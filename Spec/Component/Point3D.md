@@ -1,10 +1,10 @@
-# Point
+# Point3D
 
 ## 概要
 
-点
+3次元空間上の点
 
-extends Component
+extends Component3D
 
 ## フィールド一覧
 

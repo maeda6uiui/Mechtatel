@@ -1,10 +1,10 @@
-# UVPoint
+# UVPoint3D
 
 ## 概要
 
-UV座標をもつ点
+UV座標をもつ3次元空間上の点
 
-extends Component
+extends Component3D
 
 ## フィールド一覧
 

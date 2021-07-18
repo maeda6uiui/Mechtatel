@@ -1,10 +1,10 @@
-# Segment
+# Segment3D
 
 ## 概要
 
-線分
+3次元空間上の線分
 
-extends Component
+extends Component3D
 
 ## フィールド一覧
 
@@ -12,6 +12,5 @@ extends Component
 | ------ | ---- |
 | point1 | 点1  |
 | point2 | 点2  |
-
 
 

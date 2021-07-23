@@ -31,7 +31,7 @@ class MttInstance {
             throw new RuntimeException("Failed to create a window");
         }
 
-        vulkanInstance = new MttVulkanInstance();
+        vulkanInstance = new MttVulkanInstance(true);
 
         this.mtt = mtt;
         mtt.init();

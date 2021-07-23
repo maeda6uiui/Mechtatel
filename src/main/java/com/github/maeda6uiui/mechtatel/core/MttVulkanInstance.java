@@ -2,10 +2,7 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.vulkan.VkApplicationInfo;
-import org.lwjgl.vulkan.VkDebugUtilsMessengerCreateInfoEXT;
-import org.lwjgl.vulkan.VkInstance;
-import org.lwjgl.vulkan.VkInstanceCreateInfo;
+import org.lwjgl.vulkan.*;
 
 import static org.lwjgl.glfw.GLFWVulkan.glfwGetRequiredInstanceExtensions;
 import static org.lwjgl.vulkan.EXTDebugUtils.VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
@@ -21,6 +18,8 @@ class MttVulkanInstance {
 
     private boolean enableValidationLayer;
     private long debugMessenger;
+
+    private VkPhysicalDevice physicalDevice;
 
     private PointerBuffer getRequiredExtensions() {
         PointerBuffer glfwExtensions = glfwGetRequiredInstanceExtensions();
@@ -78,7 +77,11 @@ class MttVulkanInstance {
         this.enableValidationLayer = enableValidationLayer;
 
         this.createInstance();
-        debugMessenger = ValidationLayers.setupDebugMessenger(instance);
+        if (enableValidationLayer) {
+            debugMessenger = ValidationLayers.setupDebugMessenger(instance);
+        }
+
+        physicalDevice = PhysicalDevicePicker.pickPhysicalDevice(instance);
     }
 
     public void cleanup() {

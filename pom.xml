@@ -7,8 +7,12 @@
     <groupId>com.github.maeda6uiui</groupId>
     <artifactId>Mechtatel</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <name>Mechtatel</name>
+    <url>https://github.com/maeda6uiui/Mechtatel</url>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>
 
@@ -89,14 +93,14 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.14.0</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.4</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.14.0</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.2.4</version>
         </dependency>
     </dependencies>
 </project>

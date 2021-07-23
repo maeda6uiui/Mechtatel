@@ -12,6 +12,8 @@ class MttInstance {
     private IMechtatel mtt;
     private long window;
 
+    private MttVulkanInstance vulkanInstance;
+
     public MttInstance(IMechtatel mtt, int windowWidth, int windowHeight, String windowTitle, boolean windowResizable) {
         if (!glfwInit()) {
             throw new RuntimeException("Failed to initialize GLFW");
@@ -29,6 +31,8 @@ class MttInstance {
             throw new RuntimeException("Failed to create a window");
         }
 
+        vulkanInstance = new MttVulkanInstance();
+
         this.mtt = mtt;
         mtt.init();
     }
@@ -44,6 +48,8 @@ class MttInstance {
 
     public void cleanup() {
         mtt.dispose();
+
+        vulkanInstance.cleanup();
 
         glfwDestroyWindow(window);
         glfwTerminate();

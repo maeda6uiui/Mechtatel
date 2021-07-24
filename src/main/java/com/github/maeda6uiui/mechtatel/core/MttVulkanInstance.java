@@ -21,6 +21,9 @@ class MttVulkanInstance {
 
     private VkPhysicalDevice physicalDevice;
 
+    private VkDevice device;
+    private VkQueue graphicsQueue;
+
     private PointerBuffer getRequiredExtensions() {
         PointerBuffer glfwExtensions = glfwGetRequiredInstanceExtensions();
 
@@ -76,15 +79,27 @@ class MttVulkanInstance {
     public MttVulkanInstance(boolean enableValidationLayer) {
         this.enableValidationLayer = enableValidationLayer;
 
+        //Create a Vulkan instance
         this.createInstance();
+
+        //Set up a debug messenger
         if (enableValidationLayer) {
             debugMessenger = ValidationLayers.setupDebugMessenger(instance);
         }
 
+        //Pick up a physical device
         physicalDevice = PhysicalDevicePicker.pickPhysicalDevice(instance);
+
+        //Create a logical device and a graphics queue
+        LogicalDeviceCreator.VkDeviceAndVkQueue deviceAndGraphicsQueue
+                = LogicalDeviceCreator.createLogicalDevice(physicalDevice, enableValidationLayer);
+        device = deviceAndGraphicsQueue.device;
+        graphicsQueue = deviceAndGraphicsQueue.queue;
     }
 
     public void cleanup() {
+        vkDestroyDevice(device, null);
+
         if (enableValidationLayer) {
             ValidationLayers.destroyDebugUtilsMessengerEXT(instance, debugMessenger, null);
         }

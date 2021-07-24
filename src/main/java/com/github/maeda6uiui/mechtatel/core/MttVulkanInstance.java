@@ -36,6 +36,7 @@ class MttVulkanInstance {
 
     private long swapchain;
     private List<Long> swapchainImages;
+    private List<Long> swapchainImageViews;
     private int swapchainImageFormat;
     private VkExtent2D swapchainExtent;
 
@@ -133,9 +134,14 @@ class MttVulkanInstance {
 
         //Create a swapchain
         this.createSwapchain();
+
+        //Create image views
+        swapchainImageViews = SwapchainManager.createSwapchainImageViews(device, swapchainImages, swapchainImageFormat);
     }
 
     public void cleanup() {
+        swapchainImageViews.forEach(imageView -> vkDestroyImageView(device, imageView, null));
+
         vkDestroySwapchainKHR(device, swapchain, null);
 
         vkDestroyDevice(device, null);

@@ -2,10 +2,13 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.KHRSurface;
+import org.lwjgl.vulkan.VkExtensionProperties;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 import org.lwjgl.vulkan.VkQueueFamilyProperties;
 
 import java.nio.IntBuffer;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -42,8 +45,35 @@ class QueueFamilyMethods {
         }
     }
 
-    public static boolean isDeviceSuitable(VkPhysicalDevice device, long surface) {
+    private static boolean checkExtensionSupported(VkPhysicalDevice device, Set<String> deviceExtensions) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer extensionCount = stack.ints(0);
+            vkEnumerateDeviceExtensionProperties(device, (String) null, extensionCount, null);
+
+            VkExtensionProperties.Buffer availableExtensions = VkExtensionProperties.mallocStack(extensionCount.get(0), stack);
+            vkEnumerateDeviceExtensionProperties(device, (String) null, extensionCount, availableExtensions);
+
+            return availableExtensions.stream()
+                    .map(VkExtensionProperties::extensionNameString)
+                    .collect(Collectors.toSet())
+                    .containsAll(deviceExtensions);
+        }
+    }
+
+    public static boolean isDeviceSuitable(VkPhysicalDevice device, long surface, Set<String> deviceExtensions) {
         QueueFamilyIndices indices = findQueueFamilies(device, surface);
-        return indices.isComplete();
+
+        boolean extensionsSupported = checkExtensionSupported(device, deviceExtensions);
+        boolean swapchainAdequate = false;
+
+        if (extensionsSupported) {
+            try (MemoryStack stack = MemoryStack.stackPush()) {
+                SwapchainManager.SwapchainSupportDetails swapchainSupport
+                        = SwapchainManager.querySwapchainSupport(device, surface, stack);
+                swapchainAdequate = swapchainSupport.formats.hasRemaining() && swapchainSupport.presentModes.hasRemaining();
+            }
+        }
+
+        return indices.isComplete() && extensionsSupported && swapchainAdequate;
     }
 }

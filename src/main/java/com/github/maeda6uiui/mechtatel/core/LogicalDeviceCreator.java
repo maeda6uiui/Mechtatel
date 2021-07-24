@@ -34,9 +34,10 @@ class LogicalDeviceCreator {
             createInfo.sType(VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO);
             createInfo.pQueueCreateInfos(queueCreateInfos);
             createInfo.pEnabledFeatures(deviceFeatures);
+            createInfo.ppEnabledExtensionNames(PointerBufferUtils.asPointerBuffer(SwapchainManager.DEVICE_EXTENSIONS));
 
             if (enableValidationLayer) {
-                createInfo.ppEnabledLayerNames(ValidationLayers.validationLayerAsPointerBuffer());
+                createInfo.ppEnabledLayerNames(PointerBufferUtils.asPointerBuffer(ValidationLayers.VALIDATION_LAYERS));
             }
 
             PointerBuffer pDevice = stack.pointers(VK_NULL_HANDLE);

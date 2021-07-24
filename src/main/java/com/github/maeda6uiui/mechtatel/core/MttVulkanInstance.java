@@ -4,9 +4,14 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.nio.IntBuffer;
+import java.util.List;
+
+import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 import static org.lwjgl.glfw.GLFWVulkan.glfwGetRequiredInstanceExtensions;
 import static org.lwjgl.vulkan.EXTDebugUtils.VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
 import static org.lwjgl.vulkan.KHRSurface.vkDestroySurfaceKHR;
+import static org.lwjgl.vulkan.KHRSwapchain.vkDestroySwapchainKHR;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
@@ -28,6 +33,11 @@ class MttVulkanInstance {
     private long window;
     private long surface;
     private VkQueue presentQueue;
+
+    private long swapchain;
+    private List<Long> swapchainImages;
+    private int swapchainImageFormat;
+    private VkExtent2D swapchainExtent;
 
     private PointerBuffer getRequiredExtensions() {
         PointerBuffer glfwExtensions = glfwGetRequiredInstanceExtensions();
@@ -65,7 +75,7 @@ class MttVulkanInstance {
             createInfo.ppEnabledExtensionNames(this.getRequiredExtensions());
 
             if (enableValidationLayer) {
-                createInfo.ppEnabledLayerNames(ValidationLayers.validationLayerAsPointerBuffer());
+                createInfo.ppEnabledLayerNames(PointerBufferUtils.asPointerBuffer(ValidationLayers.VALIDATION_LAYERS));
 
                 VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo = VkDebugUtilsMessengerCreateInfoEXT.callocStack(stack);
                 ValidationLayers.populateDebugMessengerCreateInfo(debugCreateInfo);
@@ -78,6 +88,21 @@ class MttVulkanInstance {
             }
 
             instance = new VkInstance(instancePtr.get(0), createInfo);
+        }
+    }
+
+    private void createSwapchain() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer pWindowWidth = stack.ints(0);
+            IntBuffer pWindowHeight = stack.ints(0);
+            glfwGetWindowSize(window, pWindowWidth, pWindowHeight);
+
+            SwapchainManager.SwapchainRelatingData swapchainRelatingData
+                    = SwapchainManager.createSwapchain(device, surface, pWindowWidth.get(0), pWindowHeight.get(0));
+            swapchain = swapchainRelatingData.swapchain;
+            swapchainImages = swapchainRelatingData.swapchainImages;
+            swapchainImageFormat = swapchainRelatingData.swapchainImageFormat;
+            swapchainExtent = swapchainRelatingData.swapchainExtent;
         }
     }
 
@@ -105,9 +130,14 @@ class MttVulkanInstance {
         device = deviceAndQueues.device;
         graphicsQueue = deviceAndQueues.graphicsQueue;
         presentQueue = deviceAndQueues.presentQueue;
+
+        //Create a swapchain
+        this.createSwapchain();
     }
 
     public void cleanup() {
+        vkDestroySwapchainKHR(device, swapchain, null);
+
         vkDestroyDevice(device, null);
 
         if (enableValidationLayer) {

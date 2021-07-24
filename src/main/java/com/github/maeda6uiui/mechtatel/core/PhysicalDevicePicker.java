@@ -29,7 +29,7 @@ class PhysicalDevicePicker {
 
             for (int i = 0; i < ppPhysicalDevices.capacity(); i++) {
                 var device = new VkPhysicalDevice(ppPhysicalDevices.get(i), instance);
-                if (QueueFamilyMethods.isDeviceSuitable(device, surface)) {
+                if (QueueFamilyMethods.isDeviceSuitable(device, surface, SwapchainManager.DEVICE_EXTENSIONS)) {
                     return device;
                 }
             }

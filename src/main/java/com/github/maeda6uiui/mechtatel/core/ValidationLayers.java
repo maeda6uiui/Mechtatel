@@ -1,6 +1,5 @@
 package com.github.maeda6uiui.mechtatel.core;
 
-import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 import org.slf4j.Logger;
@@ -24,7 +23,7 @@ import static org.lwjgl.vulkan.VK10.*;
 class ValidationLayers {
     private static final Logger logger = LoggerFactory.getLogger(ValidationLayers.class);
 
-    private static final Set<String> VALIDATION_LAYERS;
+    public static final Set<String> VALIDATION_LAYERS;
 
     static {
         VALIDATION_LAYERS = new HashSet<>();
@@ -95,15 +94,6 @@ class ValidationLayers {
 
             return pDebugMessenger.get(0);
         }
-    }
-
-    public static PointerBuffer validationLayerAsPointerBuffer() {
-        MemoryStack stack = MemoryStack.stackGet();
-        PointerBuffer buffer = stack.mallocPointer(VALIDATION_LAYERS.size());
-
-        VALIDATION_LAYERS.stream().map(stack::UTF8).forEach(buffer::put);
-
-        return buffer.rewind();
     }
 
     public static boolean checkValidationLayerSupport() {

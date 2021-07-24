@@ -6,6 +6,7 @@ import org.lwjgl.vulkan.*;
 
 import static org.lwjgl.glfw.GLFWVulkan.glfwGetRequiredInstanceExtensions;
 import static org.lwjgl.vulkan.EXTDebugUtils.VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
+import static org.lwjgl.vulkan.KHRSurface.vkDestroySurfaceKHR;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
@@ -23,6 +24,10 @@ class MttVulkanInstance {
 
     private VkDevice device;
     private VkQueue graphicsQueue;
+
+    private long window;
+    private long surface;
+    private VkQueue presentQueue;
 
     private PointerBuffer getRequiredExtensions() {
         PointerBuffer glfwExtensions = glfwGetRequiredInstanceExtensions();
@@ -76,8 +81,9 @@ class MttVulkanInstance {
         }
     }
 
-    public MttVulkanInstance(boolean enableValidationLayer) {
+    public MttVulkanInstance(boolean enableValidationLayer, long window) {
         this.enableValidationLayer = enableValidationLayer;
+        this.window = window;
 
         //Create a Vulkan instance
         this.createInstance();
@@ -87,14 +93,18 @@ class MttVulkanInstance {
             debugMessenger = ValidationLayers.setupDebugMessenger(instance);
         }
 
-        //Pick up a physical device
-        physicalDevice = PhysicalDevicePicker.pickPhysicalDevice(instance);
+        //Create a window surface
+        surface = SurfaceCreator.createSurface(instance, window);
 
-        //Create a logical device and a graphics queue
-        LogicalDeviceCreator.VkDeviceAndVkQueue deviceAndGraphicsQueue
-                = LogicalDeviceCreator.createLogicalDevice(physicalDevice, enableValidationLayer);
-        device = deviceAndGraphicsQueue.device;
-        graphicsQueue = deviceAndGraphicsQueue.queue;
+        //Pick up a physical device
+        physicalDevice = PhysicalDevicePicker.pickPhysicalDevice(instance, surface);
+
+        //Create a logical device and queues
+        LogicalDeviceCreator.VkDeviceAndVkQueues deviceAndQueues
+                = LogicalDeviceCreator.createLogicalDevice(physicalDevice, enableValidationLayer, surface);
+        device = deviceAndQueues.device;
+        graphicsQueue = deviceAndQueues.graphicsQueue;
+        presentQueue = deviceAndQueues.presentQueue;
     }
 
     public void cleanup() {
@@ -103,6 +113,8 @@ class MttVulkanInstance {
         if (enableValidationLayer) {
             ValidationLayers.destroyDebugUtilsMessengerEXT(instance, debugMessenger, null);
         }
+
+        vkDestroySurfaceKHR(instance, surface, null);
 
         vkDestroyInstance(instance, null);
     }

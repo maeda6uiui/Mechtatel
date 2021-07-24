@@ -7,8 +7,9 @@ package com.github.maeda6uiui.mechtatel.core;
  */
 class QueueFamilyIndices {
     public Integer graphicsFamily;
+    public Integer presentFamily;
 
     public boolean isComplete() {
-        return graphicsFamily != null;
+        return graphicsFamily != null && presentFamily != null;
     }
 }

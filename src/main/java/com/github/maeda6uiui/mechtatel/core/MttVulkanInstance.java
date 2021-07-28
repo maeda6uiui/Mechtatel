@@ -40,6 +40,8 @@ class MttVulkanInstance {
     private int swapchainImageFormat;
     private VkExtent2D swapchainExtent;
 
+    private long pipelineLayout;
+
     private PointerBuffer getRequiredExtensions() {
         PointerBuffer glfwExtensions = glfwGetRequiredInstanceExtensions();
 
@@ -143,13 +145,16 @@ class MttVulkanInstance {
         swapchainImageViews = SwapchainManager.createSwapchainImageViews(device, swapchainImages, swapchainImageFormat);
 
         //Create a graphics pipeline
-        GraphicsPipelineCreator.createGraphicsPipeline(
+        pipelineLayout = GraphicsPipelineCreator.createGraphicsPipeline(
                 device,
+                swapchainExtent,
                 "./Mechtatel/Shader/Test/1.vert",
                 "./Mechtatel/Shader/Test/1.frag");
     }
 
     public void cleanup() {
+        vkDestroyPipelineLayout(device, pipelineLayout, null);
+
         swapchainImageViews.forEach(imageView -> vkDestroyImageView(device, imageView, null));
 
         vkDestroySwapchainKHR(device, swapchain, null);

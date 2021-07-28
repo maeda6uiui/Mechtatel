@@ -108,6 +108,10 @@ class MttVulkanInstance {
     }
 
     public MttVulkanInstance(boolean enableValidationLayer, long window) {
+        //Load the Shaderc library
+        System.setProperty("java.library.path", "./Mechtatel/Bin");
+        System.loadLibrary("shaderc_shared");
+
         this.enableValidationLayer = enableValidationLayer;
         this.window = window;
 
@@ -137,6 +141,12 @@ class MttVulkanInstance {
 
         //Create image views
         swapchainImageViews = SwapchainManager.createSwapchainImageViews(device, swapchainImages, swapchainImageFormat);
+
+        //Create a graphics pipeline
+        GraphicsPipelineCreator.createGraphicsPipeline(
+                device,
+                "./Mechtatel/Shader/Test/1.vert",
+                "./Mechtatel/Shader/Test/1.frag");
     }
 
     public void cleanup() {

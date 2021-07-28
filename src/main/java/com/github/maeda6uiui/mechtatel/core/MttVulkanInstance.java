@@ -40,6 +40,7 @@ class MttVulkanInstance {
     private int swapchainImageFormat;
     private VkExtent2D swapchainExtent;
 
+    private long renderPass;
     private long pipelineLayout;
 
     private PointerBuffer getRequiredExtensions() {
@@ -144,6 +145,9 @@ class MttVulkanInstance {
         //Create image views
         swapchainImageViews = SwapchainManager.createSwapchainImageViews(device, swapchainImages, swapchainImageFormat);
 
+        //Create a render pass
+        renderPass = RenderpassCreator.createRenderPass(device, swapchainImageFormat);
+
         //Create a graphics pipeline
         pipelineLayout = GraphicsPipelineCreator.createGraphicsPipeline(
                 device,
@@ -154,6 +158,8 @@ class MttVulkanInstance {
 
     public void cleanup() {
         vkDestroyPipelineLayout(device, pipelineLayout, null);
+
+        vkDestroyRenderPass(device, renderPass, null);
 
         swapchainImageViews.forEach(imageView -> vkDestroyImageView(device, imageView, null));
 

@@ -45,6 +45,8 @@ class MttVulkanInstance {
     private long pipelineLayout;
     private long graphicsPipeline;
 
+    private long commandPool;
+
     private PointerBuffer getRequiredExtensions() {
         PointerBuffer glfwExtensions = glfwGetRequiredInstanceExtensions();
 
@@ -163,9 +165,14 @@ class MttVulkanInstance {
         //Create framebuffers
         swapchainFramebuffers = FramebufferCreator.createFramebuffers(
                 device, swapchainImageViews, renderPass, swapchainExtent);
+
+        //Create a command pool
+        commandPool = CommandPoolCreator.createCommandPool(device, surface);
     }
 
     public void cleanup() {
+        vkDestroyCommandPool(device, commandPool, null);
+
         swapchainFramebuffers.forEach(framebuffer -> vkDestroyFramebuffer(device, framebuffer, null));
 
         vkDestroyPipeline(device, graphicsPipeline, null);
@@ -187,5 +194,11 @@ class MttVulkanInstance {
         vkDestroySurfaceKHR(instance, surface, null);
 
         vkDestroyInstance(instance, null);
+    }
+
+    //This is a test method for development
+    public void draw() {
+        DrawCommandDispatcher.dispatchDrawCommand(
+                device, commandPool, renderPass, swapchainExtent, swapchainFramebuffers, graphicsPipeline);
     }
 }

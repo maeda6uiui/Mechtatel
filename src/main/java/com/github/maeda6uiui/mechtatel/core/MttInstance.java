@@ -42,6 +42,8 @@ class MttInstance {
             mtt.update();
             mtt.draw();
 
+            vulkanInstance.draw();
+
             glfwPollEvents();
         }
     }

@@ -15,6 +15,11 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 class GraphicsPipelineCreator {
+    public static class GraphicsPipelineInfo {
+        public long pipelineLayout;
+        public long graphicsPipeline;
+    }
+
     private static long createShaderModule(VkDevice device, ByteBuffer spirvCode) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkShaderModuleCreateInfo createInfo = VkShaderModuleCreateInfo.callocStack(stack);
@@ -30,9 +35,10 @@ class GraphicsPipelineCreator {
         }
     }
 
-    public static long createGraphicsPipeline(
+    public static GraphicsPipelineInfo createGraphicsPipeline(
             VkDevice device,
             VkExtent2D swapchainExtent,
+            long renderPass,
             String vertShaderFilepath,
             String fragShaderFilepath) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -136,6 +142,33 @@ class GraphicsPipelineCreator {
 
             long pipelineLayout = pPipelineLayout.get(0);
 
+            //Graphics pipeline creation
+            VkGraphicsPipelineCreateInfo.Buffer pipelineInfo = VkGraphicsPipelineCreateInfo.callocStack(1, stack);
+            pipelineInfo.sType(VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO);
+            pipelineInfo.pStages(shaderStages);
+            pipelineInfo.pVertexInputState(vertexInputInfo);
+            pipelineInfo.pInputAssemblyState(inputAssembly);
+            pipelineInfo.pViewportState(viewportState);
+            pipelineInfo.pRasterizationState(rasterizer);
+            pipelineInfo.pMultisampleState(multisampling);
+            pipelineInfo.pColorBlendState(colorBlending);
+            pipelineInfo.layout(pipelineLayout);
+            pipelineInfo.renderPass(renderPass);
+            pipelineInfo.subpass(0);
+            pipelineInfo.basePipelineHandle(VK_NULL_HANDLE);
+            pipelineInfo.basePipelineIndex(-1);
+
+            LongBuffer pGraphicsPipeline = stack.mallocLong(1);
+            if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, pipelineInfo, null, pGraphicsPipeline) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create a graphics pipeline");
+            }
+
+            long graphicsPipeline = pGraphicsPipeline.get(0);
+
+            var ret = new GraphicsPipelineInfo();
+            ret.pipelineLayout = pipelineLayout;
+            ret.graphicsPipeline = graphicsPipeline;
+
             //Release resources
             vkDestroyShaderModule(device, vertShaderModule, null);
             vkDestroyShaderModule(device, fragShaderModule, null);
@@ -143,7 +176,7 @@ class GraphicsPipelineCreator {
             vertShaderSPIRV.free();
             fragShaderSPIRV.free();
 
-            return pipelineLayout;
+            return ret;
         }
     }
 }

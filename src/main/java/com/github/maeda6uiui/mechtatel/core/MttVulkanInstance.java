@@ -42,6 +42,7 @@ class MttVulkanInstance {
 
     private long renderPass;
     private long pipelineLayout;
+    private long graphicsPipeline;
 
     private PointerBuffer getRequiredExtensions() {
         PointerBuffer glfwExtensions = glfwGetRequiredInstanceExtensions();
@@ -149,14 +150,19 @@ class MttVulkanInstance {
         renderPass = RenderpassCreator.createRenderPass(device, swapchainImageFormat);
 
         //Create a graphics pipeline
-        pipelineLayout = GraphicsPipelineCreator.createGraphicsPipeline(
+        GraphicsPipelineCreator.GraphicsPipelineInfo graphicsPipelineInfo = GraphicsPipelineCreator.createGraphicsPipeline(
                 device,
                 swapchainExtent,
+                renderPass,
                 "./Mechtatel/Shader/Test/1.vert",
                 "./Mechtatel/Shader/Test/1.frag");
+        pipelineLayout = graphicsPipelineInfo.pipelineLayout;
+        graphicsPipeline = graphicsPipelineInfo.graphicsPipeline;
     }
 
     public void cleanup() {
+        vkDestroyPipeline(device, graphicsPipeline, null);
+
         vkDestroyPipelineLayout(device, pipelineLayout, null);
 
         vkDestroyRenderPass(device, renderPass, null);

@@ -39,6 +39,7 @@ class MttVulkanInstance {
     private List<Long> swapchainImageViews;
     private int swapchainImageFormat;
     private VkExtent2D swapchainExtent;
+    private List<Long> swapchainFramebuffers;
 
     private long renderPass;
     private long pipelineLayout;
@@ -158,9 +159,15 @@ class MttVulkanInstance {
                 "./Mechtatel/Shader/Test/1.frag");
         pipelineLayout = graphicsPipelineInfo.pipelineLayout;
         graphicsPipeline = graphicsPipelineInfo.graphicsPipeline;
+
+        //Create framebuffers
+        swapchainFramebuffers = FramebufferCreator.createFramebuffers(
+                device, swapchainImageViews, renderPass, swapchainExtent);
     }
 
     public void cleanup() {
+        swapchainFramebuffers.forEach(framebuffer -> vkDestroyFramebuffer(device, framebuffer, null));
+
         vkDestroyPipeline(device, graphicsPipeline, null);
 
         vkDestroyPipelineLayout(device, pipelineLayout, null);

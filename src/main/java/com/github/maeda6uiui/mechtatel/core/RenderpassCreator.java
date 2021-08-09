@@ -35,10 +35,19 @@ class RenderpassCreator {
             subpass.colorAttachmentCount(1);
             subpass.pColorAttachments(colorAttachmentRef);
 
+            VkSubpassDependency.Buffer dependency = VkSubpassDependency.callocStack(1, stack);
+            dependency.srcSubpass(VK_SUBPASS_EXTERNAL);
+            dependency.dstSubpass(0);
+            dependency.srcStageMask(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+            dependency.srcAccessMask(0);
+            dependency.dstStageMask(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+            dependency.dstAccessMask(VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
+
             VkRenderPassCreateInfo renderPassInfo = VkRenderPassCreateInfo.callocStack(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO);
             renderPassInfo.pAttachments(colorAttachment);
             renderPassInfo.pSubpasses(subpass);
+            renderPassInfo.pDependencies(dependency);
 
             LongBuffer pRenderPass = stack.mallocLong(1);
             if (vkCreateRenderPass(device, renderPassInfo, null, pRenderPass) != VK_SUCCESS) {

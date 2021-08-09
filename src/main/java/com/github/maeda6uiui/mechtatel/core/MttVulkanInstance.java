@@ -5,7 +5,9 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.nio.IntBuffer;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 import static org.lwjgl.glfw.GLFWVulkan.glfwGetRequiredInstanceExtensions;
@@ -46,6 +48,12 @@ class MttVulkanInstance {
     private long graphicsPipeline;
 
     private long commandPool;
+
+    private List<Frame> inFlightFrames;
+    private Map<Integer, Frame> imagesInFlight;
+    private int currentFrame;
+
+    private static final int MAX_FRAMES_IN_FLIGHT = 2;
 
     private PointerBuffer getRequiredExtensions() {
         PointerBuffer glfwExtensions = glfwGetRequiredInstanceExtensions();
@@ -168,9 +176,20 @@ class MttVulkanInstance {
 
         //Create a command pool
         commandPool = CommandPoolCreator.createCommandPool(device, surface);
+
+        //Create sync objects
+        inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
+        imagesInFlight = new HashMap<>(swapchainImages.size());
     }
 
     public void cleanup() {
+        inFlightFrames.forEach(frame -> {
+            vkDestroySemaphore(device, frame.renderFinishedSemaphore(), null);
+            vkDestroySemaphore(device, frame.imageAvailableSemaphore(), null);
+            vkDestroyFence(device, frame.fence(), null);
+        });
+        imagesInFlight.clear();
+
         vkDestroyCommandPool(device, commandPool, null);
 
         swapchainFramebuffers.forEach(framebuffer -> vkDestroyFramebuffer(device, framebuffer, null));
@@ -198,7 +217,13 @@ class MttVulkanInstance {
 
     //This is a test method for development
     public void draw() {
-        DrawCommandDispatcher.dispatchDrawCommand(
+        List<VkCommandBuffer> commandBuffers = DrawCommandDispatcher.dispatchDrawCommand(
                 device, commandPool, renderPass, swapchainExtent, swapchainFramebuffers, graphicsPipeline);
+
+        Frame thisFrame = inFlightFrames.get(currentFrame);
+        FrameDrawer.drawFrame(device, thisFrame, swapchain, imagesInFlight, commandBuffers, graphicsQueue, presentQueue);
+        currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+
+        vkDeviceWaitIdle(device);
     }
 }

@@ -15,7 +15,7 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 class DrawCommandDispatcher {
-    public static void dispatchDrawCommand(
+    public static List<VkCommandBuffer> dispatchDrawCommand(
             VkDevice device,
             long commandPool,
             long renderPass,
@@ -74,6 +74,8 @@ class DrawCommandDispatcher {
                     throw new RuntimeException("Failed to record a command buffer");
                 }
             }
+
+            return commandBuffers;
         }
     }
 }

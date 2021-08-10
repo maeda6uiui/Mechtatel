@@ -14,6 +14,10 @@ class MttInstance {
 
     private MttVulkanInstance vulkanInstance;
 
+    private void framebufferResizeCallback(long window, int width, int height) {
+        mtt.reshape(width, height);
+    }
+
     public MttInstance(IMechtatel mtt, int windowWidth, int windowHeight, String windowTitle, boolean windowResizable) {
         if (!glfwInit()) {
             throw new RuntimeException("Failed to initialize GLFW");
@@ -30,6 +34,8 @@ class MttInstance {
         if (window == NULL) {
             throw new RuntimeException("Failed to create a window");
         }
+
+        glfwSetFramebufferSizeCallback(window, this::framebufferResizeCallback);
 
         vulkanInstance = new MttVulkanInstance(true, window);
 

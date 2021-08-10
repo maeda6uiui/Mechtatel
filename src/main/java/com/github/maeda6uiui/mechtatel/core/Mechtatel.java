@@ -9,7 +9,7 @@ public class Mechtatel implements IMechtatel {
     private MttInstance instance;
 
     public Mechtatel() {
-        instance = new MttInstance(this, 1280, 720, "Mechtatel", false);
+        instance = new MttInstance(this, 1280, 720, "Mechtatel", true);
         instance.run();
         instance.cleanup();
     }

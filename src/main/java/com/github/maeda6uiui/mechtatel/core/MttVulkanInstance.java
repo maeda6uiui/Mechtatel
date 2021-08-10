@@ -165,8 +165,10 @@ class MttVulkanInstance {
                 device,
                 swapchainExtent,
                 renderPass,
-                "./Mechtatel/Shader/Test/1.vert",
-                "./Mechtatel/Shader/Test/1.frag");
+                Vertex2D.getBindingDescription(),
+                Vertex2D.getAttributeDescriptions(),
+                "./Mechtatel/Shader/Test/2.vert",
+                "./Mechtatel/Shader/Test/2.frag");
         pipelineLayout = graphicsPipelineInfo.pipelineLayout;
         graphicsPipeline = graphicsPipelineInfo.graphicsPipeline;
 

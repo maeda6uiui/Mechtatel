@@ -39,6 +39,8 @@ class GraphicsPipelineCreator {
             VkDevice device,
             VkExtent2D swapchainExtent,
             long renderPass,
+            VkVertexInputBindingDescription.Buffer bindingDescription,
+            VkVertexInputAttributeDescription.Buffer attributeDescriptions,
             String vertShaderFilepath,
             String fragShaderFilepath) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -73,6 +75,8 @@ class GraphicsPipelineCreator {
             //Vertex stage
             VkPipelineVertexInputStateCreateInfo vertexInputInfo = VkPipelineVertexInputStateCreateInfo.callocStack(stack);
             vertexInputInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO);
+            vertexInputInfo.pVertexBindingDescriptions(bindingDescription);
+            vertexInputInfo.pVertexAttributeDescriptions(attributeDescriptions);
 
             //Assembly stage
             VkPipelineInputAssemblyStateCreateInfo inputAssembly = VkPipelineInputAssemblyStateCreateInfo.callocStack(stack);

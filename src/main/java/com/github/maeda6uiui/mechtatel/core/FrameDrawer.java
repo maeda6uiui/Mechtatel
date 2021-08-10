@@ -30,7 +30,6 @@ class FrameDrawer {
             vkWaitForFences(device, thisFrame.pFence(), true, UINT64_MAX);
 
             IntBuffer pImageIndex = stack.mallocInt(1);
-
             vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, thisFrame.imageAvailableSemaphore(), VK_NULL_HANDLE, pImageIndex);
             final int imageIndex = pImageIndex.get(0);
 

@@ -24,15 +24,16 @@ class DrawCommandDispatcher {
             List<Long> swapchainFramebuffers,
             long graphicsPipeline,
             long vertexBuffer,
-            int numVertices) {
+            long indexBuffer,
+            int lenIndices) {
         final int commandBuffersCount = swapchainFramebuffers.size();
         var commandBuffers = new ArrayList<VkCommandBuffer>(commandBuffersCount);
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkCommandBufferAllocateInfo allocInfo = VkCommandBufferAllocateInfo.callocStack(stack);
             allocInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO);
-            allocInfo.commandPool(commandPool);
             allocInfo.level(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+            allocInfo.commandPool(commandPool);
             allocInfo.commandBufferCount(commandBuffersCount);
 
             PointerBuffer pCommandBuffers = stack.mallocPointer(commandBuffersCount);
@@ -74,7 +75,9 @@ class DrawCommandDispatcher {
                     LongBuffer offsets = stack.longs(0);
                     vkCmdBindVertexBuffers(commandBuffer, 0, vertexBuffers, offsets);
 
-                    vkCmdDraw(commandBuffer, numVertices, 1, 0, 0);
+                    vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+
+                    vkCmdDrawIndexed(commandBuffer, lenIndices, 1, 0, 0, 0);
                 }
                 vkCmdEndRenderPass(commandBuffer);
 

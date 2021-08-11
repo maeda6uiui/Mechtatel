@@ -59,7 +59,12 @@ class MttVulkanInstance {
     private long vertexBuffer;
     private long vertexBufferMemory;
 
-    private List<Vertex2D> vertices;//For test use
+    private long indexBuffer;
+    private long indexBufferMemory;
+
+    //For test use
+    private List<Vertex2D> vertices;
+    private List<Integer> indices;
 
     private static final int MAX_FRAMES_IN_FLIGHT = 2;
 
@@ -189,18 +194,34 @@ class MttVulkanInstance {
 
         //Create vertices for test
         vertices = new ArrayList<>();
-        var v1 = new Vertex2D(new Vector2f(0.0f, -0.5f), new Vector3f(1.0f, 0.0f, 0.0f));
-        var v2 = new Vertex2D(new Vector2f(0.5f, 0.5f), new Vector3f(0.0f, 1.0f, 0.0f));
-        var v3 = new Vertex2D(new Vector2f(-0.5f, 0.5f), new Vector3f(0.0f, 0.0f, 1.0f));
+        var v1 = new Vertex2D(new Vector2f(-0.5f, -0.5f), new Vector3f(1.0f, 0.0f, 0.0f));
+        var v2 = new Vertex2D(new Vector2f(0.5f, -0.5f), new Vector3f(0.0f, 1.0f, 0.0f));
+        var v3 = new Vertex2D(new Vector2f(0.5f, 0.5f), new Vector3f(0.0f, 0.0f, 1.0f));
+        var v4 = new Vertex2D(new Vector2f(-0.5f, 0.5f), new Vector3f(1.0f, 1.0f, 1.0f));
         vertices.add(v1);
         vertices.add(v2);
         vertices.add(v3);
+        vertices.add(v4);
+
+        //Create indices for test
+        indices = new ArrayList<>();
+        indices.add(0);
+        indices.add(1);
+        indices.add(2);
+        indices.add(2);
+        indices.add(3);
+        indices.add(0);
 
         //Create a vertex buffer and a vertex buffer memory
-        VertexBufferCreator.VertexBufferInfo vertexBufferInfo
-                = VertexBufferCreator.createVertexBuffer2D(device, commandPool, graphicsQueue, vertices);
-        vertexBuffer = vertexBufferInfo.vertexBuffer;
-        vertexBufferMemory = vertexBufferInfo.vertexBufferMemory;
+        BufferCreator.BufferInfo bufferInfo
+                = BufferCreator.createVertexBuffer2D(device, commandPool, graphicsQueue, vertices);
+        vertexBuffer = bufferInfo.buffer;
+        vertexBufferMemory = bufferInfo.bufferMemory;
+
+        //Create an index buffer and an index buffer memory
+        bufferInfo = BufferCreator.createIndexBuffer(device, commandPool, graphicsQueue, indices);
+        indexBuffer = bufferInfo.buffer;
+        indexBufferMemory = bufferInfo.bufferMemory;
 
         //Create sync objects
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
@@ -208,6 +229,9 @@ class MttVulkanInstance {
     }
 
     public void cleanup() {
+        vkDestroyBuffer(device, indexBuffer, null);
+        vkFreeMemory(device, indexBufferMemory, null);
+
         vkDestroyBuffer(device, vertexBuffer, null);
         vkFreeMemory(device, vertexBufferMemory, null);
 
@@ -246,8 +270,15 @@ class MttVulkanInstance {
     //This is a test method for development
     public void draw() {
         List<VkCommandBuffer> commandBuffers = DrawCommandDispatcher.dispatchDrawCommand2D(
-                device, commandPool, renderPass, swapchainExtent,
-                swapchainFramebuffers, graphicsPipeline, vertexBuffer, vertices.size());
+                device,
+                commandPool,
+                renderPass,
+                swapchainExtent,
+                swapchainFramebuffers,
+                graphicsPipeline,
+                vertexBuffer,
+                indexBuffer,
+                indices.size());
 
         Frame thisFrame = inFlightFrames.get(currentFrame);
         FrameDrawer.drawFrame(device, thisFrame, swapchain, imagesInFlight, commandBuffers, graphicsQueue, presentQueue);

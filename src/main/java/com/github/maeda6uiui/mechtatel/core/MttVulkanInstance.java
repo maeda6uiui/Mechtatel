@@ -198,7 +198,7 @@ class MttVulkanInstance {
 
         //Create a vertex buffer and a vertex buffer memory
         VertexBufferCreator.VertexBufferInfo vertexBufferInfo
-                = VertexBufferCreator.createVertexBuffer2D(device, vertices);
+                = VertexBufferCreator.createVertexBuffer2D(device, commandPool, graphicsQueue, vertices);
         vertexBuffer = vertexBufferInfo.vertexBuffer;
         vertexBufferMemory = vertexBufferInfo.vertexBufferMemory;
 

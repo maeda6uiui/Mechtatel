@@ -13,12 +13,12 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 class Vertex2D {
-    private static final int SIZEOF = (2 + 3) * Float.BYTES;
-    private static final int OFFSETOF_POS = 0;
-    private static final int OFFSETOF_COLOR = 2 * Float.BYTES;
+    public static final int SIZEOF = (2 + 3) * Float.BYTES;
+    public static final int OFFSETOF_POS = 0;
+    public static final int OFFSETOF_COLOR = 2 * Float.BYTES;
 
-    private Vector2fc pos;
-    private Vector3fc color;
+    public Vector2fc pos;
+    public Vector3fc color;
 
     public Vertex2D(Vector2fc pos, Vector3fc color) {
         this.pos = pos;

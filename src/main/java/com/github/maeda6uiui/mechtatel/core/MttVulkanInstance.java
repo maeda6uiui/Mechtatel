@@ -1,10 +1,13 @@
 package com.github.maeda6uiui.mechtatel.core;
 
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +55,11 @@ class MttVulkanInstance {
     private List<Frame> inFlightFrames;
     private Map<Integer, Frame> imagesInFlight;
     private int currentFrame;
+
+    private long vertexBuffer;
+    private long vertexBufferMemory;
+
+    private List<Vertex2D> vertices;//For test use
 
     private static final int MAX_FRAMES_IN_FLIGHT = 2;
 
@@ -179,12 +187,30 @@ class MttVulkanInstance {
         //Create a command pool
         commandPool = CommandPoolCreator.createCommandPool(device, surface);
 
+        //Create vertices for test
+        vertices = new ArrayList<>();
+        var v1 = new Vertex2D(new Vector2f(0.0f, -0.5f), new Vector3f(1.0f, 0.0f, 0.0f));
+        var v2 = new Vertex2D(new Vector2f(0.5f, 0.5f), new Vector3f(0.0f, 1.0f, 0.0f));
+        var v3 = new Vertex2D(new Vector2f(-0.5f, 0.5f), new Vector3f(0.0f, 0.0f, 1.0f));
+        vertices.add(v1);
+        vertices.add(v2);
+        vertices.add(v3);
+
+        //Create a vertex buffer and a vertex buffer memory
+        VertexBufferCreator.VertexBufferInfo vertexBufferInfo
+                = VertexBufferCreator.createVertexBuffer2D(device, vertices);
+        vertexBuffer = vertexBufferInfo.vertexBuffer;
+        vertexBufferMemory = vertexBufferInfo.vertexBufferMemory;
+
         //Create sync objects
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
         imagesInFlight = new HashMap<>(swapchainImages.size());
     }
 
     public void cleanup() {
+        vkDestroyBuffer(device, vertexBuffer, null);
+        vkFreeMemory(device, vertexBufferMemory, null);
+
         inFlightFrames.forEach(frame -> {
             vkDestroySemaphore(device, frame.renderFinishedSemaphore(), null);
             vkDestroySemaphore(device, frame.imageAvailableSemaphore(), null);
@@ -219,8 +245,9 @@ class MttVulkanInstance {
 
     //This is a test method for development
     public void draw() {
-        List<VkCommandBuffer> commandBuffers = DrawCommandDispatcher.dispatchDrawCommand(
-                device, commandPool, renderPass, swapchainExtent, swapchainFramebuffers, graphicsPipeline);
+        List<VkCommandBuffer> commandBuffers = DrawCommandDispatcher.dispatchDrawCommand2D(
+                device, commandPool, renderPass, swapchainExtent,
+                swapchainFramebuffers, graphicsPipeline, vertexBuffer, vertices.size());
 
         Frame thisFrame = inFlightFrames.get(currentFrame);
         FrameDrawer.drawFrame(device, thisFrame, swapchain, imagesInFlight, commandBuffers, graphicsQueue, presentQueue);

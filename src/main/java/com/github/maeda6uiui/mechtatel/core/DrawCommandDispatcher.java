@@ -4,6 +4,7 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,13 +16,15 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 class DrawCommandDispatcher {
-    public static List<VkCommandBuffer> dispatchDrawCommand(
+    public static List<VkCommandBuffer> dispatchDrawCommand2D(
             VkDevice device,
             long commandPool,
             long renderPass,
             VkExtent2D swapchainExtent,
             List<Long> swapchainFramebuffers,
-            long graphicsPipeline) {
+            long graphicsPipeline,
+            long vertexBuffer,
+            int numVertices) {
         final int commandBuffersCount = swapchainFramebuffers.size();
         var commandBuffers = new ArrayList<VkCommandBuffer>(commandBuffersCount);
 
@@ -66,7 +69,12 @@ class DrawCommandDispatcher {
                 vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
                 {
                     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
-                    vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+
+                    LongBuffer vertexBuffers = stack.longs(vertexBuffer);
+                    LongBuffer offsets = stack.longs(0);
+                    vkCmdBindVertexBuffers(commandBuffer, 0, vertexBuffers, offsets);
+
+                    vkCmdDraw(commandBuffer, numVertices, 1, 0, 0);
                 }
                 vkCmdEndRenderPass(commandBuffer);
 

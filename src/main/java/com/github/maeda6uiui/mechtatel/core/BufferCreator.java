@@ -43,20 +43,7 @@ class BufferCreator {
         buffer.rewind();
     }
 
-    private static int findMemoryType(VkDevice device, int typeFilter, int properties) {
-        VkPhysicalDeviceMemoryProperties memProperties = VkPhysicalDeviceMemoryProperties.mallocStack();
-        vkGetPhysicalDeviceMemoryProperties(device.getPhysicalDevice(), memProperties);
-
-        for (int i = 0; i < memProperties.memoryTypeCount(); i++) {
-            if ((typeFilter & (1 << i)) != 0 && (memProperties.memoryTypes(i).propertyFlags() & properties) == properties) {
-                return i;
-            }
-        }
-
-        throw new RuntimeException("Failed to find a suitable memory type");
-    }
-
-    private static void createBuffer(VkDevice device, long size, int usage, int properties, LongBuffer pBuffer, LongBuffer pBufferMemory) {
+    public static void createBuffer(VkDevice device, long size, int usage, int properties, LongBuffer pBuffer, LongBuffer pBufferMemory) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkBufferCreateInfo bufferInfo = VkBufferCreateInfo.callocStack(stack);
             bufferInfo.sType(VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO);
@@ -74,7 +61,7 @@ class BufferCreator {
             VkMemoryAllocateInfo allocInfo = VkMemoryAllocateInfo.callocStack(stack);
             allocInfo.sType(VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO);
             allocInfo.allocationSize(memRequirements.size());
-            allocInfo.memoryTypeIndex(findMemoryType(device, memRequirements.memoryTypeBits(), properties));
+            allocInfo.memoryTypeIndex(MemoryUtils.findMemoryType(device, memRequirements.memoryTypeBits(), properties));
 
             if (vkAllocateMemory(device, allocInfo, null, pBufferMemory) != VK_SUCCESS) {
                 throw new RuntimeException("Failed to allocate a buffer memory");

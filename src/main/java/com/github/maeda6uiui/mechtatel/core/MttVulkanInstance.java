@@ -72,6 +72,8 @@ class MttVulkanInstance {
     private List<Vertex2D> vertices;
     private List<Integer> indices;
 
+    private Texture texture;
+
     private static final int MAX_FRAMES_IN_FLIGHT = 2;
 
     private PointerBuffer getRequiredExtensions() {
@@ -250,9 +252,14 @@ class MttVulkanInstance {
         //Create sync objects
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
         imagesInFlight = new HashMap<>(swapchainImages.size());
+
+        //Create a texture for test
+        texture = new Texture(device, commandPool, graphicsQueue, "./Mechtatel/Texture/lenna.jpg");
     }
 
     public void cleanup() {
+        texture.cleanup();
+
         vkDestroyDescriptorSetLayout(device, descriptorSetLayout, null);
 
         vkDestroyBuffer(device, indexBuffer, null);

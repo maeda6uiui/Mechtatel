@@ -47,6 +47,7 @@ class MttVulkanInstance {
     private List<Long> swapchainFramebuffers;
 
     private long renderPass;
+    private long descriptorSetLayout;
     private long pipelineLayout;
     private long graphicsPipeline;
 
@@ -61,6 +62,9 @@ class MttVulkanInstance {
 
     private long indexBuffer;
     private long indexBufferMemory;
+
+    private List<Long> uniformBuffers;
+    private List<Long> uniformBufferMemories;
 
     //For test use
     private List<Vertex2D> vertices;
@@ -173,6 +177,9 @@ class MttVulkanInstance {
         //Create a render pass
         renderPass = RenderpassCreator.createRenderPass(device, swapchainImageFormat);
 
+        //Create a descriptor set layout
+        descriptorSetLayout = DescriptorSetLayoutCreator.createDescriptorSetLayout(device);
+
         //Create a graphics pipeline
         GraphicsPipelineCreator.GraphicsPipelineInfo graphicsPipelineInfo = GraphicsPipelineCreator.createGraphicsPipeline(
                 device,
@@ -180,8 +187,9 @@ class MttVulkanInstance {
                 renderPass,
                 Vertex2D.getBindingDescription(),
                 Vertex2D.getAttributeDescriptions(),
-                "./Mechtatel/Shader/Test/2.vert",
-                "./Mechtatel/Shader/Test/2.frag");
+                descriptorSetLayout,
+                "./Mechtatel/Shader/Test/3.vert",
+                "./Mechtatel/Shader/Test/3.frag");
         pipelineLayout = graphicsPipelineInfo.pipelineLayout;
         graphicsPipeline = graphicsPipelineInfo.graphicsPipeline;
 
@@ -223,12 +231,23 @@ class MttVulkanInstance {
         indexBuffer = bufferInfo.buffer;
         indexBufferMemory = bufferInfo.bufferMemory;
 
+        //Create uniform buffers and uniform buffer memories
+        List<BufferCreator.BufferInfo> uniformBufferInfos = BufferCreator.createUniformBuffers(device, swapchainImages.size());
+        uniformBuffers = new ArrayList<>();
+        uniformBufferMemories = new ArrayList<>();
+        for (var uniformBufferInfo : uniformBufferInfos) {
+            uniformBuffers.add(uniformBufferInfo.buffer);
+            uniformBufferMemories.add(uniformBufferInfo.bufferMemory);
+        }
+
         //Create sync objects
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
         imagesInFlight = new HashMap<>(swapchainImages.size());
     }
 
     public void cleanup() {
+        vkDestroyDescriptorSetLayout(device, descriptorSetLayout, null);
+
         vkDestroyBuffer(device, indexBuffer, null);
         vkFreeMemory(device, indexBufferMemory, null);
 
@@ -243,6 +262,9 @@ class MttVulkanInstance {
         imagesInFlight.clear();
 
         vkDestroyCommandPool(device, commandPool, null);
+
+        uniformBuffers.forEach(ubo -> vkDestroyBuffer(device, ubo, null));
+        uniformBufferMemories.forEach(uboMemory -> vkFreeMemory(device, uboMemory, null));
 
         swapchainFramebuffers.forEach(framebuffer -> vkDestroyFramebuffer(device, framebuffer, null));
 
@@ -281,7 +303,8 @@ class MttVulkanInstance {
                 indices.size());
 
         Frame thisFrame = inFlightFrames.get(currentFrame);
-        FrameDrawer.drawFrame(device, thisFrame, swapchain, imagesInFlight, commandBuffers, graphicsQueue, presentQueue);
+        FrameManager.updateUniformBuffer(device, thisFrame, swapchain, swapchainExtent, uniformBufferMemories);
+        FrameManager.drawFrame(device, thisFrame, swapchain, imagesInFlight, commandBuffers, graphicsQueue, presentQueue);
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 
         vkDeviceWaitIdle(device);

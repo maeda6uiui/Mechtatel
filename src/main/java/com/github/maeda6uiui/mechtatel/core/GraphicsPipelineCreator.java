@@ -41,6 +41,7 @@ class GraphicsPipelineCreator {
             long renderPass,
             VkVertexInputBindingDescription.Buffer bindingDescription,
             VkVertexInputAttributeDescription.Buffer attributeDescriptions,
+            long descriptorSetLayout,
             String vertShaderFilepath,
             String fragShaderFilepath) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -138,6 +139,7 @@ class GraphicsPipelineCreator {
             //Pipeline layout creation
             VkPipelineLayoutCreateInfo pipelineLayoutInfo = VkPipelineLayoutCreateInfo.callocStack(stack);
             pipelineLayoutInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO);
+            pipelineLayoutInfo.pSetLayouts(stack.longs(descriptorSetLayout));
 
             LongBuffer pPipelineLayout = stack.longs(VK_NULL_HANDLE);
             if (vkCreatePipelineLayout(device, pipelineLayoutInfo, null, pPipelineLayout) != VK_SUCCESS) {

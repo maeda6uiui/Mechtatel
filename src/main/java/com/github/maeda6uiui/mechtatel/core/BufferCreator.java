@@ -6,6 +6,7 @@ import org.lwjgl.vulkan.*;
 
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
@@ -224,6 +225,33 @@ class BufferCreator {
             var ret = new BufferInfo();
             ret.buffer = indexBuffer;
             ret.bufferMemory = indexBufferMemory;
+
+            return ret;
+        }
+    }
+
+    public static List<BufferInfo> createUniformBuffers(VkDevice device, int numSwapchainImages) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            var ret = new ArrayList<BufferInfo>(numSwapchainImages);
+
+            LongBuffer pBuffer = stack.mallocLong(1);
+            LongBuffer pBufferMemory = stack.mallocLong(1);
+
+            for (int i = 0; i < numSwapchainImages; i++) {
+                createBuffer(
+                        device,
+                        UniformBufferObject.SIZEOF,
+                        VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                        pBuffer,
+                        pBufferMemory);
+
+                var bufferInfo = new BufferInfo();
+                bufferInfo.buffer = pBuffer.get(0);
+                bufferInfo.bufferMemory = pBufferMemory.get(0);
+
+                ret.add(bufferInfo);
+            }
 
             return ret;
         }

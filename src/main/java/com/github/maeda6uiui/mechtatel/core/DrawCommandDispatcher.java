@@ -25,7 +25,9 @@ class DrawCommandDispatcher {
             long graphicsPipeline,
             long vertexBuffer,
             long indexBuffer,
-            int lenIndices) {
+            int lenIndices,
+            long pipelineLayout,
+            List<Long> descriptorSets) {
         final int commandBuffersCount = swapchainFramebuffers.size();
         var commandBuffers = new ArrayList<VkCommandBuffer>(commandBuffersCount);
 
@@ -76,6 +78,14 @@ class DrawCommandDispatcher {
                     vkCmdBindVertexBuffers(commandBuffer, 0, vertexBuffers, offsets);
 
                     vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+
+                    vkCmdBindDescriptorSets(
+                            commandBuffer,
+                            VK_PIPELINE_BIND_POINT_GRAPHICS,
+                            pipelineLayout,
+                            0,
+                            stack.longs(descriptorSets.get(i)),
+                            null);
 
                     vkCmdDrawIndexed(commandBuffer, lenIndices, 1, 0, 0, 0);
                 }

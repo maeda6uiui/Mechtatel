@@ -47,7 +47,9 @@ class MttVulkanInstance {
     private List<Long> swapchainFramebuffers;
 
     private long renderPass;
+    private long descriptorPool;
     private long descriptorSetLayout;
+    private List<Long> descriptorSets;
     private long pipelineLayout;
     private long graphicsPipeline;
 
@@ -240,6 +242,11 @@ class MttVulkanInstance {
             uniformBufferMemories.add(uniformBufferInfo.bufferMemory);
         }
 
+        //Create a descriptor pool and descriptor sets
+        descriptorPool = DescriptorPoolCreator.createDescriptorPool(device, swapchainImages.size());
+        descriptorSets = DescriptorSetsCreator.createDescriptorSets(
+                device, swapchainImages.size(), descriptorPool, descriptorSetLayout, uniformBuffers);
+
         //Create sync objects
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
         imagesInFlight = new HashMap<>(swapchainImages.size());
@@ -265,6 +272,8 @@ class MttVulkanInstance {
 
         uniformBuffers.forEach(ubo -> vkDestroyBuffer(device, ubo, null));
         uniformBufferMemories.forEach(uboMemory -> vkFreeMemory(device, uboMemory, null));
+
+        vkDestroyDescriptorPool(device, descriptorPool, null);
 
         swapchainFramebuffers.forEach(framebuffer -> vkDestroyFramebuffer(device, framebuffer, null));
 
@@ -300,11 +309,21 @@ class MttVulkanInstance {
                 graphicsPipeline,
                 vertexBuffer,
                 indexBuffer,
-                indices.size());
+                indices.size(),
+                pipelineLayout,
+                descriptorSets);
 
         Frame thisFrame = inFlightFrames.get(currentFrame);
-        FrameManager.updateUniformBuffer(device, thisFrame, swapchain, swapchainExtent, uniformBufferMemories);
-        FrameManager.drawFrame(device, thisFrame, swapchain, imagesInFlight, commandBuffers, graphicsQueue, presentQueue);
+        FrameManager.drawFrame(
+                device,
+                thisFrame,
+                swapchain,
+                swapchainExtent,
+                imagesInFlight,
+                commandBuffers,
+                graphicsQueue,
+                presentQueue,
+                uniformBufferMemories);
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 
         vkDeviceWaitIdle(device);

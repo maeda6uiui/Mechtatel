@@ -25,42 +25,35 @@ class FrameManager {
         final int mat4size = 16 * Float.BYTES;
 
         ubo.model.get(0, buffer);
-        ubo.view.get(mat4size, buffer);
-        ubo.proj.get(mat4size * 2, buffer);
+        ubo.view.get(AlignmentUtils.alignas(mat4size, AlignmentUtils.alignof(ubo.view)), buffer);
+        ubo.proj.get(AlignmentUtils.alignas(mat4size * 2, AlignmentUtils.alignof(ubo.proj)), buffer);
 
         buffer.rewind();
     }
 
-    public static void updateUniformBuffer(
+    private static void updateUniformBuffer(
             VkDevice device,
-            Frame thisFrame,
-            long swapchain,
             VkExtent2D swapchainExtent,
-            List<Long> uniformBufferMemories) {
+            List<Long> uniformBufferMemories,
+            int currentImage) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             var ubo = new UniformBufferObject();
 
             ubo.model.rotate((float) (glfwGetTime() * Math.toRadians(20)), 0.0f, 0.0f, 1.0f);
             ubo.view.lookAt(2.0f, 2.0f, 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
             ubo.proj.perspective(
-                    (float) Math.toRadians(90),
+                    (float) Math.toRadians(45),
                     (float) swapchainExtent.width() / (float) swapchainExtent.height(),
                     0.1f,
                     500.0f);
             ubo.proj.m11(ubo.proj.m11() * (-1.0f));
 
-            vkWaitForFences(device, thisFrame.pFence(), true, UINT64_MAX);
-
-            IntBuffer pImageIndex = stack.mallocInt(1);
-            vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, thisFrame.imageAvailableSemaphore(), VK_NULL_HANDLE, pImageIndex);
-            final int imageIndex = pImageIndex.get(0);
-
             PointerBuffer data = stack.mallocPointer(1);
-            vkMapMemory(device, uniformBufferMemories.get(imageIndex), 0, UniformBufferObject.SIZEOF, 0, data);
+            vkMapMemory(device, uniformBufferMemories.get(currentImage), 0, UniformBufferObject.SIZEOF, 0, data);
             {
                 memcpyUBO(data.getByteBuffer(0, UniformBufferObject.SIZEOF), ubo);
             }
-            vkUnmapMemory(device, uniformBufferMemories.get(imageIndex));
+            vkUnmapMemory(device, uniformBufferMemories.get(currentImage));
         }
     }
 
@@ -68,16 +61,20 @@ class FrameManager {
             VkDevice device,
             Frame thisFrame,
             long swapchain,
+            VkExtent2D swapchainExtent,
             Map<Integer, Frame> imagesInFlight,
             List<VkCommandBuffer> commandBuffers,
             VkQueue graphicsQueue,
-            VkQueue presentQueue) {
+            VkQueue presentQueue,
+            List<Long> uniformBufferMemories) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             vkWaitForFences(device, thisFrame.pFence(), true, UINT64_MAX);
 
             IntBuffer pImageIndex = stack.mallocInt(1);
             vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, thisFrame.imageAvailableSemaphore(), VK_NULL_HANDLE, pImageIndex);
             final int imageIndex = pImageIndex.get(0);
+
+            updateUniformBuffer(device, swapchainExtent, uniformBufferMemories, imageIndex);
 
             if (imagesInFlight.containsKey(imageIndex)) {
                 vkWaitForFences(device, imagesInFlight.get(imageIndex).fence(), true, UINT64_MAX);

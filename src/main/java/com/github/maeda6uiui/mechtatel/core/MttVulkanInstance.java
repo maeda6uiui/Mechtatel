@@ -69,7 +69,7 @@ class MttVulkanInstance {
     private List<Long> uniformBufferMemories;
 
     //For test use
-    private List<Vertex2D> vertices;
+    private List<Vertex2DUV> vertices;
     private List<Integer> indices;
 
     private Texture texture;
@@ -191,11 +191,11 @@ class MttVulkanInstance {
                 device,
                 swapchainExtent,
                 renderPass,
-                Vertex2D.getBindingDescription(),
-                Vertex2D.getAttributeDescriptions(),
+                Vertex2DUV.getBindingDescription(),
+                Vertex2DUV.getAttributeDescriptions(),
                 descriptorSetLayout,
-                "./Mechtatel/Shader/Test/3.vert",
-                "./Mechtatel/Shader/Test/3.frag");
+                "./Mechtatel/Shader/Test/4.vert",
+                "./Mechtatel/Shader/Test/4.frag");
         pipelineLayout = graphicsPipelineInfo.pipelineLayout;
         graphicsPipeline = graphicsPipelineInfo.graphicsPipeline;
 
@@ -208,10 +208,10 @@ class MttVulkanInstance {
 
         //Create vertices for test
         vertices = new ArrayList<>();
-        var v1 = new Vertex2D(new Vector2f(-0.5f, -0.5f), new Vector3f(1.0f, 0.0f, 0.0f));
-        var v2 = new Vertex2D(new Vector2f(0.5f, -0.5f), new Vector3f(0.0f, 1.0f, 0.0f));
-        var v3 = new Vertex2D(new Vector2f(0.5f, 0.5f), new Vector3f(0.0f, 0.0f, 1.0f));
-        var v4 = new Vertex2D(new Vector2f(-0.5f, 0.5f), new Vector3f(1.0f, 1.0f, 1.0f));
+        var v1 = new Vertex2DUV(new Vector2f(-0.5f, -0.5f), new Vector3f(1.0f, 0.0f, 0.0f), new Vector2f(1.0f, 0.0f));
+        var v2 = new Vertex2DUV(new Vector2f(0.5f, -0.5f), new Vector3f(0.0f, 1.0f, 0.0f), new Vector2f(0.0f, 0.0f));
+        var v3 = new Vertex2DUV(new Vector2f(0.5f, 0.5f), new Vector3f(0.0f, 0.0f, 1.0f), new Vector2f(0.0f, 1.0f));
+        var v4 = new Vertex2DUV(new Vector2f(-0.5f, 0.5f), new Vector3f(1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
         vertices.add(v1);
         vertices.add(v2);
         vertices.add(v3);
@@ -228,7 +228,7 @@ class MttVulkanInstance {
 
         //Create a vertex buffer and a vertex buffer memory
         BufferCreator.BufferInfo bufferInfo
-                = BufferCreator.createVertexBuffer2D(device, commandPool, graphicsQueue, vertices);
+                = BufferCreator.createVertexBuffer2DUV(device, commandPool, graphicsQueue, vertices);
         vertexBuffer = bufferInfo.buffer;
         vertexBufferMemory = bufferInfo.bufferMemory;
 
@@ -255,11 +255,17 @@ class MttVulkanInstance {
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
         imagesInFlight = new HashMap<>(swapchainImages.size());
 
-        //Create a texture for test
-        texture = new Texture(device, commandPool, graphicsQueue, "./Mechtatel/Texture/lenna.jpg");
-
         //Create a texture sampler
         textureSampler = TextureSamplerCreator.createTextureSampler(device);
+
+        //Create a texture for test
+        texture = new Texture(
+                device,
+                commandPool,
+                graphicsQueue,
+                textureSampler,
+                descriptorSets,
+                "./Mechtatel/Texture/lenna.jpg");
     }
 
     public void cleanup() {

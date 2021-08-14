@@ -63,7 +63,7 @@ class SwapchainManager {
 
     private static VkSurfaceFormatKHR chooseSwapSurfaceFormat(VkSurfaceFormatKHR.Buffer availableFormats) {
         return availableFormats.stream()
-                .filter(availableFormat -> availableFormat.format() == VK_FORMAT_B8G8R8_UNORM)
+                .filter(availableFormat -> availableFormat.format() == VK_FORMAT_B8G8R8_SRGB)
                 .filter(availableFormat -> availableFormat.colorSpace() == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
                 .findAny()
                 .orElse(availableFormats.get(0));

@@ -7,6 +7,7 @@ import org.lwjgl.vulkan.*;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
+import java.util.List;
 
 import static org.lwjgl.stb.STBImage.*;
 import static org.lwjgl.vulkan.VK10.*;
@@ -20,6 +21,8 @@ class Texture {
     private VkDevice device;
     private long commandPool;
     private VkQueue graphicsQueue;
+    private long textureSampler;
+    private List<Long> descriptorSets;
 
     private long textureImage;
     private long textureImageMemory;
@@ -259,17 +262,44 @@ class Texture {
         textureImageView = ImageViewCreator.createImageView(device, textureImage, VK_FORMAT_R8G8B8A8_SRGB);
     }
 
+    private void updateDescriptorSets() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDescriptorImageInfo.Buffer imageInfo = VkDescriptorImageInfo.callocStack(1, stack);
+            imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            imageInfo.imageView(textureImageView);
+            imageInfo.sampler(textureSampler);
+
+            VkWriteDescriptorSet.Buffer samplerDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            samplerDescriptorWrite.dstBinding(1);
+            samplerDescriptorWrite.dstArrayElement(0);
+            samplerDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+            samplerDescriptorWrite.descriptorCount(1);
+            samplerDescriptorWrite.pImageInfo(imageInfo);
+
+            for (var descriptorSet : descriptorSets) {
+                samplerDescriptorWrite.dstSet(descriptorSet);
+                vkUpdateDescriptorSets(device, samplerDescriptorWrite, null);
+            }
+        }
+    }
+
     public Texture(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
+            long textureSampler,
+            List<Long> descriptorSets,
             String textureFilepath) {
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
+        this.textureSampler = textureSampler;
+        this.descriptorSets = descriptorSets;
 
         this.createTextureImage(textureFilepath);
         this.createTextureImageView();
+        this.updateDescriptorSets();
     }
 
     public void cleanup() {

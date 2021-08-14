@@ -24,6 +24,8 @@ class Texture {
     private long textureImage;
     private long textureImageMemory;
 
+    private long textureImageView;
+
     private void memcpy(ByteBuffer dst, ByteBuffer src, long size) {
         src.limit((int) size);
         dst.put(src);
@@ -253,6 +255,10 @@ class Texture {
         }
     }
 
+    private void createTextureImageView() {
+        textureImageView = ImageViewCreator.createImageView(device, textureImage, VK_FORMAT_R8G8B8A8_SRGB);
+    }
+
     public Texture(
             VkDevice device,
             long commandPool,
@@ -263,9 +269,12 @@ class Texture {
         this.graphicsQueue = graphicsQueue;
 
         this.createTextureImage(textureFilepath);
+        this.createTextureImageView();
     }
 
     public void cleanup() {
+        vkDestroyImageView(device, textureImageView, null);
+
         vkDestroyImage(device, textureImage, null);
         vkFreeMemory(device, textureImageMemory, null);
     }

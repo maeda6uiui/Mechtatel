@@ -1,10 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core;
 
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.vulkan.KHRSurface;
-import org.lwjgl.vulkan.VkExtensionProperties;
-import org.lwjgl.vulkan.VkPhysicalDevice;
-import org.lwjgl.vulkan.VkQueueFamilyProperties;
+import org.lwjgl.vulkan.*;
 
 import java.nio.IntBuffer;
 import java.util.Set;
@@ -65,15 +62,20 @@ class QueueFamilyMethods {
 
         boolean extensionsSupported = checkExtensionSupported(device, deviceExtensions);
         boolean swapchainAdequate = false;
+        boolean anisotropySupported = false;
 
         if (extensionsSupported) {
             try (MemoryStack stack = MemoryStack.stackPush()) {
                 SwapchainManager.SwapchainSupportDetails swapchainSupport
                         = SwapchainManager.querySwapchainSupport(device, surface, stack);
                 swapchainAdequate = swapchainSupport.formats.hasRemaining() && swapchainSupport.presentModes.hasRemaining();
+
+                VkPhysicalDeviceFeatures supportedFeatures = VkPhysicalDeviceFeatures.mallocStack(stack);
+                vkGetPhysicalDeviceFeatures(device, supportedFeatures);
+                anisotropySupported = supportedFeatures.samplerAnisotropy();
             }
         }
 
-        return indices.isComplete() && extensionsSupported && swapchainAdequate;
+        return indices.isComplete() && extensionsSupported && swapchainAdequate && anisotropySupported;
     }
 }

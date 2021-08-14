@@ -29,6 +29,7 @@ class LogicalDeviceCreator {
             queueCreateInfos.pQueuePriorities(stack.floats(1.0f));
 
             VkPhysicalDeviceFeatures deviceFeatures = VkPhysicalDeviceFeatures.callocStack(stack);
+            deviceFeatures.samplerAnisotropy(true);
 
             VkDeviceCreateInfo createInfo = VkDeviceCreateInfo.callocStack(stack);
             createInfo.sType(VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO);

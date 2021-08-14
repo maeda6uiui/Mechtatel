@@ -74,6 +74,8 @@ class MttVulkanInstance {
 
     private Texture texture;
 
+    private long textureSampler;
+
     private static final int MAX_FRAMES_IN_FLIGHT = 2;
 
     private PointerBuffer getRequiredExtensions() {
@@ -255,9 +257,14 @@ class MttVulkanInstance {
 
         //Create a texture for test
         texture = new Texture(device, commandPool, graphicsQueue, "./Mechtatel/Texture/lenna.jpg");
+
+        //Create a texture sampler
+        textureSampler = TextureSamplerCreator.createTextureSampler(device);
     }
 
     public void cleanup() {
+        vkDestroySampler(device, textureSampler, null);
+
         texture.cleanup();
 
         vkDestroyDescriptorSetLayout(device, descriptorSetLayout, null);

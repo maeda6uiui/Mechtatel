@@ -31,6 +31,9 @@ OpenGLとVulkanの抽象化をいい感じで提供できればOpenGLにも対�
 
 <img src="./Image/lenna.jpg" alt="Lenna" style="zoom:50%;" />
 
+現状、Vulkan関連のコードはほとんど[ここ](https://github.com/Naitsirc98/Vulkan-Tutorial-Java)からコピーしている感じです。
+一つのクラスに全部のコードを入れたくないので、可能な限り細かく複数のクラスに分けています。
+
 ### 2021-08-09
 
 ようやく三角形を描画するところまで来ました。

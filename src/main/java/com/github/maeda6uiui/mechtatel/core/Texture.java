@@ -26,13 +26,23 @@ class Texture {
 
     private long textureImage;
     private long textureImageMemory;
-
     private long textureImageView;
+
+    private int width;
+    private int height;
+    private int mipLevels;
+
+    private String textureFilepath;
+    private boolean generateMipmaps;
 
     private void memcpy(ByteBuffer dst, ByteBuffer src, long size) {
         src.limit((int) size);
         dst.put(src);
         src.limit(src.capacity()).rewind();
+    }
+
+    private double log2(double n) {
+        return Math.log(n) / Math.log(2);
     }
 
     private void copyBufferToImage(long buffer, long image, int width, int height) {
@@ -56,7 +66,111 @@ class Texture {
         }
     }
 
-    private void createTextureImage(String textureFilepath) {
+    private void generateMipmaps() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkFormatProperties formatProperties = VkFormatProperties.mallocStack(stack);
+            vkGetPhysicalDeviceFormatProperties(device.getPhysicalDevice(), VK_FORMAT_R8G8B8A8_SRGB, formatProperties);
+
+            if ((formatProperties.optimalTilingFeatures() & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT) == 0) {
+                throw new RuntimeException("Texture image format does not support linear blitting");
+            }
+
+            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
+
+            VkImageMemoryBarrier.Buffer barrier = VkImageMemoryBarrier.callocStack(1, stack);
+            barrier.sType(VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER);
+            barrier.image(textureImage);
+            barrier.srcQueueFamilyIndex(VK_QUEUE_FAMILY_IGNORED);
+            barrier.dstQueueFamilyIndex(VK_QUEUE_FAMILY_IGNORED);
+            barrier.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+            barrier.subresourceRange().baseArrayLayer(0);
+            barrier.subresourceRange().layerCount(1);
+            barrier.subresourceRange().levelCount(1);
+
+            int mipWidth = width;
+            int mipHeight = height;
+
+            for (int i = 1; i < mipLevels; i++) {
+                barrier.subresourceRange().baseMipLevel(i - 1);
+                barrier.oldLayout(VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+                barrier.newLayout(VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+                barrier.srcAccessMask(VK_ACCESS_TRANSFER_WRITE_BIT);
+                barrier.dstAccessMask(VK_ACCESS_TRANSFER_READ_BIT);
+
+                vkCmdPipelineBarrier(
+                        commandBuffer,
+                        VK_PIPELINE_STAGE_TRANSFER_BIT,
+                        VK_PIPELINE_STAGE_TRANSFER_BIT,
+                        0,
+                        null,
+                        null,
+                        barrier);
+
+                VkImageBlit.Buffer blit = VkImageBlit.callocStack(1, stack);
+                blit.srcOffsets(0).set(0, 0, 0);
+                blit.srcOffsets(1).set(mipWidth, mipHeight, 1);
+                blit.srcSubresource().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+                blit.srcSubresource().mipLevel(i - 1);
+                blit.srcSubresource().baseArrayLayer(0);
+                blit.srcSubresource().layerCount(1);
+                blit.dstOffsets(0).set(0, 0, 0);
+                blit.dstOffsets(1).set(mipWidth > 1 ? mipWidth / 2 : 1, mipHeight > 1 ? mipHeight / 2 : 1, 1);
+                blit.dstSubresource().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+                blit.dstSubresource().mipLevel(i);
+                blit.dstSubresource().baseArrayLayer(0);
+                blit.dstSubresource().layerCount(1);
+
+                vkCmdBlitImage(
+                        commandBuffer,
+                        textureImage,
+                        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                        textureImage,
+                        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                        blit,
+                        VK_FILTER_LINEAR);
+
+                barrier.oldLayout(VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+                barrier.newLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+                barrier.srcAccessMask(VK_ACCESS_TRANSFER_READ_BIT);
+                barrier.dstAccessMask(VK_ACCESS_SHADER_READ_BIT);
+
+                vkCmdPipelineBarrier(
+                        commandBuffer,
+                        VK_PIPELINE_STAGE_TRANSFER_BIT,
+                        VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+                        0,
+                        null,
+                        null,
+                        barrier);
+
+                if (mipWidth > 1) {
+                    mipWidth /= 2;
+                }
+                if (mipHeight > 1) {
+                    mipHeight /= 2;
+                }
+            }
+
+            barrier.subresourceRange().baseMipLevel(mipLevels - 1);
+            barrier.oldLayout(VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+            barrier.newLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            barrier.srcAccessMask(VK_ACCESS_TRANSFER_WRITE_BIT);
+            barrier.dstAccessMask(VK_ACCESS_SHADER_READ_BIT);
+
+            vkCmdPipelineBarrier(
+                    commandBuffer,
+                    VK_PIPELINE_STAGE_TRANSFER_BIT,
+                    VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+                    0,
+                    null,
+                    null,
+                    barrier);
+
+            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
+        }
+    }
+
+    private void createTextureImage() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer pWidth = stack.mallocInt(1);
             IntBuffer pHeight = stack.mallocInt(1);
@@ -65,6 +179,10 @@ class Texture {
             ByteBuffer pixels = stbi_load(textureFilepath, pWidth, pHeight, pChannels, STBI_rgb_alpha);
 
             long imageSize = pWidth.get(0) * pHeight.get(0) * 4;
+            width = pWidth.get(0);
+            height = pHeight.get(0);
+
+            mipLevels = (int) Math.floor(this.log2(Math.max(width, height))) + 1;
 
             if (pixels == null) {
                 throw new RuntimeException("Failed to load a texture image " + textureFilepath);
@@ -95,9 +213,10 @@ class Texture {
                     device,
                     pWidth.get(0),
                     pHeight.get(0),
+                    mipLevels,
                     VK_FORMAT_R8G8B8A8_SRGB,
                     VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     pTextureImage,
                     pTextureImageMemory);
@@ -111,18 +230,24 @@ class Texture {
                     textureImage,
                     false,
                     VK_IMAGE_LAYOUT_UNDEFINED,
-                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                    mipLevels);
 
             this.copyBufferToImage(pStagingBuffer.get(0), textureImage, pWidth.get(0), pHeight.get(0));
 
-            ImageUtils.transitionImageLayout(
-                    device,
-                    commandPool,
-                    graphicsQueue,
-                    textureImage,
-                    false,
-                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            if (generateMipmaps) {
+                this.generateMipmaps();
+            } else {
+                ImageUtils.transitionImageLayout(
+                        device,
+                        commandPool,
+                        graphicsQueue,
+                        textureImage,
+                        false,
+                        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                        VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                        1);
+            }
 
             vkDestroyBuffer(device, pStagingBuffer.get(0), null);
             vkFreeMemory(device, pStagingBufferMemory.get(0), null);
@@ -131,7 +256,11 @@ class Texture {
 
     private void createTextureImageView() {
         textureImageView = ImageViewCreator.createImageView(
-                device, textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+                device,
+                textureImage,
+                VK_FORMAT_R8G8B8A8_SRGB,
+                VK_IMAGE_ASPECT_COLOR_BIT,
+                generateMipmaps ? mipLevels : 1);
     }
 
     private void updateDescriptorSets() {
@@ -162,14 +291,18 @@ class Texture {
             VkQueue graphicsQueue,
             long textureSampler,
             List<Long> descriptorSets,
-            String textureFilepath) {
+            String textureFilepath,
+            boolean generateMipmaps) {
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
         this.textureSampler = textureSampler;
         this.descriptorSets = descriptorSets;
 
-        this.createTextureImage(textureFilepath);
+        this.textureFilepath = textureFilepath;
+        this.generateMipmaps = generateMipmaps;
+
+        this.createTextureImage();
         this.createTextureImageView();
         this.updateDescriptorSets();
     }

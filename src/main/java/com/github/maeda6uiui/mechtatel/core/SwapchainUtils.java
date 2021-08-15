@@ -169,7 +169,7 @@ class SwapchainUtils {
         for (long swapchainImage : swapchainImages) {
             swapchainImageViews.add(
                     ImageViewCreator.createImageView(
-                            device, swapchainImage, swapchainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT));
+                            device, swapchainImage, swapchainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1));
         }
 
         return swapchainImageViews;

@@ -17,6 +17,7 @@ class ImageUtils {
             VkDevice device,
             int width,
             int height,
+            int mipLevels,
             int format,
             int tiling,
             int usage,
@@ -30,7 +31,7 @@ class ImageUtils {
             imageInfo.extent().width(width);
             imageInfo.extent().height(height);
             imageInfo.extent().depth(1);
-            imageInfo.mipLevels(1);
+            imageInfo.mipLevels(mipLevels);
             imageInfo.arrayLayers(1);
             imageInfo.format(format);
             imageInfo.tiling(tiling);
@@ -66,7 +67,8 @@ class ImageUtils {
             long image,
             boolean hasStencilComponent,
             int oldLayout,
-            int newLayout) {
+            int newLayout,
+            int mipLevels) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkImageMemoryBarrier.Buffer barrier = VkImageMemoryBarrier.callocStack(1, stack);
             barrier.sType(VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER);
@@ -76,7 +78,7 @@ class ImageUtils {
             barrier.dstQueueFamilyIndex(VK_QUEUE_FAMILY_IGNORED);
             barrier.image(image);
             barrier.subresourceRange().baseMipLevel(0);
-            barrier.subresourceRange().levelCount(1);
+            barrier.subresourceRange().levelCount(mipLevels);
             barrier.subresourceRange().baseArrayLayer(0);
             barrier.subresourceRange().layerCount(1);
 

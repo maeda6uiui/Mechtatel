@@ -288,7 +288,8 @@ class MttVulkanInstance {
                 graphicsQueue,
                 textureSampler,
                 descriptorSets,
-                "./Mechtatel/Texture/lenna.jpg");
+                "./Mechtatel/Texture/lenna.jpg",
+                true);
     }
 
     public void cleanup() {

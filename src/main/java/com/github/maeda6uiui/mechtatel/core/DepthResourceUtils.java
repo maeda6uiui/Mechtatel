@@ -69,6 +69,7 @@ class DepthResourceUtils {
                     device,
                     swapchainExtent.width(),
                     swapchainExtent.height(),
+                    1,
                     depthFormat,
                     VK_IMAGE_TILING_OPTIMAL,
                     VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
@@ -79,7 +80,7 @@ class DepthResourceUtils {
             long depthImageMemory = pDepthImageMemory.get(0);
 
             long depthImageView = ImageViewCreator.createImageView(
-                    device, depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+                    device, depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
 
             ImageUtils.transitionImageLayout(
                     device,
@@ -88,7 +89,7 @@ class DepthResourceUtils {
                     depthImage,
                     hasStencilComponent(depthFormat),
                     VK_IMAGE_LAYOUT_UNDEFINED,
-                    VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+                    VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
 
             var ret = new DepthResources();
             ret.depthImage = depthImage;

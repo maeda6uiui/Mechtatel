@@ -14,7 +14,7 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 class ImageViewCreator {
-    public static long createImageView(VkDevice device, long image, int format, int aspectFlags) {
+    public static long createImageView(VkDevice device, long image, int format, int aspectFlags, int mipLevels) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.callocStack(stack);
             viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
@@ -23,7 +23,7 @@ class ImageViewCreator {
             viewInfo.format(format);
             viewInfo.subresourceRange().aspectMask(aspectFlags);
             viewInfo.subresourceRange().baseMipLevel(0);
-            viewInfo.subresourceRange().levelCount(1);
+            viewInfo.subresourceRange().levelCount(mipLevels);
             viewInfo.subresourceRange().baseArrayLayer(0);
             viewInfo.subresourceRange().layerCount(1);
 

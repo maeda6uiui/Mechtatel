@@ -20,12 +20,13 @@ class FramebufferCreator {
     public static List<Long> createFramebuffers(
             VkDevice device,
             List<Long> swapchainImageViews,
+            long depthImageView,
             long renderPass,
             VkExtent2D swapchainExtent) {
         var swapchainFramebuffers = new ArrayList<Long>(swapchainImageViews.size());
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            LongBuffer attachments = stack.mallocLong(1);
+            LongBuffer attachments = stack.longs(VK_NULL_HANDLE, depthImageView);
             LongBuffer pFramebuffer = stack.mallocLong(1);
 
             VkFramebufferCreateInfo framebufferInfo = VkFramebufferCreateInfo.callocStack(stack);

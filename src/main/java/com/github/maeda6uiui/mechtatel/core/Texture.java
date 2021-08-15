@@ -35,153 +35,9 @@ class Texture {
         src.limit(src.capacity()).rewind();
     }
 
-    private VkCommandBuffer beginSingleTimeCommands() {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkCommandBufferAllocateInfo allocInfo = VkCommandBufferAllocateInfo.callocStack(stack);
-            allocInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO);
-            allocInfo.level(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-            allocInfo.commandPool(commandPool);
-            allocInfo.commandBufferCount(1);
-
-            PointerBuffer pCommandBuffer = stack.mallocPointer(1);
-            vkAllocateCommandBuffers(device, allocInfo, pCommandBuffer);
-            var commandBuffer = new VkCommandBuffer(pCommandBuffer.get(0), device);
-
-            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
-            beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
-            beginInfo.flags(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-
-            vkBeginCommandBuffer(commandBuffer, beginInfo);
-
-            return commandBuffer;
-        }
-    }
-
-    private void endSingleTimeCommands(VkCommandBuffer commandBuffer) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            vkEndCommandBuffer(commandBuffer);
-
-            VkSubmitInfo.Buffer submitInfo = VkSubmitInfo.callocStack(1, stack);
-            submitInfo.sType(VK_STRUCTURE_TYPE_SUBMIT_INFO);
-            submitInfo.pCommandBuffers(stack.pointers(commandBuffer));
-
-            vkQueueSubmit(graphicsQueue, submitInfo, VK_NULL_HANDLE);
-            vkQueueWaitIdle(graphicsQueue);
-
-            vkFreeCommandBuffers(device, commandPool, commandBuffer);
-        }
-    }
-
-    private void copyBuffer(long srcBuffer, long dstBuffer, long size) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkCommandBuffer commandBuffer = this.beginSingleTimeCommands();
-
-            VkBufferCopy.Buffer copyRegion = VkBufferCopy.callocStack(1, stack);
-            copyRegion.size(size);
-
-            vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, copyRegion);
-
-            this.endSingleTimeCommands(commandBuffer);
-        }
-    }
-
-    private void createImage(
-            int width,
-            int height,
-            int format,
-            int tiling,
-            int usage,
-            int memProperties,
-            LongBuffer pTextureImage,
-            LongBuffer pTextureImageMemory) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkImageCreateInfo imageInfo = VkImageCreateInfo.callocStack(stack);
-            imageInfo.sType(VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO);
-            imageInfo.imageType(VK_IMAGE_TYPE_2D);
-            imageInfo.extent().width(width);
-            imageInfo.extent().height(height);
-            imageInfo.extent().depth(1);
-            imageInfo.mipLevels(1);
-            imageInfo.arrayLayers(1);
-            imageInfo.format(format);
-            imageInfo.tiling(tiling);
-            imageInfo.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
-            imageInfo.usage(usage);
-            imageInfo.samples(VK_SAMPLE_COUNT_1_BIT);
-            imageInfo.sharingMode(VK_SHARING_MODE_EXCLUSIVE);
-
-            if (vkCreateImage(device, imageInfo, null, pTextureImage) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to create an image");
-            }
-
-            VkMemoryRequirements memRequirements = VkMemoryRequirements.mallocStack(stack);
-            vkGetImageMemoryRequirements(device, pTextureImage.get(0), memRequirements);
-
-            VkMemoryAllocateInfo allocInfo = VkMemoryAllocateInfo.callocStack(stack);
-            allocInfo.sType(VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO);
-            allocInfo.allocationSize(memRequirements.size());
-            allocInfo.memoryTypeIndex(MemoryUtils.findMemoryType(device, memRequirements.memoryTypeBits(), memProperties));
-
-            if (vkAllocateMemory(device, allocInfo, null, pTextureImageMemory) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to allocate an image memory");
-            }
-
-            vkBindImageMemory(device, pTextureImage.get(0), pTextureImageMemory.get(0), 0);
-        }
-    }
-
-    private void transitionImageLayout(long image, int oldLayout, int newLayout) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkImageMemoryBarrier.Buffer barrier = VkImageMemoryBarrier.callocStack(1, stack);
-            barrier.sType(VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER);
-            barrier.oldLayout(oldLayout);
-            barrier.newLayout(newLayout);
-            barrier.srcQueueFamilyIndex(VK_QUEUE_FAMILY_IGNORED);
-            barrier.dstQueueFamilyIndex(VK_QUEUE_FAMILY_IGNORED);
-            barrier.image(image);
-            barrier.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
-            barrier.subresourceRange().baseMipLevel(0);
-            barrier.subresourceRange().levelCount(1);
-            barrier.subresourceRange().baseArrayLayer(0);
-            barrier.subresourceRange().layerCount(1);
-
-            int sourceStage = 0;
-            int destinationStage = 0;
-
-            if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
-                barrier.srcAccessMask(0);
-                barrier.dstAccessMask(VK_ACCESS_TRANSFER_WRITE_BIT);
-
-                sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-                destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-            } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
-                barrier.srcAccessMask(VK_ACCESS_TRANSFER_WRITE_BIT);
-                barrier.dstAccessMask(VK_ACCESS_SHADER_READ_BIT);
-
-                sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-                destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-            } else {
-                throw new IllegalArgumentException("Unsupported layout transition");
-            }
-
-            VkCommandBuffer commandBuffer = this.beginSingleTimeCommands();
-
-            vkCmdPipelineBarrier(
-                    commandBuffer,
-                    sourceStage,
-                    destinationStage,
-                    0,
-                    null,
-                    null,
-                    barrier);
-
-            this.endSingleTimeCommands(commandBuffer);
-        }
-    }
-
     private void copyBufferToImage(long buffer, long image, int width, int height) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkCommandBuffer commandBuffer = this.beginSingleTimeCommands();
+            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
 
             VkBufferImageCopy.Buffer region = VkBufferImageCopy.callocStack(1, stack);
             region.bufferOffset(0);
@@ -196,7 +52,7 @@ class Texture {
 
             vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, region);
 
-            this.endSingleTimeCommands(commandBuffer);
+            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
         }
     }
 
@@ -235,7 +91,8 @@ class Texture {
 
             LongBuffer pTextureImage = stack.mallocLong(1);
             LongBuffer pTextureImageMemory = stack.mallocLong(1);
-            this.createImage(
+            ImageUtils.createImage(
+                    device,
                     pWidth.get(0),
                     pHeight.get(0),
                     VK_FORMAT_R8G8B8A8_SRGB,
@@ -247,11 +104,25 @@ class Texture {
             textureImage = pTextureImage.get(0);
             textureImageMemory = pTextureImageMemory.get(0);
 
-            this.transitionImageLayout(textureImage, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+            ImageUtils.transitionImageLayout(
+                    device,
+                    commandPool,
+                    graphicsQueue,
+                    textureImage,
+                    false,
+                    VK_IMAGE_LAYOUT_UNDEFINED,
+                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
             this.copyBufferToImage(pStagingBuffer.get(0), textureImage, pWidth.get(0), pHeight.get(0));
 
-            this.transitionImageLayout(textureImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            ImageUtils.transitionImageLayout(
+                    device,
+                    commandPool,
+                    graphicsQueue,
+                    textureImage,
+                    false,
+                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
             vkDestroyBuffer(device, pStagingBuffer.get(0), null);
             vkFreeMemory(device, pStagingBufferMemory.get(0), null);
@@ -259,7 +130,8 @@ class Texture {
     }
 
     private void createTextureImageView() {
-        textureImageView = ImageViewCreator.createImageView(device, textureImage, VK_FORMAT_R8G8B8A8_SRGB);
+        textureImageView = ImageViewCreator.createImageView(
+                device, textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
     }
 
     private void updateDescriptorSets() {

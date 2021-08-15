@@ -57,8 +57,9 @@ class DrawCommandDispatcher {
             renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
             renderArea.extent(swapchainExtent);
             renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.callocStack(1, stack);
-            clearValues.color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
+            VkClearValue.Buffer clearValues = VkClearValue.callocStack(2, stack);
+            clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
+            clearValues.get(1).depthStencil().set(1.0f, 0);
             renderPassInfo.pClearValues(clearValues);
 
             for (int i = 0; i < commandBuffersCount; i++) {

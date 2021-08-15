@@ -21,7 +21,7 @@ class LogicalDeviceCreator {
     public static VkDeviceAndVkQueues createLogicalDevice(
             VkPhysicalDevice physicalDevice, boolean enableValidationLayer, long surface) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            QueueFamilyIndices indices = QueueFamilyMethods.findQueueFamilies(physicalDevice, surface);
+            QueueFamilyIndices indices = QueueFamilyUtils.findQueueFamilies(physicalDevice, surface);
 
             VkDeviceQueueCreateInfo.Buffer queueCreateInfos = VkDeviceQueueCreateInfo.callocStack(1, stack);
             queueCreateInfos.sType(VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO);
@@ -35,7 +35,7 @@ class LogicalDeviceCreator {
             createInfo.sType(VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO);
             createInfo.pQueueCreateInfos(queueCreateInfos);
             createInfo.pEnabledFeatures(deviceFeatures);
-            createInfo.ppEnabledExtensionNames(PointerBufferUtils.asPointerBuffer(SwapchainManager.DEVICE_EXTENSIONS));
+            createInfo.ppEnabledExtensionNames(PointerBufferUtils.asPointerBuffer(SwapchainUtils.DEVICE_EXTENSIONS));
 
             if (enableValidationLayer) {
                 createInfo.ppEnabledLayerNames(PointerBufferUtils.asPointerBuffer(ValidationLayers.VALIDATION_LAYERS));

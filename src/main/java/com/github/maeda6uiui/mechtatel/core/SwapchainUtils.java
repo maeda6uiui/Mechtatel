@@ -16,11 +16,11 @@ import static org.lwjgl.vulkan.KHRSwapchain.*;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Manages swapchains
+ * Utility methods for swapchains
  *
  * @author maeda
  */
-class SwapchainManager {
+class SwapchainUtils {
     private static final int UINT32_MAX = 0xFFFFFFFF;
 
     public static final Set<String> DEVICE_EXTENSIONS = Stream.of(VK_KHR_SWAPCHAIN_EXTENSION_NAME).collect(Collectors.toSet());
@@ -122,7 +122,7 @@ class SwapchainManager {
             createInfo.imageArrayLayers(1);
             createInfo.imageUsage(VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
 
-            QueueFamilyIndices indices = QueueFamilyMethods.findQueueFamilies(device.getPhysicalDevice(), surface);
+            QueueFamilyIndices indices = QueueFamilyUtils.findQueueFamilies(device.getPhysicalDevice(), surface);
             if (!indices.graphicsFamily.equals(indices.presentFamily)) {
                 createInfo.imageSharingMode(VK_SHARING_MODE_CONCURRENT);
                 createInfo.pQueueFamilyIndices(stack.ints(indices.graphicsFamily, indices.presentFamily));
@@ -167,7 +167,9 @@ class SwapchainManager {
         var swapchainImageViews = new ArrayList<Long>(swapchainImages.size());
 
         for (long swapchainImage : swapchainImages) {
-            swapchainImageViews.add(ImageViewCreator.createImageView(device, swapchainImage, swapchainImageFormat));
+            swapchainImageViews.add(
+                    ImageViewCreator.createImageView(
+                            device, swapchainImage, swapchainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT));
         }
 
         return swapchainImageViews;

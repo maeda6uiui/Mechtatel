@@ -10,11 +10,11 @@ import java.util.stream.Collectors;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Provides methods relating to queue families
+ * Utility methods for queue families
  *
  * @author maeda
  */
-class QueueFamilyMethods {
+class QueueFamilyUtils {
     public static QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, long surface) {
         var indices = new QueueFamilyIndices();
 
@@ -66,8 +66,8 @@ class QueueFamilyMethods {
 
         if (extensionsSupported) {
             try (MemoryStack stack = MemoryStack.stackPush()) {
-                SwapchainManager.SwapchainSupportDetails swapchainSupport
-                        = SwapchainManager.querySwapchainSupport(device, surface, stack);
+                SwapchainUtils.SwapchainSupportDetails swapchainSupport
+                        = SwapchainUtils.querySwapchainSupport(device, surface, stack);
                 swapchainAdequate = swapchainSupport.formats.hasRemaining() && swapchainSupport.presentModes.hasRemaining();
 
                 VkPhysicalDeviceFeatures supportedFeatures = VkPhysicalDeviceFeatures.mallocStack(stack);

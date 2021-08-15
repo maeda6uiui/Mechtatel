@@ -14,11 +14,11 @@ import static org.lwjgl.vulkan.KHRSwapchain.*;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Frame manager
+ * Utility methods for frames
  *
  * @author maeda
  */
-class FrameManager {
+class FrameUtils {
     private static final long UINT64_MAX = 0xFFFFFFFFFFFFFFFFL;
 
     private static void memcpyUBO(ByteBuffer buffer, UniformBufferObject ubo) {
@@ -39,7 +39,7 @@ class FrameManager {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             var ubo = new UniformBufferObject();
 
-            ubo.model.rotate((float) (glfwGetTime() * Math.toRadians(20)), 0.0f, 0.0f, 1.0f);
+            ubo.model.rotate((float) (glfwGetTime() * Math.toRadians(20)), 0.0f, 1.0f, 0.0f);
             ubo.view.lookAt(2.0f, 2.0f, 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
             ubo.proj.perspective(
                     (float) Math.toRadians(45),

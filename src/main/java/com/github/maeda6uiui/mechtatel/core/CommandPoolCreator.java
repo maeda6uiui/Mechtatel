@@ -16,7 +16,7 @@ import static org.lwjgl.vulkan.VK10.*;
 class CommandPoolCreator {
     public static long createCommandPool(VkDevice device, long surface) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            QueueFamilyIndices queueFamilyIndices = QueueFamilyMethods.findQueueFamilies(device.getPhysicalDevice(), surface);
+            QueueFamilyIndices queueFamilyIndices = QueueFamilyUtils.findQueueFamilies(device.getPhysicalDevice(), surface);
 
             VkCommandPoolCreateInfo poolInfo = VkCommandPoolCreateInfo.callocStack(stack);
             poolInfo.sType(VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO);

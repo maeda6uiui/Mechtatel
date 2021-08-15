@@ -14,14 +14,14 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 class ImageViewCreator {
-    public static long createImageView(VkDevice device, long image, int format) {
+    public static long createImageView(VkDevice device, long image, int format, int aspectFlags) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.callocStack(stack);
             viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
             viewInfo.image(image);
             viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
             viewInfo.format(format);
-            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+            viewInfo.subresourceRange().aspectMask(aspectFlags);
             viewInfo.subresourceRange().baseMipLevel(0);
             viewInfo.subresourceRange().levelCount(1);
             viewInfo.subresourceRange().baseArrayLayer(0);

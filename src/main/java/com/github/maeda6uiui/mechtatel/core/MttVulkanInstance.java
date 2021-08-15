@@ -25,6 +25,8 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 class MttVulkanInstance {
+    private static final int MAX_FRAMES_IN_FLIGHT = 2;
+
     private VkInstance instance;
 
     private boolean enableValidationLayer;
@@ -68,15 +70,16 @@ class MttVulkanInstance {
     private List<Long> uniformBuffers;
     private List<Long> uniformBufferMemories;
 
-    //For test use
-    private List<Vertex2DUV> vertices;
-    private List<Integer> indices;
-
-    private Texture texture;
+    private long depthImage;
+    private long depthImageMemory;
+    private long depthImageView;
 
     private long textureSampler;
+    private Texture texture;
 
-    private static final int MAX_FRAMES_IN_FLIGHT = 2;
+    //For test use
+    private List<Vertex3DUV> vertices;
+    private List<Integer> indices;
 
     private PointerBuffer getRequiredExtensions() {
         PointerBuffer glfwExtensions = glfwGetRequiredInstanceExtensions();
@@ -136,8 +139,8 @@ class MttVulkanInstance {
             IntBuffer pWindowHeight = stack.ints(0);
             glfwGetWindowSize(window, pWindowWidth, pWindowHeight);
 
-            SwapchainManager.SwapchainRelatingData swapchainRelatingData
-                    = SwapchainManager.createSwapchain(device, surface, pWindowWidth.get(0), pWindowHeight.get(0));
+            SwapchainUtils.SwapchainRelatingData swapchainRelatingData
+                    = SwapchainUtils.createSwapchain(device, surface, pWindowWidth.get(0), pWindowHeight.get(0));
             swapchain = swapchainRelatingData.swapchain;
             swapchainImages = swapchainRelatingData.swapchainImages;
             swapchainImageFormat = swapchainRelatingData.swapchainImageFormat;
@@ -178,7 +181,7 @@ class MttVulkanInstance {
         this.createSwapchain();
 
         //Create image views
-        swapchainImageViews = SwapchainManager.createSwapchainImageViews(device, swapchainImages, swapchainImageFormat);
+        swapchainImageViews = SwapchainUtils.createSwapchainImageViews(device, swapchainImages, swapchainImageFormat);
 
         //Create a render pass
         renderPass = RenderpassCreator.createRenderPass(device, swapchainImageFormat);
@@ -191,31 +194,45 @@ class MttVulkanInstance {
                 device,
                 swapchainExtent,
                 renderPass,
-                Vertex2DUV.getBindingDescription(),
-                Vertex2DUV.getAttributeDescriptions(),
+                Vertex3DUV.getBindingDescription(),
+                Vertex3DUV.getAttributeDescriptions(),
                 descriptorSetLayout,
-                "./Mechtatel/Shader/Test/4.vert",
-                "./Mechtatel/Shader/Test/4.frag");
+                "./Mechtatel/Shader/Test/5.vert",
+                "./Mechtatel/Shader/Test/5.frag");
         pipelineLayout = graphicsPipelineInfo.pipelineLayout;
         graphicsPipeline = graphicsPipelineInfo.graphicsPipeline;
-
-        //Create framebuffers
-        swapchainFramebuffers = FramebufferCreator.createFramebuffers(
-                device, swapchainImageViews, renderPass, swapchainExtent);
 
         //Create a command pool
         commandPool = CommandPoolCreator.createCommandPool(device, surface);
 
+        DepthResourceUtils.DepthResources depthResources
+                = DepthResourceUtils.createDepthResources(device, commandPool, graphicsQueue, swapchainExtent);
+        depthImage = depthResources.depthImage;
+        depthImageMemory = depthResources.depthImageMemory;
+        depthImageView = depthResources.depthImageView;
+
+        //Create framebuffers
+        swapchainFramebuffers = FramebufferCreator.createFramebuffers(
+                device, swapchainImageViews, depthImageView, renderPass, swapchainExtent);
+
         //Create vertices for test
         vertices = new ArrayList<>();
-        var v1 = new Vertex2DUV(new Vector2f(-0.5f, -0.5f), new Vector3f(1.0f, 0.0f, 0.0f), new Vector2f(1.0f, 0.0f));
-        var v2 = new Vertex2DUV(new Vector2f(0.5f, -0.5f), new Vector3f(0.0f, 1.0f, 0.0f), new Vector2f(0.0f, 0.0f));
-        var v3 = new Vertex2DUV(new Vector2f(0.5f, 0.5f), new Vector3f(0.0f, 0.0f, 1.0f), new Vector2f(0.0f, 1.0f));
-        var v4 = new Vertex2DUV(new Vector2f(-0.5f, 0.5f), new Vector3f(1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
+        var v1 = new Vertex3DUV(new Vector3f(-0.5f, 0.0f, 0.5f), new Vector3f(1.0f, 0.0f, 0.0f), new Vector2f(1.0f, 0.0f));
+        var v2 = new Vertex3DUV(new Vector3f(0.5f, 0.0f, 0.5f), new Vector3f(0.0f, 1.0f, 0.0f), new Vector2f(0.0f, 0.0f));
+        var v3 = new Vertex3DUV(new Vector3f(0.5f, 0.0f, -0.5f), new Vector3f(0.0f, 0.0f, 1.0f), new Vector2f(0.0f, 1.0f));
+        var v4 = new Vertex3DUV(new Vector3f(-0.5f, 0.0f, -0.5f), new Vector3f(1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
+        var v5 = new Vertex3DUV(new Vector3f(-0.5f, 0.5f, 0.5f), new Vector3f(1.0f, 0.0f, 0.0f), new Vector2f(1.0f, 0.0f));
+        var v6 = new Vertex3DUV(new Vector3f(0.5f, 0.5f, 0.5f), new Vector3f(0.0f, 1.0f, 0.0f), new Vector2f(0.0f, 0.0f));
+        var v7 = new Vertex3DUV(new Vector3f(0.5f, 0.5f, -0.5f), new Vector3f(0.0f, 0.0f, 1.0f), new Vector2f(0.0f, 1.0f));
+        var v8 = new Vertex3DUV(new Vector3f(-0.5f, 0.5f, -0.5f), new Vector3f(1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
         vertices.add(v1);
         vertices.add(v2);
         vertices.add(v3);
         vertices.add(v4);
+        vertices.add(v5);
+        vertices.add(v6);
+        vertices.add(v7);
+        vertices.add(v8);
 
         //Create indices for test
         indices = new ArrayList<>();
@@ -225,10 +242,16 @@ class MttVulkanInstance {
         indices.add(2);
         indices.add(3);
         indices.add(0);
+        indices.add(4);
+        indices.add(5);
+        indices.add(6);
+        indices.add(6);
+        indices.add(7);
+        indices.add(4);
 
         //Create a vertex buffer and a vertex buffer memory
         BufferCreator.BufferInfo bufferInfo
-                = BufferCreator.createVertexBuffer2DUV(device, commandPool, graphicsQueue, vertices);
+                = BufferCreator.createVertexBuffer3DUV(device, commandPool, graphicsQueue, vertices);
         vertexBuffer = bufferInfo.buffer;
         vertexBufferMemory = bufferInfo.bufferMemory;
 
@@ -269,8 +292,11 @@ class MttVulkanInstance {
     }
 
     public void cleanup() {
-        vkDestroySampler(device, textureSampler, null);
+        vkDestroyImageView(device, depthImageView, null);
+        vkDestroyImage(device, depthImage, null);
+        vkFreeMemory(device, depthImageMemory, null);
 
+        vkDestroySampler(device, textureSampler, null);
         texture.cleanup();
 
         vkDestroyDescriptorSetLayout(device, descriptorSetLayout, null);
@@ -334,7 +360,7 @@ class MttVulkanInstance {
                 descriptorSets);
 
         Frame thisFrame = inFlightFrames.get(currentFrame);
-        FrameManager.drawFrame(
+        FrameUtils.drawFrame(
                 device,
                 thisFrame,
                 swapchain,

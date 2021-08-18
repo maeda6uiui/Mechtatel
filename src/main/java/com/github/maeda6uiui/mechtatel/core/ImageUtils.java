@@ -18,6 +18,7 @@ class ImageUtils {
             int width,
             int height,
             int mipLevels,
+            int numSamples,
             int format,
             int tiling,
             int usage,
@@ -37,7 +38,7 @@ class ImageUtils {
             imageInfo.tiling(tiling);
             imageInfo.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             imageInfo.usage(usage);
-            imageInfo.samples(VK_SAMPLE_COUNT_1_BIT);
+            imageInfo.samples(numSamples);
             imageInfo.sharingMode(VK_SHARING_MODE_EXCLUSIVE);
 
             if (vkCreateImage(device, imageInfo, null, pTextureImage) != VK_SUCCESS) {
@@ -112,6 +113,12 @@ class ImageUtils {
 
                 sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
                 destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+            } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
+                barrier.srcAccessMask(0);
+                barrier.dstAccessMask(VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
+
+                sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+                destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
             } else {
                 throw new IllegalArgumentException("Unsupported layout transition");
             }

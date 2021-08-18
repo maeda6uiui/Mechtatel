@@ -42,6 +42,7 @@ class GraphicsPipelineCreator {
             VkVertexInputBindingDescription.Buffer bindingDescription,
             VkVertexInputAttributeDescription.Buffer attributeDescriptions,
             long descriptorSetLayout,
+            int msaaSamples,
             String vertShaderFilepath,
             String fragShaderFilepath) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -117,8 +118,9 @@ class GraphicsPipelineCreator {
             //Multisampling
             VkPipelineMultisampleStateCreateInfo multisampling = VkPipelineMultisampleStateCreateInfo.callocStack(stack);
             multisampling.sType(VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO);
-            multisampling.sampleShadingEnable(false);
-            multisampling.rasterizationSamples(VK_SAMPLE_COUNT_1_BIT);
+            multisampling.sampleShadingEnable(true);
+            multisampling.minSampleShading(0.2f);
+            multisampling.rasterizationSamples(msaaSamples);
 
             VkPipelineDepthStencilStateCreateInfo depthStencil = VkPipelineDepthStencilStateCreateInfo.callocStack(stack);
             depthStencil.sType(VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO);

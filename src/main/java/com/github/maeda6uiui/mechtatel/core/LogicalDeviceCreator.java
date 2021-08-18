@@ -30,6 +30,7 @@ class LogicalDeviceCreator {
 
             VkPhysicalDeviceFeatures deviceFeatures = VkPhysicalDeviceFeatures.callocStack(stack);
             deviceFeatures.samplerAnisotropy(true);
+            deviceFeatures.sampleRateShading(true);
 
             VkDeviceCreateInfo createInfo = VkDeviceCreateInfo.callocStack(stack);
             createInfo.sType(VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO);

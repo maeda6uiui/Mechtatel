@@ -14,21 +14,21 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 class RenderpassCreator {
-    public static long createRenderPass(VkDevice device, int swapchainImageFormat) {
+    public static long createRenderPass(VkDevice device, int swapchainImageFormat, int msaaSamples) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(2, stack);
-            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(2, stack);
+            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(3, stack);
+            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(3, stack);
 
             //Color attachments
             VkAttachmentDescription colorAttachment = attachments.get(0);
             colorAttachment.format(swapchainImageFormat);
-            colorAttachment.samples(VK_SAMPLE_COUNT_1_BIT);
+            colorAttachment.samples(msaaSamples);
             colorAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
             colorAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
             colorAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
             colorAttachment.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
             colorAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
-            colorAttachment.finalLayout(VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+            colorAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             VkAttachmentReference colorAttachmentRef = attachmentRefs.get(0);
             colorAttachmentRef.attachment(0);
@@ -37,7 +37,7 @@ class RenderpassCreator {
             //Depth-stencil attachments
             VkAttachmentDescription depthAttachment = attachments.get(1);
             depthAttachment.format(DepthResourceUtils.findDepthFormat(device));
-            depthAttachment.samples(VK_SAMPLE_COUNT_1_BIT);
+            depthAttachment.samples(msaaSamples);
             depthAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
             depthAttachment.storeOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
             depthAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
@@ -49,11 +49,27 @@ class RenderpassCreator {
             depthAttachmentRef.attachment(1);
             depthAttachmentRef.layout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
+            //Present image
+            VkAttachmentDescription colorAttachmentResolve = attachments.get(2);
+            colorAttachmentResolve.format(swapchainImageFormat);
+            colorAttachmentResolve.samples(VK_SAMPLE_COUNT_1_BIT);
+            colorAttachmentResolve.loadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
+            colorAttachmentResolve.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
+            colorAttachmentResolve.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
+            colorAttachmentResolve.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
+            colorAttachmentResolve.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
+            colorAttachmentResolve.finalLayout(VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+
+            VkAttachmentReference colorAttachmentResolveRef = attachmentRefs.get(2);
+            colorAttachmentResolveRef.attachment(2);
+            colorAttachmentResolveRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.callocStack(1, stack);
             subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
             subpass.colorAttachmentCount(1);
             subpass.pColorAttachments(VkAttachmentReference.callocStack(1, stack).put(0, colorAttachmentRef));
             subpass.pDepthStencilAttachment(depthAttachmentRef);
+            subpass.pResolveAttachments(VkAttachmentReference.callocStack(1, stack).put(0, colorAttachmentResolveRef));
 
             VkSubpassDependency.Buffer dependency = VkSubpassDependency.callocStack(1, stack);
             dependency.srcSubpass(VK_SUBPASS_EXTERNAL);

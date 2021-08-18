@@ -74,6 +74,11 @@ class MttVulkanInstance {
     private long depthImageMemory;
     private long depthImageView;
 
+    private int msaaSamples;
+    private long colorImage;
+    private long colorImageMemory;
+    private long colorImageView;
+
     private long textureSampler;
     private Texture texture;
 
@@ -183,8 +188,24 @@ class MttVulkanInstance {
         //Create image views
         swapchainImageViews = SwapchainUtils.createSwapchainImageViews(device, swapchainImages, swapchainImageFormat);
 
+        //Create a command pool
+        commandPool = CommandPoolCreator.createCommandPool(device, surface);
+
+        //Create color resources
+        msaaSamples = MultisamplingUtils.getMaxUsableSampleCount(device);
+        ColorResourceCreator.ColorResources colorResources = ColorResourceCreator.createColorResources(
+                device,
+                commandPool,
+                graphicsQueue,
+                swapchainExtent,
+                msaaSamples,
+                swapchainImageFormat);
+        colorImage = colorResources.colorImage;
+        colorImageMemory = colorResources.colorImageMemory;
+        colorImageView = colorResources.colorImageView;
+
         //Create a render pass
-        renderPass = RenderpassCreator.createRenderPass(device, swapchainImageFormat);
+        renderPass = RenderpassCreator.createRenderPass(device, swapchainImageFormat, msaaSamples);
 
         //Create a descriptor set layout
         descriptorSetLayout = DescriptorSetLayoutCreator.createDescriptorSetLayout(device);
@@ -197,23 +218,22 @@ class MttVulkanInstance {
                 Vertex3DUV.getBindingDescription(),
                 Vertex3DUV.getAttributeDescriptions(),
                 descriptorSetLayout,
+                msaaSamples,
                 "./Mechtatel/Shader/Test/5.vert",
                 "./Mechtatel/Shader/Test/5.frag");
         pipelineLayout = graphicsPipelineInfo.pipelineLayout;
         graphicsPipeline = graphicsPipelineInfo.graphicsPipeline;
 
-        //Create a command pool
-        commandPool = CommandPoolCreator.createCommandPool(device, surface);
-
+        //Create depth resources
         DepthResourceUtils.DepthResources depthResources
-                = DepthResourceUtils.createDepthResources(device, commandPool, graphicsQueue, swapchainExtent);
+                = DepthResourceUtils.createDepthResources(device, commandPool, graphicsQueue, swapchainExtent, msaaSamples);
         depthImage = depthResources.depthImage;
         depthImageMemory = depthResources.depthImageMemory;
         depthImageView = depthResources.depthImageView;
 
         //Create framebuffers
         swapchainFramebuffers = FramebufferCreator.createFramebuffers(
-                device, swapchainImageViews, depthImageView, renderPass, swapchainExtent);
+                device, swapchainImageViews, colorImageView, depthImageView, renderPass, swapchainExtent);
 
         //Create vertices for test
         vertices = new ArrayList<>();
@@ -293,6 +313,10 @@ class MttVulkanInstance {
     }
 
     public void cleanup() {
+        vkDestroyImageView(device, colorImageView, null);
+        vkDestroyImage(device, colorImage, null);
+        vkFreeMemory(device, colorImageMemory, null);
+
         vkDestroyImageView(device, depthImageView, null);
         vkDestroyImage(device, depthImage, null);
         vkFreeMemory(device, depthImageMemory, null);

@@ -58,7 +58,8 @@ class DepthResourceUtils {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            VkExtent2D swapchainExtent) {
+            VkExtent2D swapchainExtent,
+            int msaaSamples) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             int depthFormat = findDepthFormat(device);
 
@@ -70,6 +71,7 @@ class DepthResourceUtils {
                     swapchainExtent.width(),
                     swapchainExtent.height(),
                     1,
+                    msaaSamples,
                     depthFormat,
                     VK_IMAGE_TILING_OPTIMAL,
                     VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,

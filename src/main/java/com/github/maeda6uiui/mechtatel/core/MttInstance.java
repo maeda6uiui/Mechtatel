@@ -11,14 +11,21 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 class MttInstance {
     private IMechtatel mtt;
     private long window;
-
     private MttVulkanInstance vulkanInstance;
+
+    private int fps;
 
     private void framebufferResizeCallback(long window, int width, int height) {
         mtt.reshape(width, height);
     }
 
-    public MttInstance(IMechtatel mtt, int windowWidth, int windowHeight, String windowTitle, boolean windowResizable) {
+    public MttInstance(
+            IMechtatel mtt,
+            int windowWidth,
+            int windowHeight,
+            String windowTitle,
+            boolean windowResizable,
+            int fps) {
         if (!glfwInit()) {
             throw new RuntimeException("Failed to initialize GLFW");
         }
@@ -39,16 +46,30 @@ class MttInstance {
 
         vulkanInstance = new MttVulkanInstance(true, window);
 
+        this.fps = fps;
+
         this.mtt = mtt;
         mtt.init();
     }
 
     public void run() {
-        while (!glfwWindowShouldClose(window)) {
-            mtt.update();
-            mtt.draw();
+        double currentTime = 0.0;
+        double lastTime = 0.0;
+        double elapsedTime = 0.0;
+        glfwSetTime(0.0);
 
-            vulkanInstance.draw();
+        while (!glfwWindowShouldClose(window)) {
+            currentTime = glfwGetTime();
+            elapsedTime = currentTime - lastTime;
+
+            if (elapsedTime >= 1.0 / fps) {
+                mtt.update();
+                mtt.draw();
+
+                vulkanInstance.draw();
+
+                lastTime = glfwGetTime();
+            }
 
             glfwPollEvents();
         }

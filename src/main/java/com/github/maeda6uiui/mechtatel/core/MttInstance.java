@@ -1,5 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core;
 
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_2_BIT;

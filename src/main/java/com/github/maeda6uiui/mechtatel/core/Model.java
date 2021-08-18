@@ -132,7 +132,7 @@ class Model {
         indexBufferMemories.forEach((idx, indexBufferMemory) -> vkFreeMemory(device, indexBufferMemory, null));
     }
 
-    public void draw() {
+    public List<VkCommandBuffer> draw() {
         final int commandBuffersCount = swapchainFramebuffers.size();
         var commandBuffers = new ArrayList<VkCommandBuffer>(commandBuffersCount);
 
@@ -181,8 +181,8 @@ class Model {
 
                     int numMeshes = model.meshes.size();
                     for (int j = 0; j < numMeshes; j++) {
-                        Texture texture = textures.get(j);
-                        texture.updateDescriptorSets();
+                        Texture texture = textures.get(model.meshes.get(j).materialIndex);
+                        //texture.updateDescriptorSets();
 
                         LongBuffer lVertexBuffers = stack.longs(vertexBuffers.get(j));
                         LongBuffer offsets = stack.longs(0);
@@ -200,7 +200,7 @@ class Model {
 
                         vkCmdDrawIndexed(
                                 commandBuffer,
-                                model.meshes.get(i).indices.size(),
+                                model.meshes.get(j).indices.size(),
                                 1,
                                 0,
                                 0,
@@ -213,6 +213,8 @@ class Model {
                     throw new RuntimeException("Failed to record a command buffer");
                 }
             }
+
+            return commandBuffers;
         }
     }
 }

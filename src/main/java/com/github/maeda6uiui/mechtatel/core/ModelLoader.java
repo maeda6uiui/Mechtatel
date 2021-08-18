@@ -153,7 +153,7 @@ class ModelLoader {
     }
 
     public static Model loadModel(String modelFilepath) {
-        try (AIScene scene = aiImportFile(modelFilepath, aiProcessPreset_TargetRealtime_Quality)) {
+        try (AIScene scene = aiImportFile(modelFilepath, aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs)) {
             if (scene == null || scene.mRootNode() == null) {
                 String errorStr = String.format("Could not load a model %s\n%s", modelFilepath, aiGetErrorString());
                 throw new RuntimeException(errorStr);

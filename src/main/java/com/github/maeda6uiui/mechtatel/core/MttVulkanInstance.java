@@ -1,7 +1,5 @@
 package com.github.maeda6uiui.mechtatel.core;
 
-import org.joml.Vector2f;
-import org.joml.Vector3f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -61,12 +59,6 @@ class MttVulkanInstance {
     private Map<Integer, Frame> imagesInFlight;
     private int currentFrame;
 
-    private long vertexBuffer;
-    private long vertexBufferMemory;
-
-    private long indexBuffer;
-    private long indexBufferMemory;
-
     private List<Long> uniformBuffers;
     private List<Long> uniformBufferMemories;
 
@@ -80,11 +72,8 @@ class MttVulkanInstance {
     private long colorImageView;
 
     private long textureSampler;
-    private Texture texture;
 
-    //For test use
-    private List<Vertex3DUV> vertices;
-    private List<Integer> indices;
+    private Model model;
 
     private PointerBuffer getRequiredExtensions() {
         PointerBuffer glfwExtensions = glfwGetRequiredInstanceExtensions();
@@ -235,51 +224,6 @@ class MttVulkanInstance {
         swapchainFramebuffers = FramebufferCreator.createFramebuffers(
                 device, swapchainImageViews, colorImageView, depthImageView, renderPass, swapchainExtent);
 
-        //Create vertices for test
-        vertices = new ArrayList<>();
-        var v1 = new Vertex3DUV(new Vector3f(-0.5f, 0.0f, 0.5f), new Vector3f(1.0f, 0.0f, 0.0f), new Vector2f(1.0f, 0.0f));
-        var v2 = new Vertex3DUV(new Vector3f(0.5f, 0.0f, 0.5f), new Vector3f(0.0f, 1.0f, 0.0f), new Vector2f(0.0f, 0.0f));
-        var v3 = new Vertex3DUV(new Vector3f(0.5f, 0.0f, -0.5f), new Vector3f(0.0f, 0.0f, 1.0f), new Vector2f(0.0f, 1.0f));
-        var v4 = new Vertex3DUV(new Vector3f(-0.5f, 0.0f, -0.5f), new Vector3f(1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
-        var v5 = new Vertex3DUV(new Vector3f(-0.5f, 0.5f, 0.5f), new Vector3f(1.0f, 0.0f, 0.0f), new Vector2f(1.0f, 0.0f));
-        var v6 = new Vertex3DUV(new Vector3f(0.5f, 0.5f, 0.5f), new Vector3f(0.0f, 1.0f, 0.0f), new Vector2f(0.0f, 0.0f));
-        var v7 = new Vertex3DUV(new Vector3f(0.5f, 0.5f, -0.5f), new Vector3f(0.0f, 0.0f, 1.0f), new Vector2f(0.0f, 1.0f));
-        var v8 = new Vertex3DUV(new Vector3f(-0.5f, 0.5f, -0.5f), new Vector3f(1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
-        vertices.add(v1);
-        vertices.add(v2);
-        vertices.add(v3);
-        vertices.add(v4);
-        vertices.add(v5);
-        vertices.add(v6);
-        vertices.add(v7);
-        vertices.add(v8);
-
-        //Create indices for test
-        indices = new ArrayList<>();
-        indices.add(0);
-        indices.add(1);
-        indices.add(2);
-        indices.add(2);
-        indices.add(3);
-        indices.add(0);
-        indices.add(4);
-        indices.add(5);
-        indices.add(6);
-        indices.add(6);
-        indices.add(7);
-        indices.add(4);
-
-        //Create a vertex buffer and a vertex buffer memory
-        BufferCreator.BufferInfo bufferInfo
-                = BufferCreator.createVertexBuffer3DUV(device, commandPool, graphicsQueue, vertices);
-        vertexBuffer = bufferInfo.buffer;
-        vertexBufferMemory = bufferInfo.bufferMemory;
-
-        //Create an index buffer and an index buffer memory
-        bufferInfo = BufferCreator.createIndexBuffer(device, commandPool, graphicsQueue, indices);
-        indexBuffer = bufferInfo.buffer;
-        indexBufferMemory = bufferInfo.bufferMemory;
-
         //Create uniform buffers and uniform buffer memories
         List<BufferCreator.BufferInfo> uniformBufferInfos = BufferCreator.createUniformBuffers(device, swapchainImages.size());
         uniformBuffers = new ArrayList<>();
@@ -301,18 +245,24 @@ class MttVulkanInstance {
         //Create a texture sampler
         textureSampler = TextureSamplerCreator.createTextureSampler(device);
 
-        //Create a texture for test
-        texture = new Texture(
+        //Load a model
+        model = new Model(
                 device,
                 commandPool,
+                renderPass,
+                swapchainExtent,
+                swapchainFramebuffers,
+                graphicsPipeline,
                 graphicsQueue,
                 textureSampler,
+                pipelineLayout,
                 descriptorSets,
-                "./Mechtatel/Texture/lenna.jpg",
-                true);
+                "./Mechtatel/Model/Teapot/teapot.obj");
     }
 
     public void cleanup() {
+        model.cleanup();
+
         vkDestroyImageView(device, colorImageView, null);
         vkDestroyImage(device, colorImage, null);
         vkFreeMemory(device, colorImageMemory, null);
@@ -322,15 +272,8 @@ class MttVulkanInstance {
         vkFreeMemory(device, depthImageMemory, null);
 
         vkDestroySampler(device, textureSampler, null);
-        texture.cleanup();
 
         vkDestroyDescriptorSetLayout(device, descriptorSetLayout, null);
-
-        vkDestroyBuffer(device, indexBuffer, null);
-        vkFreeMemory(device, indexBufferMemory, null);
-
-        vkDestroyBuffer(device, vertexBuffer, null);
-        vkFreeMemory(device, vertexBufferMemory, null);
 
         inFlightFrames.forEach(frame -> {
             vkDestroySemaphore(device, frame.renderFinishedSemaphore(), null);
@@ -371,18 +314,7 @@ class MttVulkanInstance {
 
     //This is a test method for development
     public void draw() {
-        List<VkCommandBuffer> commandBuffers = DrawCommandDispatcher.dispatchDrawCommand3D(
-                device,
-                commandPool,
-                renderPass,
-                swapchainExtent,
-                swapchainFramebuffers,
-                graphicsPipeline,
-                vertexBuffer,
-                indexBuffer,
-                indices.size(),
-                pipelineLayout,
-                descriptorSets);
+        List<VkCommandBuffer> commandBuffers = model.draw();
 
         Frame thisFrame = inFlightFrames.get(currentFrame);
         FrameUtils.drawFrame(

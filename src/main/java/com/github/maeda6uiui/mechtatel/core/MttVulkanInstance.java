@@ -1,6 +1,5 @@
 package com.github.maeda6uiui.mechtatel.core;
 
-import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
@@ -11,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
-import static org.lwjgl.glfw.GLFWVulkan.glfwGetRequiredInstanceExtensions;
-import static org.lwjgl.vulkan.EXTDebugUtils.VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
 import static org.lwjgl.vulkan.KHRSurface.vkDestroySurfaceKHR;
 import static org.lwjgl.vulkan.KHRSwapchain.vkDestroySwapchainKHR;
 import static org.lwjgl.vulkan.VK10.*;
@@ -64,7 +61,6 @@ class MttVulkanInstance {
     private long depthImageMemory;
     private long depthImageView;
 
-    private int msaaSamples;
     private long colorImage;
     private long colorImageMemory;
     private long colorImageView;
@@ -73,74 +69,7 @@ class MttVulkanInstance {
 
     private Model model;
 
-    private PointerBuffer getRequiredExtensions() {
-        PointerBuffer glfwExtensions = glfwGetRequiredInstanceExtensions();
-
-        if (enableValidationLayer) {
-            MemoryStack stack = MemoryStack.stackGet();
-
-            PointerBuffer extensions = stack.mallocPointer(glfwExtensions.capacity() + 1);
-            extensions.put(glfwExtensions);
-            extensions.put(stack.UTF8(VK_EXT_DEBUG_UTILS_EXTENSION_NAME));
-
-            return extensions.rewind();
-        }
-
-        return glfwExtensions;
-    }
-
-    private void createInstance() {
-        if (enableValidationLayer && !ValidationLayers.checkValidationLayerSupport()) {
-            throw new RuntimeException("Validation requested but not supported");
-        }
-
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkApplicationInfo appInfo = VkApplicationInfo.callocStack(stack);
-            appInfo.sType(VK_STRUCTURE_TYPE_APPLICATION_INFO);
-            appInfo.pApplicationName(stack.UTF8Safe("Mechtatel"));
-            appInfo.applicationVersion(VK_MAKE_VERSION(1, 0, 0));
-            appInfo.pEngineName(stack.UTF8Safe("No Engine"));
-            appInfo.engineVersion(VK_MAKE_VERSION(1, 0, 0));
-            appInfo.apiVersion(VK_API_VERSION_1_0);
-
-            VkInstanceCreateInfo createInfo = VkInstanceCreateInfo.callocStack(stack);
-            createInfo.sType(VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO);
-            createInfo.pApplicationInfo(appInfo);
-            createInfo.ppEnabledExtensionNames(this.getRequiredExtensions());
-
-            if (enableValidationLayer) {
-                createInfo.ppEnabledLayerNames(PointerBufferUtils.asPointerBuffer(ValidationLayers.VALIDATION_LAYERS));
-
-                VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo = VkDebugUtilsMessengerCreateInfoEXT.callocStack(stack);
-                ValidationLayers.populateDebugMessengerCreateInfo(debugCreateInfo);
-                createInfo.pNext(debugCreateInfo.address());
-            }
-
-            PointerBuffer instancePtr = stack.mallocPointer(1);
-            if (vkCreateInstance(createInfo, null, instancePtr) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to create a Vulkan instance");
-            }
-
-            instance = new VkInstance(instancePtr.get(0), createInfo);
-        }
-    }
-
-    private void createSwapchain() {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer pWindowWidth = stack.ints(0);
-            IntBuffer pWindowHeight = stack.ints(0);
-            glfwGetWindowSize(window, pWindowWidth, pWindowHeight);
-
-            SwapchainUtils.SwapchainRelatingData swapchainRelatingData
-                    = SwapchainUtils.createSwapchain(device, surface, pWindowWidth.get(0), pWindowHeight.get(0));
-            swapchain = swapchainRelatingData.swapchain;
-            swapchainImages = swapchainRelatingData.swapchainImages;
-            swapchainImageFormat = swapchainRelatingData.swapchainImageFormat;
-            swapchainExtent = swapchainRelatingData.swapchainExtent;
-        }
-    }
-
-    public MttVulkanInstance(boolean enableValidationLayer, long window) {
+    public MttVulkanInstance(boolean enableValidationLayer, long window, int msaaSamples) {
         //Load the Shaderc library
         System.setProperty("java.library.path", "./Mechtatel/Bin");
         System.loadLibrary("shaderc_shared");
@@ -149,7 +78,7 @@ class MttVulkanInstance {
         this.window = window;
 
         //Create a Vulkan instance
-        this.createInstance();
+        instance = InstanceCreator.createInstance(enableValidationLayer);
 
         //Set up a debug messenger
         if (enableValidationLayer) {
@@ -170,7 +99,18 @@ class MttVulkanInstance {
         presentQueue = deviceAndQueues.presentQueue;
 
         //Create a swapchain
-        this.createSwapchain();
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer pWindowWidth = stack.ints(0);
+            IntBuffer pWindowHeight = stack.ints(0);
+            glfwGetWindowSize(window, pWindowWidth, pWindowHeight);
+
+            SwapchainUtils.SwapchainRelatingData swapchainRelatingData
+                    = SwapchainUtils.createSwapchain(device, surface, pWindowWidth.get(0), pWindowHeight.get(0));
+            swapchain = swapchainRelatingData.swapchain;
+            swapchainImages = swapchainRelatingData.swapchainImages;
+            swapchainImageFormat = swapchainRelatingData.swapchainImageFormat;
+            swapchainExtent = swapchainRelatingData.swapchainExtent;
+        }
 
         //Create image views
         swapchainImageViews = SwapchainUtils.createSwapchainImageViews(device, swapchainImages, swapchainImageFormat);
@@ -179,7 +119,9 @@ class MttVulkanInstance {
         commandPool = CommandPoolCreator.createCommandPool(device, surface);
 
         //Create color resources
-        msaaSamples = MultisamplingUtils.getMaxUsableSampleCount(device);
+        if (msaaSamples < 0) {
+            msaaSamples = MultisamplingUtils.getMaxUsableSampleCount(device);
+        }
         ColorResourceCreator.ColorResources colorResources = ColorResourceCreator.createColorResources(
                 device,
                 commandPool,

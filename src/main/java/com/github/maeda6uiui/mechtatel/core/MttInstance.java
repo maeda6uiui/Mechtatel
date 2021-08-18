@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
+import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_2_BIT;
 
 /**
  * Provides abstraction of the low-level operations
@@ -44,7 +45,7 @@ class MttInstance {
 
         glfwSetFramebufferSizeCallback(window, this::framebufferResizeCallback);
 
-        vulkanInstance = new MttVulkanInstance(true, window);
+        vulkanInstance = new MttVulkanInstance(true, window, VK_SAMPLE_COUNT_2_BIT);
 
         this.fps = fps;
 

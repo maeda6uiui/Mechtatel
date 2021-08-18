@@ -371,7 +371,7 @@ class MttVulkanInstance {
 
     //This is a test method for development
     public void draw() {
-        List<VkCommandBuffer> commandBuffers = DrawCommandDispatcher.dispatchDrawCommand2D(
+        List<VkCommandBuffer> commandBuffers = DrawCommandDispatcher.dispatchDrawCommand3D(
                 device,
                 commandPool,
                 renderPass,

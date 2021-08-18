@@ -16,7 +16,7 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 class DrawCommandDispatcher {
-    public static List<VkCommandBuffer> dispatchDrawCommand2D(
+    public static List<VkCommandBuffer> dispatchDrawCommand3D(
             VkDevice device,
             long commandPool,
             long renderPass,

@@ -264,7 +264,7 @@ class Texture {
                 generateMipmaps ? mipLevels : 1);
     }
 
-    private void updateDescriptorSets() {
+    public void updateDescriptorSets() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDescriptorImageInfo.Buffer imageInfo = VkDescriptorImageInfo.callocStack(1, stack);
             imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);

@@ -22,11 +22,16 @@ class Texture {
     private long commandPool;
     private VkQueue graphicsQueue;
     private long textureSampler;
-    private List<Long> descriptorSets;
+    private int numSwapchainImages;
+    private long descriptorSetLayout;
+    private List<Long> uniformBuffers;
 
     private long textureImage;
     private long textureImageMemory;
     private long textureImageView;
+
+    private long descriptorPool;
+    private List<Long> descriptorSets;
 
     private int width;
     private int height;
@@ -264,7 +269,16 @@ class Texture {
                 generateMipmaps ? mipLevels : 1);
     }
 
-    public void updateDescriptorSets() {
+    private void createDescriptorPool() {
+        descriptorPool = DescriptorPoolCreator.createDescriptorPool(device, numSwapchainImages);
+    }
+
+    private void createDescriptorSets() {
+        descriptorSets = DescriptorSetsCreator.createDescriptorSets(
+                device, numSwapchainImages, descriptorPool, descriptorSetLayout, uniformBuffers);
+    }
+
+    private void updateDescriptorSets() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDescriptorImageInfo.Buffer imageInfo = VkDescriptorImageInfo.callocStack(1, stack);
             imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -291,27 +305,46 @@ class Texture {
             long commandPool,
             VkQueue graphicsQueue,
             long textureSampler,
-            List<Long> descriptorSets,
+            int numSwapchainImages,
+            long descriptorSetLayout,
+            List<Long> uniformBuffers,
             String textureFilepath,
             boolean generateMipmaps) {
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
         this.textureSampler = textureSampler;
-        this.descriptorSets = descriptorSets;
+        this.numSwapchainImages = numSwapchainImages;
+        this.descriptorSetLayout = descriptorSetLayout;
+        this.uniformBuffers = uniformBuffers;
 
         this.textureFilepath = textureFilepath;
         this.generateMipmaps = generateMipmaps;
 
         this.createTextureImage();
         this.createTextureImageView();
+        this.createDescriptorPool();
+        this.createDescriptorSets();
         this.updateDescriptorSets();
     }
 
     public void cleanup() {
-        vkDestroyImageView(device, textureImageView, null);
-
         vkDestroyImage(device, textureImage, null);
         vkFreeMemory(device, textureImageMemory, null);
+        vkDestroyImageView(device, textureImageView, null);
+
+        vkDestroyDescriptorPool(device, descriptorPool, null);
+    }
+
+    public void bindDescriptorSets(VkCommandBuffer commandBuffer, long pipelineLayout, int index) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            vkCmdBindDescriptorSets(
+                    commandBuffer,
+                    VK_PIPELINE_BIND_POINT_GRAPHICS,
+                    pipelineLayout,
+                    0,
+                    stack.longs(descriptorSets.get(index)),
+                    null);
+        }
     }
 }

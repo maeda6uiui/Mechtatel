@@ -28,7 +28,9 @@ class Model {
     private VkQueue graphicsQueue;
     private long textureSampler;
     private long pipelineLayout;
-    private List<Long> descriptorSets;
+    private int numSwapchainImages;
+    private long descriptorSetLayout;
+    private List<Long> uniformBuffers;
 
     private String modelFilepath;
 
@@ -60,7 +62,9 @@ class Model {
                     commandPool,
                     graphicsQueue,
                     textureSampler,
-                    descriptorSets,
+                    numSwapchainImages,
+                    descriptorSetLayout,
+                    uniformBuffers,
                     diffuseTexFilepath,
                     true);
             textures.put(index, texture);
@@ -99,7 +103,9 @@ class Model {
             VkQueue graphicsQueue,
             long textureSampler,
             long pipelineLayout,
-            List<Long> descriptorSets,
+            int numSwapchainImages,
+            long descriptorSetLayout,
+            List<Long> uniformBuffers,
             String modelFilepath) {
         this.device = device;
         this.commandPool = commandPool;
@@ -110,7 +116,9 @@ class Model {
         this.graphicsQueue = graphicsQueue;
         this.textureSampler = textureSampler;
         this.pipelineLayout = pipelineLayout;
-        this.descriptorSets = descriptorSets;
+        this.numSwapchainImages = numSwapchainImages;
+        this.descriptorSetLayout = descriptorSetLayout;
+        this.uniformBuffers = uniformBuffers;
 
         this.modelFilepath = modelFilepath;
 
@@ -182,21 +190,13 @@ class Model {
                     int numMeshes = model.meshes.size();
                     for (int j = 0; j < numMeshes; j++) {
                         Texture texture = textures.get(model.meshes.get(j).materialIndex);
-                        //texture.updateDescriptorSets();
+                        texture.bindDescriptorSets(commandBuffer, pipelineLayout, i);
 
                         LongBuffer lVertexBuffers = stack.longs(vertexBuffers.get(j));
                         LongBuffer offsets = stack.longs(0);
                         vkCmdBindVertexBuffers(commandBuffer, 0, lVertexBuffers, offsets);
 
                         vkCmdBindIndexBuffer(commandBuffer, indexBuffers.get(j), 0, VK_INDEX_TYPE_UINT32);
-
-                        vkCmdBindDescriptorSets(
-                                commandBuffer,
-                                VK_PIPELINE_BIND_POINT_GRAPHICS,
-                                pipelineLayout,
-                                0,
-                                stack.longs(descriptorSets.get(i)),
-                                null);
 
                         vkCmdDrawIndexed(
                                 commandBuffer,

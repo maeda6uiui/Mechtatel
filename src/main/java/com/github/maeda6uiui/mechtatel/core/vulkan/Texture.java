@@ -19,12 +19,6 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 class Texture {
     private VkDevice device;
-    private long commandPool;
-    private VkQueue graphicsQueue;
-    private long textureSampler;
-    private int numSwapchainImages;
-    private long descriptorSetLayout;
-    private List<Long> uniformBuffers;
 
     private long textureImage;
     private long textureImageMemory;
@@ -50,7 +44,13 @@ class Texture {
         return Math.log(n) / Math.log(2);
     }
 
-    private void copyBufferToImage(long buffer, long image, int width, int height) {
+    private void copyBufferToImage(
+            long commandPool,
+            VkQueue graphicsQueue,
+            long buffer,
+            long image,
+            int width,
+            int height) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
 
@@ -71,7 +71,7 @@ class Texture {
         }
     }
 
-    private void generateMipmaps() {
+    private void generateMipmaps(long commandPool, VkQueue graphicsQueue) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkFormatProperties formatProperties = VkFormatProperties.mallocStack(stack);
             vkGetPhysicalDeviceFormatProperties(device.getPhysicalDevice(), VK_FORMAT_R8G8B8A8_SRGB, formatProperties);
@@ -175,7 +175,7 @@ class Texture {
         }
     }
 
-    private void createTextureImage() {
+    private void createTextureImage(long commandPool, VkQueue graphicsQueue) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer pWidth = stack.mallocInt(1);
             IntBuffer pHeight = stack.mallocInt(1);
@@ -239,10 +239,16 @@ class Texture {
                     VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                     mipLevels);
 
-            this.copyBufferToImage(pStagingBuffer.get(0), textureImage, pWidth.get(0), pHeight.get(0));
+            this.copyBufferToImage(
+                    commandPool,
+                    graphicsQueue,
+                    pStagingBuffer.get(0),
+                    textureImage,
+                    pWidth.get(0),
+                    pHeight.get(0));
 
             if (generateMipmaps) {
-                this.generateMipmaps();
+                this.generateMipmaps(commandPool, graphicsQueue);
             } else {
                 ImageUtils.transitionImageLayout(
                         device,
@@ -269,16 +275,7 @@ class Texture {
                 generateMipmaps ? mipLevels : 1);
     }
 
-    private void createDescriptorPool() {
-        descriptorPool = DescriptorPoolCreator.createDescriptorPool(device, numSwapchainImages);
-    }
-
-    private void createDescriptorSets() {
-        descriptorSets = DescriptorSetsCreator.createDescriptorSets(
-                device, numSwapchainImages, descriptorPool, descriptorSetLayout, uniformBuffers);
-    }
-
-    private void updateDescriptorSets() {
+    private void updateDescriptorSets(long textureSampler) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDescriptorImageInfo.Buffer imageInfo = VkDescriptorImageInfo.callocStack(1, stack);
             imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -311,21 +308,21 @@ class Texture {
             String textureFilepath,
             boolean generateMipmaps) {
         this.device = device;
-        this.commandPool = commandPool;
-        this.graphicsQueue = graphicsQueue;
-        this.textureSampler = textureSampler;
-        this.numSwapchainImages = numSwapchainImages;
-        this.descriptorSetLayout = descriptorSetLayout;
-        this.uniformBuffers = uniformBuffers;
 
         this.textureFilepath = textureFilepath;
         this.generateMipmaps = generateMipmaps;
 
-        this.createTextureImage();
+        //Create a texture image and a texture image view
+        this.createTextureImage(commandPool, graphicsQueue);
         this.createTextureImageView();
-        this.createDescriptorPool();
-        this.createDescriptorSets();
-        this.updateDescriptorSets();
+
+        //Create a descriptor pool and descriptor sets
+        descriptorPool = DescriptorPoolCreator.createDescriptorPool(device, numSwapchainImages);
+        descriptorSets = DescriptorSetsCreator.createDescriptorSets(
+                device, numSwapchainImages, descriptorPool, descriptorSetLayout, uniformBuffers);
+
+        //Update descriptor sets
+        this.updateDescriptorSets(textureSampler);
     }
 
     public void cleanup() {

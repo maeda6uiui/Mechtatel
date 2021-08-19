@@ -184,13 +184,8 @@ public class MttVulkanInstance {
         model = new Model(
                 device,
                 commandPool,
-                renderPass,
-                swapchainExtent,
-                swapchainFramebuffers,
-                graphicsPipeline,
                 graphicsQueue,
                 textureSampler,
-                pipelineLayout,
                 swapchainImages.size(),
                 descriptorSetLayout,
                 uniformBuffers,
@@ -249,7 +244,14 @@ public class MttVulkanInstance {
 
     //This is a test method for development
     public void draw() {
-        List<VkCommandBuffer> commandBuffers = model.draw();
+        List<VkCommandBuffer> commandBuffers = model.draw(
+                commandPool,
+                swapchainImages.size(),
+                renderPass,
+                swapchainExtent,
+                swapchainFramebuffers,
+                graphicsPipeline,
+                pipelineLayout);
 
         Frame thisFrame = inFlightFrames.get(currentFrame);
         FrameUtils.drawFrame(

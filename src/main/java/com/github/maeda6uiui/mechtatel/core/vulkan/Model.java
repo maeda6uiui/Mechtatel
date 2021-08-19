@@ -1,12 +1,10 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
-import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.nio.LongBuffer;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,17 +18,6 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 class Model {
     private VkDevice device;
-    private long commandPool;
-    private long renderPass;
-    private VkExtent2D swapchainExtent;
-    private List<Long> swapchainFramebuffers;
-    private long graphicsPipeline;
-    private VkQueue graphicsQueue;
-    private long textureSampler;
-    private long pipelineLayout;
-    private int numSwapchainImages;
-    private long descriptorSetLayout;
-    private List<Long> uniformBuffers;
 
     private String modelFilepath;
 
@@ -42,7 +29,13 @@ class Model {
     private Map<Integer, Long> indexBuffers;
     private Map<Integer, Long> indexBufferMemories;
 
-    private void loadTextures() {
+    private void loadTextures(
+            long commandPool,
+            VkQueue graphicsQueue,
+            long textureSampler,
+            int numSwapchainImages,
+            long descriptorSetLayout,
+            List<Long> uniformBuffers) {
         String modelDir = Paths.get(modelFilepath).getParent().toString();
 
         Map<Integer, ModelLoader.Material> materials = model.materials;
@@ -71,7 +64,9 @@ class Model {
         }
     }
 
-    private void createBuffers() {
+    private void createBuffers(
+            long commandPool,
+            VkQueue graphicsQueue) {
         int numMeshes = model.meshes.size();
 
         //Create buffers
@@ -96,35 +91,19 @@ class Model {
     public Model(
             VkDevice device,
             long commandPool,
-            long renderPass,
-            VkExtent2D swapchainExtent,
-            List<Long> swapchainFramebuffers,
-            long graphicsPipeline,
             VkQueue graphicsQueue,
             long textureSampler,
-            long pipelineLayout,
             int numSwapchainImages,
             long descriptorSetLayout,
             List<Long> uniformBuffers,
             String modelFilepath) {
         this.device = device;
-        this.commandPool = commandPool;
-        this.renderPass = renderPass;
-        this.swapchainExtent = swapchainExtent;
-        this.swapchainFramebuffers = swapchainFramebuffers;
-        this.graphicsPipeline = graphicsPipeline;
-        this.graphicsQueue = graphicsQueue;
-        this.textureSampler = textureSampler;
-        this.pipelineLayout = pipelineLayout;
-        this.numSwapchainImages = numSwapchainImages;
-        this.descriptorSetLayout = descriptorSetLayout;
-        this.uniformBuffers = uniformBuffers;
 
         this.modelFilepath = modelFilepath;
 
         model = ModelLoader.loadModel(modelFilepath);
-        this.loadTextures();
-        this.createBuffers();
+        this.loadTextures(commandPool, graphicsQueue, textureSampler, numSwapchainImages, descriptorSetLayout, uniformBuffers);
+        this.createBuffers(commandPool, graphicsQueue);
     }
 
     public void cleanup() {
@@ -140,25 +119,17 @@ class Model {
         indexBufferMemories.forEach((idx, indexBufferMemory) -> vkFreeMemory(device, indexBufferMemory, null));
     }
 
-    public List<VkCommandBuffer> draw() {
-        final int commandBuffersCount = swapchainFramebuffers.size();
-        var commandBuffers = new ArrayList<VkCommandBuffer>(commandBuffersCount);
-
+    public List<VkCommandBuffer> draw(
+            long commandPool,
+            int numSwapchainImages,
+            long renderPass,
+            VkExtent2D swapchainExtent,
+            List<Long> swapchainFramebuffers,
+            long graphicsPipeline,
+            long pipelineLayout) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkCommandBufferAllocateInfo allocInfo = VkCommandBufferAllocateInfo.callocStack(stack);
-            allocInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO);
-            allocInfo.level(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-            allocInfo.commandPool(commandPool);
-            allocInfo.commandBufferCount(commandBuffersCount);
-
-            PointerBuffer pCommandBuffers = stack.mallocPointer(commandBuffersCount);
-            if (vkAllocateCommandBuffers(device, allocInfo, pCommandBuffers) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to allocate command buffers");
-            }
-
-            for (int i = 0; i < commandBuffersCount; i++) {
-                commandBuffers.add(new VkCommandBuffer(pCommandBuffers.get(i), device));
-            }
+            List<VkCommandBuffer> commandBuffers
+                    = CommandBufferUtils.createCommandBuffers(device, commandPool, numSwapchainImages);
 
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
@@ -175,7 +146,7 @@ class Model {
             clearValues.get(1).depthStencil().set(1.0f, 0);
             renderPassInfo.pClearValues(clearValues);
 
-            for (int i = 0; i < commandBuffersCount; i++) {
+            for (int i = 0; i < commandBuffers.size(); i++) {
                 VkCommandBuffer commandBuffer = commandBuffers.get(i);
                 if (vkBeginCommandBuffer(commandBuffer, beginInfo) != VK_SUCCESS) {
                     throw new RuntimeException("Failed to begin recording a command buffer");

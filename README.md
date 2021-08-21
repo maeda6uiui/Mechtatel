@@ -25,6 +25,49 @@ OpenGLとVulkanの抽象化をいい感じで提供できればOpenGLにも対�
 
 ## 報告
 
+### 2021-08-21
+
+複数のモデルを表示することができました。
+
+<img src="./Image/two_cubes.jpg" alt="Two cubes" style="zoom:50%;" />
+
+このあたりで一度立ち止まって、仕様書の作成に戻りたいと思います。
+
+### 2021-08-18
+
+3Dモデル(Utah Teapot)を表示できました。
+これで[チュートリアル](https://github.com/Naitsirc98/Vulkan-Tutorial-Java)の内容を一通り実装したことになります。
+このチュートリアルなしではここまでたどり着けなかったので、感謝しかないです。
+
+<img src="./Image/teapot.jpg" alt="Utah Teapot" style="zoom:50%;" />
+
+ところで、複数のテクスチャを表示する方法がわかりません。
+自分が変な操作をしているのが原因なのは明確ですが、Validation Errorが出ます。
+複数のテクスチャを使用するモデルを表示したいので、この点に関して調べる必要がありますね。
+
+#### 追記
+
+複数のテクスチャを使用するモデルを表示できました。
+
+<img src="./Image/cube.jpg" alt="Cube" style="zoom:50%;" />
+
+テクスチャごとにDescriptor Setを作成するという手法を取りましたが、これが正しいのかどうかはよくわかりません。
+
+### 2021-08-14
+
+テクスチャを表示できました。
+
+<img src="./Image/lenna.jpg" alt="Lenna" style="zoom:50%;" />
+
+現状、Vulkan関連のコードはほとんど[ここ](https://github.com/Naitsirc98/Vulkan-Tutorial-Java)からコピーしている感じです。
+一つのクラスに全部のコードを入れたくないので、可能な限り細かく複数のクラスに分けています。
+
+### 2021-08-09
+
+ようやく三角形を描画するところまで来ました。
+
+<img src="./Image/triangle.jpg" alt="三角形" style="zoom:50%;" />
+
 ### 2021-07-18
 
 雑な仕様書を作成しています。

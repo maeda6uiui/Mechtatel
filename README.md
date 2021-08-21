@@ -25,6 +25,12 @@ OpenGLとVulkanの抽象化をいい感じで提供できればOpenGLにも対�
 
 ## 報告
 
+### 2021-08-21
+
+複数のモデルを表示することができました。
+
+<img src="./Image/two_cubes.jpg" alt="Two cubes" style="zoom:50%;" />
+
 ### 2021-08-18
 
 3Dモデル(Utah Teapot)を表示できました。

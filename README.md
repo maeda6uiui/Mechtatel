@@ -31,6 +31,8 @@ OpenGLとVulkanの抽象化をいい感じで提供できればOpenGLにも対�
 
 <img src="./Image/two_cubes.jpg" alt="Two cubes" style="zoom:50%;" />
 
+このあたりで一度立ち止まって、仕様書の作成に戻りたいと思います。
+
 ### 2021-08-18
 
 3Dモデル(Utah Teapot)を表示できました。

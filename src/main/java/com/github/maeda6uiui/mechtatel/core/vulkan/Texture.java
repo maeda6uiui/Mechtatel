@@ -333,14 +333,14 @@ class Texture {
         vkDestroyDescriptorPool(device, descriptorPool, null);
     }
 
-    public void bindDescriptorSets(VkCommandBuffer commandBuffer, long pipelineLayout, int index) {
+    public void bindDescriptorSets(VkCommandBuffer commandBuffer, int commandBufferIndex, long pipelineLayout) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             vkCmdBindDescriptorSets(
                     commandBuffer,
                     VK_PIPELINE_BIND_POINT_GRAPHICS,
                     pipelineLayout,
                     0,
-                    stack.longs(descriptorSets.get(index)),
+                    stack.longs(descriptorSets.get(commandBufferIndex)),
                     null);
         }
     }

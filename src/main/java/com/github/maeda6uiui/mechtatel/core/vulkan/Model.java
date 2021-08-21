@@ -1,7 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.vulkan.*;
+import org.lwjgl.vulkan.VkCommandBuffer;
+import org.lwjgl.vulkan.VkDevice;
+import org.lwjgl.vulkan.VkQueue;
 
 import java.nio.LongBuffer;
 import java.nio.file.Paths;
@@ -120,66 +122,30 @@ class Model {
     }
 
     public void draw(
-            List<VkCommandBuffer> commandBuffers,
-            long renderPass,
-            VkExtent2D swapchainExtent,
-            List<Long> swapchainFramebuffers,
-            long graphicsPipeline,
+            VkCommandBuffer commandBuffer,
+            int commandBufferIndex,
             long pipelineLayout) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
-            beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
+            int numMeshes = model.meshes.size();
+            for (int i = 0; i < numMeshes; i++) {
+                Texture texture = textures.get(model.meshes.get(i).materialIndex);
+                texture.bindDescriptorSets(commandBuffer, commandBufferIndex, pipelineLayout);
 
-            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
-            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
-            renderPassInfo.renderPass(renderPass);
-            VkRect2D renderArea = VkRect2D.callocStack(stack);
-            renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
-            renderArea.extent(swapchainExtent);
-            renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.callocStack(2, stack);
-            clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
-            clearValues.get(1).depthStencil().set(1.0f, 0);
-            renderPassInfo.pClearValues(clearValues);
+                LongBuffer lVertexBuffers = stack.longs(vertexBuffers.get(i));
+                LongBuffer offsets = stack.longs(0);
+                vkCmdBindVertexBuffers(commandBuffer, 0, lVertexBuffers, offsets);
 
-            for (int i = 0; i < commandBuffers.size(); i++) {
-                VkCommandBuffer commandBuffer = commandBuffers.get(i);
-                if (vkBeginCommandBuffer(commandBuffer, beginInfo) != VK_SUCCESS) {
-                    throw new RuntimeException("Failed to begin recording a command buffer");
-                }
+                vkCmdBindIndexBuffer(commandBuffer, indexBuffers.get(i), 0, VK_INDEX_TYPE_UINT32);
 
-                renderPassInfo.framebuffer(swapchainFramebuffers.get(i));
-
-                vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-                {
-                    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
-
-                    int numMeshes = model.meshes.size();
-                    for (int j = 0; j < numMeshes; j++) {
-                        Texture texture = textures.get(model.meshes.get(j).materialIndex);
-                        texture.bindDescriptorSets(commandBuffer, pipelineLayout, i);
-
-                        LongBuffer lVertexBuffers = stack.longs(vertexBuffers.get(j));
-                        LongBuffer offsets = stack.longs(0);
-                        vkCmdBindVertexBuffers(commandBuffer, 0, lVertexBuffers, offsets);
-
-                        vkCmdBindIndexBuffer(commandBuffer, indexBuffers.get(j), 0, VK_INDEX_TYPE_UINT32);
-
-                        vkCmdDrawIndexed(
-                                commandBuffer,
-                                model.meshes.get(j).indices.size(),
-                                1,
-                                0,
-                                0,
-                                0);
-                    }
-                }
-                vkCmdEndRenderPass(commandBuffer);
-
-                if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-                    throw new RuntimeException("Failed to record a command buffer");
-                }
+                vkCmdDrawIndexed(
+                        commandBuffer,
+                        model.meshes.get(i).indices.size(),
+                        1,
+                        0,
+                        0,
+                        0);
             }
         }
     }
 }
+

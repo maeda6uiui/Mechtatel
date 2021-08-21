@@ -242,32 +242,61 @@ public class MttVulkanInstance {
         vkDestroyInstance(instance, null);
     }
 
-    //This is a test method for development
     public void draw() {
-        List<VkCommandBuffer> commandBuffers
-                = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchainImages.size());
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            List<VkCommandBuffer> commandBuffers
+                    = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchainImages.size());
 
-        model.draw(
-                commandBuffers,
-                renderPass,
-                swapchainExtent,
-                swapchainFramebuffers,
-                graphicsPipeline,
-                pipelineLayout);
+            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
+            beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
 
-        Frame thisFrame = inFlightFrames.get(currentFrame);
-        FrameUtils.drawFrame(
-                device,
-                thisFrame,
-                swapchain,
-                swapchainExtent,
-                imagesInFlight,
-                commandBuffers,
-                graphicsQueue,
-                presentQueue,
-                uniformBufferMemories);
-        currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
+            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
+            renderPassInfo.renderPass(renderPass);
+            VkRect2D renderArea = VkRect2D.callocStack(stack);
+            renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
+            renderArea.extent(swapchainExtent);
+            renderPassInfo.renderArea(renderArea);
+            VkClearValue.Buffer clearValues = VkClearValue.callocStack(2, stack);
+            clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
+            clearValues.get(1).depthStencil().set(1.0f, 0);
+            renderPassInfo.pClearValues(clearValues);
 
-        vkDeviceWaitIdle(device);
+            for (int i = 0; i < commandBuffers.size(); i++) {
+                VkCommandBuffer commandBuffer = commandBuffers.get(i);
+                if (vkBeginCommandBuffer(commandBuffer, beginInfo) != VK_SUCCESS) {
+                    throw new RuntimeException("Failed to begin recording a command buffer");
+                }
+
+                renderPassInfo.framebuffer(swapchainFramebuffers.get(i));
+
+                vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+                {
+                    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+
+                    model.draw(commandBuffer, i, pipelineLayout);
+                }
+                vkCmdEndRenderPass(commandBuffer);
+
+                if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
+                    throw new RuntimeException("Failed to record a command buffer");
+                }
+            }
+
+            Frame thisFrame = inFlightFrames.get(currentFrame);
+            FrameUtils.drawFrame(
+                    device,
+                    thisFrame,
+                    swapchain,
+                    swapchainExtent,
+                    imagesInFlight,
+                    commandBuffers,
+                    graphicsQueue,
+                    presentQueue,
+                    uniformBufferMemories);
+            currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+
+            vkDeviceWaitIdle(device);
+        }
     }
 }

@@ -244,9 +244,11 @@ public class MttVulkanInstance {
 
     //This is a test method for development
     public void draw() {
-        List<VkCommandBuffer> commandBuffers = model.draw(
-                commandPool,
-                swapchainImages.size(),
+        List<VkCommandBuffer> commandBuffers
+                = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchainImages.size());
+
+        model.draw(
+                commandBuffers,
                 renderPass,
                 swapchainExtent,
                 swapchainFramebuffers,

@@ -119,18 +119,14 @@ class Model {
         indexBufferMemories.forEach((idx, indexBufferMemory) -> vkFreeMemory(device, indexBufferMemory, null));
     }
 
-    public List<VkCommandBuffer> draw(
-            long commandPool,
-            int numSwapchainImages,
+    public void draw(
+            List<VkCommandBuffer> commandBuffers,
             long renderPass,
             VkExtent2D swapchainExtent,
             List<Long> swapchainFramebuffers,
             long graphicsPipeline,
             long pipelineLayout) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            List<VkCommandBuffer> commandBuffers
-                    = CommandBufferUtils.createCommandBuffers(device, commandPool, numSwapchainImages);
-
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
 
@@ -184,8 +180,6 @@ class Model {
                     throw new RuntimeException("Failed to record a command buffer");
                 }
             }
-
-            return commandBuffers;
         }
     }
 }

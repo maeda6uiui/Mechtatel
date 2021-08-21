@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
+import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
+import static org.lwjgl.glfw.GLFW.glfwWaitEvents;
 import static org.lwjgl.vulkan.KHRSurface.vkDestroySurfaceKHR;
 import static org.lwjgl.vulkan.KHRSwapchain.vkDestroySwapchainKHR;
 import static org.lwjgl.vulkan.VK10.*;
@@ -26,6 +27,8 @@ public class MttVulkanInstance {
 
     private boolean enableValidationLayer;
     private long debugMessenger;
+
+    private int msaaSamples;
 
     private VkPhysicalDevice physicalDevice;
 
@@ -70,6 +73,65 @@ public class MttVulkanInstance {
     private Model model;
     private Model model2;
 
+    private void createSwapchainObjects() {
+        //Create a swapchain
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer width = stack.ints(0);
+            IntBuffer height = stack.ints(0);
+            glfwGetFramebufferSize(window, width, height);
+
+            SwapchainUtils.SwapchainRelatingData swapchainRelatingData
+                    = SwapchainUtils.createSwapchain(device, surface, width.get(0), height.get(0));
+            swapchain = swapchainRelatingData.swapchain;
+            swapchainImages = swapchainRelatingData.swapchainImages;
+            swapchainImageFormat = swapchainRelatingData.swapchainImageFormat;
+            swapchainExtent = swapchainRelatingData.swapchainExtent;
+        }
+
+        //Create image views
+        swapchainImageViews = SwapchainUtils.createSwapchainImageViews(device, swapchainImages, swapchainImageFormat);
+
+        //Create a render pass
+        renderPass = RenderpassCreator.createRenderPass(device, swapchainImageFormat, msaaSamples);
+
+        //Create color resources
+        ColorResourceCreator.ColorResources colorResources = ColorResourceCreator.createColorResources(
+                device,
+                commandPool,
+                graphicsQueue,
+                swapchainExtent,
+                msaaSamples,
+                swapchainImageFormat);
+        colorImage = colorResources.colorImage;
+        colorImageMemory = colorResources.colorImageMemory;
+        colorImageView = colorResources.colorImageView;
+
+        //Create a graphics pipeline
+        GraphicsPipelineCreator.GraphicsPipelineInfo graphicsPipelineInfo = GraphicsPipelineCreator.createGraphicsPipeline(
+                device,
+                swapchainExtent,
+                renderPass,
+                Vertex3DUV.getBindingDescription(),
+                Vertex3DUV.getAttributeDescriptions(),
+                descriptorSetLayout,
+                msaaSamples,
+                "./Mechtatel/Shader/Test/5.vert",
+                "./Mechtatel/Shader/Test/5.frag");
+        pipelineLayout = graphicsPipelineInfo.pipelineLayout;
+        graphicsPipeline = graphicsPipelineInfo.graphicsPipeline;
+
+        //Create depth resources
+        DepthResourceUtils.DepthResources depthResources
+                = DepthResourceUtils.createDepthResources(device, commandPool, graphicsQueue, swapchainExtent, msaaSamples);
+        depthImage = depthResources.depthImage;
+        depthImageMemory = depthResources.depthImageMemory;
+        depthImageView = depthResources.depthImageView;
+
+        //Create swapchain framebuffers
+        swapchainFramebuffers = FramebufferCreator.createFramebuffers(
+                device, swapchainImageViews, colorImageView, depthImageView, renderPass, swapchainExtent);
+    }
+
     public MttVulkanInstance(boolean enableValidationLayer, long window, int msaaSamples) {
         //Load the Shaderc library
         System.setProperty("java.library.path", "./Mechtatel/Bin");
@@ -99,84 +161,30 @@ public class MttVulkanInstance {
         graphicsQueue = deviceAndQueues.graphicsQueue;
         presentQueue = deviceAndQueues.presentQueue;
 
-        //Create a swapchain
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer pWindowWidth = stack.ints(0);
-            IntBuffer pWindowHeight = stack.ints(0);
-            glfwGetWindowSize(window, pWindowWidth, pWindowHeight);
-
-            SwapchainUtils.SwapchainRelatingData swapchainRelatingData
-                    = SwapchainUtils.createSwapchain(device, surface, pWindowWidth.get(0), pWindowHeight.get(0));
-            swapchain = swapchainRelatingData.swapchain;
-            swapchainImages = swapchainRelatingData.swapchainImages;
-            swapchainImageFormat = swapchainRelatingData.swapchainImageFormat;
-            swapchainExtent = swapchainRelatingData.swapchainExtent;
-        }
-
-        //Create image views
-        swapchainImageViews = SwapchainUtils.createSwapchainImageViews(device, swapchainImages, swapchainImageFormat);
+        //Get the MSAA sample count
+        this.msaaSamples = msaaSamples < 0 ? MultisamplingUtils.getMaxUsableSampleCount(device) : msaaSamples;
 
         //Create a command pool
         commandPool = CommandPoolCreator.createCommandPool(device, surface);
 
-        //Create color resources
-        if (msaaSamples < 0) {
-            msaaSamples = MultisamplingUtils.getMaxUsableSampleCount(device);
-        }
-        ColorResourceCreator.ColorResources colorResources = ColorResourceCreator.createColorResources(
-                device,
-                commandPool,
-                graphicsQueue,
-                swapchainExtent,
-                msaaSamples,
-                swapchainImageFormat);
-        colorImage = colorResources.colorImage;
-        colorImageMemory = colorResources.colorImageMemory;
-        colorImageView = colorResources.colorImageView;
-
-        //Create a render pass
-        renderPass = RenderpassCreator.createRenderPass(device, swapchainImageFormat, msaaSamples);
-
         //Create a descriptor set layout
         descriptorSetLayout = DescriptorSetLayoutCreator.createDescriptorSetLayout(device);
 
-        //Create a graphics pipeline
-        GraphicsPipelineCreator.GraphicsPipelineInfo graphicsPipelineInfo = GraphicsPipelineCreator.createGraphicsPipeline(
-                device,
-                swapchainExtent,
-                renderPass,
-                Vertex3DUV.getBindingDescription(),
-                Vertex3DUV.getAttributeDescriptions(),
-                descriptorSetLayout,
-                msaaSamples,
-                "./Mechtatel/Shader/Test/5.vert",
-                "./Mechtatel/Shader/Test/5.frag");
-        pipelineLayout = graphicsPipelineInfo.pipelineLayout;
-        graphicsPipeline = graphicsPipelineInfo.graphicsPipeline;
+        //Create swapchain objects
+        this.createSwapchainObjects();
 
-        //Create depth resources
-        DepthResourceUtils.DepthResources depthResources
-                = DepthResourceUtils.createDepthResources(device, commandPool, graphicsQueue, swapchainExtent, msaaSamples);
-        depthImage = depthResources.depthImage;
-        depthImageMemory = depthResources.depthImageMemory;
-        depthImageView = depthResources.depthImageView;
-
-        //Create framebuffers
-        swapchainFramebuffers = FramebufferCreator.createFramebuffers(
-                device, swapchainImageViews, colorImageView, depthImageView, renderPass, swapchainExtent);
+        //Create sync objects
+        inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
+        imagesInFlight = new HashMap<>(swapchainImages.size());
 
         //Create uniform buffers and uniform buffer memories
-        List<BufferCreator.BufferInfo> uniformBufferInfos = BufferCreator.createUniformBuffers(device, swapchainImages.size());
+        List<BufferCreator.BufferInfo> uniformBufferInfos = BufferCreator.createCameraUBOBuffers(device, swapchainImages.size());
         uniformBuffers = new ArrayList<>();
         uniformBufferMemories = new ArrayList<>();
         for (var uniformBufferInfo : uniformBufferInfos) {
             uniformBuffers.add(uniformBufferInfo.buffer);
             uniformBufferMemories.add(uniformBufferInfo.bufferMemory);
         }
-
-        //Create sync objects
-        inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
-        imagesInFlight = new HashMap<>(swapchainImages.size());
 
         //Create a texture sampler
         textureSampler = TextureSamplerCreator.createTextureSampler(device);
@@ -202,21 +210,35 @@ public class MttVulkanInstance {
                 "./Mechtatel/Model/Cube/cube2.obj");
     }
 
-    public void cleanup() {
-        model.cleanup();
-        model2.cleanup();
-
-        vkDestroyImageView(device, colorImageView, null);
-        vkDestroyImage(device, colorImage, null);
-        vkFreeMemory(device, colorImageMemory, null);
+    private void cleanupSwapchain() {
+        swapchainFramebuffers.forEach(framebuffer -> vkDestroyFramebuffer(device, framebuffer, null));
 
         vkDestroyImageView(device, depthImageView, null);
         vkDestroyImage(device, depthImage, null);
         vkFreeMemory(device, depthImageMemory, null);
 
+        vkDestroyPipeline(device, graphicsPipeline, null);
+        vkDestroyPipelineLayout(device, pipelineLayout, null);
+
+        vkDestroyImageView(device, colorImageView, null);
+        vkDestroyImage(device, colorImage, null);
+        vkFreeMemory(device, colorImageMemory, null);
+
+        vkDestroyRenderPass(device, renderPass, null);
+
+        swapchainImageViews.forEach(imageView -> vkDestroyImageView(device, imageView, null));
+
+        vkDestroySwapchainKHR(device, swapchain, null);
+    }
+
+    public void cleanup() {
+        model.cleanup();
+        model2.cleanup();
+
         vkDestroySampler(device, textureSampler, null);
 
-        vkDestroyDescriptorSetLayout(device, descriptorSetLayout, null);
+        uniformBuffers.forEach(ubo -> vkDestroyBuffer(device, ubo, null));
+        uniformBufferMemories.forEach(uboMemory -> vkFreeMemory(device, uboMemory, null));
 
         inFlightFrames.forEach(frame -> {
             vkDestroySemaphore(device, frame.renderFinishedSemaphore(), null);
@@ -225,22 +247,11 @@ public class MttVulkanInstance {
         });
         imagesInFlight.clear();
 
+        this.cleanupSwapchain();
+
+        vkDestroyDescriptorSetLayout(device, descriptorSetLayout, null);
+
         vkDestroyCommandPool(device, commandPool, null);
-
-        uniformBuffers.forEach(ubo -> vkDestroyBuffer(device, ubo, null));
-        uniformBufferMemories.forEach(uboMemory -> vkFreeMemory(device, uboMemory, null));
-
-        swapchainFramebuffers.forEach(framebuffer -> vkDestroyFramebuffer(device, framebuffer, null));
-
-        vkDestroyPipeline(device, graphicsPipeline, null);
-
-        vkDestroyPipelineLayout(device, pipelineLayout, null);
-
-        vkDestroyRenderPass(device, renderPass, null);
-
-        swapchainImageViews.forEach(imageView -> vkDestroyImageView(device, imageView, null));
-
-        vkDestroySwapchainKHR(device, swapchain, null);
 
         vkDestroyDevice(device, null);
 
@@ -253,11 +264,25 @@ public class MttVulkanInstance {
         vkDestroyInstance(instance, null);
     }
 
+    public void recreateSwapchain() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer width = stack.ints(0);
+            IntBuffer height = stack.ints(0);
+
+            while (width.get(0) == 0 && height.get(0) == 0) {
+                glfwGetFramebufferSize(window, width, height);
+                glfwWaitEvents();
+            }
+        }
+
+        vkDeviceWaitIdle(device);
+
+        this.cleanupSwapchain();
+        this.createSwapchainObjects();
+    }
+
     public void draw() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            List<VkCommandBuffer> commandBuffers
-                    = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchainImages.size());
-
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
 
@@ -272,6 +297,9 @@ public class MttVulkanInstance {
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
             clearValues.get(1).depthStencil().set(1.0f, 0);
             renderPassInfo.pClearValues(clearValues);
+
+            var commandBuffers
+                    = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchainImages.size());
 
             for (int i = 0; i < commandBuffers.size(); i++) {
                 VkCommandBuffer commandBuffer = commandBuffers.get(i);
@@ -296,7 +324,7 @@ public class MttVulkanInstance {
             }
 
             Frame thisFrame = inFlightFrames.get(currentFrame);
-            FrameUtils.drawFrame(
+            int result = FrameUtils.drawFrame(
                     device,
                     thisFrame,
                     swapchain,
@@ -306,9 +334,15 @@ public class MttVulkanInstance {
                     graphicsQueue,
                     presentQueue,
                     uniformBufferMemories);
+            if (result < 0) {
+                this.recreateSwapchain();
+            }
+
             currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 
             vkDeviceWaitIdle(device);
+
+            vkFreeCommandBuffers(device, commandPool, PointerBufferUtils.asPointerBuffer(commandBuffers));
         }
     }
 }

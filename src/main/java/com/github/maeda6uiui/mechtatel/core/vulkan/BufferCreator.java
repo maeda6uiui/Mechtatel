@@ -352,7 +352,7 @@ class BufferCreator {
         }
     }
 
-    public static List<BufferInfo> createUniformBuffers(VkDevice device, int numSwapchainImages) {
+    public static List<BufferInfo> createCameraUBOBuffers(VkDevice device, int numSwapchainImages) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             var ret = new ArrayList<BufferInfo>(numSwapchainImages);
 

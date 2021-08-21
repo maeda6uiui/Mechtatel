@@ -20,6 +20,10 @@ class MttInstance {
 
     private void framebufferResizeCallback(long window, int width, int height) {
         mtt.reshape(width, height);
+
+        if (vulkanInstance != null) {
+            vulkanInstance.recreateSwapchain();
+        }
     }
 
     public MttInstance(

@@ -17,8 +17,10 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void reshape(int width, int height) {
+        /*
         String text = String.format("reshape: (%d, %d)", width, height);
         System.out.println(text);
+         */
     }
 
     @Override

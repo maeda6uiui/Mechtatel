@@ -57,7 +57,7 @@ class FrameUtils {
         }
     }
 
-    public static void drawFrame(
+    public static int drawFrame(
             VkDevice device,
             Frame thisFrame,
             long swapchain,
@@ -71,7 +71,12 @@ class FrameUtils {
             vkWaitForFences(device, thisFrame.pFence(), true, UINT64_MAX);
 
             IntBuffer pImageIndex = stack.mallocInt(1);
-            vkAcquireNextImageKHR(device, swapchain, UINT64_MAX, thisFrame.imageAvailableSemaphore(), VK_NULL_HANDLE, pImageIndex);
+            int vkResult = vkAcquireNextImageKHR(
+                    device, swapchain, UINT64_MAX, thisFrame.imageAvailableSemaphore(), VK_NULL_HANDLE, pImageIndex);
+            if (vkResult == VK_ERROR_OUT_OF_DATE_KHR) {
+                return -1;
+            }
+
             final int imageIndex = pImageIndex.get(0);
 
             updateUniformBuffer(device, swapchainExtent, uniformBufferMemories, imageIndex);
@@ -103,7 +108,14 @@ class FrameUtils {
             presentInfo.pSwapchains(stack.longs(swapchain));
             presentInfo.pImageIndices(pImageIndex);
 
-            vkQueuePresentKHR(presentQueue, presentInfo);
+            vkResult = vkQueuePresentKHR(presentQueue, presentInfo);
+            if (vkResult == VK_ERROR_OUT_OF_DATE_KHR || vkResult == VK_SUBOPTIMAL_KHR) {
+                return -1;
+            } else if (vkResult != VK_SUCCESS) {
+                throw new RuntimeException("Failed to present a swapchain image");
+            }
+
+            return 0;
         }
     }
 }

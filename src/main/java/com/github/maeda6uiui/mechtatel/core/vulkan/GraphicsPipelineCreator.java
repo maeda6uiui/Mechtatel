@@ -18,6 +18,9 @@ class GraphicsPipelineCreator {
     public static class GraphicsPipelineInfo {
         public long pipelineLayout;
         public long graphicsPipeline;
+
+        public long vertShaderModule;
+        public long fragShaderModule;
     }
 
     private static long createShaderModule(VkDevice device, ByteBuffer spirvCode) {
@@ -35,7 +38,7 @@ class GraphicsPipelineCreator {
         }
     }
 
-    public static GraphicsPipelineInfo createGraphicsPipeline(
+    private static GraphicsPipelineInfo innerCreateGraphicsPipeline(
             VkDevice device,
             VkExtent2D swapchainExtent,
             long renderPass,
@@ -43,21 +46,9 @@ class GraphicsPipelineCreator {
             VkVertexInputAttributeDescription.Buffer attributeDescriptions,
             long descriptorSetLayout,
             int msaaSamples,
-            String vertShaderFilepath,
-            String fragShaderFilepath) {
+            long vertShaderModule,
+            long fragShaderModule) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
-            ShaderSPIRVUtils.SPIRV fragShaderSPIRV;
-            try {
-                vertShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(vertShaderFilepath, ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER);
-                fragShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(fragShaderFilepath, ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            long vertShaderModule = createShaderModule(device, vertShaderSPIRV.bytecode());
-            long fragShaderModule = createShaderModule(device, fragShaderSPIRV.bytecode());
-
             ByteBuffer entryPoint = stack.UTF8("main");
 
             VkPipelineShaderStageCreateInfo.Buffer shaderStages = VkPipelineShaderStageCreateInfo.callocStack(2, stack);
@@ -187,15 +178,75 @@ class GraphicsPipelineCreator {
             var ret = new GraphicsPipelineInfo();
             ret.pipelineLayout = pipelineLayout;
             ret.graphicsPipeline = graphicsPipeline;
-
-            //Release resources
-            vkDestroyShaderModule(device, vertShaderModule, null);
-            vkDestroyShaderModule(device, fragShaderModule, null);
-
-            vertShaderSPIRV.free();
-            fragShaderSPIRV.free();
+            ret.vertShaderModule = vertShaderModule;
+            ret.fragShaderModule = fragShaderModule;
 
             return ret;
         }
+    }
+
+    public static GraphicsPipelineInfo createGraphicsPipeline(
+            VkDevice device,
+            VkExtent2D swapchainExtent,
+            long renderPass,
+            VkVertexInputBindingDescription.Buffer bindingDescription,
+            VkVertexInputAttributeDescription.Buffer attributeDescriptions,
+            long descriptorSetLayout,
+            int msaaSamples,
+            String vertShaderFilepath,
+            String fragShaderFilepath) {
+        ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
+        ShaderSPIRVUtils.SPIRV fragShaderSPIRV;
+        try {
+            vertShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(vertShaderFilepath, ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER);
+            fragShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(fragShaderFilepath, ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        long vertShaderModule = createShaderModule(device, vertShaderSPIRV.bytecode());
+        long fragShaderModule = createShaderModule(device, fragShaderSPIRV.bytecode());
+
+        GraphicsPipelineInfo graphicsPipelineInfo = innerCreateGraphicsPipeline(
+                device,
+                swapchainExtent,
+                renderPass,
+                bindingDescription,
+                attributeDescriptions,
+                descriptorSetLayout,
+                msaaSamples,
+                vertShaderModule,
+                fragShaderModule);
+
+        //Release resources
+        //vkDestroyShaderModule(device, vertShaderModule, null);
+        //vkDestroyShaderModule(device, fragShaderModule, null);
+
+        vertShaderSPIRV.free();
+        fragShaderSPIRV.free();
+
+        return graphicsPipelineInfo;
+    }
+
+    public static GraphicsPipelineInfo recreateGraphicsPipeline(
+            VkDevice device,
+            VkExtent2D swapchainExtent,
+            long renderPass,
+            VkVertexInputBindingDescription.Buffer bindingDescription,
+            VkVertexInputAttributeDescription.Buffer attributeDescriptions,
+            long descriptorSetLayout,
+            int msaaSamples,
+            long vertShaderModule,
+            long fragShaderModule) {
+        return innerCreateGraphicsPipeline(
+                device,
+                swapchainExtent,
+                renderPass,
+                bindingDescription,
+                attributeDescriptions,
+                descriptorSetLayout,
+                msaaSamples,
+                vertShaderModule,
+                fragShaderModule);
     }
 }

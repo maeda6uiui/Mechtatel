@@ -50,6 +50,8 @@ public class MttVulkanInstance {
     private long descriptorSetLayout;
     private long pipelineLayout;
     private long graphicsPipeline;
+    private long vertShaderModule;
+    private long fragShaderModule;
 
     private long commandPool;
 
@@ -73,7 +75,7 @@ public class MttVulkanInstance {
     private Model model;
     private Model model2;
 
-    private void createSwapchainObjects() {
+    private void createSwapchainObjects(boolean recreate) {
         //Create a swapchain
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer width = stack.ints(0);
@@ -107,18 +109,35 @@ public class MttVulkanInstance {
         colorImageView = colorResources.colorImageView;
 
         //Create a graphics pipeline
-        GraphicsPipelineCreator.GraphicsPipelineInfo graphicsPipelineInfo = GraphicsPipelineCreator.createGraphicsPipeline(
-                device,
-                swapchainExtent,
-                renderPass,
-                Vertex3DUV.getBindingDescription(),
-                Vertex3DUV.getAttributeDescriptions(),
-                descriptorSetLayout,
-                msaaSamples,
-                "./Mechtatel/Shader/Test/5.vert",
-                "./Mechtatel/Shader/Test/5.frag");
-        pipelineLayout = graphicsPipelineInfo.pipelineLayout;
-        graphicsPipeline = graphicsPipelineInfo.graphicsPipeline;
+        if (recreate) {
+            GraphicsPipelineCreator.GraphicsPipelineInfo graphicsPipelineInfo = GraphicsPipelineCreator.recreateGraphicsPipeline(
+                    device,
+                    swapchainExtent,
+                    renderPass,
+                    Vertex3DUV.getBindingDescription(),
+                    Vertex3DUV.getAttributeDescriptions(),
+                    descriptorSetLayout,
+                    msaaSamples,
+                    vertShaderModule,
+                    fragShaderModule);
+            pipelineLayout = graphicsPipelineInfo.pipelineLayout;
+            graphicsPipeline = graphicsPipelineInfo.graphicsPipeline;
+        } else {
+            GraphicsPipelineCreator.GraphicsPipelineInfo graphicsPipelineInfo = GraphicsPipelineCreator.createGraphicsPipeline(
+                    device,
+                    swapchainExtent,
+                    renderPass,
+                    Vertex3DUV.getBindingDescription(),
+                    Vertex3DUV.getAttributeDescriptions(),
+                    descriptorSetLayout,
+                    msaaSamples,
+                    "./Mechtatel/Shader/Test/5.vert",
+                    "./Mechtatel/Shader/Test/5.frag");
+            pipelineLayout = graphicsPipelineInfo.pipelineLayout;
+            graphicsPipeline = graphicsPipelineInfo.graphicsPipeline;
+            vertShaderModule = graphicsPipelineInfo.vertShaderModule;
+            fragShaderModule = graphicsPipelineInfo.fragShaderModule;
+        }
 
         //Create depth resources
         DepthResourceUtils.DepthResources depthResources
@@ -171,7 +190,7 @@ public class MttVulkanInstance {
         descriptorSetLayout = DescriptorSetLayoutCreator.createDescriptorSetLayout(device);
 
         //Create swapchain objects
-        this.createSwapchainObjects();
+        this.createSwapchainObjects(false);
 
         //Create sync objects
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
@@ -249,6 +268,9 @@ public class MttVulkanInstance {
 
         this.cleanupSwapchain();
 
+        vkDestroyShaderModule(device, vertShaderModule, null);
+        vkDestroyShaderModule(device, fragShaderModule, null);
+
         vkDestroyDescriptorSetLayout(device, descriptorSetLayout, null);
 
         vkDestroyCommandPool(device, commandPool, null);
@@ -278,7 +300,7 @@ public class MttVulkanInstance {
         vkDeviceWaitIdle(device);
 
         this.cleanupSwapchain();
-        this.createSwapchainObjects();
+        this.createSwapchainObjects(true);
     }
 
     public void draw() {

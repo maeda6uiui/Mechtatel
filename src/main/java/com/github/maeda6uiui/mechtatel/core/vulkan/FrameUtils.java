@@ -21,7 +21,7 @@ import static org.lwjgl.vulkan.VK10.*;
 class FrameUtils {
     private static final long UINT64_MAX = 0xFFFFFFFFFFFFFFFFL;
 
-    private static void memcpyUBO(ByteBuffer buffer, CameraUBO ubo) {
+    private static void memcpyCameraUBO(ByteBuffer buffer, CameraUBO ubo) {
         final int mat4size = 16 * Float.BYTES;
 
         ubo.model.get(0, buffer);
@@ -51,7 +51,7 @@ class FrameUtils {
             PointerBuffer data = stack.mallocPointer(1);
             vkMapMemory(device, uniformBufferMemories.get(currentImage), 0, CameraUBO.SIZEOF, 0, data);
             {
-                memcpyUBO(data.getByteBuffer(0, CameraUBO.SIZEOF), ubo);
+                memcpyCameraUBO(data.getByteBuffer(0, CameraUBO.SIZEOF), ubo);
             }
             vkUnmapMemory(device, uniformBufferMemories.get(currentImage));
         }

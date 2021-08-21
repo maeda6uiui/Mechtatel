@@ -68,6 +68,7 @@ public class MttVulkanInstance {
     private long textureSampler;
 
     private Model model;
+    private Model model2;
 
     public MttVulkanInstance(boolean enableValidationLayer, long window, int msaaSamples) {
         //Load the Shaderc library
@@ -180,7 +181,7 @@ public class MttVulkanInstance {
         //Create a texture sampler
         textureSampler = TextureSamplerCreator.createTextureSampler(device);
 
-        //Load a model
+        //Load models
         model = new Model(
                 device,
                 commandPool,
@@ -190,10 +191,20 @@ public class MttVulkanInstance {
                 descriptorSetLayout,
                 uniformBuffers,
                 "./Mechtatel/Model/Cube/cube.obj");
+        model2 = new Model(
+                device,
+                commandPool,
+                graphicsQueue,
+                textureSampler,
+                swapchainImages.size(),
+                descriptorSetLayout,
+                uniformBuffers,
+                "./Mechtatel/Model/Cube/cube2.obj");
     }
 
     public void cleanup() {
         model.cleanup();
+        model2.cleanup();
 
         vkDestroyImageView(device, colorImageView, null);
         vkDestroyImage(device, colorImage, null);
@@ -275,6 +286,7 @@ public class MttVulkanInstance {
                     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
                     model.draw(commandBuffer, i, pipelineLayout);
+                    model2.draw(commandBuffer, i, pipelineLayout);
                 }
                 vkCmdEndRenderPass(commandBuffer);
 

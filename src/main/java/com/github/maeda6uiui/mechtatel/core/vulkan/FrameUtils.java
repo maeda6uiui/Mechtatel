@@ -21,7 +21,7 @@ import static org.lwjgl.vulkan.VK10.*;
 class FrameUtils {
     private static final long UINT64_MAX = 0xFFFFFFFFFFFFFFFFL;
 
-    private static void memcpyUBO(ByteBuffer buffer, UniformBufferObject ubo) {
+    private static void memcpyUBO(ByteBuffer buffer, CameraUBO ubo) {
         final int mat4size = 16 * Float.BYTES;
 
         ubo.model.get(0, buffer);
@@ -37,7 +37,7 @@ class FrameUtils {
             List<Long> uniformBufferMemories,
             int currentImage) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            var ubo = new UniformBufferObject();
+            var ubo = new CameraUBO();
 
             ubo.model.rotate((float) (glfwGetTime() * Math.toRadians(20)), 0.0f, 1.0f, 0.0f);
             ubo.view.lookAt(5.0f, 5.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
@@ -49,9 +49,9 @@ class FrameUtils {
             ubo.proj.m11(ubo.proj.m11() * (-1.0f));
 
             PointerBuffer data = stack.mallocPointer(1);
-            vkMapMemory(device, uniformBufferMemories.get(currentImage), 0, UniformBufferObject.SIZEOF, 0, data);
+            vkMapMemory(device, uniformBufferMemories.get(currentImage), 0, CameraUBO.SIZEOF, 0, data);
             {
-                memcpyUBO(data.getByteBuffer(0, UniformBufferObject.SIZEOF), ubo);
+                memcpyUBO(data.getByteBuffer(0, CameraUBO.SIZEOF), ubo);
             }
             vkUnmapMemory(device, uniformBufferMemories.get(currentImage));
         }

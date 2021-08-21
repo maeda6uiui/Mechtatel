@@ -44,7 +44,7 @@ class DescriptorSetsCreator {
 
             VkDescriptorBufferInfo.Buffer bufferInfo = VkDescriptorBufferInfo.callocStack(1, stack);
             bufferInfo.offset(0);
-            bufferInfo.range(UniformBufferObject.SIZEOF);
+            bufferInfo.range(CameraUBO.SIZEOF);
 
             VkWriteDescriptorSet.Buffer descriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
             descriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);

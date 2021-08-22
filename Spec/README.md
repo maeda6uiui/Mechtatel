@@ -12,6 +12,10 @@ core.vulkanパッケージにはVulkan関連のクラスを格納し、coreパ�
 たとえば、core.Textureクラスはcore.vulkan.Textureクラスを包含し、ユーザがcore.Textureクラスを扱うときには、Vulkan関連の内容は隠蔽されている。
 このような設計にすることで、将来的にOpenGLにも対応したいとなったときに、core.opengl.Textureクラスを作成し、core.TextureクラスでOpenGLとVulkanの差異を吸収することができる(と思う)。
 
+すべての図形(球や3Dモデルなど)はComponentを継承する。
+2D図形はComponent2D、3D図形はComponent3Dを継承する。
+Componentは位置やスケールなどの情報をもたず、その代わりに変換行列をもつ。
+
 ## シェーダ
 
 標準シェーダとして以下のようなものを実装する。

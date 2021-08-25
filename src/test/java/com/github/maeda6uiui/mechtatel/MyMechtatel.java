@@ -1,4 +1,6 @@
-package com.github.maeda6uiui.mechtatel.core;
+package com.github.maeda6uiui.mechtatel;
+
+import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 
 public class MyMechtatel extends Mechtatel {
     public MyMechtatel() {

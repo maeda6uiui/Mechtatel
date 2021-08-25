@@ -165,21 +165,21 @@ class ModelLoader {
             PointerBuffer pMaterials = scene.mMaterials();
             PointerBuffer pMeshes = scene.mMeshes();
 
-            var preModel = new Model(numMaterials, numMeshes);
+            var model = new Model(numMaterials, numMeshes);
 
             //Process materials
             for (int i = 0; i < numMaterials; i++) {
                 AIMaterial aiMaterial = AIMaterial.create(pMaterials.get(i));
-                processMaterial(aiMaterial, preModel.materials.get(i));
+                processMaterial(aiMaterial, model.materials.get(i));
             }
 
             //Process meshes
             for (int i = 0; i < numMeshes; i++) {
                 AIMesh aiMesh = AIMesh.create(pMeshes.get(i));
-                processMesh(aiMesh, preModel.meshes.get(i));
+                processMesh(aiMesh, model.meshes.get(i));
             }
 
-            return preModel;
+            return model;
         }
     }
 }

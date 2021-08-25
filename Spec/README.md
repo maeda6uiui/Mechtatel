@@ -45,7 +45,18 @@ Componentは位置やスケールなどの情報をもたず、その代わり�
 
 テキストの描画はシェーダというより、Javaプログラム側の問題かもしれない。
 
-GUIの描画やその動作に関しては何か外部のライブラリがあれば使用する。
+GUIの描画やその動作に関しては、[Dear ImGui](https://github.com/ocornut/imgui)を使用したい。
+これはC++のライブラリだが、ちょっと検索すると、Javaでも使えるようにしてくれた偉大な先人がいるようなので、それを試してみたい。
+たとえば、[imgui-java](https://github.com/SpaiR/imgui-java)とか[jimgui](https://github.com/ice1000/jimgui)とかが有望に思える。
 
 2Dの標準シェーダは*Mechtatel/Shader/Standard/2D*以下に格納する。
+
+## 描画の流れ
+
+1. Component.draw()を実行
+2. draw()が実行されたComponentをArrayListに追加する
+3. MttVulkanInstance内のdraw()でArrayListに追加されているComponentの描画を実行し、ArrayListを空にする
+
+描画予定のComponentを所持するのはMttInstanceで、低水準クラス(MttVulkanInstance)に対しては、ArrayListのgetのみを行えるインターフェイスを提供する。
+すべての描画が終わった後、MttInstanceでArrayListを空にする。
 

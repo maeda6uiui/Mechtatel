@@ -1,5 +1,11 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.Model3D;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.Vertex3DUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
+import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
+import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
@@ -72,8 +78,8 @@ public class MttVulkanInstance {
 
     private long textureSampler;
 
-    private Model model;
-    private Model model2;
+    private Model3D model;
+    private Model3D model2;
 
     private void createSwapchainObjects(boolean recreate) {
         //Create a swapchain
@@ -209,7 +215,7 @@ public class MttVulkanInstance {
         textureSampler = TextureSamplerCreator.createTextureSampler(device);
 
         //Load models
-        model = new Model(
+        model = new Model3D(
                 device,
                 commandPool,
                 graphicsQueue,
@@ -218,7 +224,7 @@ public class MttVulkanInstance {
                 descriptorSetLayout,
                 uniformBuffers,
                 "./Mechtatel/Model/Cube/cube.obj");
-        model2 = new Model(
+        model2 = new Model3D(
                 device,
                 commandPool,
                 graphicsQueue,
@@ -346,9 +352,7 @@ public class MttVulkanInstance {
             }
 
             Frame thisFrame = inFlightFrames.get(currentFrame);
-            int result = FrameUtils.drawFrame(
-                    device,
-                    thisFrame,
+            int result = thisFrame.drawFrame(
                     swapchain,
                     swapchainExtent,
                     imagesInFlight,

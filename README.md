@@ -20,10 +20,73 @@ Mechtatel (露: Мечтатель 英: Dreamer)
 - Java
 - LWJGL
 - Vulkan
-
-OpenGLとVulkanの抽象化をいい感じで提供できればOpenGLにも対応したいけど、とりあえずはVulkanのみで進めていく。
+- (OpenGL)
 
 ## 報告
+
+### 2021-08-28
+
+そこはかとなくいい感じのものができました。
+
+<img src="./Image/cube_2.jpg" alt="Cube" style="zoom:50%;" />
+
+描画結果はこれまでと同じですが、それを実現するコードの方に進歩があったと思います。
+ユーザはMechtatelクラスを継承して自身のクラスを作成し、そのinit()、dispose()、reshape()、update()という四つのメソッド内に処理を記述します。
+
+```Java
+package com.github.maeda6uiui.mechtatel;
+
+import com.github.maeda6uiui.mechtatel.core.Mechtatel;
+import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.component.Model3D;
+
+import java.io.IOException;
+
+public class MyMechtatel extends Mechtatel {
+    public MyMechtatel(MttSettings settings) {
+        super(settings);
+    }
+
+    public static void main(String[] args) {
+        MttSettings settings;
+        //Load settings from a JSON file
+        try {
+            settings = new MttSettings("./Mechtatel/Setting/settings.json");
+        }
+        //If the program fails to load the JSON file, then use the default settings
+        catch (IOException e) {
+            settings = new MttSettings();
+        }
+
+        new MyMechtatel(settings);
+    }
+
+    private Model3D model;
+
+    @Override
+    public void init() {
+        model = this.createModel3D("./Mechtatel/Model/Cube/cube.obj");
+    }
+
+    @Override
+    public void dispose() {
+        //Components are automatically cleaned up, so you don't have to explicitly clean up the component.
+        //model.cleanup();
+    }
+
+    @Override
+    public void reshape(int width, int height) {
+
+    }
+
+    @Override
+    public void update() {
+
+    }
+}
+```
+
+現在使用しているのはVulkanですが、同じようにすれば、OpenGLに対する抽象化も提供することができるはずです。(たぶん)
 
 ### 2021-08-25
 

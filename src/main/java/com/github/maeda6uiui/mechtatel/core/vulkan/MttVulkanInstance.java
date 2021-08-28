@@ -1,7 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.Model3D;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.Vertex3DUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
@@ -26,7 +27,7 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda
  */
-public class MttVulkanInstance {
+public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private static final int MAX_FRAMES_IN_FLIGHT = 2;
 
     private VkInstance instance;
@@ -78,8 +79,7 @@ public class MttVulkanInstance {
 
     private long textureSampler;
 
-    private Model3D model;
-    private Model3D model2;
+    private ArrayList<VkComponent> components;
 
     private void createSwapchainObjects(boolean recreate) {
         //Create a swapchain
@@ -120,8 +120,8 @@ public class MttVulkanInstance {
                     device,
                     swapchainExtent,
                     renderPass,
-                    Vertex3DUV.getBindingDescription(),
-                    Vertex3DUV.getAttributeDescriptions(),
+                    VkVertex3DUV.getBindingDescription(),
+                    VkVertex3DUV.getAttributeDescriptions(),
                     descriptorSetLayout,
                     msaaSamples,
                     vertShaderModule,
@@ -133,8 +133,8 @@ public class MttVulkanInstance {
                     device,
                     swapchainExtent,
                     renderPass,
-                    Vertex3DUV.getBindingDescription(),
-                    Vertex3DUV.getAttributeDescriptions(),
+                    VkVertex3DUV.getBindingDescription(),
+                    VkVertex3DUV.getAttributeDescriptions(),
                     descriptorSetLayout,
                     msaaSamples,
                     "./Mechtatel/Shader/Test/5.vert",
@@ -214,25 +214,7 @@ public class MttVulkanInstance {
         //Create a texture sampler
         textureSampler = TextureSamplerCreator.createTextureSampler(device);
 
-        //Load models
-        model = new Model3D(
-                device,
-                commandPool,
-                graphicsQueue,
-                textureSampler,
-                swapchainImages.size(),
-                descriptorSetLayout,
-                uniformBuffers,
-                "./Mechtatel/Model/Cube/cube.obj");
-        model2 = new Model3D(
-                device,
-                commandPool,
-                graphicsQueue,
-                textureSampler,
-                swapchainImages.size(),
-                descriptorSetLayout,
-                uniformBuffers,
-                "./Mechtatel/Model/Cube/cube2.obj");
+        components = new ArrayList<>();
     }
 
     private void cleanupSwapchain() {
@@ -257,8 +239,7 @@ public class MttVulkanInstance {
     }
 
     public void cleanup() {
-        model.cleanup();
-        model2.cleanup();
+        components.forEach(component -> component.cleanup());
 
         vkDestroySampler(device, textureSampler, null);
 
@@ -341,8 +322,9 @@ public class MttVulkanInstance {
                 {
                     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
-                    model.draw(commandBuffer, i, pipelineLayout);
-                    model2.draw(commandBuffer, i, pipelineLayout);
+                    for (var component : components) {
+                        component.draw(commandBuffer, i, pipelineLayout);
+                    }
                 }
                 vkCmdEndRenderPass(commandBuffer);
 
@@ -370,5 +352,33 @@ public class MttVulkanInstance {
 
             vkFreeCommandBuffers(device, commandPool, PointerBufferUtils.asPointerBuffer(commandBuffers));
         }
+    }
+
+    //=== Methods relating to components ===
+    @Override
+    public boolean deleteComponent(VkComponent component) {
+        if (!components.contains(component)) {
+            return false;
+        }
+
+        component.cleanup();
+        components.remove(component);
+
+        return true;
+    }
+
+    public VkModel3D createModel3D(String modelFilepath) {
+        var model = new VkModel3D(
+                device,
+                commandPool,
+                graphicsQueue,
+                textureSampler,
+                swapchainImages.size(),
+                descriptorSetLayout,
+                uniformBuffers,
+                modelFilepath);
+        components.add(model);
+
+        return model;
     }
 }

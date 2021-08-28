@@ -10,7 +10,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Vertex2D with a UV
  */
-public class Vertex2DUV {
+public class VkVertex2DUV {
     public static final int SIZEOF = (2 + 3 + 2) * Float.BYTES;
     public static final int OFFSETOF_POS = 0;
     public static final int OFFSETOF_COLOR = 2 * Float.BYTES;
@@ -20,7 +20,7 @@ public class Vertex2DUV {
     public Vector3fc color;
     public Vector2fc texCoords;
 
-    public Vertex2DUV(Vector2fc pos, Vector3fc color, Vector2fc texCoords) {
+    public VkVertex2DUV(Vector2fc pos, Vector3fc color, Vector2fc texCoords) {
         this.pos = pos;
         this.color = color;
         this.texCoords = texCoords;

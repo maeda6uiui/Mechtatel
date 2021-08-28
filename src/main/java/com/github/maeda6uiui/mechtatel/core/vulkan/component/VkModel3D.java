@@ -21,7 +21,7 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda
  */
-public class Model3D {
+public class VkModel3D extends VkComponent3D {
     private VkDevice device;
 
     private ModelLoader.Model model;
@@ -92,7 +92,7 @@ public class Model3D {
         }
     }
 
-    public Model3D(
+    public VkModel3D(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -115,6 +115,7 @@ public class Model3D {
         this.createBuffers(commandPool, graphicsQueue);
     }
 
+    @Override
     public void cleanup() {
         //Texture
         textures.forEach((idx, texture) -> texture.cleanup());
@@ -128,10 +129,15 @@ public class Model3D {
         indexBufferMemories.forEach((idx, indexBufferMemory) -> vkFreeMemory(device, indexBufferMemory, null));
     }
 
+    @Override
     public void draw(
             VkCommandBuffer commandBuffer,
             int commandBufferIndex,
             long pipelineLayout) {
+        if (!this.getVisible()) {
+            return;
+        }
+
         try (MemoryStack stack = MemoryStack.stackPush()) {
             int numMeshes = model.meshes.size();
             for (int i = 0; i < numMeshes; i++) {

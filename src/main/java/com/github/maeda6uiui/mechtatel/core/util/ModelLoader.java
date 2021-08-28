@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.util;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.Vertex3DUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3DUV;
 import org.joml.*;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -34,7 +34,7 @@ public class ModelLoader {
     public static class Mesh {
         public int materialIndex;
 
-        public final List<Vertex3DUV> vertices;
+        public final List<VkVertex3DUV> vertices;
         public final List<Integer> indices;
 
         public Mesh() {
@@ -145,7 +145,7 @@ public class ModelLoader {
         //Create vertices
         int numVertices = positions.size();
         for (int i = 0; i < numVertices; i++) {
-            var vertex = new Vertex3DUV(
+            var vertex = new VkVertex3DUV(
                     positions.get(i),
                     new Vector3f(1.0f, 1.0f, 1.0f),
                     texCoords.get(i));

@@ -13,6 +13,4 @@ interface IMechtatel {
     public void reshape(int width, int height);
 
     public void update();
-
-    public void draw();
 }

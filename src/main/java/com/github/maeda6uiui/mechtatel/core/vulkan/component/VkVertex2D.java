@@ -12,7 +12,7 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda
  */
-public class Vertex2D {
+public class VkVertex2D {
     public static final int SIZEOF = (2 + 3) * Float.BYTES;
     public static final int OFFSETOF_POS = 0;
     public static final int OFFSETOF_COLOR = 2 * Float.BYTES;
@@ -20,7 +20,7 @@ public class Vertex2D {
     public Vector2fc pos;
     public Vector3fc color;
 
-    public Vertex2D(Vector2fc pos, Vector3fc color) {
+    public VkVertex2D(Vector2fc pos, Vector3fc color) {
         this.pos = pos;
         this.color = color;
     }

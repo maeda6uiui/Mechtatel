@@ -1,8 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.creator;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.Vertex2D;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.Vertex2DUV;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.Vertex3DUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2D;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.MemoryUtils;
 import org.lwjgl.PointerBuffer;
@@ -27,7 +27,7 @@ public class BufferCreator {
         public long bufferMemory;
     }
 
-    private static void memcpyVertex2D(ByteBuffer buffer, List<Vertex2D> vertices) {
+    private static void memcpyVertex2D(ByteBuffer buffer, List<VkVertex2D> vertices) {
         for (var vertex : vertices) {
             buffer.putFloat(vertex.pos.x());
             buffer.putFloat(vertex.pos.y());
@@ -40,7 +40,7 @@ public class BufferCreator {
         buffer.rewind();
     }
 
-    private static void memcpyVertex2DUV(ByteBuffer buffer, List<Vertex2DUV> vertices) {
+    private static void memcpyVertex2DUV(ByteBuffer buffer, List<VkVertex2DUV> vertices) {
         for (var vertex : vertices) {
             buffer.putFloat(vertex.pos.x());
             buffer.putFloat(vertex.pos.y());
@@ -56,7 +56,7 @@ public class BufferCreator {
         buffer.rewind();
     }
 
-    private static void memcpyVertex3DUV(ByteBuffer buffer, List<Vertex3DUV> vertices) {
+    private static void memcpyVertex3DUV(ByteBuffer buffer, List<VkVertex3DUV> vertices) {
         for (var vertex : vertices) {
             buffer.putFloat(vertex.pos.x());
             buffer.putFloat(vertex.pos.y());
@@ -151,9 +151,9 @@ public class BufferCreator {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<Vertex2D> vertices) {
+            List<VkVertex2D> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            long bufferSize = Vertex2D.SIZEOF * vertices.size();
+            long bufferSize = VkVertex2D.SIZEOF * vertices.size();
 
             LongBuffer pBuffer = stack.mallocLong(1);
             LongBuffer pBufferMemory = stack.mallocLong(1);
@@ -202,9 +202,9 @@ public class BufferCreator {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<Vertex2DUV> vertices) {
+            List<VkVertex2DUV> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            long bufferSize = Vertex2DUV.SIZEOF * vertices.size();
+            long bufferSize = VkVertex2DUV.SIZEOF * vertices.size();
 
             LongBuffer pBuffer = stack.mallocLong(1);
             LongBuffer pBufferMemory = stack.mallocLong(1);
@@ -253,9 +253,9 @@ public class BufferCreator {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<Vertex3DUV> vertices) {
+            List<VkVertex3DUV> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            long bufferSize = Vertex3DUV.SIZEOF * vertices.size();
+            long bufferSize = VkVertex3DUV.SIZEOF * vertices.size();
 
             LongBuffer pBuffer = stack.mallocLong(1);
             LongBuffer pBufferMemory = stack.mallocLong(1);

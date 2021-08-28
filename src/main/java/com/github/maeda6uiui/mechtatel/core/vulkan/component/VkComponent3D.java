@@ -1,6 +1,5 @@
-package com.github.maeda6uiui.mechtatel.core.component;
+package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanInstanceForComponent;
 import org.joml.Vector3fc;
 
 /**
@@ -8,9 +7,9 @@ import org.joml.Vector3fc;
  *
  * @author maeda
  */
-public class Component3D extends Component {
-    public Component3D(IMttVulkanInstanceForComponent vulkanComponent) {
-        super(vulkanComponent);
+public class VkComponent3D extends VkComponent {
+    public VkComponent3D() {
+
     }
 
     public void translate(Vector3fc v) {

@@ -1,5 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
+import com.github.maeda6uiui.mechtatel.core.util.UniversalCounter;
+import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanInstanceForComponent;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 
@@ -9,22 +11,22 @@ import org.joml.Matrix4fc;
  * @author maeda
  */
 public class Component {
-    private static int count;
-
-    static {
-        count = 0;
-    }
-
     private String tag;
     private Matrix4f mat;
     private boolean visible;
 
-    public Component() {
-        tag = "Component_" + count;
+    private IMttVulkanInstanceForComponent vulkanInstance;
+
+    private void setDefaultValues() {
+        tag = "Component_" + UniversalCounter.get();
         mat = new Matrix4f().identity();
         visible = true;
+    }
 
-        count++;
+    //Vulkan
+    public Component(IMttVulkanInstanceForComponent vulkanInstance) {
+        this.setDefaultValues();
+        this.vulkanInstance = vulkanInstance;
     }
 
     public String getTag() {
@@ -63,7 +65,11 @@ public class Component {
         this.mat.invert();
     }
 
-    public void draw() {
+    protected IMttVulkanInstanceForComponent getVulkanInstance() {
+        return vulkanInstance;
+    }
+
+    public void cleanup() {
 
     }
 }

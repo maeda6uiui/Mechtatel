@@ -75,7 +75,7 @@ public class MttSettings {
 
     @Override
     public String toString() {
-        String ret = windowSettings.toString() + "\n" + systemSettings.toString();
+        String ret = windowSettings.toString() + " " + systemSettings.toString();
         return ret;
     }
 }

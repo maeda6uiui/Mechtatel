@@ -3,7 +3,6 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.creator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3DUV;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.MemoryUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
@@ -357,7 +356,7 @@ public class BufferCreator {
         }
     }
 
-    public static List<BufferInfo> createCameraUBOBuffers(VkDevice device, int numSwapchainImages) {
+    public static List<BufferInfo> createUBOBuffers(VkDevice device, int numSwapchainImages, long size) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             var ret = new ArrayList<BufferInfo>(numSwapchainImages);
 
@@ -367,7 +366,7 @@ public class BufferCreator {
             for (int i = 0; i < numSwapchainImages; i++) {
                 createBuffer(
                         device,
-                        CameraUBO.SIZEOF,
+                        size,
                         VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                         pBuffer,

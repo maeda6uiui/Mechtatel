@@ -43,24 +43,25 @@ public class DescriptorSetsCreator {
 
             var descriptorSets = new ArrayList<Long>(pDescriptorSets.capacity());
 
-            VkDescriptorBufferInfo.Buffer bufferInfo = VkDescriptorBufferInfo.callocStack(1, stack);
-            bufferInfo.offset(0);
-            bufferInfo.range(CameraUBO.SIZEOF);
+            VkDescriptorBufferInfo.Buffer cameraUBOInfo = VkDescriptorBufferInfo.callocStack(1, stack);
+            cameraUBOInfo.offset(0);
+            cameraUBOInfo.range(CameraUBO.SIZEOF);
 
-            VkWriteDescriptorSet.Buffer descriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
-            descriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            descriptorWrite.dstBinding(0);
-            descriptorWrite.dstArrayElement(0);
-            descriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            descriptorWrite.descriptorCount(1);
-            descriptorWrite.pBufferInfo(bufferInfo);
+            VkWriteDescriptorSet.Buffer cameraUBODescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            cameraUBODescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            cameraUBODescriptorWrite.dstBinding(0);
+            cameraUBODescriptorWrite.dstArrayElement(0);
+            cameraUBODescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            cameraUBODescriptorWrite.descriptorCount(1);
+            cameraUBODescriptorWrite.pBufferInfo(cameraUBOInfo);
 
             for (int i = 0; i < pDescriptorSets.capacity(); i++) {
                 long descriptorSet = pDescriptorSets.get(i);
 
-                bufferInfo.buffer(uniformBuffers.get(i));
-                descriptorWrite.dstSet(descriptorSet);
-                vkUpdateDescriptorSets(device, descriptorWrite, null);
+                cameraUBOInfo.buffer(uniformBuffers.get(i));
+                cameraUBODescriptorWrite.dstSet(descriptorSet);
+
+                vkUpdateDescriptorSets(device, cameraUBODescriptorWrite, null);
 
                 descriptorSets.add(descriptorSet);
             }

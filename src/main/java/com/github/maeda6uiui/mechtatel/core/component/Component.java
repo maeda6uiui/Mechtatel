@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.component;
 
 import com.github.maeda6uiui.mechtatel.core.util.UniversalCounter;
 import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanInstanceForComponent;
-import org.joml.Matrix4f;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
 import org.joml.Matrix4fc;
 
 /**
@@ -12,21 +12,26 @@ import org.joml.Matrix4fc;
  */
 public class Component {
     private String tag;
-    private Matrix4f mat;
-    private boolean visible;
 
     private IMttVulkanInstanceForComponent vulkanInstance;
+    private VkComponent vkComponent;
 
     private void setDefaultValues() {
         tag = "Component_" + UniversalCounter.get();
-        mat = new Matrix4f().identity();
-        visible = true;
     }
 
     //Vulkan
     public Component(IMttVulkanInstanceForComponent vulkanInstance) {
         this.setDefaultValues();
         this.vulkanInstance = vulkanInstance;
+    }
+
+    protected void associateVulkanComponent(VkComponent vkComponent) {
+        this.vkComponent = vkComponent;
+    }
+
+    protected VkComponent getVulkanComponent() {
+        return vkComponent;
     }
 
     public String getTag() {
@@ -38,31 +43,19 @@ public class Component {
     }
 
     public Matrix4fc getMat() {
-        return mat;
-    }
-
-    protected Matrix4f getMatRef() {
-        return mat;
+        return vkComponent.getMat();
     }
 
     public void setMat(Matrix4fc mat) {
-        this.mat = new Matrix4f(mat);
-    }
-
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
-    public boolean getVisible() {
-        return visible;
+        vkComponent.setMat(mat);
     }
 
     public void applyMat(Matrix4fc right) {
-        this.mat.mul(right);
+        vkComponent.applyMat(right);
     }
 
     public void reset() {
-        this.mat.invert();
+        vkComponent.reset();
     }
 
     protected IMttVulkanInstanceForComponent getVulkanInstance() {
@@ -70,6 +63,6 @@ public class Component {
     }
 
     public void cleanup() {
-
+        vulkanInstance.deleteComponent(vkComponent);
     }
 }

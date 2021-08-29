@@ -19,9 +19,9 @@ public class DescriptorPoolCreator {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDescriptorPoolSize.Buffer poolSizes = VkDescriptorPoolSize.callocStack(2, stack);
 
-            VkDescriptorPoolSize uniformBufferPoolSize = poolSizes.get(0);
-            uniformBufferPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            uniformBufferPoolSize.descriptorCount(numSwapchainImages);
+            VkDescriptorPoolSize cameraUBPoolSize = poolSizes.get(0);
+            cameraUBPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            cameraUBPoolSize.descriptorCount(numSwapchainImages);
 
             VkDescriptorPoolSize textureSamplerPoolSize = poolSizes.get(1);
             textureSamplerPoolSize.type(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);

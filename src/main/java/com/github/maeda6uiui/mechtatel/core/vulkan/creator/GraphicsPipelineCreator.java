@@ -140,10 +140,18 @@ public class GraphicsPipelineCreator {
             colorBlending.pAttachments(colorBlendAttachment);
             colorBlending.blendConstants(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
 
+            //Push constant
+            //Push a model matrix (mat4)
+            VkPushConstantRange.Buffer pushConstant = VkPushConstantRange.callocStack(1, stack);
+            pushConstant.offset(0);
+            pushConstant.size(1 * 16 * Float.BYTES);
+            pushConstant.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
+
             //Pipeline layout creation
             VkPipelineLayoutCreateInfo pipelineLayoutInfo = VkPipelineLayoutCreateInfo.callocStack(stack);
             pipelineLayoutInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO);
             pipelineLayoutInfo.pSetLayouts(stack.longs(descriptorSetLayout));
+            pipelineLayoutInfo.pPushConstantRanges(pushConstant);
 
             LongBuffer pPipelineLayout = stack.longs(VK_NULL_HANDLE);
             if (vkCreatePipelineLayout(device, pipelineLayoutInfo, null, pPipelineLayout) != VK_SUCCESS) {

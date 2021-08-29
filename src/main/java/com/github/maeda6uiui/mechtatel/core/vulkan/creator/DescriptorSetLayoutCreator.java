@@ -19,12 +19,12 @@ public class DescriptorSetLayoutCreator {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDescriptorSetLayoutBinding.Buffer bindings = VkDescriptorSetLayoutBinding.callocStack(2, stack);
 
-            VkDescriptorSetLayoutBinding uboLayoutBinding = bindings.get(0);
-            uboLayoutBinding.binding(0);
-            uboLayoutBinding.descriptorCount(1);
-            uboLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            uboLayoutBinding.pImmutableSamplers(null);
-            uboLayoutBinding.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
+            VkDescriptorSetLayoutBinding cameraUBOLayoutBinding = bindings.get(0);
+            cameraUBOLayoutBinding.binding(0);
+            cameraUBOLayoutBinding.descriptorCount(1);
+            cameraUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            cameraUBOLayoutBinding.pImmutableSamplers(null);
+            cameraUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
 
             VkDescriptorSetLayoutBinding samplerLayoutBinding = bindings.get(1);
             samplerLayoutBinding.binding(1);

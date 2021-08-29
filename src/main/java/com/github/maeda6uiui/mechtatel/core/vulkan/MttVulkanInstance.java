@@ -5,11 +5,13 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,8 +68,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private Map<Integer, Frame> imagesInFlight;
     private int currentFrame;
 
-    private List<Long> uniformBuffers;
-    private List<Long> uniformBufferMemories;
+    private List<Long> cameraUBs;
+    private List<Long> cameraUBMemories;
 
     private long depthImage;
     private long depthImageMemory;
@@ -137,8 +139,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     VkVertex3DUV.getAttributeDescriptions(),
                     descriptorSetLayout,
                     msaaSamples,
-                    "./Mechtatel/Shader/Test/5.vert",
-                    "./Mechtatel/Shader/Test/5.frag");
+                    "./Mechtatel/Shader/Standard/3D/simple.vert",
+                    "./Mechtatel/Shader/Standard/3D/simple.frag");
             pipelineLayout = graphicsPipelineInfo.pipelineLayout;
             graphicsPipeline = graphicsPipelineInfo.graphicsPipeline;
             vertShaderModule = graphicsPipelineInfo.vertShaderModule;
@@ -203,12 +205,13 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         imagesInFlight = new HashMap<>(swapchainImages.size());
 
         //Create uniform buffers and uniform buffer memories
-        List<BufferCreator.BufferInfo> uniformBufferInfos = BufferCreator.createCameraUBOBuffers(device, swapchainImages.size());
-        uniformBuffers = new ArrayList<>();
-        uniformBufferMemories = new ArrayList<>();
-        for (var uniformBufferInfo : uniformBufferInfos) {
-            uniformBuffers.add(uniformBufferInfo.buffer);
-            uniformBufferMemories.add(uniformBufferInfo.bufferMemory);
+        List<BufferCreator.BufferInfo> cameraUBInfos = BufferCreator.createUBOBuffers(
+                device, swapchainImages.size(), CameraUBO.SIZEOF);
+        cameraUBs = new ArrayList<>();
+        cameraUBMemories = new ArrayList<>();
+        for (var cameraUBInfo : cameraUBInfos) {
+            cameraUBs.add(cameraUBInfo.buffer);
+            cameraUBMemories.add(cameraUBInfo.bufferMemory);
         }
 
         //Create a texture sampler
@@ -243,8 +246,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         vkDestroySampler(device, textureSampler, null);
 
-        uniformBuffers.forEach(ubo -> vkDestroyBuffer(device, ubo, null));
-        uniformBufferMemories.forEach(uboMemory -> vkFreeMemory(device, uboMemory, null));
+        cameraUBs.forEach(ubo -> vkDestroyBuffer(device, ubo, null));
+        cameraUBMemories.forEach(uboMemory -> vkFreeMemory(device, uboMemory, null));
 
         inFlightFrames.forEach(frame -> {
             vkDestroySemaphore(device, frame.renderFinishedSemaphore(), null);
@@ -307,6 +310,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             clearValues.get(1).depthStencil().set(1.0f, 0);
             renderPassInfo.pClearValues(clearValues);
 
+            Frame thisFrame = inFlightFrames.get(currentFrame);
+
             var commandBuffers
                     = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchainImages.size());
 
@@ -323,6 +328,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
                     for (var component : components) {
+                        ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
+                        component.getMat().get(matBuffer);
+
+                        vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, matBuffer);
+
                         component.draw(commandBuffer, i, pipelineLayout);
                     }
                 }
@@ -333,15 +343,22 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 }
             }
 
-            Frame thisFrame = inFlightFrames.get(currentFrame);
+            var cameraUBO = new CameraUBO();
+            cameraUBO.view.lookAt(5.0f, 5.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+            cameraUBO.proj.perspective(
+                    (float) Math.toRadians(45),
+                    (float) swapchainExtent.width() / (float) swapchainExtent.height(),
+                    0.1f,
+                    500.0f);
+            cameraUBO.proj.m11(cameraUBO.proj.m11() * (-1.0f));
+
+            thisFrame.updateCameraUBO(cameraUBMemories, cameraUBO);
             int result = thisFrame.drawFrame(
                     swapchain,
-                    swapchainExtent,
                     imagesInFlight,
                     commandBuffers,
                     graphicsQueue,
-                    presentQueue,
-                    uniformBufferMemories);
+                    presentQueue);
             if (result < 0) {
                 this.recreateSwapchain();
             }
@@ -375,7 +392,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 textureSampler,
                 swapchainImages.size(),
                 descriptorSetLayout,
-                uniformBuffers,
+                cameraUBs,
                 modelFilepath);
         components.add(model);
 

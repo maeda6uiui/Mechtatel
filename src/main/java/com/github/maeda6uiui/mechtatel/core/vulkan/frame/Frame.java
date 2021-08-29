@@ -12,7 +12,6 @@ import java.nio.LongBuffer;
 import java.util.List;
 import java.util.Map;
 
-import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.vulkan.KHRSwapchain.*;
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -65,46 +64,33 @@ public class Frame {
     private void memcpyCameraUBO(ByteBuffer buffer, CameraUBO ubo) {
         final int mat4size = 16 * Float.BYTES;
 
-        ubo.model.get(0, buffer);
-        ubo.view.get(AlignmentUtils.alignas(mat4size, AlignmentUtils.alignof(ubo.view)), buffer);
-        ubo.proj.get(AlignmentUtils.alignas(mat4size * 2, AlignmentUtils.alignof(ubo.proj)), buffer);
+        ubo.view.get(0, buffer);
+        ubo.proj.get(AlignmentUtils.alignas(mat4size, AlignmentUtils.alignof(ubo.proj)), buffer);
 
         buffer.rewind();
     }
 
-    private void updateUniformBuffer(
-            VkExtent2D swapchainExtent,
-            List<Long> uniformBufferMemories,
-            int currentImage) {
+    public void updateCameraUBO(
+            List<Long> UBMemories,
+            CameraUBO ubo) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            var ubo = new CameraUBO();
-
-            ubo.model.rotate((float) (glfwGetTime() * Math.toRadians(20)), 0.0f, 1.0f, 0.0f);
-            ubo.view.lookAt(5.0f, 5.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-            ubo.proj.perspective(
-                    (float) Math.toRadians(45),
-                    (float) swapchainExtent.width() / (float) swapchainExtent.height(),
-                    0.1f,
-                    500.0f);
-            ubo.proj.m11(ubo.proj.m11() * (-1.0f));
-
-            PointerBuffer data = stack.mallocPointer(1);
-            vkMapMemory(device, uniformBufferMemories.get(currentImage), 0, CameraUBO.SIZEOF, 0, data);
-            {
-                memcpyCameraUBO(data.getByteBuffer(0, CameraUBO.SIZEOF), ubo);
+            for (var UBMemory : UBMemories) {
+                PointerBuffer data = stack.mallocPointer(1);
+                vkMapMemory(device, UBMemory, 0, CameraUBO.SIZEOF, 0, data);
+                {
+                    memcpyCameraUBO(data.getByteBuffer(0, CameraUBO.SIZEOF), ubo);
+                }
+                vkUnmapMemory(device, UBMemory);
             }
-            vkUnmapMemory(device, uniformBufferMemories.get(currentImage));
         }
     }
 
     public int drawFrame(
             long swapchain,
-            VkExtent2D swapchainExtent,
             Map<Integer, Frame> imagesInFlight,
             List<VkCommandBuffer> commandBuffers,
             VkQueue graphicsQueue,
-            VkQueue presentQueue,
-            List<Long> uniformBufferMemories) {
+            VkQueue presentQueue) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             vkWaitForFences(device, this.pFence(), true, UINT64_MAX);
 
@@ -116,8 +102,6 @@ public class Frame {
             }
 
             final int imageIndex = pImageIndex.get(0);
-
-            this.updateUniformBuffer(swapchainExtent, uniformBufferMemories, imageIndex);
 
             if (imagesInFlight.containsKey(imageIndex)) {
                 vkWaitForFences(device, imagesInFlight.get(imageIndex).fence(), true, UINT64_MAX);

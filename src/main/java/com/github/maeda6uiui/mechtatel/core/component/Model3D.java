@@ -11,20 +11,16 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
 public class Model3D extends Component3D {
     private String modelFilepath;
     private VkModel3D vkModel;
-    
+
     public Model3D(MttVulkanInstance vulkanInstance, String modelFilepath) {
         super(vulkanInstance);
 
         this.modelFilepath = modelFilepath;
         vkModel = vulkanInstance.createModel3D(modelFilepath);
+        this.associateVulkanComponent(vkModel);
     }
 
     public String getModelFilepath() {
         return modelFilepath;
-    }
-
-    @Override
-    public void cleanup() {
-        this.getVulkanInstance().deleteComponent(vkModel);
     }
 }

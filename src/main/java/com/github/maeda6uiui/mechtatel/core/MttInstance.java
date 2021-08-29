@@ -3,6 +3,9 @@ package com.github.maeda6uiui.mechtatel.core;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import org.lwjgl.system.MemoryStack;
+
+import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -65,6 +68,15 @@ class MttInstance {
         this.mtt = mtt;
 
         camera = new Camera();
+
+        //Set initial aspect according to the framebuffer size
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer width = stack.ints(0);
+            IntBuffer height = stack.ints(0);
+            glfwGetFramebufferSize(window, width, height);
+
+            camera.setAspect((float) width.get(0) / (float) height.get(0));
+        }
     }
 
     public void run() {

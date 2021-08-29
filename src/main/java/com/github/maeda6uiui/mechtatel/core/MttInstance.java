@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core;
 
+import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 
@@ -19,12 +20,16 @@ class MttInstance {
 
     private int fps;
 
+    private Camera camera;
+
     private void framebufferResizeCallback(long window, int width, int height) {
         mtt.reshape(width, height);
 
         if (vulkanInstance != null) {
             vulkanInstance.recreateSwapchain();
         }
+
+        camera.setAspect((float) width / (float) height);
     }
 
     public MttInstance(
@@ -58,6 +63,8 @@ class MttInstance {
         this.fps = settings.systemSettings.fps;
 
         this.mtt = mtt;
+
+        camera = new Camera();
     }
 
     public void run() {
@@ -74,7 +81,7 @@ class MttInstance {
 
             if (elapsedTime >= 1.0 / fps) {
                 mtt.update();
-                vulkanInstance.draw();
+                vulkanInstance.draw(camera);
 
                 lastTime = glfwGetTime();
             }
@@ -89,6 +96,10 @@ class MttInstance {
 
         glfwDestroyWindow(window);
         glfwTerminate();
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 
     //=== Methods relating to components ===

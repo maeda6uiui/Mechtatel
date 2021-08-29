@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core;
 
+import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,10 @@ public class Mechtatel implements IMechtatel {
     @Override
     public void update() {
 
+    }
+
+    public Camera getCamera() {
+        return instance.getCamera();
     }
 
     //=== Methods relating to components ===

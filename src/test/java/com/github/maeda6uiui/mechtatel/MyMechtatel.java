@@ -45,6 +45,6 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void update() {
-        model.rotY(0.05f);
+
     }
 }

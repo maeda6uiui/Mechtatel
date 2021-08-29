@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan.ubo;
+package com.github.maeda6uiui.mechtatel.core.camera;
 
 import org.joml.Matrix4f;
 

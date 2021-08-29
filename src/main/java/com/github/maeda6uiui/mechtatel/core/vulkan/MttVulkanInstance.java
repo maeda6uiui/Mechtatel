@@ -1,11 +1,12 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
+import com.github.maeda6uiui.mechtatel.core.camera.Camera;
+import com.github.maeda6uiui.mechtatel.core.camera.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.lwjgl.system.MemoryStack;
@@ -293,7 +294,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         this.createSwapchainObjects(true);
     }
 
-    public void draw() {
+    public void draw(Camera camera) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
@@ -343,14 +344,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 }
             }
 
-            var cameraUBO = new CameraUBO();
-            cameraUBO.view.lookAt(5.0f, 5.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-            cameraUBO.proj.perspective(
-                    (float) Math.toRadians(45),
-                    (float) swapchainExtent.width() / (float) swapchainExtent.height(),
-                    0.1f,
-                    500.0f);
-            cameraUBO.proj.m11(cameraUBO.proj.m11() * (-1.0f));
+            CameraUBO cameraUBO = camera.createCameraUBO(true);
 
             thisFrame.updateCameraUBO(cameraUBMemories, cameraUBO);
             int result = thisFrame.drawFrame(

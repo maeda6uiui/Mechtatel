@@ -346,7 +346,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
             CameraUBO cameraUBO = camera.createCameraUBO(true);
 
-            thisFrame.updateCameraUBO(cameraUBMemories, cameraUBO);
+            UBOUtils.updateCameraUBO(device, cameraUBMemories, cameraUBO);
             int result = thisFrame.drawFrame(
                     swapchain,
                     imagesInFlight,

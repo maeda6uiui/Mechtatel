@@ -1,8 +1,19 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
+import com.github.maeda6uiui.mechtatel.core.camera.Camera;
+import com.github.maeda6uiui.mechtatel.core.camera.CameraUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
+import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
+import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.SimpleNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
+import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +31,7 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda
  */
-public class MttVulkanInstance {
+public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private static final int MAX_FRAMES_IN_FLIGHT = 2;
 
     private VkInstance instance;
@@ -46,12 +57,7 @@ public class MttVulkanInstance {
     private VkExtent2D swapchainExtent;
     private List<Long> swapchainFramebuffers;
 
-    private long renderPass;
-    private long descriptorSetLayout;
-    private long pipelineLayout;
-    private long graphicsPipeline;
-    private long vertShaderModule;
-    private long fragShaderModule;
+    private Nabor nabor;
 
     private long commandPool;
 
@@ -59,8 +65,8 @@ public class MttVulkanInstance {
     private Map<Integer, Frame> imagesInFlight;
     private int currentFrame;
 
-    private List<Long> uniformBuffers;
-    private List<Long> uniformBufferMemories;
+    private List<Long> cameraUBs;
+    private List<Long> cameraUBMemories;
 
     private long depthImage;
     private long depthImageMemory;
@@ -72,10 +78,9 @@ public class MttVulkanInstance {
 
     private long textureSampler;
 
-    private Model model;
-    private Model model2;
+    private ArrayList<VkComponent> components;
 
-    private void createSwapchainObjects(boolean recreate) {
+    private void createSwapchainObjects() {
         //Create a swapchain
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer width = stack.ints(0);
@@ -93,9 +98,6 @@ public class MttVulkanInstance {
         //Create image views
         swapchainImageViews = SwapchainUtils.createSwapchainImageViews(device, swapchainImages, swapchainImageFormat);
 
-        //Create a render pass
-        renderPass = RenderpassCreator.createRenderPass(device, swapchainImageFormat, msaaSamples);
-
         //Create color resources
         ColorResourceCreator.ColorResources colorResources = ColorResourceCreator.createColorResources(
                 device,
@@ -108,37 +110,6 @@ public class MttVulkanInstance {
         colorImageMemory = colorResources.colorImageMemory;
         colorImageView = colorResources.colorImageView;
 
-        //Create a graphics pipeline
-        if (recreate) {
-            GraphicsPipelineCreator.GraphicsPipelineInfo graphicsPipelineInfo = GraphicsPipelineCreator.recreateGraphicsPipeline(
-                    device,
-                    swapchainExtent,
-                    renderPass,
-                    Vertex3DUV.getBindingDescription(),
-                    Vertex3DUV.getAttributeDescriptions(),
-                    descriptorSetLayout,
-                    msaaSamples,
-                    vertShaderModule,
-                    fragShaderModule);
-            pipelineLayout = graphicsPipelineInfo.pipelineLayout;
-            graphicsPipeline = graphicsPipelineInfo.graphicsPipeline;
-        } else {
-            GraphicsPipelineCreator.GraphicsPipelineInfo graphicsPipelineInfo = GraphicsPipelineCreator.createGraphicsPipeline(
-                    device,
-                    swapchainExtent,
-                    renderPass,
-                    Vertex3DUV.getBindingDescription(),
-                    Vertex3DUV.getAttributeDescriptions(),
-                    descriptorSetLayout,
-                    msaaSamples,
-                    "./Mechtatel/Shader/Test/5.vert",
-                    "./Mechtatel/Shader/Test/5.frag");
-            pipelineLayout = graphicsPipelineInfo.pipelineLayout;
-            graphicsPipeline = graphicsPipelineInfo.graphicsPipeline;
-            vertShaderModule = graphicsPipelineInfo.vertShaderModule;
-            fragShaderModule = graphicsPipelineInfo.fragShaderModule;
-        }
-
         //Create depth resources
         DepthResourceUtils.DepthResources depthResources
                 = DepthResourceUtils.createDepthResources(device, commandPool, graphicsQueue, swapchainExtent, msaaSamples);
@@ -146,9 +117,24 @@ public class MttVulkanInstance {
         depthImageMemory = depthResources.depthImageMemory;
         depthImageView = depthResources.depthImageView;
 
+        if (nabor == null) {
+            nabor = new SimpleNabor(
+                    device,
+                    swapchainImageFormat,
+                    msaaSamples,
+                    swapchainExtent.width(),
+                    swapchainExtent.height());
+        } else {
+            nabor.recreate(
+                    swapchainImageFormat,
+                    msaaSamples,
+                    swapchainExtent.width(),
+                    swapchainExtent.height());
+        }
+
         //Create swapchain framebuffers
         swapchainFramebuffers = FramebufferCreator.createFramebuffers(
-                device, swapchainImageViews, colorImageView, depthImageView, renderPass, swapchainExtent);
+                device, swapchainImageViews, colorImageView, depthImageView, nabor.getRenderPass(), swapchainExtent);
     }
 
     public MttVulkanInstance(boolean enableValidationLayer, long window, int msaaSamples) {
@@ -186,47 +172,27 @@ public class MttVulkanInstance {
         //Create a command pool
         commandPool = CommandPoolCreator.createCommandPool(device, surface);
 
-        //Create a descriptor set layout
-        descriptorSetLayout = DescriptorSetLayoutCreator.createDescriptorSetLayout(device);
-
         //Create swapchain objects
-        this.createSwapchainObjects(false);
+        this.createSwapchainObjects();
 
         //Create sync objects
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
         imagesInFlight = new HashMap<>(swapchainImages.size());
 
         //Create uniform buffers and uniform buffer memories
-        List<BufferCreator.BufferInfo> uniformBufferInfos = BufferCreator.createCameraUBOBuffers(device, swapchainImages.size());
-        uniformBuffers = new ArrayList<>();
-        uniformBufferMemories = new ArrayList<>();
-        for (var uniformBufferInfo : uniformBufferInfos) {
-            uniformBuffers.add(uniformBufferInfo.buffer);
-            uniformBufferMemories.add(uniformBufferInfo.bufferMemory);
+        List<BufferCreator.BufferInfo> cameraUBInfos = BufferCreator.createUBOBuffers(
+                device, swapchainImages.size(), CameraUBO.SIZEOF);
+        cameraUBs = new ArrayList<>();
+        cameraUBMemories = new ArrayList<>();
+        for (var cameraUBInfo : cameraUBInfos) {
+            cameraUBs.add(cameraUBInfo.buffer);
+            cameraUBMemories.add(cameraUBInfo.bufferMemory);
         }
 
         //Create a texture sampler
         textureSampler = TextureSamplerCreator.createTextureSampler(device);
 
-        //Load models
-        model = new Model(
-                device,
-                commandPool,
-                graphicsQueue,
-                textureSampler,
-                swapchainImages.size(),
-                descriptorSetLayout,
-                uniformBuffers,
-                "./Mechtatel/Model/Cube/cube.obj");
-        model2 = new Model(
-                device,
-                commandPool,
-                graphicsQueue,
-                textureSampler,
-                swapchainImages.size(),
-                descriptorSetLayout,
-                uniformBuffers,
-                "./Mechtatel/Model/Cube/cube2.obj");
+        components = new ArrayList<>();
     }
 
     private void cleanupSwapchain() {
@@ -236,14 +202,9 @@ public class MttVulkanInstance {
         vkDestroyImage(device, depthImage, null);
         vkFreeMemory(device, depthImageMemory, null);
 
-        vkDestroyPipeline(device, graphicsPipeline, null);
-        vkDestroyPipelineLayout(device, pipelineLayout, null);
-
         vkDestroyImageView(device, colorImageView, null);
         vkDestroyImage(device, colorImage, null);
         vkFreeMemory(device, colorImageMemory, null);
-
-        vkDestroyRenderPass(device, renderPass, null);
 
         swapchainImageViews.forEach(imageView -> vkDestroyImageView(device, imageView, null));
 
@@ -251,13 +212,12 @@ public class MttVulkanInstance {
     }
 
     public void cleanup() {
-        model.cleanup();
-        model2.cleanup();
+        components.forEach(component -> component.cleanup());
 
         vkDestroySampler(device, textureSampler, null);
 
-        uniformBuffers.forEach(ubo -> vkDestroyBuffer(device, ubo, null));
-        uniformBufferMemories.forEach(uboMemory -> vkFreeMemory(device, uboMemory, null));
+        cameraUBs.forEach(ubo -> vkDestroyBuffer(device, ubo, null));
+        cameraUBMemories.forEach(uboMemory -> vkFreeMemory(device, uboMemory, null));
 
         inFlightFrames.forEach(frame -> {
             vkDestroySemaphore(device, frame.renderFinishedSemaphore(), null);
@@ -268,10 +228,7 @@ public class MttVulkanInstance {
 
         this.cleanupSwapchain();
 
-        vkDestroyShaderModule(device, vertShaderModule, null);
-        vkDestroyShaderModule(device, fragShaderModule, null);
-
-        vkDestroyDescriptorSetLayout(device, descriptorSetLayout, null);
+        nabor.cleanup(false);
 
         vkDestroyCommandPool(device, commandPool, null);
 
@@ -300,17 +257,17 @@ public class MttVulkanInstance {
         vkDeviceWaitIdle(device);
 
         this.cleanupSwapchain();
-        this.createSwapchainObjects(true);
+        this.createSwapchainObjects();
     }
 
-    public void draw() {
+    public void draw(Camera camera) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
 
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
-            renderPassInfo.renderPass(renderPass);
+            renderPassInfo.renderPass(nabor.getRenderPass());
             VkRect2D renderArea = VkRect2D.callocStack(stack);
             renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
             renderArea.extent(swapchainExtent);
@@ -319,6 +276,8 @@ public class MttVulkanInstance {
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
             clearValues.get(1).depthStencil().set(1.0f, 0);
             renderPassInfo.pClearValues(clearValues);
+
+            Frame thisFrame = inFlightFrames.get(currentFrame);
 
             var commandBuffers
                     = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchainImages.size());
@@ -333,10 +292,16 @@ public class MttVulkanInstance {
 
                 vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
                 {
-                    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+                    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, nabor.getGraphicsPipeline(0));
 
-                    model.draw(commandBuffer, i, pipelineLayout);
-                    model2.draw(commandBuffer, i, pipelineLayout);
+                    for (var component : components) {
+                        ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
+                        component.getMat().get(matBuffer);
+
+                        vkCmdPushConstants(commandBuffer, nabor.getPipelineLayout(0), VK_SHADER_STAGE_VERTEX_BIT, 0, matBuffer);
+
+                        component.draw(commandBuffer, i, nabor.getPipelineLayout(0));
+                    }
                 }
                 vkCmdEndRenderPass(commandBuffer);
 
@@ -345,17 +310,15 @@ public class MttVulkanInstance {
                 }
             }
 
-            Frame thisFrame = inFlightFrames.get(currentFrame);
-            int result = FrameUtils.drawFrame(
-                    device,
-                    thisFrame,
+            CameraUBO cameraUBO = camera.createCameraUBO(true);
+
+            UBOUtils.updateCameraUBO(device, cameraUBMemories, cameraUBO);
+            int result = thisFrame.drawFrame(
                     swapchain,
-                    swapchainExtent,
                     imagesInFlight,
                     commandBuffers,
                     graphicsQueue,
-                    presentQueue,
-                    uniformBufferMemories);
+                    presentQueue);
             if (result < 0) {
                 this.recreateSwapchain();
             }
@@ -366,5 +329,33 @@ public class MttVulkanInstance {
 
             vkFreeCommandBuffers(device, commandPool, PointerBufferUtils.asPointerBuffer(commandBuffers));
         }
+    }
+
+    //=== Methods relating to components ===
+    @Override
+    public boolean deleteComponent(VkComponent component) {
+        if (!components.contains(component)) {
+            return false;
+        }
+
+        component.cleanup();
+        components.remove(component);
+
+        return true;
+    }
+
+    public VkModel3D createModel3D(String modelFilepath) {
+        var model = new VkModel3D(
+                device,
+                commandPool,
+                graphicsQueue,
+                textureSampler,
+                swapchainImages.size(),
+                nabor.getDescriptorSetLayout(0),
+                cameraUBs,
+                modelFilepath);
+        components.add(model);
+
+        return model;
     }
 }

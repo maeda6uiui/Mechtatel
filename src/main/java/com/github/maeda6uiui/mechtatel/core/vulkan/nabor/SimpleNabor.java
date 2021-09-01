@@ -151,8 +151,8 @@ public class SimpleNabor extends Nabor {
             vertShaderModule = this.getVertShaderModules().get(0);
             fragShaderModule = this.getFragShaderModules().get(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/3D/simple.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/3D/simple.frag";
+            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/3d_simple.vert";
+            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/3d_simple.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

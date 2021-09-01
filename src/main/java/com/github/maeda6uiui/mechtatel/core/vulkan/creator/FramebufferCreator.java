@@ -19,12 +19,12 @@ import static org.lwjgl.vulkan.VK10.*;
 public class FramebufferCreator {
     public static List<Long> createFramebuffers(
             VkDevice device,
-            List<Long> swapchainImageViews,
+            List<Long> imageViews,
             long colorImageView,
             long depthImageView,
             long renderPass,
-            VkExtent2D swapchainExtent) {
-        var swapchainFramebuffers = new ArrayList<Long>(swapchainImageViews.size());
+            VkExtent2D extent) {
+        var framebuffers = new ArrayList<Long>(imageViews.size());
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
             LongBuffer attachments = stack.longs(colorImageView, depthImageView, VK_NULL_HANDLE);
@@ -33,11 +33,11 @@ public class FramebufferCreator {
             VkFramebufferCreateInfo framebufferInfo = VkFramebufferCreateInfo.callocStack(stack);
             framebufferInfo.sType(VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO);
             framebufferInfo.renderPass(renderPass);
-            framebufferInfo.width(swapchainExtent.width());
-            framebufferInfo.height(swapchainExtent.height());
+            framebufferInfo.width(extent.width());
+            framebufferInfo.height(extent.height());
             framebufferInfo.layers(1);
 
-            for (long imageView : swapchainImageViews) {
+            for (long imageView : imageViews) {
                 attachments.put(2, imageView);
                 framebufferInfo.pAttachments(attachments);
 
@@ -45,10 +45,10 @@ public class FramebufferCreator {
                     throw new RuntimeException("Failed to create a framebuffer");
                 }
 
-                swapchainFramebuffers.add(pFramebuffer.get(0));
+                framebuffers.add(pFramebuffer.get(0));
             }
 
-            return swapchainFramebuffers;
+            return framebuffers;
         }
     }
 }

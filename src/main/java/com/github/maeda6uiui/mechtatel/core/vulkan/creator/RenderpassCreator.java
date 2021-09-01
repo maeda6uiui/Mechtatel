@@ -15,14 +15,14 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 public class RenderpassCreator {
-    public static long createRenderPass(VkDevice device, int swapchainImageFormat, int msaaSamples) {
+    public static long createRenderPass(VkDevice device, int imageFormat, int msaaSamples) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(3, stack);
             VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(3, stack);
 
             //Color attachments
             VkAttachmentDescription colorAttachment = attachments.get(0);
-            colorAttachment.format(swapchainImageFormat);
+            colorAttachment.format(imageFormat);
             colorAttachment.samples(msaaSamples);
             colorAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
             colorAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
@@ -52,7 +52,7 @@ public class RenderpassCreator {
 
             //Present image
             VkAttachmentDescription colorAttachmentResolve = attachments.get(2);
-            colorAttachmentResolve.format(swapchainImageFormat);
+            colorAttachmentResolve.format(imageFormat);
             colorAttachmentResolve.samples(VK_SAMPLE_COUNT_1_BIT);
             colorAttachmentResolve.loadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
             colorAttachmentResolve.storeOp(VK_ATTACHMENT_STORE_OP_STORE);

@@ -41,7 +41,7 @@ public class GraphicsPipelineCreator {
 
     private static GraphicsPipelineInfo innerCreateGraphicsPipeline(
             VkDevice device,
-            VkExtent2D swapchainExtent,
+            VkExtent2D extent,
             long renderPass,
             VkVertexInputBindingDescription.Buffer bindingDescription,
             VkVertexInputAttributeDescription.Buffer attributeDescriptions,
@@ -82,14 +82,14 @@ public class GraphicsPipelineCreator {
             VkViewport.Buffer viewport = VkViewport.callocStack(1, stack);
             viewport.x(0.0f);
             viewport.y(0.0f);
-            viewport.width(swapchainExtent.width());
-            viewport.height(swapchainExtent.height());
+            viewport.width(extent.width());
+            viewport.height(extent.height());
             viewport.minDepth(0.0f);
             viewport.maxDepth(1.0f);
 
             VkRect2D.Buffer scissor = VkRect2D.callocStack(1, stack);
             scissor.offset(VkOffset2D.callocStack(stack).set(0, 0));
-            scissor.extent(swapchainExtent);
+            scissor.extent(extent);
 
             VkPipelineViewportStateCreateInfo viewportState = VkPipelineViewportStateCreateInfo.callocStack(stack);
             viewportState.sType(VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO);
@@ -196,7 +196,7 @@ public class GraphicsPipelineCreator {
 
     public static GraphicsPipelineInfo createGraphicsPipeline(
             VkDevice device,
-            VkExtent2D swapchainExtent,
+            VkExtent2D extent,
             long renderPass,
             VkVertexInputBindingDescription.Buffer bindingDescription,
             VkVertexInputAttributeDescription.Buffer attributeDescriptions,
@@ -218,7 +218,7 @@ public class GraphicsPipelineCreator {
 
         GraphicsPipelineInfo graphicsPipelineInfo = innerCreateGraphicsPipeline(
                 device,
-                swapchainExtent,
+                extent,
                 renderPass,
                 bindingDescription,
                 attributeDescriptions,
@@ -239,7 +239,7 @@ public class GraphicsPipelineCreator {
 
     public static GraphicsPipelineInfo recreateGraphicsPipeline(
             VkDevice device,
-            VkExtent2D swapchainExtent,
+            VkExtent2D extent,
             long renderPass,
             VkVertexInputBindingDescription.Buffer bindingDescription,
             VkVertexInputAttributeDescription.Buffer attributeDescriptions,
@@ -249,7 +249,7 @@ public class GraphicsPipelineCreator {
             long fragShaderModule) {
         return innerCreateGraphicsPipeline(
                 device,
-                swapchainExtent,
+                extent,
                 renderPass,
                 bindingDescription,
                 attributeDescriptions,

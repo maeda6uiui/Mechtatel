@@ -4,9 +4,10 @@ import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.camera.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.SimpleNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.lwjgl.system.MemoryStack;
@@ -56,12 +57,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private VkExtent2D swapchainExtent;
     private List<Long> swapchainFramebuffers;
 
-    private long renderPass;
-    private long descriptorSetLayout;
-    private long pipelineLayout;
-    private long graphicsPipeline;
-    private long vertShaderModule;
-    private long fragShaderModule;
+    private Nabor nabor;
 
     private long commandPool;
 
@@ -84,7 +80,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
     private ArrayList<VkComponent> components;
 
-    private void createSwapchainObjects(boolean recreate) {
+    private void createSwapchainObjects() {
         //Create a swapchain
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer width = stack.ints(0);
@@ -102,9 +98,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         //Create image views
         swapchainImageViews = SwapchainUtils.createSwapchainImageViews(device, swapchainImages, swapchainImageFormat);
 
-        //Create a render pass
-        renderPass = RenderpassCreator.createRenderPass(device, swapchainImageFormat, msaaSamples);
-
         //Create color resources
         ColorResourceCreator.ColorResources colorResources = ColorResourceCreator.createColorResources(
                 device,
@@ -117,37 +110,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         colorImageMemory = colorResources.colorImageMemory;
         colorImageView = colorResources.colorImageView;
 
-        //Create a graphics pipeline
-        if (recreate) {
-            GraphicsPipelineCreator.GraphicsPipelineInfo graphicsPipelineInfo = GraphicsPipelineCreator.recreateGraphicsPipeline(
-                    device,
-                    swapchainExtent,
-                    renderPass,
-                    VkVertex3DUV.getBindingDescription(),
-                    VkVertex3DUV.getAttributeDescriptions(),
-                    descriptorSetLayout,
-                    msaaSamples,
-                    vertShaderModule,
-                    fragShaderModule);
-            pipelineLayout = graphicsPipelineInfo.pipelineLayout;
-            graphicsPipeline = graphicsPipelineInfo.graphicsPipeline;
-        } else {
-            GraphicsPipelineCreator.GraphicsPipelineInfo graphicsPipelineInfo = GraphicsPipelineCreator.createGraphicsPipeline(
-                    device,
-                    swapchainExtent,
-                    renderPass,
-                    VkVertex3DUV.getBindingDescription(),
-                    VkVertex3DUV.getAttributeDescriptions(),
-                    descriptorSetLayout,
-                    msaaSamples,
-                    "./Mechtatel/Shader/Standard/3D/simple.vert",
-                    "./Mechtatel/Shader/Standard/3D/simple.frag");
-            pipelineLayout = graphicsPipelineInfo.pipelineLayout;
-            graphicsPipeline = graphicsPipelineInfo.graphicsPipeline;
-            vertShaderModule = graphicsPipelineInfo.vertShaderModule;
-            fragShaderModule = graphicsPipelineInfo.fragShaderModule;
-        }
-
         //Create depth resources
         DepthResourceUtils.DepthResources depthResources
                 = DepthResourceUtils.createDepthResources(device, commandPool, graphicsQueue, swapchainExtent, msaaSamples);
@@ -155,9 +117,24 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         depthImageMemory = depthResources.depthImageMemory;
         depthImageView = depthResources.depthImageView;
 
+        if (nabor == null) {
+            nabor = new SimpleNabor(
+                    device,
+                    swapchainImageFormat,
+                    msaaSamples,
+                    swapchainExtent.width(),
+                    swapchainExtent.height());
+        } else {
+            nabor.recreate(
+                    swapchainImageFormat,
+                    msaaSamples,
+                    swapchainExtent.width(),
+                    swapchainExtent.height());
+        }
+
         //Create swapchain framebuffers
         swapchainFramebuffers = FramebufferCreator.createFramebuffers(
-                device, swapchainImageViews, colorImageView, depthImageView, renderPass, swapchainExtent);
+                device, swapchainImageViews, colorImageView, depthImageView, nabor.getRenderPass(), swapchainExtent);
     }
 
     public MttVulkanInstance(boolean enableValidationLayer, long window, int msaaSamples) {
@@ -195,11 +172,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         //Create a command pool
         commandPool = CommandPoolCreator.createCommandPool(device, surface);
 
-        //Create a descriptor set layout
-        descriptorSetLayout = DescriptorSetLayoutCreator.createDescriptorSetLayout(device);
-
         //Create swapchain objects
-        this.createSwapchainObjects(false);
+        this.createSwapchainObjects();
 
         //Create sync objects
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
@@ -228,14 +202,9 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         vkDestroyImage(device, depthImage, null);
         vkFreeMemory(device, depthImageMemory, null);
 
-        vkDestroyPipeline(device, graphicsPipeline, null);
-        vkDestroyPipelineLayout(device, pipelineLayout, null);
-
         vkDestroyImageView(device, colorImageView, null);
         vkDestroyImage(device, colorImage, null);
         vkFreeMemory(device, colorImageMemory, null);
-
-        vkDestroyRenderPass(device, renderPass, null);
 
         swapchainImageViews.forEach(imageView -> vkDestroyImageView(device, imageView, null));
 
@@ -259,10 +228,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         this.cleanupSwapchain();
 
-        vkDestroyShaderModule(device, vertShaderModule, null);
-        vkDestroyShaderModule(device, fragShaderModule, null);
-
-        vkDestroyDescriptorSetLayout(device, descriptorSetLayout, null);
+        nabor.cleanup(false);
 
         vkDestroyCommandPool(device, commandPool, null);
 
@@ -291,7 +257,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         vkDeviceWaitIdle(device);
 
         this.cleanupSwapchain();
-        this.createSwapchainObjects(true);
+        this.createSwapchainObjects();
     }
 
     public void draw(Camera camera) {
@@ -301,7 +267,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
-            renderPassInfo.renderPass(renderPass);
+            renderPassInfo.renderPass(nabor.getRenderPass());
             VkRect2D renderArea = VkRect2D.callocStack(stack);
             renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
             renderArea.extent(swapchainExtent);
@@ -326,15 +292,15 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
                 vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
                 {
-                    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+                    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, nabor.getGraphicsPipeline());
 
                     for (var component : components) {
                         ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
                         component.getMat().get(matBuffer);
 
-                        vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, matBuffer);
+                        vkCmdPushConstants(commandBuffer, nabor.getPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, matBuffer);
 
-                        component.draw(commandBuffer, i, pipelineLayout);
+                        component.draw(commandBuffer, i, nabor.getPipelineLayout());
                     }
                 }
                 vkCmdEndRenderPass(commandBuffer);
@@ -385,7 +351,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 graphicsQueue,
                 textureSampler,
                 swapchainImages.size(),
-                descriptorSetLayout,
+                nabor.getDescriptorSetLayout(),
                 cameraUBs,
                 modelFilepath);
         components.add(model);

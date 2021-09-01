@@ -20,11 +20,11 @@ public class Nabor {
     private VkDevice device;
 
     private long renderPass;
-    private long descriptorSetLayout;
+    private List<Long> descriptorSetLayouts;
     private List<Long> vertShaderModules;
     private List<Long> fragShaderModules;
-    private long pipelineLayout;
-    private long graphicsPipeline;
+    private List<Long> pipelineLayouts;
+    private List<Long> graphicsPipelines;
 
     protected void createRenderPass(int imageFormat, int msaaSamples) {
 
@@ -41,8 +41,11 @@ public class Nabor {
     public Nabor(VkDevice device, int imageFormat, int msaaSamples, int width, int height) {
         this.device = device;
 
+        descriptorSetLayouts = new ArrayList<>();
         vertShaderModules = new ArrayList<>();
         fragShaderModules = new ArrayList<>();
+        pipelineLayouts = new ArrayList<>();
+        graphicsPipelines = new ArrayList<>();
 
         this.createRenderPass(imageFormat, msaaSamples);
         this.createDescriptorSetLayout();
@@ -50,17 +53,20 @@ public class Nabor {
     }
 
     public void cleanup(boolean reserveForRecreation) {
-        vkDestroyPipeline(device, graphicsPipeline, null);
-        vkDestroyPipelineLayout(device, pipelineLayout, null);
+        graphicsPipelines.forEach(graphicsPipeline -> vkDestroyPipeline(device, graphicsPipeline, null));
+        pipelineLayouts.forEach(pipelineLayout -> vkDestroyPipelineLayout(device, pipelineLayout, null));
+        graphicsPipelines.clear();
+        pipelineLayouts.clear();
 
         if (!reserveForRecreation) {
             vertShaderModules.forEach(vertShaderModule -> vkDestroyShaderModule(device, vertShaderModule, null));
             fragShaderModules.forEach(fragShaderModule -> vkDestroyShaderModule(device, fragShaderModule, null));
-
             vertShaderModules.clear();
             fragShaderModules.clear();
 
-            vkDestroyDescriptorSetLayout(device, descriptorSetLayout, null);
+            descriptorSetLayouts.forEach(
+                    descriptorSetLayout -> vkDestroyDescriptorSetLayout(device, descriptorSetLayout, null));
+            descriptorSetLayouts.clear();
         }
 
         vkDestroyRenderPass(device, renderPass, null);
@@ -85,36 +91,60 @@ public class Nabor {
         this.renderPass = renderPass;
     }
 
-    public long getDescriptorSetLayout() {
-        return descriptorSetLayout;
+    public long getDescriptorSetLayout(int index) {
+        return descriptorSetLayouts.get(index);
     }
 
-    protected void setDescriptorSetLayout(long descriptorSetLayout) {
-        this.descriptorSetLayout = descriptorSetLayout;
+    protected List<Long> getDescriptorSetLayouts() {
+        return descriptorSetLayouts;
+    }
+
+    protected void setDescriptorSetLayouts(List<Long> descriptorSetLayouts) {
+        this.descriptorSetLayouts = descriptorSetLayouts;
     }
 
     protected List<Long> getVertShaderModules() {
         return vertShaderModules;
     }
 
+    protected void setVertShaderModules(List<Long> vertShaderModules) {
+        this.vertShaderModules = vertShaderModules;
+    }
+
     protected List<Long> getFragShaderModules() {
         return fragShaderModules;
     }
 
-    protected void setPipelineLayout(long pipelineLayout) {
-        this.pipelineLayout = pipelineLayout;
+    protected void setFragShaderModules(List<Long> fragShaderModules) {
+        this.fragShaderModules = fragShaderModules;
     }
 
-    public long getPipelineLayout() {
-        return pipelineLayout;
+    public long getPipelineLayout(int index) {
+        return pipelineLayouts.get(index);
     }
 
-    public long getGraphicsPipeline() {
-        return graphicsPipeline;
+    protected List<Long> getPipelineLayouts() {
+        return pipelineLayouts;
     }
 
-    protected void setGraphicsPipeline(long graphicsPipeline) {
-        this.graphicsPipeline = graphicsPipeline;
+    protected void setPipelineLayouts(List<Long> pipelineLayouts) {
+        this.pipelineLayouts = pipelineLayouts;
+    }
+
+    public int getNumPipelines() {
+        return graphicsPipelines.size();
+    }
+
+    public long getGraphicsPipeline(int index) {
+        return graphicsPipelines.get(index);
+    }
+
+    protected List<Long> getGraphicsPipelines() {
+        return graphicsPipelines;
+    }
+
+    protected void setGraphicsPipelines(List<Long> graphicsPipelines) {
+        this.graphicsPipelines = graphicsPipelines;
     }
 
     protected long createShaderModule(VkDevice device, ByteBuffer spirvCode) {

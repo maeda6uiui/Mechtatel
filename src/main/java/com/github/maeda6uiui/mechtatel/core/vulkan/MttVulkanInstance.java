@@ -292,15 +292,15 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
                 vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
                 {
-                    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, nabor.getGraphicsPipeline());
+                    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, nabor.getGraphicsPipeline(0));
 
                     for (var component : components) {
                         ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
                         component.getMat().get(matBuffer);
 
-                        vkCmdPushConstants(commandBuffer, nabor.getPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, matBuffer);
+                        vkCmdPushConstants(commandBuffer, nabor.getPipelineLayout(0), VK_SHADER_STAGE_VERTEX_BIT, 0, matBuffer);
 
-                        component.draw(commandBuffer, i, nabor.getPipelineLayout());
+                        component.draw(commandBuffer, i, nabor.getPipelineLayout(0));
                     }
                 }
                 vkCmdEndRenderPass(commandBuffer);
@@ -351,7 +351,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 graphicsQueue,
                 textureSampler,
                 swapchainImages.size(),
-                nabor.getDescriptorSetLayout(),
+                nabor.getDescriptorSetLayout(0),
                 cameraUBs,
                 modelFilepath);
         components.add(model);

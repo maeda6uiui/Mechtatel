@@ -136,7 +136,8 @@ public class SimpleNabor extends Nabor {
                 throw new RuntimeException("Failed to create a descriptor set layout");
             }
 
-            this.setDescriptorSetLayout(pDescriptorSetLayout.get(0));
+            long descriptorSetLayout = pDescriptorSetLayout.get(0);
+            this.getDescriptorSetLayouts().add(descriptorSetLayout);
         }
     }
 
@@ -234,6 +235,7 @@ public class SimpleNabor extends Nabor {
             multisampling.minSampleShading(0.2f);
             multisampling.rasterizationSamples(msaaSamples);
 
+            //Depth-stencil
             VkPipelineDepthStencilStateCreateInfo depthStencil = VkPipelineDepthStencilStateCreateInfo.callocStack(stack);
             depthStencil.sType(VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO);
             depthStencil.depthTestEnable(true);
@@ -270,7 +272,7 @@ public class SimpleNabor extends Nabor {
             //Pipeline layout creation
             VkPipelineLayoutCreateInfo pipelineLayoutInfo = VkPipelineLayoutCreateInfo.callocStack(stack);
             pipelineLayoutInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO);
-            pipelineLayoutInfo.pSetLayouts(stack.longs(this.getDescriptorSetLayout()));
+            pipelineLayoutInfo.pSetLayouts(stack.longs(this.getDescriptorSetLayout(0)));
             pipelineLayoutInfo.pPushConstantRanges(pushConstant);
 
             LongBuffer pPipelineLayout = stack.longs(VK_NULL_HANDLE);
@@ -279,7 +281,7 @@ public class SimpleNabor extends Nabor {
             }
 
             long pipelineLayout = pPipelineLayout.get(0);
-            this.setPipelineLayout(pipelineLayout);
+            this.getPipelineLayouts().add(pipelineLayout);
 
             //Graphics pipeline creation
             VkGraphicsPipelineCreateInfo.Buffer pipelineInfo = VkGraphicsPipelineCreateInfo.callocStack(1, stack);
@@ -304,7 +306,7 @@ public class SimpleNabor extends Nabor {
             }
 
             long graphicsPipeline = pGraphicsPipeline.get(0);
-            this.setGraphicsPipeline(graphicsPipeline);
+            this.getGraphicsPipelines().add(graphicsPipeline);
         }
     }
 }

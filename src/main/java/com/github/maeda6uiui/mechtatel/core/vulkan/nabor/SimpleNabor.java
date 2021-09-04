@@ -102,7 +102,8 @@ public class SimpleNabor extends Nabor {
                 throw new RuntimeException("Failed to create a render pass");
             }
 
-            this.setRenderPass(pRenderPass.get(0));
+            long renderPass = pRenderPass.get(0);
+            this.setRenderPass(renderPass);
         }
     }
 

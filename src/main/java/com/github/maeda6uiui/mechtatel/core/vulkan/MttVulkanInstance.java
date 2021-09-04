@@ -118,8 +118,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         depthImageView = depthResources.depthImageView;
 
         if (nabor == null) {
-            nabor = new SimpleNabor(
-                    device,
+            nabor = new SimpleNabor(device);
+            nabor.compile(
                     swapchainImageFormat,
                     msaaSamples,
                     swapchainExtent.width(),

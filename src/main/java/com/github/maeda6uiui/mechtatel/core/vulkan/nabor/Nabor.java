@@ -26,19 +26,7 @@ public class Nabor {
     private List<Long> pipelineLayouts;
     private List<Long> graphicsPipelines;
 
-    protected void createRenderPass(int imageFormat, int msaaSamples) {
-
-    }
-
-    protected void createDescriptorSetLayout() {
-
-    }
-
-    protected void createGraphicsPipeline(int width, int height, int msaaSamples) {
-
-    }
-
-    public Nabor(VkDevice device, int imageFormat, int msaaSamples, int width, int height) {
+    public Nabor(VkDevice device) {
         this.device = device;
 
         descriptorSetLayouts = new ArrayList<>();
@@ -46,10 +34,28 @@ public class Nabor {
         fragShaderModules = new ArrayList<>();
         pipelineLayouts = new ArrayList<>();
         graphicsPipelines = new ArrayList<>();
+    }
 
+    protected void createRenderPass(int imageFormat, int msaaSamples) {
+
+    }
+
+    protected void createDescriptorSetLayouts() {
+
+    }
+
+    protected void createGraphicsPipelines(int width, int height, int msaaSamples) {
+
+    }
+
+    public void compile(
+            int imageFormat,
+            int msaaSamples,
+            int width,
+            int height) {
         this.createRenderPass(imageFormat, msaaSamples);
-        this.createDescriptorSetLayout();
-        this.createGraphicsPipeline(width, height, msaaSamples);
+        this.createDescriptorSetLayouts();
+        this.createGraphicsPipelines(width, height, msaaSamples);
     }
 
     public void cleanup(boolean reserveForRecreation) {
@@ -76,7 +82,7 @@ public class Nabor {
         this.cleanup(true);
 
         this.createRenderPass(imageFormat, msaaSamples);
-        this.createGraphicsPipeline(width, height, msaaSamples);
+        this.createGraphicsPipelines(width, height, msaaSamples);
     }
 
     protected VkDevice getDevice() {

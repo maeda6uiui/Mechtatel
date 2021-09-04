@@ -350,6 +350,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 commandPool,
                 graphicsQueue,
                 textureSampler,
+                nabor.getTexDstBinding(),
                 swapchainImages.size(),
                 nabor.getDescriptorSetLayout(0),
                 cameraUBs,

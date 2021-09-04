@@ -19,6 +19,8 @@ import static org.lwjgl.vulkan.VK10.*;
 public class Nabor {
     private VkDevice device;
 
+    private int texDstBinding;
+
     private long renderPass;
     private List<Long> descriptorSetLayouts;
     private List<Long> vertShaderModules;
@@ -28,6 +30,8 @@ public class Nabor {
 
     public Nabor(VkDevice device) {
         this.device = device;
+
+        texDstBinding = 1;
 
         descriptorSetLayouts = new ArrayList<>();
         vertShaderModules = new ArrayList<>();
@@ -87,6 +91,14 @@ public class Nabor {
 
     protected VkDevice getDevice() {
         return device;
+    }
+
+    public int getTexDstBinding() {
+        return texDstBinding;
+    }
+
+    protected void setTexDstBinding(int texDstBinding) {
+        this.texDstBinding = texDstBinding;
     }
 
     public long getRenderPass() {

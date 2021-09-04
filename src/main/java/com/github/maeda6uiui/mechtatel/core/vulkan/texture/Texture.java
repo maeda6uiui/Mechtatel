@@ -281,7 +281,7 @@ public class Texture {
                 generateMipmaps ? mipLevels : 1);
     }
 
-    private void updateDescriptorSets(long textureSampler) {
+    private void updateDescriptorSets(long textureSampler, int dstBinding) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDescriptorImageInfo.Buffer imageInfo = VkDescriptorImageInfo.callocStack(1, stack);
             imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -290,7 +290,7 @@ public class Texture {
 
             VkWriteDescriptorSet.Buffer samplerDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
             samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            samplerDescriptorWrite.dstBinding(1);
+            samplerDescriptorWrite.dstBinding(dstBinding);
             samplerDescriptorWrite.dstArrayElement(0);
             samplerDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
             samplerDescriptorWrite.descriptorCount(1);
@@ -308,6 +308,7 @@ public class Texture {
             long commandPool,
             VkQueue graphicsQueue,
             long textureSampler,
+            int dstBinding,
             int numSwapchainImages,
             long descriptorSetLayout,
             List<Long> uniformBuffers,
@@ -328,7 +329,7 @@ public class Texture {
                 device, numSwapchainImages, descriptorPool, descriptorSetLayout, uniformBuffers);
 
         //Update descriptor sets
-        this.updateDescriptorSets(textureSampler);
+        this.updateDescriptorSets(textureSampler, dstBinding);
     }
 
     public void cleanup() {

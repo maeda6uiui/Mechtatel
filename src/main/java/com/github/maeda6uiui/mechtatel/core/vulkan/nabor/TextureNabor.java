@@ -143,7 +143,7 @@ public class TextureNabor extends Nabor {
     }
 
     @Override
-    protected void createGraphicsPipelines(int width, int height, int msaaSamples) {
+    protected void createGraphicsPipelines(VkExtent2D extent, int msaaSamples) {
         VkDevice device = this.getDevice();
 
         long vertShaderModule;
@@ -204,14 +204,14 @@ public class TextureNabor extends Nabor {
             VkViewport.Buffer viewport = VkViewport.callocStack(1, stack);
             viewport.x(0.0f);
             viewport.y(0.0f);
-            viewport.width(width);
-            viewport.height(height);
+            viewport.width(extent.width());
+            viewport.height(extent.height());
             viewport.minDepth(0.0f);
             viewport.maxDepth(1.0f);
 
             VkRect2D.Buffer scissor = VkRect2D.callocStack(1, stack);
             scissor.offset(VkOffset2D.callocStack(stack).set(0, 0));
-            scissor.extent(VkExtent2D.callocStack(stack).set(width, height));
+            scissor.extent(extent);
 
             VkPipelineViewportStateCreateInfo viewportState = VkPipelineViewportStateCreateInfo.callocStack(stack);
             viewportState.sType(VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO);

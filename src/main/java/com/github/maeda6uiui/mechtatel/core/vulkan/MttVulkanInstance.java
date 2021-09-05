@@ -120,20 +120,22 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         if (nabor == null) {
             nabor = new TextureNabor(device);
             nabor.compile(
+                    commandPool,
+                    graphicsQueue,
                     swapchainImageFormat,
                     msaaSamples,
-                    swapchainExtent.width(),
-                    swapchainExtent.height());
+                    swapchainExtent);
         } else {
             nabor.recreate(
+                    commandPool,
+                    graphicsQueue,
                     swapchainImageFormat,
                     msaaSamples,
-                    swapchainExtent.width(),
-                    swapchainExtent.height());
+                    swapchainExtent);
         }
 
         //Create swapchain framebuffers
-        swapchainFramebuffers = FramebufferCreator.createFramebuffers(
+        swapchainFramebuffers = FramebufferCreator.createSwapchainFramebuffers(
                 device, swapchainImageViews, colorImageView, depthImageView, nabor.getRenderPass(), swapchainExtent);
     }
 

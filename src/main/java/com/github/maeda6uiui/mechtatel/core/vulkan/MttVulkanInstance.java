@@ -7,7 +7,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.SimpleNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.lwjgl.system.MemoryStack;
@@ -118,7 +118,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         depthImageView = depthResources.depthImageView;
 
         if (nabor == null) {
-            nabor = new SimpleNabor(device);
+            nabor = new TextureNabor(device);
             nabor.compile(
                     swapchainImageFormat,
                     msaaSamples,

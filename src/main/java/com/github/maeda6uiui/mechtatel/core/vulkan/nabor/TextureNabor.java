@@ -14,12 +14,12 @@ import static org.lwjgl.vulkan.KHRSwapchain.VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Nabor for rendering with "simple" shader
+ * Nabor for rendering with "texture" shader
  *
  * @author maeda
  */
-public class SimpleNabor extends Nabor {
-    public SimpleNabor(VkDevice device) {
+public class TextureNabor extends Nabor {
+    public TextureNabor(VkDevice device) {
         super(device);
     }
 
@@ -152,8 +152,8 @@ public class SimpleNabor extends Nabor {
             vertShaderModule = this.getVertShaderModules().get(0);
             fragShaderModule = this.getFragShaderModules().get(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/3d_simple.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/3d_simple.frag";
+            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/3d_texture.vert";
+            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/3d_texture.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

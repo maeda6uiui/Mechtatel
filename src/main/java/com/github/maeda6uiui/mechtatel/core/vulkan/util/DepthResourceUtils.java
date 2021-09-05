@@ -59,7 +59,7 @@ public class DepthResourceUtils {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            VkExtent2D swapchainExtent,
+            VkExtent2D extent,
             int msaaSamples) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             int depthFormat = findDepthFormat(device);
@@ -69,8 +69,8 @@ public class DepthResourceUtils {
 
             ImageUtils.createImage(
                     device,
-                    swapchainExtent.width(),
-                    swapchainExtent.height(),
+                    extent.width(),
+                    extent.height(),
                     1,
                     msaaSamples,
                     depthFormat,

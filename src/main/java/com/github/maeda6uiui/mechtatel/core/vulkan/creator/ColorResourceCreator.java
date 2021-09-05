@@ -26,20 +26,20 @@ public class ColorResourceCreator {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            VkExtent2D swapchainExtent,
+            VkExtent2D extent,
             int msaaSamples,
-            int swapchainImageFormat) {
+            int imageFormat) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             LongBuffer pColorImage = stack.mallocLong(1);
             LongBuffer pColorImageMemory = stack.mallocLong(1);
 
             ImageUtils.createImage(
                     device,
-                    swapchainExtent.width(),
-                    swapchainExtent.height(),
+                    extent.width(),
+                    extent.height(),
                     1,
                     msaaSamples,
-                    swapchainImageFormat,
+                    imageFormat,
                     VK_IMAGE_TILING_OPTIMAL,
                     VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -49,7 +49,7 @@ public class ColorResourceCreator {
             long colorImageMemory = pColorImageMemory.get(0);
 
             long colorImageView = ImageViewCreator.createImageView(
-                    device, colorImage, swapchainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
+                    device, colorImage, imageFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 
             ImageUtils.transitionImageLayout(
                     device,

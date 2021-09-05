@@ -19,8 +19,8 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 public class SimpleNabor extends Nabor {
-    public SimpleNabor(VkDevice device, int imageFormat, int msaaSamples, int width, int height) {
-        super(device, imageFormat, msaaSamples, width, height);
+    public SimpleNabor(VkDevice device) {
+        super(device);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class SimpleNabor extends Nabor {
             depthAttachment.format(DepthResourceUtils.findDepthFormat(device));
             depthAttachment.samples(msaaSamples);
             depthAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
-            depthAttachment.storeOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
+            depthAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
             depthAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
             depthAttachment.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
             depthAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
@@ -102,12 +102,13 @@ public class SimpleNabor extends Nabor {
                 throw new RuntimeException("Failed to create a render pass");
             }
 
-            this.setRenderPass(pRenderPass.get(0));
+            long renderPass = pRenderPass.get(0);
+            this.setRenderPass(renderPass);
         }
     }
 
     @Override
-    protected void createDescriptorSetLayout() {
+    protected void createDescriptorSetLayouts() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
@@ -142,7 +143,7 @@ public class SimpleNabor extends Nabor {
     }
 
     @Override
-    protected void createGraphicsPipeline(int width, int height, int msaaSamples) {
+    protected void createGraphicsPipelines(int width, int height, int msaaSamples) {
         VkDevice device = this.getDevice();
 
         long vertShaderModule;

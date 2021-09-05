@@ -19,6 +19,8 @@ import static org.lwjgl.vulkan.VK10.*;
 public class Nabor {
     private VkDevice device;
 
+    private int texDstBinding;
+
     private long renderPass;
     private List<Long> descriptorSetLayouts;
     private List<Long> vertShaderModules;
@@ -26,30 +28,38 @@ public class Nabor {
     private List<Long> pipelineLayouts;
     private List<Long> graphicsPipelines;
 
-    protected void createRenderPass(int imageFormat, int msaaSamples) {
-
-    }
-
-    protected void createDescriptorSetLayout() {
-
-    }
-
-    protected void createGraphicsPipeline(int width, int height, int msaaSamples) {
-
-    }
-
-    public Nabor(VkDevice device, int imageFormat, int msaaSamples, int width, int height) {
+    public Nabor(VkDevice device) {
         this.device = device;
+
+        texDstBinding = 1;
 
         descriptorSetLayouts = new ArrayList<>();
         vertShaderModules = new ArrayList<>();
         fragShaderModules = new ArrayList<>();
         pipelineLayouts = new ArrayList<>();
         graphicsPipelines = new ArrayList<>();
+    }
 
+    protected void createRenderPass(int imageFormat, int msaaSamples) {
+
+    }
+
+    protected void createDescriptorSetLayouts() {
+
+    }
+
+    protected void createGraphicsPipelines(int width, int height, int msaaSamples) {
+
+    }
+
+    public void compile(
+            int imageFormat,
+            int msaaSamples,
+            int width,
+            int height) {
         this.createRenderPass(imageFormat, msaaSamples);
-        this.createDescriptorSetLayout();
-        this.createGraphicsPipeline(width, height, msaaSamples);
+        this.createDescriptorSetLayouts();
+        this.createGraphicsPipelines(width, height, msaaSamples);
     }
 
     public void cleanup(boolean reserveForRecreation) {
@@ -76,11 +86,19 @@ public class Nabor {
         this.cleanup(true);
 
         this.createRenderPass(imageFormat, msaaSamples);
-        this.createGraphicsPipeline(width, height, msaaSamples);
+        this.createGraphicsPipelines(width, height, msaaSamples);
     }
 
     protected VkDevice getDevice() {
         return device;
+    }
+
+    public int getTexDstBinding() {
+        return texDstBinding;
+    }
+
+    protected void setTexDstBinding(int texDstBinding) {
+        this.texDstBinding = texDstBinding;
     }
 
     public long getRenderPass() {

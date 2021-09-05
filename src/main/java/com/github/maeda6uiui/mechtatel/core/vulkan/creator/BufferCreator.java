@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.creator;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.MemoryUtils;
 import org.lwjgl.PointerBuffer;
@@ -34,6 +35,7 @@ public class BufferCreator {
             buffer.putFloat(vertex.color.x());
             buffer.putFloat(vertex.color.y());
             buffer.putFloat(vertex.color.z());
+            buffer.putFloat(vertex.color.w());
         }
 
         buffer.rewind();
@@ -47,9 +49,25 @@ public class BufferCreator {
             buffer.putFloat(vertex.color.x());
             buffer.putFloat(vertex.color.y());
             buffer.putFloat(vertex.color.z());
+            buffer.putFloat(vertex.color.w());
 
             buffer.putFloat(vertex.texCoords.x());
             buffer.putFloat(vertex.texCoords.y());
+        }
+
+        buffer.rewind();
+    }
+
+    private static void memcpyVertex3D(ByteBuffer buffer, List<VkVertex3D> vertices) {
+        for (var vertex : vertices) {
+            buffer.putFloat(vertex.pos.x());
+            buffer.putFloat(vertex.pos.y());
+            buffer.putFloat(vertex.pos.z());
+
+            buffer.putFloat(vertex.color.x());
+            buffer.putFloat(vertex.color.y());
+            buffer.putFloat(vertex.color.z());
+            buffer.putFloat(vertex.color.w());
         }
 
         buffer.rewind();
@@ -64,6 +82,7 @@ public class BufferCreator {
             buffer.putFloat(vertex.color.x());
             buffer.putFloat(vertex.color.y());
             buffer.putFloat(vertex.color.z());
+            buffer.putFloat(vertex.color.w());
 
             buffer.putFloat(vertex.texCoords.x());
             buffer.putFloat(vertex.texCoords.y());

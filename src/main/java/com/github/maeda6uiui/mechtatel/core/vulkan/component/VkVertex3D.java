@@ -1,11 +1,11 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
 import org.joml.Vector3fc;
+import org.joml.Vector4fc;
 import org.lwjgl.vulkan.VkVertexInputAttributeDescription;
 import org.lwjgl.vulkan.VkVertexInputBindingDescription;
 
-import static org.lwjgl.vulkan.VK10.VK_FORMAT_R32G32B32_SFLOAT;
-import static org.lwjgl.vulkan.VK10.VK_VERTEX_INPUT_RATE_VERTEX;
+import static org.lwjgl.vulkan.VK10.*;
 
 /**
  * Vertex3D
@@ -13,14 +13,14 @@ import static org.lwjgl.vulkan.VK10.VK_VERTEX_INPUT_RATE_VERTEX;
  * @author maeda
  */
 public class VkVertex3D {
-    public static final int SIZEOF = (3 + 3) * Float.BYTES;
+    public static final int SIZEOF = (3 + 4) * Float.BYTES;
     public static final int OFFSETOF_POS = 0;
     public static final int OFFSETOF_COLOR = 3 * Float.BYTES;
 
     public Vector3fc pos;
-    public Vector3fc color;
+    public Vector4fc color;
 
-    public VkVertex3D(Vector3fc pos, Vector3fc color) {
+    public VkVertex3D(Vector3fc pos, Vector4fc color) {
         this.pos = pos;
         this.color = color;
     }
@@ -48,7 +48,7 @@ public class VkVertex3D {
         VkVertexInputAttributeDescription colorDescription = attributeDescriptions.get(1);
         colorDescription.binding(0);
         colorDescription.location(1);
-        colorDescription.format(VK_FORMAT_R32G32B32_SFLOAT);
+        colorDescription.format(VK_FORMAT_R32G32B32A32_SFLOAT);
         colorDescription.offset(OFFSETOF_COLOR);
 
         return attributeDescriptions;

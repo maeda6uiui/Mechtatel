@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
+import org.joml.Vector4fc;
 import org.lwjgl.vulkan.VkVertexInputAttributeDescription;
 import org.lwjgl.vulkan.VkVertexInputBindingDescription;
 
@@ -13,16 +14,16 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 public class VkVertex3DUV {
-    public static final int SIZEOF = (3 + 3 + 2) * Float.BYTES;
+    public static final int SIZEOF = (3 + 4 + 2) * Float.BYTES;
     public static final int OFFSETOF_POS = 0;
     public static final int OFFSETOF_COLOR = 3 * Float.BYTES;
-    public static final int OFFSETOF_TEXCOORDS = (3 + 3) * Float.BYTES;
+    public static final int OFFSETOF_TEXCOORDS = (3 + 4) * Float.BYTES;
 
     public Vector3fc pos;
-    public Vector3fc color;
+    public Vector4fc color;
     public Vector2fc texCoords;
 
-    public VkVertex3DUV(Vector3fc pos, Vector3fc color, Vector2fc texCoords) {
+    public VkVertex3DUV(Vector3fc pos, Vector4fc color, Vector2fc texCoords) {
         this.pos = pos;
         this.color = color;
         this.texCoords = texCoords;
@@ -51,7 +52,7 @@ public class VkVertex3DUV {
         VkVertexInputAttributeDescription colorDescription = attributeDescriptions.get(1);
         colorDescription.binding(0);
         colorDescription.location(1);
-        colorDescription.format(VK_FORMAT_R32G32B32_SFLOAT);
+        colorDescription.format(VK_FORMAT_R32G32B32A32_SFLOAT);
         colorDescription.offset(OFFSETOF_COLOR);
 
         //Texture coordinates

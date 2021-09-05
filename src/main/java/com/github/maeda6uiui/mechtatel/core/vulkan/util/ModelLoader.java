@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.util;
+package com.github.maeda6uiui.mechtatel.core.vulkan.util;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3DUV;
 import org.joml.*;
@@ -147,7 +147,7 @@ public class ModelLoader {
         for (int i = 0; i < numVertices; i++) {
             var vertex = new VkVertex3DUV(
                     positions.get(i),
-                    new Vector3f(1.0f, 1.0f, 1.0f),
+                    new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
                     texCoords.get(i));
             mesh.vertices.add(vertex);
         }

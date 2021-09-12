@@ -23,6 +23,8 @@ public class Nabor {
 
     private int texDstBinding;
 
+    private VkExtent2D extent;
+
     private List<Long> uniformBuffers;
     private List<Long> uniformBufferMemories;
 
@@ -82,20 +84,19 @@ public class Nabor {
 
     }
 
-    protected void createGraphicsPipelines(VkExtent2D extent, int msaaSamples) {
+    protected void createGraphicsPipelines(int msaaSamples) {
 
     }
 
     protected void createImages(
             long commandPool,
             VkQueue graphicsQueue,
-            VkExtent2D extent,
             int msaaSamples,
             int imageFormat) {
 
     }
 
-    protected void createFramebuffers(VkExtent2D extent) {
+    protected void createFramebuffers() {
 
     }
 
@@ -105,14 +106,16 @@ public class Nabor {
             VkExtent2D extent,
             long commandPool,
             VkQueue graphicsQueue) {
+        this.extent = extent;
+
         this.createUniformBuffers(1);
         this.createRenderPass(imageFormat, msaaSamples);
         this.createDescriptorSetLayouts();
         this.createDescriptorPools(1);
         this.createDescriptorSets(1);
-        this.createGraphicsPipelines(extent, msaaSamples);
-        this.createImages(commandPool, graphicsQueue, extent, msaaSamples, imageFormat);
-        this.createFramebuffers(extent);
+        this.createGraphicsPipelines(msaaSamples);
+        this.createImages(commandPool, graphicsQueue, msaaSamples, imageFormat);
+        this.createFramebuffers();
     }
 
     public void cleanup(boolean reserveForRecreation) {
@@ -138,6 +141,8 @@ public class Nabor {
 
             uniformBuffers.forEach(uniformBuffer -> vkDestroyBuffer(device, uniformBuffer, null));
             uniformBufferMemories.forEach(uniformBufferMemory -> vkFreeMemory(device, uniformBufferMemory, null));
+            uniformBuffers.clear();
+            uniformBufferMemories.clear();
 
             descriptorSetLayouts.forEach(
                     descriptorSetLayout -> vkDestroyDescriptorSetLayout(device, descriptorSetLayout, null));
@@ -158,13 +163,14 @@ public class Nabor {
             VkExtent2D extent,
             long commandPool,
             VkQueue graphicsQueue) {
+        this.extent = extent;
+
         this.cleanup(true);
 
         this.createRenderPass(imageFormat, msaaSamples);
-        this.createGraphicsPipelines(extent, msaaSamples);
-        this.createGraphicsPipelines(extent, msaaSamples);
-        this.createImages(commandPool, graphicsQueue, extent, msaaSamples, imageFormat);
-        this.createFramebuffers(extent);
+        this.createGraphicsPipelines(msaaSamples);
+        this.createImages(commandPool, graphicsQueue, msaaSamples, imageFormat);
+        this.createFramebuffers();
     }
 
     protected VkDevice getDevice() {
@@ -177,6 +183,10 @@ public class Nabor {
 
     protected void setTexDstBinding(int texDstBinding) {
         this.texDstBinding = texDstBinding;
+    }
+
+    public VkExtent2D getExtent() {
+        return extent;
     }
 
     protected List<Long> getUniformBuffers() {
@@ -249,6 +259,10 @@ public class Nabor {
 
     protected List<Long> getFramebuffers() {
         return framebuffers;
+    }
+
+    public long getFramebuffer(int index) {
+        return framebuffers.get(index);
     }
 
     protected long createShaderModule(VkDevice device, ByteBuffer spirvCode) {

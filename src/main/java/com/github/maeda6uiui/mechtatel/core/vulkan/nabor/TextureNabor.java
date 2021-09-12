@@ -220,8 +220,9 @@ public class TextureNabor extends Nabor {
     }
 
     @Override
-    protected void createGraphicsPipelines(VkExtent2D extent, int msaaSamples) {
+    protected void createGraphicsPipelines(int msaaSamples) {
         VkDevice device = this.getDevice();
+        VkExtent2D extent = this.getExtent();
 
         long vertShaderModule;
         long fragShaderModule;
@@ -392,11 +393,11 @@ public class TextureNabor extends Nabor {
     protected void createImages(
             long commandPool,
             VkQueue graphicsQueue,
-            VkExtent2D extent,
             int msaaSamples,
             int imageFormat) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
+            VkExtent2D extent = this.getExtent();
 
             //Color image
             LongBuffer pColorImage = stack.mallocLong(1);
@@ -494,9 +495,10 @@ public class TextureNabor extends Nabor {
     }
 
     @Override
-    protected void createFramebuffers(VkExtent2D extent) {
+    protected void createFramebuffers() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
+            VkExtent2D extent = this.getExtent();
 
             long colorImageView = this.getImageViews().get(0);
             long depthImageView = this.getImageViews().get(1);

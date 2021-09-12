@@ -217,6 +217,60 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         this.createSwapchainObjects();
     }
 
+    private void drawToBackScreen(Camera camera) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            var cameraUBO = new CameraUBO(camera);
+            cameraUBO.update(device, cameraUBOMemories);
+
+            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
+            beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
+
+            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
+            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
+            renderPassInfo.renderPass(nabor.getRenderPass());
+            renderPassInfo.framebuffer(nabor.getFramebuffer(0));
+            VkRect2D renderArea = VkRect2D.callocStack(stack);
+            renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
+            renderArea.extent(nabor.getExtent());
+            renderPassInfo.renderArea(renderArea);
+            VkClearValue.Buffer clearValues = VkClearValue.callocStack(2, stack);
+            clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
+            clearValues.get(1).depthStencil().set(1.0f, 0);
+            renderPassInfo.pClearValues(clearValues);
+
+            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
+
+            if (vkBeginCommandBuffer(commandBuffer, beginInfo) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to begin recording a command buffer");
+            }
+
+            vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+            {
+                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, nabor.getGraphicsPipeline(0));
+
+                for (var component : components) {
+                    ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
+                    component.getMat().get(matBuffer);
+
+                    vkCmdPushConstants(commandBuffer, nabor.getPipelineLayout(0), VK_SHADER_STAGE_VERTEX_BIT, 0, matBuffer);
+
+                    component.draw(commandBuffer, 0, nabor.getPipelineLayout(0));
+                }
+            }
+            vkCmdEndRenderPass(commandBuffer);
+
+            if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to record a command buffer");
+            }
+
+            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
+        }
+    }
+
+    private void presentToFrontScreen() {
+
+    }
+
     public void draw(Camera camera) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);

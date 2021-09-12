@@ -63,14 +63,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private List<Long> cameraUBOs;
     private List<Long> cameraUBOMemories;
 
-    private long depthImage;
-    private long depthImageMemory;
-    private long depthImageView;
-
-    private long colorImage;
-    private long colorImageMemory;
-    private long colorImageView;
-
     private long textureSampler;
 
     private ArrayList<VkComponent> components;

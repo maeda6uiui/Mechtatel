@@ -22,8 +22,13 @@ public class Nabor {
 
     private int texDstBinding;
 
+    private List<Long> uniformBuffers;
+    private List<Long> uniformBufferMemories;
+
     private long renderPass;
     private List<Long> descriptorSetLayouts;
+    private List<Long> descriptorPools;
+    private List<Long> descriptorSets;
     private List<Long> vertShaderModules;
     private List<Long> fragShaderModules;
     private List<Long> pipelineLayouts;
@@ -34,11 +39,20 @@ public class Nabor {
 
         texDstBinding = 1;
 
+        uniformBuffers = new ArrayList<>();
+        uniformBufferMemories = new ArrayList<>();
+
         descriptorSetLayouts = new ArrayList<>();
+        descriptorPools = new ArrayList<>();
+        descriptorSets = new ArrayList<>();
         vertShaderModules = new ArrayList<>();
         fragShaderModules = new ArrayList<>();
         pipelineLayouts = new ArrayList<>();
         graphicsPipelines = new ArrayList<>();
+    }
+
+    protected void createUniformBuffers(int descriptorCount) {
+
     }
 
     protected void createRenderPass(int imageFormat, int msaaSamples) {
@@ -46,6 +60,14 @@ public class Nabor {
     }
 
     protected void createDescriptorSetLayouts() {
+
+    }
+
+    protected void createDescriptorPools(int descriptorCount) {
+
+    }
+
+    protected void createDescriptorSets(int descriptorCount) {
 
     }
 
@@ -57,8 +79,11 @@ public class Nabor {
             int imageFormat,
             int msaaSamples,
             VkExtent2D extent) {
+        this.createUniformBuffers(1);
         this.createRenderPass(imageFormat, msaaSamples);
         this.createDescriptorSetLayouts();
+        this.createDescriptorPools(1);
+        this.createDescriptorSets(1);
         this.createGraphicsPipelines(extent, msaaSamples);
     }
 
@@ -74,9 +99,17 @@ public class Nabor {
             vertShaderModules.clear();
             fragShaderModules.clear();
 
+            uniformBuffers.forEach(uniformBuffer -> vkDestroyBuffer(device, uniformBuffer, null));
+            uniformBufferMemories.forEach(uniformBufferMemory -> vkFreeMemory(device, uniformBufferMemory, null));
+
             descriptorSetLayouts.forEach(
                     descriptorSetLayout -> vkDestroyDescriptorSetLayout(device, descriptorSetLayout, null));
             descriptorSetLayouts.clear();
+
+            descriptorPools.forEach(descriptorPool -> vkDestroyDescriptorPool(device, descriptorPool, null));
+            descriptorPools.clear();
+
+            descriptorSets.clear();
         }
 
         vkDestroyRenderPass(device, renderPass, null);
@@ -104,6 +137,14 @@ public class Nabor {
         this.texDstBinding = texDstBinding;
     }
 
+    protected List<Long> getUniformBuffers() {
+        return uniformBuffers;
+    }
+
+    protected List<Long> getUniformBufferMemories() {
+        return uniformBufferMemories;
+    }
+
     public long getRenderPass() {
         return renderPass;
     }
@@ -120,24 +161,20 @@ public class Nabor {
         return descriptorSetLayouts;
     }
 
-    protected void setDescriptorSetLayouts(List<Long> descriptorSetLayouts) {
-        this.descriptorSetLayouts = descriptorSetLayouts;
+    protected List<Long> getDescriptorPools() {
+        return descriptorPools;
+    }
+
+    protected List<Long> getDescriptorSets() {
+        return descriptorSets;
     }
 
     protected List<Long> getVertShaderModules() {
         return vertShaderModules;
     }
 
-    protected void setVertShaderModules(List<Long> vertShaderModules) {
-        this.vertShaderModules = vertShaderModules;
-    }
-
     protected List<Long> getFragShaderModules() {
         return fragShaderModules;
-    }
-
-    protected void setFragShaderModules(List<Long> fragShaderModules) {
-        this.fragShaderModules = fragShaderModules;
     }
 
     public long getPipelineLayout(int index) {
@@ -148,24 +185,12 @@ public class Nabor {
         return pipelineLayouts;
     }
 
-    protected void setPipelineLayouts(List<Long> pipelineLayouts) {
-        this.pipelineLayouts = pipelineLayouts;
-    }
-
-    public int getNumPipelines() {
-        return graphicsPipelines.size();
-    }
-
     public long getGraphicsPipeline(int index) {
         return graphicsPipelines.get(index);
     }
 
     protected List<Long> getGraphicsPipelines() {
         return graphicsPipelines;
-    }
-
-    protected void setGraphicsPipelines(List<Long> graphicsPipelines) {
-        this.graphicsPipelines = graphicsPipelines;
     }
 
     protected long createShaderModule(VkDevice device, ByteBuffer spirvCode) {

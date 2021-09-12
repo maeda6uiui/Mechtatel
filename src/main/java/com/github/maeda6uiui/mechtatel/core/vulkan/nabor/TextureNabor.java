@@ -1,6 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
+import com.github.maeda6uiui.mechtatel.core.camera.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3DUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
 import org.lwjgl.system.MemoryStack;
@@ -21,6 +23,18 @@ import static org.lwjgl.vulkan.VK10.*;
 public class TextureNabor extends Nabor {
     public TextureNabor(VkDevice device) {
         super(device);
+    }
+
+    @Override
+    protected void createUniformBuffers(int descriptorCount) {
+        VkDevice device = this.getDevice();
+
+        var cameraUBOInfos = BufferCreator.createUBOBuffers(
+                device, descriptorCount, CameraUBO.SIZEOF);
+        for (var cameraUBOInfo : cameraUBOInfos) {
+            this.getUniformBuffers().add(cameraUBOInfo.buffer);
+            this.getUniformBufferMemories().add(cameraUBOInfo.bufferMemory);
+        }
     }
 
     @Override
@@ -139,6 +153,83 @@ public class TextureNabor extends Nabor {
 
             long descriptorSetLayout = pDescriptorSetLayout.get(0);
             this.getDescriptorSetLayouts().add(descriptorSetLayout);
+        }
+    }
+
+    @Override
+    protected void createDescriptorPools(int descriptorCount) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDevice device = this.getDevice();
+
+            VkDescriptorPoolSize.Buffer poolSizes = VkDescriptorPoolSize.callocStack(2, stack);
+
+            VkDescriptorPoolSize cameraUBPoolSize = poolSizes.get(0);
+            cameraUBPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            cameraUBPoolSize.descriptorCount(descriptorCount);
+
+            VkDescriptorPoolSize textureSamplerPoolSize = poolSizes.get(1);
+            textureSamplerPoolSize.type(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+            textureSamplerPoolSize.descriptorCount(descriptorCount);
+
+            VkDescriptorPoolCreateInfo poolInfo = VkDescriptorPoolCreateInfo.callocStack(stack);
+            poolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
+            poolInfo.pPoolSizes(poolSizes);
+            poolInfo.maxSets(descriptorCount);
+
+            LongBuffer pDescriptorPool = stack.mallocLong(1);
+            if (vkCreateDescriptorPool(device, poolInfo, null, pDescriptorPool) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create a descriptor pool");
+            }
+
+            this.getDescriptorPools().add(pDescriptorPool.get(0));
+        }
+    }
+
+    @Override
+    protected void createDescriptorSets(int descriptorCount) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDevice device = this.getDevice();
+
+            long descriptorSetLayout = this.getDescriptorSetLayouts().get(0);
+            long descriptorPool = this.getDescriptorPools().get(0);
+
+            LongBuffer layouts = stack.mallocLong(descriptorCount);
+            for (int i = 0; i < layouts.capacity(); i++) {
+                layouts.put(i, descriptorSetLayout);
+            }
+
+            VkDescriptorSetAllocateInfo allocInfo = VkDescriptorSetAllocateInfo.callocStack(stack);
+            allocInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO);
+            allocInfo.descriptorPool(descriptorPool);
+            allocInfo.pSetLayouts(layouts);
+
+            LongBuffer pDescriptorSets = stack.mallocLong(descriptorCount);
+            if (vkAllocateDescriptorSets(device, allocInfo, pDescriptorSets) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to allocate descriptor sets");
+            }
+
+            VkDescriptorBufferInfo.Buffer cameraUBOInfo = VkDescriptorBufferInfo.callocStack(1, stack);
+            cameraUBOInfo.offset(0);
+            cameraUBOInfo.range(CameraUBO.SIZEOF);
+
+            VkWriteDescriptorSet.Buffer cameraUBODescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            cameraUBODescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            cameraUBODescriptorWrite.dstBinding(0);
+            cameraUBODescriptorWrite.dstArrayElement(0);
+            cameraUBODescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            cameraUBODescriptorWrite.descriptorCount(1);
+            cameraUBODescriptorWrite.pBufferInfo(cameraUBOInfo);
+
+            for (int i = 0; i < pDescriptorSets.capacity(); i++) {
+                long descriptorSet = pDescriptorSets.get(i);
+
+                cameraUBOInfo.buffer(this.getUniformBuffers().get(i));
+                cameraUBODescriptorWrite.dstSet(descriptorSet);
+
+                vkUpdateDescriptorSets(device, cameraUBODescriptorWrite, null);
+
+                this.getDescriptorSets().add(descriptorSet);
+            }
         }
     }
 

@@ -9,7 +9,10 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.MultisamplingUtils;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.PhysicalDevicePicker;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.PointerBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -265,8 +268,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             }
 
             var cameraUBO = new CameraUBO(camera);
+            cameraUBO.update(device, cameraUBOMemories);
 
-            UBOUtils.updateCameraUBO(device, cameraUBOMemories, cameraUBO);
             int result = thisFrame.drawFrame(
                     swapchain.getSwapchain(),
                     imagesInFlight,

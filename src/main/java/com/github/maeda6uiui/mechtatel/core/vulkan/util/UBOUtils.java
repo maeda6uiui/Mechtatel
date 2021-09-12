@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.util;
 
-import com.github.maeda6uiui.mechtatel.core.camera.CameraUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkDevice;

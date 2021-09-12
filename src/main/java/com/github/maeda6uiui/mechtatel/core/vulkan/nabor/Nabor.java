@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkExtent2D;
+import org.lwjgl.vulkan.VkQueue;
 import org.lwjgl.vulkan.VkShaderModuleCreateInfo;
 
 import java.nio.ByteBuffer;
@@ -34,6 +35,11 @@ public class Nabor {
     private List<Long> pipelineLayouts;
     private List<Long> graphicsPipelines;
 
+    private List<Long> images;
+    private List<Long> imageMemories;
+    private List<Long> imageViews;
+    private List<Long> framebuffers;
+
     public Nabor(VkDevice device) {
         this.device = device;
 
@@ -49,6 +55,11 @@ public class Nabor {
         fragShaderModules = new ArrayList<>();
         pipelineLayouts = new ArrayList<>();
         graphicsPipelines = new ArrayList<>();
+
+        images = new ArrayList<>();
+        imageMemories = new ArrayList<>();
+        imageViews = new ArrayList<>();
+        framebuffers = new ArrayList<>();
     }
 
     protected void createUniformBuffers(int descriptorCount) {
@@ -75,16 +86,33 @@ public class Nabor {
 
     }
 
+    protected void createImages(
+            long commandPool,
+            VkQueue graphicsQueue,
+            VkExtent2D extent,
+            int msaaSamples,
+            int imageFormat) {
+
+    }
+
+    protected void createFramebuffers(VkExtent2D extent) {
+
+    }
+
     public void compile(
             int imageFormat,
             int msaaSamples,
-            VkExtent2D extent) {
+            VkExtent2D extent,
+            long commandPool,
+            VkQueue graphicsQueue) {
         this.createUniformBuffers(1);
         this.createRenderPass(imageFormat, msaaSamples);
         this.createDescriptorSetLayouts();
         this.createDescriptorPools(1);
         this.createDescriptorSets(1);
         this.createGraphicsPipelines(extent, msaaSamples);
+        this.createImages(commandPool, graphicsQueue, extent, msaaSamples, imageFormat);
+        this.createFramebuffers(extent);
     }
 
     public void cleanup(boolean reserveForRecreation) {
@@ -92,6 +120,15 @@ public class Nabor {
         pipelineLayouts.forEach(pipelineLayout -> vkDestroyPipelineLayout(device, pipelineLayout, null));
         graphicsPipelines.clear();
         pipelineLayouts.clear();
+
+        images.forEach(image -> vkDestroyImage(device, image, null));
+        imageMemories.forEach(imageMemory -> vkFreeMemory(device, imageMemory, null));
+        imageViews.forEach(imageView -> vkDestroyImageView(device, imageView, null));
+        framebuffers.forEach(framebuffer -> vkDestroyFramebuffer(device, framebuffer, null));
+        images.clear();
+        imageMemories.clear();
+        imageViews.clear();
+        framebuffers.clear();
 
         if (!reserveForRecreation) {
             vertShaderModules.forEach(vertShaderModule -> vkDestroyShaderModule(device, vertShaderModule, null));
@@ -118,11 +155,16 @@ public class Nabor {
     public void recreate(
             int imageFormat,
             int msaaSamples,
-            VkExtent2D extent) {
+            VkExtent2D extent,
+            long commandPool,
+            VkQueue graphicsQueue) {
         this.cleanup(true);
 
         this.createRenderPass(imageFormat, msaaSamples);
         this.createGraphicsPipelines(extent, msaaSamples);
+        this.createGraphicsPipelines(extent, msaaSamples);
+        this.createImages(commandPool, graphicsQueue, extent, msaaSamples, imageFormat);
+        this.createFramebuffers(extent);
     }
 
     protected VkDevice getDevice() {
@@ -191,6 +233,22 @@ public class Nabor {
 
     protected List<Long> getGraphicsPipelines() {
         return graphicsPipelines;
+    }
+
+    protected List<Long> getImages() {
+        return images;
+    }
+
+    protected List<Long> getImageMemories() {
+        return imageMemories;
+    }
+
+    protected List<Long> getImageViews() {
+        return imageViews;
+    }
+
+    protected List<Long> getFramebuffers() {
+        return framebuffers;
     }
 
     protected long createShaderModule(VkDevice device, ByteBuffer spirvCode) {

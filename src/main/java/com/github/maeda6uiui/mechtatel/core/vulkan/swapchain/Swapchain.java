@@ -42,7 +42,7 @@ public class Swapchain {
     private long depthImageView;
     private long renderPass;
     private List<Long> swapchainFramebuffers;
-    
+
     private VkSurfaceFormatKHR chooseSwapSurfaceFormat(VkSurfaceFormatKHR.Buffer availableFormats) {
         return availableFormats.stream()
                 .filter(availableFormat -> availableFormat.format() == VK_FORMAT_B8G8R8_SRGB)
@@ -186,12 +186,22 @@ public class Swapchain {
                     msaaSamples,
                     swapchainImageFormat,
                     VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     pColorImage,
                     pColorImageMemory);
             colorImage = pColorImage.get(0);
             colorImageMemory = pColorImageMemory.get(0);
+
+            ImageUtils.transitionImageLayout(
+                    device,
+                    commandPool,
+                    graphicsQueue,
+                    colorImage,
+                    false,
+                    VK_IMAGE_LAYOUT_UNDEFINED,
+                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                    1);
 
             VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.callocStack(stack);
             viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
@@ -208,18 +218,7 @@ public class Swapchain {
             if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
                 throw new RuntimeException("Failed to create an image view");
             }
-
             colorImageView = pImageView.get(0);
-
-            ImageUtils.transitionImageLayout(
-                    device,
-                    commandPool,
-                    graphicsQueue,
-                    colorImage,
-                    false,
-                    VK_IMAGE_LAYOUT_UNDEFINED,
-                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                    1);
 
             //Depth image
             LongBuffer pDepthImage = stack.mallocLong(1);
@@ -242,15 +241,6 @@ public class Swapchain {
             depthImage = pDepthImage.get(0);
             depthImageMemory = pDepthImageMemory.get(0);
 
-            viewInfo.image(depthImage);
-            viewInfo.format(depthFormat);
-            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_DEPTH_BIT);
-
-            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to create an image view");
-            }
-            depthImageView = pImageView.get(0);
-
             ImageUtils.transitionImageLayout(
                     device,
                     commandPool,
@@ -259,6 +249,15 @@ public class Swapchain {
                     hasStencilComponent(depthFormat),
                     VK_IMAGE_LAYOUT_UNDEFINED,
                     VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
+
+            viewInfo.image(depthImage);
+            viewInfo.format(depthFormat);
+            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_DEPTH_BIT);
+
+            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create an image view");
+            }
+            depthImageView = pImageView.get(0);
         }
     }
 
@@ -416,6 +415,10 @@ public class Swapchain {
 
     public VkExtent2D getSwapchainExtent() {
         return swapchainExtent;
+    }
+
+    public long getRenderPass() {
+        return renderPass;
     }
 
     public long getSwapchainFramebuffer(int index) {

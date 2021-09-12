@@ -90,12 +90,16 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             nabor.compile(
                     swapchain.getSwapchainImageFormat(),
                     msaaSamples,
-                    swapchain.getSwapchainExtent());
+                    swapchain.getSwapchainExtent(),
+                    commandPool,
+                    graphicsQueue);
         } else {
             nabor.recreate(
                     swapchain.getSwapchainImageFormat(),
                     msaaSamples,
-                    swapchain.getSwapchainExtent());
+                    swapchain.getSwapchainExtent(),
+                    commandPool,
+                    graphicsQueue);
         }
     }
 
@@ -217,7 +221,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
-            renderPassInfo.renderPass(nabor.getRenderPass());
+            renderPassInfo.renderPass(swapchain.getRenderPass());
             VkRect2D renderArea = VkRect2D.callocStack(stack);
             renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
             renderArea.extent(swapchain.getSwapchainExtent());

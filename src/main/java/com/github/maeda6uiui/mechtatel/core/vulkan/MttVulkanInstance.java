@@ -65,8 +65,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private Map<Integer, Frame> imagesInFlight;
     private int currentFrame;
 
-    private List<Long> cameraUBs;
-    private List<Long> cameraUBMemories;
+    private List<Long> cameraUBOs;
+    private List<Long> cameraUBOMemories;
 
     private long depthImage;
     private long depthImageMemory;
@@ -180,11 +180,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         //Create uniform buffers and uniform buffer memories
         List<BufferCreator.BufferInfo> cameraUBInfos = BufferCreator.createUBOBuffers(
                 device, swapchainImages.size(), CameraUBO.SIZEOF);
-        cameraUBs = new ArrayList<>();
-        cameraUBMemories = new ArrayList<>();
+        cameraUBOs = new ArrayList<>();
+        cameraUBOMemories = new ArrayList<>();
         for (var cameraUBInfo : cameraUBInfos) {
-            cameraUBs.add(cameraUBInfo.buffer);
-            cameraUBMemories.add(cameraUBInfo.bufferMemory);
+            cameraUBOs.add(cameraUBInfo.buffer);
+            cameraUBOMemories.add(cameraUBInfo.bufferMemory);
         }
 
         //Create a texture sampler
@@ -214,8 +214,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         vkDestroySampler(device, textureSampler, null);
 
-        cameraUBs.forEach(ubo -> vkDestroyBuffer(device, ubo, null));
-        cameraUBMemories.forEach(uboMemory -> vkFreeMemory(device, uboMemory, null));
+        cameraUBOs.forEach(ubo -> vkDestroyBuffer(device, ubo, null));
+        cameraUBOMemories.forEach(uboMemory -> vkFreeMemory(device, uboMemory, null));
 
         inFlightFrames.forEach(frame -> {
             vkDestroySemaphore(device, frame.renderFinishedSemaphore(), null);
@@ -310,7 +310,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
             CameraUBO cameraUBO = camera.createCameraUBO(true);
 
-            UBOUtils.updateCameraUBO(device, cameraUBMemories, cameraUBO);
+            UBOUtils.updateCameraUBO(device, cameraUBOMemories, cameraUBO);
             int result = thisFrame.drawFrame(
                     swapchain,
                     imagesInFlight,
@@ -351,7 +351,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 nabor.getTexDstBinding(),
                 swapchainImages.size(),
                 nabor.getDescriptorSetLayout(0),
-                cameraUBs,
+                cameraUBOs,
                 modelFilepath);
         components.add(model);
 

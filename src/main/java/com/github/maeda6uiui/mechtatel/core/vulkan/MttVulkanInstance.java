@@ -8,6 +8,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.lwjgl.system.MemoryStack;
@@ -23,7 +24,6 @@ import java.util.Map;
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
 import static org.lwjgl.glfw.GLFW.glfwWaitEvents;
 import static org.lwjgl.vulkan.KHRSurface.vkDestroySurfaceKHR;
-import static org.lwjgl.vulkan.KHRSwapchain.vkDestroySwapchainKHR;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
@@ -50,12 +50,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private long surface;
     private VkQueue presentQueue;
 
-    private long swapchain;
-    private List<Long> swapchainImages;
-    private List<Long> swapchainImageViews;
-    private int swapchainImageFormat;
-    private VkExtent2D swapchainExtent;
-    private List<Long> swapchainFramebuffers;
+    private Swapchain swapchain;
 
     private Nabor nabor;
 
@@ -87,52 +82,29 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             IntBuffer height = stack.ints(0);
             glfwGetFramebufferSize(window, width, height);
 
-            SwapchainUtils.SwapchainRelatingData swapchainRelatingData
-                    = SwapchainUtils.createSwapchain(device, surface, width.get(0), height.get(0));
-            swapchain = swapchainRelatingData.swapchain;
-            swapchainImages = swapchainRelatingData.swapchainImages;
-            swapchainImageFormat = swapchainRelatingData.swapchainImageFormat;
-            swapchainExtent = swapchainRelatingData.swapchainExtent;
+            swapchain = new Swapchain(
+                    device,
+                    surface,
+                    commandPool,
+                    graphicsQueue,
+                    width.get(0),
+                    height.get(0),
+                    msaaSamples);
         }
 
-        //Create image views
-        swapchainImageViews = SwapchainUtils.createSwapchainImageViews(device, swapchainImages, swapchainImageFormat);
-
-        //Create color resources
-        ColorResourceCreator.ColorResources colorResources = ColorResourceCreator.createColorResources(
-                device,
-                commandPool,
-                graphicsQueue,
-                swapchainExtent,
-                msaaSamples,
-                swapchainImageFormat);
-        colorImage = colorResources.colorImage;
-        colorImageMemory = colorResources.colorImageMemory;
-        colorImageView = colorResources.colorImageView;
-
-        //Create depth resources
-        DepthResourceUtils.DepthResources depthResources
-                = DepthResourceUtils.createDepthResources(device, commandPool, graphicsQueue, swapchainExtent, msaaSamples);
-        depthImage = depthResources.depthImage;
-        depthImageMemory = depthResources.depthImageMemory;
-        depthImageView = depthResources.depthImageView;
-
+        //Create a nabor
         if (nabor == null) {
             nabor = new TextureNabor(device);
             nabor.compile(
-                    swapchainImageFormat,
+                    swapchain.getSwapchainImageFormat(),
                     msaaSamples,
-                    swapchainExtent);
+                    swapchain.getSwapchainExtent());
         } else {
             nabor.recreate(
-                    swapchainImageFormat,
+                    swapchain.getSwapchainImageFormat(),
                     msaaSamples,
-                    swapchainExtent);
+                    swapchain.getSwapchainExtent());
         }
-
-        //Create swapchain framebuffers
-        swapchainFramebuffers = FramebufferCreator.createSwapchainFramebuffers(
-                device, swapchainImageViews, colorImageView, depthImageView, nabor.getRenderPass(), swapchainExtent);
     }
 
     public MttVulkanInstance(boolean enableValidationLayer, long window, int msaaSamples) {
@@ -175,11 +147,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         //Create sync objects
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
-        imagesInFlight = new HashMap<>(swapchainImages.size());
+        imagesInFlight = new HashMap<>(swapchain.getNumSwapchainImages());
 
         //Create uniform buffers and uniform buffer memories
         List<BufferCreator.BufferInfo> cameraUBInfos = BufferCreator.createUBOBuffers(
-                device, swapchainImages.size(), CameraUBO.SIZEOF);
+                device, swapchain.getNumSwapchainImages(), CameraUBO.SIZEOF);
         cameraUBOs = new ArrayList<>();
         cameraUBOMemories = new ArrayList<>();
         for (var cameraUBInfo : cameraUBInfos) {
@@ -194,19 +166,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     }
 
     private void cleanupSwapchain() {
-        swapchainFramebuffers.forEach(framebuffer -> vkDestroyFramebuffer(device, framebuffer, null));
-
-        vkDestroyImageView(device, depthImageView, null);
-        vkDestroyImage(device, depthImage, null);
-        vkFreeMemory(device, depthImageMemory, null);
-
-        vkDestroyImageView(device, colorImageView, null);
-        vkDestroyImage(device, colorImage, null);
-        vkFreeMemory(device, colorImageMemory, null);
-
-        swapchainImageViews.forEach(imageView -> vkDestroyImageView(device, imageView, null));
-
-        vkDestroySwapchainKHR(device, swapchain, null);
+        swapchain.cleanup();
     }
 
     public void cleanup() {
@@ -268,7 +228,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             renderPassInfo.renderPass(nabor.getRenderPass());
             VkRect2D renderArea = VkRect2D.callocStack(stack);
             renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
-            renderArea.extent(swapchainExtent);
+            renderArea.extent(swapchain.getSwapchainExtent());
             renderPassInfo.renderArea(renderArea);
             VkClearValue.Buffer clearValues = VkClearValue.callocStack(2, stack);
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
@@ -278,7 +238,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             Frame thisFrame = inFlightFrames.get(currentFrame);
 
             var commandBuffers
-                    = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchainImages.size());
+                    = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchain.getNumSwapchainImages());
 
             for (int i = 0; i < commandBuffers.size(); i++) {
                 VkCommandBuffer commandBuffer = commandBuffers.get(i);
@@ -286,7 +246,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     throw new RuntimeException("Failed to begin recording a command buffer");
                 }
 
-                renderPassInfo.framebuffer(swapchainFramebuffers.get(i));
+                renderPassInfo.framebuffer(swapchain.getSwapchainFramebuffer(i));
 
                 vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
                 {
@@ -312,7 +272,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
             UBOUtils.updateCameraUBO(device, cameraUBOMemories, cameraUBO);
             int result = thisFrame.drawFrame(
-                    swapchain,
+                    swapchain.getSwapchain(),
                     imagesInFlight,
                     commandBuffers,
                     graphicsQueue,
@@ -349,7 +309,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 graphicsQueue,
                 textureSampler,
                 nabor.getTexDstBinding(),
-                swapchainImages.size(),
+                swapchain.getNumSwapchainImages(),
                 nabor.getDescriptorSetLayout(0),
                 cameraUBOs,
                 modelFilepath);

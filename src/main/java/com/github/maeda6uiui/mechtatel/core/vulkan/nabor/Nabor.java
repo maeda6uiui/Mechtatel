@@ -1,12 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.ColorResourceCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.FramebufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkExtent2D;
-import org.lwjgl.vulkan.VkQueue;
 import org.lwjgl.vulkan.VkShaderModuleCreateInfo;
 
 import java.nio.ByteBuffer;
@@ -33,16 +29,6 @@ public class Nabor {
     private List<Long> pipelineLayouts;
     private List<Long> graphicsPipelines;
 
-    private long colorImage;
-    private long colorImageMemory;
-    private long colorImageView;
-
-    private long depthImage;
-    private long depthImageMemory;
-    private long depthImageView;
-
-    private long framebuffer;
-
     public Nabor(VkDevice device) {
         this.device = device;
 
@@ -67,69 +53,16 @@ public class Nabor {
 
     }
 
-    protected void createColorImageAndImageView(
-            long commandPool,
-            VkQueue graphicsQueue,
-            VkExtent2D extent,
-            int msaaSamples,
-            int imageFormat) {
-        ColorResourceCreator.ColorResources resources = ColorResourceCreator.createColorResources(
-                device,
-                commandPool,
-                graphicsQueue,
-                extent,
-                msaaSamples,
-                imageFormat);
-        colorImage = resources.colorImage;
-        colorImageMemory = resources.colorImageMemory;
-        colorImageView = resources.colorImageView;
-    }
-
-    protected void createDepthImageAndImageViews(
-            long commandPool,
-            VkQueue graphicsQueue,
-            VkExtent2D extent,
-            int msaaSamples) {
-        DepthResourceUtils.DepthResources resources = DepthResourceUtils.createDepthResources(
-                device,
-                commandPool,
-                graphicsQueue,
-                extent,
-                msaaSamples);
-        depthImage = resources.depthImage;
-        depthImageMemory = resources.depthImageMemory;
-        depthImageView = resources.depthImageView;
-    }
-
-    protected void createFramebuffer(VkExtent2D extent) {
-        framebuffer = FramebufferCreator.createFramebuffer(device, colorImageView, depthImageView, renderPass, extent);
-    }
-
     public void compile(
-            long commandPool,
-            VkQueue graphicsQueue,
             int imageFormat,
             int msaaSamples,
             VkExtent2D extent) {
         this.createRenderPass(imageFormat, msaaSamples);
         this.createDescriptorSetLayouts();
         this.createGraphicsPipelines(extent, msaaSamples);
-        this.createColorImageAndImageView(commandPool, graphicsQueue, extent, msaaSamples, imageFormat);
-        this.createDepthImageAndImageViews(commandPool, graphicsQueue, extent, msaaSamples);
-        this.createFramebuffer(extent);
     }
 
     public void cleanup(boolean reserveForRecreation) {
-        vkDestroyFramebuffer(device, framebuffer, null);
-
-        vkDestroyImageView(device, depthImageView, null);
-        vkDestroyImage(device, depthImage, null);
-        vkFreeMemory(device, depthImageMemory, null);
-
-        vkDestroyImageView(device, colorImageView, null);
-        vkDestroyImage(device, colorImage, null);
-        vkFreeMemory(device, colorImageMemory, null);
-
         graphicsPipelines.forEach(graphicsPipeline -> vkDestroyPipeline(device, graphicsPipeline, null));
         pipelineLayouts.forEach(pipelineLayout -> vkDestroyPipelineLayout(device, pipelineLayout, null));
         graphicsPipelines.clear();
@@ -150,8 +83,6 @@ public class Nabor {
     }
 
     public void recreate(
-            long commandPool,
-            VkQueue graphicsQueue,
             int imageFormat,
             int msaaSamples,
             VkExtent2D extent) {
@@ -159,9 +90,6 @@ public class Nabor {
 
         this.createRenderPass(imageFormat, msaaSamples);
         this.createGraphicsPipelines(extent, msaaSamples);
-        this.createColorImageAndImageView(commandPool, graphicsQueue, extent, msaaSamples, imageFormat);
-        this.createDepthImageAndImageViews(commandPool, graphicsQueue, extent, msaaSamples);
-        this.createFramebuffer(extent);
     }
 
     protected VkDevice getDevice() {
@@ -238,10 +166,6 @@ public class Nabor {
 
     protected void setGraphicsPipelines(List<Long> graphicsPipelines) {
         this.graphicsPipelines = graphicsPipelines;
-    }
-
-    protected long getFramebuffer() {
-        return framebuffer;
     }
 
     protected long createShaderModule(VkDevice device, ByteBuffer spirvCode) {

@@ -120,15 +120,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         if (nabor == null) {
             nabor = new TextureNabor(device);
             nabor.compile(
-                    commandPool,
-                    graphicsQueue,
                     swapchainImageFormat,
                     msaaSamples,
                     swapchainExtent);
         } else {
             nabor.recreate(
-                    commandPool,
-                    graphicsQueue,
                     swapchainImageFormat,
                     msaaSamples,
                     swapchainExtent);

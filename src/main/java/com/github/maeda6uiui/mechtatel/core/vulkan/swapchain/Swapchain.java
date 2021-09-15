@@ -11,8 +11,6 @@ import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils.findDepthFormat;
-import static com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils.hasStencilComponent;
 import static com.github.maeda6uiui.mechtatel.core.vulkan.util.SwapchainUtils.querySwapchainSupport;
 import static org.lwjgl.vulkan.KHRSurface.*;
 import static org.lwjgl.vulkan.KHRSwapchain.*;
@@ -37,10 +35,6 @@ public class Swapchain {
     private long colorImage;
     private long colorImageMemory;
     private long colorImageView;
-    private long depthImage;
-    private long depthImageMemory;
-    private long depthImageView;
-    private long renderPass;
     private List<Long> swapchainFramebuffers;
 
     private VkSurfaceFormatKHR chooseSwapSurfaceFormat(VkSurfaceFormatKHR.Buffer availableFormats) {
@@ -219,152 +213,6 @@ public class Swapchain {
                 throw new RuntimeException("Failed to create an image view");
             }
             colorImageView = pImageView.get(0);
-
-            //Depth image
-            LongBuffer pDepthImage = stack.mallocLong(1);
-            LongBuffer pDepthImageMemory = stack.mallocLong(1);
-
-            int depthFormat = findDepthFormat(device);
-
-            ImageUtils.createImage(
-                    device,
-                    swapchainExtent.width(),
-                    swapchainExtent.height(),
-                    1,
-                    msaaSamples,
-                    depthFormat,
-                    VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pDepthImage,
-                    pDepthImageMemory);
-            depthImage = pDepthImage.get(0);
-            depthImageMemory = pDepthImageMemory.get(0);
-
-            ImageUtils.transitionImageLayout(
-                    device,
-                    commandPool,
-                    graphicsQueue,
-                    depthImage,
-                    hasStencilComponent(depthFormat),
-                    VK_IMAGE_LAYOUT_UNDEFINED,
-                    VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
-
-            viewInfo.image(depthImage);
-            viewInfo.format(depthFormat);
-            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_DEPTH_BIT);
-
-            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to create an image view");
-            }
-            depthImageView = pImageView.get(0);
-        }
-    }
-
-    private void createRenderPass(int msaaSamples) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(3, stack);
-            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(3, stack);
-
-            //Color attachments
-            VkAttachmentDescription colorAttachment = attachments.get(0);
-            colorAttachment.format(swapchainImageFormat);
-            colorAttachment.samples(msaaSamples);
-            colorAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
-            colorAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
-            colorAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
-            colorAttachment.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
-            colorAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
-            colorAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-
-            VkAttachmentReference colorAttachmentRef = attachmentRefs.get(0);
-            colorAttachmentRef.attachment(0);
-            colorAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-
-            //Depth-stencil attachments
-            VkAttachmentDescription depthAttachment = attachments.get(1);
-            depthAttachment.format(findDepthFormat(device));
-            depthAttachment.samples(msaaSamples);
-            depthAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
-            depthAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
-            depthAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
-            depthAttachment.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
-            depthAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
-            depthAttachment.finalLayout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-
-            VkAttachmentReference depthAttachmentRef = attachmentRefs.get(1);
-            depthAttachmentRef.attachment(1);
-            depthAttachmentRef.layout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-
-            //Present image
-            VkAttachmentDescription colorAttachmentResolve = attachments.get(2);
-            colorAttachmentResolve.format(swapchainImageFormat);
-            colorAttachmentResolve.samples(VK_SAMPLE_COUNT_1_BIT);
-            colorAttachmentResolve.loadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
-            colorAttachmentResolve.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
-            colorAttachmentResolve.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
-            colorAttachmentResolve.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
-            colorAttachmentResolve.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
-            colorAttachmentResolve.finalLayout(VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
-
-            VkAttachmentReference colorAttachmentResolveRef = attachmentRefs.get(2);
-            colorAttachmentResolveRef.attachment(2);
-            colorAttachmentResolveRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-
-            VkSubpassDescription.Buffer subpass = VkSubpassDescription.callocStack(1, stack);
-            subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
-            subpass.colorAttachmentCount(1);
-            subpass.pColorAttachments(VkAttachmentReference.callocStack(1, stack).put(0, colorAttachmentRef));
-            subpass.pDepthStencilAttachment(depthAttachmentRef);
-            subpass.pResolveAttachments(VkAttachmentReference.callocStack(1, stack).put(0, colorAttachmentResolveRef));
-
-            VkSubpassDependency.Buffer dependency = VkSubpassDependency.callocStack(1, stack);
-            dependency.srcSubpass(VK_SUBPASS_EXTERNAL);
-            dependency.dstSubpass(0);
-            dependency.srcStageMask(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
-            dependency.srcAccessMask(0);
-            dependency.dstStageMask(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
-            dependency.dstAccessMask(VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
-
-            VkRenderPassCreateInfo renderPassInfo = VkRenderPassCreateInfo.callocStack(stack);
-            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO);
-            renderPassInfo.pAttachments(attachments);
-            renderPassInfo.pSubpasses(subpass);
-            renderPassInfo.pDependencies(dependency);
-
-            LongBuffer pRenderPass = stack.mallocLong(1);
-            if (vkCreateRenderPass(device, renderPassInfo, null, pRenderPass) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to create a render pass");
-            }
-
-            renderPass = pRenderPass.get(0);
-        }
-    }
-
-    private void createFramebuffers() {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            swapchainFramebuffers = new ArrayList<>(swapchainImageViews.size());
-
-            LongBuffer attachments = stack.longs(colorImageView, depthImageView, VK_NULL_HANDLE);
-            LongBuffer pFramebuffer = stack.mallocLong(1);
-
-            VkFramebufferCreateInfo framebufferInfo = VkFramebufferCreateInfo.callocStack(stack);
-            framebufferInfo.sType(VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO);
-            framebufferInfo.renderPass(renderPass);
-            framebufferInfo.width(swapchainExtent.width());
-            framebufferInfo.height(swapchainExtent.height());
-            framebufferInfo.layers(1);
-
-            for (long swapchainImageView : swapchainImageViews) {
-                attachments.put(2, swapchainImageView);
-                framebufferInfo.pAttachments(attachments);
-
-                if (vkCreateFramebuffer(device, framebufferInfo, null, pFramebuffer) != VK_SUCCESS) {
-                    throw new RuntimeException("Failed to create a framebuffer");
-                }
-
-                swapchainFramebuffers.add(pFramebuffer.get(0));
-            }
         }
     }
 
@@ -380,8 +228,33 @@ public class Swapchain {
 
         this.createSwapchain(surface, width, height);
         this.createImages(commandPool, graphicsQueue, msaaSamples);
-        this.createRenderPass(msaaSamples);
-        this.createFramebuffers();
+    }
+
+    public void createFramebuffers(long renderPass) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            swapchainFramebuffers = new ArrayList<>(swapchainImageViews.size());
+
+            LongBuffer attachments = stack.longs(colorImageView, VK_NULL_HANDLE);
+            LongBuffer pFramebuffer = stack.mallocLong(1);
+
+            VkFramebufferCreateInfo framebufferInfo = VkFramebufferCreateInfo.callocStack(stack);
+            framebufferInfo.sType(VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO);
+            framebufferInfo.renderPass(renderPass);
+            framebufferInfo.width(swapchainExtent.width());
+            framebufferInfo.height(swapchainExtent.height());
+            framebufferInfo.layers(1);
+
+            for (long swapchainImageView : swapchainImageViews) {
+                attachments.put(1, swapchainImageView);
+                framebufferInfo.pAttachments(attachments);
+
+                if (vkCreateFramebuffer(device, framebufferInfo, null, pFramebuffer) != VK_SUCCESS) {
+                    throw new RuntimeException("Failed to create a framebuffer");
+                }
+
+                swapchainFramebuffers.add(pFramebuffer.get(0));
+            }
+        }
     }
 
     public void cleanup() {
@@ -392,13 +265,9 @@ public class Swapchain {
         vkDestroyImage(device, colorImage, null);
         vkFreeMemory(device, colorImageMemory, null);
 
-        vkDestroyImageView(device, depthImageView, null);
-        vkDestroyImage(device, depthImage, null);
-        vkFreeMemory(device, depthImageMemory, null);
-
-        vkDestroyRenderPass(device, renderPass, null);
-
-        swapchainFramebuffers.forEach(framebuffer -> vkDestroyFramebuffer(device, framebuffer, null));
+        if (swapchainFramebuffers != null) {
+            swapchainFramebuffers.forEach(framebuffer -> vkDestroyFramebuffer(device, framebuffer, null));
+        }
     }
 
     public long getSwapchain() {
@@ -415,10 +284,6 @@ public class Swapchain {
 
     public VkExtent2D getSwapchainExtent() {
         return swapchainExtent;
-    }
-
-    public long getRenderPass() {
-        return renderPass;
     }
 
     public long getSwapchainFramebuffer(int index) {

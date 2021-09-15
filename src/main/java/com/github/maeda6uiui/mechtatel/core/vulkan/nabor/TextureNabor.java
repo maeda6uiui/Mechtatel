@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
+import com.github.maeda6uiui.mechtatel.core.vulkan.creator.TextureSamplerCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
@@ -23,8 +24,35 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 public class TextureNabor extends Nabor {
+    private int texDstBinding;
+    private long texSampler;
+
     public TextureNabor(VkDevice device) {
         super(device);
+
+        texDstBinding = 1;
+        texSampler = TextureSamplerCreator.createTextureSampler(device);
+    }
+
+    public int getTexDstBinding() {
+        return texDstBinding;
+    }
+
+    protected void setTexDstBinding(int texDstBinding) {
+        this.texDstBinding = texDstBinding;
+    }
+
+    public long getTexSampler() {
+        return texSampler;
+    }
+
+    @Override
+    public void cleanup(boolean reserveForRecreation) {
+        super.cleanup(reserveForRecreation);
+
+        if (!reserveForRecreation) {
+            vkDestroySampler(this.getDevice(), texSampler, null);
+        }
     }
 
     @Override

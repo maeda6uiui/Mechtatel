@@ -5,7 +5,6 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
@@ -55,7 +54,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
     private Swapchain swapchain;
 
-    private Nabor nabor;
+    private TextureNabor nabor;
 
     private long commandPool;
 
@@ -65,8 +64,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
     private List<Long> cameraUBOs;
     private List<Long> cameraUBOMemories;
-
-    private long textureSampler;
 
     private ArrayList<VkComponent> components;
 
@@ -158,9 +155,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             cameraUBOMemories.add(cameraUBInfo.bufferMemory);
         }
 
-        //Create a texture sampler
-        textureSampler = TextureSamplerCreator.createTextureSampler(device);
-
         components = new ArrayList<>();
     }
 
@@ -170,8 +164,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
     public void cleanup() {
         components.forEach(component -> component.cleanup());
-
-        vkDestroySampler(device, textureSampler, null);
 
         cameraUBOs.forEach(ubo -> vkDestroyBuffer(device, ubo, null));
         cameraUBOMemories.forEach(uboMemory -> vkFreeMemory(device, uboMemory, null));
@@ -360,7 +352,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 device,
                 commandPool,
                 graphicsQueue,
-                textureSampler,
+                nabor.getTexSampler(),
                 nabor.getTexDstBinding(),
                 swapchain.getNumSwapchainImages(),
                 nabor.getDescriptorSetLayout(0),

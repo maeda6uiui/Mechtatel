@@ -57,7 +57,7 @@ public class Frame {
         return MemoryStack.stackGet().longs(fence);
     }
 
-    public int drawFrame(
+    public int present(
             long swapchain,
             Map<Integer, Frame> imagesInFlight,
             List<VkCommandBuffer> commandBuffers,

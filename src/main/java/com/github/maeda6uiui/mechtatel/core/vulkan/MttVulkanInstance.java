@@ -126,8 +126,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     commandPool,
                     graphicsQueue);
         }
-
-        presentNabor.updateDescriptorSets(texNabor.getImageView(2));
     }
 
     public MttVulkanInstance(boolean enableValidationLayer, long window, int msaaSamples) {
@@ -309,13 +307,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 {
                     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, presentNabor.getGraphicsPipeline(0));
 
-                    vkCmdBindDescriptorSets(
-                            commandBuffer,
-                            VK_PIPELINE_BIND_POINT_GRAPHICS,
-                            presentNabor.getPipelineLayout(0),
-                            0,
-                            stack.longs(presentNabor.getDescriptorSet(i)),
-                            null);
+                    presentNabor.bindBackScreen(commandBuffer, i, texNabor.getImageView(2));
 
                     quadDrawer.draw(commandBuffer);
                 }
@@ -327,7 +319,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             }
 
             Frame thisFrame = inFlightFrames.get(currentFrame);
-            int result = thisFrame.drawFrame(
+            int result = thisFrame.present(
                     swapchain.getSwapchain(),
                     imagesInFlight,
                     commandBuffers,

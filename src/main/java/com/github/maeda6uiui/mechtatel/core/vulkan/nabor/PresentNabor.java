@@ -9,7 +9,6 @@ import org.lwjgl.vulkan.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
-import java.util.List;
 
 import static org.lwjgl.vulkan.KHRSwapchain.VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 import static org.lwjgl.vulkan.VK10.*;
@@ -353,7 +352,7 @@ public class PresentNabor extends Nabor {
         }
     }
 
-    public void updateDescriptorSets(long imageView) {
+    public void bindBackScreen(VkCommandBuffer commandBuffer, int commandBufferIndex, long imageView) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
@@ -370,11 +369,18 @@ public class PresentNabor extends Nabor {
             samplerDescriptorWrite.descriptorCount(1);
             samplerDescriptorWrite.pImageInfo(imageInfo);
 
-            List<Long> descriptorSets = this.getDescriptorSets();
-            for (var descriptorSet : descriptorSets) {
-                samplerDescriptorWrite.dstSet(descriptorSet);
-                vkUpdateDescriptorSets(device, samplerDescriptorWrite, null);
-            }
+            long descriptorSet = this.getDescriptorSets().get(commandBufferIndex);
+            samplerDescriptorWrite.dstSet(descriptorSet);
+
+            vkUpdateDescriptorSets(device, samplerDescriptorWrite, null);
+
+            vkCmdBindDescriptorSets(
+                    commandBuffer,
+                    VK_PIPELINE_BIND_POINT_GRAPHICS,
+                    this.getPipelineLayout(0),
+                    0,
+                    stack.longs(descriptorSet),
+                    null);
         }
     }
 }

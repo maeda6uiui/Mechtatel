@@ -129,6 +129,8 @@ public class VkModel3D extends VkComponent3D {
     public void draw(
             VkCommandBuffer commandBuffer,
             int commandBufferIndex,
+            long textureSampler,
+            int dstBinding,
             long pipelineLayout) {
         if (!this.getVisible()) {
             return;
@@ -138,7 +140,7 @@ public class VkModel3D extends VkComponent3D {
             int numMeshes = model.meshes.size();
             for (int i = 0; i < numMeshes; i++) {
                 Texture texture = textures.get(model.meshes.get(i).materialIndex);
-                texture.bindDescriptorSets(commandBuffer, commandBufferIndex, pipelineLayout);
+                texture.bind(commandBuffer, commandBufferIndex, textureSampler, dstBinding, pipelineLayout);
 
                 LongBuffer lVertexBuffers = stack.longs(vertexBuffers.get(i));
                 LongBuffer offsets = stack.longs(0);
@@ -157,4 +159,3 @@ public class VkModel3D extends VkComponent3D {
         }
     }
 }
-

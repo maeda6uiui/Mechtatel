@@ -278,28 +278,6 @@ public class Texture {
                 generateMipmaps ? mipLevels : 1);
     }
 
-    private void updateDescriptorSets(long textureSampler, int dstBinding) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkDescriptorImageInfo.Buffer imageInfo = VkDescriptorImageInfo.callocStack(1, stack);
-            imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            imageInfo.imageView(textureImageView);
-            imageInfo.sampler(textureSampler);
-
-            VkWriteDescriptorSet.Buffer samplerDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
-            samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            samplerDescriptorWrite.dstBinding(dstBinding);
-            samplerDescriptorWrite.dstArrayElement(0);
-            samplerDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
-            samplerDescriptorWrite.descriptorCount(1);
-            samplerDescriptorWrite.pImageInfo(imageInfo);
-
-            for (var descriptorSet : descriptorSets) {
-                samplerDescriptorWrite.dstSet(descriptorSet);
-                vkUpdateDescriptorSets(device, samplerDescriptorWrite, null);
-            }
-        }
-    }
-
     public Texture(
             VkDevice device,
             long commandPool,
@@ -319,9 +297,6 @@ public class Texture {
         this.createTextureImageView();
 
         this.descriptorSets = descriptorSets;
-
-        //Update descriptor sets
-        this.updateDescriptorSets(textureSampler, dstBinding);
     }
 
     public void cleanup() {
@@ -330,8 +305,31 @@ public class Texture {
         vkDestroyImageView(device, textureImageView, null);
     }
 
-    public void bindDescriptorSets(VkCommandBuffer commandBuffer, int commandBufferIndex, long pipelineLayout) {
+    public void bind(
+            VkCommandBuffer commandBuffer,
+            int commandBufferIndex,
+            long textureSampler,
+            int dstBinding,
+            long pipelineLayout) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDescriptorImageInfo.Buffer imageInfo = VkDescriptorImageInfo.callocStack(1, stack);
+            imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            imageInfo.imageView(textureImageView);
+            imageInfo.sampler(textureSampler);
+
+            VkWriteDescriptorSet.Buffer samplerDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            samplerDescriptorWrite.dstBinding(dstBinding);
+            samplerDescriptorWrite.dstArrayElement(0);
+            samplerDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+            samplerDescriptorWrite.descriptorCount(1);
+            samplerDescriptorWrite.pImageInfo(imageInfo);
+
+            for (var descriptorSet : descriptorSets) {
+                samplerDescriptorWrite.dstSet(descriptorSet);
+                vkUpdateDescriptorSets(device, samplerDescriptorWrite, null);
+            }
+
             vkCmdBindDescriptorSets(
                     commandBuffer,
                     VK_PIPELINE_BIND_POINT_GRAPHICS,

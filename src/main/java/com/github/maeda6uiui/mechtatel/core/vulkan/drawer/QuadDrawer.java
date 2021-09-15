@@ -2,7 +2,6 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.drawer;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
@@ -91,10 +90,8 @@ public class QuadDrawer {
         vkFreeMemory(device, indexBufferMemory, null);
     }
 
-    public void draw(long commandPool, VkQueue graphicsQueue) {
+    public void draw(VkCommandBuffer commandBuffer) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
-
             LongBuffer lVertexBuffers = stack.longs(vertexBuffer);
             LongBuffer offsets = stack.longs(0);
             vkCmdBindVertexBuffers(commandBuffer, 0, lVertexBuffers, offsets);
@@ -108,8 +105,6 @@ public class QuadDrawer {
                     0,
                     0,
                     0);
-
-            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
         }
     }
 }

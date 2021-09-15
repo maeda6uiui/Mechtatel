@@ -15,7 +15,6 @@ import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 
 import static com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils.findDepthFormat;
-import static com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils.hasStencilComponent;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
@@ -72,8 +71,8 @@ public class TextureNabor extends Nabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(2, stack);
-            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(2, stack);
+            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(3, stack);
+            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(3, stack);
 
             //Color attachments
             VkAttachmentDescription colorAttachment = attachments.get(0);
@@ -105,11 +104,27 @@ public class TextureNabor extends Nabor {
             depthAttachmentRef.attachment(1);
             depthAttachmentRef.layout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
+            //Color resolve
+            VkAttachmentDescription colorAttachmentResolve = attachments.get(2);
+            colorAttachmentResolve.format(imageFormat);
+            colorAttachmentResolve.samples(VK_SAMPLE_COUNT_1_BIT);
+            colorAttachmentResolve.loadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
+            colorAttachmentResolve.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
+            colorAttachmentResolve.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
+            colorAttachmentResolve.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
+            colorAttachmentResolve.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
+            colorAttachmentResolve.finalLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+            VkAttachmentReference colorAttachmentResolveRef = attachmentRefs.get(2);
+            colorAttachmentResolveRef.attachment(2);
+            colorAttachmentResolveRef.layout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.callocStack(1, stack);
             subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
             subpass.colorAttachmentCount(1);
             subpass.pColorAttachments(VkAttachmentReference.callocStack(1, stack).put(0, colorAttachmentRef));
             subpass.pDepthStencilAttachment(depthAttachmentRef);
+            subpass.pResolveAttachments(VkAttachmentReference.callocStack(1, stack).put(0, colorAttachmentResolveRef));
 
             VkSubpassDependency.Buffer dependency = VkSubpassDependency.callocStack(1, stack);
             dependency.srcSubpass(VK_SUBPASS_EXTERNAL);
@@ -428,10 +443,11 @@ public class TextureNabor extends Nabor {
             VkDevice device = this.getDevice();
             VkExtent2D extent = this.getExtent();
 
-            //Color image
-            LongBuffer pColorImage = stack.mallocLong(1);
-            LongBuffer pColorImageMemory = stack.mallocLong(1);
+            LongBuffer pImage = stack.mallocLong(1);
+            LongBuffer pImageMemory = stack.mallocLong(1);
+            LongBuffer pImageView = stack.mallocLong(1);
 
+            //Color image
             ImageUtils.createImage(
                     device,
                     extent.width(),
@@ -440,22 +456,12 @@ public class TextureNabor extends Nabor {
                     msaaSamples,
                     imageFormat,
                     VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pColorImage,
-                    pColorImageMemory);
-            long colorImage = pColorImage.get(0);
-            long colorImageMemory = pColorImageMemory.get(0);
-
-            ImageUtils.transitionImageLayout(
-                    device,
-                    commandPool,
-                    graphicsQueue,
-                    colorImage,
-                    false,
-                    VK_IMAGE_LAYOUT_UNDEFINED,
-                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                    1);
+                    pImage,
+                    pImageMemory);
+            long colorImage = pImage.get(0);
+            long colorImageMemory = pImageMemory.get(0);
 
             VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.callocStack(stack);
             viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
@@ -468,7 +474,6 @@ public class TextureNabor extends Nabor {
             viewInfo.subresourceRange().baseArrayLayer(0);
             viewInfo.subresourceRange().layerCount(1);
 
-            LongBuffer pImageView = stack.mallocLong(1);
             if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
                 throw new RuntimeException("Failed to create an image view");
             }
@@ -479,9 +484,6 @@ public class TextureNabor extends Nabor {
             this.getImageViews().add(colorImageView);
 
             //Depth image
-            LongBuffer pDepthImage = stack.mallocLong(1);
-            LongBuffer pDepthImageMemory = stack.mallocLong(1);
-
             int depthFormat = findDepthFormat(device);
 
             ImageUtils.createImage(
@@ -494,19 +496,10 @@ public class TextureNabor extends Nabor {
                     VK_IMAGE_TILING_OPTIMAL,
                     VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pDepthImage,
-                    pDepthImageMemory);
-            long depthImage = pDepthImage.get(0);
-            long depthImageMemory = pDepthImageMemory.get(0);
-
-            ImageUtils.transitionImageLayout(
-                    device,
-                    commandPool,
-                    graphicsQueue,
-                    depthImage,
-                    hasStencilComponent(depthFormat),
-                    VK_IMAGE_LAYOUT_UNDEFINED,
-                    VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 1);
+                    pImage,
+                    pImageMemory);
+            long depthImage = pImage.get(0);
+            long depthImageMemory = pImageMemory.get(0);
 
             viewInfo.image(depthImage);
             viewInfo.format(depthFormat);
@@ -520,6 +513,35 @@ public class TextureNabor extends Nabor {
             this.getImages().add(depthImage);
             this.getImageMemories().add(depthImageMemory);
             this.getImageViews().add(depthImageView);
+
+            //Color resolve image
+            ImageUtils.createImage(
+                    device,
+                    extent.width(),
+                    extent.height(),
+                    1,
+                    VK_SAMPLE_COUNT_1_BIT,
+                    imageFormat,
+                    VK_IMAGE_TILING_OPTIMAL,
+                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                    pImage,
+                    pImageMemory);
+            long colorResolveImage = pImage.get(0);
+            long colorResolveImageMemory = pImageMemory.get(0);
+
+            viewInfo.image(colorResolveImage);
+            viewInfo.format(imageFormat);
+            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+
+            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create an image view");
+            }
+            long colorResolveImageView = pImageView.get(0);
+
+            this.getImages().add(colorResolveImage);
+            this.getImageMemories().add(colorResolveImageMemory);
+            this.getImageViews().add(colorResolveImageView);
         }
     }
 
@@ -531,10 +553,11 @@ public class TextureNabor extends Nabor {
 
             long colorImageView = this.getImageViews().get(0);
             long depthImageView = this.getImageViews().get(1);
+            long colorResolveImageView = this.getImageViews().get(2);
 
             long renderPass = this.getRenderPass();
 
-            LongBuffer attachments = stack.longs(colorImageView, depthImageView);
+            LongBuffer attachments = stack.longs(colorImageView, depthImageView, colorResolveImageView);
             LongBuffer pFramebuffer = stack.mallocLong(1);
 
             VkFramebufferCreateInfo framebufferInfo = VkFramebufferCreateInfo.callocStack(stack);

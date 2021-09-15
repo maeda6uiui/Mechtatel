@@ -105,14 +105,15 @@ public class Nabor {
             int msaaSamples,
             VkExtent2D extent,
             long commandPool,
-            VkQueue graphicsQueue) {
+            VkQueue graphicsQueue,
+            int descriptorCount) {
         this.extent = extent;
 
-        this.createUniformBuffers(1);
+        this.createUniformBuffers(descriptorCount);
         this.createRenderPass(imageFormat, msaaSamples);
         this.createDescriptorSetLayouts();
-        this.createDescriptorPools(1);
-        this.createDescriptorSets(1);
+        this.createDescriptorPools(descriptorCount);
+        this.createDescriptorSets(descriptorCount);
         this.createGraphicsPipelines(msaaSamples);
         this.createImages(commandPool, graphicsQueue, msaaSamples, imageFormat);
         this.createFramebuffers();
@@ -217,7 +218,11 @@ public class Nabor {
         return descriptorPools;
     }
 
-    protected List<Long> getDescriptorSets() {
+    public long getDescriptorSet(int index) {
+        return descriptorSets.get(index);
+    }
+
+    public List<Long> getDescriptorSets() {
         return descriptorSets;
     }
 
@@ -251,6 +256,10 @@ public class Nabor {
 
     protected List<Long> getImageMemories() {
         return imageMemories;
+    }
+
+    public long getImageView(int index) {
+        return imageViews.get(index);
     }
 
     protected List<Long> getImageViews() {

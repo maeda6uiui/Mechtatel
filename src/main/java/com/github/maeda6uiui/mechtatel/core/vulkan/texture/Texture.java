@@ -1,8 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.texture;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.DescriptorPoolCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.DescriptorSetsCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.ImageViewCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
@@ -30,7 +28,6 @@ public class Texture {
     private long textureImageMemory;
     private long textureImageView;
 
-    private long descriptorPool;
     private List<Long> descriptorSets;
 
     private int width;
@@ -309,9 +306,7 @@ public class Texture {
             VkQueue graphicsQueue,
             long textureSampler,
             int dstBinding,
-            int numSwapchainImages,
-            long descriptorSetLayout,
-            List<Long> uniformBuffers,
+            List<Long> descriptorSets,
             String textureFilepath,
             boolean generateMipmaps) {
         this.device = device;
@@ -323,10 +318,7 @@ public class Texture {
         this.createTextureImage(commandPool, graphicsQueue);
         this.createTextureImageView();
 
-        //Create a descriptor pool and descriptor sets
-        descriptorPool = DescriptorPoolCreator.createDescriptorPool(device, numSwapchainImages);
-        descriptorSets = DescriptorSetsCreator.createDescriptorSets(
-                device, numSwapchainImages, descriptorPool, descriptorSetLayout, uniformBuffers);
+        this.descriptorSets = descriptorSets;
 
         //Update descriptor sets
         this.updateDescriptorSets(textureSampler, dstBinding);
@@ -336,8 +328,6 @@ public class Texture {
         vkDestroyImage(device, textureImage, null);
         vkFreeMemory(device, textureImageMemory, null);
         vkDestroyImageView(device, textureImageView, null);
-
-        vkDestroyDescriptorPool(device, descriptorPool, null);
     }
 
     public void bindDescriptorSets(VkCommandBuffer commandBuffer, int commandBufferIndex, long pipelineLayout) {

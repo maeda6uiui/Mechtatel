@@ -353,7 +353,7 @@ public class PresentNabor extends Nabor {
         }
     }
 
-    public void bindImageFromNabor(long imageView) {
+    public void updateDescriptorSets(long imageView) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 

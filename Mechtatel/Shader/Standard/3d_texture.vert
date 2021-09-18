@@ -5,9 +5,9 @@ layout(binding=0) uniform CameraUBO{
     mat4 view;
     mat4 proj;
 }camera;
-layout(push_constant) uniform TransformationPC{
+layout(push_constant) uniform VertPC{
     mat4 model;
-}transformation;
+}pc;
 
 layout(location=0) in vec3 inPosition;
 layout(location=1) in vec4 inColor;
@@ -17,7 +17,7 @@ layout(location=0) out vec4 fragColor;
 layout(location=1) out vec2 fragTexCoords;
 
 void main(){
-    gl_Position=camera.proj*camera.view*transformation.model*vec4(inPosition,1.0);
+    gl_Position=camera.proj*camera.view*pc.model*vec4(inPosition,1.0);
     fragColor=inColor;
     fragTexCoords=inTexCoords;
 }

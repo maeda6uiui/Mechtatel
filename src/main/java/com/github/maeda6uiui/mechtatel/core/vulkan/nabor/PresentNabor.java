@@ -19,26 +19,26 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 public class PresentNabor extends Nabor {
-    private int texDstBinding;
-    private long texSampler;
+    private int textureDstBinding;
+    private long textureSampler;
 
     public PresentNabor(VkDevice device) {
         super(device);
 
-        texDstBinding = 0;
-        texSampler = TextureSamplerCreator.createTextureSampler(device);
+        textureDstBinding = 0;
+        textureSampler = TextureSamplerCreator.createTextureSampler(device);
     }
 
-    public int getTexDstBinding() {
-        return texDstBinding;
+    public int getTextureDstBinding() {
+        return textureDstBinding;
     }
 
-    protected void setTexDstBinding(int texDstBinding) {
-        this.texDstBinding = texDstBinding;
+    protected void setTextureDstBinding(int textureDstBinding) {
+        this.textureDstBinding = textureDstBinding;
     }
 
-    public long getTexSampler() {
-        return texSampler;
+    public long getTextureSampler() {
+        return textureSampler;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class PresentNabor extends Nabor {
         super.cleanup(reserveForRecreation);
 
         if (!reserveForRecreation) {
-            vkDestroySampler(this.getDevice(), texSampler, null);
+            vkDestroySampler(this.getDevice(), textureSampler, null);
         }
     }
 
@@ -359,11 +359,11 @@ public class PresentNabor extends Nabor {
             VkDescriptorImageInfo.Buffer imageInfo = VkDescriptorImageInfo.callocStack(1, stack);
             imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
             imageInfo.imageView(imageView);
-            imageInfo.sampler(texSampler);
+            imageInfo.sampler(textureSampler);
 
             VkWriteDescriptorSet.Buffer samplerDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
             samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            samplerDescriptorWrite.dstBinding(texDstBinding);
+            samplerDescriptorWrite.dstBinding(textureDstBinding);
             samplerDescriptorWrite.dstArrayElement(0);
             samplerDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
             samplerDescriptorWrite.descriptorCount(1);

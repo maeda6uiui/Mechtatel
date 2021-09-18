@@ -245,18 +245,31 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             {
                 vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, texNabor.getGraphicsPipeline(0));
 
+                vkCmdBindDescriptorSets(
+                        commandBuffer,
+                        VK_PIPELINE_BIND_POINT_GRAPHICS,
+                        texNabor.getPipelineLayout(0),
+                        0,
+                        stack.longs(texNabor.getDescriptorSet(0)),
+                        null);
+
                 for (var component : components) {
                     ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
                     component.getMat().get(matBuffer);
 
-                    vkCmdPushConstants(commandBuffer, texNabor.getPipelineLayout(0), VK_SHADER_STAGE_VERTEX_BIT, 0, matBuffer);
+                    vkCmdPushConstants(
+                            commandBuffer,
+                            texNabor.getPipelineLayout(0),
+                            VK_SHADER_STAGE_VERTEX_BIT,
+                            0,
+                            matBuffer);
 
                     component.draw(
                             commandBuffer,
                             0,
                             texNabor.getPipelineLayout(0),
-                            texNabor.getTexSampler(),
-                            texNabor.getTexDstBinding());
+                            texNabor.getTextureSampler(),
+                            texNabor.getTextureDstBinding());
                 }
             }
             vkCmdEndRenderPass(commandBuffer);
@@ -349,8 +362,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 device,
                 commandPool,
                 graphicsQueue,
-                texNabor.getTexSampler(),
-                texNabor.getTexDstBinding(),
+                texNabor.getTextureDstBinding(),
                 texNabor.getDescriptorSets(),
                 modelFilepath);
         components.add(model);

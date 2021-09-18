@@ -23,34 +23,46 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 public class TextureNabor extends Nabor {
-    private int texDstBinding;
-    private long texSampler;
+    public static final int MAX_NUM_TEXTURES = 128;
+
+    private int textureDstBinding;
+    private long textureSampler;
+
+    private long dummyImage;
+    private long dummyImageMemory;
+    private long dummyImageView;
 
     public TextureNabor(VkDevice device) {
         super(device);
 
-        texDstBinding = 1;
-        texSampler = TextureSamplerCreator.createTextureSampler(device);
+        textureDstBinding = 2;
+        textureSampler = TextureSamplerCreator.createTextureSampler(device);
     }
 
-    public int getTexDstBinding() {
-        return texDstBinding;
+    public int getTextureDstBinding() {
+        return textureDstBinding;
     }
 
-    protected void setTexDstBinding(int texDstBinding) {
-        this.texDstBinding = texDstBinding;
+    protected void setTextureDstBinding(int textureDstBinding) {
+        this.textureDstBinding = textureDstBinding;
     }
 
-    public long getTexSampler() {
-        return texSampler;
+    public long getTextureSampler() {
+        return textureSampler;
     }
 
     @Override
     public void cleanup(boolean reserveForRecreation) {
         super.cleanup(reserveForRecreation);
 
+        VkDevice device = this.getDevice();
+
         if (!reserveForRecreation) {
-            vkDestroySampler(this.getDevice(), texSampler, null);
+            vkDestroySampler(device, textureSampler, null);
+
+            vkDestroyImage(device, dummyImage, null);
+            vkFreeMemory(device, dummyImageMemory, null);
+            vkDestroyImageView(device, dummyImageView, null);
         }
     }
 
@@ -155,7 +167,7 @@ public class TextureNabor extends Nabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            VkDescriptorSetLayoutBinding.Buffer bindings = VkDescriptorSetLayoutBinding.callocStack(2, stack);
+            VkDescriptorSetLayoutBinding.Buffer bindings = VkDescriptorSetLayoutBinding.callocStack(3, stack);
 
             VkDescriptorSetLayoutBinding cameraUBOLayoutBinding = bindings.get(0);
             cameraUBOLayoutBinding.binding(0);
@@ -167,9 +179,16 @@ public class TextureNabor extends Nabor {
             VkDescriptorSetLayoutBinding samplerLayoutBinding = bindings.get(1);
             samplerLayoutBinding.binding(1);
             samplerLayoutBinding.descriptorCount(1);
-            samplerLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+            samplerLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLER);
             samplerLayoutBinding.pImmutableSamplers(null);
             samplerLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+
+            VkDescriptorSetLayoutBinding textureLayoutBinding = bindings.get(2);
+            textureLayoutBinding.binding(2);
+            textureLayoutBinding.descriptorCount(MAX_NUM_TEXTURES);
+            textureLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            textureLayoutBinding.pImmutableSamplers(null);
+            textureLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             VkDescriptorSetLayoutCreateInfo layoutInfo = VkDescriptorSetLayoutCreateInfo.callocStack(stack);
             layoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
@@ -190,15 +209,19 @@ public class TextureNabor extends Nabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            VkDescriptorPoolSize.Buffer poolSizes = VkDescriptorPoolSize.callocStack(2, stack);
+            VkDescriptorPoolSize.Buffer poolSizes = VkDescriptorPoolSize.callocStack(3, stack);
 
             VkDescriptorPoolSize cameraUBPoolSize = poolSizes.get(0);
             cameraUBPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             cameraUBPoolSize.descriptorCount(descriptorCount);
 
-            VkDescriptorPoolSize textureSamplerPoolSize = poolSizes.get(1);
-            textureSamplerPoolSize.type(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
-            textureSamplerPoolSize.descriptorCount(descriptorCount);
+            VkDescriptorPoolSize samplerPoolSize = poolSizes.get(1);
+            samplerPoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLER);
+            samplerPoolSize.descriptorCount(descriptorCount);
+
+            VkDescriptorPoolSize texturePoolSize = poolSizes.get(2);
+            texturePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            texturePoolSize.descriptorCount(descriptorCount * MAX_NUM_TEXTURES);
 
             VkDescriptorPoolCreateInfo poolInfo = VkDescriptorPoolCreateInfo.callocStack(stack);
             poolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
@@ -212,6 +235,48 @@ public class TextureNabor extends Nabor {
 
             long descriptorPool = pDescriptorPool.get(0);
             this.getDescriptorPools().add(descriptorPool);
+        }
+    }
+
+    private void createDummyImages() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDevice device = this.getDevice();
+
+            LongBuffer pImage = stack.mallocLong(1);
+            LongBuffer pImageMemory = stack.mallocLong(1);
+            LongBuffer pImageView = stack.mallocLong(1);
+
+            //Color image
+            ImageUtils.createImage(
+                    device,
+                    1,
+                    1,
+                    1,
+                    1,
+                    VK_FORMAT_R8_UNORM,
+                    VK_IMAGE_TILING_OPTIMAL,
+                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                    pImage,
+                    pImageMemory);
+            dummyImage = pImage.get(0);
+            dummyImageMemory = pImageMemory.get(0);
+
+            VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.callocStack(stack);
+            viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
+            viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
+            viewInfo.image(dummyImage);
+            viewInfo.format(VK_FORMAT_R8_UNORM);
+            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+            viewInfo.subresourceRange().baseMipLevel(0);
+            viewInfo.subresourceRange().levelCount(1);
+            viewInfo.subresourceRange().baseArrayLayer(0);
+            viewInfo.subresourceRange().layerCount(1);
+
+            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create an image view");
+            }
+            dummyImageView = pImageView.get(0);
         }
     }
 
@@ -238,11 +303,13 @@ public class TextureNabor extends Nabor {
                 throw new RuntimeException("Failed to allocate descriptor sets");
             }
 
+            VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.callocStack(3, stack);
+
             VkDescriptorBufferInfo.Buffer cameraUBOInfo = VkDescriptorBufferInfo.callocStack(1, stack);
             cameraUBOInfo.offset(0);
             cameraUBOInfo.range(CameraUBO.SIZEOF);
 
-            VkWriteDescriptorSet.Buffer cameraUBODescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            VkWriteDescriptorSet cameraUBODescriptorWrite = descriptorWrites.get(0);
             cameraUBODescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
             cameraUBODescriptorWrite.dstBinding(0);
             cameraUBODescriptorWrite.dstArrayElement(0);
@@ -250,13 +317,45 @@ public class TextureNabor extends Nabor {
             cameraUBODescriptorWrite.descriptorCount(1);
             cameraUBODescriptorWrite.pBufferInfo(cameraUBOInfo);
 
+            VkDescriptorImageInfo.Buffer samplerInfo = VkDescriptorImageInfo.callocStack(1, stack);
+            samplerInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            samplerInfo.sampler(textureSampler);
+
+            VkWriteDescriptorSet samplerDescriptorWrite = descriptorWrites.get(1);
+            samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            samplerDescriptorWrite.dstBinding(1);
+            samplerDescriptorWrite.dstArrayElement(0);
+            samplerDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLER);
+            samplerDescriptorWrite.descriptorCount(1);
+            samplerDescriptorWrite.pImageInfo(samplerInfo);
+
+            //Create dummy textures and fill the texture array
+            this.createDummyImages();
+
+            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.callocStack(MAX_NUM_TEXTURES, stack);
+            for (int i = 0; i < MAX_NUM_TEXTURES; i++) {
+                VkDescriptorImageInfo imageInfo = imageInfos.get(i);
+                imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+                imageInfo.imageView(dummyImageView);
+            }
+
+            VkWriteDescriptorSet imageDescriptorWrite = descriptorWrites.get(2);
+            imageDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            imageDescriptorWrite.dstBinding(textureDstBinding);
+            imageDescriptorWrite.dstArrayElement(0);
+            imageDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            imageDescriptorWrite.descriptorCount(MAX_NUM_TEXTURES);
+            imageDescriptorWrite.pImageInfo(imageInfos);
+
             for (int i = 0; i < pDescriptorSets.capacity(); i++) {
                 long descriptorSet = pDescriptorSets.get(i);
 
                 cameraUBOInfo.buffer(this.getUniformBuffers().get(i));
                 cameraUBODescriptorWrite.dstSet(descriptorSet);
+                samplerDescriptorWrite.dstSet(descriptorSet);
+                imageDescriptorWrite.dstSet(descriptorSet);
 
-                vkUpdateDescriptorSets(device, cameraUBODescriptorWrite, null);
+                vkUpdateDescriptorSets(device, descriptorWrites, null);
 
                 this.getDescriptorSets().add(descriptorSet);
             }
@@ -386,17 +485,23 @@ public class TextureNabor extends Nabor {
             colorBlending.blendConstants(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
 
             //Push constant
-            //Push a model matrix (mat4)
-            VkPushConstantRange.Buffer pushConstant = VkPushConstantRange.callocStack(1, stack);
-            pushConstant.offset(0);
-            pushConstant.size(1 * 16 * Float.BYTES);
-            pushConstant.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
+            VkPushConstantRange.Buffer pushConstants = VkPushConstantRange.callocStack(2, stack);
+
+            VkPushConstantRange vertPC = pushConstants.get(0);
+            vertPC.offset(0);
+            vertPC.size(1 * 16 * Float.BYTES);
+            vertPC.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
+
+            VkPushConstantRange fragPC = pushConstants.get(1);
+            fragPC.offset(1 * 16 * Float.BYTES);
+            fragPC.size(1 * Integer.BYTES);
+            fragPC.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //Pipeline layout creation
             VkPipelineLayoutCreateInfo pipelineLayoutInfo = VkPipelineLayoutCreateInfo.callocStack(stack);
             pipelineLayoutInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO);
             pipelineLayoutInfo.pSetLayouts(stack.longs(this.getDescriptorSetLayout(0)));
-            pipelineLayoutInfo.pPushConstantRanges(pushConstant);
+            pipelineLayoutInfo.pPushConstantRanges(pushConstants);
 
             LongBuffer pPipelineLayout = stack.longs(VK_NULL_HANDLE);
             if (vkCreatePipelineLayout(device, pipelineLayoutInfo, null, pPipelineLayout) != VK_SUCCESS) {

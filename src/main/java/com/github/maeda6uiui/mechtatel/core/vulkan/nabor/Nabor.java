@@ -178,12 +178,12 @@ public class Nabor {
         return device;
     }
 
-    public int getTexDstBinding() {
+    public int getTextureDstBinding() {
         return texDstBinding;
     }
 
-    protected void setTexDstBinding(int texDstBinding) {
-        this.texDstBinding = texDstBinding;
+    protected void setTextureDstBinding(int textureDstBinding) {
+        this.texDstBinding = textureDstBinding;
     }
 
     public VkExtent2D getExtent() {

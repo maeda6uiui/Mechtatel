@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.texture;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.ImageViewCreator;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.PointerBuffer;
@@ -11,7 +12,9 @@ import org.lwjgl.vulkan.*;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.lwjgl.stb.STBImage.*;
 import static org.lwjgl.vulkan.VK10.*;
@@ -22,13 +25,37 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 public class Texture {
+    private static Map<Integer, Boolean> allocationStatus;
+
+    static {
+        allocationStatus = new HashMap<>();
+        for (int i = 0; i < TextureNabor.MAX_NUM_TEXTURES; i++) {
+            allocationStatus.put(i, false);
+        }
+    }
+
+    private static int allocateTextureIndex() {
+        int index = -1;
+
+        for (var entry : allocationStatus.entrySet()) {
+            if (!entry.getValue()) {
+                index = entry.getKey();
+                allocationStatus.put(index, true);
+
+                break;
+            }
+        }
+
+        return index;
+    }
+
     private VkDevice device;
+
+    private int textureIndex;
 
     private long textureImage;
     private long textureImageMemory;
     private long textureImageView;
-
-    private List<Long> descriptorSets;
 
     private int width;
     private int height;
@@ -278,15 +305,43 @@ public class Texture {
                 generateMipmaps ? mipLevels : 1);
     }
 
+    private void updateDescriptorSets(
+            int dstBinding,
+            List<Long> descriptorSets) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDescriptorImageInfo.Buffer imageInfo = VkDescriptorImageInfo.callocStack(1, stack);
+            imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            imageInfo.imageView(textureImageView);
+
+            VkWriteDescriptorSet.Buffer imageDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            imageDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            imageDescriptorWrite.dstBinding(dstBinding);
+            imageDescriptorWrite.dstArrayElement(textureIndex);
+            imageDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            imageDescriptorWrite.descriptorCount(1);
+            imageDescriptorWrite.pImageInfo(imageInfo);
+
+            for (var descriptorSet : descriptorSets) {
+                imageDescriptorWrite.dstSet(descriptorSet);
+                vkUpdateDescriptorSets(device, imageDescriptorWrite, null);
+            }
+        }
+    }
+
     public Texture(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            long textureSampler,
             int dstBinding,
             List<Long> descriptorSets,
             String textureFilepath,
             boolean generateMipmaps) {
+        textureIndex = allocateTextureIndex();
+        if (textureIndex < 0) {
+            String msg = String.format("You cannot create more than %d textures", TextureNabor.MAX_NUM_TEXTURES);
+            throw new RuntimeException(msg);
+        }
+
         this.device = device;
 
         this.textureFilepath = textureFilepath;
@@ -296,47 +351,18 @@ public class Texture {
         this.createTextureImage(commandPool, graphicsQueue);
         this.createTextureImageView();
 
-        this.descriptorSets = descriptorSets;
+        this.updateDescriptorSets(dstBinding, descriptorSets);
     }
 
     public void cleanup() {
         vkDestroyImage(device, textureImage, null);
         vkFreeMemory(device, textureImageMemory, null);
         vkDestroyImageView(device, textureImageView, null);
+
+        allocationStatus.put(textureIndex, false);
     }
 
-    public void bind(
-            VkCommandBuffer commandBuffer,
-            int commandBufferIndex,
-            long textureSampler,
-            int dstBinding,
-            long pipelineLayout) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkDescriptorImageInfo.Buffer imageInfo = VkDescriptorImageInfo.callocStack(1, stack);
-            imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            imageInfo.imageView(textureImageView);
-            imageInfo.sampler(textureSampler);
-
-            VkWriteDescriptorSet.Buffer samplerDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
-            samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            samplerDescriptorWrite.dstBinding(dstBinding);
-            samplerDescriptorWrite.dstArrayElement(0);
-            samplerDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
-            samplerDescriptorWrite.descriptorCount(1);
-            samplerDescriptorWrite.pImageInfo(imageInfo);
-
-            for (var descriptorSet : descriptorSets) {
-                samplerDescriptorWrite.dstSet(descriptorSet);
-                vkUpdateDescriptorSets(device, samplerDescriptorWrite, null);
-            }
-
-            vkCmdBindDescriptorSets(
-                    commandBuffer,
-                    VK_PIPELINE_BIND_POINT_GRAPHICS,
-                    pipelineLayout,
-                    0,
-                    stack.longs(descriptorSets.get(commandBufferIndex)),
-                    null);
-        }
+    public int getTextureIndex() {
+        return textureIndex;
     }
 }

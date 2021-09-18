@@ -29,11 +29,7 @@ public class AlignmentUtils {
         SIZEOF_CACHE.put(Vector3f.class, 3 * Float.BYTES);
         SIZEOF_CACHE.put(Vector4f.class, 4 * Float.BYTES);
 
-        SIZEOF_CACHE.put(Matrix4f.class, SIZEOF_CACHE.get(Vector4f.class));
-    }
-
-    public static int sizeof(Object obj) {
-        return obj == null ? 0 : SIZEOF_CACHE.getOrDefault(obj.getClass(), 0);
+        SIZEOF_CACHE.put(Matrix4f.class, 16 * Float.BYTES);
     }
 
     public static int alignof(Object obj) {

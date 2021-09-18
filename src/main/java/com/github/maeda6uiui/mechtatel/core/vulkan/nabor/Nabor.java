@@ -80,7 +80,7 @@ public class Nabor {
 
     }
 
-    protected void createDescriptorSets(int descriptorCount) {
+    protected void createDescriptorSets(int descriptorCount, long commandPool, VkQueue graphicsQueue) {
 
     }
 
@@ -113,7 +113,7 @@ public class Nabor {
         this.createRenderPass(imageFormat, msaaSamples);
         this.createDescriptorSetLayouts();
         this.createDescriptorPools(descriptorCount);
-        this.createDescriptorSets(descriptorCount);
+        this.createDescriptorSets(descriptorCount, commandPool, graphicsQueue);
         this.createGraphicsPipelines(msaaSamples);
         this.createImages(commandPool, graphicsQueue, msaaSamples, imageFormat);
         this.createFramebuffers();

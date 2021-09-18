@@ -173,7 +173,7 @@ public class PresentNabor extends Nabor {
     }
 
     @Override
-    protected void createDescriptorSets(int descriptorCount) {
+    protected void createDescriptorSets(int descriptorCount, long commandPool, VkQueue graphicsQueue) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 

@@ -238,7 +238,7 @@ public class TextureNabor extends Nabor {
         }
     }
 
-    private void createDummyImages() {
+    private void createDummyImages(long commandPool, VkQueue graphicsQueue) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
@@ -262,6 +262,25 @@ public class TextureNabor extends Nabor {
             dummyImage = pImage.get(0);
             dummyImageMemory = pImageMemory.get(0);
 
+            ImageUtils.transitionImageLayout(
+                    device,
+                    commandPool,
+                    graphicsQueue,
+                    dummyImage,
+                    false,
+                    VK_IMAGE_LAYOUT_UNDEFINED,
+                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                    1);
+            ImageUtils.transitionImageLayout(
+                    device,
+                    commandPool,
+                    graphicsQueue,
+                    dummyImage,
+                    false,
+                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                    1);
+
             VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.callocStack(stack);
             viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
             viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
@@ -281,7 +300,7 @@ public class TextureNabor extends Nabor {
     }
 
     @Override
-    protected void createDescriptorSets(int descriptorCount) {
+    protected void createDescriptorSets(int descriptorCount, long commandPool, VkQueue graphicsQueue) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
@@ -330,7 +349,7 @@ public class TextureNabor extends Nabor {
             samplerDescriptorWrite.pImageInfo(samplerInfo);
 
             //Create dummy textures and fill the texture array
-            this.createDummyImages();
+            this.createDummyImages(commandPool, graphicsQueue);
 
             VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.callocStack(MAX_NUM_TEXTURES, stack);
             for (int i = 0; i < MAX_NUM_TEXTURES; i++) {

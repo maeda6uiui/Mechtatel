@@ -21,8 +21,6 @@ import static org.lwjgl.vulkan.VK10.*;
 public class Nabor {
     private VkDevice device;
 
-    private int texDstBinding;
-
     private VkExtent2D extent;
 
     private List<Long> uniformBuffers;
@@ -44,8 +42,6 @@ public class Nabor {
 
     public Nabor(VkDevice device) {
         this.device = device;
-
-        texDstBinding = 1;
 
         uniformBuffers = new ArrayList<>();
         uniformBufferMemories = new ArrayList<>();
@@ -178,23 +174,23 @@ public class Nabor {
         return device;
     }
 
-    public int getTextureDstBinding() {
-        return texDstBinding;
-    }
-
-    protected void setTextureDstBinding(int textureDstBinding) {
-        this.texDstBinding = textureDstBinding;
-    }
-
     public VkExtent2D getExtent() {
         return extent;
+    }
+
+    public long getUniformBuffer(int index) {
+        return uniformBuffers.get(index);
     }
 
     protected List<Long> getUniformBuffers() {
         return uniformBuffers;
     }
 
-    public List<Long> getUniformBufferMemories() {
+    public long getUniformBufferMemory(int index) {
+        return uniformBufferMemories.get(index);
+    }
+
+    protected List<Long> getUniformBufferMemories() {
         return uniformBufferMemories;
     }
 
@@ -214,6 +210,10 @@ public class Nabor {
         return descriptorSetLayouts;
     }
 
+    public long getDescriptorPool(int index) {
+        return descriptorPools.get(index);
+    }
+
     protected List<Long> getDescriptorPools() {
         return descriptorPools;
     }
@@ -222,12 +222,20 @@ public class Nabor {
         return descriptorSets.get(index);
     }
 
-    public List<Long> getDescriptorSets() {
+    protected List<Long> getDescriptorSets() {
         return descriptorSets;
+    }
+
+    public long getVertShaderModule(int index) {
+        return vertShaderModules.get(index);
     }
 
     protected List<Long> getVertShaderModules() {
         return vertShaderModules;
+    }
+
+    public long getFragShaderModule(int index) {
+        return fragShaderModules.get(index);
     }
 
     protected List<Long> getFragShaderModules() {
@@ -250,8 +258,16 @@ public class Nabor {
         return graphicsPipelines;
     }
 
+    public long getImage(int index) {
+        return images.get(index);
+    }
+
     protected List<Long> getImages() {
         return images;
+    }
+
+    public long getImageMemory(int index) {
+        return imageMemories.get(index);
     }
 
     protected List<Long> getImageMemories() {
@@ -266,12 +282,16 @@ public class Nabor {
         return imageViews;
     }
 
-    protected List<Long> getFramebuffers() {
-        return framebuffers;
+    public int getNumFramebuffers() {
+        return framebuffers.size();
     }
 
     public long getFramebuffer(int index) {
         return framebuffers.get(index);
+    }
+
+    protected List<Long> getFramebuffers() {
+        return framebuffers;
     }
 
     protected long createShaderModule(VkDevice device, ByteBuffer spirvCode) {

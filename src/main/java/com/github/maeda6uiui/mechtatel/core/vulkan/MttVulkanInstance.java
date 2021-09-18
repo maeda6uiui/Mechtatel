@@ -220,8 +220,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
     private void drawToBackScreen(Camera camera) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
+            var uniformBufferMemories = new ArrayList<Long>();
+            uniformBufferMemories.add(texNabor.getUniformBufferMemory(0));
+
             var cameraUBO = new CameraUBO(camera);
-            cameraUBO.update(device, texNabor.getUniformBufferMemories());
+            cameraUBO.update(device, uniformBufferMemories);
 
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
@@ -358,12 +361,15 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     }
 
     public VkModel3D createModel3D(String modelFilepath) {
+        var descriptorSets = new ArrayList<Long>();
+        descriptorSets.add(texNabor.getDescriptorSet(0));
+
         var model = new VkModel3D(
                 device,
                 commandPool,
                 graphicsQueue,
                 texNabor.getTextureDstBinding(),
-                texNabor.getDescriptorSets(),
+                descriptorSets,
                 modelFilepath);
         components.add(model);
 

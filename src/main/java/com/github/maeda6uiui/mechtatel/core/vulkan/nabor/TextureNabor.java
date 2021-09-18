@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 
-import static com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils.findDepthFormat;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
@@ -255,7 +254,7 @@ public class TextureNabor extends Nabor {
                     1,
                     VK_FORMAT_R8_UNORM,
                     VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     pImage,
                     pImageMemory);
@@ -608,7 +607,7 @@ public class TextureNabor extends Nabor {
             this.getImageViews().add(colorImageView);
 
             //Depth image
-            int depthFormat = findDepthFormat(device);
+            int depthFormat = DepthResourceUtils.findDepthFormat(device);
 
             ImageUtils.createImage(
                     device,

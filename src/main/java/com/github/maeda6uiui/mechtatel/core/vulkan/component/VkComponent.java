@@ -56,10 +56,10 @@ public class VkComponent {
     public void draw(
             VkCommandBuffer commandBuffer,
             int commandBufferIndex,
+            long pipelineLayout,
             long textureSampler,
-            int dstBinding,
-            long pipelineLayout) {
-        
+            int dstBinding) {
+
     }
 
     public void cleanup() {

@@ -65,9 +65,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private Map<Integer, Frame> imagesInFlight;
     private int currentFrame;
 
-    private List<Long> cameraUBOs;
-    private List<Long> cameraUBOMemories;
-
     private ArrayList<VkComponent> components;
 
     private QuadDrawer quadDrawer;
@@ -170,16 +167,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
         imagesInFlight = new HashMap<>(swapchain.getNumSwapchainImages());
 
-        //Create uniform buffers and uniform buffer memories
-        List<BufferCreator.BufferInfo> cameraUBInfos = BufferCreator.createUBOBuffers(
-                device, swapchain.getNumSwapchainImages(), CameraUBO.SIZEOF);
-        cameraUBOs = new ArrayList<>();
-        cameraUBOMemories = new ArrayList<>();
-        for (var cameraUBInfo : cameraUBInfos) {
-            cameraUBOs.add(cameraUBInfo.buffer);
-            cameraUBOMemories.add(cameraUBInfo.bufferMemory);
-        }
-
         components = new ArrayList<>();
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
@@ -189,9 +176,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         quadDrawer.cleanup();
 
         components.forEach(component -> component.cleanup());
-
-        cameraUBOs.forEach(ubo -> vkDestroyBuffer(device, ubo, null));
-        cameraUBOMemories.forEach(uboMemory -> vkFreeMemory(device, uboMemory, null));
 
         inFlightFrames.forEach(frame -> {
             vkDestroySemaphore(device, frame.renderFinishedSemaphore(), null);
@@ -237,7 +221,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private void drawToBackScreen(Camera camera) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             var cameraUBO = new CameraUBO(camera);
-            cameraUBO.update(device, cameraUBOMemories);
+            cameraUBO.update(device, texNabor.getUniformBufferMemories());
 
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
@@ -267,7 +251,12 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
                     vkCmdPushConstants(commandBuffer, texNabor.getPipelineLayout(0), VK_SHADER_STAGE_VERTEX_BIT, 0, matBuffer);
 
-                    component.draw(commandBuffer, 0, texNabor.getPipelineLayout(0));
+                    component.draw(
+                            commandBuffer,
+                            0,
+                            texNabor.getPipelineLayout(0),
+                            texNabor.getTexSampler(),
+                            texNabor.getTexDstBinding());
                 }
             }
             vkCmdEndRenderPass(commandBuffer);

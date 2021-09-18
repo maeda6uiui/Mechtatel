@@ -194,7 +194,7 @@ public class Nabor {
         return uniformBuffers;
     }
 
-    protected List<Long> getUniformBufferMemories() {
+    public List<Long> getUniformBufferMemories() {
         return uniformBufferMemories;
     }
 

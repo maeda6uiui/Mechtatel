@@ -129,9 +129,9 @@ public class VkModel3D extends VkComponent3D {
     public void draw(
             VkCommandBuffer commandBuffer,
             int commandBufferIndex,
+            long pipelineLayout,
             long textureSampler,
-            int dstBinding,
-            long pipelineLayout) {
+            int dstBinding) {
         if (!this.getVisible()) {
             return;
         }

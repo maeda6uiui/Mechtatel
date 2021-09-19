@@ -26,7 +26,7 @@ public class PresentNabor extends Nabor {
 
         textureSampler = TextureSamplerCreator.createTextureSampler(device);
     }
-    
+
     @Override
     public void cleanup(boolean reserveForRecreation) {
         super.cleanup(reserveForRecreation);
@@ -44,7 +44,7 @@ public class PresentNabor extends Nabor {
             VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(1, stack);
             VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(1, stack);
 
-            //Color attachments
+            //Color attachment
             VkAttachmentDescription colorAttachment = attachments.get(0);
             colorAttachment.format(imageFormat);
             colorAttachment.samples(VK_SAMPLE_COUNT_1_BIT);

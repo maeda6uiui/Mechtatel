@@ -12,10 +12,15 @@ layout(push_constant) uniform FragPC{
 
 layout(location=0) in vec4 fragColor;
 layout(location=1) in vec2 fragTexCoords;
-layout(location=2) in vec3 fragNormal;
+layout(location=2) in vec3 fragPosition;
+layout(location=3) in vec3 fragNormal;
 
 layout(location=0) out vec4 outColor;
+layout(location=1) out vec3 outPosition;
+layout(location=2) out vec3 outNormal;
 
 void main(){
     outColor=texture(sampler2D(textures[pc.textureIndex],textureSampler),fragTexCoords);
+    outPosition=fragPosition;
+    outNormal=fragNormal;
 }

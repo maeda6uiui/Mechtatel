@@ -57,7 +57,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private Swapchain swapchain;
 
     private PresentNabor presentNabor;
-    private TextureNabor texNabor;
+    private TextureNabor textureNabor;
 
     private long commandPool;
 
@@ -103,9 +103,9 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         }
         swapchain.createFramebuffers(presentNabor.getRenderPass());
 
-        if (texNabor == null) {
-            texNabor = new TextureNabor(device);
-            texNabor.compile(
+        if (textureNabor == null) {
+            textureNabor = new TextureNabor(device);
+            textureNabor.compile(
                     swapchain.getSwapchainImageFormat(),
                     msaaSamples,
                     swapchain.getSwapchainExtent(),
@@ -113,7 +113,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     graphicsQueue,
                     1);
         } else {
-            texNabor.recreate(
+            textureNabor.recreate(
                     swapchain.getSwapchainImageFormat(),
                     msaaSamples,
                     swapchain.getSwapchainExtent(),
@@ -183,7 +183,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         swapchain.cleanup();
         presentNabor.cleanup(false);
-        texNabor.cleanup(false);
+        textureNabor.cleanup(false);
 
         vkDestroyCommandPool(device, commandPool, null);
 
@@ -218,7 +218,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private void drawToBackScreen(Camera camera) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             var uniformBufferMemories = new ArrayList<Long>();
-            uniformBufferMemories.add(texNabor.getUniformBufferMemory(0));
+            uniformBufferMemories.add(textureNabor.getUniformBufferMemory(0));
 
             var cameraUBO = new CameraUBO(camera);
             cameraUBO.update(device, uniformBufferMemories);
@@ -228,11 +228,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
-            renderPassInfo.renderPass(texNabor.getRenderPass());
-            renderPassInfo.framebuffer(texNabor.getFramebuffer(0));
+            renderPassInfo.renderPass(textureNabor.getRenderPass());
+            renderPassInfo.framebuffer(textureNabor.getFramebuffer(0));
             VkRect2D renderArea = VkRect2D.callocStack(stack);
             renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
-            renderArea.extent(texNabor.getExtent());
+            renderArea.extent(textureNabor.getExtent());
             renderPassInfo.renderArea(renderArea);
             VkClearValue.Buffer clearValues = VkClearValue.callocStack(2, stack);
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
@@ -243,14 +243,14 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
             vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
             {
-                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, texNabor.getGraphicsPipeline(0));
+                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, textureNabor.getGraphicsPipeline(0));
 
                 vkCmdBindDescriptorSets(
                         commandBuffer,
                         VK_PIPELINE_BIND_POINT_GRAPHICS,
-                        texNabor.getPipelineLayout(0),
+                        textureNabor.getPipelineLayout(0),
                         0,
-                        texNabor.pDescriptorSets(),
+                        textureNabor.pDescriptorSets(),
                         null);
 
                 for (var component : components) {
@@ -259,7 +259,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
                     vkCmdPushConstants(
                             commandBuffer,
-                            texNabor.getPipelineLayout(0),
+                            textureNabor.getPipelineLayout(0),
                             VK_SHADER_STAGE_VERTEX_BIT,
                             0,
                             matBuffer);
@@ -267,8 +267,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     component.draw(
                             commandBuffer,
                             0,
-                            texNabor.getPipelineLayout(0),
-                            texNabor.getTextureSampler());
+                            textureNabor.getPipelineLayout(0),
+                            textureNabor.getTextureSampler());
                 }
             }
             vkCmdEndRenderPass(commandBuffer);
@@ -308,7 +308,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 {
                     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, presentNabor.getGraphicsPipeline(0));
 
-                    presentNabor.bindBackScreen(commandBuffer, i, texNabor.getImageView(2));
+                    presentNabor.bindBackScreen(commandBuffer, i, textureNabor.getImageView(2));
 
                     quadDrawer.draw(commandBuffer);
                 }
@@ -357,10 +357,10 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     }
 
     public VkModel3D createModel3D(String modelFilepath) {
-        int numDescriptorSets = texNabor.getNumDescriptorSets();
+        int numDescriptorSets = textureNabor.getNumDescriptorSets();
         var descriptorSets = new ArrayList<Long>();
         for (int i = 0; i < numDescriptorSets; i++) {
-            descriptorSets.add(texNabor.getDescriptorSet(i));
+            descriptorSets.add(textureNabor.getDescriptorSet(i));
         }
 
         var model = new VkModel3D(
@@ -368,7 +368,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 commandPool,
                 graphicsQueue,
                 descriptorSets,
-                texNabor.getSetCount(),
+                textureNabor.getSetCount(),
                 modelFilepath);
         components.add(model);
 

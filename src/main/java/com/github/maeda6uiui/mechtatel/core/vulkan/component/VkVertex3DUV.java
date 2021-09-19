@@ -14,19 +14,22 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 public class VkVertex3DUV {
-    public static final int SIZEOF = (3 + 4 + 2) * Float.BYTES;
+    public static final int SIZEOF = (3 + 4 + 2 + 3) * Float.BYTES;
     public static final int OFFSETOF_POS = 0;
     public static final int OFFSETOF_COLOR = 3 * Float.BYTES;
     public static final int OFFSETOF_TEXCOORDS = (3 + 4) * Float.BYTES;
+    public static final int OFFSETOF_NORMAL = (3 + 4 + 2) * Float.BYTES;
 
     public Vector3fc pos;
     public Vector4fc color;
     public Vector2fc texCoords;
+    public Vector3fc normal;
 
-    public VkVertex3DUV(Vector3fc pos, Vector4fc color, Vector2fc texCoords) {
+    public VkVertex3DUV(Vector3fc pos, Vector4fc color, Vector2fc texCoords, Vector3fc normal) {
         this.pos = pos;
         this.color = color;
         this.texCoords = texCoords;
+        this.normal = normal;
     }
 
     public static VkVertexInputBindingDescription.Buffer getBindingDescription() {
@@ -39,7 +42,7 @@ public class VkVertex3DUV {
     }
 
     public static VkVertexInputAttributeDescription.Buffer getAttributeDescriptions() {
-        VkVertexInputAttributeDescription.Buffer attributeDescriptions = VkVertexInputAttributeDescription.callocStack(3);
+        VkVertexInputAttributeDescription.Buffer attributeDescriptions = VkVertexInputAttributeDescription.callocStack(4);
 
         //Position
         VkVertexInputAttributeDescription posDescription = attributeDescriptions.get(0);
@@ -61,6 +64,13 @@ public class VkVertex3DUV {
         texCoordsDescription.location(2);
         texCoordsDescription.format(VK_FORMAT_R32G32_SFLOAT);
         texCoordsDescription.offset(OFFSETOF_TEXCOORDS);
+
+        //Normal
+        VkVertexInputAttributeDescription normalDescription = attributeDescriptions.get(3);
+        normalDescription.binding(0);
+        normalDescription.location(3);
+        normalDescription.format(VK_FORMAT_R32G32B32_SFLOAT);
+        normalDescription.offset(OFFSETOF_NORMAL);
 
         return attributeDescriptions;
     }

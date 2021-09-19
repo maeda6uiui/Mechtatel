@@ -164,8 +164,10 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
         imagesInFlight = new HashMap<>(swapchain.getNumSwapchainImages());
 
+        //Create components
         components = new ArrayList<>();
 
+        //Create a quad drawer to present the back screen to the front screen
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
     }
 

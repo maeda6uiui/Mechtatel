@@ -119,6 +119,15 @@ public class ModelLoader {
         }
     }
 
+    private static void processNormals(AIMesh mesh, List<Vector3fc> normals) {
+        AIVector3D.Buffer aiNormals = Objects.requireNonNull(mesh.mNormals());
+
+        for (int i = 0; i < aiNormals.capacity(); i++) {
+            AIVector3D normal = aiNormals.get(i);
+            normals.add(new Vector3f(normal.x(), normal.y(), normal.z()));
+        }
+    }
+
     private static void processIndices(AIMesh mesh, List<Integer> indices) {
         AIFace.Buffer aiFaces = Objects.requireNonNull(mesh.mFaces());
 
@@ -135,9 +144,11 @@ public class ModelLoader {
     private static void processMesh(AIMesh aiMesh, Mesh mesh) {
         var positions = new ArrayList<Vector3fc>();
         var texCoords = new ArrayList<Vector2fc>();
+        var normals = new ArrayList<Vector3fc>();
 
         processPositions(aiMesh, positions);
         processTexCoords(aiMesh, texCoords);
+        processNormals(aiMesh, normals);
         processIndices(aiMesh, mesh.indices);
 
         mesh.materialIndex = aiMesh.mMaterialIndex();
@@ -148,7 +159,8 @@ public class ModelLoader {
             var vertex = new VkVertex3DUV(
                     positions.get(i),
                     new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
-                    texCoords.get(i));
+                    texCoords.get(i),
+                    normals.get(i));
             mesh.vertices.add(vertex);
         }
     }

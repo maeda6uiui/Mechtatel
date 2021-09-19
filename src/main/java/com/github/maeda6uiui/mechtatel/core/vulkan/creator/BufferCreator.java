@@ -68,6 +68,10 @@ public class BufferCreator {
             buffer.putFloat(vertex.color.y());
             buffer.putFloat(vertex.color.z());
             buffer.putFloat(vertex.color.w());
+
+            buffer.putFloat(vertex.normal.x());
+            buffer.putFloat(vertex.normal.y());
+            buffer.putFloat(vertex.normal.z());
         }
 
         buffer.rewind();
@@ -86,6 +90,10 @@ public class BufferCreator {
 
             buffer.putFloat(vertex.texCoords.x());
             buffer.putFloat(vertex.texCoords.y());
+
+            buffer.putFloat(vertex.normal.x());
+            buffer.putFloat(vertex.normal.y());
+            buffer.putFloat(vertex.normal.z());
         }
 
         buffer.rewind();
@@ -375,14 +383,14 @@ public class BufferCreator {
         }
     }
 
-    public static List<BufferInfo> createUBOBuffers(VkDevice device, int numSwapchainImages, long size) {
+    public static List<BufferInfo> createUBOBuffers(VkDevice device, int numBuffers, long size) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            var ret = new ArrayList<BufferInfo>(numSwapchainImages);
+            var ret = new ArrayList<BufferInfo>(numBuffers);
 
             LongBuffer pBuffer = stack.mallocLong(1);
             LongBuffer pBufferMemory = stack.mallocLong(1);
 
-            for (int i = 0; i < numSwapchainImages; i++) {
+            for (int i = 0; i < numBuffers; i++) {
                 createBuffer(
                         device,
                         size,

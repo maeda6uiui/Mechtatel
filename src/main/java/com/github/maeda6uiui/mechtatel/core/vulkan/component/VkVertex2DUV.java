@@ -9,6 +9,8 @@ import static org.lwjgl.vulkan.VK10.*;
 
 /**
  * Vertex2D with a UV
+ *
+ * @author maeda
  */
 public class VkVertex2DUV {
     public static final int SIZEOF = (2 + 4 + 2) * Float.BYTES;

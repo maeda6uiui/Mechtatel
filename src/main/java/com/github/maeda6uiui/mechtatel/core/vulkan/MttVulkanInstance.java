@@ -310,8 +310,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 {
                     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, presentNabor.getGraphicsPipeline(0));
 
-                    presentNabor.bindBackScreen(commandBuffer, i, textureNabor.getImageView(2));
-
+                    presentNabor.bindBackScreen(commandBuffer, i, textureNabor.getColorResolveImageView());
                     quadDrawer.draw(commandBuffer);
                 }
                 vkCmdEndRenderPass(commandBuffer);

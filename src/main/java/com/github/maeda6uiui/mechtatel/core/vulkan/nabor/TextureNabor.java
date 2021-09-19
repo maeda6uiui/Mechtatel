@@ -32,6 +32,10 @@ public class TextureNabor extends Nabor {
     private long dummyImageMemory;
     private long dummyImageView;
 
+    private int colorResolveImageIndex;
+    private int depthResolveImageIndex;
+    private int normalImageIndex;
+
     public TextureNabor(VkDevice device) {
         super(device);
 
@@ -40,6 +44,18 @@ public class TextureNabor extends Nabor {
 
     public long getTextureSampler() {
         return textureSampler;
+    }
+
+    public long getColorResolveImageView() {
+        return this.getImageView(colorResolveImageIndex);
+    }
+
+    public long getDepthResolveImageView() {
+        return this.getImageView(depthResolveImageIndex);
+    }
+
+    public long getNormalResolveImageView() {
+        return this.getImageView(normalImageIndex);
     }
 
     @Override
@@ -121,6 +137,8 @@ public class TextureNabor extends Nabor {
             VkAttachmentReference colorAttachmentResolveRef = attachmentRefs.get(2);
             colorAttachmentResolveRef.attachment(2);
             colorAttachmentResolveRef.layout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+            colorResolveImageIndex = 2;
 
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.callocStack(1, stack);
             subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);

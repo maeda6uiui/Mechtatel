@@ -36,8 +36,8 @@ public class VkModel3D extends VkComponent3D {
     private void loadTextures(
             long commandPool,
             VkQueue graphicsQueue,
-            int dstBinding,
             List<Long> descriptorSets,
+            int setCount,
             String modelFilepath) {
         String modelDir = Paths.get(modelFilepath).getParent().toString();
 
@@ -57,8 +57,8 @@ public class VkModel3D extends VkComponent3D {
                     device,
                     commandPool,
                     graphicsQueue,
-                    dstBinding,
                     descriptorSets,
+                    setCount,
                     diffuseTexFilepath,
                     true);
             textures.put(index, texture);
@@ -93,8 +93,8 @@ public class VkModel3D extends VkComponent3D {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            int dstBinding,
             List<Long> descriptorSets,
+            int setCount,
             String modelFilepath) {
         this.device = device;
 
@@ -102,8 +102,8 @@ public class VkModel3D extends VkComponent3D {
         this.loadTextures(
                 commandPool,
                 graphicsQueue,
-                dstBinding,
                 descriptorSets,
+                setCount,
                 modelFilepath);
         this.createBuffers(commandPool, graphicsQueue);
     }
@@ -127,8 +127,7 @@ public class VkModel3D extends VkComponent3D {
             VkCommandBuffer commandBuffer,
             int commandBufferIndex,
             long pipelineLayout,
-            long textureSampler,
-            int dstBinding) {
+            long textureSampler) {
         if (!this.getVisible()) {
             return;
         }

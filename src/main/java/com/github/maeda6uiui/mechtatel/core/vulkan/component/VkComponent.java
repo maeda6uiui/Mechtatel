@@ -57,8 +57,7 @@ public class VkComponent {
             VkCommandBuffer commandBuffer,
             int commandBufferIndex,
             long pipelineLayout,
-            long textureSampler,
-            int dstBinding) {
+            long textureSampler) {
 
     }
 

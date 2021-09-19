@@ -306,24 +306,27 @@ public class Texture {
     }
 
     private void updateDescriptorSets(
-            int dstBinding,
-            List<Long> descriptorSets) {
+            List<Long> descriptorSets,
+            int setCount) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkDescriptorImageInfo.Buffer imageInfo = VkDescriptorImageInfo.callocStack(1, stack);
-            imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            imageInfo.imageView(textureImageView);
+            VkDescriptorImageInfo.Buffer textureInfo = VkDescriptorImageInfo.callocStack(1, stack);
+            textureInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            textureInfo.imageView(textureImageView);
 
-            VkWriteDescriptorSet.Buffer imageDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
-            imageDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            imageDescriptorWrite.dstBinding(dstBinding);
-            imageDescriptorWrite.dstArrayElement(textureIndex);
-            imageDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            imageDescriptorWrite.descriptorCount(1);
-            imageDescriptorWrite.pImageInfo(imageInfo);
+            VkWriteDescriptorSet.Buffer textureDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            textureDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            textureDescriptorWrite.dstBinding(0);
+            textureDescriptorWrite.dstArrayElement(textureIndex);
+            textureDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            textureDescriptorWrite.descriptorCount(1);
+            textureDescriptorWrite.pImageInfo(textureInfo);
 
-            for (var descriptorSet : descriptorSets) {
-                imageDescriptorWrite.dstSet(descriptorSet);
-                vkUpdateDescriptorSets(device, imageDescriptorWrite, null);
+            for (int i = 0; i < descriptorSets.size(); i++) {
+                //Update set 1
+                if (i % setCount == 1) {
+                    textureDescriptorWrite.dstSet(descriptorSets.get(i));
+                    vkUpdateDescriptorSets(device, textureDescriptorWrite, null);
+                }
             }
         }
     }
@@ -332,8 +335,8 @@ public class Texture {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            int dstBinding,
             List<Long> descriptorSets,
+            int setCount,
             String textureFilepath,
             boolean generateMipmaps) {
         textureIndex = allocateTextureIndex();
@@ -351,7 +354,7 @@ public class Texture {
         this.createTextureImage(commandPool, graphicsQueue);
         this.createTextureImageView();
 
-        this.updateDescriptorSets(dstBinding, descriptorSets);
+        this.updateDescriptorSets(descriptorSets, setCount);
     }
 
     public void cleanup() {

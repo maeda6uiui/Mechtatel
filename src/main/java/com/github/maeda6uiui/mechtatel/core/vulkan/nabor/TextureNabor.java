@@ -13,6 +13,8 @@ import org.lwjgl.vulkan.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -24,7 +26,6 @@ import static org.lwjgl.vulkan.VK10.*;
 public class TextureNabor extends Nabor {
     public static final int MAX_NUM_TEXTURES = 128;
 
-    private int textureDstBinding;
     private long textureSampler;
 
     private long dummyImage;
@@ -34,16 +35,7 @@ public class TextureNabor extends Nabor {
     public TextureNabor(VkDevice device) {
         super(device);
 
-        textureDstBinding = 2;
         textureSampler = TextureSamplerCreator.createTextureSampler(device);
-    }
-
-    public int getTextureDstBinding() {
-        return textureDstBinding;
-    }
-
-    protected void setTextureDstBinding(int textureDstBinding) {
-        this.textureDstBinding = textureDstBinding;
     }
 
     public long getTextureSampler() {
@@ -166,40 +158,63 @@ public class TextureNabor extends Nabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            VkDescriptorSetLayoutBinding.Buffer bindings = VkDescriptorSetLayoutBinding.callocStack(3, stack);
+            //=== set 0 ===
+            VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.callocStack(1, stack);
 
-            VkDescriptorSetLayoutBinding cameraUBOLayoutBinding = bindings.get(0);
+            VkDescriptorSetLayoutBinding cameraUBOLayoutBinding = uboBindings.get(0);
             cameraUBOLayoutBinding.binding(0);
             cameraUBOLayoutBinding.descriptorCount(1);
             cameraUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             cameraUBOLayoutBinding.pImmutableSamplers(null);
             cameraUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
 
-            VkDescriptorSetLayoutBinding samplerLayoutBinding = bindings.get(1);
-            samplerLayoutBinding.binding(1);
-            samplerLayoutBinding.descriptorCount(1);
-            samplerLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLER);
-            samplerLayoutBinding.pImmutableSamplers(null);
-            samplerLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+            //=== set 1 ===
+            VkDescriptorSetLayoutBinding.Buffer textureBindings = VkDescriptorSetLayoutBinding.callocStack(1, stack);
 
-            VkDescriptorSetLayoutBinding textureLayoutBinding = bindings.get(2);
-            textureLayoutBinding.binding(2);
+            VkDescriptorSetLayoutBinding textureLayoutBinding = textureBindings.get(0);
+            textureLayoutBinding.binding(0);
             textureLayoutBinding.descriptorCount(MAX_NUM_TEXTURES);
             textureLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             textureLayoutBinding.pImmutableSamplers(null);
             textureLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            VkDescriptorSetLayoutCreateInfo layoutInfo = VkDescriptorSetLayoutCreateInfo.callocStack(stack);
-            layoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
-            layoutInfo.pBindings(bindings);
+            //=== set 2 ===
+            VkDescriptorSetLayoutBinding.Buffer samplerBindings = VkDescriptorSetLayoutBinding.callocStack(1, stack);
 
-            LongBuffer pDescriptorSetLayout = stack.mallocLong(1);
-            if (vkCreateDescriptorSetLayout(device, layoutInfo, null, pDescriptorSetLayout) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to create a descriptor set layout");
+            VkDescriptorSetLayoutBinding samplerLayoutBinding = samplerBindings.get(0);
+            samplerLayoutBinding.binding(0);
+            samplerLayoutBinding.descriptorCount(1);
+            samplerLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLER);
+            samplerLayoutBinding.pImmutableSamplers(null);
+            samplerLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+
+            //Create descriptor set layouts
+            VkDescriptorSetLayoutCreateInfo.Buffer layoutInfos = VkDescriptorSetLayoutCreateInfo.callocStack(3, stack);
+
+            //=== set 0 ===
+            VkDescriptorSetLayoutCreateInfo uboLayoutInfo = layoutInfos.get(0);
+            uboLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            uboLayoutInfo.pBindings(uboBindings);
+
+            //=== set 1 ===
+            VkDescriptorSetLayoutCreateInfo textureLayoutInfo = layoutInfos.get(1);
+            textureLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            textureLayoutInfo.pBindings(textureBindings);
+
+            //=== set 2 ===
+            VkDescriptorSetLayoutCreateInfo samplerLayoutInfo = layoutInfos.get(2);
+            samplerLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            samplerLayoutInfo.pBindings(samplerBindings);
+
+            for (int i = 0; i < 3; i++) {
+                LongBuffer pDescriptorSetLayout = stack.mallocLong(1);
+                if (vkCreateDescriptorSetLayout(device, layoutInfos.get(i), null, pDescriptorSetLayout) != VK_SUCCESS) {
+                    throw new RuntimeException("Failed to create a descriptor set layout");
+                }
+
+                long descriptorSetLayout = pDescriptorSetLayout.get(0);
+                this.getDescriptorSetLayouts().add(descriptorSetLayout);
             }
-
-            long descriptorSetLayout = pDescriptorSetLayout.get(0);
-            this.getDescriptorSetLayouts().add(descriptorSetLayout);
         }
     }
 
@@ -208,32 +223,57 @@ public class TextureNabor extends Nabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            VkDescriptorPoolSize.Buffer poolSizes = VkDescriptorPoolSize.callocStack(3, stack);
+            //=== set 0 ===
+            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.callocStack(1, stack);
 
-            VkDescriptorPoolSize cameraUBPoolSize = poolSizes.get(0);
-            cameraUBPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            cameraUBPoolSize.descriptorCount(descriptorCount);
+            VkDescriptorPoolSize cameraUBOPoolSize = uboPoolSizes.get(0);
+            cameraUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            cameraUBOPoolSize.descriptorCount(descriptorCount);
 
-            VkDescriptorPoolSize samplerPoolSize = poolSizes.get(1);
-            samplerPoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLER);
-            samplerPoolSize.descriptorCount(descriptorCount);
+            //=== set 1 ===
+            VkDescriptorPoolSize.Buffer texturePoolSizes = VkDescriptorPoolSize.callocStack(1, stack);
 
-            VkDescriptorPoolSize texturePoolSize = poolSizes.get(2);
+            VkDescriptorPoolSize texturePoolSize = texturePoolSizes.get(0);
             texturePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             texturePoolSize.descriptorCount(descriptorCount * MAX_NUM_TEXTURES);
 
-            VkDescriptorPoolCreateInfo poolInfo = VkDescriptorPoolCreateInfo.callocStack(stack);
-            poolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
-            poolInfo.pPoolSizes(poolSizes);
-            poolInfo.maxSets(descriptorCount);
+            //=== set 2 ===
+            VkDescriptorPoolSize.Buffer samplerPoolSizes = VkDescriptorPoolSize.callocStack(1, stack);
 
-            LongBuffer pDescriptorPool = stack.mallocLong(1);
-            if (vkCreateDescriptorPool(device, poolInfo, null, pDescriptorPool) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to create a descriptor pool");
+            VkDescriptorPoolSize samplerPoolSize = samplerPoolSizes.get(0);
+            samplerPoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLER);
+            samplerPoolSize.descriptorCount(descriptorCount);
+
+            //Create descriptor pools
+            VkDescriptorPoolCreateInfo.Buffer poolInfos = VkDescriptorPoolCreateInfo.callocStack(3, stack);
+
+            //=== set 0 ===
+            VkDescriptorPoolCreateInfo uboPoolInfo = poolInfos.get(0);
+            uboPoolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
+            uboPoolInfo.pPoolSizes(uboPoolSizes);
+            uboPoolInfo.maxSets(descriptorCount);
+
+            //=== set 1 ===
+            VkDescriptorPoolCreateInfo texturePoolInfo = poolInfos.get(1);
+            texturePoolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
+            texturePoolInfo.pPoolSizes(texturePoolSizes);
+            texturePoolInfo.maxSets(descriptorCount);
+
+            //=== set 2 ===
+            VkDescriptorPoolCreateInfo samplerPoolInfo = poolInfos.get(2);
+            samplerPoolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
+            samplerPoolInfo.pPoolSizes(samplerPoolSizes);
+            samplerPoolInfo.maxSets(descriptorCount);
+
+            for (int i = 0; i < 3; i++) {
+                LongBuffer pDescriptorPool = stack.mallocLong(1);
+                if (vkCreateDescriptorPool(device, poolInfos.get(i), null, pDescriptorPool) != VK_SUCCESS) {
+                    throw new RuntimeException("Failed to create a descriptor pool");
+                }
+
+                long descriptorPool = pDescriptorPool.get(0);
+                this.getDescriptorPools().add(descriptorPool);
             }
-
-            long descriptorPool = pDescriptorPool.get(0);
-            this.getDescriptorPools().add(descriptorPool);
         }
     }
 
@@ -303,50 +343,55 @@ public class TextureNabor extends Nabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            long descriptorSetLayout = this.getDescriptorSetLayouts().get(0);
-            long descriptorPool = this.getDescriptorPools().get(0);
+            List<Long> descriptorSetLayouts = this.getDescriptorSetLayouts();
+            List<Long> descriptorPools = this.getDescriptorPools();
+            List<Long> descriptorSets = new ArrayList<>();
 
-            LongBuffer layouts = stack.mallocLong(descriptorCount);
-            for (int i = 0; i < layouts.capacity(); i++) {
-                layouts.put(i, descriptorSetLayout);
+            int setCount = descriptorSetLayouts.size();
+            this.setSetCount(setCount);
+
+            VkDescriptorSetAllocateInfo.Buffer allocInfos = VkDescriptorSetAllocateInfo.callocStack(setCount, stack);
+
+            for (int i = 0; i < setCount; i++) {
+                LongBuffer layouts = stack.mallocLong(descriptorCount);
+
+                for (int j = 0; j < descriptorCount; j++) {
+                    layouts.put(j, descriptorSetLayouts.get(i));
+                }
+
+                VkDescriptorSetAllocateInfo allocInfo = allocInfos.get(i);
+                allocInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO);
+                allocInfo.descriptorPool(descriptorPools.get(i));
+                allocInfo.pSetLayouts(layouts);
+
+                LongBuffer pDescriptorSets = stack.mallocLong(descriptorCount);
+                if (vkAllocateDescriptorSets(device, allocInfo, pDescriptorSets) != VK_SUCCESS) {
+                    throw new RuntimeException("Failed to allocate descriptor sets");
+                }
+
+                for (int j = 0; j < descriptorCount; j++) {
+                    descriptorSets.add(pDescriptorSets.get(j));
+                }
             }
 
-            VkDescriptorSetAllocateInfo allocInfo = VkDescriptorSetAllocateInfo.callocStack(stack);
-            allocInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO);
-            allocInfo.descriptorPool(descriptorPool);
-            allocInfo.pSetLayouts(layouts);
+            VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.callocStack(setCount, stack);
 
-            LongBuffer pDescriptorSets = stack.mallocLong(descriptorCount);
-            if (vkAllocateDescriptorSets(device, allocInfo, pDescriptorSets) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to allocate descriptor sets");
-            }
+            //=== set 0 ===
+            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.callocStack(1, stack);
 
-            VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.callocStack(3, stack);
-
-            VkDescriptorBufferInfo.Buffer cameraUBOInfo = VkDescriptorBufferInfo.callocStack(1, stack);
+            VkDescriptorBufferInfo cameraUBOInfo = uboInfos.get(0);
             cameraUBOInfo.offset(0);
             cameraUBOInfo.range(CameraUBO.SIZEOF);
 
-            VkWriteDescriptorSet cameraUBODescriptorWrite = descriptorWrites.get(0);
-            cameraUBODescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            cameraUBODescriptorWrite.dstBinding(0);
-            cameraUBODescriptorWrite.dstArrayElement(0);
-            cameraUBODescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            cameraUBODescriptorWrite.descriptorCount(1);
-            cameraUBODescriptorWrite.pBufferInfo(cameraUBOInfo);
+            VkWriteDescriptorSet uboDescriptorWrite = descriptorWrites.get(0);
+            uboDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            uboDescriptorWrite.dstBinding(0);
+            uboDescriptorWrite.dstArrayElement(0);
+            uboDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            uboDescriptorWrite.descriptorCount(1);
+            uboDescriptorWrite.pBufferInfo(uboInfos);
 
-            VkDescriptorImageInfo.Buffer samplerInfo = VkDescriptorImageInfo.callocStack(1, stack);
-            samplerInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            samplerInfo.sampler(textureSampler);
-
-            VkWriteDescriptorSet samplerDescriptorWrite = descriptorWrites.get(1);
-            samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            samplerDescriptorWrite.dstBinding(1);
-            samplerDescriptorWrite.dstArrayElement(0);
-            samplerDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLER);
-            samplerDescriptorWrite.descriptorCount(1);
-            samplerDescriptorWrite.pImageInfo(samplerInfo);
-
+            //=== set 1 ===
             //Create dummy textures and fill the texture array
             this.createDummyImages(commandPool, graphicsQueue);
 
@@ -357,25 +402,41 @@ public class TextureNabor extends Nabor {
                 imageInfo.imageView(dummyImageView);
             }
 
-            VkWriteDescriptorSet imageDescriptorWrite = descriptorWrites.get(2);
-            imageDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            imageDescriptorWrite.dstBinding(textureDstBinding);
-            imageDescriptorWrite.dstArrayElement(0);
-            imageDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            imageDescriptorWrite.descriptorCount(MAX_NUM_TEXTURES);
-            imageDescriptorWrite.pImageInfo(imageInfos);
+            VkWriteDescriptorSet textureDescriptorWrite = descriptorWrites.get(1);
+            textureDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            textureDescriptorWrite.dstBinding(0);
+            textureDescriptorWrite.dstArrayElement(0);
+            textureDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            textureDescriptorWrite.descriptorCount(MAX_NUM_TEXTURES);
+            textureDescriptorWrite.pImageInfo(imageInfos);
 
-            for (int i = 0; i < pDescriptorSets.capacity(); i++) {
-                long descriptorSet = pDescriptorSets.get(i);
+            //=== set 2 ===
+            VkDescriptorImageInfo.Buffer samplerInfos = VkDescriptorImageInfo.callocStack(1, stack);
 
-                cameraUBOInfo.buffer(this.getUniformBuffers().get(i));
-                cameraUBODescriptorWrite.dstSet(descriptorSet);
-                samplerDescriptorWrite.dstSet(descriptorSet);
-                imageDescriptorWrite.dstSet(descriptorSet);
+            VkDescriptorImageInfo samplerInfo = samplerInfos.get(0);
+            samplerInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            samplerInfo.sampler(textureSampler);
+
+            VkWriteDescriptorSet samplerDescriptorWrite = descriptorWrites.get(2);
+            samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            samplerDescriptorWrite.dstBinding(0);
+            samplerDescriptorWrite.dstArrayElement(0);
+            samplerDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLER);
+            samplerDescriptorWrite.descriptorCount(1);
+            samplerDescriptorWrite.pImageInfo(samplerInfos);
+
+            for (int i = 0; i < descriptorCount; i++) {
+                uboInfos.buffer(this.getUniformBuffer(i));
+
+                uboDescriptorWrite.dstSet(descriptorSets.get(i * setCount));
+                textureDescriptorWrite.dstSet(descriptorSets.get(i * setCount + 1));
+                samplerDescriptorWrite.dstSet(descriptorSets.get(i * setCount + 2));
 
                 vkUpdateDescriptorSets(device, descriptorWrites, null);
+            }
 
-                this.getDescriptorSets().add(descriptorSet);
+            for (int i = 0; i < descriptorSets.size(); i++) {
+                this.getDescriptorSets().add(descriptorSets.get(i));
             }
         }
     }
@@ -388,8 +449,8 @@ public class TextureNabor extends Nabor {
         long vertShaderModule;
         long fragShaderModule;
         if (this.getVertShaderModules().size() != 0) {
-            vertShaderModule = this.getVertShaderModules().get(0);
-            fragShaderModule = this.getFragShaderModules().get(0);
+            vertShaderModule = this.getVertShaderModule(0);
+            fragShaderModule = this.getFragShaderModule(0);
         } else {
             final String vertShaderFilepath = "./Mechtatel/Shader/Standard/3d_texture.vert";
             final String fragShaderFilepath = "./Mechtatel/Shader/Standard/3d_texture.frag";
@@ -502,7 +563,7 @@ public class TextureNabor extends Nabor {
             colorBlending.pAttachments(colorBlendAttachment);
             colorBlending.blendConstants(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
 
-            //Push constant
+            //Push constants
             VkPushConstantRange.Buffer pushConstants = VkPushConstantRange.callocStack(2, stack);
 
             VkPushConstantRange vertPC = pushConstants.get(0);
@@ -518,7 +579,7 @@ public class TextureNabor extends Nabor {
             //Pipeline layout creation
             VkPipelineLayoutCreateInfo pipelineLayoutInfo = VkPipelineLayoutCreateInfo.callocStack(stack);
             pipelineLayoutInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO);
-            pipelineLayoutInfo.pSetLayouts(stack.longs(this.getDescriptorSetLayout(0)));
+            pipelineLayoutInfo.pSetLayouts(this.pDescriptorSetLayouts());
             pipelineLayoutInfo.pPushConstantRanges(pushConstants);
 
             LongBuffer pPipelineLayout = stack.longs(VK_NULL_HANDLE);

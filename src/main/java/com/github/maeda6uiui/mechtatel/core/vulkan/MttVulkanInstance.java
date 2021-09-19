@@ -250,7 +250,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         VK_PIPELINE_BIND_POINT_GRAPHICS,
                         texNabor.getPipelineLayout(0),
                         0,
-                        stack.longs(texNabor.getDescriptorSet(0)),
+                        texNabor.pDescriptorSets(),
                         null);
 
                 for (var component : components) {
@@ -268,8 +268,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                             commandBuffer,
                             0,
                             texNabor.getPipelineLayout(0),
-                            texNabor.getTextureSampler(),
-                            texNabor.getTextureDstBinding());
+                            texNabor.getTextureSampler());
                 }
             }
             vkCmdEndRenderPass(commandBuffer);
@@ -358,15 +357,18 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     }
 
     public VkModel3D createModel3D(String modelFilepath) {
+        int numDescriptorSets = texNabor.getNumDescriptorSets();
         var descriptorSets = new ArrayList<Long>();
-        descriptorSets.add(texNabor.getDescriptorSet(0));
+        for (int i = 0; i < numDescriptorSets; i++) {
+            descriptorSets.add(texNabor.getDescriptorSet(i));
+        }
 
         var model = new VkModel3D(
                 device,
                 commandPool,
                 graphicsQueue,
-                texNabor.getTextureDstBinding(),
                 descriptorSets,
+                texNabor.getSetCount(),
                 modelFilepath);
         components.add(model);
 

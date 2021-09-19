@@ -40,6 +40,8 @@ public class Nabor {
     private List<Long> imageViews;
     private List<Long> framebuffers;
 
+    private int setCount;
+
     public Nabor(VkDevice device) {
         this.device = device;
 
@@ -210,6 +212,15 @@ public class Nabor {
         return descriptorSetLayouts;
     }
 
+    protected LongBuffer pDescriptorSetLayouts() {
+        LongBuffer pLayouts = MemoryStack.stackGet().mallocLong(descriptorSetLayouts.size());
+        for (int i = 0; i < descriptorSetLayouts.size(); i++) {
+            pLayouts.put(i, descriptorSetLayouts.get(i));
+        }
+
+        return pLayouts;
+    }
+
     public long getDescriptorPool(int index) {
         return descriptorPools.get(index);
     }
@@ -218,12 +229,25 @@ public class Nabor {
         return descriptorPools;
     }
 
+    public int getNumDescriptorSets() {
+        return descriptorSets.size();
+    }
+
     public long getDescriptorSet(int index) {
         return descriptorSets.get(index);
     }
 
     protected List<Long> getDescriptorSets() {
         return descriptorSets;
+    }
+
+    public LongBuffer pDescriptorSets() {
+        LongBuffer pSets = MemoryStack.stackGet().mallocLong(descriptorSets.size());
+        for (int i = 0; i < descriptorSets.size(); i++) {
+            pSets.put(i, descriptorSets.get(i));
+        }
+
+        return pSets;
     }
 
     public long getVertShaderModule(int index) {
@@ -292,6 +316,14 @@ public class Nabor {
 
     protected List<Long> getFramebuffers() {
         return framebuffers;
+    }
+
+    public int getSetCount() {
+        return setCount;
+    }
+
+    protected void setSetCount(int setCount) {
+        this.setCount = setCount;
     }
 
     protected long createShaderModule(VkDevice device, ByteBuffer spirvCode) {

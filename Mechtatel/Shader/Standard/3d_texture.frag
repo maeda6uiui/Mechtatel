@@ -4,8 +4,8 @@
 const int MAX_NUM_TEXTURES=128;
 const int SIZEOF_FLOAT=4;
 
-layout(binding=1) uniform sampler textureSampler;
-layout(binding=2) uniform texture2D textures[MAX_NUM_TEXTURES];
+layout(set=1,binding=0) uniform texture2D textures[MAX_NUM_TEXTURES];
+layout(set=2,binding=0) uniform sampler textureSampler;
 layout(push_constant) uniform FragPC{
     layout(offset=1*16*SIZEOF_FLOAT) int textureIndex;
 }pc;

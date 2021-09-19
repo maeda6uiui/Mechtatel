@@ -82,7 +82,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         //Create nabors
         if (presentNabor == null) {
-            presentNabor = new PresentNabor(device, VK_SAMPLE_COUNT_1_BIT);
+            presentNabor = new PresentNabor(device);
             presentNabor.compile(
                     swapchain.getSwapchainImageFormat(),
                     swapchain.getSwapchainExtent(),
@@ -99,7 +99,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         swapchain.createFramebuffers(presentNabor.getRenderPass());
 
         if (textureNabor == null) {
-            textureNabor = new TextureNabor(device, VK_SAMPLE_COUNT_1_BIT);
+            textureNabor = new TextureNabor(device);
             textureNabor.compile(
                     swapchain.getSwapchainImageFormat(),
                     swapchain.getSwapchainExtent(),

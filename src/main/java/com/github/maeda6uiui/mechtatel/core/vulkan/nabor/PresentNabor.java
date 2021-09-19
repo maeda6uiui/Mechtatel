@@ -21,8 +21,8 @@ import static org.lwjgl.vulkan.VK10.*;
 public class PresentNabor extends Nabor {
     private long textureSampler;
 
-    public PresentNabor(VkDevice device, int msaaSamples) {
-        super(device, msaaSamples);
+    public PresentNabor(VkDevice device) {
+        super(device, VK_SAMPLE_COUNT_1_BIT);
 
         textureSampler = TextureSamplerCreator.createTextureSampler(device);
     }
@@ -41,13 +41,15 @@ public class PresentNabor extends Nabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
+            int msaaSamples = this.getMsaaSamples();
+
             VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(1, stack);
             VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(1, stack);
 
             //Color attachment
             VkAttachmentDescription colorAttachment = attachments.get(0);
             colorAttachment.format(colorImageFormat);
-            colorAttachment.samples(VK_SAMPLE_COUNT_1_BIT);
+            colorAttachment.samples(msaaSamples);
             colorAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
             colorAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
             colorAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
@@ -175,6 +177,7 @@ public class PresentNabor extends Nabor {
     @Override
     protected void createGraphicsPipelines() {
         VkDevice device = this.getDevice();
+        int msaaSamples = this.getMsaaSamples();
         VkExtent2D extent = this.getExtent();
 
         long vertShaderModule;
@@ -265,7 +268,7 @@ public class PresentNabor extends Nabor {
             multisampling.sType(VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO);
             multisampling.sampleShadingEnable(true);
             multisampling.minSampleShading(0.2f);
-            multisampling.rasterizationSamples(VK_SAMPLE_COUNT_1_BIT);
+            multisampling.rasterizationSamples(msaaSamples);
 
             //Color blending
             VkPipelineColorBlendAttachmentState.Buffer colorBlendAttachment = VkPipelineColorBlendAttachmentState.callocStack(1, stack);

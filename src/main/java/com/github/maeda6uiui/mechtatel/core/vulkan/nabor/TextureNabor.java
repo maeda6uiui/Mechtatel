@@ -40,8 +40,8 @@ public class TextureNabor extends Nabor {
     private int positionAttachmentIndex;
     private int normalAttachmentIndex;
 
-    public TextureNabor(VkDevice device, int msaaSamples) {
-        super(device, msaaSamples);
+    public TextureNabor(VkDevice device) {
+        super(device, VK_SAMPLE_COUNT_1_BIT);
 
         textureSampler = TextureSamplerCreator.createTextureSampler(device);
 

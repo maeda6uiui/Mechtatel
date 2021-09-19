@@ -39,9 +39,6 @@ public class TextureNabor extends Nabor {
     private int depthAttachmentIndex;
     private int positionAttachmentIndex;
     private int normalAttachmentIndex;
-    private int colorResolveAttachmentIndex;
-    private int positionResolveAttachmentIndex;
-    private int normalResolveAttachmentIndex;
 
     public TextureNabor(VkDevice device) {
         super(device);
@@ -56,16 +53,36 @@ public class TextureNabor extends Nabor {
         return textureSampler;
     }
 
-    public long getColorResolveImageView() {
-        return this.getImageView(colorResolveAttachmentIndex);
+    public long getColorImage() {
+        return this.getImage(colorAttachmentIndex);
     }
 
-    public long getPositionResolveImageView() {
-        return this.getImageView(positionResolveAttachmentIndex);
+    public long getColorImageView() {
+        return this.getImageView(colorAttachmentIndex);
     }
 
-    public long getNormalResolveImageView() {
-        return this.getImageView(normalResolveAttachmentIndex);
+    public long getDepthImage() {
+        return this.getImage(depthAttachmentIndex);
+    }
+
+    public long getDepthImageView() {
+        return this.getImageView(depthAttachmentIndex);
+    }
+
+    public long getPositionImage() {
+        return this.getImage(positionAttachmentIndex);
+    }
+
+    public long getPositionImageView() {
+        return this.getImageView(positionAttachmentIndex);
+    }
+
+    public long getNormalImage() {
+        return this.getImage(normalAttachmentIndex);
+    }
+
+    public long getNormalImageView() {
+        return this.getImageView(normalAttachmentIndex);
     }
 
     @Override
@@ -100,8 +117,8 @@ public class TextureNabor extends Nabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(7, stack);
-            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(7, stack);
+            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(4, stack);
+            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(4, stack);
 
             //Color attachment
             colorAttachmentIndex = 0;
@@ -171,73 +188,16 @@ public class TextureNabor extends Nabor {
             normalAttachmentRef.attachment(normalAttachmentIndex);
             normalAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            //Color resolve
-            colorResolveAttachmentIndex = 4;
-
-            VkAttachmentDescription colorAttachmentResolve = attachments.get(colorResolveAttachmentIndex);
-            colorAttachmentResolve.format(imageFormat);
-            colorAttachmentResolve.samples(VK_SAMPLE_COUNT_1_BIT);
-            colorAttachmentResolve.loadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
-            colorAttachmentResolve.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
-            colorAttachmentResolve.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
-            colorAttachmentResolve.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
-            colorAttachmentResolve.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
-            colorAttachmentResolve.finalLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-            VkAttachmentReference colorAttachmentResolveRef = attachmentRefs.get(colorResolveAttachmentIndex);
-            colorAttachmentResolveRef.attachment(colorResolveAttachmentIndex);
-            colorAttachmentResolveRef.layout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-            //Position resolve
-            positionResolveAttachmentIndex = 5;
-
-            VkAttachmentDescription positionAttachmentResolve = attachments.get(positionResolveAttachmentIndex);
-            positionAttachmentResolve.format(positionImageFormat);
-            positionAttachmentResolve.samples(VK_SAMPLE_COUNT_1_BIT);
-            positionAttachmentResolve.loadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
-            positionAttachmentResolve.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
-            positionAttachmentResolve.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
-            positionAttachmentResolve.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
-            positionAttachmentResolve.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
-            positionAttachmentResolve.finalLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-            VkAttachmentReference positionAttachmentResolveRef = attachmentRefs.get(positionResolveAttachmentIndex);
-            positionAttachmentResolveRef.attachment(positionResolveAttachmentIndex);
-            positionAttachmentResolveRef.layout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-            //Normal resolve
-            normalResolveAttachmentIndex = 6;
-
-            VkAttachmentDescription normalAttachmentResolve = attachments.get(normalResolveAttachmentIndex);
-            normalAttachmentResolve.format(normalImageFormat);
-            normalAttachmentResolve.samples(VK_SAMPLE_COUNT_1_BIT);
-            normalAttachmentResolve.loadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
-            normalAttachmentResolve.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
-            normalAttachmentResolve.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
-            normalAttachmentResolve.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
-            normalAttachmentResolve.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
-            normalAttachmentResolve.finalLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-            VkAttachmentReference normalAttachmentResolveRef = attachmentRefs.get(normalResolveAttachmentIndex);
-            normalAttachmentResolveRef.attachment(normalResolveAttachmentIndex);
-            normalAttachmentResolveRef.layout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
             VkAttachmentReference.Buffer colorAttachmentRefs = VkAttachmentReference.callocStack(3, stack);
             colorAttachmentRefs.put(0, colorAttachmentRef);
             colorAttachmentRefs.put(1, positionAttachmentRef);
             colorAttachmentRefs.put(2, normalAttachmentRef);
-
-            VkAttachmentReference.Buffer resolveAttachmentRefs = VkAttachmentReference.callocStack(3, stack);
-            resolveAttachmentRefs.put(0, colorAttachmentResolveRef);
-            resolveAttachmentRefs.put(1, positionAttachmentResolveRef);
-            resolveAttachmentRefs.put(2, normalAttachmentResolveRef);
 
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.callocStack(1, stack);
             subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
             subpass.colorAttachmentCount(3);
             subpass.pColorAttachments(colorAttachmentRefs);
             subpass.pDepthStencilAttachment(depthAttachmentRef);
-            subpass.pResolveAttachments(resolveAttachmentRefs);
 
             VkSubpassDependency.Buffer dependency = VkSubpassDependency.callocStack(1, stack);
             dependency.srcSubpass(VK_SUBPASS_EXTERNAL);
@@ -759,7 +719,7 @@ public class TextureNabor extends Nabor {
                     msaaSamples,
                     imageFormat,
                     VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     pImage,
                     pImageMemory);
@@ -797,7 +757,7 @@ public class TextureNabor extends Nabor {
                     msaaSamples,
                     depthFormat,
                     VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+                    VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     pImage,
                     pImageMemory);
@@ -826,7 +786,7 @@ public class TextureNabor extends Nabor {
                     msaaSamples,
                     positionImageFormat,
                     VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     pImage,
                     pImageMemory);
@@ -855,7 +815,7 @@ public class TextureNabor extends Nabor {
                     msaaSamples,
                     normalImageFormat,
                     VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     pImage,
                     pImageMemory);
@@ -874,93 +834,6 @@ public class TextureNabor extends Nabor {
             this.getImages().add(normalImage);
             this.getImageMemories().add(normalImageMemory);
             this.getImageViews().add(normalImageView);
-
-            //Color resolve image
-            ImageUtils.createImage(
-                    device,
-                    extent.width(),
-                    extent.height(),
-                    1,
-                    VK_SAMPLE_COUNT_1_BIT,
-                    imageFormat,
-                    VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pImage,
-                    pImageMemory);
-            long colorResolveImage = pImage.get(0);
-            long colorResolveImageMemory = pImageMemory.get(0);
-
-            viewInfo.image(colorResolveImage);
-            viewInfo.format(imageFormat);
-            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
-
-            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to create an image view");
-            }
-            long colorResolveImageView = pImageView.get(0);
-
-            this.getImages().add(colorResolveImage);
-            this.getImageMemories().add(colorResolveImageMemory);
-            this.getImageViews().add(colorResolveImageView);
-
-            //Position resolve image
-            ImageUtils.createImage(
-                    device,
-                    extent.width(),
-                    extent.height(),
-                    1,
-                    VK_SAMPLE_COUNT_1_BIT,
-                    positionImageFormat,
-                    VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pImage,
-                    pImageMemory);
-            long positionResolveImage = pImage.get(0);
-            long positionResolveImageMemory = pImageMemory.get(0);
-
-            viewInfo.image(positionResolveImage);
-            viewInfo.format(positionImageFormat);
-            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
-
-            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to create an image view");
-            }
-            long positionResolveImageView = pImageView.get(0);
-
-            this.getImages().add(positionResolveImage);
-            this.getImageMemories().add(positionResolveImageMemory);
-            this.getImageViews().add(positionResolveImageView);
-
-            //Normal resolve image
-            ImageUtils.createImage(
-                    device,
-                    extent.width(),
-                    extent.height(),
-                    1,
-                    VK_SAMPLE_COUNT_1_BIT,
-                    normalImageFormat,
-                    VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pImage,
-                    pImageMemory);
-            long normalResolveImage = pImage.get(0);
-            long normalResolveImageMemory = pImageMemory.get(0);
-
-            viewInfo.image(normalResolveImage);
-            viewInfo.format(normalImageFormat);
-            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
-
-            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to create an image view");
-            }
-            long normalResolveImageView = pImageView.get(0);
-
-            this.getImages().add(normalResolveImage);
-            this.getImageMemories().add(normalResolveImageMemory);
-            this.getImageViews().add(normalResolveImageView);
         }
     }
 

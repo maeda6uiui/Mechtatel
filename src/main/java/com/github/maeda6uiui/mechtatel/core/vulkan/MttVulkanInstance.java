@@ -10,10 +10,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.MultisamplingUtils;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.PhysicalDevicePicker;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.PointerBufferUtils;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -107,7 +104,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             textureNabor = new TextureNabor(device);
             textureNabor.compile(
                     swapchain.getSwapchainImageFormat(),
-                    msaaSamples,
+                    VK_SAMPLE_COUNT_1_BIT,
                     swapchain.getSwapchainExtent(),
                     commandPool,
                     graphicsQueue,
@@ -115,7 +112,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         } else {
             textureNabor.recreate(
                     swapchain.getSwapchainImageFormat(),
-                    msaaSamples,
+                    VK_SAMPLE_COUNT_1_BIT,
                     swapchain.getSwapchainExtent(),
                     commandPool,
                     graphicsQueue);
@@ -297,6 +294,19 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
             renderPassInfo.pClearValues(clearValues);
 
+            long colorImage = textureNabor.getColorImage();
+            long colorImageView = textureNabor.getColorImageView();
+
+            ImageUtils.transitionImageLayout(
+                    device,
+                    commandPool,
+                    graphicsQueue,
+                    colorImage,
+                    false,
+                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                    1);
+
             var commandBuffers
                     = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchain.getNumSwapchainImages());
 
@@ -312,7 +322,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 {
                     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, presentNabor.getGraphicsPipeline(0));
 
-                    presentNabor.bindBackScreen(commandBuffer, i, textureNabor.getColorResolveImageView());
+                    presentNabor.bindBackScreen(commandBuffer, i, colorImageView);
                     quadDrawer.draw(commandBuffer);
                 }
                 vkCmdEndRenderPass(commandBuffer);

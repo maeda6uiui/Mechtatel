@@ -26,11 +26,7 @@ public class PresentNabor extends Nabor {
 
         textureSampler = TextureSamplerCreator.createTextureSampler(device);
     }
-
-    public long getTextureSampler() {
-        return textureSampler;
-    }
-
+    
     @Override
     public void cleanup(boolean reserveForRecreation) {
         super.cleanup(reserveForRecreation);

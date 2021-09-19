@@ -21,8 +21,8 @@ import static org.lwjgl.vulkan.VK10.*;
 public class PresentNabor extends Nabor {
     private long textureSampler;
 
-    public PresentNabor(VkDevice device) {
-        super(device);
+    public PresentNabor(VkDevice device, int msaaSamples) {
+        super(device, msaaSamples);
 
         textureSampler = TextureSamplerCreator.createTextureSampler(device);
     }
@@ -37,7 +37,7 @@ public class PresentNabor extends Nabor {
     }
 
     @Override
-    protected void createRenderPass(int imageFormat, int msaaSamples) {
+    protected void createRenderPass(int imageFormat) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
@@ -173,7 +173,7 @@ public class PresentNabor extends Nabor {
     }
 
     @Override
-    protected void createGraphicsPipelines(int msaaSamples) {
+    protected void createGraphicsPipelines() {
         VkDevice device = this.getDevice();
         VkExtent2D extent = this.getExtent();
 

@@ -40,8 +40,8 @@ public class TextureNabor extends Nabor {
     private int positionAttachmentIndex;
     private int normalAttachmentIndex;
 
-    public TextureNabor(VkDevice device) {
-        super(device);
+    public TextureNabor(VkDevice device, int msaaSamples) {
+        super(device, msaaSamples);
 
         textureSampler = TextureSamplerCreator.createTextureSampler(device);
 
@@ -113,9 +113,10 @@ public class TextureNabor extends Nabor {
     }
 
     @Override
-    protected void createRenderPass(int imageFormat, int msaaSamples) {
+    protected void createRenderPass(int imageFormat) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
+            int msaaSamples = this.getMsaaSamples();
 
             VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(4, stack);
             VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(4, stack);
@@ -503,8 +504,9 @@ public class TextureNabor extends Nabor {
     }
 
     @Override
-    protected void createGraphicsPipelines(int msaaSamples) {
+    protected void createGraphicsPipelines() {
         VkDevice device = this.getDevice();
+        int msaaSamples = this.getMsaaSamples();
         VkExtent2D extent = this.getExtent();
 
         long vertShaderModule;
@@ -700,10 +702,10 @@ public class TextureNabor extends Nabor {
     protected void createImages(
             long commandPool,
             VkQueue graphicsQueue,
-            int msaaSamples,
             int imageFormat) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
+            int msaaSamples = this.getMsaaSamples();
             VkExtent2D extent = this.getExtent();
 
             LongBuffer pImage = stack.mallocLong(1);

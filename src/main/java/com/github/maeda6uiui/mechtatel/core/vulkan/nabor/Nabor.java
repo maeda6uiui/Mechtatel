@@ -21,6 +21,7 @@ import static org.lwjgl.vulkan.VK10.*;
 public class Nabor {
     private VkDevice device;
 
+    private int msaaSamples;
     private VkExtent2D extent;
 
     private List<Long> uniformBuffers;
@@ -42,8 +43,10 @@ public class Nabor {
 
     private int setCount;
 
-    public Nabor(VkDevice device) {
+    public Nabor(VkDevice device, int msaaSamples) {
         this.device = device;
+
+        this.msaaSamples = msaaSamples;
 
         uniformBuffers = new ArrayList<>();
         uniformBufferMemories = new ArrayList<>();
@@ -66,7 +69,7 @@ public class Nabor {
 
     }
 
-    protected void createRenderPass(int imageFormat, int msaaSamples) {
+    protected void createRenderPass(int imageFormat) {
 
     }
 
@@ -82,14 +85,13 @@ public class Nabor {
 
     }
 
-    protected void createGraphicsPipelines(int msaaSamples) {
+    protected void createGraphicsPipelines() {
 
     }
 
     protected void createImages(
             long commandPool,
             VkQueue graphicsQueue,
-            int msaaSamples,
             int imageFormat) {
 
     }
@@ -100,7 +102,6 @@ public class Nabor {
 
     public void compile(
             int imageFormat,
-            int msaaSamples,
             VkExtent2D extent,
             long commandPool,
             VkQueue graphicsQueue,
@@ -108,12 +109,12 @@ public class Nabor {
         this.extent = extent;
 
         this.createUniformBuffers(descriptorCount);
-        this.createRenderPass(imageFormat, msaaSamples);
+        this.createRenderPass(imageFormat);
         this.createDescriptorSetLayouts();
         this.createDescriptorPools(descriptorCount);
         this.createDescriptorSets(descriptorCount, commandPool, graphicsQueue);
-        this.createGraphicsPipelines(msaaSamples);
-        this.createImages(commandPool, graphicsQueue, msaaSamples, imageFormat);
+        this.createGraphicsPipelines();
+        this.createImages(commandPool, graphicsQueue, imageFormat);
         this.createFramebuffers();
     }
 
@@ -158,7 +159,6 @@ public class Nabor {
 
     public void recreate(
             int imageFormat,
-            int msaaSamples,
             VkExtent2D extent,
             long commandPool,
             VkQueue graphicsQueue) {
@@ -166,14 +166,18 @@ public class Nabor {
 
         this.cleanup(true);
 
-        this.createRenderPass(imageFormat, msaaSamples);
-        this.createGraphicsPipelines(msaaSamples);
-        this.createImages(commandPool, graphicsQueue, msaaSamples, imageFormat);
+        this.createRenderPass(imageFormat);
+        this.createGraphicsPipelines();
+        this.createImages(commandPool, graphicsQueue, imageFormat);
         this.createFramebuffers();
     }
 
     protected VkDevice getDevice() {
         return device;
+    }
+
+    public int getMsaaSamples() {
+        return msaaSamples;
     }
 
     public VkExtent2D getExtent() {

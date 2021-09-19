@@ -40,13 +40,13 @@ public class TextureNabor extends Nabor {
     private int positionAttachmentIndex;
     private int normalAttachmentIndex;
 
-    public TextureNabor(VkDevice device) {
+    public TextureNabor(VkDevice device, int positionImageFormat, int normalImageFormat) {
         super(device, VK_SAMPLE_COUNT_1_BIT);
 
         textureSampler = TextureSamplerCreator.createTextureSampler(device);
 
-        positionImageFormat = VK_FORMAT_R16G16B16A16_SFLOAT;
-        normalImageFormat = VK_FORMAT_R16G16B16A16_SFLOAT;
+        this.positionImageFormat = positionImageFormat;
+        this.normalImageFormat = normalImageFormat;
     }
 
     public long getTextureSampler() {

@@ -99,7 +99,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         swapchain.createFramebuffers(presentNabor.getRenderPass());
 
         if (textureNabor == null) {
-            textureNabor = new TextureNabor(device);
+            textureNabor = new TextureNabor(device, VK_FORMAT_R16G16B16A16_SFLOAT, VK_FORMAT_R16G16B16A16_SFLOAT);
             textureNabor.compile(
                     swapchain.getSwapchainImageFormat(),
                     swapchain.getSwapchainExtent(),

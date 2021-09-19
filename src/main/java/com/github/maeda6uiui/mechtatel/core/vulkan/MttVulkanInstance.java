@@ -79,11 +79,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             swapchain = new Swapchain(
                     device,
                     surface,
-                    commandPool,
-                    graphicsQueue,
                     width.get(0),
-                    height.get(0),
-                    VK_SAMPLE_COUNT_2_BIT);
+                    height.get(0));
         }
 
         //Create nabors
@@ -91,7 +88,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             presentNabor = new PresentNabor(device);
             presentNabor.compile(
                     swapchain.getSwapchainImageFormat(),
-                    VK_SAMPLE_COUNT_2_BIT,
+                    VK_SAMPLE_COUNT_1_BIT,
                     swapchain.getSwapchainExtent(),
                     commandPool,
                     graphicsQueue,
@@ -99,7 +96,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         } else {
             presentNabor.recreate(
                     swapchain.getSwapchainImageFormat(),
-                    VK_SAMPLE_COUNT_2_BIT,
+                    VK_SAMPLE_COUNT_1_BIT,
                     swapchain.getSwapchainExtent(),
                     commandPool,
                     graphicsQueue);

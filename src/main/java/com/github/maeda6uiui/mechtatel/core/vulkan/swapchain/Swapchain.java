@@ -1,6 +1,5 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.swapchain;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.QueueFamilyUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.SwapchainUtils;
 import org.lwjgl.system.MemoryStack;
@@ -31,10 +30,6 @@ public class Swapchain {
     private int swapchainImageFormat;
     private List<Long> swapchainImages;
     private List<Long> swapchainImageViews;
-
-    private long colorImage;
-    private long colorImageMemory;
-    private long colorImageView;
     private List<Long> swapchainFramebuffers;
 
     private VkSurfaceFormatKHR chooseSwapSurfaceFormat(VkSurfaceFormatKHR.Buffer availableFormats) {
@@ -163,78 +158,21 @@ public class Swapchain {
         }
     }
 
-    private void createImages(
-            long commandPool,
-            VkQueue graphicsQueue,
-            int msaaSamples) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            //Color image
-            LongBuffer pColorImage = stack.mallocLong(1);
-            LongBuffer pColorImageMemory = stack.mallocLong(1);
-
-            ImageUtils.createImage(
-                    device,
-                    swapchainExtent.width(),
-                    swapchainExtent.height(),
-                    1,
-                    msaaSamples,
-                    swapchainImageFormat,
-                    VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pColorImage,
-                    pColorImageMemory);
-            colorImage = pColorImage.get(0);
-            colorImageMemory = pColorImageMemory.get(0);
-
-            ImageUtils.transitionImageLayout(
-                    device,
-                    commandPool,
-                    graphicsQueue,
-                    colorImage,
-                    false,
-                    VK_IMAGE_LAYOUT_UNDEFINED,
-                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                    1);
-
-            VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.callocStack(stack);
-            viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
-            viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
-            viewInfo.image(colorImage);
-            viewInfo.format(swapchainImageFormat);
-            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
-            viewInfo.subresourceRange().baseMipLevel(0);
-            viewInfo.subresourceRange().levelCount(1);
-            viewInfo.subresourceRange().baseArrayLayer(0);
-            viewInfo.subresourceRange().layerCount(1);
-
-            LongBuffer pImageView = stack.mallocLong(1);
-            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to create an image view");
-            }
-            colorImageView = pImageView.get(0);
-        }
-    }
-
     public Swapchain(
             VkDevice device,
             long surface,
-            long commandPool,
-            VkQueue graphicsQueue,
             int width,
-            int height,
-            int msaaSamples) {
+            int height) {
         this.device = device;
 
         this.createSwapchain(surface, width, height);
-        this.createImages(commandPool, graphicsQueue, msaaSamples);
     }
 
     public void createFramebuffers(long renderPass) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             swapchainFramebuffers = new ArrayList<>(swapchainImageViews.size());
 
-            LongBuffer attachments = stack.longs(colorImageView, VK_NULL_HANDLE);
+            LongBuffer attachments = stack.longs(VK_NULL_HANDLE);
             LongBuffer pFramebuffer = stack.mallocLong(1);
 
             VkFramebufferCreateInfo framebufferInfo = VkFramebufferCreateInfo.callocStack(stack);
@@ -245,7 +183,7 @@ public class Swapchain {
             framebufferInfo.layers(1);
 
             for (long swapchainImageView : swapchainImageViews) {
-                attachments.put(1, swapchainImageView);
+                attachments.put(0, swapchainImageView);
                 framebufferInfo.pAttachments(attachments);
 
                 if (vkCreateFramebuffer(device, framebufferInfo, null, pFramebuffer) != VK_SUCCESS) {
@@ -260,10 +198,6 @@ public class Swapchain {
     public void cleanup() {
         vkDestroySwapchainKHR(device, swapchain, null);
         swapchainImageViews.forEach(imageView -> vkDestroyImageView(device, imageView, null));
-
-        vkDestroyImageView(device, colorImageView, null);
-        vkDestroyImage(device, colorImage, null);
-        vkFreeMemory(device, colorImageMemory, null);
 
         if (swapchainFramebuffers != null) {
             swapchainFramebuffers.forEach(framebuffer -> vkDestroyFramebuffer(device, framebuffer, null));

@@ -28,6 +28,7 @@ public class TextureNabor extends Nabor {
 
     private long textureSampler;
 
+    private int depthImageFormat;
     private int positionImageFormat;
     private int normalImageFormat;
 
@@ -45,12 +46,25 @@ public class TextureNabor extends Nabor {
 
         textureSampler = TextureSamplerCreator.createTextureSampler(device);
 
+        this.depthImageFormat = DepthResourceUtils.findDepthFormat(device);
         this.positionImageFormat = positionImageFormat;
         this.normalImageFormat = normalImageFormat;
     }
 
     public long getTextureSampler() {
         return textureSampler;
+    }
+
+    public int getDepthImageFormat() {
+        return depthImageFormat;
+    }
+
+    public int getPositionImageFormat() {
+        return positionImageFormat;
+    }
+
+    public int getNormalImageFormat() {
+        return normalImageFormat;
     }
 
     public long getColorImage() {
@@ -142,7 +156,7 @@ public class TextureNabor extends Nabor {
             depthAttachmentIndex = 1;
 
             VkAttachmentDescription depthAttachment = attachments.get(depthAttachmentIndex);
-            depthAttachment.format(DepthResourceUtils.findDepthFormat(device));
+            depthAttachment.format(depthImageFormat);
             depthAttachment.samples(msaaSamples);
             depthAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
             depthAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
@@ -749,15 +763,13 @@ public class TextureNabor extends Nabor {
             this.getImageViews().add(colorImageView);
 
             //Depth image
-            int depthFormat = DepthResourceUtils.findDepthFormat(device);
-
             ImageUtils.createImage(
                     device,
                     extent.width(),
                     extent.height(),
                     1,
                     msaaSamples,
-                    depthFormat,
+                    depthImageFormat,
                     VK_IMAGE_TILING_OPTIMAL,
                     VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -767,7 +779,7 @@ public class TextureNabor extends Nabor {
             long depthImageMemory = pImageMemory.get(0);
 
             viewInfo.image(depthImage);
-            viewInfo.format(depthFormat);
+            viewInfo.format(depthImageFormat);
             viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_DEPTH_BIT);
 
             if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {

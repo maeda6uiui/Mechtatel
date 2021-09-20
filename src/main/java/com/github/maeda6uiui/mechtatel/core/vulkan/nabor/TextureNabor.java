@@ -726,7 +726,7 @@ public class TextureNabor extends Nabor {
             LongBuffer pImageMemory = stack.mallocLong(1);
             LongBuffer pImageView = stack.mallocLong(1);
 
-            //Color image
+            //Albedo image
             ImageUtils.createImage(
                     device,
                     extent.width(),
@@ -739,13 +739,13 @@ public class TextureNabor extends Nabor {
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     pImage,
                     pImageMemory);
-            long colorImage = pImage.get(0);
-            long colorImageMemory = pImageMemory.get(0);
+            long albedoImage = pImage.get(0);
+            long albedoImageMemory = pImageMemory.get(0);
 
             VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.callocStack(stack);
             viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
             viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
-            viewInfo.image(colorImage);
+            viewInfo.image(albedoImage);
             viewInfo.format(albedoImageFormat);
             viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
             viewInfo.subresourceRange().baseMipLevel(0);
@@ -756,11 +756,11 @@ public class TextureNabor extends Nabor {
             if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
                 throw new RuntimeException("Failed to create an image view");
             }
-            long colorImageView = pImageView.get(0);
+            long albedoImageView = pImageView.get(0);
 
-            this.getImages().add(colorImage);
-            this.getImageMemories().add(colorImageMemory);
-            this.getImageViews().add(colorImageView);
+            this.getImages().add(albedoImage);
+            this.getImageMemories().add(albedoImageMemory);
+            this.getImageViews().add(albedoImageView);
 
             //Depth image
             ImageUtils.createImage(

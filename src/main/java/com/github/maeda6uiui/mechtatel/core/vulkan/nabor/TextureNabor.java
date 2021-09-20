@@ -36,7 +36,7 @@ public class TextureNabor extends Nabor {
     private long dummyImageMemory;
     private long dummyImageView;
 
-    private int colorAttachmentIndex;
+    private int albedoAttachmentIndex;
     private int depthAttachmentIndex;
     private int positionAttachmentIndex;
     private int normalAttachmentIndex;
@@ -67,12 +67,12 @@ public class TextureNabor extends Nabor {
         return normalImageFormat;
     }
 
-    public long getColorImage() {
-        return this.getImage(colorAttachmentIndex);
+    public long getAlbedoImage() {
+        return this.getImage(albedoAttachmentIndex);
     }
 
-    public long getColorImageView() {
-        return this.getImageView(colorAttachmentIndex);
+    public long getAlbedoImageView() {
+        return this.getImageView(albedoAttachmentIndex);
     }
 
     public long getDepthImage() {
@@ -127,7 +127,7 @@ public class TextureNabor extends Nabor {
     }
 
     @Override
-    protected void createRenderPass(int colorImageFormat) {
+    protected void createRenderPass(int albedoImageFormat) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
             int msaaSamples = this.getMsaaSamples();
@@ -136,10 +136,10 @@ public class TextureNabor extends Nabor {
             VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(4, stack);
 
             //Color attachment
-            colorAttachmentIndex = 0;
+            albedoAttachmentIndex = 0;
 
-            VkAttachmentDescription colorAttachment = attachments.get(colorAttachmentIndex);
-            colorAttachment.format(colorImageFormat);
+            VkAttachmentDescription colorAttachment = attachments.get(albedoAttachmentIndex);
+            colorAttachment.format(albedoImageFormat);
             colorAttachment.samples(msaaSamples);
             colorAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
             colorAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
@@ -148,8 +148,8 @@ public class TextureNabor extends Nabor {
             colorAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             colorAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference colorAttachmentRef = attachmentRefs.get(colorAttachmentIndex);
-            colorAttachmentRef.attachment(colorAttachmentIndex);
+            VkAttachmentReference colorAttachmentRef = attachmentRefs.get(albedoAttachmentIndex);
+            colorAttachmentRef.attachment(albedoAttachmentIndex);
             colorAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             //Depth-stencil attachment
@@ -716,7 +716,7 @@ public class TextureNabor extends Nabor {
     protected void createImages(
             long commandPool,
             VkQueue graphicsQueue,
-            int colorImageFormat) {
+            int albedoImageFormat) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
             int msaaSamples = this.getMsaaSamples();
@@ -733,7 +733,7 @@ public class TextureNabor extends Nabor {
                     extent.height(),
                     1,
                     msaaSamples,
-                    colorImageFormat,
+                    albedoImageFormat,
                     VK_IMAGE_TILING_OPTIMAL,
                     VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -746,7 +746,7 @@ public class TextureNabor extends Nabor {
             viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
             viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
             viewInfo.image(colorImage);
-            viewInfo.format(colorImageFormat);
+            viewInfo.format(albedoImageFormat);
             viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
             viewInfo.subresourceRange().baseMipLevel(0);
             viewInfo.subresourceRange().levelCount(1);

@@ -290,14 +290,14 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
             renderPassInfo.pClearValues(clearValues);
 
-            long colorImage = textureNabor.getColorImage();
-            long colorImageView = textureNabor.getColorImageView();
+            long albedoImage = textureNabor.getAlbedoImage();
+            long albedoImageView = textureNabor.getAlbedoImageView();
 
             ImageUtils.transitionImageLayout(
                     device,
                     commandPool,
                     graphicsQueue,
-                    colorImage,
+                    albedoImage,
                     false,
                     VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
@@ -318,7 +318,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 {
                     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, presentNabor.getGraphicsPipeline(0));
 
-                    presentNabor.bindBackScreen(commandBuffer, i, colorImageView);
+                    presentNabor.bindBackScreen(commandBuffer, i, albedoImageView);
                     quadDrawer.draw(commandBuffer);
                 }
                 vkCmdEndRenderPass(commandBuffer);

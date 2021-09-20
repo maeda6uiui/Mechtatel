@@ -69,7 +69,7 @@ public class Nabor {
 
     }
 
-    protected void createRenderPass(int colorImageFormat) {
+    protected void createRenderPass(int albedoImageFormat) {
 
     }
 
@@ -92,7 +92,7 @@ public class Nabor {
     protected void createImages(
             long commandPool,
             VkQueue graphicsQueue,
-            int colorImageFormat) {
+            int albedoImageFormat) {
 
     }
 
@@ -101,7 +101,7 @@ public class Nabor {
     }
 
     public void compile(
-            int colorImageFormat,
+            int albedoImageFormat,
             VkExtent2D extent,
             long commandPool,
             VkQueue graphicsQueue,
@@ -109,12 +109,12 @@ public class Nabor {
         this.extent = extent;
 
         this.createUniformBuffers(descriptorCount);
-        this.createRenderPass(colorImageFormat);
+        this.createRenderPass(albedoImageFormat);
         this.createDescriptorSetLayouts();
         this.createDescriptorPools(descriptorCount);
         this.createDescriptorSets(descriptorCount, commandPool, graphicsQueue);
         this.createGraphicsPipelines();
-        this.createImages(commandPool, graphicsQueue, colorImageFormat);
+        this.createImages(commandPool, graphicsQueue, albedoImageFormat);
         this.createFramebuffers();
     }
 
@@ -158,7 +158,7 @@ public class Nabor {
     }
 
     public void recreate(
-            int colorImageFormat,
+            int albedoImageFormat,
             VkExtent2D extent,
             long commandPool,
             VkQueue graphicsQueue) {
@@ -166,9 +166,9 @@ public class Nabor {
 
         this.cleanup(true);
 
-        this.createRenderPass(colorImageFormat);
+        this.createRenderPass(albedoImageFormat);
         this.createGraphicsPipelines();
-        this.createImages(commandPool, graphicsQueue, colorImageFormat);
+        this.createImages(commandPool, graphicsQueue, albedoImageFormat);
         this.createFramebuffers();
     }
 

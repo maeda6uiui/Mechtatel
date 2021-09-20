@@ -8,6 +8,7 @@ import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkQueue;
 
+import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -35,11 +36,8 @@ public class VkModel3D extends VkComponent3D {
     private void loadTextures(
             long commandPool,
             VkQueue graphicsQueue,
-            long textureSampler,
-            int dstBinding,
-            int numSwapchainImages,
-            long descriptorSetLayout,
-            List<Long> uniformBuffers,
+            List<Long> descriptorSets,
+            int setCount,
             String modelFilepath) {
         String modelDir = Paths.get(modelFilepath).getParent().toString();
 
@@ -59,11 +57,8 @@ public class VkModel3D extends VkComponent3D {
                     device,
                     commandPool,
                     graphicsQueue,
-                    textureSampler,
-                    dstBinding,
-                    numSwapchainImages,
-                    descriptorSetLayout,
-                    uniformBuffers,
+                    descriptorSets,
+                    setCount,
                     diffuseTexFilepath,
                     true);
             textures.put(index, texture);
@@ -98,11 +93,8 @@ public class VkModel3D extends VkComponent3D {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            long textureSampler,
-            int dstBinding,
-            int numSwapchainImages,
-            long descriptorSetLayout,
-            List<Long> uniformBuffers,
+            List<Long> descriptorSets,
+            int setCount,
             String modelFilepath) {
         this.device = device;
 
@@ -110,11 +102,8 @@ public class VkModel3D extends VkComponent3D {
         this.loadTextures(
                 commandPool,
                 graphicsQueue,
-                textureSampler,
-                dstBinding,
-                numSwapchainImages,
-                descriptorSetLayout,
-                uniformBuffers,
+                descriptorSets,
+                setCount,
                 modelFilepath);
         this.createBuffers(commandPool, graphicsQueue);
     }
@@ -137,7 +126,8 @@ public class VkModel3D extends VkComponent3D {
     public void draw(
             VkCommandBuffer commandBuffer,
             int commandBufferIndex,
-            long pipelineLayout) {
+            long pipelineLayout,
+            long textureSampler) {
         if (!this.getVisible()) {
             return;
         }
@@ -146,7 +136,20 @@ public class VkModel3D extends VkComponent3D {
             int numMeshes = model.meshes.size();
             for (int i = 0; i < numMeshes; i++) {
                 Texture texture = textures.get(model.meshes.get(i).materialIndex);
-                texture.bindDescriptorSets(commandBuffer, commandBufferIndex, pipelineLayout);
+                if (texture == null) {
+                    continue;
+                }
+
+                ByteBuffer textureIndexBuffer = stack.calloc(1 * Integer.BYTES);
+                textureIndexBuffer.putInt(texture.getTextureIndex());
+                textureIndexBuffer.rewind();
+
+                vkCmdPushConstants(
+                        commandBuffer,
+                        pipelineLayout,
+                        VK_SHADER_STAGE_FRAGMENT_BIT,
+                        1 * 16 * Float.BYTES,
+                        textureIndexBuffer);
 
                 LongBuffer lVertexBuffers = stack.longs(vertexBuffers.get(i));
                 LongBuffer offsets = stack.longs(0);
@@ -165,4 +168,3 @@ public class VkModel3D extends VkComponent3D {
         }
     }
 }
-

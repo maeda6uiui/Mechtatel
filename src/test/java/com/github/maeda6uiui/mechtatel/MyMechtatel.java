@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
+import org.joml.Vector3f;
 
 import java.io.IOException;
 
@@ -30,6 +31,8 @@ public class MyMechtatel extends Mechtatel {
     @Override
     public void init() {
         model = this.createModel3D("./Mechtatel/Model/Cube/cube.obj");
+
+        this.getCamera().setEye(new Vector3f(2.5f, 2.5f, 2.5f));
     }
 
     @Override

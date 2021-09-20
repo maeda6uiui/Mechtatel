@@ -1,14 +1,19 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
-import com.github.maeda6uiui.mechtatel.core.camera.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
+import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.SimpleNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.GBufferNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.MultisamplingUtils;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.PhysicalDevicePicker;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.PointerBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -23,7 +28,6 @@ import java.util.Map;
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
 import static org.lwjgl.glfw.GLFW.glfwWaitEvents;
 import static org.lwjgl.vulkan.KHRSurface.vkDestroySurfaceKHR;
-import static org.lwjgl.vulkan.KHRSwapchain.vkDestroySwapchainKHR;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
@@ -50,14 +54,10 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private long surface;
     private VkQueue presentQueue;
 
-    private long swapchain;
-    private List<Long> swapchainImages;
-    private List<Long> swapchainImageViews;
-    private int swapchainImageFormat;
-    private VkExtent2D swapchainExtent;
-    private List<Long> swapchainFramebuffers;
+    private Swapchain swapchain;
 
-    private Nabor nabor;
+    private PresentNabor presentNabor;
+    private GBufferNabor gBufferNabor;
 
     private long commandPool;
 
@@ -65,20 +65,9 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private Map<Integer, Frame> imagesInFlight;
     private int currentFrame;
 
-    private List<Long> cameraUBs;
-    private List<Long> cameraUBMemories;
-
-    private long depthImage;
-    private long depthImageMemory;
-    private long depthImageView;
-
-    private long colorImage;
-    private long colorImageMemory;
-    private long colorImageView;
-
-    private long textureSampler;
-
     private ArrayList<VkComponent> components;
+
+    private QuadDrawer quadDrawer;
 
     private void createSwapchainObjects() {
         //Create a swapchain
@@ -87,54 +76,46 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             IntBuffer height = stack.ints(0);
             glfwGetFramebufferSize(window, width, height);
 
-            SwapchainUtils.SwapchainRelatingData swapchainRelatingData
-                    = SwapchainUtils.createSwapchain(device, surface, width.get(0), height.get(0));
-            swapchain = swapchainRelatingData.swapchain;
-            swapchainImages = swapchainRelatingData.swapchainImages;
-            swapchainImageFormat = swapchainRelatingData.swapchainImageFormat;
-            swapchainExtent = swapchainRelatingData.swapchainExtent;
+            swapchain = new Swapchain(
+                    device,
+                    surface,
+                    width.get(0),
+                    height.get(0));
         }
 
-        //Create image views
-        swapchainImageViews = SwapchainUtils.createSwapchainImageViews(device, swapchainImages, swapchainImageFormat);
-
-        //Create color resources
-        ColorResourceCreator.ColorResources colorResources = ColorResourceCreator.createColorResources(
-                device,
-                commandPool,
-                graphicsQueue,
-                swapchainExtent,
-                msaaSamples,
-                swapchainImageFormat);
-        colorImage = colorResources.colorImage;
-        colorImageMemory = colorResources.colorImageMemory;
-        colorImageView = colorResources.colorImageView;
-
-        //Create depth resources
-        DepthResourceUtils.DepthResources depthResources
-                = DepthResourceUtils.createDepthResources(device, commandPool, graphicsQueue, swapchainExtent, msaaSamples);
-        depthImage = depthResources.depthImage;
-        depthImageMemory = depthResources.depthImageMemory;
-        depthImageView = depthResources.depthImageView;
-
-        if (nabor == null) {
-            nabor = new SimpleNabor(device);
-            nabor.compile(
-                    swapchainImageFormat,
-                    msaaSamples,
-                    swapchainExtent.width(),
-                    swapchainExtent.height());
+        //Create nabors
+        if (presentNabor == null) {
+            presentNabor = new PresentNabor(device);
+            presentNabor.compile(
+                    swapchain.getSwapchainImageFormat(),
+                    swapchain.getSwapchainExtent(),
+                    commandPool,
+                    graphicsQueue,
+                    swapchain.getNumSwapchainImages());
         } else {
-            nabor.recreate(
-                    swapchainImageFormat,
-                    msaaSamples,
-                    swapchainExtent.width(),
-                    swapchainExtent.height());
+            presentNabor.recreate(
+                    swapchain.getSwapchainImageFormat(),
+                    swapchain.getSwapchainExtent(),
+                    commandPool,
+                    graphicsQueue);
         }
+        swapchain.createFramebuffers(presentNabor.getRenderPass());
 
-        //Create swapchain framebuffers
-        swapchainFramebuffers = FramebufferCreator.createFramebuffers(
-                device, swapchainImageViews, colorImageView, depthImageView, nabor.getRenderPass(), swapchainExtent);
+        if (gBufferNabor == null) {
+            gBufferNabor = new GBufferNabor(device, VK_FORMAT_R16G16B16A16_SFLOAT, VK_FORMAT_R16G16B16A16_SFLOAT);
+            gBufferNabor.compile(
+                    swapchain.getSwapchainImageFormat(),
+                    swapchain.getSwapchainExtent(),
+                    commandPool,
+                    graphicsQueue,
+                    1);
+        } else {
+            gBufferNabor.recreate(
+                    swapchain.getSwapchainImageFormat(),
+                    swapchain.getSwapchainExtent(),
+                    commandPool,
+                    graphicsQueue);
+        }
     }
 
     public MttVulkanInstance(boolean enableValidationLayer, long window, int msaaSamples) {
@@ -177,47 +158,19 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         //Create sync objects
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
-        imagesInFlight = new HashMap<>(swapchainImages.size());
+        imagesInFlight = new HashMap<>(swapchain.getNumSwapchainImages());
 
-        //Create uniform buffers and uniform buffer memories
-        List<BufferCreator.BufferInfo> cameraUBInfos = BufferCreator.createUBOBuffers(
-                device, swapchainImages.size(), CameraUBO.SIZEOF);
-        cameraUBs = new ArrayList<>();
-        cameraUBMemories = new ArrayList<>();
-        for (var cameraUBInfo : cameraUBInfos) {
-            cameraUBs.add(cameraUBInfo.buffer);
-            cameraUBMemories.add(cameraUBInfo.bufferMemory);
-        }
-
-        //Create a texture sampler
-        textureSampler = TextureSamplerCreator.createTextureSampler(device);
-
+        //Create components
         components = new ArrayList<>();
-    }
 
-    private void cleanupSwapchain() {
-        swapchainFramebuffers.forEach(framebuffer -> vkDestroyFramebuffer(device, framebuffer, null));
-
-        vkDestroyImageView(device, depthImageView, null);
-        vkDestroyImage(device, depthImage, null);
-        vkFreeMemory(device, depthImageMemory, null);
-
-        vkDestroyImageView(device, colorImageView, null);
-        vkDestroyImage(device, colorImage, null);
-        vkFreeMemory(device, colorImageMemory, null);
-
-        swapchainImageViews.forEach(imageView -> vkDestroyImageView(device, imageView, null));
-
-        vkDestroySwapchainKHR(device, swapchain, null);
+        //Create a quad drawer to present the back screen to the front screen
+        quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
     }
 
     public void cleanup() {
+        quadDrawer.cleanup();
+
         components.forEach(component -> component.cleanup());
-
-        vkDestroySampler(device, textureSampler, null);
-
-        cameraUBs.forEach(ubo -> vkDestroyBuffer(device, ubo, null));
-        cameraUBMemories.forEach(uboMemory -> vkFreeMemory(device, uboMemory, null));
 
         inFlightFrames.forEach(frame -> {
             vkDestroySemaphore(device, frame.renderFinishedSemaphore(), null);
@@ -226,9 +179,9 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         });
         imagesInFlight.clear();
 
-        this.cleanupSwapchain();
-
-        nabor.cleanup(false);
+        swapchain.cleanup();
+        presentNabor.cleanup(false);
+        gBufferNabor.cleanup(false);
 
         vkDestroyCommandPool(device, commandPool, null);
 
@@ -256,31 +209,95 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         vkDeviceWaitIdle(device);
 
-        this.cleanupSwapchain();
+        swapchain.cleanup();
         this.createSwapchainObjects();
     }
 
-    public void draw(Camera camera) {
+    private void drawToBackScreen(Camera camera) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            var uniformBufferMemories = new ArrayList<Long>();
+            uniformBufferMemories.add(gBufferNabor.getUniformBufferMemory(0));
+
+            var cameraUBO = new CameraUBO(camera);
+            cameraUBO.update(device, uniformBufferMemories);
+
+            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
+            beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
+
+            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
+            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
+            renderPassInfo.renderPass(gBufferNabor.getRenderPass());
+            renderPassInfo.framebuffer(gBufferNabor.getFramebuffer(0));
+            VkRect2D renderArea = VkRect2D.callocStack(stack);
+            renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
+            renderArea.extent(gBufferNabor.getExtent());
+            renderPassInfo.renderArea(renderArea);
+            VkClearValue.Buffer clearValues = VkClearValue.callocStack(4, stack);
+            clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
+            clearValues.get(1).depthStencil().set(1.0f, 0);
+            clearValues.get(2).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            clearValues.get(3).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            renderPassInfo.pClearValues(clearValues);
+
+            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
+
+            vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+            {
+                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gBufferNabor.getGraphicsPipeline(0));
+
+                vkCmdBindDescriptorSets(
+                        commandBuffer,
+                        VK_PIPELINE_BIND_POINT_GRAPHICS,
+                        gBufferNabor.getPipelineLayout(0),
+                        0,
+                        gBufferNabor.pDescriptorSets(),
+                        null);
+
+                for (var component : components) {
+                    ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
+                    component.getMat().get(matBuffer);
+
+                    vkCmdPushConstants(
+                            commandBuffer,
+                            gBufferNabor.getPipelineLayout(0),
+                            VK_SHADER_STAGE_VERTEX_BIT,
+                            0,
+                            matBuffer);
+
+                    component.draw(
+                            commandBuffer,
+                            0,
+                            gBufferNabor.getPipelineLayout(0),
+                            gBufferNabor.getTextureSampler());
+                }
+            }
+            vkCmdEndRenderPass(commandBuffer);
+
+            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
+        }
+    }
+
+    private void presentToFrontScreen() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
 
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
-            renderPassInfo.renderPass(nabor.getRenderPass());
+            renderPassInfo.renderPass(presentNabor.getRenderPass());
             VkRect2D renderArea = VkRect2D.callocStack(stack);
             renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
-            renderArea.extent(swapchainExtent);
+            renderArea.extent(presentNabor.getExtent());
             renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.callocStack(2, stack);
+            VkClearValue.Buffer clearValues = VkClearValue.callocStack(1, stack);
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
-            clearValues.get(1).depthStencil().set(1.0f, 0);
             renderPassInfo.pClearValues(clearValues);
 
-            Frame thisFrame = inFlightFrames.get(currentFrame);
+            gBufferNabor.transitionAlbedoImage(commandPool, graphicsQueue);
+            long albedoImageView = gBufferNabor.getAlbedoImageView();
 
             var commandBuffers
-                    = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchainImages.size());
+                    = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchain.getNumSwapchainImages());
 
             for (int i = 0; i < commandBuffers.size(); i++) {
                 VkCommandBuffer commandBuffer = commandBuffers.get(i);
@@ -288,20 +305,14 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     throw new RuntimeException("Failed to begin recording a command buffer");
                 }
 
-                renderPassInfo.framebuffer(swapchainFramebuffers.get(i));
+                renderPassInfo.framebuffer(swapchain.getSwapchainFramebuffer(i));
 
                 vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
                 {
-                    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, nabor.getGraphicsPipeline(0));
+                    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, presentNabor.getGraphicsPipeline(0));
 
-                    for (var component : components) {
-                        ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
-                        component.getMat().get(matBuffer);
-
-                        vkCmdPushConstants(commandBuffer, nabor.getPipelineLayout(0), VK_SHADER_STAGE_VERTEX_BIT, 0, matBuffer);
-
-                        component.draw(commandBuffer, i, nabor.getPipelineLayout(0));
-                    }
+                    presentNabor.bindBackScreen(commandBuffer, i, albedoImageView);
+                    quadDrawer.draw(commandBuffer);
                 }
                 vkCmdEndRenderPass(commandBuffer);
 
@@ -310,11 +321,9 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 }
             }
 
-            CameraUBO cameraUBO = camera.createCameraUBO(true);
-
-            UBOUtils.updateCameraUBO(device, cameraUBMemories, cameraUBO);
-            int result = thisFrame.drawFrame(
-                    swapchain,
+            Frame thisFrame = inFlightFrames.get(currentFrame);
+            int result = thisFrame.present(
+                    swapchain.getSwapchain(),
                     imagesInFlight,
                     commandBuffers,
                     graphicsQueue,
@@ -331,6 +340,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         }
     }
 
+    public void draw(Camera camera) {
+        this.drawToBackScreen(camera);
+        this.presentToFrontScreen();
+    }
+
     //=== Methods relating to components ===
     @Override
     public boolean deleteComponent(VkComponent component) {
@@ -345,15 +359,18 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     }
 
     public VkModel3D createModel3D(String modelFilepath) {
+        int numDescriptorSets = gBufferNabor.getNumDescriptorSets();
+        var descriptorSets = new ArrayList<Long>();
+        for (int i = 0; i < numDescriptorSets; i++) {
+            descriptorSets.add(gBufferNabor.getDescriptorSet(i));
+        }
+
         var model = new VkModel3D(
                 device,
                 commandPool,
                 graphicsQueue,
-                textureSampler,
-                nabor.getTexDstBinding(),
-                swapchainImages.size(),
-                nabor.getDescriptorSetLayout(0),
-                cameraUBs,
+                descriptorSets,
+                gBufferNabor.getSetCount(),
                 modelFilepath);
         components.add(model);
 

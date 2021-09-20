@@ -1,10 +1,10 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
-import org.joml.Vector2fc;
-import org.joml.Vector3fc;
+import com.github.maeda6uiui.mechtatel.core.component.Vertex2D;
 import org.lwjgl.vulkan.VkVertexInputAttributeDescription;
 import org.lwjgl.vulkan.VkVertexInputBindingDescription;
 
+import static com.github.maeda6uiui.mechtatel.core.component.Vertex2D.OFFSETOF_COLOR;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
@@ -13,22 +13,10 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 public class VkVertex2D {
-    public static final int SIZEOF = (2 + 3) * Float.BYTES;
-    public static final int OFFSETOF_POS = 0;
-    public static final int OFFSETOF_COLOR = 2 * Float.BYTES;
-
-    public Vector2fc pos;
-    public Vector3fc color;
-
-    public VkVertex2D(Vector2fc pos, Vector3fc color) {
-        this.pos = pos;
-        this.color = color;
-    }
-
     public static VkVertexInputBindingDescription.Buffer getBindingDescription() {
         VkVertexInputBindingDescription.Buffer bindingDescription = VkVertexInputBindingDescription.callocStack(1);
         bindingDescription.binding(0);
-        bindingDescription.stride(SIZEOF);
+        bindingDescription.stride(Vertex2D.SIZEOF);
         bindingDescription.inputRate(VK_VERTEX_INPUT_RATE_VERTEX);
 
         return bindingDescription;
@@ -42,13 +30,13 @@ public class VkVertex2D {
         posDescription.binding(0);
         posDescription.location(0);
         posDescription.format(VK_FORMAT_R32G32_SFLOAT);
-        posDescription.offset(OFFSETOF_POS);
+        posDescription.offset(Vertex2D.OFFSETOF_POS);
 
         //Color
         VkVertexInputAttributeDescription colorDescription = attributeDescriptions.get(1);
         colorDescription.binding(0);
         colorDescription.location(1);
-        colorDescription.format(VK_FORMAT_R32G32B32_SFLOAT);
+        colorDescription.format(VK_FORMAT_R32G32B32A32_SFLOAT);
         colorDescription.offset(OFFSETOF_COLOR);
 
         return attributeDescriptions;

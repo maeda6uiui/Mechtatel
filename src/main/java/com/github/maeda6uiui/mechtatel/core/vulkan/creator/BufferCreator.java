@@ -1,14 +1,14 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.creator;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2D;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2DUV;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3DUV;
+import com.github.maeda6uiui.mechtatel.core.component.Vertex2D;
+import com.github.maeda6uiui.mechtatel.core.component.Vertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.component.Vertex3DUV;
+import com.github.maeda6uiui.mechtatel.core.util.MemcpyUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.MemoryUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
-import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,60 +24,6 @@ public class BufferCreator {
     public static class BufferInfo {
         public long buffer;
         public long bufferMemory;
-    }
-
-    private static void memcpyVertex2D(ByteBuffer buffer, List<VkVertex2D> vertices) {
-        for (var vertex : vertices) {
-            buffer.putFloat(vertex.pos.x());
-            buffer.putFloat(vertex.pos.y());
-
-            buffer.putFloat(vertex.color.x());
-            buffer.putFloat(vertex.color.y());
-            buffer.putFloat(vertex.color.z());
-        }
-
-        buffer.rewind();
-    }
-
-    private static void memcpyVertex2DUV(ByteBuffer buffer, List<VkVertex2DUV> vertices) {
-        for (var vertex : vertices) {
-            buffer.putFloat(vertex.pos.x());
-            buffer.putFloat(vertex.pos.y());
-
-            buffer.putFloat(vertex.color.x());
-            buffer.putFloat(vertex.color.y());
-            buffer.putFloat(vertex.color.z());
-
-            buffer.putFloat(vertex.texCoords.x());
-            buffer.putFloat(vertex.texCoords.y());
-        }
-
-        buffer.rewind();
-    }
-
-    private static void memcpyVertex3DUV(ByteBuffer buffer, List<VkVertex3DUV> vertices) {
-        for (var vertex : vertices) {
-            buffer.putFloat(vertex.pos.x());
-            buffer.putFloat(vertex.pos.y());
-            buffer.putFloat(vertex.pos.z());
-
-            buffer.putFloat(vertex.color.x());
-            buffer.putFloat(vertex.color.y());
-            buffer.putFloat(vertex.color.z());
-
-            buffer.putFloat(vertex.texCoords.x());
-            buffer.putFloat(vertex.texCoords.y());
-        }
-
-        buffer.rewind();
-    }
-
-    private static void memcpyIntegers(ByteBuffer buffer, List<Integer> indices) {
-        for (var index : indices) {
-            buffer.putInt(index);
-        }
-
-        buffer.rewind();
     }
 
     public static void createBuffer(VkDevice device, long size, int usage, int properties, LongBuffer pBuffer, LongBuffer pBufferMemory) {
@@ -150,9 +96,9 @@ public class BufferCreator {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<VkVertex2D> vertices) {
+            List<Vertex2D> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            long bufferSize = VkVertex2D.SIZEOF * vertices.size();
+            long bufferSize = Vertex2D.SIZEOF * vertices.size();
 
             LongBuffer pBuffer = stack.mallocLong(1);
             LongBuffer pBufferMemory = stack.mallocLong(1);
@@ -170,7 +116,7 @@ public class BufferCreator {
 
             vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, data);
             {
-                memcpyVertex2D(data.getByteBuffer(0, (int) bufferSize), vertices);
+                MemcpyUtils.memcpyVertex2D(data.getByteBuffer(0, (int) bufferSize), vertices);
             }
             vkUnmapMemory(device, stagingBufferMemory);
 
@@ -201,9 +147,9 @@ public class BufferCreator {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<VkVertex2DUV> vertices) {
+            List<Vertex2DUV> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            long bufferSize = VkVertex2DUV.SIZEOF * vertices.size();
+            long bufferSize = Vertex2DUV.SIZEOF * vertices.size();
 
             LongBuffer pBuffer = stack.mallocLong(1);
             LongBuffer pBufferMemory = stack.mallocLong(1);
@@ -221,7 +167,7 @@ public class BufferCreator {
 
             vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, data);
             {
-                memcpyVertex2DUV(data.getByteBuffer(0, (int) bufferSize), vertices);
+                MemcpyUtils.memcpyVertex2DUV(data.getByteBuffer(0, (int) bufferSize), vertices);
             }
             vkUnmapMemory(device, stagingBufferMemory);
 
@@ -252,9 +198,9 @@ public class BufferCreator {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<VkVertex3DUV> vertices) {
+            List<Vertex3DUV> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            long bufferSize = VkVertex3DUV.SIZEOF * vertices.size();
+            long bufferSize = Vertex3DUV.SIZEOF * vertices.size();
 
             LongBuffer pBuffer = stack.mallocLong(1);
             LongBuffer pBufferMemory = stack.mallocLong(1);
@@ -272,7 +218,7 @@ public class BufferCreator {
 
             vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, data);
             {
-                memcpyVertex3DUV(data.getByteBuffer(0, (int) bufferSize), vertices);
+                MemcpyUtils.memcpyVertex3DUV(data.getByteBuffer(0, (int) bufferSize), vertices);
             }
             vkUnmapMemory(device, stagingBufferMemory);
 
@@ -323,7 +269,7 @@ public class BufferCreator {
 
             vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, data);
             {
-                memcpyIntegers(data.getByteBuffer(0, (int) bufferSize), indices);
+                MemcpyUtils.memcpyIntegers(data.getByteBuffer(0, (int) bufferSize), indices);
             }
             vkUnmapMemory(device, stagingBufferMemory);
 
@@ -356,14 +302,14 @@ public class BufferCreator {
         }
     }
 
-    public static List<BufferInfo> createUBOBuffers(VkDevice device, int numSwapchainImages, long size) {
+    public static List<BufferInfo> createUBOBuffers(VkDevice device, int numBuffers, long size) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            var ret = new ArrayList<BufferInfo>(numSwapchainImages);
+            var ret = new ArrayList<BufferInfo>(numBuffers);
 
             LongBuffer pBuffer = stack.mallocLong(1);
             LongBuffer pBufferMemory = stack.mallocLong(1);
 
-            for (int i = 0; i < numSwapchainImages; i++) {
+            for (int i = 0; i < numBuffers; i++) {
                 createBuffer(
                         device,
                         size,

@@ -1,9 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.texture;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.DescriptorPoolCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.DescriptorSetsCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.ImageViewCreator;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.PointerBuffer;
@@ -13,7 +12,9 @@ import org.lwjgl.vulkan.*;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.lwjgl.stb.STBImage.*;
 import static org.lwjgl.vulkan.VK10.*;
@@ -24,14 +25,37 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 public class Texture {
+    private static Map<Integer, Boolean> allocationStatus;
+
+    static {
+        allocationStatus = new HashMap<>();
+        for (int i = 0; i < GBufferNabor.MAX_NUM_TEXTURES; i++) {
+            allocationStatus.put(i, false);
+        }
+    }
+
+    private static int allocateTextureIndex() {
+        int index = -1;
+
+        for (var entry : allocationStatus.entrySet()) {
+            if (!entry.getValue()) {
+                index = entry.getKey();
+                allocationStatus.put(index, true);
+
+                break;
+            }
+        }
+
+        return index;
+    }
+
     private VkDevice device;
+
+    private int textureIndex;
 
     private long textureImage;
     private long textureImageMemory;
     private long textureImageView;
-
-    private long descriptorPool;
-    private List<Long> descriptorSets;
 
     private int width;
     private int height;
@@ -281,24 +305,28 @@ public class Texture {
                 generateMipmaps ? mipLevels : 1);
     }
 
-    private void updateDescriptorSets(long textureSampler, int dstBinding) {
+    private void updateDescriptorSets(
+            List<Long> descriptorSets,
+            int setCount) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkDescriptorImageInfo.Buffer imageInfo = VkDescriptorImageInfo.callocStack(1, stack);
-            imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            imageInfo.imageView(textureImageView);
-            imageInfo.sampler(textureSampler);
+            VkDescriptorImageInfo.Buffer textureInfo = VkDescriptorImageInfo.callocStack(1, stack);
+            textureInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            textureInfo.imageView(textureImageView);
 
-            VkWriteDescriptorSet.Buffer samplerDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
-            samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            samplerDescriptorWrite.dstBinding(dstBinding);
-            samplerDescriptorWrite.dstArrayElement(0);
-            samplerDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
-            samplerDescriptorWrite.descriptorCount(1);
-            samplerDescriptorWrite.pImageInfo(imageInfo);
+            VkWriteDescriptorSet.Buffer textureDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            textureDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            textureDescriptorWrite.dstBinding(0);
+            textureDescriptorWrite.dstArrayElement(textureIndex);
+            textureDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            textureDescriptorWrite.descriptorCount(1);
+            textureDescriptorWrite.pImageInfo(textureInfo);
 
-            for (var descriptorSet : descriptorSets) {
-                samplerDescriptorWrite.dstSet(descriptorSet);
-                vkUpdateDescriptorSets(device, samplerDescriptorWrite, null);
+            for (int i = 0; i < descriptorSets.size(); i++) {
+                //Update set 1
+                if (i % setCount == 1) {
+                    textureDescriptorWrite.dstSet(descriptorSets.get(i));
+                    vkUpdateDescriptorSets(device, textureDescriptorWrite, null);
+                }
             }
         }
     }
@@ -307,13 +335,16 @@ public class Texture {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            long textureSampler,
-            int dstBinding,
-            int numSwapchainImages,
-            long descriptorSetLayout,
-            List<Long> uniformBuffers,
+            List<Long> descriptorSets,
+            int setCount,
             String textureFilepath,
             boolean generateMipmaps) {
+        textureIndex = allocateTextureIndex();
+        if (textureIndex < 0) {
+            String msg = String.format("You cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
+            throw new RuntimeException(msg);
+        }
+
         this.device = device;
 
         this.textureFilepath = textureFilepath;
@@ -323,13 +354,7 @@ public class Texture {
         this.createTextureImage(commandPool, graphicsQueue);
         this.createTextureImageView();
 
-        //Create a descriptor pool and descriptor sets
-        descriptorPool = DescriptorPoolCreator.createDescriptorPool(device, numSwapchainImages);
-        descriptorSets = DescriptorSetsCreator.createDescriptorSets(
-                device, numSwapchainImages, descriptorPool, descriptorSetLayout, uniformBuffers);
-
-        //Update descriptor sets
-        this.updateDescriptorSets(textureSampler, dstBinding);
+        this.updateDescriptorSets(descriptorSets, setCount);
     }
 
     public void cleanup() {
@@ -337,18 +362,10 @@ public class Texture {
         vkFreeMemory(device, textureImageMemory, null);
         vkDestroyImageView(device, textureImageView, null);
 
-        vkDestroyDescriptorPool(device, descriptorPool, null);
+        allocationStatus.put(textureIndex, false);
     }
 
-    public void bindDescriptorSets(VkCommandBuffer commandBuffer, int commandBufferIndex, long pipelineLayout) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            vkCmdBindDescriptorSets(
-                    commandBuffer,
-                    VK_PIPELINE_BIND_POINT_GRAPHICS,
-                    pipelineLayout,
-                    0,
-                    stack.longs(descriptorSets.get(commandBufferIndex)),
-                    null);
-        }
+    public int getTextureIndex() {
+        return textureIndex;
     }
 }

@@ -17,7 +17,7 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 public class FramebufferCreator {
-    public static List<Long> createFramebuffers(
+    public static List<Long> createSwapchainFramebuffers(
             VkDevice device,
             List<Long> imageViews,
             long colorImageView,
@@ -49,6 +49,32 @@ public class FramebufferCreator {
             }
 
             return framebuffers;
+        }
+    }
+
+    public static long createFramebuffer(
+            VkDevice device,
+            long colorImageView,
+            long depthImageView,
+            long renderPass,
+            VkExtent2D extent) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            LongBuffer attachments = stack.longs(colorImageView, depthImageView);
+            LongBuffer pFramebuffer = stack.mallocLong(1);
+
+            VkFramebufferCreateInfo framebufferInfo = VkFramebufferCreateInfo.callocStack(stack);
+            framebufferInfo.sType(VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO);
+            framebufferInfo.renderPass(renderPass);
+            framebufferInfo.width(extent.width());
+            framebufferInfo.height(extent.height());
+            framebufferInfo.layers(1);
+            framebufferInfo.pAttachments(attachments);
+
+            if (vkCreateFramebuffer(device, framebufferInfo, null, pFramebuffer) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create a framebuffer");
+            }
+
+            return pFramebuffer.get(0);
         }
     }
 }

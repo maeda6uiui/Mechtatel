@@ -23,8 +23,8 @@ public class ImageUtils {
             int tiling,
             int usage,
             int memProperties,
-            LongBuffer pTextureImage,
-            LongBuffer pTextureImageMemory) {
+            LongBuffer pImage,
+            LongBuffer pImageMemory) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkImageCreateInfo imageInfo = VkImageCreateInfo.callocStack(stack);
             imageInfo.sType(VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO);
@@ -41,23 +41,23 @@ public class ImageUtils {
             imageInfo.samples(numSamples);
             imageInfo.sharingMode(VK_SHARING_MODE_EXCLUSIVE);
 
-            if (vkCreateImage(device, imageInfo, null, pTextureImage) != VK_SUCCESS) {
+            if (vkCreateImage(device, imageInfo, null, pImage) != VK_SUCCESS) {
                 throw new RuntimeException("Failed to create an image");
             }
 
             VkMemoryRequirements memRequirements = VkMemoryRequirements.mallocStack(stack);
-            vkGetImageMemoryRequirements(device, pTextureImage.get(0), memRequirements);
+            vkGetImageMemoryRequirements(device, pImage.get(0), memRequirements);
 
             VkMemoryAllocateInfo allocInfo = VkMemoryAllocateInfo.callocStack(stack);
             allocInfo.sType(VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO);
             allocInfo.allocationSize(memRequirements.size());
             allocInfo.memoryTypeIndex(MemoryUtils.findMemoryType(device, memRequirements.memoryTypeBits(), memProperties));
 
-            if (vkAllocateMemory(device, allocInfo, null, pTextureImageMemory) != VK_SUCCESS) {
+            if (vkAllocateMemory(device, allocInfo, null, pImageMemory) != VK_SUCCESS) {
                 throw new RuntimeException("Failed to allocate an image memory");
             }
 
-            vkBindImageMemory(device, pTextureImage.get(0), pTextureImageMemory.get(0), 0);
+            vkBindImageMemory(device, pImage.get(0), pImageMemory.get(0), 0);
         }
     }
 
@@ -83,7 +83,7 @@ public class ImageUtils {
             barrier.subresourceRange().baseArrayLayer(0);
             barrier.subresourceRange().layerCount(1);
 
-            if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
+            if (oldLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL || newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
                 barrier.subresourceRange().aspectMask(VK_IMAGE_ASPECT_DEPTH_BIT);
                 if (hasStencilComponent) {
                     barrier.subresourceRange().aspectMask(barrier.subresourceRange().aspectMask() | VK_IMAGE_ASPECT_STENCIL_BIT);
@@ -119,6 +119,24 @@ public class ImageUtils {
 
                 sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
                 destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+            } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+                barrier.srcAccessMask(0);
+                barrier.dstAccessMask(VK_ACCESS_SHADER_READ_BIT);
+
+                sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+                destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+            } else if (oldLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+                barrier.srcAccessMask(VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
+                barrier.dstAccessMask(VK_ACCESS_SHADER_READ_BIT);
+
+                sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+                destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+            } else if (oldLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+                barrier.srcAccessMask(VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT);
+                barrier.dstAccessMask(VK_ACCESS_SHADER_READ_BIT);
+
+                sourceStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+                destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
             } else {
                 throw new IllegalArgumentException("Unsupported layout transition");
             }

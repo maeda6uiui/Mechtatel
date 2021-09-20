@@ -53,6 +53,14 @@ public class VkComponent {
 
     }
 
+    public void draw(
+            VkCommandBuffer commandBuffer,
+            int commandBufferIndex,
+            long pipelineLayout,
+            long textureSampler) {
+
+    }
+
     public void cleanup() {
 
     }

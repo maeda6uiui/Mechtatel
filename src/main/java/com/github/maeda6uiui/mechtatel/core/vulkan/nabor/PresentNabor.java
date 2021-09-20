@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3DUV;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.creator.TextureSamplerCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -14,74 +14,57 @@ import static org.lwjgl.vulkan.KHRSwapchain.VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Nabor for rendering with "simple" shader
+ * Nabor to present an image to the swapchain
  *
  * @author maeda
  */
-public class SimpleNabor extends Nabor {
-    public SimpleNabor(VkDevice device) {
-        super(device);
+public class PresentNabor extends Nabor {
+    private long textureSampler;
+
+    public PresentNabor(VkDevice device) {
+        super(device, VK_SAMPLE_COUNT_1_BIT);
+
+        textureSampler = TextureSamplerCreator.createTextureSampler(device);
     }
 
     @Override
-    protected void createRenderPass(int imageFormat, int msaaSamples) {
+    public void cleanup(boolean reserveForRecreation) {
+        super.cleanup(reserveForRecreation);
+
+        if (!reserveForRecreation) {
+            vkDestroySampler(this.getDevice(), textureSampler, null);
+        }
+    }
+
+    @Override
+    protected void createRenderPass(int albedoImageFormat) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(3, stack);
-            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(3, stack);
+            int msaaSamples = this.getMsaaSamples();
 
-            //Color attachments
+            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(1, stack);
+            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(1, stack);
+
+            //Color attachment
             VkAttachmentDescription colorAttachment = attachments.get(0);
-            colorAttachment.format(imageFormat);
+            colorAttachment.format(albedoImageFormat);
             colorAttachment.samples(msaaSamples);
             colorAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
             colorAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
             colorAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
             colorAttachment.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
             colorAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
-            colorAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+            colorAttachment.finalLayout(VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 
             VkAttachmentReference colorAttachmentRef = attachmentRefs.get(0);
             colorAttachmentRef.attachment(0);
             colorAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            //Depth-stencil attachments
-            VkAttachmentDescription depthAttachment = attachments.get(1);
-            depthAttachment.format(DepthResourceUtils.findDepthFormat(device));
-            depthAttachment.samples(msaaSamples);
-            depthAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
-            depthAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
-            depthAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
-            depthAttachment.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
-            depthAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
-            depthAttachment.finalLayout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-
-            VkAttachmentReference depthAttachmentRef = attachmentRefs.get(1);
-            depthAttachmentRef.attachment(1);
-            depthAttachmentRef.layout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-
-            //Present image
-            VkAttachmentDescription colorAttachmentResolve = attachments.get(2);
-            colorAttachmentResolve.format(imageFormat);
-            colorAttachmentResolve.samples(VK_SAMPLE_COUNT_1_BIT);
-            colorAttachmentResolve.loadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
-            colorAttachmentResolve.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
-            colorAttachmentResolve.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
-            colorAttachmentResolve.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
-            colorAttachmentResolve.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
-            colorAttachmentResolve.finalLayout(VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
-
-            VkAttachmentReference colorAttachmentResolveRef = attachmentRefs.get(2);
-            colorAttachmentResolveRef.attachment(2);
-            colorAttachmentResolveRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.callocStack(1, stack);
             subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
             subpass.colorAttachmentCount(1);
             subpass.pColorAttachments(VkAttachmentReference.callocStack(1, stack).put(0, colorAttachmentRef));
-            subpass.pDepthStencilAttachment(depthAttachmentRef);
-            subpass.pResolveAttachments(VkAttachmentReference.callocStack(1, stack).put(0, colorAttachmentResolveRef));
 
             VkSubpassDependency.Buffer dependency = VkSubpassDependency.callocStack(1, stack);
             dependency.srcSubpass(VK_SUBPASS_EXTERNAL);
@@ -112,17 +95,10 @@ public class SimpleNabor extends Nabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            VkDescriptorSetLayoutBinding.Buffer bindings = VkDescriptorSetLayoutBinding.callocStack(2, stack);
+            VkDescriptorSetLayoutBinding.Buffer bindings = VkDescriptorSetLayoutBinding.callocStack(1, stack);
 
-            VkDescriptorSetLayoutBinding cameraUBOLayoutBinding = bindings.get(0);
-            cameraUBOLayoutBinding.binding(0);
-            cameraUBOLayoutBinding.descriptorCount(1);
-            cameraUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            cameraUBOLayoutBinding.pImmutableSamplers(null);
-            cameraUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
-
-            VkDescriptorSetLayoutBinding samplerLayoutBinding = bindings.get(1);
-            samplerLayoutBinding.binding(1);
+            VkDescriptorSetLayoutBinding samplerLayoutBinding = bindings.get(0);
+            samplerLayoutBinding.binding(0);
             samplerLayoutBinding.descriptorCount(1);
             samplerLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
             samplerLayoutBinding.pImmutableSamplers(null);
@@ -143,8 +119,66 @@ public class SimpleNabor extends Nabor {
     }
 
     @Override
-    protected void createGraphicsPipelines(int width, int height, int msaaSamples) {
+    protected void createDescriptorPools(int descriptorCount) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDevice device = this.getDevice();
+
+            VkDescriptorPoolSize.Buffer poolSizes = VkDescriptorPoolSize.callocStack(1, stack);
+
+            VkDescriptorPoolSize textureSamplerPoolSize = poolSizes.get(0);
+            textureSamplerPoolSize.type(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+            textureSamplerPoolSize.descriptorCount(descriptorCount);
+
+            VkDescriptorPoolCreateInfo poolInfo = VkDescriptorPoolCreateInfo.callocStack(stack);
+            poolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
+            poolInfo.pPoolSizes(poolSizes);
+            poolInfo.maxSets(descriptorCount);
+
+            LongBuffer pDescriptorPool = stack.mallocLong(1);
+            if (vkCreateDescriptorPool(device, poolInfo, null, pDescriptorPool) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create a descriptor pool");
+            }
+
+            long descriptorPool = pDescriptorPool.get(0);
+            this.getDescriptorPools().add(descriptorPool);
+        }
+    }
+
+    @Override
+    protected void createDescriptorSets(int descriptorCount, long commandPool, VkQueue graphicsQueue) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDevice device = this.getDevice();
+
+            long descriptorSetLayout = this.getDescriptorSetLayouts().get(0);
+            long descriptorPool = this.getDescriptorPools().get(0);
+
+            LongBuffer layouts = stack.mallocLong(descriptorCount);
+            for (int i = 0; i < layouts.capacity(); i++) {
+                layouts.put(i, descriptorSetLayout);
+            }
+
+            VkDescriptorSetAllocateInfo allocInfo = VkDescriptorSetAllocateInfo.callocStack(stack);
+            allocInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO);
+            allocInfo.descriptorPool(descriptorPool);
+            allocInfo.pSetLayouts(layouts);
+
+            LongBuffer pDescriptorSets = stack.mallocLong(descriptorCount);
+            if (vkAllocateDescriptorSets(device, allocInfo, pDescriptorSets) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to allocate descriptor sets");
+            }
+
+            for (int i = 0; i < pDescriptorSets.capacity(); i++) {
+                long descriptorSet = pDescriptorSets.get(i);
+                this.getDescriptorSets().add(descriptorSet);
+            }
+        }
+    }
+
+    @Override
+    protected void createGraphicsPipelines() {
         VkDevice device = this.getDevice();
+        int msaaSamples = this.getMsaaSamples();
+        VkExtent2D extent = this.getExtent();
 
         long vertShaderModule;
         long fragShaderModule;
@@ -152,8 +186,8 @@ public class SimpleNabor extends Nabor {
             vertShaderModule = this.getVertShaderModules().get(0);
             fragShaderModule = this.getFragShaderModules().get(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/3d_simple.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/3d_simple.frag";
+            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/2d_present.vert";
+            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/2d_present.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;
@@ -191,8 +225,8 @@ public class SimpleNabor extends Nabor {
             //Vertex stage
             VkPipelineVertexInputStateCreateInfo vertexInputInfo = VkPipelineVertexInputStateCreateInfo.callocStack(stack);
             vertexInputInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO);
-            vertexInputInfo.pVertexBindingDescriptions(VkVertex3DUV.getBindingDescription());
-            vertexInputInfo.pVertexAttributeDescriptions(VkVertex3DUV.getAttributeDescriptions());
+            vertexInputInfo.pVertexBindingDescriptions(VkVertex2DUV.getBindingDescription());
+            vertexInputInfo.pVertexAttributeDescriptions(VkVertex2DUV.getAttributeDescriptions());
 
             //Assembly stage
             VkPipelineInputAssemblyStateCreateInfo inputAssembly = VkPipelineInputAssemblyStateCreateInfo.callocStack(stack);
@@ -204,14 +238,14 @@ public class SimpleNabor extends Nabor {
             VkViewport.Buffer viewport = VkViewport.callocStack(1, stack);
             viewport.x(0.0f);
             viewport.y(0.0f);
-            viewport.width(width);
-            viewport.height(height);
+            viewport.width(extent.width());
+            viewport.height(extent.height());
             viewport.minDepth(0.0f);
             viewport.maxDepth(1.0f);
 
             VkRect2D.Buffer scissor = VkRect2D.callocStack(1, stack);
             scissor.offset(VkOffset2D.callocStack(stack).set(0, 0));
-            scissor.extent(VkExtent2D.callocStack(stack).set(width, height));
+            scissor.extent(extent);
 
             VkPipelineViewportStateCreateInfo viewportState = VkPipelineViewportStateCreateInfo.callocStack(stack);
             viewportState.sType(VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO);
@@ -236,17 +270,6 @@ public class SimpleNabor extends Nabor {
             multisampling.minSampleShading(0.2f);
             multisampling.rasterizationSamples(msaaSamples);
 
-            //Depth-stencil
-            VkPipelineDepthStencilStateCreateInfo depthStencil = VkPipelineDepthStencilStateCreateInfo.callocStack(stack);
-            depthStencil.sType(VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO);
-            depthStencil.depthTestEnable(true);
-            depthStencil.depthWriteEnable(true);
-            depthStencil.depthCompareOp(VK_COMPARE_OP_LESS);
-            depthStencil.depthBoundsTestEnable(false);
-            depthStencil.minDepthBounds(0.0f);
-            depthStencil.maxDepthBounds(1.0f);
-            depthStencil.stencilTestEnable(false);
-
             //Color blending
             VkPipelineColorBlendAttachmentState.Buffer colorBlendAttachment = VkPipelineColorBlendAttachmentState.callocStack(1, stack);
             colorBlendAttachment.colorWriteMask(
@@ -263,18 +286,10 @@ public class SimpleNabor extends Nabor {
             colorBlending.pAttachments(colorBlendAttachment);
             colorBlending.blendConstants(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
 
-            //Push constant
-            //Push a model matrix (mat4)
-            VkPushConstantRange.Buffer pushConstant = VkPushConstantRange.callocStack(1, stack);
-            pushConstant.offset(0);
-            pushConstant.size(1 * 16 * Float.BYTES);
-            pushConstant.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
-
             //Pipeline layout creation
             VkPipelineLayoutCreateInfo pipelineLayoutInfo = VkPipelineLayoutCreateInfo.callocStack(stack);
             pipelineLayoutInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO);
             pipelineLayoutInfo.pSetLayouts(stack.longs(this.getDescriptorSetLayout(0)));
-            pipelineLayoutInfo.pPushConstantRanges(pushConstant);
 
             LongBuffer pPipelineLayout = stack.longs(VK_NULL_HANDLE);
             if (vkCreatePipelineLayout(device, pipelineLayoutInfo, null, pPipelineLayout) != VK_SUCCESS) {
@@ -293,7 +308,6 @@ public class SimpleNabor extends Nabor {
             pipelineInfo.pViewportState(viewportState);
             pipelineInfo.pRasterizationState(rasterizer);
             pipelineInfo.pMultisampleState(multisampling);
-            pipelineInfo.pDepthStencilState(depthStencil);
             pipelineInfo.pColorBlendState(colorBlending);
             pipelineInfo.layout(pipelineLayout);
             pipelineInfo.renderPass(this.getRenderPass());
@@ -308,6 +322,38 @@ public class SimpleNabor extends Nabor {
 
             long graphicsPipeline = pGraphicsPipeline.get(0);
             this.getGraphicsPipelines().add(graphicsPipeline);
+        }
+    }
+
+    public void bindBackScreen(VkCommandBuffer commandBuffer, int commandBufferIndex, long imageView) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDevice device = this.getDevice();
+
+            VkDescriptorImageInfo.Buffer imageInfo = VkDescriptorImageInfo.callocStack(1, stack);
+            imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            imageInfo.imageView(imageView);
+            imageInfo.sampler(textureSampler);
+
+            VkWriteDescriptorSet.Buffer samplerDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            samplerDescriptorWrite.dstBinding(0);
+            samplerDescriptorWrite.dstArrayElement(0);
+            samplerDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+            samplerDescriptorWrite.descriptorCount(1);
+            samplerDescriptorWrite.pImageInfo(imageInfo);
+
+            long descriptorSet = this.getDescriptorSets().get(commandBufferIndex);
+            samplerDescriptorWrite.dstSet(descriptorSet);
+
+            vkUpdateDescriptorSets(device, samplerDescriptorWrite, null);
+
+            vkCmdBindDescriptorSets(
+                    commandBuffer,
+                    VK_PIPELINE_BIND_POINT_GRAPHICS,
+                    this.getPipelineLayout(0),
+                    0,
+                    stack.longs(descriptorSet),
+                    null);
         }
     }
 }

@@ -83,16 +83,4 @@ public class Camera {
     public void setZFar(float zFar) {
         this.zFar = zFar;
     }
-
-    public CameraUBO createCameraUBO(boolean flip11) {
-        var cameraUBO = new CameraUBO();
-
-        cameraUBO.view.lookAt(eye.x, eye.y, eye.z, center.x, center.y, center.z, up.x, up.y, up.z);
-        cameraUBO.proj.perspective(fovY, aspect, zNear, zFar);
-        if (flip11) {
-            cameraUBO.proj.m11(cameraUBO.proj.m11() * (-1.0f));
-        }
-
-        return cameraUBO;
-    }
 }

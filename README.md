@@ -24,6 +24,35 @@ Mechtatel (露: Мечтатель 英: Dreamer)
 
 ## 報告
 
+### 2021-09-20
+
+Nabor (露: Набор 英: Kit)という概念を導入してみました。
+NaborはRender PassやGraphics Pipelineといったレンダリングに必要なデータ一式をもちます。
+
+現在はGBufferNaborとPresentNaborの二つのNaborがあります。
+GBufferNaborを用いて色(Albedo)や深度(Depth)を出力し、その画像をPresentNaborのシェーダに渡して最終的な描画結果を画面に出力します。
+これが効率的なやり方なのかどうかはわかりませんが、この方法を用いれば、Naborを複数個繋げて色々なエフェクトをかけることができます。(たぶん)
+
+GBufferNaborから出力される内容としては、以下のようになります。
+
+#### Albedo
+
+<img src="./Image/cube_albedo.jpg" alt="Cube (Albedo)" style="zoom:50%;" />
+
+#### Depth
+
+<img src="./Image/cube_depth.jpg" alt="Cube (Depth)" style="zoom:50%;" />
+
+#### Position
+
+<img src="./Image/cube_position.jpg" alt="Cube (Position)" style="zoom:50%;" />
+
+#### Normal
+
+<img src="./Image/cube_normal.jpg" alt="Cube (Normal)" style="zoom:50%;" />
+
+あまり詳しく理解していないのですが、これらの出力を利用して、遅延シェーディング(Deferred Shading)というのを行いたいと思っています。
+
 ### 2021-09-05
 
 ノードを連結して描画結果を自由にカスタマイズできる、みたいなことをやりたい。

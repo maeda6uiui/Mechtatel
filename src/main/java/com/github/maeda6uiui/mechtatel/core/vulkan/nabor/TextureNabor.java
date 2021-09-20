@@ -75,12 +75,42 @@ public class TextureNabor extends Nabor {
         return this.getImageView(albedoAttachmentIndex);
     }
 
+    public void transitionAlbedoImage(long commandPool, VkQueue graphicsQueue) {
+        VkDevice device = this.getDevice();
+        long albedoImage = this.getImage(albedoAttachmentIndex);
+
+        ImageUtils.transitionImageLayout(
+                device,
+                commandPool,
+                graphicsQueue,
+                albedoImage,
+                false,
+                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                1);
+    }
+
     public long getDepthImage() {
         return this.getImage(depthAttachmentIndex);
     }
 
     public long getDepthImageView() {
         return this.getImageView(depthAttachmentIndex);
+    }
+
+    public void transitionDepthImage(long commandPool, VkQueue graphicsQueue) {
+        VkDevice device = this.getDevice();
+        long depthImage = this.getImage(depthAttachmentIndex);
+
+        ImageUtils.transitionImageLayout(
+                device,
+                commandPool,
+                graphicsQueue,
+                depthImage,
+                DepthResourceUtils.hasStencilComponent(depthImageFormat),
+                VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                1);
     }
 
     public long getPositionImage() {
@@ -91,12 +121,42 @@ public class TextureNabor extends Nabor {
         return this.getImageView(positionAttachmentIndex);
     }
 
+    public void transitionPositionImage(long commandPool, VkQueue graphicsQueue) {
+        VkDevice device = this.getDevice();
+        long positionImage = this.getImage(positionAttachmentIndex);
+
+        ImageUtils.transitionImageLayout(
+                device,
+                commandPool,
+                graphicsQueue,
+                positionImage,
+                false,
+                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                1);
+    }
+
     public long getNormalImage() {
         return this.getImage(normalAttachmentIndex);
     }
 
     public long getNormalImageView() {
         return this.getImageView(normalAttachmentIndex);
+    }
+
+    public void transitionNormalImage(long commandPool, VkQueue graphicsQueue) {
+        VkDevice device = this.getDevice();
+        long normalImage = this.getImage(normalAttachmentIndex);
+
+        ImageUtils.transitionImageLayout(
+                device,
+                commandPool,
+                graphicsQueue,
+                normalImage,
+                false,
+                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                1);
     }
 
     @Override

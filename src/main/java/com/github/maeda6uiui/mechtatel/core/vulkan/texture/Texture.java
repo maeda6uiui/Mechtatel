@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.texture;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.ImageViewCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.PointerBuffer;
@@ -29,7 +29,7 @@ public class Texture {
 
     static {
         allocationStatus = new HashMap<>();
-        for (int i = 0; i < TextureNabor.MAX_NUM_TEXTURES; i++) {
+        for (int i = 0; i < GBufferNabor.MAX_NUM_TEXTURES; i++) {
             allocationStatus.put(i, false);
         }
     }
@@ -341,7 +341,7 @@ public class Texture {
             boolean generateMipmaps) {
         textureIndex = allocateTextureIndex();
         if (textureIndex < 0) {
-            String msg = String.format("You cannot create more than %d textures", TextureNabor.MAX_NUM_TEXTURES);
+            String msg = String.format("You cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
             throw new RuntimeException(msg);
         }
 

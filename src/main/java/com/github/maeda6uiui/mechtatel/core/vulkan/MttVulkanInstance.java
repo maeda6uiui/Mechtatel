@@ -6,8 +6,8 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
@@ -57,7 +57,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private Swapchain swapchain;
 
     private PresentNabor presentNabor;
-    private TextureNabor textureNabor;
+    private GBufferNabor gBufferNabor;
 
     private long commandPool;
 
@@ -101,16 +101,16 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         }
         swapchain.createFramebuffers(presentNabor.getRenderPass());
 
-        if (textureNabor == null) {
-            textureNabor = new TextureNabor(device, VK_FORMAT_R16G16B16A16_SFLOAT, VK_FORMAT_R16G16B16A16_SFLOAT);
-            textureNabor.compile(
+        if (gBufferNabor == null) {
+            gBufferNabor = new GBufferNabor(device, VK_FORMAT_R16G16B16A16_SFLOAT, VK_FORMAT_R16G16B16A16_SFLOAT);
+            gBufferNabor.compile(
                     swapchain.getSwapchainImageFormat(),
                     swapchain.getSwapchainExtent(),
                     commandPool,
                     graphicsQueue,
                     1);
         } else {
-            textureNabor.recreate(
+            gBufferNabor.recreate(
                     swapchain.getSwapchainImageFormat(),
                     swapchain.getSwapchainExtent(),
                     commandPool,
@@ -181,7 +181,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         swapchain.cleanup();
         presentNabor.cleanup(false);
-        textureNabor.cleanup(false);
+        gBufferNabor.cleanup(false);
 
         vkDestroyCommandPool(device, commandPool, null);
 
@@ -216,7 +216,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private void drawToBackScreen(Camera camera) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             var uniformBufferMemories = new ArrayList<Long>();
-            uniformBufferMemories.add(textureNabor.getUniformBufferMemory(0));
+            uniformBufferMemories.add(gBufferNabor.getUniformBufferMemory(0));
 
             var cameraUBO = new CameraUBO(camera);
             cameraUBO.update(device, uniformBufferMemories);
@@ -226,11 +226,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
-            renderPassInfo.renderPass(textureNabor.getRenderPass());
-            renderPassInfo.framebuffer(textureNabor.getFramebuffer(0));
+            renderPassInfo.renderPass(gBufferNabor.getRenderPass());
+            renderPassInfo.framebuffer(gBufferNabor.getFramebuffer(0));
             VkRect2D renderArea = VkRect2D.callocStack(stack);
             renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
-            renderArea.extent(textureNabor.getExtent());
+            renderArea.extent(gBufferNabor.getExtent());
             renderPassInfo.renderArea(renderArea);
             VkClearValue.Buffer clearValues = VkClearValue.callocStack(4, stack);
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
@@ -243,14 +243,14 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
             vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
             {
-                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, textureNabor.getGraphicsPipeline(0));
+                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gBufferNabor.getGraphicsPipeline(0));
 
                 vkCmdBindDescriptorSets(
                         commandBuffer,
                         VK_PIPELINE_BIND_POINT_GRAPHICS,
-                        textureNabor.getPipelineLayout(0),
+                        gBufferNabor.getPipelineLayout(0),
                         0,
-                        textureNabor.pDescriptorSets(),
+                        gBufferNabor.pDescriptorSets(),
                         null);
 
                 for (var component : components) {
@@ -259,7 +259,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
                     vkCmdPushConstants(
                             commandBuffer,
-                            textureNabor.getPipelineLayout(0),
+                            gBufferNabor.getPipelineLayout(0),
                             VK_SHADER_STAGE_VERTEX_BIT,
                             0,
                             matBuffer);
@@ -267,8 +267,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     component.draw(
                             commandBuffer,
                             0,
-                            textureNabor.getPipelineLayout(0),
-                            textureNabor.getTextureSampler());
+                            gBufferNabor.getPipelineLayout(0),
+                            gBufferNabor.getTextureSampler());
                 }
             }
             vkCmdEndRenderPass(commandBuffer);
@@ -293,8 +293,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
             renderPassInfo.pClearValues(clearValues);
 
-            textureNabor.transitionAlbedoImage(commandPool, graphicsQueue);
-            long albedoImageView = textureNabor.getAlbedoImageView();
+            gBufferNabor.transitionAlbedoImage(commandPool, graphicsQueue);
+            long albedoImageView = gBufferNabor.getAlbedoImageView();
 
             var commandBuffers
                     = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchain.getNumSwapchainImages());
@@ -359,10 +359,10 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     }
 
     public VkModel3D createModel3D(String modelFilepath) {
-        int numDescriptorSets = textureNabor.getNumDescriptorSets();
+        int numDescriptorSets = gBufferNabor.getNumDescriptorSets();
         var descriptorSets = new ArrayList<Long>();
         for (int i = 0; i < numDescriptorSets; i++) {
-            descriptorSets.add(textureNabor.getDescriptorSet(i));
+            descriptorSets.add(gBufferNabor.getDescriptorSet(i));
         }
 
         var model = new VkModel3D(
@@ -370,7 +370,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 commandPool,
                 graphicsQueue,
                 descriptorSets,
-                textureNabor.getSetCount(),
+                gBufferNabor.getSetCount(),
                 modelFilepath);
         components.add(model);
 

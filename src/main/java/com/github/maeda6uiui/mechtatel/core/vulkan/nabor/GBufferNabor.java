@@ -19,11 +19,11 @@ import java.util.List;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Nabor for rendering with "texture" shader
+ * Nabor for G-Buffer
  *
  * @author maeda
  */
-public class TextureNabor extends Nabor {
+public class GBufferNabor extends Nabor {
     public static final int MAX_NUM_TEXTURES = 128;
 
     private long textureSampler;
@@ -41,7 +41,7 @@ public class TextureNabor extends Nabor {
     private int positionAttachmentIndex;
     private int normalAttachmentIndex;
 
-    public TextureNabor(VkDevice device, int positionImageFormat, int normalImageFormat) {
+    public GBufferNabor(VkDevice device, int positionImageFormat, int normalImageFormat) {
         super(device, VK_SAMPLE_COUNT_1_BIT);
 
         textureSampler = TextureSamplerCreator.createTextureSampler(device);

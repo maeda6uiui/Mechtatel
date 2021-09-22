@@ -183,8 +183,8 @@ public class PresentNabor extends Nabor {
         long vertShaderModule;
         long fragShaderModule;
         if (this.getVertShaderModules().size() != 0) {
-            vertShaderModule = this.getVertShaderModules().get(0);
-            fragShaderModule = this.getFragShaderModules().get(0);
+            vertShaderModule = this.getVertShaderModule(0);
+            fragShaderModule = this.getFragShaderModule(0);
         } else {
             final String vertShaderFilepath = "./Mechtatel/Shader/Standard/Present/present.vert";
             final String fragShaderFilepath = "./Mechtatel/Shader/Standard/Present/present.frag";

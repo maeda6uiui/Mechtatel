@@ -1,6 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
+import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
@@ -213,7 +214,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         this.createSwapchainObjects();
     }
 
-    private void drawToBackScreen(Camera camera) {
+    private void drawToBackScreen(Camera camera, ParallelLight parallelLight) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             var uniformBufferMemories = new ArrayList<Long>();
             uniformBufferMemories.add(gBufferNabor.getUniformBufferMemory(0));
@@ -340,8 +341,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         }
     }
 
-    public void draw(Camera camera) {
-        this.drawToBackScreen(camera);
+    public void draw(Camera camera, ParallelLight parallelLight) {
+        this.drawToBackScreen(camera, parallelLight);
         this.presentToFrontScreen();
     }
 

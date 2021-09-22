@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
+import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import org.lwjgl.system.MemoryStack;
 
@@ -24,6 +25,7 @@ class MttInstance {
     private int fps;
 
     private Camera camera;
+    private ParallelLight parallelLight;
 
     private void framebufferResizeCallback(long window, int width, int height) {
         mtt.reshape(width, height);
@@ -68,6 +70,7 @@ class MttInstance {
         this.mtt = mtt;
 
         camera = new Camera();
+        parallelLight = new ParallelLight();
 
         //Set initial aspect according to the framebuffer size
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -93,7 +96,7 @@ class MttInstance {
 
             if (elapsedTime >= 1.0 / fps) {
                 mtt.update();
-                vulkanInstance.draw(camera);
+                vulkanInstance.draw(camera, parallelLight);
 
                 lastTime = glfwGetTime();
             }
@@ -112,6 +115,10 @@ class MttInstance {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public ParallelLight getParallelLight() {
+        return parallelLight;
     }
 
     //=== Methods relating to components ===

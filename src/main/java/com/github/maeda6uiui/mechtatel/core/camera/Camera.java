@@ -8,14 +8,14 @@ import org.joml.Vector3f;
  * @author maeda
  */
 public class Camera {
-    private Vector3f eye;
-    private Vector3f center;
-    private Vector3f up;
+    public Vector3f eye;
+    public Vector3f center;
+    public Vector3f up;
 
-    private float fovY;
-    private float aspect;
-    private float zNear;
-    private float zFar;
+    public float fovY;
+    public float aspect;
+    public float zNear;
+    public float zFar;
 
     public Camera() {
         eye = new Vector3f(5.0f, 5.0f, 5.0f);

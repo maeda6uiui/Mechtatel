@@ -589,8 +589,8 @@ public class GBufferNabor extends Nabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/3d_texture.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/3d_texture.frag";
+            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/GBuffer/gbuffer.vert";
+            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/GBuffer/gbuffer.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

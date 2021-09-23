@@ -9,6 +9,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.ShadingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
@@ -59,6 +60,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
     private PresentNabor presentNabor;
     private GBufferNabor gBufferNabor;
+    private ShadingNabor shadingNabor;
 
     private long commandPool;
 
@@ -112,6 +114,22 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     1);
         } else {
             gBufferNabor.recreate(
+                    swapchain.getSwapchainImageFormat(),
+                    swapchain.getSwapchainExtent(),
+                    commandPool,
+                    graphicsQueue);
+        }
+
+        if (shadingNabor == null) {
+            shadingNabor = new ShadingNabor(device);
+            shadingNabor.compile(
+                    swapchain.getSwapchainImageFormat(),
+                    swapchain.getSwapchainExtent(),
+                    commandPool,
+                    graphicsQueue,
+                    1);
+        } else {
+            shadingNabor.recreate(
                     swapchain.getSwapchainImageFormat(),
                     swapchain.getSwapchainExtent(),
                     commandPool,
@@ -183,6 +201,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         swapchain.cleanup();
         presentNabor.cleanup(false);
         gBufferNabor.cleanup(false);
+        shadingNabor.cleanup(false);
 
         vkDestroyCommandPool(device, commandPool, null);
 

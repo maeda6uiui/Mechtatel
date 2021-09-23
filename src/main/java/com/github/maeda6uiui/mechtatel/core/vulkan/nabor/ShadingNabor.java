@@ -392,10 +392,12 @@ public class ShadingNabor extends Nabor {
             VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.callocStack(2, stack);
 
             VkDescriptorBufferInfo cameraUBOInfo = uboInfos.get(0);
+            cameraUBOInfo.buffer(this.getUniformBuffer(0));
             cameraUBOInfo.offset(0);
             cameraUBOInfo.range(CameraUBO.SIZEOF);
 
             VkDescriptorBufferInfo parallelLightUBOInfo = uboInfos.get(1);
+            parallelLightUBOInfo.buffer(this.getUniformBuffer(1));
             parallelLightUBOInfo.offset(0);
             parallelLightUBOInfo.range(ParallelLightingUBO.SIZEOF);
 

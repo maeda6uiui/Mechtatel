@@ -516,6 +516,7 @@ public class GBufferNabor extends Nabor {
             VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.callocStack(1, stack);
 
             VkDescriptorBufferInfo cameraUBOInfo = uboInfos.get(0);
+            cameraUBOInfo.buffer(this.getUniformBuffer(0));
             cameraUBOInfo.offset(0);
             cameraUBOInfo.range(CameraUBO.SIZEOF);
 

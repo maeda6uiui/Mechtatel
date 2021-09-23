@@ -12,6 +12,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.ShadingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.ParallelLightingUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.MultisamplingUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.PhysicalDevicePicker;
@@ -22,10 +23,7 @@ import org.lwjgl.vulkan.*;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
 import static org.lwjgl.glfw.GLFW.glfwWaitEvents;
@@ -233,13 +231,12 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         this.createSwapchainObjects();
     }
 
-    private void drawToBackScreen(Camera camera, ParallelLight parallelLight) {
+    private void runGBufferNabor(Camera camera) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            var uniformBufferMemories = new ArrayList<Long>();
-            uniformBufferMemories.add(gBufferNabor.getUniformBufferMemory(0));
+            long cameraUBOMemory = gBufferNabor.getUniformBufferMemory(0);
 
             var cameraUBO = new CameraUBO(camera);
-            cameraUBO.update(device, uniformBufferMemories);
+            cameraUBO.update(device, Arrays.asList(new Long[]{cameraUBOMemory}));
 
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
@@ -290,6 +287,54 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                             gBufferNabor.getPipelineLayout(0),
                             gBufferNabor.getTextureSampler());
                 }
+            }
+            vkCmdEndRenderPass(commandBuffer);
+
+            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
+        }
+    }
+
+    private void runShadingNabor(ParallelLight parallelLight) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            long parallelLightUBOMemory = shadingNabor.getUniformBufferMemory(1);
+
+            var parallelLightUBO = new ParallelLightingUBO(parallelLight);
+            parallelLightUBO.update(device, Arrays.asList(new Long[]{parallelLightUBOMemory}));
+
+            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
+            beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
+
+            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
+            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
+            renderPassInfo.renderPass(shadingNabor.getRenderPass());
+            renderPassInfo.framebuffer(shadingNabor.getFramebuffer(0));
+            VkRect2D renderArea = VkRect2D.callocStack(stack);
+            renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
+            renderArea.extent(shadingNabor.getExtent());
+            renderPassInfo.renderArea(renderArea);
+            VkClearValue.Buffer clearValues = VkClearValue.callocStack(1, stack);
+            clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
+            renderPassInfo.pClearValues(clearValues);
+
+            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
+
+            vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+            {
+                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, shadingNabor.getGraphicsPipeline(0));
+
+                gBufferNabor.transitionAlbedoImage(commandPool, graphicsQueue);
+                gBufferNabor.transitionDepthImage(commandPool, graphicsQueue);
+                gBufferNabor.transitionPositionImage(commandPool, graphicsQueue);
+                gBufferNabor.transitionNormalImage(commandPool, graphicsQueue);
+
+                shadingNabor.bindTextures(
+                        commandBuffer,
+                        0,
+                        gBufferNabor.getAlbedoImageView(),
+                        gBufferNabor.getDepthImageView(),
+                        gBufferNabor.getPositionImageView(),
+                        gBufferNabor.getNormalImageView());
+                quadDrawer.draw(commandBuffer);
             }
             vkCmdEndRenderPass(commandBuffer);
 
@@ -361,7 +406,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     }
 
     public void draw(Camera camera, ParallelLight parallelLight) {
-        this.drawToBackScreen(camera, parallelLight);
+        this.runGBufferNabor(camera);
+        this.runShadingNabor(parallelLight);
         this.presentToFrontScreen();
     }
 

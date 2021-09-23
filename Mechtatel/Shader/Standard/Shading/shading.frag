@@ -37,7 +37,7 @@ void main(){
     vec3 position=texture(sampler2D(positionTexture,textureSampler),fragTexCoords).rgb;
     vec3 normal=texture(sampler2D(normalTexture,textureSampler),fragTexCoords).rgb;
 
-    vec3 cameraDirection=normalize(camera.center,camera.eye);
+    vec3 cameraDirection=normalize(camera.center-camera.eye);
     vec3 halfLE=-normalize(cameraDirection+light.direction);
 
     float diffuseCoefficient=clamp(dot(normal,-light.direction),0.0,1.0);

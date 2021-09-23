@@ -37,7 +37,7 @@ public class PresentNabor extends Nabor {
     }
 
     @Override
-    protected void createRenderPass(int albedoImageFormat) {
+    protected void createRenderPass(int colorImageFormat) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
@@ -48,7 +48,7 @@ public class PresentNabor extends Nabor {
 
             //Color attachment
             VkAttachmentDescription colorAttachment = attachments.get(0);
-            colorAttachment.format(albedoImageFormat);
+            colorAttachment.format(colorImageFormat);
             colorAttachment.samples(msaaSamples);
             colorAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
             colorAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);

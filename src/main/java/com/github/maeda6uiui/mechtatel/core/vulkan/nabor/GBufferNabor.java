@@ -187,7 +187,7 @@ public class GBufferNabor extends Nabor {
     }
 
     @Override
-    protected void createRenderPass(int albedoImageFormat) {
+    protected void createRenderPass(int colorImageFormat) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
             int msaaSamples = this.getMsaaSamples();
@@ -199,7 +199,7 @@ public class GBufferNabor extends Nabor {
             albedoAttachmentIndex = 0;
 
             VkAttachmentDescription colorAttachment = attachments.get(albedoAttachmentIndex);
-            colorAttachment.format(albedoImageFormat);
+            colorAttachment.format(colorImageFormat);
             colorAttachment.samples(msaaSamples);
             colorAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
             colorAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
@@ -776,7 +776,7 @@ public class GBufferNabor extends Nabor {
     protected void createImages(
             long commandPool,
             VkQueue graphicsQueue,
-            int albedoImageFormat) {
+            int colorImageFormat) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
             int msaaSamples = this.getMsaaSamples();
@@ -793,7 +793,7 @@ public class GBufferNabor extends Nabor {
                     extent.height(),
                     1,
                     msaaSamples,
-                    albedoImageFormat,
+                    colorImageFormat,
                     VK_IMAGE_TILING_OPTIMAL,
                     VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -806,7 +806,7 @@ public class GBufferNabor extends Nabor {
             viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
             viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
             viewInfo.image(albedoImage);
-            viewInfo.format(albedoImageFormat);
+            viewInfo.format(colorImageFormat);
             viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
             viewInfo.subresourceRange().baseMipLevel(0);
             viewInfo.subresourceRange().levelCount(1);

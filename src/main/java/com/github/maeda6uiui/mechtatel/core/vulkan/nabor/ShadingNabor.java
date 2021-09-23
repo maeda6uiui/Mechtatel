@@ -40,6 +40,25 @@ public class ShadingNabor extends Nabor {
         return textureSampler;
     }
 
+    public void transitionColorImage(long commandPool, VkQueue graphicsQueue) {
+        VkDevice device = this.getDevice();
+        long colorImage = this.getImage(0);
+
+        ImageUtils.transitionImageLayout(
+                device,
+                commandPool,
+                graphicsQueue,
+                colorImage,
+                false,
+                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                1);
+    }
+
+    public long getColorImageView() {
+        return this.getImageView(0);
+    }
+
     @Override
     public void cleanup(boolean reserveForRecreation) {
         super.cleanup(reserveForRecreation);

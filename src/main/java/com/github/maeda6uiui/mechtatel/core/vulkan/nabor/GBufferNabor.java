@@ -563,9 +563,9 @@ public class GBufferNabor extends Nabor {
             samplerDescriptorWrite.pImageInfo(samplerInfos);
 
             for (int i = 0; i < descriptorCount; i++) {
-                uboDescriptorWrite.dstSet(descriptorSets.get(i * setCount));
-                textureDescriptorWrite.dstSet(descriptorSets.get(i * setCount + 1));
-                samplerDescriptorWrite.dstSet(descriptorSets.get(i * setCount + 2));
+                uboDescriptorWrite.dstSet(descriptorSets.get(i));
+                textureDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount));
+                samplerDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount * 2));
 
                 vkUpdateDescriptorSets(device, descriptorWrites, null);
             }

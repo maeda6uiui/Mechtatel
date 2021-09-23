@@ -67,14 +67,6 @@ public class GBufferNabor extends Nabor {
         return normalImageFormat;
     }
 
-    public long getAlbedoImage() {
-        return this.getImage(albedoAttachmentIndex);
-    }
-
-    public long getAlbedoImageView() {
-        return this.getImageView(albedoAttachmentIndex);
-    }
-
     public void transitionAlbedoImage(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long albedoImage = this.getImage(albedoAttachmentIndex);
@@ -90,12 +82,8 @@ public class GBufferNabor extends Nabor {
                 1);
     }
 
-    public long getDepthImage() {
-        return this.getImage(depthAttachmentIndex);
-    }
-
-    public long getDepthImageView() {
-        return this.getImageView(depthAttachmentIndex);
+    public long getAlbedoImageView() {
+        return this.getImageView(albedoAttachmentIndex);
     }
 
     public void transitionDepthImage(long commandPool, VkQueue graphicsQueue) {
@@ -113,12 +101,8 @@ public class GBufferNabor extends Nabor {
                 1);
     }
 
-    public long getPositionImage() {
-        return this.getImage(positionAttachmentIndex);
-    }
-
-    public long getPositionImageView() {
-        return this.getImageView(positionAttachmentIndex);
+    public long getDepthImageView() {
+        return this.getImageView(depthAttachmentIndex);
     }
 
     public void transitionPositionImage(long commandPool, VkQueue graphicsQueue) {
@@ -136,12 +120,8 @@ public class GBufferNabor extends Nabor {
                 1);
     }
 
-    public long getNormalImage() {
-        return this.getImage(normalAttachmentIndex);
-    }
-
-    public long getNormalImageView() {
-        return this.getImageView(normalAttachmentIndex);
+    public long getPositionImageView() {
+        return this.getImageView(positionAttachmentIndex);
     }
 
     public void transitionNormalImage(long commandPool, VkQueue graphicsQueue) {
@@ -157,6 +137,10 @@ public class GBufferNabor extends Nabor {
                 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 1);
+    }
+
+    public long getNormalImageView() {
+        return this.getImageView(normalAttachmentIndex);
     }
 
     @Override

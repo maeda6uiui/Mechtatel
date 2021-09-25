@@ -30,6 +30,9 @@ public class TextureSamplerCreator {
             samplerInfo.compareEnable(false);
             samplerInfo.compareOp(VK_COMPARE_OP_ALWAYS);
             samplerInfo.mipmapMode(VK_SAMPLER_MIPMAP_MODE_LINEAR);
+            samplerInfo.minLod(0.0f);
+            samplerInfo.maxLod(8.0f);
+            samplerInfo.mipLodBias(0.0f);
 
             LongBuffer pTextureSampler = stack.mallocLong(1);
             if (vkCreateSampler(device, samplerInfo, null, pTextureSampler) != VK_SUCCESS) {

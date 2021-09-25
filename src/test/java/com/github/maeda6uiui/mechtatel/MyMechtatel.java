@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.io.IOException;
@@ -27,12 +28,20 @@ public class MyMechtatel extends Mechtatel {
     }
 
     private Model3D model;
+    private Vector3f lightPosition;
+    private Vector3f lightCenter;
 
     @Override
     public void init() {
-        model = this.createModel3D("./Mechtatel/Model/Cube/cube.obj");
+        model = this.createModel3D("./Mechtatel/Model/Teapot/teapot.obj");
 
-        this.getCamera().setEye(new Vector3f(2.5f, 2.5f, 2.5f));
+        this.getCamera().setEye(new Vector3f(1.0f, 1.5f, 1.0f));
+        this.getCamera().setCenter(new Vector3f(0.0f, 0.5f, 0.0f));
+
+        lightPosition = new Vector3f(100.0f, 100.0f, 100.0f);
+        lightCenter = new Vector3f(0.0f, 0.0f, 0.0f);
+        var lightDirection = lightCenter.sub(lightPosition).normalize();
+        this.getParallelLight().setDirection(lightDirection);
     }
 
     @Override
@@ -48,6 +57,8 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void update() {
-
+        new Matrix4f().rotateY((float) Math.toRadians(1.0)).transformPosition(lightPosition);
+        var lightDirection = lightCenter.sub(lightPosition).normalize();
+        this.getParallelLight().setDirection(lightDirection);
     }
 }

@@ -725,10 +725,9 @@ public class ShadingNabor extends Nabor {
         }
     }
 
-    public void bindTextures(
+    public void bindImages(
             VkCommandBuffer commandBuffer,
-            int commandBufferIndex,
-            long albedoImageView,
+            long colorImageView,
             long depthImageView,
             long positionImageView,
             long normalImageView) {
@@ -737,9 +736,9 @@ public class ShadingNabor extends Nabor {
 
             VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.callocStack(4, stack);
 
-            VkDescriptorImageInfo albedoImageInfo = imageInfos.get(0);
-            albedoImageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            albedoImageInfo.imageView(albedoImageView);
+            VkDescriptorImageInfo colorImageInfo = imageInfos.get(0);
+            colorImageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            colorImageInfo.imageView(colorImageView);
 
             VkDescriptorImageInfo depthImageInfo = imageInfos.get(1);
             depthImageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -761,7 +760,7 @@ public class ShadingNabor extends Nabor {
             textureDescriptorWrite.descriptorCount(4);
             textureDescriptorWrite.pImageInfo(imageInfos);
 
-            long descriptorSet = this.getDescriptorSets().get(commandBufferIndex);
+            long descriptorSet = this.getDescriptorSet(1);
             textureDescriptorWrite.dstSet(descriptorSet);
 
             vkUpdateDescriptorSets(device, textureDescriptorWrite, null);
@@ -771,7 +770,7 @@ public class ShadingNabor extends Nabor {
                     VK_PIPELINE_BIND_POINT_GRAPHICS,
                     this.getPipelineLayout(0),
                     0,
-                    stack.longs(descriptorSet),
+                    this.pDescriptorSets(),
                     null);
         }
     }

@@ -44,8 +44,8 @@ void main(){
     float specularCoefficient=pow(clamp(dot(normal,halfLE),0.0,1.0),light.specularPowY);
 
     vec3 ambientColor=clamp(light.ambientColor,light.ambientClampMin,light.ambientClampMax);
-    vec3 diffuseColor=clamp(light.diffuseColor,light.diffuseClampMin,light.ambientClampMax);
-    vec3 specularColor=clamp(light.specularColor,light.specularClampMin,light.specularClampMax);
+    vec3 diffuseColor=clamp(light.diffuseColor*diffuseCoefficient,light.diffuseClampMin,light.diffuseClampMax);
+    vec3 specularColor=clamp(light.specularColor*specularCoefficient,light.specularClampMin,light.specularClampMax);
     vec3 postLightingColor=albedo.rgb*(ambientColor+diffuseColor+specularColor);
 
     outColor=vec4(postLightingColor,albedo.a);

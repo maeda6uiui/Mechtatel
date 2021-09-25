@@ -19,7 +19,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda
  */
 public class ParallelLightingUBO {
-    public static final int SIZEOF = (10 * 3 + 1 * 1) * Float.BYTES;
+    public static final int SIZEOF = (10 * 4 + 1 * 1) * Float.BYTES;
 
     private Vector3f direction;
     private Vector3f ambientColor;
@@ -62,19 +62,19 @@ public class ParallelLightingUBO {
     }
 
     private void memcpy(ByteBuffer buffer) {
-        final int vec3Size = 3 * Float.BYTES;
+        final int vec4Size = 4 * Float.BYTES;
 
         direction.get(0, buffer);
-        ambientColor.get(AlignmentUtils.alignas(vec3Size, AlignmentUtils.alignof(ambientColor)), buffer);
-        diffuseColor.get((AlignmentUtils.alignas(vec3Size * 2, AlignmentUtils.alignof(diffuseColor))), buffer);
-        specularColor.get((AlignmentUtils.alignas(vec3Size * 3, AlignmentUtils.alignof(specularColor))), buffer);
-        ambientClampMin.get((AlignmentUtils.alignas(vec3Size * 4, AlignmentUtils.alignof(ambientClampMin))), buffer);
-        ambientClampMax.get((AlignmentUtils.alignas(vec3Size * 5, AlignmentUtils.alignof(ambientClampMax))), buffer);
-        diffuseClampMin.get((AlignmentUtils.alignas(vec3Size * 6, AlignmentUtils.alignof(diffuseClampMin))), buffer);
-        diffuseClampMax.get((AlignmentUtils.alignas(vec3Size * 7, AlignmentUtils.alignof(diffuseClampMax))), buffer);
-        specularClampMin.get((AlignmentUtils.alignas(vec3Size * 8, AlignmentUtils.alignof(specularClampMin))), buffer);
-        specularClampMax.get((AlignmentUtils.alignas(vec3Size * 9, AlignmentUtils.alignof(specularClampMax))), buffer);
-        buffer.putFloat(AlignmentUtils.alignas(vec3Size * 10, AlignmentUtils.alignof(speculatPowY)), speculatPowY);
+        ambientColor.get(AlignmentUtils.alignas(vec4Size, AlignmentUtils.alignof(ambientColor)), buffer);
+        diffuseColor.get((AlignmentUtils.alignas(vec4Size * 2, AlignmentUtils.alignof(diffuseColor))), buffer);
+        specularColor.get((AlignmentUtils.alignas(vec4Size * 3, AlignmentUtils.alignof(specularColor))), buffer);
+        ambientClampMin.get((AlignmentUtils.alignas(vec4Size * 4, AlignmentUtils.alignof(ambientClampMin))), buffer);
+        ambientClampMax.get((AlignmentUtils.alignas(vec4Size * 5, AlignmentUtils.alignof(ambientClampMax))), buffer);
+        diffuseClampMin.get((AlignmentUtils.alignas(vec4Size * 6, AlignmentUtils.alignof(diffuseClampMin))), buffer);
+        diffuseClampMax.get((AlignmentUtils.alignas(vec4Size * 7, AlignmentUtils.alignof(diffuseClampMax))), buffer);
+        specularClampMin.get((AlignmentUtils.alignas(vec4Size * 8, AlignmentUtils.alignof(specularClampMin))), buffer);
+        specularClampMax.get((AlignmentUtils.alignas(vec4Size * 9, AlignmentUtils.alignof(specularClampMax))), buffer);
+        buffer.putFloat(AlignmentUtils.alignas(vec4Size * 10, AlignmentUtils.alignof(speculatPowY)), speculatPowY);
     }
 
     public void update(

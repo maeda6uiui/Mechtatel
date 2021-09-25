@@ -327,13 +327,13 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 gBufferNabor.transitionPositionImage(commandPool, graphicsQueue);
                 gBufferNabor.transitionNormalImage(commandPool, graphicsQueue);
 
-                shadingNabor.bindTextures(
+                shadingNabor.bindImages(
                         commandBuffer,
-                        0,
                         gBufferNabor.getAlbedoImageView(),
                         gBufferNabor.getDepthImageView(),
                         gBufferNabor.getPositionImageView(),
                         gBufferNabor.getNormalImageView());
+
                 quadDrawer.draw(commandBuffer);
             }
             vkCmdEndRenderPass(commandBuffer);
@@ -358,8 +358,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
             renderPassInfo.pClearValues(clearValues);
 
-            gBufferNabor.transitionAlbedoImage(commandPool, graphicsQueue);
-            long albedoImageView = gBufferNabor.getAlbedoImageView();
+            shadingNabor.transitionColorImage(commandPool, graphicsQueue);
+            long colorImageView = shadingNabor.getColorImageView();
 
             var commandBuffers
                     = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchain.getNumSwapchainImages());
@@ -376,7 +376,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 {
                     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, presentNabor.getGraphicsPipeline(0));
 
-                    presentNabor.bindBackScreen(commandBuffer, i, albedoImageView);
+                    presentNabor.bindBackScreen(commandBuffer, i, colorImageView);
                     quadDrawer.draw(commandBuffer);
                 }
                 vkCmdEndRenderPass(commandBuffer);

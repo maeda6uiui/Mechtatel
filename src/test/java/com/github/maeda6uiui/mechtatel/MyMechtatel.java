@@ -27,7 +27,8 @@ public class MyMechtatel extends Mechtatel {
         new MyMechtatel(settings);
     }
 
-    private Model3D model;
+    private Model3D teapot;
+    private Model3D ground;
 
     private Vector3f lightPosition;
     private Vector3f lightCenter;
@@ -37,7 +38,8 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void init() {
-        model = this.createModel3D("./Mechtatel/Model/Teapot/teapot.obj");
+        teapot = this.createModel3D("./Mechtatel/Model/Teapot/teapot.obj");
+        ground = this.createModel3D("./Mechtatel/Model/Plane/plane.obj");
 
         lightPosition = new Vector3f(100.0f, 100.0f, 100.0f);
         lightCenter = new Vector3f(0.0f, 0.0f, 0.0f);
@@ -64,12 +66,12 @@ public class MyMechtatel extends Mechtatel {
     @Override
     public void update() {
         /*
-        new Matrix4f().rotateY((float) Math.toRadians(1.0)).transformPosition(lightPosition);
+        new Matrix4f().rotateY((float) Math.toRadians(0.3)).transformPosition(lightPosition);
         var lightDirection = lightCenter.sub(lightPosition).normalize();
         this.getParallelLight().setDirection(lightDirection);
          */
 
-        new Matrix4f().rotateY((float) Math.toRadians(1.0)).transformPosition(cameraPosition);
+        new Matrix4f().rotateY((float) Math.toRadians(0.3)).transformPosition(cameraPosition);
         this.getCamera().setEye(cameraPosition);
     }
 }

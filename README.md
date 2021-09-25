@@ -24,6 +24,12 @@ Mechtatel (露: Мечтатель 英: Dreamer)
 
 ## 報告
 
+### 2021-09-25
+
+シェーディングを実装しました。
+
+<img src="./Image/shading.jpg" alt="Shading" style="zoom:50%;" />
+
 ### 2021-09-20
 
 Nabor (露: Набор 英: Kit)という概念を導入してみました。

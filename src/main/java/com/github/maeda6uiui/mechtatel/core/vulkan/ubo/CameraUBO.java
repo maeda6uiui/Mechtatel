@@ -1,7 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.ubo;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.AlignmentUtils;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -21,7 +20,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda
  */
 public class CameraUBO {
-    public static final int SIZEOF = (2 * 16 + 2 * 3) * Float.BYTES;
+    public static final int SIZEOF = (2 * 16 + 2 * 4) * Float.BYTES;
 
     public Matrix4f view;
     public Matrix4f proj;
@@ -32,7 +31,7 @@ public class CameraUBO {
     public CameraUBO() {
         view = new Matrix4f();
         proj = new Matrix4f();
-        
+
         eye = new Vector3f();
         center = new Vector3f();
     }
@@ -59,12 +58,12 @@ public class CameraUBO {
 
     private void memcpy(ByteBuffer buffer) {
         final int mat4Size = 16 * Float.BYTES;
-        final int vec3Size = 3 * Float.BYTES;
+        final int vec4Size = 4 * Float.BYTES;
 
         view.get(0, buffer);
-        proj.get(AlignmentUtils.alignas(mat4Size, AlignmentUtils.alignof(proj)), buffer);
-        eye.get(AlignmentUtils.alignas(mat4Size * 2, AlignmentUtils.alignof(eye)), buffer);
-        center.get(AlignmentUtils.alignas(mat4Size * 2 + vec3Size, AlignmentUtils.alignof(center)), buffer);
+        proj.get(mat4Size, buffer);
+        eye.get(mat4Size * 2, buffer);
+        center.get(mat4Size * 2 + vec4Size, buffer);
 
         buffer.rewind();
     }

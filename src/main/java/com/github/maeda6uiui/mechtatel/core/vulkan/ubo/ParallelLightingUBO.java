@@ -1,7 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.ubo;
 
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.AlignmentUtils;
 import org.joml.Vector3f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
@@ -65,16 +64,16 @@ public class ParallelLightingUBO {
         final int vec4Size = 4 * Float.BYTES;
 
         direction.get(0, buffer);
-        ambientColor.get(AlignmentUtils.alignas(vec4Size, AlignmentUtils.alignof(ambientColor)), buffer);
-        diffuseColor.get((AlignmentUtils.alignas(vec4Size * 2, AlignmentUtils.alignof(diffuseColor))), buffer);
-        specularColor.get((AlignmentUtils.alignas(vec4Size * 3, AlignmentUtils.alignof(specularColor))), buffer);
-        ambientClampMin.get((AlignmentUtils.alignas(vec4Size * 4, AlignmentUtils.alignof(ambientClampMin))), buffer);
-        ambientClampMax.get((AlignmentUtils.alignas(vec4Size * 5, AlignmentUtils.alignof(ambientClampMax))), buffer);
-        diffuseClampMin.get((AlignmentUtils.alignas(vec4Size * 6, AlignmentUtils.alignof(diffuseClampMin))), buffer);
-        diffuseClampMax.get((AlignmentUtils.alignas(vec4Size * 7, AlignmentUtils.alignof(diffuseClampMax))), buffer);
-        specularClampMin.get((AlignmentUtils.alignas(vec4Size * 8, AlignmentUtils.alignof(specularClampMin))), buffer);
-        specularClampMax.get((AlignmentUtils.alignas(vec4Size * 9, AlignmentUtils.alignof(specularClampMax))), buffer);
-        buffer.putFloat(AlignmentUtils.alignas(vec4Size * 10, AlignmentUtils.alignof(speculatPowY)), speculatPowY);
+        ambientColor.get(vec4Size, buffer);
+        diffuseColor.get(vec4Size * 2, buffer);
+        specularColor.get(vec4Size * 3, buffer);
+        ambientClampMin.get(vec4Size * 4, buffer);
+        ambientClampMax.get(vec4Size * 5, buffer);
+        diffuseClampMin.get(vec4Size * 6, buffer);
+        diffuseClampMax.get(vec4Size * 7, buffer);
+        specularClampMin.get(vec4Size * 8, buffer);
+        specularClampMax.get(vec4Size * 9, buffer);
+        buffer.putFloat(vec4Size * 10, speculatPowY);
     }
 
     public void update(

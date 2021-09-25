@@ -30,7 +30,7 @@ public class ParallelLightingUBO {
     private Vector3f diffuseClampMax;
     private Vector3f specularClampMin;
     private Vector3f specularClampMax;
-    private float speculatPowY;
+    private float specularPowY;
 
     public ParallelLightingUBO() {
         direction = new Vector3f();
@@ -43,7 +43,7 @@ public class ParallelLightingUBO {
         diffuseClampMax = new Vector3f();
         specularClampMin = new Vector3f();
         specularClampMax = new Vector3f();
-        speculatPowY = 0.0f;
+        specularPowY = 0.0f;
     }
 
     public ParallelLightingUBO(ParallelLight light) {
@@ -57,10 +57,11 @@ public class ParallelLightingUBO {
         diffuseClampMax = light.getDiffuseClampMax();
         specularClampMin = light.getSpecularClampMin();
         specularClampMax = light.getSpecularClampMax();
-        speculatPowY = light.getSpeculatPowY();
+        specularPowY = light.getSpecularPowY();
     }
 
     private void memcpy(ByteBuffer buffer) {
+        final int vec3Size = 3 * Float.BYTES;
         final int vec4Size = 4 * Float.BYTES;
 
         direction.get(0, buffer);
@@ -73,7 +74,9 @@ public class ParallelLightingUBO {
         diffuseClampMax.get(vec4Size * 7, buffer);
         specularClampMin.get(vec4Size * 8, buffer);
         specularClampMax.get(vec4Size * 9, buffer);
-        buffer.putFloat(vec4Size * 10, speculatPowY);
+        buffer.putFloat(vec4Size * 9 + vec3Size, specularPowY);
+
+        buffer.rewind();
     }
 
     public void update(

@@ -18,7 +18,7 @@ public class ParallelLight {
     private Vector3f diffuseClampMax;
     private Vector3f specularClampMin;
     private Vector3f specularClampMax;
-    private float speculatPowY;
+    private float specularPowY;
 
     public ParallelLight() {
         direction = new Vector3f(-1.0f, -1.0f, -1.0f).normalize();
@@ -31,7 +31,7 @@ public class ParallelLight {
         diffuseClampMax = new Vector3f(0.3f, 0.3f, 0.3f);
         specularClampMin = new Vector3f(0.0f, 0.0f, 0.0f);
         specularClampMax = new Vector3f(0.3f, 0.3f, 0.3f);
-        speculatPowY = 2.0f;
+        specularPowY = 3.0f;
     }
 
     public Vector3f getDirection() {
@@ -114,11 +114,11 @@ public class ParallelLight {
         this.specularClampMax = specularClampMax;
     }
 
-    public float getSpeculatPowY() {
-        return speculatPowY;
+    public float getSpecularPowY() {
+        return specularPowY;
     }
 
-    public void setSpeculatPowY(float speculatPowY) {
-        this.speculatPowY = speculatPowY;
+    public void setSpecularPowY(float specularPowY) {
+        this.specularPowY = specularPowY;
     }
 }

@@ -26,7 +26,10 @@ import org.lwjgl.vulkan.*;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
 import static org.lwjgl.glfw.GLFW.glfwWaitEvents;
@@ -255,9 +258,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private void runGBufferNabor(Camera camera) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             long cameraUBOMemory = gBufferNabor.getUniformBufferMemory(0);
-
             var cameraUBO = new CameraUBO(camera);
-            cameraUBO.update(device, Arrays.asList(new Long[]{cameraUBOMemory}));
+            cameraUBO.update(device, cameraUBOMemory);
 
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
@@ -319,11 +321,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             long cameraUBOMemory = shadingNabor.getUniformBufferMemory(0);
             var cameraUBO = new CameraUBO(camera);
-            cameraUBO.update(device, Arrays.asList(new Long[]{cameraUBOMemory}));
+            cameraUBO.update(device, cameraUBOMemory);
 
             long parallelLightUBOMemory = shadingNabor.getUniformBufferMemory(1);
             var parallelLightUBO = new ParallelLightUBO(parallelLight);
-            parallelLightUBO.update(device, Arrays.asList(new Long[]{parallelLightUBOMemory}));
+            parallelLightUBO.update(device, parallelLightUBOMemory);
 
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
@@ -370,11 +372,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             long cameraUBOMemory = fogNabor.getUniformBufferMemory(0);
             var cameraUBO = new CameraUBO(camera);
-            cameraUBO.update(device, Arrays.asList(new Long[]{cameraUBOMemory}));
+            cameraUBO.update(device, cameraUBOMemory);
 
             long fogUBOMemory = fogNabor.getUniformBufferMemory(1);
             var fogUBO = new FogUBO(fog);
-            fogUBO.update(device, Arrays.asList(new Long[]{fogUBOMemory}));
+            fogUBO.update(device, fogUBOMemory);
 
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);

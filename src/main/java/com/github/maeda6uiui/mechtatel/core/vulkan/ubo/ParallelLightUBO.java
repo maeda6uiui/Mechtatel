@@ -7,7 +7,6 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkDevice;
 
 import java.nio.ByteBuffer;
-import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.vkMapMemory;
 import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
@@ -79,18 +78,14 @@ public class ParallelLightUBO {
         buffer.rewind();
     }
 
-    public void update(
-            VkDevice device,
-            List<Long> uniformBufferMemories) {
+    public void update(VkDevice device, long uniformBufferMemory) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            for (var uniformBufferMemory : uniformBufferMemories) {
-                PointerBuffer data = stack.mallocPointer(1);
-                vkMapMemory(device, uniformBufferMemory, 0, SIZEOF, 0, data);
-                {
-                    this.memcpy(data.getByteBuffer(0, SIZEOF));
-                }
-                vkUnmapMemory(device, uniformBufferMemory);
+            PointerBuffer data = stack.mallocPointer(1);
+            vkMapMemory(device, uniformBufferMemory, 0, SIZEOF, 0, data);
+            {
+                this.memcpy(data.getByteBuffer(0, SIZEOF));
             }
+            vkUnmapMemory(device, uniformBufferMemory);
         }
     }
 }

@@ -17,7 +17,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  *
  * @author maeda
  */
-public class ParallelLightingUBO {
+public class ParallelLightUBO {
     public static final int SIZEOF = (10 * 4 + 1 * 1) * Float.BYTES;
 
     private Vector3f direction;
@@ -32,7 +32,7 @@ public class ParallelLightingUBO {
     private Vector3f specularClampMax;
     private float specularPowY;
 
-    public ParallelLightingUBO() {
+    public ParallelLightUBO() {
         direction = new Vector3f();
         ambientColor = new Vector3f();
         diffuseColor = new Vector3f();
@@ -46,7 +46,7 @@ public class ParallelLightingUBO {
         specularPowY = 0.0f;
     }
 
-    public ParallelLightingUBO(ParallelLight light) {
+    public ParallelLightUBO(ParallelLight light) {
         direction = light.getDirection();
         ambientColor = light.getAmbientColor();
         diffuseColor = light.getDiffuseColor();
@@ -85,9 +85,9 @@ public class ParallelLightingUBO {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             for (var uniformBufferMemory : uniformBufferMemories) {
                 PointerBuffer data = stack.mallocPointer(1);
-                vkMapMemory(device, uniformBufferMemory, 0, ParallelLightingUBO.SIZEOF, 0, data);
+                vkMapMemory(device, uniformBufferMemory, 0, ParallelLightUBO.SIZEOF, 0, data);
                 {
-                    this.memcpy(data.getByteBuffer(0, ParallelLightingUBO.SIZEOF));
+                    this.memcpy(data.getByteBuffer(0, ParallelLightUBO.SIZEOF));
                 }
                 vkUnmapMemory(device, uniformBufferMemory);
             }

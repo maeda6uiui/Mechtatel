@@ -12,7 +12,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.ShadingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.ParallelLightingUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.ParallelLightUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.MultisamplingUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.PhysicalDevicePicker;
@@ -301,7 +301,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             cameraUBO.update(device, Arrays.asList(new Long[]{cameraUBOMemory}));
 
             long parallelLightUBOMemory = shadingNabor.getUniformBufferMemory(1);
-            var parallelLightUBO = new ParallelLightingUBO(parallelLight);
+            var parallelLightUBO = new ParallelLightUBO(parallelLight);
             parallelLightUBO.update(device, Arrays.asList(new Long[]{parallelLightUBOMemory}));
 
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);

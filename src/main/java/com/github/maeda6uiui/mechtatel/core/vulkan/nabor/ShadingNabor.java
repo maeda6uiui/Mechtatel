@@ -4,7 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.TextureSamplerCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.ParallelLightingUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.ParallelLightUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
 import org.lwjgl.system.MemoryStack;
@@ -86,7 +86,7 @@ public class ShadingNabor extends Nabor {
         }
 
         var parallelLightUBOInfos = BufferCreator.createUBOBuffers(
-                device, descriptorCount, ParallelLightingUBO.SIZEOF);
+                device, descriptorCount, ParallelLightUBO.SIZEOF);
         for (var parallelLightUBOInfo : parallelLightUBOInfos) {
             this.getUniformBuffers().add(parallelLightUBOInfo.buffer);
             this.getUniformBufferMemories().add(parallelLightUBOInfo.bufferMemory);
@@ -418,7 +418,7 @@ public class ShadingNabor extends Nabor {
             VkDescriptorBufferInfo parallelLightUBOInfo = uboInfos.get(1);
             parallelLightUBOInfo.buffer(this.getUniformBuffer(1));
             parallelLightUBOInfo.offset(0);
-            parallelLightUBOInfo.range(ParallelLightingUBO.SIZEOF);
+            parallelLightUBOInfo.range(ParallelLightUBO.SIZEOF);
 
             VkWriteDescriptorSet uboDescriptorWrite = descriptorWrites.get(0);
             uboDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);

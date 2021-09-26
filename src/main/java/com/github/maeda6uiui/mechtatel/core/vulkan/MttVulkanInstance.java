@@ -1,17 +1,20 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
+import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.FogNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.ShadingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.FogUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.ParallelLightUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.MultisamplingUtils;
@@ -59,6 +62,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private PresentNabor presentNabor;
     private GBufferNabor gBufferNabor;
     private ShadingNabor shadingNabor;
+    private FogNabor fogNabor;
 
     private long commandPool;
 
@@ -133,6 +137,22 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     commandPool,
                     graphicsQueue);
         }
+
+        if (fogNabor == null) {
+            fogNabor = new FogNabor(device);
+            fogNabor.compile(
+                    swapchain.getSwapchainImageFormat(),
+                    swapchain.getSwapchainExtent(),
+                    commandPool,
+                    graphicsQueue,
+                    1);
+        } else {
+            fogNabor.recreate(
+                    swapchain.getSwapchainImageFormat(),
+                    swapchain.getSwapchainExtent(),
+                    commandPool,
+                    graphicsQueue);
+        }
     }
 
     public MttVulkanInstance(boolean enableValidationLayer, long window, int msaaSamples) {
@@ -200,6 +220,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         presentNabor.cleanup(false);
         gBufferNabor.cleanup(false);
         shadingNabor.cleanup(false);
+        fogNabor.cleanup(false);
 
         vkDestroyCommandPool(device, commandPool, null);
 
@@ -345,6 +366,54 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         }
     }
 
+    private void runFogNabor(Camera camera, Fog fog) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            long cameraUBOMemory = fogNabor.getUniformBufferMemory(0);
+            var cameraUBO = new CameraUBO(camera);
+            cameraUBO.update(device, Arrays.asList(new Long[]{cameraUBOMemory}));
+
+            long fogUBOMemory = fogNabor.getUniformBufferMemory(1);
+            var fogUBO = new FogUBO(fog);
+            fogUBO.update(device, Arrays.asList(new Long[]{fogUBOMemory}));
+
+            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
+            beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
+
+            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
+            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
+            renderPassInfo.renderPass(fogNabor.getRenderPass());
+            renderPassInfo.framebuffer(fogNabor.getFramebuffer(0));
+            VkRect2D renderArea = VkRect2D.callocStack(stack);
+            renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
+            renderArea.extent(fogNabor.getExtent());
+            renderPassInfo.renderArea(renderArea);
+            VkClearValue.Buffer clearValues = VkClearValue.callocStack(1, stack);
+            clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
+            renderPassInfo.pClearValues(clearValues);
+
+            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
+
+            vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+            {
+                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, fogNabor.getGraphicsPipeline(0));
+
+                shadingNabor.transitionColorImage(commandPool, graphicsQueue);
+
+                fogNabor.bindImages(
+                        commandBuffer,
+                        shadingNabor.getColorImageView(),
+                        gBufferNabor.getDepthImageView(),
+                        gBufferNabor.getPositionImageView(),
+                        gBufferNabor.getNormalImageView());
+
+                quadDrawer.draw(commandBuffer);
+            }
+            vkCmdEndRenderPass(commandBuffer);
+
+            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
+        }
+    }
+
     private void presentToFrontScreen() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
@@ -361,8 +430,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
             renderPassInfo.pClearValues(clearValues);
 
-            shadingNabor.transitionColorImage(commandPool, graphicsQueue);
-            long colorImageView = shadingNabor.getColorImageView();
+            fogNabor.transitionColorImage(commandPool, graphicsQueue);
+            long colorImageView = fogNabor.getColorImageView();
 
             var commandBuffers
                     = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchain.getNumSwapchainImages());
@@ -408,9 +477,10 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         }
     }
 
-    public void draw(Camera camera, ParallelLight parallelLight) {
+    public void draw(Camera camera, ParallelLight parallelLight, Fog fog) {
         this.runGBufferNabor(camera);
         this.runShadingNabor(camera, parallelLight);
+        this.runFogNabor(camera, fog);
         this.presentToFrontScreen();
     }
 

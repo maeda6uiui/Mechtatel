@@ -50,6 +50,9 @@ public class MyMechtatel extends Mechtatel {
         cameraCenter = new Vector3f(0.0f, 0.5f, 0.0f);
         this.getCamera().setEye(cameraPosition);
         this.getCamera().setCenter(cameraCenter);
+
+        this.getFog().setStart(2.0f);
+        this.getFog().setEnd(10.0f);
     }
 
     @Override

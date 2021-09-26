@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
+import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +61,10 @@ public class Mechtatel implements IMechtatel {
 
     public ParallelLight getParallelLight() {
         return instance.getParallelLight();
+    }
+
+    public Fog getFog() {
+        return instance.getFog();
     }
 
     //=== Methods relating to components ===

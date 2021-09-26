@@ -111,9 +111,9 @@ public class PresentNabor extends Nabor {
 
             VkDescriptorPoolSize.Buffer poolSizes = VkDescriptorPoolSize.callocStack(1, stack);
 
-            VkDescriptorPoolSize textureSamplerPoolSize = poolSizes.get(0);
-            textureSamplerPoolSize.type(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
-            textureSamplerPoolSize.descriptorCount(descriptorCount);
+            VkDescriptorPoolSize samplerPoolSize = poolSizes.get(0);
+            samplerPoolSize.type(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+            samplerPoolSize.descriptorCount(descriptorCount);
 
             VkDescriptorPoolCreateInfo poolInfo = VkDescriptorPoolCreateInfo.callocStack(stack);
             poolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);

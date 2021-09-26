@@ -150,6 +150,21 @@ public class Nabor {
         this.createFramebuffers();
     }
 
+    public void recreate(
+            int colorImageFormat,
+            VkExtent2D extent,
+            long commandPool,
+            VkQueue graphicsQueue) {
+        this.extent = extent;
+
+        this.cleanup(true);
+
+        this.createRenderPass(colorImageFormat);
+        this.createGraphicsPipelines();
+        this.createImages(commandPool, graphicsQueue, colorImageFormat);
+        this.createFramebuffers();
+    }
+
     public void cleanup(boolean reserveForRecreation) {
         graphicsPipelines.forEach(graphicsPipeline -> vkDestroyPipeline(device, graphicsPipeline, null));
         pipelineLayouts.forEach(pipelineLayout -> vkDestroyPipelineLayout(device, pipelineLayout, null));
@@ -190,21 +205,6 @@ public class Nabor {
         }
 
         vkDestroyRenderPass(device, renderPass, null);
-    }
-
-    public void recreate(
-            int colorImageFormat,
-            VkExtent2D extent,
-            long commandPool,
-            VkQueue graphicsQueue) {
-        this.extent = extent;
-
-        this.cleanup(true);
-
-        this.createRenderPass(colorImageFormat);
-        this.createGraphicsPipelines();
-        this.createImages(commandPool, graphicsQueue, colorImageFormat);
-        this.createFramebuffers();
     }
 
     protected VkDevice getDevice() {

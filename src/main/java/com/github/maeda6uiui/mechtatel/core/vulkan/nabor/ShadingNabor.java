@@ -68,35 +68,35 @@ public class ShadingNabor extends PostProcessingNabor {
             parallelLightUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 1 ===
-            VkDescriptorSetLayoutBinding.Buffer textureBindings = VkDescriptorSetLayoutBinding.callocStack(4, stack);
+            VkDescriptorSetLayoutBinding.Buffer imageBindings = VkDescriptorSetLayoutBinding.callocStack(4, stack);
 
-            VkDescriptorSetLayoutBinding albedoTextureLayoutBinding = textureBindings.get(0);
-            albedoTextureLayoutBinding.binding(0);
-            albedoTextureLayoutBinding.descriptorCount(1);
-            albedoTextureLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            albedoTextureLayoutBinding.pImmutableSamplers(null);
-            albedoTextureLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+            VkDescriptorSetLayoutBinding albedoImageLayoutBinding = imageBindings.get(0);
+            albedoImageLayoutBinding.binding(0);
+            albedoImageLayoutBinding.descriptorCount(1);
+            albedoImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            albedoImageLayoutBinding.pImmutableSamplers(null);
+            albedoImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            VkDescriptorSetLayoutBinding depthTextureLayoutBinding = textureBindings.get(1);
-            depthTextureLayoutBinding.binding(1);
-            depthTextureLayoutBinding.descriptorCount(1);
-            depthTextureLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            depthTextureLayoutBinding.pImmutableSamplers(null);
-            depthTextureLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+            VkDescriptorSetLayoutBinding depthImageLayoutBinding = imageBindings.get(1);
+            depthImageLayoutBinding.binding(1);
+            depthImageLayoutBinding.descriptorCount(1);
+            depthImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            depthImageLayoutBinding.pImmutableSamplers(null);
+            depthImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            VkDescriptorSetLayoutBinding positionTextureLayoutBinding = textureBindings.get(2);
-            positionTextureLayoutBinding.binding(2);
-            positionTextureLayoutBinding.descriptorCount(1);
-            positionTextureLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            positionTextureLayoutBinding.pImmutableSamplers(null);
-            positionTextureLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+            VkDescriptorSetLayoutBinding positionImageLayoutBinding = imageBindings.get(2);
+            positionImageLayoutBinding.binding(2);
+            positionImageLayoutBinding.descriptorCount(1);
+            positionImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            positionImageLayoutBinding.pImmutableSamplers(null);
+            positionImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            VkDescriptorSetLayoutBinding normalTextureLayoutBinding = textureBindings.get(3);
-            normalTextureLayoutBinding.binding(3);
-            normalTextureLayoutBinding.descriptorCount(1);
-            normalTextureLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            normalTextureLayoutBinding.pImmutableSamplers(null);
-            normalTextureLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+            VkDescriptorSetLayoutBinding normalImageLayoutBinding = imageBindings.get(3);
+            normalImageLayoutBinding.binding(3);
+            normalImageLayoutBinding.descriptorCount(1);
+            normalImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            normalImageLayoutBinding.pImmutableSamplers(null);
+            normalImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 2 ===
             VkDescriptorSetLayoutBinding.Buffer samplerBindings = VkDescriptorSetLayoutBinding.callocStack(1, stack);
@@ -117,9 +117,9 @@ public class ShadingNabor extends PostProcessingNabor {
             uboLayoutInfo.pBindings(uboBindings);
 
             //=== set 1 ===
-            VkDescriptorSetLayoutCreateInfo textureLayoutInfo = layoutInfos.get(1);
-            textureLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
-            textureLayoutInfo.pBindings(textureBindings);
+            VkDescriptorSetLayoutCreateInfo imageLayoutInfo = layoutInfos.get(1);
+            imageLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            imageLayoutInfo.pBindings(imageBindings);
 
             //=== set 2 ===
             VkDescriptorSetLayoutCreateInfo samplerLayoutInfo = layoutInfos.get(2);
@@ -155,23 +155,23 @@ public class ShadingNabor extends PostProcessingNabor {
             parallelLightUBOPoolSize.descriptorCount(descriptorCount);
 
             //=== set 1 ===
-            VkDescriptorPoolSize.Buffer texturePoolSizes = VkDescriptorPoolSize.callocStack(4, stack);
+            VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.callocStack(4, stack);
 
-            VkDescriptorPoolSize albedoTexturePoolSize = texturePoolSizes.get(0);
-            albedoTexturePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            albedoTexturePoolSize.descriptorCount(descriptorCount);
+            VkDescriptorPoolSize albedoImagePoolSize = imagePoolSizes.get(0);
+            albedoImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            albedoImagePoolSize.descriptorCount(descriptorCount);
 
-            VkDescriptorPoolSize depthTexturePoolSize = texturePoolSizes.get(1);
-            depthTexturePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            depthTexturePoolSize.descriptorCount(descriptorCount);
+            VkDescriptorPoolSize depthImagePoolSize = imagePoolSizes.get(1);
+            depthImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            depthImagePoolSize.descriptorCount(descriptorCount);
 
-            VkDescriptorPoolSize positionTexturePoolSize = texturePoolSizes.get(2);
-            positionTexturePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            positionTexturePoolSize.descriptorCount(descriptorCount);
+            VkDescriptorPoolSize positionImagePoolSize = imagePoolSizes.get(2);
+            positionImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            positionImagePoolSize.descriptorCount(descriptorCount);
 
-            VkDescriptorPoolSize normalTexturePoolSize = texturePoolSizes.get(3);
-            normalTexturePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            normalTexturePoolSize.descriptorCount(descriptorCount);
+            VkDescriptorPoolSize normalImagePoolSize = imagePoolSizes.get(3);
+            normalImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            normalImagePoolSize.descriptorCount(descriptorCount);
 
             //=== set 2 ===
             VkDescriptorPoolSize.Buffer samplerPoolSizes = VkDescriptorPoolSize.callocStack(1, stack);
@@ -190,10 +190,10 @@ public class ShadingNabor extends PostProcessingNabor {
             uboPoolInfo.maxSets(descriptorCount);
 
             //=== set 1 ===
-            VkDescriptorPoolCreateInfo texturePoolInfo = poolInfos.get(1);
-            texturePoolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
-            texturePoolInfo.pPoolSizes(texturePoolSizes);
-            texturePoolInfo.maxSets(descriptorCount);
+            VkDescriptorPoolCreateInfo imagePoolInfo = poolInfos.get(1);
+            imagePoolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
+            imagePoolInfo.pPoolSizes(imagePoolSizes);
+            imagePoolInfo.maxSets(descriptorCount);
 
             //=== set 2 ===
             VkDescriptorPoolCreateInfo samplerPoolInfo = poolInfos.get(2);

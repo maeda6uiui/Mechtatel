@@ -287,14 +287,14 @@ public class GBufferNabor extends Nabor {
             cameraUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
 
             //=== set 1 ===
-            VkDescriptorSetLayoutBinding.Buffer textureBindings = VkDescriptorSetLayoutBinding.callocStack(1, stack);
+            VkDescriptorSetLayoutBinding.Buffer imageBindings = VkDescriptorSetLayoutBinding.callocStack(1, stack);
 
-            VkDescriptorSetLayoutBinding textureLayoutBinding = textureBindings.get(0);
-            textureLayoutBinding.binding(0);
-            textureLayoutBinding.descriptorCount(MAX_NUM_TEXTURES);
-            textureLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            textureLayoutBinding.pImmutableSamplers(null);
-            textureLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+            VkDescriptorSetLayoutBinding imageLayoutBinding = imageBindings.get(0);
+            imageLayoutBinding.binding(0);
+            imageLayoutBinding.descriptorCount(MAX_NUM_TEXTURES);
+            imageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            imageLayoutBinding.pImmutableSamplers(null);
+            imageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 2 ===
             VkDescriptorSetLayoutBinding.Buffer samplerBindings = VkDescriptorSetLayoutBinding.callocStack(1, stack);
@@ -315,9 +315,9 @@ public class GBufferNabor extends Nabor {
             uboLayoutInfo.pBindings(uboBindings);
 
             //=== set 1 ===
-            VkDescriptorSetLayoutCreateInfo textureLayoutInfo = layoutInfos.get(1);
-            textureLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
-            textureLayoutInfo.pBindings(textureBindings);
+            VkDescriptorSetLayoutCreateInfo imageLayoutInfo = layoutInfos.get(1);
+            imageLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            imageLayoutInfo.pBindings(imageBindings);
 
             //=== set 2 ===
             VkDescriptorSetLayoutCreateInfo samplerLayoutInfo = layoutInfos.get(2);
@@ -349,11 +349,11 @@ public class GBufferNabor extends Nabor {
             cameraUBOPoolSize.descriptorCount(descriptorCount);
 
             //=== set 1 ===
-            VkDescriptorPoolSize.Buffer texturePoolSizes = VkDescriptorPoolSize.callocStack(1, stack);
+            VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.callocStack(1, stack);
 
-            VkDescriptorPoolSize texturePoolSize = texturePoolSizes.get(0);
-            texturePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            texturePoolSize.descriptorCount(descriptorCount * MAX_NUM_TEXTURES);
+            VkDescriptorPoolSize imagePoolSize = imagePoolSizes.get(0);
+            imagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            imagePoolSize.descriptorCount(descriptorCount * MAX_NUM_TEXTURES);
 
             //=== set 2 ===
             VkDescriptorPoolSize.Buffer samplerPoolSizes = VkDescriptorPoolSize.callocStack(1, stack);
@@ -372,10 +372,10 @@ public class GBufferNabor extends Nabor {
             uboPoolInfo.maxSets(descriptorCount);
 
             //=== set 1 ===
-            VkDescriptorPoolCreateInfo texturePoolInfo = poolInfos.get(1);
-            texturePoolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
-            texturePoolInfo.pPoolSizes(texturePoolSizes);
-            texturePoolInfo.maxSets(descriptorCount);
+            VkDescriptorPoolCreateInfo imagePoolInfo = poolInfos.get(1);
+            imagePoolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
+            imagePoolInfo.pPoolSizes(imagePoolSizes);
+            imagePoolInfo.maxSets(descriptorCount);
 
             //=== set 2 ===
             VkDescriptorPoolCreateInfo samplerPoolInfo = poolInfos.get(2);

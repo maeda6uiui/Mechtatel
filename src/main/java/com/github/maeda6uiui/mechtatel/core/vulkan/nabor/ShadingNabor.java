@@ -22,45 +22,9 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda
  */
-public class ShadingNabor extends Nabor {
-    private long dummyImage;
-    private long dummyImageMemory;
-    private long dummyImageView;
-
+public class ShadingNabor extends PostProcessingNabor {
     public ShadingNabor(VkDevice device) {
         super(device, VK_SAMPLE_COUNT_1_BIT);
-    }
-
-    public void transitionColorImage(long commandPool, VkQueue graphicsQueue) {
-        VkDevice device = this.getDevice();
-        long colorImage = this.getImage(0);
-
-        ImageUtils.transitionImageLayout(
-                device,
-                commandPool,
-                graphicsQueue,
-                colorImage,
-                false,
-                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                1);
-    }
-
-    public long getColorImageView() {
-        return this.getImageView(0);
-    }
-
-    @Override
-    public void cleanup(boolean reserveForRecreation) {
-        super.cleanup(reserveForRecreation);
-
-        VkDevice device = this.getDevice();
-
-        if (!reserveForRecreation) {
-            vkDestroyImage(device, dummyImage, null);
-            vkFreeMemory(device, dummyImageMemory, null);
-            vkDestroyImageView(device, dummyImageView, null);
-        }
     }
 
     @Override
@@ -306,60 +270,10 @@ public class ShadingNabor extends Nabor {
         }
     }
 
-    private void createDummyImages(long commandPool, VkQueue graphicsQueue) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkDevice device = this.getDevice();
-
-            LongBuffer pImage = stack.mallocLong(1);
-            LongBuffer pImageMemory = stack.mallocLong(1);
-            LongBuffer pImageView = stack.mallocLong(1);
-
-            //Color image
-            ImageUtils.createImage(
-                    device,
-                    1,
-                    1,
-                    1,
-                    1,
-                    VK_FORMAT_R8_UNORM,
-                    VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_SAMPLED_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pImage,
-                    pImageMemory);
-            dummyImage = pImage.get(0);
-            dummyImageMemory = pImageMemory.get(0);
-
-            ImageUtils.transitionImageLayout(
-                    device,
-                    commandPool,
-                    graphicsQueue,
-                    dummyImage,
-                    false,
-                    VK_IMAGE_LAYOUT_UNDEFINED,
-                    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                    1);
-
-            VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.callocStack(stack);
-            viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
-            viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
-            viewInfo.image(dummyImage);
-            viewInfo.format(VK_FORMAT_R8_UNORM);
-            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
-            viewInfo.subresourceRange().baseMipLevel(0);
-            viewInfo.subresourceRange().levelCount(1);
-            viewInfo.subresourceRange().baseArrayLayer(0);
-            viewInfo.subresourceRange().layerCount(1);
-
-            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to create an image view");
-            }
-            dummyImageView = pImageView.get(0);
-        }
-    }
-
     @Override
     protected void createDescriptorSets(int descriptorCount, long commandPool, VkQueue graphicsQueue) {
+        super.createDescriptorSets(descriptorCount, commandPool, graphicsQueue);
+
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
@@ -418,23 +332,20 @@ public class ShadingNabor extends Nabor {
             uboDescriptorWrite.pBufferInfo(uboInfos);
 
             //=== set 1 ===
-            //Create dummy textures and fill the texture array
-            this.createDummyImages(commandPool, graphicsQueue);
-
             VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.callocStack(4, stack);
             for (int i = 0; i < 4; i++) {
                 VkDescriptorImageInfo imageInfo = imageInfos.get(i);
                 imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-                imageInfo.imageView(dummyImageView);
+                imageInfo.imageView(this.getDummyImageView());
             }
 
-            VkWriteDescriptorSet textureDescriptorWrite = descriptorWrites.get(1);
-            textureDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            textureDescriptorWrite.dstBinding(0);
-            textureDescriptorWrite.dstArrayElement(0);
-            textureDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            textureDescriptorWrite.descriptorCount(4);
-            textureDescriptorWrite.pImageInfo(imageInfos);
+            VkWriteDescriptorSet imageDescriptorWrite = descriptorWrites.get(1);
+            imageDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            imageDescriptorWrite.dstBinding(0);
+            imageDescriptorWrite.dstArrayElement(0);
+            imageDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            imageDescriptorWrite.descriptorCount(4);
+            imageDescriptorWrite.pImageInfo(imageInfos);
 
             //=== set 2 ===
             VkDescriptorImageInfo.Buffer samplerInfos = VkDescriptorImageInfo.callocStack(1, stack);
@@ -453,7 +364,7 @@ public class ShadingNabor extends Nabor {
 
             for (int i = 0; i < descriptorCount; i++) {
                 uboDescriptorWrite.dstSet(descriptorSets.get(i));
-                textureDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount));
+                imageDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount));
                 samplerDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount * 2));
 
                 vkUpdateDescriptorSets(device, descriptorWrites, null);
@@ -679,88 +590,6 @@ public class ShadingNabor extends Nabor {
             this.getImages().add(colorImage);
             this.getImageMemories().add(colorImageMemory);
             this.getImageViews().add(colorImageView);
-        }
-    }
-
-    @Override
-    protected void createFramebuffers() {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkDevice device = this.getDevice();
-            VkExtent2D extent = this.getExtent();
-
-            long renderPass = this.getRenderPass();
-
-            List<Long> imageViews = this.getImageViews();
-            LongBuffer attachments = stack.mallocLong(imageViews.size());
-            for (int i = 0; i < imageViews.size(); i++) {
-                attachments.put(i, imageViews.get(i));
-            }
-
-            LongBuffer pFramebuffer = stack.mallocLong(1);
-
-            VkFramebufferCreateInfo framebufferInfo = VkFramebufferCreateInfo.callocStack(stack);
-            framebufferInfo.sType(VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO);
-            framebufferInfo.renderPass(renderPass);
-            framebufferInfo.width(extent.width());
-            framebufferInfo.height(extent.height());
-            framebufferInfo.layers(1);
-            framebufferInfo.pAttachments(attachments);
-
-            if (vkCreateFramebuffer(device, framebufferInfo, null, pFramebuffer) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to create a framebuffer");
-            }
-
-            this.getFramebuffers().add(pFramebuffer.get(0));
-        }
-    }
-
-    public void bindImages(
-            VkCommandBuffer commandBuffer,
-            long colorImageView,
-            long depthImageView,
-            long positionImageView,
-            long normalImageView) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkDevice device = this.getDevice();
-
-            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.callocStack(4, stack);
-
-            VkDescriptorImageInfo colorImageInfo = imageInfos.get(0);
-            colorImageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            colorImageInfo.imageView(colorImageView);
-
-            VkDescriptorImageInfo depthImageInfo = imageInfos.get(1);
-            depthImageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            depthImageInfo.imageView(depthImageView);
-
-            VkDescriptorImageInfo positionImageInfo = imageInfos.get(2);
-            positionImageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            positionImageInfo.imageView(positionImageView);
-
-            VkDescriptorImageInfo normalImageInfo = imageInfos.get(3);
-            normalImageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            normalImageInfo.imageView(normalImageView);
-
-            VkWriteDescriptorSet.Buffer textureDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
-            textureDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            textureDescriptorWrite.dstBinding(0);
-            textureDescriptorWrite.dstArrayElement(0);
-            textureDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            textureDescriptorWrite.descriptorCount(4);
-            textureDescriptorWrite.pImageInfo(imageInfos);
-
-            long descriptorSet = this.getDescriptorSet(1);
-            textureDescriptorWrite.dstSet(descriptorSet);
-
-            vkUpdateDescriptorSets(device, textureDescriptorWrite, null);
-
-            vkCmdBindDescriptorSets(
-                    commandBuffer,
-                    VK_PIPELINE_BIND_POINT_GRAPHICS,
-                    this.getPipelineLayout(0),
-                    0,
-                    this.pDescriptorSets(),
-                    null);
         }
     }
 }

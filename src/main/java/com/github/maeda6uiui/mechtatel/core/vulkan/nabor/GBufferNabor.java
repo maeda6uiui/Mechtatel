@@ -512,13 +512,13 @@ public class GBufferNabor extends Nabor {
                 imageInfo.imageView(dummyImageView);
             }
 
-            VkWriteDescriptorSet textureDescriptorWrite = descriptorWrites.get(1);
-            textureDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            textureDescriptorWrite.dstBinding(0);
-            textureDescriptorWrite.dstArrayElement(0);
-            textureDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            textureDescriptorWrite.descriptorCount(MAX_NUM_TEXTURES);
-            textureDescriptorWrite.pImageInfo(imageInfos);
+            VkWriteDescriptorSet imageDescriptorWrite = descriptorWrites.get(1);
+            imageDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            imageDescriptorWrite.dstBinding(0);
+            imageDescriptorWrite.dstArrayElement(0);
+            imageDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            imageDescriptorWrite.descriptorCount(MAX_NUM_TEXTURES);
+            imageDescriptorWrite.pImageInfo(imageInfos);
 
             //=== set 2 ===
             VkDescriptorImageInfo.Buffer samplerInfos = VkDescriptorImageInfo.callocStack(1, stack);
@@ -537,7 +537,7 @@ public class GBufferNabor extends Nabor {
 
             for (int i = 0; i < descriptorCount; i++) {
                 uboDescriptorWrite.dstSet(descriptorSets.get(i));
-                textureDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount));
+                imageDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount));
                 samplerDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount * 2));
 
                 vkUpdateDescriptorSets(device, descriptorWrites, null);

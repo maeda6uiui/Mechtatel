@@ -74,9 +74,9 @@ public class CameraUBO {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             for (var uniformBufferMemory : uniformBufferMemories) {
                 PointerBuffer data = stack.mallocPointer(1);
-                vkMapMemory(device, uniformBufferMemory, 0, CameraUBO.SIZEOF, 0, data);
+                vkMapMemory(device, uniformBufferMemory, 0, SIZEOF, 0, data);
                 {
-                    this.memcpy(data.getByteBuffer(0, CameraUBO.SIZEOF));
+                    this.memcpy(data.getByteBuffer(0, SIZEOF));
                 }
                 vkUnmapMemory(device, uniformBufferMemory);
             }

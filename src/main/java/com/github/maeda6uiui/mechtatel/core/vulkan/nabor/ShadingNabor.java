@@ -2,7 +2,6 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.TextureSamplerCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.ParallelLightUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
@@ -24,20 +23,12 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 public class ShadingNabor extends Nabor {
-    private long textureSampler;
-
     private long dummyImage;
     private long dummyImageMemory;
     private long dummyImageView;
 
     public ShadingNabor(VkDevice device) {
         super(device, VK_SAMPLE_COUNT_1_BIT);
-
-        textureSampler = TextureSamplerCreator.createTextureSampler(device);
-    }
-
-    public long getTextureSampler() {
-        return textureSampler;
     }
 
     public void transitionColorImage(long commandPool, VkQueue graphicsQueue) {
@@ -66,8 +57,6 @@ public class ShadingNabor extends Nabor {
         VkDevice device = this.getDevice();
 
         if (!reserveForRecreation) {
-            vkDestroySampler(device, textureSampler, null);
-
             vkDestroyImage(device, dummyImage, null);
             vkFreeMemory(device, dummyImageMemory, null);
             vkDestroyImageView(device, dummyImageView, null);
@@ -452,7 +441,7 @@ public class ShadingNabor extends Nabor {
 
             VkDescriptorImageInfo samplerInfo = samplerInfos.get(0);
             samplerInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            samplerInfo.sampler(textureSampler);
+            samplerInfo.sampler(this.getTextureSampler(0));
 
             VkWriteDescriptorSet samplerDescriptorWrite = descriptorWrites.get(2);
             samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);

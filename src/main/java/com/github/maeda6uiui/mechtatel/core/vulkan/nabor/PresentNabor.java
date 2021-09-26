@@ -1,7 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2DUV;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.TextureSamplerCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -19,21 +18,8 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 public class PresentNabor extends Nabor {
-    private long textureSampler;
-
     public PresentNabor(VkDevice device) {
         super(device, VK_SAMPLE_COUNT_1_BIT);
-
-        textureSampler = TextureSamplerCreator.createTextureSampler(device);
-    }
-
-    @Override
-    public void cleanup(boolean reserveForRecreation) {
-        super.cleanup(reserveForRecreation);
-
-        if (!reserveForRecreation) {
-            vkDestroySampler(this.getDevice(), textureSampler, null);
-        }
     }
 
     @Override
@@ -332,7 +318,7 @@ public class PresentNabor extends Nabor {
             VkDescriptorImageInfo.Buffer imageInfo = VkDescriptorImageInfo.callocStack(1, stack);
             imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
             imageInfo.imageView(imageView);
-            imageInfo.sampler(textureSampler);
+            imageInfo.sampler(this.getTextureSampler(0));
 
             VkWriteDescriptorSet.Buffer samplerDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
             samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);

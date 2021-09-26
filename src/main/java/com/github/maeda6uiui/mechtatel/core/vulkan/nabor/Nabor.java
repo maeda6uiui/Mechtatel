@@ -1,10 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.vulkan.VkDevice;
-import org.lwjgl.vulkan.VkExtent2D;
-import org.lwjgl.vulkan.VkQueue;
-import org.lwjgl.vulkan.VkShaderModuleCreateInfo;
+import org.lwjgl.vulkan.*;
 
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
@@ -23,6 +20,8 @@ public class Nabor {
 
     private int msaaSamples;
     private VkExtent2D extent;
+
+    private List<Long> textureSamplers;
 
     private List<Long> uniformBuffers;
     private List<Long> uniformBufferMemories;
@@ -48,6 +47,8 @@ public class Nabor {
 
         this.msaaSamples = msaaSamples;
 
+        textureSamplers = new ArrayList<>();
+
         uniformBuffers = new ArrayList<>();
         uniformBufferMemories = new ArrayList<>();
 
@@ -63,6 +64,36 @@ public class Nabor {
         imageMemories = new ArrayList<>();
         imageViews = new ArrayList<>();
         framebuffers = new ArrayList<>();
+    }
+
+    protected void createTextureSamplers() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkSamplerCreateInfo samplerInfo = VkSamplerCreateInfo.callocStack(stack);
+            samplerInfo.sType(VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO);
+            samplerInfo.magFilter(VK_FILTER_LINEAR);
+            samplerInfo.minFilter(VK_FILTER_LINEAR);
+            samplerInfo.addressModeU(VK_SAMPLER_ADDRESS_MODE_REPEAT);
+            samplerInfo.addressModeV(VK_SAMPLER_ADDRESS_MODE_REPEAT);
+            samplerInfo.addressModeW(VK_SAMPLER_ADDRESS_MODE_REPEAT);
+            samplerInfo.anisotropyEnable(true);
+            samplerInfo.maxAnisotropy(16.0f);
+            samplerInfo.borderColor(VK_BORDER_COLOR_INT_OPAQUE_BLACK);
+            samplerInfo.unnormalizedCoordinates(false);
+            samplerInfo.compareEnable(false);
+            samplerInfo.compareOp(VK_COMPARE_OP_ALWAYS);
+            samplerInfo.mipmapMode(VK_SAMPLER_MIPMAP_MODE_LINEAR);
+            samplerInfo.minLod(0.0f);
+            samplerInfo.maxLod(8.0f);
+            samplerInfo.mipLodBias(0.0f);
+
+            LongBuffer pTextureSampler = stack.mallocLong(1);
+            if (vkCreateSampler(device, samplerInfo, null, pTextureSampler) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create a texture sampler");
+            }
+
+            long textureSampler = pTextureSampler.get(0);
+            textureSamplers.add(textureSampler);
+        }
     }
 
     protected void createUniformBuffers(int descriptorCount) {
@@ -108,6 +139,7 @@ public class Nabor {
             int descriptorCount) {
         this.extent = extent;
 
+        this.createTextureSamplers();
         this.createUniformBuffers(descriptorCount);
         this.createRenderPass(colorImageFormat);
         this.createDescriptorSetLayouts();
@@ -138,6 +170,9 @@ public class Nabor {
             fragShaderModules.forEach(fragShaderModule -> vkDestroyShaderModule(device, fragShaderModule, null));
             vertShaderModules.clear();
             fragShaderModules.clear();
+
+            textureSamplers.forEach(textureSampler -> vkDestroySampler(device, textureSampler, null));
+            textureSamplers.clear();
 
             uniformBuffers.forEach(uniformBuffer -> vkDestroyBuffer(device, uniformBuffer, null));
             uniformBufferMemories.forEach(uniformBufferMemory -> vkFreeMemory(device, uniformBufferMemory, null));
@@ -182,6 +217,14 @@ public class Nabor {
 
     public VkExtent2D getExtent() {
         return extent;
+    }
+
+    public long getTextureSampler(int index) {
+        return textureSamplers.get(index);
+    }
+
+    protected List<Long> getTextureSamplers() {
+        return textureSamplers;
     }
 
     public long getUniformBuffer(int index) {

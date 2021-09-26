@@ -285,7 +285,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                             commandBuffer,
                             0,
                             gBufferNabor.getPipelineLayout(0),
-                            gBufferNabor.getTextureSampler());
+                            gBufferNabor.getTextureSampler(0));
                 }
             }
             vkCmdEndRenderPass(commandBuffer);

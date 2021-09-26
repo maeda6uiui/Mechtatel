@@ -2,7 +2,6 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.TextureSamplerCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
@@ -26,8 +25,6 @@ import static org.lwjgl.vulkan.VK10.*;
 public class GBufferNabor extends Nabor {
     public static final int MAX_NUM_TEXTURES = 128;
 
-    private long textureSampler;
-
     private int depthImageFormat;
     private int positionImageFormat;
     private int normalImageFormat;
@@ -44,15 +41,9 @@ public class GBufferNabor extends Nabor {
     public GBufferNabor(VkDevice device, int positionImageFormat, int normalImageFormat) {
         super(device, VK_SAMPLE_COUNT_1_BIT);
 
-        textureSampler = TextureSamplerCreator.createTextureSampler(device);
-
         this.depthImageFormat = DepthResourceUtils.findDepthFormat(device);
         this.positionImageFormat = positionImageFormat;
         this.normalImageFormat = normalImageFormat;
-    }
-
-    public long getTextureSampler() {
-        return textureSampler;
     }
 
     public int getDepthImageFormat() {
@@ -150,8 +141,6 @@ public class GBufferNabor extends Nabor {
         VkDevice device = this.getDevice();
 
         if (!reserveForRecreation) {
-            vkDestroySampler(device, textureSampler, null);
-
             vkDestroyImage(device, dummyImage, null);
             vkFreeMemory(device, dummyImageMemory, null);
             vkDestroyImageView(device, dummyImageView, null);
@@ -536,7 +525,7 @@ public class GBufferNabor extends Nabor {
 
             VkDescriptorImageInfo samplerInfo = samplerInfos.get(0);
             samplerInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            samplerInfo.sampler(textureSampler);
+            samplerInfo.sampler(this.getTextureSampler(0));
 
             VkWriteDescriptorSet samplerDescriptorWrite = descriptorWrites.get(2);
             samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);

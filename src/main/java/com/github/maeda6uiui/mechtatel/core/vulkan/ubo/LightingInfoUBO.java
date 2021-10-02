@@ -24,12 +24,6 @@ public class LightingInfoUBO {
     private Vector3f lightingClampMax;
     private int numLights;
 
-    public LightingInfoUBO() {
-        lightingClampMin = new Vector3f();
-        lightingClampMax = new Vector3f();
-        numLights = 0;
-    }
-
     public LightingInfoUBO(LightingInfo lightingInfo) {
         lightingClampMin = lightingInfo.getLightingClampMin();
         lightingClampMax = lightingInfo.getLightingClampMax();

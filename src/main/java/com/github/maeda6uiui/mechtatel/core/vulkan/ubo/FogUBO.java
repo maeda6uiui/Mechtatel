@@ -24,13 +24,7 @@ public class FogUBO {
     private Vector3f color;
     private float start;
     private float end;
-
-    public FogUBO() {
-        color = new Vector3f();
-        start = 0.0f;
-        end = 0.0f;
-    }
-
+    
     public FogUBO(Fog fog) {
         color = fog.getColor();
         start = fog.getStart();

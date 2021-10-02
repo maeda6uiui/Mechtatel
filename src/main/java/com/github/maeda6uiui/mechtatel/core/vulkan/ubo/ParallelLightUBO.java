@@ -33,20 +33,6 @@ public class ParallelLightUBO {
     private Vector3f specularClampMax;
     private float specularPowY;
 
-    public ParallelLightUBO() {
-        direction = new Vector3f();
-        ambientColor = new Vector3f();
-        diffuseColor = new Vector3f();
-        specularColor = new Vector3f();
-        ambientClampMin = new Vector3f();
-        ambientClampMax = new Vector3f();
-        diffuseClampMin = new Vector3f();
-        diffuseClampMax = new Vector3f();
-        specularClampMin = new Vector3f();
-        specularClampMax = new Vector3f();
-        specularPowY = 0.0f;
-    }
-
     public ParallelLightUBO(ParallelLight light) {
         direction = light.getDirection();
         ambientColor = light.getAmbientColor();

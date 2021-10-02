@@ -29,14 +29,6 @@ public class CameraUBO {
     public Vector3f eye;
     public Vector3f center;
 
-    public CameraUBO() {
-        view = new Matrix4f();
-        proj = new Matrix4f();
-
-        eye = new Vector3f();
-        center = new Vector3f();
-    }
-
     public CameraUBO(Camera camera) {
         Vector3fc eye = camera.getEye();
         Vector3fc center = camera.getCenter();

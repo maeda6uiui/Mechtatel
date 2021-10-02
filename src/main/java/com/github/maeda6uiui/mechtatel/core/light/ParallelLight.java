@@ -39,7 +39,7 @@ public class ParallelLight {
     }
 
     public void setDirection(Vector3f direction) {
-        this.direction = direction;
+        this.direction = direction.normalize();
     }
 
     public Vector3f getAmbientColor() {

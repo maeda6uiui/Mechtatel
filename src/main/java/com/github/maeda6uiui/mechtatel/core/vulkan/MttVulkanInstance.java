@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
+import com.github.maeda6uiui.mechtatel.core.light.LightingInfo;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
@@ -15,6 +16,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.ShadingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.FogUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.LightingInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.ParallelLightUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.MultisamplingUtils;
@@ -323,9 +325,18 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             var cameraUBO = new CameraUBO(camera);
             cameraUBO.update(device, cameraUBOMemory);
 
-            long parallelLightUBOMemory = shadingNabor.getUniformBufferMemory(1);
-            var parallelLightUBO = new ParallelLightUBO(parallelLights.get(0));
-            parallelLightUBO.update(device, parallelLightUBOMemory);
+            var lightingInfo = new LightingInfo();
+            lightingInfo.setNumLights(parallelLights.size());
+
+            long lightingInfoUBOMemory = shadingNabor.getUniformBufferMemory(1);
+            var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
+            lightingInfoUBO.update(device, lightingInfoUBOMemory);
+
+            long parallelLightUBOMemory = shadingNabor.getUniformBufferMemory(2);
+            for (int i = 0; i < parallelLights.size(); i++) {
+                var parallelLightUBO = new ParallelLightUBO(parallelLights.get(i));
+                parallelLightUBO.update(device, parallelLightUBOMemory, i);
+            }
 
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);

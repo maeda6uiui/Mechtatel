@@ -10,6 +10,8 @@ import org.lwjgl.vulkan.VkDevice;
 
 import java.nio.ByteBuffer;
 
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_MAT4;
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_VEC4;
 import static org.lwjgl.vulkan.VK10.vkMapMemory;
 import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 
@@ -19,7 +21,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda
  */
 public class CameraUBO {
-    public static final int SIZEOF = (2 * 16 + 2 * 4) * Float.BYTES;
+    public static final int SIZEOF = 2 * SIZEOF_MAT4 + 2 * SIZEOF_VEC4;
 
     public Matrix4f view;
     public Matrix4f proj;
@@ -56,13 +58,10 @@ public class CameraUBO {
     }
 
     private void memcpy(ByteBuffer buffer) {
-        final int mat4Size = 16 * Float.BYTES;
-        final int vec4Size = 4 * Float.BYTES;
-
         view.get(0, buffer);
-        proj.get(mat4Size, buffer);
-        eye.get(mat4Size * 2, buffer);
-        center.get(mat4Size * 2 + vec4Size, buffer);
+        proj.get(SIZEOF_MAT4, buffer);
+        eye.get(SIZEOF_MAT4 * 2, buffer);
+        center.get(SIZEOF_MAT4 * 2 + SIZEOF_VEC4, buffer);
 
         buffer.rewind();
     }

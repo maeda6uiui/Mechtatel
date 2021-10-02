@@ -1,6 +1,8 @@
 #version 450
 #extension GL_ARB_separate_shader_objects:enable
 
+const int MAX_NUM_LIGHTS=4;
+
 layout(set=0,binding=0) uniform CameraUBO{
     mat4 view;
     mat4 proj;
@@ -8,7 +10,12 @@ layout(set=0,binding=0) uniform CameraUBO{
     vec3 eye;
     vec3 center;
 }camera;
-layout(set=0,binding=1) uniform ParallelLightUBO{
+layout(set=0,binding=1) uniform LightingInfoUBO{
+    vec3 lightingClampMin;
+    vec3 lightingClampMax;
+    int numLights;
+}lightingInfo;
+struct ParallelLight{
     vec3 direction;
     vec3 ambientColor;
     vec3 diffuseColor;
@@ -20,7 +27,10 @@ layout(set=0,binding=1) uniform ParallelLightUBO{
     vec3 specularClampMin;
     vec3 specularClampMax;
     float specularPowY;
-}light;
+};
+layout(set=0,binding=2) uniform ParallelLightUBOs{
+    ParallelLight lights[MAX_NUM_LIGHTS];
+};
 layout(set=1,binding=0) uniform texture2D albedoTexture;
 layout(set=1,binding=1) uniform texture2D depthTexture;
 layout(set=1,binding=2) uniform texture2D positionTexture;
@@ -38,15 +48,23 @@ void main(){
     vec3 normal=texture(sampler2D(normalTexture,textureSampler),fragTexCoords).rgb;
 
     vec3 cameraDirection=normalize(camera.center-camera.eye);
-    vec3 halfLE=-normalize(cameraDirection+light.direction);
 
-    float diffuseCoefficient=clamp(dot(normal,-light.direction),0.0,1.0);
-    float specularCoefficient=pow(clamp(dot(normal,halfLE),0.0,1.0),light.specularPowY);
+    vec3 lightingColor=vec3(0.0);
 
-    vec3 ambientColor=clamp(light.ambientColor,light.ambientClampMin,light.ambientClampMax);
-    vec3 diffuseColor=clamp(light.diffuseColor*diffuseCoefficient,light.diffuseClampMin,light.diffuseClampMax);
-    vec3 specularColor=clamp(light.specularColor*specularCoefficient,light.specularClampMin,light.specularClampMax);
-    vec3 postLightingColor=albedo.rgb*(ambientColor+diffuseColor+specularColor);
+    for(int i=0;i<min(lightingInfo.numLights,MAX_NUM_LIGHTS);i++){
+        vec3 halfLE=-normalize(cameraDirection+lights[i].direction);
+
+        float diffuseCoefficient=clamp(dot(normal,-lights[i].direction),0.0,1.0);
+        float specularCoefficient=pow(clamp(dot(normal,halfLE),0.0,1.0),lights[i].specularPowY);
+
+        vec3 ambientColor=clamp(lights[i].ambientColor,lights[i].ambientClampMin,lights[i].ambientClampMax);
+        vec3 diffuseColor=clamp(lights[i].diffuseColor*diffuseCoefficient,lights[i].diffuseClampMin,lights[i].diffuseClampMax);
+        vec3 specularColor=clamp(lights[i].specularColor*specularCoefficient,lights[i].specularClampMin,lights[i].specularClampMax);
+        lightingColor+=ambientColor+diffuseColor+specularColor;
+    }
+
+    lightingColor=clamp(lightingColor,lightingInfo.lightingClampMin,lightingInfo.lightingClampMax);
+    vec3 postLightingColor=albedo.rgb*lightingColor;
 
     outColor=vec4(postLightingColor,albedo.a);
 }

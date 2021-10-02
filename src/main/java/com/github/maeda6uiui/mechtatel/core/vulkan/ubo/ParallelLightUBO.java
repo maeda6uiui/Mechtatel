@@ -8,6 +8,8 @@ import org.lwjgl.vulkan.VkDevice;
 
 import java.nio.ByteBuffer;
 
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_VEC3;
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_VEC4;
 import static org.lwjgl.vulkan.VK10.vkMapMemory;
 import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 
@@ -17,7 +19,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda
  */
 public class ParallelLightUBO {
-    public static final int SIZEOF = (10 * 4 + 1 * 1) * Float.BYTES;
+    public static final int SIZEOF = 10 * SIZEOF_VEC4;
 
     private Vector3f direction;
     private Vector3f ambientColor;
@@ -60,28 +62,25 @@ public class ParallelLightUBO {
     }
 
     private void memcpy(ByteBuffer buffer) {
-        final int vec3Size = 3 * Float.BYTES;
-        final int vec4Size = 4 * Float.BYTES;
-
         direction.get(0, buffer);
-        ambientColor.get(vec4Size, buffer);
-        diffuseColor.get(vec4Size * 2, buffer);
-        specularColor.get(vec4Size * 3, buffer);
-        ambientClampMin.get(vec4Size * 4, buffer);
-        ambientClampMax.get(vec4Size * 5, buffer);
-        diffuseClampMin.get(vec4Size * 6, buffer);
-        diffuseClampMax.get(vec4Size * 7, buffer);
-        specularClampMin.get(vec4Size * 8, buffer);
-        specularClampMax.get(vec4Size * 9, buffer);
-        buffer.putFloat(vec4Size * 9 + vec3Size, specularPowY);
+        ambientColor.get(SIZEOF_VEC4, buffer);
+        diffuseColor.get(SIZEOF_VEC4 * 2, buffer);
+        specularColor.get(SIZEOF_VEC4 * 3, buffer);
+        ambientClampMin.get(SIZEOF_VEC4 * 4, buffer);
+        ambientClampMax.get(SIZEOF_VEC4 * 5, buffer);
+        diffuseClampMin.get(SIZEOF_VEC4 * 6, buffer);
+        diffuseClampMax.get(SIZEOF_VEC4 * 7, buffer);
+        specularClampMin.get(SIZEOF_VEC4 * 8, buffer);
+        specularClampMax.get(SIZEOF_VEC4 * 9, buffer);
+        buffer.putFloat(SIZEOF_VEC4 * 9 + SIZEOF_VEC3, specularPowY);
 
         buffer.rewind();
     }
 
-    public void update(VkDevice device, long uniformBufferMemory) {
+    public void update(VkDevice device, long uniformBufferMemory, int index) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             PointerBuffer data = stack.mallocPointer(1);
-            vkMapMemory(device, uniformBufferMemory, 0, SIZEOF, 0, data);
+            vkMapMemory(device, uniformBufferMemory, index * SIZEOF, SIZEOF, 0, data);
             {
                 this.memcpy(data.getByteBuffer(0, SIZEOF));
             }

@@ -136,12 +136,19 @@ class MttInstance {
         return parallelLights.get(index);
     }
 
-    public void removeParallelLight(int index) {
-        if (index == 0) {
+    public ParallelLight createParallelLight() {
+        var parallelLight = new ParallelLight();
+        parallelLights.add(parallelLight);
+
+        return parallelLight;
+    }
+
+    public void removeParallelLight(ParallelLight parallelLight) {
+        if (parallelLights.get(0) == parallelLight) {
             throw new RuntimeException("Default light cannot be removed");
         }
 
-        parallelLights.remove(index);
+        parallelLights.remove(parallelLight);
     }
 
     //=== Methods relating to components ===

@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.LightingInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.ParallelLightUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
 import org.lwjgl.system.MemoryStack;
@@ -22,6 +23,8 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 public class ShadingNabor extends PostProcessingNabor {
+    public static final int MAX_NUM_LIGHTS = 4;
+
     public ShadingNabor(VkDevice device) {
         super(device, VK_SAMPLE_COUNT_1_BIT);
     }
@@ -37,8 +40,15 @@ public class ShadingNabor extends PostProcessingNabor {
             this.getUniformBufferMemories().add(cameraUBOInfo.bufferMemory);
         }
 
+        var lightingInfoUBOInfos = BufferCreator.createUBOBuffers(
+                device, descriptorCount, LightingInfoUBO.SIZEOF);
+        for (var lightingInfoUBOInfo : lightingInfoUBOInfos) {
+            this.getUniformBuffers().add(lightingInfoUBOInfo.buffer);
+            this.getUniformBufferMemories().add(lightingInfoUBOInfo.bufferMemory);
+        }
+
         var parallelLightUBOInfos = BufferCreator.createUBOBuffers(
-                device, descriptorCount, ParallelLightUBO.SIZEOF);
+                device, descriptorCount, ParallelLightUBO.SIZEOF * MAX_NUM_LIGHTS);
         for (var parallelLightUBOInfo : parallelLightUBOInfos) {
             this.getUniformBuffers().add(parallelLightUBOInfo.buffer);
             this.getUniformBufferMemories().add(parallelLightUBOInfo.bufferMemory);
@@ -51,7 +61,7 @@ public class ShadingNabor extends PostProcessingNabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.callocStack(2, stack);
+            VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.callocStack(3, stack);
 
             VkDescriptorSetLayoutBinding cameraUBOLayoutBinding = uboBindings.get(0);
             cameraUBOLayoutBinding.binding(0);
@@ -60,9 +70,16 @@ public class ShadingNabor extends PostProcessingNabor {
             cameraUBOLayoutBinding.pImmutableSamplers(null);
             cameraUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            VkDescriptorSetLayoutBinding parallelLightUBOLayoutBinding = uboBindings.get(1);
-            parallelLightUBOLayoutBinding.binding(1);
-            parallelLightUBOLayoutBinding.descriptorCount(1);
+            VkDescriptorSetLayoutBinding lightingInfoUBOLayoutBinding = uboBindings.get(1);
+            lightingInfoUBOLayoutBinding.binding(1);
+            lightingInfoUBOLayoutBinding.descriptorCount(1);
+            lightingInfoUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            lightingInfoUBOLayoutBinding.pImmutableSamplers(null);
+            lightingInfoUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+
+            VkDescriptorSetLayoutBinding parallelLightUBOLayoutBinding = uboBindings.get(2);
+            parallelLightUBOLayoutBinding.binding(2);
+            parallelLightUBOLayoutBinding.descriptorCount(MAX_NUM_LIGHTS);
             parallelLightUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             parallelLightUBOLayoutBinding.pImmutableSamplers(null);
             parallelLightUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
@@ -144,15 +161,19 @@ public class ShadingNabor extends PostProcessingNabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.callocStack(2, stack);
+            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.callocStack(3, stack);
 
             VkDescriptorPoolSize cameraUBOPoolSize = uboPoolSizes.get(0);
             cameraUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             cameraUBOPoolSize.descriptorCount(descriptorCount);
 
-            VkDescriptorPoolSize parallelLightUBOPoolSize = uboPoolSizes.get(1);
+            VkDescriptorPoolSize lightingInfoUBOPoolSize = uboPoolSizes.get(1);
+            lightingInfoUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            lightingInfoUBOPoolSize.descriptorCount(descriptorCount);
+
+            VkDescriptorPoolSize parallelLightUBOPoolSize = uboPoolSizes.get(2);
             parallelLightUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            parallelLightUBOPoolSize.descriptorCount(descriptorCount);
+            parallelLightUBOPoolSize.descriptorCount(descriptorCount * MAX_NUM_LIGHTS);
 
             //=== set 1 ===
             VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.callocStack(4, stack);
@@ -261,10 +282,10 @@ public class ShadingNabor extends PostProcessingNabor {
             cameraUBOInfo.offset(0);
             cameraUBOInfo.range(CameraUBO.SIZEOF);
 
-            VkDescriptorBufferInfo parallelLightUBOInfo = uboInfos.get(1);
-            parallelLightUBOInfo.buffer(this.getUniformBuffer(1));
-            parallelLightUBOInfo.offset(0);
-            parallelLightUBOInfo.range(ParallelLightUBO.SIZEOF);
+            VkDescriptorBufferInfo lightingInfoUBOInfo = uboInfos.get(1);
+            lightingInfoUBOInfo.buffer(this.getUniformBuffer(1));
+            lightingInfoUBOInfo.offset(0);
+            lightingInfoUBOInfo.range(LightingInfoUBO.SIZEOF);
 
             VkWriteDescriptorSet uboDescriptorWrite = descriptorWrites.get(0);
             uboDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
@@ -273,6 +294,22 @@ public class ShadingNabor extends PostProcessingNabor {
             uboDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             uboDescriptorWrite.descriptorCount(2);
             uboDescriptorWrite.pBufferInfo(uboInfos);
+
+            VkWriteDescriptorSet.Buffer parallelLightUBODescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            VkDescriptorBufferInfo.Buffer parallelLightUBOInfos = VkDescriptorBufferInfo.callocStack(MAX_NUM_LIGHTS, stack);
+            for (int i = 0; i < MAX_NUM_LIGHTS; i++) {
+                VkDescriptorBufferInfo parallelLightUBOInfo = parallelLightUBOInfos.get(i);
+                parallelLightUBOInfo.buffer(this.getUniformBuffer(2));
+                parallelLightUBOInfo.offset(0);
+                parallelLightUBOInfo.range(ParallelLightUBO.SIZEOF);
+            }
+
+            parallelLightUBODescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            parallelLightUBODescriptorWrite.dstBinding(2);
+            parallelLightUBODescriptorWrite.dstArrayElement(0);
+            parallelLightUBODescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            parallelLightUBODescriptorWrite.descriptorCount(MAX_NUM_LIGHTS);
+            parallelLightUBODescriptorWrite.pBufferInfo(parallelLightUBOInfos);
 
             //=== set 1 ===
             VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.callocStack(4, stack);
@@ -309,8 +346,10 @@ public class ShadingNabor extends PostProcessingNabor {
                 uboDescriptorWrite.dstSet(descriptorSets.get(i));
                 imageDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount));
                 samplerDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount * 2));
-
                 vkUpdateDescriptorSets(device, descriptorWrites, null);
+
+                parallelLightUBODescriptorWrite.dstSet(descriptorSets.get(i));
+                vkUpdateDescriptorSets(device, parallelLightUBODescriptorWrite, null);
             }
 
             for (int i = 0; i < descriptorSets.size(); i++) {

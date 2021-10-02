@@ -8,6 +8,8 @@ import org.lwjgl.vulkan.VkDevice;
 
 import java.nio.ByteBuffer;
 
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_FLOAT;
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_VEC3;
 import static org.lwjgl.vulkan.VK10.vkMapMemory;
 import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 
@@ -17,7 +19,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda
  */
 public class FogUBO {
-    public static final int SIZEOF = (1 * 3 + 2 * 1) * Float.BYTES;
+    public static final int SIZEOF = 1 * SIZEOF_VEC3 + 2 * SIZEOF_FLOAT;
 
     private Vector3f color;
     private float start;
@@ -36,12 +38,9 @@ public class FogUBO {
     }
 
     private void memcpy(ByteBuffer buffer) {
-        final int vec3Size = 3 * Float.BYTES;
-        final int floatSize = Float.BYTES;
-
         color.get(0, buffer);
-        buffer.putFloat(vec3Size, start);
-        buffer.putFloat(vec3Size + floatSize, end);
+        buffer.putFloat(SIZEOF_VEC3, start);
+        buffer.putFloat(SIZEOF_VEC3 + SIZEOF_FLOAT, end);
 
         buffer.rewind();
     }

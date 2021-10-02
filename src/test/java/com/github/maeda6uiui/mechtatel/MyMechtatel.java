@@ -44,7 +44,7 @@ public class MyMechtatel extends Mechtatel {
         lightPosition = new Vector3f(100.0f, 100.0f, 100.0f);
         lightCenter = new Vector3f(0.0f, 0.0f, 0.0f);
         var lightDirection = lightCenter.sub(lightPosition).normalize();
-        this.getParallelLight().setDirection(lightDirection);
+        this.getParallelLight(0).setDirection(lightDirection);
 
         cameraPosition = new Vector3f(1.0f, 1.5f, 1.0f);
         cameraCenter = new Vector3f(0.0f, 0.5f, 0.0f);

@@ -317,14 +317,14 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         }
     }
 
-    private void runShadingNabor(Camera camera, ParallelLight parallelLight) {
+    private void runShadingNabor(Camera camera, List<ParallelLight> parallelLights) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             long cameraUBOMemory = shadingNabor.getUniformBufferMemory(0);
             var cameraUBO = new CameraUBO(camera);
             cameraUBO.update(device, cameraUBOMemory);
 
             long parallelLightUBOMemory = shadingNabor.getUniformBufferMemory(1);
-            var parallelLightUBO = new ParallelLightUBO(parallelLight);
+            var parallelLightUBO = new ParallelLightUBO(parallelLights.get(0));
             parallelLightUBO.update(device, parallelLightUBOMemory);
 
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
@@ -479,9 +479,9 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         }
     }
 
-    public void draw(Camera camera, ParallelLight parallelLight, Fog fog) {
+    public void draw(Camera camera, List<ParallelLight> parallelLights, Fog fog) {
         this.runGBufferNabor(camera);
-        this.runShadingNabor(camera, parallelLight);
+        this.runShadingNabor(camera, parallelLights);
         this.runFogNabor(camera, fog);
         this.presentToFrontScreen();
     }

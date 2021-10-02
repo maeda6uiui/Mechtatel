@@ -59,8 +59,8 @@ public class Mechtatel implements IMechtatel {
         return instance.getCamera();
     }
 
-    public ParallelLight getParallelLight() {
-        return instance.getParallelLight();
+    public ParallelLight getParallelLight(int index) {
+        return instance.getParallelLight(index);
     }
 
     public Fog getFog() {

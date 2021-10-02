@@ -8,6 +8,8 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -26,8 +28,8 @@ class MttInstance {
     private int fps;
 
     private Camera camera;
-    private ParallelLight parallelLight;
     private Fog fog;
+    private List<ParallelLight> parallelLights;
 
     private void framebufferResizeCallback(long window, int width, int height) {
         mtt.reshape(width, height);
@@ -72,8 +74,10 @@ class MttInstance {
         this.mtt = mtt;
 
         camera = new Camera();
-        parallelLight = new ParallelLight();
         fog = new Fog();
+
+        parallelLights = new ArrayList<>();
+        parallelLights.add(new ParallelLight());
 
         //Set initial aspect according to the framebuffer size
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -99,7 +103,7 @@ class MttInstance {
 
             if (elapsedTime >= 1.0 / fps) {
                 mtt.update();
-                vulkanInstance.draw(camera, parallelLight, fog);
+                vulkanInstance.draw(camera, parallelLights, fog);
 
                 lastTime = glfwGetTime();
             }
@@ -120,12 +124,24 @@ class MttInstance {
         return camera;
     }
 
-    public ParallelLight getParallelLight() {
-        return parallelLight;
-    }
-
     public Fog getFog() {
         return fog;
+    }
+
+    public int getNumParallelLights() {
+        return parallelLights.size();
+    }
+
+    public ParallelLight getParallelLight(int index) {
+        return parallelLights.get(index);
+    }
+
+    public void removeParallelLight(int index) {
+        if (index == 0) {
+            throw new RuntimeException("Default light cannot be removed");
+        }
+
+        parallelLights.remove(index);
     }
 
     //=== Methods relating to components ===

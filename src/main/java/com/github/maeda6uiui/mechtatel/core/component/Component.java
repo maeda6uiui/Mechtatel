@@ -63,6 +63,6 @@ public class Component {
     }
 
     public void cleanup() {
-        vulkanInstance.deleteComponent(vkComponent);
+        vulkanInstance.removeComponent(vkComponent);
     }
 }

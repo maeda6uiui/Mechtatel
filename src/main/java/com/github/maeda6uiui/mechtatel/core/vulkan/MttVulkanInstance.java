@@ -488,7 +488,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
     //=== Methods relating to components ===
     @Override
-    public boolean deleteComponent(VkComponent component) {
+    public boolean removeComponent(VkComponent component) {
         if (!components.contains(component)) {
             return false;
         }

@@ -370,8 +370,8 @@ public class ParallelLightNabor extends PostProcessingNabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/Shading/shading.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/Shading/shading.frag";
+            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/parallel_light.vert";
+            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/parallel_light.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

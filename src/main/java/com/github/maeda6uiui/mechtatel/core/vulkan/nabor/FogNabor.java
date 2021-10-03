@@ -331,8 +331,8 @@ public class FogNabor extends PostProcessingNabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/Fog/fog.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/Fog/fog.frag";
+            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/fog.vert";
+            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/fog.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

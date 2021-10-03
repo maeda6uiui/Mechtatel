@@ -6,6 +6,8 @@ import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.ParallelLightNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.SpotlightNabor;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
@@ -188,6 +190,11 @@ class MttInstance {
     }
 
     public ParallelLight createParallelLight() {
+        if (parallelLights.size() >= ParallelLightNabor.MAX_NUM_LIGHTS) {
+            String msg = String.format("Cannot create more than %d lights", ParallelLightNabor.MAX_NUM_LIGHTS);
+            throw new RuntimeException(msg);
+        }
+
         var parallelLight = new ParallelLight();
         parallelLights.add(parallelLight);
 
@@ -211,6 +218,11 @@ class MttInstance {
     }
 
     public Spotlight createSpotlight() {
+        if (spotlights.size() >= SpotlightNabor.MAX_NUM_LIGHTS) {
+            String msg = String.format("Cannot create more than %d lights", SpotlightNabor.MAX_NUM_LIGHTS);
+            throw new RuntimeException(msg);
+        }
+
         var spotlight = new Spotlight();
         spotlights.add(spotlight);
 

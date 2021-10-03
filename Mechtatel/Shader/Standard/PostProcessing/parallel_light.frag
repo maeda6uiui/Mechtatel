@@ -49,7 +49,7 @@ void main(){
 
     vec3 lightingColor=lightingInfo.ambientColor;
 
-    for(int i=0;i<min(lightingInfo.numLights,MAX_NUM_LIGHTS);i++){
+    for(int i=0;i<lightingInfo.numLights;i++){
         vec3 halfLE=-normalize(cameraDirection+lights[i].direction);
 
         float diffuseCoefficient=clamp(dot(normal,-lights[i].direction),0.0,1.0);

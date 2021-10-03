@@ -24,6 +24,34 @@ Mechtatel (露: Мечтатель 英: Dreamer)
 
 ## 報告
 
+### 2021-10-03
+
+スポットライトを実装しました。
+
+<img src="./Image/spotlights.jpg" alt="Spotlights" style="zoom:50%;" />
+
+Post Processing用のNaborを接続するのは比較的簡単にできるようになりました。
+ユーザが書くコードとしては、以下のような感じになります。
+
+```java
+var ppNaborNames = new ArrayList<String>();
+ppNaborNames.add("spotlight");
+this.createPostProcessingNabors(ppNaborNames);
+```
+
+上の画像ではSpotlight用のNaborしか使用していないのでこのようなコードになりますが、たとえば、Parallel LightをかけてからFogをかけるなら、
+
+```java
+var ppNaborNames = new ArrayList<String>();
+ppNaborNames.add("parallel_light");
+ppNaborNames.add("fog");
+this.createPostProcessingNabors(ppNaborNames);
+```
+
+というようにすればいいだけです。
+
+次は点光源とシャドウマッピングを実装していきたいと思います。
+
 ### 2021-09-26
 
 フォグを実装しました。
@@ -83,7 +111,7 @@ VulkanのSubpassあたりを使えば実装できるのかなと考えていま�
 描画結果はこれまでと同じですが、それを実現するコードの方に進歩があったと思います。
 ユーザはMechtatelクラスを継承して自身のクラスを作成し、そのinit()、dispose()、reshape()、update()という四つのメソッド内に処理を記述します。
 
-```Java
+```java
 package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;

@@ -5,6 +5,8 @@ import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +56,30 @@ public class Mechtatel implements IMechtatel {
     @Override
     public void update() {
 
+    }
+
+    public Vector4f getBackgroundColor() {
+        return instance.getBackgroundColor();
+    }
+
+    public void setBackgroundColor(Vector4f backgroundColor) {
+        instance.setBackgroundColor(backgroundColor);
+    }
+
+    public Vector3f getParallelLightAmbientColor() {
+        return instance.getParallelLightAmbientColor();
+    }
+
+    public void setParallelLightAmbientColor(Vector3f parallelLightAmbientColor) {
+        instance.setParallelLightAmbientColor(parallelLightAmbientColor);
+    }
+
+    public Vector3f getSpotlightAmbientColor() {
+        return instance.getSpotlightAmbientColor();
+    }
+
+    public void setSpotlightAmbientColor(Vector3f spotlightAmbientColor) {
+        instance.setSpotlightAmbientColor(spotlightAmbientColor);
     }
 
     public Camera getCamera() {

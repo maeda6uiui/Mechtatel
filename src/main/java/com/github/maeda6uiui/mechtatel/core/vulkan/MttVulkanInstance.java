@@ -490,6 +490,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 colorImageView = lastPPNabor.getColorImageView();
             }
 
+            lastPPNabor = null;
+
             var commandBuffers
                     = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchain.getNumSwapchainImages());
 

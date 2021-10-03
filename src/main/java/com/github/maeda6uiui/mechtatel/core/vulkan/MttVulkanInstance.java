@@ -18,6 +18,8 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.util.MultisamplingUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.PhysicalDevicePicker;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.PointerBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
@@ -270,7 +272,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         this.createSwapchainObjects();
     }
 
-    private void runGBufferNabor(Camera camera) {
+    private void runGBufferNabor(Vector4f backgroundColor, Camera camera) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             long cameraUBOMemory = gBufferNabor.getUniformBufferMemory(0);
             var cameraUBO = new CameraUBO(camera);
@@ -288,7 +290,12 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             renderArea.extent(gBufferNabor.getExtent());
             renderPassInfo.renderArea(renderArea);
             VkClearValue.Buffer clearValues = VkClearValue.callocStack(4, stack);
-            clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
+            clearValues.get(0).color().float32(
+                    stack.floats(
+                            backgroundColor.x,
+                            backgroundColor.y,
+                            backgroundColor.z,
+                            backgroundColor.w));
             clearValues.get(1).depthStencil().set(1.0f, 0);
             clearValues.get(2).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             clearValues.get(3).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
@@ -335,6 +342,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private void runShadingNabor(
             Camera camera,
             List<ParallelLight> parallelLights,
+            Vector3f ambientColor,
             PostProcessingNabor ppNabor) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             long cameraUBOMemory = shadingNabor.getUniformBufferMemory(0);
@@ -343,6 +351,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
             var lightingInfo = new LightingInfo();
             lightingInfo.setNumLights(parallelLights.size());
+            lightingInfo.setAmbientColor(ambientColor);
 
             long lightingInfoUBOMemory = shadingNabor.getUniformBufferMemory(1);
             var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
@@ -410,6 +419,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private void runSpotlightNabor(
             Camera camera,
             List<Spotlight> spotlights,
+            Vector3f ambientColor,
             PostProcessingNabor ppNabor) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             long cameraUBOMemory = spotlightNabor.getUniformBufferMemory(0);
@@ -418,6 +428,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
             var lightingInfo = new LightingInfo();
             lightingInfo.setNumLights(spotlights.size());
+            lightingInfo.setAmbientColor(ambientColor);
 
             long lightingInfoUBOMemory = spotlightNabor.getUniformBufferMemory(1);
             var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
@@ -613,13 +624,16 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     }
 
     public void draw(
+            Vector4f backgroundColor,
             Camera camera,
             List<ParallelLight> parallelLights,
+            Vector3f parallelLightAmbientColor,
             List<Spotlight> spotlights,
+            Vector3f spotlightAmbientColor,
             Fog fog) {
-        this.runGBufferNabor(camera);
-        this.runShadingNabor(camera, parallelLights, null);
-        this.runSpotlightNabor(camera, spotlights, shadingNabor);
+        this.runGBufferNabor(backgroundColor, camera);
+        this.runShadingNabor(camera, parallelLights, parallelLightAmbientColor, null);
+        this.runSpotlightNabor(camera, spotlights, spotlightAmbientColor, shadingNabor);
         this.runFogNabor(camera, fog, spotlightNabor);
         this.presentToFrontScreen(fogNabor);
     }

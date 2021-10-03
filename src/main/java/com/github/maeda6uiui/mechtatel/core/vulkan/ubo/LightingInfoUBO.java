@@ -8,7 +8,8 @@ import org.lwjgl.vulkan.VkDevice;
 
 import java.nio.ByteBuffer;
 
-import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.*;
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_VEC3;
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_VEC4;
 import static org.lwjgl.vulkan.VK10.vkMapMemory;
 import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 
@@ -18,22 +19,25 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda
  */
 public class LightingInfoUBO {
-    public static final int SIZEOF = SIZEOF_VEC4 + SIZEOF_VEC3 + SIZEOF_INT;
+    public static final int SIZEOF = 3 * SIZEOF_VEC4;
 
+    private Vector3f ambientColor;
     private Vector3f lightingClampMin;
     private Vector3f lightingClampMax;
     private int numLights;
 
     public LightingInfoUBO(LightingInfo lightingInfo) {
+        ambientColor = lightingInfo.getAmbientColor();
         lightingClampMin = lightingInfo.getLightingClampMin();
         lightingClampMax = lightingInfo.getLightingClampMax();
         numLights = lightingInfo.getNumLights();
     }
 
     private void memcpy(ByteBuffer buffer) {
-        lightingClampMin.get(0, buffer);
-        lightingClampMax.get(SIZEOF_VEC4, buffer);
-        buffer.putInt(SIZEOF_VEC4 + SIZEOF_VEC3, numLights);
+        ambientColor.get(0, buffer);
+        lightingClampMin.get(SIZEOF_VEC4, buffer);
+        lightingClampMax.get(SIZEOF_VEC4 * 2, buffer);
+        buffer.putInt(SIZEOF_VEC4 * 2 + SIZEOF_VEC3, numLights);
 
         buffer.rewind();
     }

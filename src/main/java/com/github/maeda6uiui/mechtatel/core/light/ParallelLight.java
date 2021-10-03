@@ -9,11 +9,8 @@ import org.joml.Vector3f;
  */
 public class ParallelLight {
     private Vector3f direction;
-    private Vector3f ambientColor;
     private Vector3f diffuseColor;
     private Vector3f specularColor;
-    private Vector3f ambientClampMin;
-    private Vector3f ambientClampMax;
     private Vector3f diffuseClampMin;
     private Vector3f diffuseClampMax;
     private Vector3f specularClampMin;
@@ -22,16 +19,13 @@ public class ParallelLight {
 
     public ParallelLight() {
         direction = new Vector3f(-1.0f, -1.0f, -1.0f).normalize();
-        ambientColor = new Vector3f(1.0f, 1.0f, 1.0f);
         diffuseColor = new Vector3f(1.0f, 1.0f, 1.0f);
         specularColor = new Vector3f(1.0f, 1.0f, 1.0f);
-        ambientClampMin = new Vector3f(0.0f, 0.0f, 0.0f);
-        ambientClampMax = new Vector3f(0.4f, 0.4f, 0.4f);
         diffuseClampMin = new Vector3f(0.0f, 0.0f, 0.0f);
-        diffuseClampMax = new Vector3f(0.3f, 0.3f, 0.3f);
+        diffuseClampMax = new Vector3f(0.7f, 0.7f, 0.7f);
         specularClampMin = new Vector3f(0.0f, 0.0f, 0.0f);
         specularClampMax = new Vector3f(0.3f, 0.3f, 0.3f);
-        specularPowY = 3.0f;
+        specularPowY = 2.0f;
     }
 
     public Vector3f getDirection() {
@@ -40,14 +34,6 @@ public class ParallelLight {
 
     public void setDirection(Vector3f direction) {
         this.direction = direction.normalize();
-    }
-
-    public Vector3f getAmbientColor() {
-        return ambientColor;
-    }
-
-    public void setAmbientColor(Vector3f ambientColor) {
-        this.ambientColor = ambientColor;
     }
 
     public Vector3f getDiffuseColor() {
@@ -64,22 +50,6 @@ public class ParallelLight {
 
     public void setSpecularColor(Vector3f specularColor) {
         this.specularColor = specularColor;
-    }
-
-    public Vector3f getAmbientClampMin() {
-        return ambientClampMin;
-    }
-
-    public void setAmbientClampMin(Vector3f ambientClampMin) {
-        this.ambientClampMin = ambientClampMin;
-    }
-
-    public Vector3f getAmbientClampMax() {
-        return ambientClampMax;
-    }
-
-    public void setAmbientClampMax(Vector3f ambientClampMax) {
-        this.ambientClampMax = ambientClampMax;
     }
 
     public Vector3f getDiffuseClampMin() {

@@ -11,6 +11,7 @@ layout(set=0,binding=0) uniform CameraUBO{
     vec3 center;
 }camera;
 layout(set=0,binding=1) uniform LightingInfoUBO{
+    vec3 ambientColor;
     vec3 lightingClampMin;
     vec3 lightingClampMax;
     int numLights;
@@ -53,7 +54,7 @@ void main(){
 
     vec3 cameraDirection=normalize(camera.center-camera.eye);
 
-    vec3 lightingColor=vec3(0.0);
+    vec3 lightingColor=lightingInfo.ambientColor;
 
     for(int i=0;i<min(lightingInfo.numLights,MAX_NUM_LIGHTS);i++){
         vec3 r=position-lights[i].position;

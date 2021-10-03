@@ -6,6 +6,8 @@ import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
@@ -28,10 +30,14 @@ class MttInstance {
 
     private int fps;
 
+    private Vector4f backgroundColor;
+    private Vector3f parallelLightAmbientColor;
+    private Vector3f spotlightAmbientColor;
+
     private Camera camera;
-    private Fog fog;
     private List<ParallelLight> parallelLights;
     private List<Spotlight> spotlights;
+    private Fog fog;
 
     private void framebufferResizeCallback(long window, int width, int height) {
         mtt.reshape(width, height);
@@ -75,13 +81,18 @@ class MttInstance {
 
         this.mtt = mtt;
 
+        backgroundColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+        parallelLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
+        spotlightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
+
         camera = new Camera();
-        fog = new Fog();
 
         parallelLights = new ArrayList<>();
         parallelLights.add(new ParallelLight());
 
         spotlights = new ArrayList<>();
+
+        fog = new Fog();
 
         //Set initial aspect according to the framebuffer size
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -107,7 +118,14 @@ class MttInstance {
 
             if (elapsedTime >= 1.0 / fps) {
                 mtt.update();
-                vulkanInstance.draw(camera, parallelLights, spotlights, fog);
+                vulkanInstance.draw(
+                        backgroundColor,
+                        camera,
+                        parallelLights,
+                        parallelLightAmbientColor,
+                        spotlights,
+                        spotlightAmbientColor,
+                        fog);
 
                 lastTime = glfwGetTime();
             }
@@ -122,6 +140,30 @@ class MttInstance {
 
         glfwDestroyWindow(window);
         glfwTerminate();
+    }
+
+    public Vector4f getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(Vector4f backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public Vector3f getParallelLightAmbientColor() {
+        return parallelLightAmbientColor;
+    }
+
+    public void setParallelLightAmbientColor(Vector3f parallelLightAmbientColor) {
+        this.parallelLightAmbientColor = parallelLightAmbientColor;
+    }
+
+    public Vector3f getSpotlightAmbientColor() {
+        return spotlightAmbientColor;
+    }
+
+    public void setSpotlightAmbientColor(Vector3f spotlightAmbientColor) {
+        this.spotlightAmbientColor = spotlightAmbientColor;
     }
 
     public Camera getCamera() {

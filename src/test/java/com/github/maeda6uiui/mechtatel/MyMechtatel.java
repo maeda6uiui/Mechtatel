@@ -51,7 +51,6 @@ public class MyMechtatel extends Mechtatel {
 
         ParallelLight defaultLight = this.getParallelLight(0);
         defaultLight.setDirection(lightDirection);
-        defaultLight.setAmbientClampMax(new Vector3f(1.0f, 1.0f, 1.0f));
         defaultLight.setDiffuseClampMax(new Vector3f(0.0f, 0.0f, 0.0f));
         defaultLight.setSpecularClampMax(new Vector3f(0.0f, 0.0f, 0.0f));
 

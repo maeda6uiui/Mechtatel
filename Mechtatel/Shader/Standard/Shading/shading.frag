@@ -11,17 +11,15 @@ layout(set=0,binding=0) uniform CameraUBO{
     vec3 center;
 }camera;
 layout(set=0,binding=1) uniform LightingInfoUBO{
+    vec3 ambientColor;
     vec3 lightingClampMin;
     vec3 lightingClampMax;
     int numLights;
 }lightingInfo;
 struct ParallelLight{
     vec3 direction;
-    vec3 ambientColor;
     vec3 diffuseColor;
     vec3 specularColor;
-    vec3 ambientClampMin;
-    vec3 ambientClampMax;
     vec3 diffuseClampMin;
     vec3 diffuseClampMax;
     vec3 specularClampMin;
@@ -49,7 +47,7 @@ void main(){
 
     vec3 cameraDirection=normalize(camera.center-camera.eye);
 
-    vec3 lightingColor=vec3(0.0);
+    vec3 lightingColor=lightingInfo.ambientColor;
 
     for(int i=0;i<min(lightingInfo.numLights,MAX_NUM_LIGHTS);i++){
         vec3 halfLE=-normalize(cameraDirection+lights[i].direction);
@@ -57,10 +55,9 @@ void main(){
         float diffuseCoefficient=clamp(dot(normal,-lights[i].direction),0.0,1.0);
         float specularCoefficient=pow(clamp(dot(normal,halfLE),0.0,1.0),lights[i].specularPowY);
 
-        vec3 ambientColor=clamp(lights[i].ambientColor,lights[i].ambientClampMin,lights[i].ambientClampMax);
         vec3 diffuseColor=clamp(lights[i].diffuseColor*diffuseCoefficient,lights[i].diffuseClampMin,lights[i].diffuseClampMax);
         vec3 specularColor=clamp(lights[i].specularColor*specularCoefficient,lights[i].specularClampMin,lights[i].specularClampMax);
-        lightingColor+=ambientColor+diffuseColor+specularColor;
+        lightingColor+=diffuseColor+specularColor;
     }
 
     lightingColor=clamp(lightingColor,lightingInfo.lightingClampMin,lightingInfo.lightingClampMax);

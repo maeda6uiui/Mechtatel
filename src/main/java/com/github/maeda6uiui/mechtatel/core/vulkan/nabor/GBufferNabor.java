@@ -2,7 +2,6 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.TextureSamplerCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
@@ -26,8 +25,6 @@ import static org.lwjgl.vulkan.VK10.*;
 public class GBufferNabor extends Nabor {
     public static final int MAX_NUM_TEXTURES = 128;
 
-    private long textureSampler;
-
     private int depthImageFormat;
     private int positionImageFormat;
     private int normalImageFormat;
@@ -44,15 +41,9 @@ public class GBufferNabor extends Nabor {
     public GBufferNabor(VkDevice device, int positionImageFormat, int normalImageFormat) {
         super(device, VK_SAMPLE_COUNT_1_BIT);
 
-        textureSampler = TextureSamplerCreator.createTextureSampler(device);
-
         this.depthImageFormat = DepthResourceUtils.findDepthFormat(device);
         this.positionImageFormat = positionImageFormat;
         this.normalImageFormat = normalImageFormat;
-    }
-
-    public long getTextureSampler() {
-        return textureSampler;
     }
 
     public int getDepthImageFormat() {
@@ -65,14 +56,6 @@ public class GBufferNabor extends Nabor {
 
     public int getNormalImageFormat() {
         return normalImageFormat;
-    }
-
-    public long getAlbedoImage() {
-        return this.getImage(albedoAttachmentIndex);
-    }
-
-    public long getAlbedoImageView() {
-        return this.getImageView(albedoAttachmentIndex);
     }
 
     public void transitionAlbedoImage(long commandPool, VkQueue graphicsQueue) {
@@ -90,12 +73,8 @@ public class GBufferNabor extends Nabor {
                 1);
     }
 
-    public long getDepthImage() {
-        return this.getImage(depthAttachmentIndex);
-    }
-
-    public long getDepthImageView() {
-        return this.getImageView(depthAttachmentIndex);
+    public long getAlbedoImageView() {
+        return this.getImageView(albedoAttachmentIndex);
     }
 
     public void transitionDepthImage(long commandPool, VkQueue graphicsQueue) {
@@ -113,12 +92,8 @@ public class GBufferNabor extends Nabor {
                 1);
     }
 
-    public long getPositionImage() {
-        return this.getImage(positionAttachmentIndex);
-    }
-
-    public long getPositionImageView() {
-        return this.getImageView(positionAttachmentIndex);
+    public long getDepthImageView() {
+        return this.getImageView(depthAttachmentIndex);
     }
 
     public void transitionPositionImage(long commandPool, VkQueue graphicsQueue) {
@@ -136,12 +111,8 @@ public class GBufferNabor extends Nabor {
                 1);
     }
 
-    public long getNormalImage() {
-        return this.getImage(normalAttachmentIndex);
-    }
-
-    public long getNormalImageView() {
-        return this.getImageView(normalAttachmentIndex);
+    public long getPositionImageView() {
+        return this.getImageView(positionAttachmentIndex);
     }
 
     public void transitionNormalImage(long commandPool, VkQueue graphicsQueue) {
@@ -159,6 +130,10 @@ public class GBufferNabor extends Nabor {
                 1);
     }
 
+    public long getNormalImageView() {
+        return this.getImageView(normalAttachmentIndex);
+    }
+
     @Override
     public void cleanup(boolean reserveForRecreation) {
         super.cleanup(reserveForRecreation);
@@ -166,8 +141,6 @@ public class GBufferNabor extends Nabor {
         VkDevice device = this.getDevice();
 
         if (!reserveForRecreation) {
-            vkDestroySampler(device, textureSampler, null);
-
             vkDestroyImage(device, dummyImage, null);
             vkFreeMemory(device, dummyImageMemory, null);
             vkDestroyImageView(device, dummyImageView, null);
@@ -187,7 +160,7 @@ public class GBufferNabor extends Nabor {
     }
 
     @Override
-    protected void createRenderPass(int albedoImageFormat) {
+    protected void createRenderPass(int colorImageFormat) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
             int msaaSamples = this.getMsaaSamples();
@@ -199,7 +172,7 @@ public class GBufferNabor extends Nabor {
             albedoAttachmentIndex = 0;
 
             VkAttachmentDescription colorAttachment = attachments.get(albedoAttachmentIndex);
-            colorAttachment.format(albedoImageFormat);
+            colorAttachment.format(colorImageFormat);
             colorAttachment.samples(msaaSamples);
             colorAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
             colorAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
@@ -314,14 +287,14 @@ public class GBufferNabor extends Nabor {
             cameraUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
 
             //=== set 1 ===
-            VkDescriptorSetLayoutBinding.Buffer textureBindings = VkDescriptorSetLayoutBinding.callocStack(1, stack);
+            VkDescriptorSetLayoutBinding.Buffer imageBindings = VkDescriptorSetLayoutBinding.callocStack(1, stack);
 
-            VkDescriptorSetLayoutBinding textureLayoutBinding = textureBindings.get(0);
-            textureLayoutBinding.binding(0);
-            textureLayoutBinding.descriptorCount(MAX_NUM_TEXTURES);
-            textureLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            textureLayoutBinding.pImmutableSamplers(null);
-            textureLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+            VkDescriptorSetLayoutBinding imageLayoutBinding = imageBindings.get(0);
+            imageLayoutBinding.binding(0);
+            imageLayoutBinding.descriptorCount(MAX_NUM_TEXTURES);
+            imageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            imageLayoutBinding.pImmutableSamplers(null);
+            imageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 2 ===
             VkDescriptorSetLayoutBinding.Buffer samplerBindings = VkDescriptorSetLayoutBinding.callocStack(1, stack);
@@ -342,9 +315,9 @@ public class GBufferNabor extends Nabor {
             uboLayoutInfo.pBindings(uboBindings);
 
             //=== set 1 ===
-            VkDescriptorSetLayoutCreateInfo textureLayoutInfo = layoutInfos.get(1);
-            textureLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
-            textureLayoutInfo.pBindings(textureBindings);
+            VkDescriptorSetLayoutCreateInfo imageLayoutInfo = layoutInfos.get(1);
+            imageLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            imageLayoutInfo.pBindings(imageBindings);
 
             //=== set 2 ===
             VkDescriptorSetLayoutCreateInfo samplerLayoutInfo = layoutInfos.get(2);
@@ -376,11 +349,11 @@ public class GBufferNabor extends Nabor {
             cameraUBOPoolSize.descriptorCount(descriptorCount);
 
             //=== set 1 ===
-            VkDescriptorPoolSize.Buffer texturePoolSizes = VkDescriptorPoolSize.callocStack(1, stack);
+            VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.callocStack(1, stack);
 
-            VkDescriptorPoolSize texturePoolSize = texturePoolSizes.get(0);
-            texturePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            texturePoolSize.descriptorCount(descriptorCount * MAX_NUM_TEXTURES);
+            VkDescriptorPoolSize imagePoolSize = imagePoolSizes.get(0);
+            imagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            imagePoolSize.descriptorCount(descriptorCount * MAX_NUM_TEXTURES);
 
             //=== set 2 ===
             VkDescriptorPoolSize.Buffer samplerPoolSizes = VkDescriptorPoolSize.callocStack(1, stack);
@@ -399,10 +372,10 @@ public class GBufferNabor extends Nabor {
             uboPoolInfo.maxSets(descriptorCount);
 
             //=== set 1 ===
-            VkDescriptorPoolCreateInfo texturePoolInfo = poolInfos.get(1);
-            texturePoolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
-            texturePoolInfo.pPoolSizes(texturePoolSizes);
-            texturePoolInfo.maxSets(descriptorCount);
+            VkDescriptorPoolCreateInfo imagePoolInfo = poolInfos.get(1);
+            imagePoolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
+            imagePoolInfo.pPoolSizes(imagePoolSizes);
+            imagePoolInfo.maxSets(descriptorCount);
 
             //=== set 2 ===
             VkDescriptorPoolCreateInfo samplerPoolInfo = poolInfos.get(2);
@@ -516,6 +489,7 @@ public class GBufferNabor extends Nabor {
             VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.callocStack(1, stack);
 
             VkDescriptorBufferInfo cameraUBOInfo = uboInfos.get(0);
+            cameraUBOInfo.buffer(this.getUniformBuffer(0));
             cameraUBOInfo.offset(0);
             cameraUBOInfo.range(CameraUBO.SIZEOF);
 
@@ -538,20 +512,20 @@ public class GBufferNabor extends Nabor {
                 imageInfo.imageView(dummyImageView);
             }
 
-            VkWriteDescriptorSet textureDescriptorWrite = descriptorWrites.get(1);
-            textureDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            textureDescriptorWrite.dstBinding(0);
-            textureDescriptorWrite.dstArrayElement(0);
-            textureDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            textureDescriptorWrite.descriptorCount(MAX_NUM_TEXTURES);
-            textureDescriptorWrite.pImageInfo(imageInfos);
+            VkWriteDescriptorSet imageDescriptorWrite = descriptorWrites.get(1);
+            imageDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            imageDescriptorWrite.dstBinding(0);
+            imageDescriptorWrite.dstArrayElement(0);
+            imageDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            imageDescriptorWrite.descriptorCount(MAX_NUM_TEXTURES);
+            imageDescriptorWrite.pImageInfo(imageInfos);
 
             //=== set 2 ===
             VkDescriptorImageInfo.Buffer samplerInfos = VkDescriptorImageInfo.callocStack(1, stack);
 
             VkDescriptorImageInfo samplerInfo = samplerInfos.get(0);
             samplerInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            samplerInfo.sampler(textureSampler);
+            samplerInfo.sampler(this.getTextureSampler(0));
 
             VkWriteDescriptorSet samplerDescriptorWrite = descriptorWrites.get(2);
             samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
@@ -562,11 +536,9 @@ public class GBufferNabor extends Nabor {
             samplerDescriptorWrite.pImageInfo(samplerInfos);
 
             for (int i = 0; i < descriptorCount; i++) {
-                uboInfos.buffer(this.getUniformBuffer(i));
-
-                uboDescriptorWrite.dstSet(descriptorSets.get(i * setCount));
-                textureDescriptorWrite.dstSet(descriptorSets.get(i * setCount + 1));
-                samplerDescriptorWrite.dstSet(descriptorSets.get(i * setCount + 2));
+                uboDescriptorWrite.dstSet(descriptorSets.get(i));
+                imageDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount));
+                samplerDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount * 2));
 
                 vkUpdateDescriptorSets(device, descriptorWrites, null);
             }
@@ -589,8 +561,8 @@ public class GBufferNabor extends Nabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/3d_texture.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/3d_texture.frag";
+            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/GBuffer/gbuffer.vert";
+            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/GBuffer/gbuffer.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;
@@ -776,7 +748,7 @@ public class GBufferNabor extends Nabor {
     protected void createImages(
             long commandPool,
             VkQueue graphicsQueue,
-            int albedoImageFormat) {
+            int colorImageFormat) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
             int msaaSamples = this.getMsaaSamples();
@@ -793,7 +765,7 @@ public class GBufferNabor extends Nabor {
                     extent.height(),
                     1,
                     msaaSamples,
-                    albedoImageFormat,
+                    colorImageFormat,
                     VK_IMAGE_TILING_OPTIMAL,
                     VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -806,7 +778,7 @@ public class GBufferNabor extends Nabor {
             viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
             viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
             viewInfo.image(albedoImage);
-            viewInfo.format(albedoImageFormat);
+            viewInfo.format(colorImageFormat);
             viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
             viewInfo.subresourceRange().baseMipLevel(0);
             viewInfo.subresourceRange().levelCount(1);

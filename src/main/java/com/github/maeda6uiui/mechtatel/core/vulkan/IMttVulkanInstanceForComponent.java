@@ -8,5 +8,5 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
  * @author maeda
  */
 public interface IMttVulkanInstanceForComponent {
-    public boolean deleteComponent(VkComponent component);
+    public boolean removeComponent(VkComponent component);
 }

@@ -2,14 +2,22 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
+import com.github.maeda6uiui.mechtatel.core.fog.Fog;
+import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
+import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.ParallelLightNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.SpotlightNabor;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
-import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_2_BIT;
 
 /**
  * Provides abstraction of the low-level operations
@@ -23,7 +31,14 @@ class MttInstance {
 
     private int fps;
 
+    private Vector4f backgroundColor;
+    private Vector3f parallelLightAmbientColor;
+    private Vector3f spotlightAmbientColor;
+
     private Camera camera;
+    private Fog fog;
+    private List<ParallelLight> parallelLights;
+    private List<Spotlight> spotlights;
 
     private void framebufferResizeCallback(long window, int width, int height) {
         mtt.reshape(width, height);
@@ -61,13 +76,23 @@ class MttInstance {
 
         glfwSetFramebufferSizeCallback(window, this::framebufferResizeCallback);
 
-        vulkanInstance = new MttVulkanInstance(true, window, VK_SAMPLE_COUNT_2_BIT);
+        vulkanInstance = new MttVulkanInstance(
+                true,
+                window,
+                -1);
 
         this.fps = settings.systemSettings.fps;
 
         this.mtt = mtt;
 
+        backgroundColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+        parallelLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
+        spotlightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
+
         camera = new Camera();
+        fog = new Fog();
+        parallelLights = new ArrayList<>();
+        spotlights = new ArrayList<>();
 
         //Set initial aspect according to the framebuffer size
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -93,7 +118,14 @@ class MttInstance {
 
             if (elapsedTime >= 1.0 / fps) {
                 mtt.update();
-                vulkanInstance.draw(camera);
+                vulkanInstance.draw(
+                        backgroundColor,
+                        camera,
+                        fog,
+                        parallelLights,
+                        parallelLightAmbientColor,
+                        spotlights,
+                        spotlightAmbientColor);
 
                 lastTime = glfwGetTime();
             }
@@ -110,8 +142,88 @@ class MttInstance {
         glfwTerminate();
     }
 
+    public void createPostProcessingNabors(List<String> naborNames) {
+        vulkanInstance.createPostProcessingNabors(naborNames);
+    }
+
+    public Vector4f getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(Vector4f backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public Vector3f getParallelLightAmbientColor() {
+        return parallelLightAmbientColor;
+    }
+
+    public void setParallelLightAmbientColor(Vector3f parallelLightAmbientColor) {
+        this.parallelLightAmbientColor = parallelLightAmbientColor;
+    }
+
+    public Vector3f getSpotlightAmbientColor() {
+        return spotlightAmbientColor;
+    }
+
+    public void setSpotlightAmbientColor(Vector3f spotlightAmbientColor) {
+        this.spotlightAmbientColor = spotlightAmbientColor;
+    }
+
     public Camera getCamera() {
         return camera;
+    }
+
+    public Fog getFog() {
+        return fog;
+    }
+
+    public int getNumParallelLights() {
+        return parallelLights.size();
+    }
+
+    public ParallelLight getParallelLight(int index) {
+        return parallelLights.get(index);
+    }
+
+    public ParallelLight createParallelLight() {
+        if (parallelLights.size() >= ParallelLightNabor.MAX_NUM_LIGHTS) {
+            String msg = String.format("Cannot create more than %d lights", ParallelLightNabor.MAX_NUM_LIGHTS);
+            throw new RuntimeException(msg);
+        }
+
+        var parallelLight = new ParallelLight();
+        parallelLights.add(parallelLight);
+
+        return parallelLight;
+    }
+
+    public boolean removeParallelLight(ParallelLight parallelLight) {
+        return parallelLights.remove(parallelLight);
+    }
+
+    public int getNumSpotlights() {
+        return spotlights.size();
+    }
+
+    public Spotlight getSpotlight(int index) {
+        return spotlights.get(index);
+    }
+
+    public Spotlight createSpotlight() {
+        if (spotlights.size() >= SpotlightNabor.MAX_NUM_LIGHTS) {
+            String msg = String.format("Cannot create more than %d lights", SpotlightNabor.MAX_NUM_LIGHTS);
+            throw new RuntimeException(msg);
+        }
+
+        var spotlight = new Spotlight();
+        spotlights.add(spotlight);
+
+        return spotlight;
+    }
+
+    public boolean removeSpotlight(Spotlight spotlight) {
+        return spotlights.remove(spotlight);
     }
 
     //=== Methods relating to components ===

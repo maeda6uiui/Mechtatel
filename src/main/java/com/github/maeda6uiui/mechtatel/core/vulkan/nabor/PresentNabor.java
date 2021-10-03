@@ -1,7 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2DUV;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.TextureSamplerCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -19,25 +18,12 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 public class PresentNabor extends Nabor {
-    private long textureSampler;
-
     public PresentNabor(VkDevice device) {
         super(device, VK_SAMPLE_COUNT_1_BIT);
-
-        textureSampler = TextureSamplerCreator.createTextureSampler(device);
     }
 
     @Override
-    public void cleanup(boolean reserveForRecreation) {
-        super.cleanup(reserveForRecreation);
-
-        if (!reserveForRecreation) {
-            vkDestroySampler(this.getDevice(), textureSampler, null);
-        }
-    }
-
-    @Override
-    protected void createRenderPass(int albedoImageFormat) {
+    protected void createRenderPass(int colorImageFormat) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
@@ -48,7 +34,7 @@ public class PresentNabor extends Nabor {
 
             //Color attachment
             VkAttachmentDescription colorAttachment = attachments.get(0);
-            colorAttachment.format(albedoImageFormat);
+            colorAttachment.format(colorImageFormat);
             colorAttachment.samples(msaaSamples);
             colorAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
             colorAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
@@ -125,9 +111,9 @@ public class PresentNabor extends Nabor {
 
             VkDescriptorPoolSize.Buffer poolSizes = VkDescriptorPoolSize.callocStack(1, stack);
 
-            VkDescriptorPoolSize textureSamplerPoolSize = poolSizes.get(0);
-            textureSamplerPoolSize.type(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
-            textureSamplerPoolSize.descriptorCount(descriptorCount);
+            VkDescriptorPoolSize samplerPoolSize = poolSizes.get(0);
+            samplerPoolSize.type(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+            samplerPoolSize.descriptorCount(descriptorCount);
 
             VkDescriptorPoolCreateInfo poolInfo = VkDescriptorPoolCreateInfo.callocStack(stack);
             poolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
@@ -183,11 +169,11 @@ public class PresentNabor extends Nabor {
         long vertShaderModule;
         long fragShaderModule;
         if (this.getVertShaderModules().size() != 0) {
-            vertShaderModule = this.getVertShaderModules().get(0);
-            fragShaderModule = this.getFragShaderModules().get(0);
+            vertShaderModule = this.getVertShaderModule(0);
+            fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/2d_present.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/2d_present.frag";
+            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/Present/present.vert";
+            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/Present/present.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;
@@ -332,7 +318,7 @@ public class PresentNabor extends Nabor {
             VkDescriptorImageInfo.Buffer imageInfo = VkDescriptorImageInfo.callocStack(1, stack);
             imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
             imageInfo.imageView(imageView);
-            imageInfo.sampler(textureSampler);
+            imageInfo.sampler(this.getTextureSampler(0));
 
             VkWriteDescriptorSet.Buffer samplerDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
             samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);

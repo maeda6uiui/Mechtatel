@@ -128,7 +128,7 @@ public class VkModel3D extends VkComponent3D {
             int commandBufferIndex,
             long pipelineLayout,
             long textureSampler) {
-        if (!this.getVisible()) {
+        if (!this.isVisible()) {
             return;
         }
 

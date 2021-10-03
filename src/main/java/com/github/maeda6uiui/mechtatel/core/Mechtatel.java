@@ -2,8 +2,15 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
+import com.github.maeda6uiui.mechtatel.core.fog.Fog;
+import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
+import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * Base class of the Mechtatel engine
@@ -53,8 +60,72 @@ public class Mechtatel implements IMechtatel {
 
     }
 
+    public void createPostProcessingNabors(List<String> naborNames) {
+        instance.createPostProcessingNabors(naborNames);
+    }
+
+    public Vector4f getBackgroundColor() {
+        return instance.getBackgroundColor();
+    }
+
+    public void setBackgroundColor(Vector4f backgroundColor) {
+        instance.setBackgroundColor(backgroundColor);
+    }
+
+    public Vector3f getParallelLightAmbientColor() {
+        return instance.getParallelLightAmbientColor();
+    }
+
+    public void setParallelLightAmbientColor(Vector3f parallelLightAmbientColor) {
+        instance.setParallelLightAmbientColor(parallelLightAmbientColor);
+    }
+
+    public Vector3f getSpotlightAmbientColor() {
+        return instance.getSpotlightAmbientColor();
+    }
+
+    public void setSpotlightAmbientColor(Vector3f spotlightAmbientColor) {
+        instance.setSpotlightAmbientColor(spotlightAmbientColor);
+    }
+
     public Camera getCamera() {
         return instance.getCamera();
+    }
+
+    public Fog getFog() {
+        return instance.getFog();
+    }
+
+    public int getNumParallelLights() {
+        return instance.getNumParallelLights();
+    }
+
+    public ParallelLight getParallelLight(int index) {
+        return instance.getParallelLight(index);
+    }
+
+    public ParallelLight createParallelLight() {
+        return instance.createParallelLight();
+    }
+
+    public boolean removeParallelLight(ParallelLight parallelLight) {
+        return instance.removeParallelLight(parallelLight);
+    }
+
+    public int getNumSpotlights() {
+        return instance.getNumSpotlights();
+    }
+
+    public Spotlight getSpotlight(int index) {
+        return instance.getSpotlight(index);
+    }
+
+    public Spotlight createSpotlight() {
+        return instance.createSpotlight();
+    }
+
+    public boolean removeSpotlight(Spotlight spotlight) {
+        return instance.removeSpotlight(spotlight);
     }
 
     //=== Methods relating to components ===

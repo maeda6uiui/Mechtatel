@@ -4,6 +4,9 @@
 layout(set=0,binding=0) uniform CameraUBO{
     mat4 view;
     mat4 proj;
+    
+    vec3 eye;
+    vec3 center;
 }camera;
 layout(push_constant) uniform VertPC{
     mat4 model;

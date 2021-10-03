@@ -8,6 +8,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MyMechtatel extends Mechtatel {
     public MyMechtatel(MttSettings settings) {
@@ -31,9 +32,6 @@ public class MyMechtatel extends Mechtatel {
     private Model3D teapot;
     private Model3D ground;
 
-    private Vector3f lightPosition;
-    private Vector3f lightCenter;
-
     private Vector3f cameraPosition;
     private Vector3f cameraCenter;
 
@@ -43,6 +41,12 @@ public class MyMechtatel extends Mechtatel {
         ground = this.createModel3D("./Mechtatel/Model/Plane/plane.obj");
 
         teapot.setVisible(false);
+
+        var ppNaborNames = new ArrayList<String>();
+        ppNaborNames.add("spotlight");
+        this.createPostProcessingNabors(ppNaborNames);
+
+        this.setSpotlightAmbientColor(new Vector3f(0.0f, 0.0f, 0.0f));
 
         Spotlight spotlightR = this.createSpotlight();
         spotlightR.setDiffuseColor(new Vector3f(1.0f, 0.0f, 0.0f));
@@ -59,7 +63,7 @@ public class MyMechtatel extends Mechtatel {
         spotlightB.setPosition(new Vector3f(-5.0f, 5.0f, -5.0f));
         spotlightB.setCenter(new Vector3f(0.0f, 0.0f, 0.0f));
 
-        cameraPosition = new Vector3f(5.0f, 5.0f, 5.0f);
+        cameraPosition = new Vector3f(4.0f, 4.0f, 4.0f);
         cameraCenter = new Vector3f(0.0f, 0.5f, 0.0f);
         this.getCamera().setEye(cameraPosition);
         this.getCamera().setCenter(cameraCenter);

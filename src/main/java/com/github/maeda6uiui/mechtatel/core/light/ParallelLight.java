@@ -22,9 +22,9 @@ public class ParallelLight {
         diffuseColor = new Vector3f(1.0f, 1.0f, 1.0f);
         specularColor = new Vector3f(1.0f, 1.0f, 1.0f);
         diffuseClampMin = new Vector3f(0.0f, 0.0f, 0.0f);
-        diffuseClampMax = new Vector3f(0.7f, 0.7f, 0.7f);
+        diffuseClampMax = new Vector3f(0.3f, 0.3f, 0.3f);
         specularClampMin = new Vector3f(0.0f, 0.0f, 0.0f);
-        specularClampMax = new Vector3f(0.3f, 0.3f, 0.3f);
+        specularClampMax = new Vector3f(0.2f, 0.2f, 0.2f);
         specularPowY = 2.0f;
     }
 

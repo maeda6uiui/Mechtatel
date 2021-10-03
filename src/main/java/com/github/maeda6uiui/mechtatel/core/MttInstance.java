@@ -16,7 +16,6 @@ import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
-import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_2_BIT;
 
 /**
  * Provides abstraction of the low-level operations
@@ -35,9 +34,9 @@ class MttInstance {
     private Vector3f spotlightAmbientColor;
 
     private Camera camera;
+    private Fog fog;
     private List<ParallelLight> parallelLights;
     private List<Spotlight> spotlights;
-    private Fog fog;
 
     private void framebufferResizeCallback(long window, int width, int height) {
         mtt.reshape(width, height);
@@ -75,7 +74,10 @@ class MttInstance {
 
         glfwSetFramebufferSizeCallback(window, this::framebufferResizeCallback);
 
-        vulkanInstance = new MttVulkanInstance(true, window, VK_SAMPLE_COUNT_2_BIT);
+        vulkanInstance = new MttVulkanInstance(
+                true,
+                window,
+                -1);
 
         this.fps = settings.systemSettings.fps;
 
@@ -86,13 +88,12 @@ class MttInstance {
         spotlightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
 
         camera = new Camera();
+        fog = new Fog();
 
         parallelLights = new ArrayList<>();
         parallelLights.add(new ParallelLight());
 
         spotlights = new ArrayList<>();
-
-        fog = new Fog();
 
         //Set initial aspect according to the framebuffer size
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -121,11 +122,11 @@ class MttInstance {
                 vulkanInstance.draw(
                         backgroundColor,
                         camera,
+                        fog,
                         parallelLights,
                         parallelLightAmbientColor,
                         spotlights,
-                        spotlightAmbientColor,
-                        fog);
+                        spotlightAmbientColor);
 
                 lastTime = glfwGetTime();
             }
@@ -140,6 +141,10 @@ class MttInstance {
 
         glfwDestroyWindow(window);
         glfwTerminate();
+    }
+
+    public void createPostProcessingNabors(List<String> naborNames) {
+        vulkanInstance.createPostProcessingNabors(naborNames);
     }
 
     public Vector4f getBackgroundColor() {

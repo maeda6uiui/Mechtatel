@@ -10,6 +10,8 @@ import org.joml.Vector4f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
  * Base class of the Mechtatel engine
  *
@@ -56,6 +58,10 @@ public class Mechtatel implements IMechtatel {
     @Override
     public void update() {
 
+    }
+
+    public void createPostProcessingNabors(List<String> naborNames) {
+        instance.createPostProcessingNabors(naborNames);
     }
 
     public Vector4f getBackgroundColor() {

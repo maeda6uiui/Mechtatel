@@ -63,7 +63,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
     private PresentNabor presentNabor;
     private GBufferNabor gBufferNabor;
-    private ShadingNabor shadingNabor;
+    private ParallelLightNabor parallelLightNabor;
     private SpotlightNabor spotlightNabor;
     private FogNabor fogNabor;
 
@@ -125,16 +125,16 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     graphicsQueue);
         }
 
-        if (shadingNabor == null) {
-            shadingNabor = new ShadingNabor(device);
-            shadingNabor.compile(
+        if (parallelLightNabor == null) {
+            parallelLightNabor = new ParallelLightNabor(device);
+            parallelLightNabor.compile(
                     swapchain.getSwapchainImageFormat(),
                     swapchain.getSwapchainExtent(),
                     commandPool,
                     graphicsQueue,
                     1);
         } else {
-            shadingNabor.recreate(
+            parallelLightNabor.recreate(
                     swapchain.getSwapchainImageFormat(),
                     swapchain.getSwapchainExtent(),
                     commandPool,
@@ -238,7 +238,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         swapchain.cleanup();
         presentNabor.cleanup(false);
         gBufferNabor.cleanup(false);
-        shadingNabor.cleanup(false);
+        parallelLightNabor.cleanup(false);
         spotlightNabor.cleanup(false);
         fogNabor.cleanup(false);
 
@@ -345,7 +345,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             Vector3f ambientColor,
             PostProcessingNabor ppNabor) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            long cameraUBOMemory = shadingNabor.getUniformBufferMemory(0);
+            long cameraUBOMemory = parallelLightNabor.getUniformBufferMemory(0);
             var cameraUBO = new CameraUBO(camera);
             cameraUBO.update(device, cameraUBOMemory);
 
@@ -353,11 +353,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             lightingInfo.setNumLights(parallelLights.size());
             lightingInfo.setAmbientColor(ambientColor);
 
-            long lightingInfoUBOMemory = shadingNabor.getUniformBufferMemory(1);
+            long lightingInfoUBOMemory = parallelLightNabor.getUniformBufferMemory(1);
             var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
             lightingInfoUBO.update(device, lightingInfoUBOMemory);
 
-            long parallelLightUBOMemory = shadingNabor.getUniformBufferMemory(2);
+            long parallelLightUBOMemory = parallelLightNabor.getUniformBufferMemory(2);
             for (int i = 0; i < parallelLights.size(); i++) {
                 var parallelLightUBO = new ParallelLightUBO(parallelLights.get(i));
                 parallelLightUBO.update(device, parallelLightUBOMemory, i);
@@ -368,11 +368,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
-            renderPassInfo.renderPass(shadingNabor.getRenderPass());
-            renderPassInfo.framebuffer(shadingNabor.getFramebuffer(0));
+            renderPassInfo.renderPass(parallelLightNabor.getRenderPass());
+            renderPassInfo.framebuffer(parallelLightNabor.getFramebuffer(0));
             VkRect2D renderArea = VkRect2D.callocStack(stack);
             renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
-            renderArea.extent(shadingNabor.getExtent());
+            renderArea.extent(parallelLightNabor.getExtent());
             renderPassInfo.renderArea(renderArea);
             VkClearValue.Buffer clearValues = VkClearValue.callocStack(1, stack);
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
@@ -382,7 +382,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
             vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
             {
-                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, shadingNabor.getGraphicsPipeline(0));
+                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, parallelLightNabor.getGraphicsPipeline(0));
 
                 //First post-processing
                 if (ppNabor == null) {
@@ -391,7 +391,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     gBufferNabor.transitionPositionImage(commandPool, graphicsQueue);
                     gBufferNabor.transitionNormalImage(commandPool, graphicsQueue);
 
-                    shadingNabor.bindImages(
+                    parallelLightNabor.bindImages(
                             commandBuffer,
                             gBufferNabor.getAlbedoImageView(),
                             gBufferNabor.getDepthImageView(),
@@ -400,7 +400,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 } else {
                     ppNabor.transitionColorImage(commandPool, graphicsQueue);
 
-                    shadingNabor.bindImages(
+                    parallelLightNabor.bindImages(
                             commandBuffer,
                             ppNabor.getColorImageView(),
                             gBufferNabor.getDepthImageView(),
@@ -633,7 +633,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             Fog fog) {
         this.runGBufferNabor(backgroundColor, camera);
         this.runShadingNabor(camera, parallelLights, parallelLightAmbientColor, null);
-        this.runSpotlightNabor(camera, spotlights, spotlightAmbientColor, shadingNabor);
+        this.runSpotlightNabor(camera, spotlights, spotlightAmbientColor, parallelLightNabor);
         this.runFogNabor(camera, fog, spotlightNabor);
         this.presentToFrontScreen(fogNabor);
     }

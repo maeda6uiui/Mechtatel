@@ -18,14 +18,14 @@ import java.util.List;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Nabor for shading
+ * Nabor for parallel lights
  *
  * @author maeda
  */
-public class ShadingNabor extends PostProcessingNabor {
+public class ParallelLightNabor extends PostProcessingNabor {
     public static final int MAX_NUM_LIGHTS = 4;
 
-    public ShadingNabor(VkDevice device) {
+    public ParallelLightNabor(VkDevice device) {
         super(device, VK_SAMPLE_COUNT_1_BIT);
     }
 

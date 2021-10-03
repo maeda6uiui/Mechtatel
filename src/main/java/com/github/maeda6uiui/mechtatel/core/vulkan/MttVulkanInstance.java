@@ -4,20 +4,15 @@ import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.LightingInfo;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
+import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.FogNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.GBufferNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.ShadingNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.FogUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.LightingInfoUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.ParallelLightUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.MultisamplingUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.PhysicalDevicePicker;
@@ -67,6 +62,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private PresentNabor presentNabor;
     private GBufferNabor gBufferNabor;
     private ShadingNabor shadingNabor;
+    private SpotlightNabor spotlightNabor;
     private FogNabor fogNabor;
 
     private long commandPool;
@@ -158,6 +154,22 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     commandPool,
                     graphicsQueue);
         }
+
+        if (spotlightNabor == null) {
+            spotlightNabor = new SpotlightNabor(device);
+            spotlightNabor.compile(
+                    swapchain.getSwapchainImageFormat(),
+                    swapchain.getSwapchainExtent(),
+                    commandPool,
+                    graphicsQueue,
+                    1);
+        } else {
+            spotlightNabor.recreate(
+                    swapchain.getSwapchainImageFormat(),
+                    swapchain.getSwapchainExtent(),
+                    commandPool,
+                    graphicsQueue);
+        }
     }
 
     public MttVulkanInstance(boolean enableValidationLayer, long window, int msaaSamples) {
@@ -225,6 +237,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         presentNabor.cleanup(false);
         gBufferNabor.cleanup(false);
         shadingNabor.cleanup(false);
+        spotlightNabor.cleanup(false);
         fogNabor.cleanup(false);
 
         vkDestroyCommandPool(device, commandPool, null);
@@ -379,6 +392,63 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         }
     }
 
+    private void runSpotlightNabor(Camera camera, List<Spotlight> spotlights) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            long cameraUBOMemory = spotlightNabor.getUniformBufferMemory(0);
+            var cameraUBO = new CameraUBO(camera);
+            cameraUBO.update(device, cameraUBOMemory);
+
+            var lightingInfo = new LightingInfo();
+            lightingInfo.setNumLights(spotlights.size());
+
+            long lightingInfoUBOMemory = spotlightNabor.getUniformBufferMemory(1);
+            var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
+            lightingInfoUBO.update(device, lightingInfoUBOMemory);
+
+            long spotlightUBOMemory = spotlightNabor.getUniformBufferMemory(2);
+            for (int i = 0; i < spotlights.size(); i++) {
+                var spotlightUBO = new SpotlightUBO(spotlights.get(i));
+                spotlightUBO.update(device, spotlightUBOMemory, i);
+            }
+
+            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
+            beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
+
+            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
+            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
+            renderPassInfo.renderPass(spotlightNabor.getRenderPass());
+            renderPassInfo.framebuffer(spotlightNabor.getFramebuffer(0));
+            VkRect2D renderArea = VkRect2D.callocStack(stack);
+            renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
+            renderArea.extent(spotlightNabor.getExtent());
+            renderPassInfo.renderArea(renderArea);
+            VkClearValue.Buffer clearValues = VkClearValue.callocStack(1, stack);
+            clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
+            renderPassInfo.pClearValues(clearValues);
+
+            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
+
+            vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+            {
+                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, spotlightNabor.getGraphicsPipeline(0));
+
+                shadingNabor.transitionColorImage(commandPool, graphicsQueue);
+
+                spotlightNabor.bindImages(
+                        commandBuffer,
+                        shadingNabor.getColorImageView(),
+                        gBufferNabor.getDepthImageView(),
+                        gBufferNabor.getPositionImageView(),
+                        gBufferNabor.getNormalImageView());
+
+                quadDrawer.draw(commandBuffer);
+            }
+            vkCmdEndRenderPass(commandBuffer);
+
+            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
+        }
+    }
+
     private void runFogNabor(Camera camera, Fog fog) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             long cameraUBOMemory = fogNabor.getUniformBufferMemory(0);
@@ -410,11 +480,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             {
                 vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, fogNabor.getGraphicsPipeline(0));
 
-                shadingNabor.transitionColorImage(commandPool, graphicsQueue);
+                spotlightNabor.transitionColorImage(commandPool, graphicsQueue);
 
                 fogNabor.bindImages(
                         commandBuffer,
-                        shadingNabor.getColorImageView(),
+                        spotlightNabor.getColorImageView(),
                         gBufferNabor.getDepthImageView(),
                         gBufferNabor.getPositionImageView(),
                         gBufferNabor.getNormalImageView());
@@ -490,9 +560,14 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         }
     }
 
-    public void draw(Camera camera, List<ParallelLight> parallelLights, Fog fog) {
+    public void draw(
+            Camera camera,
+            List<ParallelLight> parallelLights,
+            List<Spotlight> spotlights,
+            Fog fog) {
         this.runGBufferNabor(camera);
         this.runShadingNabor(camera, parallelLights);
+        this.runSpotlightNabor(camera, spotlights);
         this.runFogNabor(camera, fog);
         this.presentToFrontScreen();
     }

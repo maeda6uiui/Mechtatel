@@ -34,7 +34,7 @@ public class VkComponent {
         this.visible = visible;
     }
 
-    public boolean getVisible() {
+    public boolean isVisible() {
         return visible;
     }
 

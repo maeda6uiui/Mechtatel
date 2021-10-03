@@ -4,6 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
+import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,10 @@ public class Mechtatel implements IMechtatel {
         return instance.getCamera();
     }
 
+    public Fog getFog() {
+        return instance.getFog();
+    }
+
     public int getNumParallelLights() {
         return instance.getNumParallelLights();
     }
@@ -71,12 +76,24 @@ public class Mechtatel implements IMechtatel {
         return instance.createParallelLight();
     }
 
-    public void removeParallelLight(ParallelLight parallelLight) {
-        instance.removeParallelLight(parallelLight);
+    public boolean removeParallelLight(ParallelLight parallelLight) {
+        return instance.removeParallelLight(parallelLight);
     }
 
-    public Fog getFog() {
-        return instance.getFog();
+    public int getNumSpotlights() {
+        return instance.getNumSpotlights();
+    }
+
+    public Spotlight getSpotlight(int index) {
+        return instance.getSpotlight(index);
+    }
+
+    public Spotlight createSpotlight() {
+        return instance.createSpotlight();
+    }
+
+    public boolean removeSpotlight(Spotlight spotlight) {
+        return instance.removeSpotlight(spotlight);
     }
 
     //=== Methods relating to components ===

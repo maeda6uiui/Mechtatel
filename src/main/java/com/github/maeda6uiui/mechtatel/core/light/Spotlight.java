@@ -25,7 +25,7 @@ public class Spotlight {
     private float specularPowY;
 
     public Spotlight() {
-        position = new Vector3f(50.0f, 50.0f, 50.0f);
+        position = new Vector3f(5.0f, 5.0f, 5.0f);
         direction = new Vector3f(-1.0f, -1.0f, -1.0f).normalize();
         diffuseColor = new Vector3f(1.0f, 1.0f, 1.0f);
         specularColor = new Vector3f(1.0f, 1.0f, 1.0f);
@@ -35,10 +35,10 @@ public class Spotlight {
         specularClampMax = new Vector3f(0.3f, 0.3f, 0.3f);
         k0 = 0.0f;
         k1 = 0.0f;
-        k2 = 1.0f;
+        k2 = 0.01f;
         theta = (float) Math.toRadians(20);
         phi = (float) Math.toRadians(50);
-        falloff = 1.0f;
+        falloff = 2.0f;
         specularPowY = 2.0f;
     }
 
@@ -56,6 +56,10 @@ public class Spotlight {
 
     public void setDirection(Vector3f direction) {
         this.direction = direction.normalize();
+    }
+
+    public void setCenter(Vector3f center) {
+        this.direction = center.sub(position).normalize();
     }
 
     public Vector3f getDiffuseColor() {

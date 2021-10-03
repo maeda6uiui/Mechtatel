@@ -4,6 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
+import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import org.lwjgl.system.MemoryStack;
 
@@ -30,6 +31,7 @@ class MttInstance {
     private Camera camera;
     private Fog fog;
     private List<ParallelLight> parallelLights;
+    private List<Spotlight> spotlights;
 
     private void framebufferResizeCallback(long window, int width, int height) {
         mtt.reshape(width, height);
@@ -79,6 +81,8 @@ class MttInstance {
         parallelLights = new ArrayList<>();
         parallelLights.add(new ParallelLight());
 
+        spotlights = new ArrayList<>();
+
         //Set initial aspect according to the framebuffer size
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer width = stack.ints(0);
@@ -103,7 +107,7 @@ class MttInstance {
 
             if (elapsedTime >= 1.0 / fps) {
                 mtt.update();
-                vulkanInstance.draw(camera, parallelLights, fog);
+                vulkanInstance.draw(camera, parallelLights, spotlights, fog);
 
                 lastTime = glfwGetTime();
             }
@@ -143,12 +147,31 @@ class MttInstance {
         return parallelLight;
     }
 
-    public void removeParallelLight(ParallelLight parallelLight) {
+    public boolean removeParallelLight(ParallelLight parallelLight) {
         if (parallelLights.get(0) == parallelLight) {
             throw new RuntimeException("Default light cannot be removed");
         }
 
-        parallelLights.remove(parallelLight);
+        return parallelLights.remove(parallelLight);
+    }
+
+    public int getNumSpotlights() {
+        return spotlights.size();
+    }
+
+    public Spotlight getSpotlight(int index) {
+        return spotlights.get(index);
+    }
+
+    public Spotlight createSpotlight() {
+        var spotlight = new Spotlight();
+        spotlights.add(spotlight);
+
+        return spotlight;
+    }
+
+    public boolean removeSpotlight(Spotlight spotlight) {
+        return spotlights.remove(spotlight);
     }
 
     //=== Methods relating to components ===

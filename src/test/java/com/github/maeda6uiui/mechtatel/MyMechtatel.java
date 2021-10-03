@@ -4,6 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
+import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -42,20 +43,40 @@ public class MyMechtatel extends Mechtatel {
         teapot = this.createModel3D("./Mechtatel/Model/Teapot/teapot.obj");
         ground = this.createModel3D("./Mechtatel/Model/Plane/plane.obj");
 
+        teapot.setVisible(false);
+
         lightPosition = new Vector3f(100.0f, 100.0f, 100.0f);
         lightCenter = new Vector3f(0.0f, 0.0f, 0.0f);
         var lightDirection = lightCenter.sub(lightPosition);
 
         ParallelLight defaultLight = this.getParallelLight(0);
         defaultLight.setDirection(lightDirection);
+        defaultLight.setAmbientClampMax(new Vector3f(1.0f, 1.0f, 1.0f));
+        defaultLight.setDiffuseClampMax(new Vector3f(0.0f, 0.0f, 0.0f));
+        defaultLight.setSpecularClampMax(new Vector3f(0.0f, 0.0f, 0.0f));
 
-        cameraPosition = new Vector3f(1.0f, 1.5f, 1.0f);
+        Spotlight spotlightR = this.createSpotlight();
+        spotlightR.setDiffuseColor(new Vector3f(1.0f, 0.0f, 0.0f));
+        spotlightR.setPosition(new Vector3f(5.0f, 5.0f, 5.0f));
+        spotlightR.setCenter(new Vector3f(0.0f, 0.0f, 0.0f));
+
+        Spotlight spotlightG = this.createSpotlight();
+        spotlightG.setDiffuseColor(new Vector3f(0.0f, 1.0f, 0.0f));
+        spotlightG.setPosition(new Vector3f(-5.0f, 5.0f, 5.0f));
+        spotlightG.setCenter(new Vector3f(0.0f, 0.0f, 0.0f));
+
+        Spotlight spotlightB = this.createSpotlight();
+        spotlightB.setDiffuseColor(new Vector3f(0.0f, 0.0f, 1.0f));
+        spotlightB.setPosition(new Vector3f(-5.0f, 5.0f, -5.0f));
+        spotlightB.setCenter(new Vector3f(0.0f, 0.0f, 0.0f));
+
+        cameraPosition = new Vector3f(5.0f, 5.0f, 5.0f);
         cameraCenter = new Vector3f(0.0f, 0.5f, 0.0f);
         this.getCamera().setEye(cameraPosition);
         this.getCamera().setCenter(cameraCenter);
 
-        this.getFog().setStart(2.0f);
-        this.getFog().setEnd(10.0f);
+        this.getFog().setStart(100.0f);
+        this.getFog().setEnd(200.0f);
     }
 
     @Override

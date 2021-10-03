@@ -50,6 +50,14 @@ public class Component {
         vkComponent.setMat(mat);
     }
 
+    public void setVisible(boolean visible) {
+        vkComponent.setVisible(visible);
+    }
+
+    public boolean isVisible() {
+        return vkComponent.isVisible();
+    }
+
     public void applyMat(Matrix4fc right) {
         vkComponent.applyMat(right);
     }

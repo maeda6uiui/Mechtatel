@@ -91,10 +91,7 @@ class MttInstance {
 
         camera = new Camera();
         fog = new Fog();
-
         parallelLights = new ArrayList<>();
-        parallelLights.add(new ParallelLight());
-
         spotlights = new ArrayList<>();
 
         //Set initial aspect according to the framebuffer size
@@ -202,10 +199,6 @@ class MttInstance {
     }
 
     public boolean removeParallelLight(ParallelLight parallelLight) {
-        if (parallelLights.get(0) == parallelLight) {
-            throw new RuntimeException("Default light cannot be removed");
-        }
-
         return parallelLights.remove(parallelLight);
     }
 

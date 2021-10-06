@@ -24,6 +24,18 @@ Mechtatel (露: Мечтатель 英: Dreamer)
 
 ## 報告
 
+### 2021-10-06
+
+点光源(ポイントライト)を実装しました。
+
+<img src="./Image/point_light.jpg" alt="Point Light" style="zoom:50%;" />
+
+複数のポイントライトを設置するとこんな感じになります。
+
+<img src="./Image/point_lights.jpg" alt="Point Lights" style="zoom:50%;" />
+
+スポットライトのコードを流用することで比較的簡単に実装できました。
+
 ### 2021-10-03
 
 スポットライトを実装しました。

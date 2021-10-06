@@ -34,7 +34,11 @@ Mechtatel (露: Мечтатель 英: Dreamer)
 
 <img src="./Image/point_lights.jpg" alt="Point Lights" style="zoom:50%;" />
 
+<img src="./Image/point_lights_2.jpg" alt="Point Lights 2" style="zoom:50%;" />
+
 スポットライトのコードを流用することで比較的簡単に実装できました。
+
+また、同じモデルを何度も読み込むのは無駄なので、モデルの複製(同じモデルの読み込みは一度のみ、テクスチャは共有)を行う機能も実装しました。
 
 ### 2021-10-03
 

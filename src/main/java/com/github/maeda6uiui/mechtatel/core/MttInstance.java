@@ -4,9 +4,11 @@ import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
+import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.ParallelLightNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PointLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.SpotlightNabor;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -33,11 +35,13 @@ class MttInstance {
 
     private Vector4f backgroundColor;
     private Vector3f parallelLightAmbientColor;
+    private Vector3f pointLightAmbientColor;
     private Vector3f spotlightAmbientColor;
 
     private Camera camera;
     private Fog fog;
     private List<ParallelLight> parallelLights;
+    private List<PointLight> pointLights;
     private List<Spotlight> spotlights;
 
     private void framebufferResizeCallback(long window, int width, int height) {
@@ -87,11 +91,13 @@ class MttInstance {
 
         backgroundColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
         parallelLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
+        pointLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
         spotlightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
 
         camera = new Camera();
         fog = new Fog();
         parallelLights = new ArrayList<>();
+        pointLights = new ArrayList<>();
         spotlights = new ArrayList<>();
 
         //Set initial aspect according to the framebuffer size
@@ -124,6 +130,8 @@ class MttInstance {
                         fog,
                         parallelLights,
                         parallelLightAmbientColor,
+                        pointLights,
+                        pointLightAmbientColor,
                         spotlights,
                         spotlightAmbientColor);
 
@@ -160,6 +168,14 @@ class MttInstance {
 
     public void setParallelLightAmbientColor(Vector3f parallelLightAmbientColor) {
         this.parallelLightAmbientColor = parallelLightAmbientColor;
+    }
+
+    public Vector3f getPointLightAmbientColor() {
+        return pointLightAmbientColor;
+    }
+
+    public void setPointLightAmbientColor(Vector3f pointLightAmbientColor) {
+        this.pointLightAmbientColor = pointLightAmbientColor;
     }
 
     public Vector3f getSpotlightAmbientColor() {
@@ -200,6 +216,30 @@ class MttInstance {
 
     public boolean removeParallelLight(ParallelLight parallelLight) {
         return parallelLights.remove(parallelLight);
+    }
+
+    public int getNumPointLights() {
+        return pointLights.size();
+    }
+
+    public PointLight getPointLight(int index) {
+        return pointLights.get(index);
+    }
+
+    public PointLight createPointLight() {
+        if (pointLights.size() >= PointLightNabor.MAX_NUM_LIGHTS) {
+            String msg = String.format("Cannot create more than %d lights", PointLightNabor.MAX_NUM_LIGHTS);
+            throw new RuntimeException(msg);
+        }
+
+        var pointLight = new PointLight();
+        pointLights.add(pointLight);
+
+        return pointLight;
+    }
+
+    public boolean removePointLight(PointLight pointLight) {
+        return pointLights.remove(pointLight);
     }
 
     public int getNumSpotlights() {

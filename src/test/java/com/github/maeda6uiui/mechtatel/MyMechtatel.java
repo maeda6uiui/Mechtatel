@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
-import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
+import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -29,7 +29,6 @@ public class MyMechtatel extends Mechtatel {
         new MyMechtatel(settings);
     }
 
-    private Model3D teapot;
     private Model3D ground;
 
     private Vector3f cameraPosition;
@@ -37,39 +36,30 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void init() {
-        teapot = this.createModel3D("./Mechtatel/Model/Teapot/teapot.obj");
         ground = this.createModel3D("./Mechtatel/Model/Plane/plane.obj");
 
-        teapot.setVisible(false);
+        this.setPointLightAmbientColor(new Vector3f(0.0f, 0.0f, 0.0f));
+
+        PointLight pointLightR = this.createPointLight();
+        pointLightR.setPosition(new Vector3f(-5.0f, 5.0f, -5.0f));
+        pointLightR.setDiffuseColor(new Vector3f(1.0f, 0.0f, 0.0f));
+
+        PointLight pointLightG = this.createPointLight();
+        pointLightG.setPosition(new Vector3f(0.0f, 5.0f, 0.0f));
+        pointLightG.setDiffuseColor(new Vector3f(0.0f, 1.0f, 0.0f));
+
+        PointLight pointLightB = this.createPointLight();
+        pointLightB.setPosition(new Vector3f(5.0f, 5.0f, 5.0f));
+        pointLightB.setDiffuseColor(new Vector3f(0.0f, 0.0f, 1.0f));
 
         var ppNaborNames = new ArrayList<String>();
-        ppNaborNames.add("spotlight");
+        ppNaborNames.add("point_light");
         this.createPostProcessingNabors(ppNaborNames);
-
-        this.setSpotlightAmbientColor(new Vector3f(0.0f, 0.0f, 0.0f));
-
-        Spotlight spotlightR = this.createSpotlight();
-        spotlightR.setDiffuseColor(new Vector3f(1.0f, 0.0f, 0.0f));
-        spotlightR.setPosition(new Vector3f(5.0f, 5.0f, 5.0f));
-        spotlightR.setCenter(new Vector3f(0.0f, 0.0f, 0.0f));
-
-        Spotlight spotlightG = this.createSpotlight();
-        spotlightG.setDiffuseColor(new Vector3f(0.0f, 1.0f, 0.0f));
-        spotlightG.setPosition(new Vector3f(-5.0f, 5.0f, 5.0f));
-        spotlightG.setCenter(new Vector3f(0.0f, 0.0f, 0.0f));
-
-        Spotlight spotlightB = this.createSpotlight();
-        spotlightB.setDiffuseColor(new Vector3f(0.0f, 0.0f, 1.0f));
-        spotlightB.setPosition(new Vector3f(-5.0f, 5.0f, -5.0f));
-        spotlightB.setCenter(new Vector3f(0.0f, 0.0f, 0.0f));
 
         cameraPosition = new Vector3f(4.0f, 4.0f, 4.0f);
         cameraCenter = new Vector3f(0.0f, 0.5f, 0.0f);
         this.getCamera().setEye(cameraPosition);
         this.getCamera().setCenter(cameraCenter);
-
-        this.getFog().setStart(100.0f);
-        this.getFog().setEnd(200.0f);
     }
 
     @Override

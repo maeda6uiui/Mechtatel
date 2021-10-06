@@ -4,6 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
+import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -80,6 +81,14 @@ public class Mechtatel implements IMechtatel {
         instance.setParallelLightAmbientColor(parallelLightAmbientColor);
     }
 
+    public Vector3f getPointLightAmbientColor() {
+        return instance.getPointLightAmbientColor();
+    }
+
+    public void setPointLightAmbientColor(Vector3f pointLightAmbientColor) {
+        instance.setPointLightAmbientColor(pointLightAmbientColor);
+    }
+
     public Vector3f getSpotlightAmbientColor() {
         return instance.getSpotlightAmbientColor();
     }
@@ -110,6 +119,22 @@ public class Mechtatel implements IMechtatel {
 
     public boolean removeParallelLight(ParallelLight parallelLight) {
         return instance.removeParallelLight(parallelLight);
+    }
+
+    public int getNumPointLights() {
+        return instance.getNumPointLights();
+    }
+
+    public PointLight getPointLight(int index) {
+        return instance.getPointLight(index);
+    }
+
+    public PointLight createPointLight() {
+        return instance.createPointLight();
+    }
+
+    public boolean removePointLight(PointLight pointLight) {
+        return instance.removePointLight(pointLight);
     }
 
     public int getNumSpotlights() {

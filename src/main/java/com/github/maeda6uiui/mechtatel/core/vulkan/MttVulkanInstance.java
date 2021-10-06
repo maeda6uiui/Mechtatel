@@ -381,10 +381,10 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
                     lightingInfoUBO.update(device, lightingInfoUBOMemory);
 
-                    long parallelLightUBOMemory = ppNabor.getUniformBufferMemory(2);
+                    long lightUBOMemory = ppNabor.getUniformBufferMemory(2);
                     for (int i = 0; i < parallelLights.size(); i++) {
-                        var parallelLightUBO = new ParallelLightUBO(parallelLights.get(i));
-                        parallelLightUBO.update(device, parallelLightUBOMemory, i);
+                        var lightUBO = new ParallelLightUBO(parallelLights.get(i));
+                        lightUBO.update(device, lightUBOMemory, i);
                     }
                 }
                 break;
@@ -402,10 +402,10 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
                     lightingInfoUBO.update(device, lightingInfoUBOMemory);
 
-                    long pointLightUBOMemory = ppNabor.getUniformBufferMemory(2);
+                    long lightUBOMemory = ppNabor.getUniformBufferMemory(2);
                     for (int i = 0; i < pointLights.size(); i++) {
-                        var pointLightUBO = new PointLightUBO(pointLights.get(i));
-                        pointLightUBO.update(device, pointLightUBOMemory, i);
+                        var lightUBO = new PointLightUBO(pointLights.get(i));
+                        lightUBO.update(device, lightUBOMemory, i);
                     }
                 }
                 break;
@@ -423,10 +423,10 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
                     lightingInfoUBO.update(device, lightingInfoUBOMemory);
 
-                    long spotlightUBOMemory = ppNabor.getUniformBufferMemory(2);
+                    long lightUBOMemory = ppNabor.getUniformBufferMemory(2);
                     for (int i = 0; i < spotlights.size(); i++) {
-                        var spotlightUBO = new SpotlightUBO(spotlights.get(i));
-                        spotlightUBO.update(device, spotlightUBOMemory, i);
+                        var lightUBO = new SpotlightUBO(spotlights.get(i));
+                        lightUBO.update(device, lightUBOMemory, i);
                     }
                 }
                 break;

@@ -617,4 +617,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         return model;
     }
+
+    public VkModel3D duplicateModel3D(VkModel3D srcModel) {
+        var model = new VkModel3D(device, commandPool, graphicsQueue, srcModel);
+        components.add(model);
+
+        return model;
+    }
 }

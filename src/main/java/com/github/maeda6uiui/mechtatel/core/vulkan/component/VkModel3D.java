@@ -25,6 +25,8 @@ import static org.lwjgl.vulkan.VK10.*;
 public class VkModel3D extends VkComponent3D {
     private VkDevice device;
 
+    private boolean isDuplicatedModel;
+
     private ModelLoader.Model model;
 
     private Map<Integer, Texture> textures;
@@ -98,6 +100,8 @@ public class VkModel3D extends VkComponent3D {
             String modelFilepath) {
         this.device = device;
 
+        isDuplicatedModel = false;
+
         model = ModelLoader.loadModel(modelFilepath);
         this.loadTextures(
                 commandPool,
@@ -108,10 +112,27 @@ public class VkModel3D extends VkComponent3D {
         this.createBuffers(commandPool, graphicsQueue);
     }
 
+    public VkModel3D(
+            VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue,
+            VkModel3D srcModel) {
+        this.device = device;
+
+        isDuplicatedModel = true;
+
+        model = srcModel.model;
+        this.createBuffers(commandPool, graphicsQueue);
+
+        textures = srcModel.textures;
+    }
+
     @Override
     public void cleanup() {
         //Texture
-        textures.forEach((idx, texture) -> texture.cleanup());
+        if (!isDuplicatedModel) {
+            textures.forEach((idx, texture) -> texture.cleanup());
+        }
 
         //Buffers
         vertexBuffers.forEach((idx, vertexBuffer) -> vkDestroyBuffer(device, vertexBuffer, null));

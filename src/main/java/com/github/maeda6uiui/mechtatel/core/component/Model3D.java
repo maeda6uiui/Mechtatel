@@ -20,6 +20,14 @@ public class Model3D extends Component3D {
         this.associateVulkanComponent(vkModel);
     }
 
+    public Model3D(MttVulkanInstance vulkanInstance, Model3D srcModel) {
+        super(vulkanInstance);
+
+        this.modelFilepath = srcModel.modelFilepath;
+        vkModel = vulkanInstance.duplicateModel3D(srcModel.vkModel);
+        this.associateVulkanComponent(vkModel);
+    }
+
     public String getModelFilepath() {
         return modelFilepath;
     }

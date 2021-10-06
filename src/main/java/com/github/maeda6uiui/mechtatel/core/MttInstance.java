@@ -271,4 +271,9 @@ class MttInstance {
         var model = new Model3D(vulkanInstance, modelFilepath);
         return model;
     }
+
+    public Model3D duplicateModel3D(Model3D srcModel) {
+        var model = new Model3D(vulkanInstance, srcModel);
+        return model;
+    }
 }

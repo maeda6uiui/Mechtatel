@@ -157,4 +157,8 @@ public class Mechtatel implements IMechtatel {
     public Model3D createModel3D(String modelFilepath) {
         return instance.createModel3D(modelFilepath);
     }
+
+    public Model3D duplicateModel3D(Model3D srcModel) {
+        return instance.duplicateModel3D(srcModel);
+    }
 }

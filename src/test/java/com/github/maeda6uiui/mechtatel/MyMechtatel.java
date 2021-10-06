@@ -30,6 +30,8 @@ public class MyMechtatel extends Mechtatel {
     }
 
     private Model3D ground;
+    private Model3D model1;
+    private Model3D model2;
 
     private Vector3f cameraPosition;
     private Vector3f cameraCenter;
@@ -37,6 +39,12 @@ public class MyMechtatel extends Mechtatel {
     @Override
     public void init() {
         ground = this.createModel3D("./Mechtatel/Model/Plane/plane.obj");
+
+        model1 = this.createModel3D("./Mechtatel/Model/Cube/cube.obj");
+        model2 = this.duplicateModel3D(model1);
+
+        model1.translate(new Vector3f(-3.0f, 1.0f, -3.0f));
+        model2.translate(new Vector3f(3.0f, 1.0f, 3.0f));
 
         this.setPointLightAmbientColor(new Vector3f(0.0f, 0.0f, 0.0f));
 

@@ -47,11 +47,11 @@ public class ParallelLightNabor extends PostProcessingNabor {
             this.getUniformBufferMemories().add(lightingInfoUBOInfo.bufferMemory);
         }
 
-        var parallelLightUBOInfos = BufferCreator.createUBOBuffers(
+        var lightUBOInfos = BufferCreator.createUBOBuffers(
                 device, descriptorCount, ParallelLightUBO.SIZEOF * MAX_NUM_LIGHTS);
-        for (var parallelLightUBOInfo : parallelLightUBOInfos) {
-            this.getUniformBuffers().add(parallelLightUBOInfo.buffer);
-            this.getUniformBufferMemories().add(parallelLightUBOInfo.bufferMemory);
+        for (var lightUBOInfo : lightUBOInfos) {
+            this.getUniformBuffers().add(lightUBOInfo.buffer);
+            this.getUniformBufferMemories().add(lightUBOInfo.bufferMemory);
         }
     }
 
@@ -77,12 +77,12 @@ public class ParallelLightNabor extends PostProcessingNabor {
             lightingInfoUBOLayoutBinding.pImmutableSamplers(null);
             lightingInfoUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            VkDescriptorSetLayoutBinding parallelLightUBOLayoutBinding = uboBindings.get(2);
-            parallelLightUBOLayoutBinding.binding(2);
-            parallelLightUBOLayoutBinding.descriptorCount(MAX_NUM_LIGHTS);
-            parallelLightUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            parallelLightUBOLayoutBinding.pImmutableSamplers(null);
-            parallelLightUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+            VkDescriptorSetLayoutBinding lightUBOLayoutBinding = uboBindings.get(2);
+            lightUBOLayoutBinding.binding(2);
+            lightUBOLayoutBinding.descriptorCount(MAX_NUM_LIGHTS);
+            lightUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            lightUBOLayoutBinding.pImmutableSamplers(null);
+            lightUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 1 ===
             VkDescriptorSetLayoutBinding.Buffer imageBindings = VkDescriptorSetLayoutBinding.callocStack(4, stack);
@@ -171,9 +171,9 @@ public class ParallelLightNabor extends PostProcessingNabor {
             lightingInfoUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             lightingInfoUBOPoolSize.descriptorCount(descriptorCount);
 
-            VkDescriptorPoolSize parallelLightUBOPoolSize = uboPoolSizes.get(2);
-            parallelLightUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            parallelLightUBOPoolSize.descriptorCount(descriptorCount * MAX_NUM_LIGHTS);
+            VkDescriptorPoolSize lightUBOPoolSize = uboPoolSizes.get(2);
+            lightUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            lightUBOPoolSize.descriptorCount(descriptorCount * MAX_NUM_LIGHTS);
 
             //=== set 1 ===
             VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.callocStack(4, stack);
@@ -295,21 +295,21 @@ public class ParallelLightNabor extends PostProcessingNabor {
             uboDescriptorWrite.descriptorCount(2);
             uboDescriptorWrite.pBufferInfo(uboInfos);
 
-            VkWriteDescriptorSet.Buffer parallelLightUBODescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
-            VkDescriptorBufferInfo.Buffer parallelLightUBOInfos = VkDescriptorBufferInfo.callocStack(MAX_NUM_LIGHTS, stack);
+            VkWriteDescriptorSet.Buffer lightUBODescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            VkDescriptorBufferInfo.Buffer lightUBOInfos = VkDescriptorBufferInfo.callocStack(MAX_NUM_LIGHTS, stack);
             for (int i = 0; i < MAX_NUM_LIGHTS; i++) {
-                VkDescriptorBufferInfo parallelLightUBOInfo = parallelLightUBOInfos.get(i);
-                parallelLightUBOInfo.buffer(this.getUniformBuffer(2));
-                parallelLightUBOInfo.offset(0);
-                parallelLightUBOInfo.range(ParallelLightUBO.SIZEOF);
+                VkDescriptorBufferInfo lightUBOInfo = lightUBOInfos.get(i);
+                lightUBOInfo.buffer(this.getUniformBuffer(2));
+                lightUBOInfo.offset(0);
+                lightUBOInfo.range(ParallelLightUBO.SIZEOF);
             }
 
-            parallelLightUBODescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            parallelLightUBODescriptorWrite.dstBinding(2);
-            parallelLightUBODescriptorWrite.dstArrayElement(0);
-            parallelLightUBODescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            parallelLightUBODescriptorWrite.descriptorCount(MAX_NUM_LIGHTS);
-            parallelLightUBODescriptorWrite.pBufferInfo(parallelLightUBOInfos);
+            lightUBODescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            lightUBODescriptorWrite.dstBinding(2);
+            lightUBODescriptorWrite.dstArrayElement(0);
+            lightUBODescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            lightUBODescriptorWrite.descriptorCount(MAX_NUM_LIGHTS);
+            lightUBODescriptorWrite.pBufferInfo(lightUBOInfos);
 
             //=== set 1 ===
             VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.callocStack(4, stack);
@@ -348,8 +348,8 @@ public class ParallelLightNabor extends PostProcessingNabor {
                 samplerDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount * 2));
                 vkUpdateDescriptorSets(device, descriptorWrites, null);
 
-                parallelLightUBODescriptorWrite.dstSet(descriptorSets.get(i));
-                vkUpdateDescriptorSets(device, parallelLightUBODescriptorWrite, null);
+                lightUBODescriptorWrite.dstSet(descriptorSets.get(i));
+                vkUpdateDescriptorSets(device, lightUBODescriptorWrite, null);
             }
 
             for (int i = 0; i < descriptorSets.size(); i++) {

@@ -47,11 +47,11 @@ public class PointLightNabor extends PostProcessingNabor {
             this.getUniformBufferMemories().add(lightingInfoUBOInfo.bufferMemory);
         }
 
-        var pointLightUBOInfos = BufferCreator.createUBOBuffers(
+        var lightUBOInfos = BufferCreator.createUBOBuffers(
                 device, descriptorCount, PointLightUBO.SIZEOF * MAX_NUM_LIGHTS);
-        for (var pointLightUBOInfo : pointLightUBOInfos) {
-            this.getUniformBuffers().add(pointLightUBOInfo.buffer);
-            this.getUniformBufferMemories().add(pointLightUBOInfo.bufferMemory);
+        for (var lightUBOInfo : lightUBOInfos) {
+            this.getUniformBuffers().add(lightUBOInfo.buffer);
+            this.getUniformBufferMemories().add(lightUBOInfo.bufferMemory);
         }
     }
 
@@ -77,12 +77,12 @@ public class PointLightNabor extends PostProcessingNabor {
             lightingInfoUBOLayoutBinding.pImmutableSamplers(null);
             lightingInfoUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            VkDescriptorSetLayoutBinding pointLightUBOLayoutBinding = uboBindings.get(2);
-            pointLightUBOLayoutBinding.binding(2);
-            pointLightUBOLayoutBinding.descriptorCount(MAX_NUM_LIGHTS);
-            pointLightUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            pointLightUBOLayoutBinding.pImmutableSamplers(null);
-            pointLightUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+            VkDescriptorSetLayoutBinding lightUBOLayoutBinding = uboBindings.get(2);
+            lightUBOLayoutBinding.binding(2);
+            lightUBOLayoutBinding.descriptorCount(MAX_NUM_LIGHTS);
+            lightUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            lightUBOLayoutBinding.pImmutableSamplers(null);
+            lightUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 1 ===
             VkDescriptorSetLayoutBinding.Buffer imageBindings = VkDescriptorSetLayoutBinding.callocStack(4, stack);
@@ -171,9 +171,9 @@ public class PointLightNabor extends PostProcessingNabor {
             lightingInfoUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             lightingInfoUBOPoolSize.descriptorCount(descriptorCount);
 
-            VkDescriptorPoolSize pointLightUBOPoolSize = uboPoolSizes.get(2);
-            pointLightUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            pointLightUBOPoolSize.descriptorCount(descriptorCount * MAX_NUM_LIGHTS);
+            VkDescriptorPoolSize lightUBOPoolSize = uboPoolSizes.get(2);
+            lightUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            lightUBOPoolSize.descriptorCount(descriptorCount * MAX_NUM_LIGHTS);
 
             //=== set 1 ===
             VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.callocStack(4, stack);
@@ -295,21 +295,21 @@ public class PointLightNabor extends PostProcessingNabor {
             uboDescriptorWrite.descriptorCount(2);
             uboDescriptorWrite.pBufferInfo(uboInfos);
 
-            VkWriteDescriptorSet.Buffer pointLightUBODescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
-            VkDescriptorBufferInfo.Buffer pointLightUBOInfos = VkDescriptorBufferInfo.callocStack(MAX_NUM_LIGHTS, stack);
+            VkWriteDescriptorSet.Buffer lightUBODescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            VkDescriptorBufferInfo.Buffer lightUBOInfos = VkDescriptorBufferInfo.callocStack(MAX_NUM_LIGHTS, stack);
             for (int i = 0; i < MAX_NUM_LIGHTS; i++) {
-                VkDescriptorBufferInfo pointLightUBOInfo = pointLightUBOInfos.get(i);
-                pointLightUBOInfo.buffer(this.getUniformBuffer(2));
-                pointLightUBOInfo.offset(0);
-                pointLightUBOInfo.range(PointLightUBO.SIZEOF);
+                VkDescriptorBufferInfo lightUBOInfo = lightUBOInfos.get(i);
+                lightUBOInfo.buffer(this.getUniformBuffer(2));
+                lightUBOInfo.offset(0);
+                lightUBOInfo.range(PointLightUBO.SIZEOF);
             }
 
-            pointLightUBODescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            pointLightUBODescriptorWrite.dstBinding(2);
-            pointLightUBODescriptorWrite.dstArrayElement(0);
-            pointLightUBODescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            pointLightUBODescriptorWrite.descriptorCount(MAX_NUM_LIGHTS);
-            pointLightUBODescriptorWrite.pBufferInfo(pointLightUBOInfos);
+            lightUBODescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            lightUBODescriptorWrite.dstBinding(2);
+            lightUBODescriptorWrite.dstArrayElement(0);
+            lightUBODescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            lightUBODescriptorWrite.descriptorCount(MAX_NUM_LIGHTS);
+            lightUBODescriptorWrite.pBufferInfo(lightUBOInfos);
 
             //=== set 1 ===
             VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.callocStack(4, stack);
@@ -348,8 +348,8 @@ public class PointLightNabor extends PostProcessingNabor {
                 samplerDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount * 2));
                 vkUpdateDescriptorSets(device, descriptorWrites, null);
 
-                pointLightUBODescriptorWrite.dstSet(descriptorSets.get(i));
-                vkUpdateDescriptorSets(device, pointLightUBODescriptorWrite, null);
+                lightUBODescriptorWrite.dstSet(descriptorSets.get(i));
+                vkUpdateDescriptorSets(device, lightUBODescriptorWrite, null);
             }
 
             for (int i = 0; i < descriptorSets.size(); i++) {

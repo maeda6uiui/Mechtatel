@@ -33,7 +33,7 @@ struct Spotlight{
     float falloff;
     float specularPowY;
 };
-layout(set=0,binding=2) uniform ParallelLightUBOs{
+layout(set=0,binding=2) uniform LightUBOs{
     Spotlight lights[MAX_NUM_LIGHTS];
 };
 layout(set=1,binding=0) uniform texture2D albedoTexture;

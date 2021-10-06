@@ -341,7 +341,7 @@ public class Texture {
             boolean generateMipmaps) {
         textureIndex = allocateTextureIndex();
         if (textureIndex < 0) {
-            String msg = String.format("You cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
+            String msg = String.format("Cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
             throw new RuntimeException(msg);
         }
 

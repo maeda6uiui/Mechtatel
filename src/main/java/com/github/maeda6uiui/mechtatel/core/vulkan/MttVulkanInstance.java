@@ -4,6 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.LightingInfo;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
+import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
@@ -245,6 +246,9 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 case "parallel_light":
                     ppNabor = new ParallelLightNabor(device);
                     break;
+                case "point_light":
+                    ppNabor = new PointLightNabor(device);
+                    break;
                 case "spotlight":
                     ppNabor = new SpotlightNabor(device);
                     break;
@@ -342,6 +346,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             Fog fog,
             List<ParallelLight> parallelLights,
             Vector3f parallelLightAmbientColor,
+            List<PointLight> pointLights,
+            Vector3f pointLightAmbientColor,
             List<Spotlight> spotlights,
             Vector3f spotlightAmbientColor) {
         lastPPNabor = null;
@@ -379,6 +385,27 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     for (int i = 0; i < parallelLights.size(); i++) {
                         var parallelLightUBO = new ParallelLightUBO(parallelLights.get(i));
                         parallelLightUBO.update(device, parallelLightUBOMemory, i);
+                    }
+                }
+                break;
+
+                case "point_light": {
+                    long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
+                    var cameraUBO = new CameraUBO(camera);
+                    cameraUBO.update(device, cameraUBOMemory);
+
+                    var lightingInfo = new LightingInfo();
+                    lightingInfo.setNumLights(pointLights.size());
+                    lightingInfo.setAmbientColor(pointLightAmbientColor);
+
+                    long lightingInfoUBOMemory = ppNabor.getUniformBufferMemory(1);
+                    var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
+                    lightingInfoUBO.update(device, lightingInfoUBOMemory);
+
+                    long pointLightUBOMemory = ppNabor.getUniformBufferMemory(2);
+                    for (int i = 0; i < pointLights.size(); i++) {
+                        var pointLightUBO = new PointLightUBO(pointLights.get(i));
+                        pointLightUBO.update(device, pointLightUBOMemory, i);
                     }
                 }
                 break;
@@ -542,6 +569,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             Fog fog,
             List<ParallelLight> parallelLights,
             Vector3f parallelLightAmbientColor,
+            List<PointLight> pointLights,
+            Vector3f pointLightAmbientColor,
             List<Spotlight> spotlights,
             Vector3f spotlightAmbientColor) {
         this.runGBufferNabor(backgroundColor, camera);
@@ -550,6 +579,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 fog,
                 parallelLights,
                 parallelLightAmbientColor,
+                pointLights,
+                pointLightAmbientColor,
                 spotlights,
                 spotlightAmbientColor);
         this.presentToFrontScreen();
@@ -582,6 +613,13 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 descriptorSets,
                 gBufferNabor.getSetCount(),
                 modelFilepath);
+        components.add(model);
+
+        return model;
+    }
+
+    public VkModel3D duplicateModel3D(VkModel3D srcModel) {
+        var model = new VkModel3D(device, commandPool, graphicsQueue, srcModel);
         components.add(model);
 
         return model;

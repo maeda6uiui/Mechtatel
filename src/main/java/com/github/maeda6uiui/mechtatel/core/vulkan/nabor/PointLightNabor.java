@@ -4,7 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.LightingInfoUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.ParallelLightUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.PointLightUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -18,14 +18,14 @@ import java.util.List;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Nabor for parallel lights
+ * Nabor for point lights
  *
  * @author maeda
  */
-public class ParallelLightNabor extends PostProcessingNabor {
-    public static final int MAX_NUM_LIGHTS = 4;
+public class PointLightNabor extends PostProcessingNabor {
+    public static final int MAX_NUM_LIGHTS = 64;
 
-    public ParallelLightNabor(VkDevice device) {
+    public PointLightNabor(VkDevice device) {
         super(device, VK_SAMPLE_COUNT_1_BIT);
     }
 
@@ -48,7 +48,7 @@ public class ParallelLightNabor extends PostProcessingNabor {
         }
 
         var lightUBOInfos = BufferCreator.createUBOBuffers(
-                device, descriptorCount, ParallelLightUBO.SIZEOF * MAX_NUM_LIGHTS);
+                device, descriptorCount, PointLightUBO.SIZEOF * MAX_NUM_LIGHTS);
         for (var lightUBOInfo : lightUBOInfos) {
             this.getUniformBuffers().add(lightUBOInfo.buffer);
             this.getUniformBufferMemories().add(lightUBOInfo.bufferMemory);
@@ -301,7 +301,7 @@ public class ParallelLightNabor extends PostProcessingNabor {
                 VkDescriptorBufferInfo lightUBOInfo = lightUBOInfos.get(i);
                 lightUBOInfo.buffer(this.getUniformBuffer(2));
                 lightUBOInfo.offset(0);
-                lightUBOInfo.range(ParallelLightUBO.SIZEOF);
+                lightUBOInfo.range(PointLightUBO.SIZEOF);
             }
 
             lightUBODescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
@@ -370,8 +370,8 @@ public class ParallelLightNabor extends PostProcessingNabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/parallel_light.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/parallel_light.frag";
+            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/point_light.vert";
+            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/point_light.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

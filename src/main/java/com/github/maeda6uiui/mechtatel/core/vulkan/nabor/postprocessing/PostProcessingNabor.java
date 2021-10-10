@@ -1,6 +1,7 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
+package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;

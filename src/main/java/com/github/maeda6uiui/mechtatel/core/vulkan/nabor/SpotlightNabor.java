@@ -366,7 +366,7 @@ public class SpotlightNabor extends PostProcessingNabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/spotlight.vert";
+            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/post_processing.vert";
             final String fragShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/spotlight.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;

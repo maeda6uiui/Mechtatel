@@ -359,14 +359,14 @@ public class PointLightNabor extends PostProcessingNabor {
     @Override
     protected void createGraphicsPipelines() {
         VkDevice device = this.getDevice();
-        
+
         long vertShaderModule;
         long fragShaderModule;
         if (this.getVertShaderModules().size() != 0) {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/point_light.vert";
+            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/post_processing.vert";
             final String fragShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/point_light.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;

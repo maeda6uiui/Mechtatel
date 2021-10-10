@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan.ubo;
+package com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing;
 
 import com.github.maeda6uiui.mechtatel.core.light.LightingInfo;
 import org.joml.Vector3f;

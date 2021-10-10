@@ -6,7 +6,7 @@ const int MAX_NUM_SHADOW_MAPS=16;
 const int PROJECTION_TYPE_ORTHOGRAPHIC=0;
 const int PROJECTION_TYPE_PERSPECTIVE=1;
 
-layout(set=0,binding=0) uniform ShadowMappingInfoUBO{
+layout(set=0,binding=0) uniform Pass2InfoUBO{
     int numShadowMaps;
 }smInfo;
 struct ShadowInfo{

@@ -6,15 +6,18 @@ const int MAX_NUM_SHADOW_MAPS=16;
 const int PROJECTION_TYPE_ORTHOGRAPHIC=0;
 const int PROJECTION_TYPE_PERSPECTIVE=1;
 
-struct ShadowMappingLightInfo{
+layout(set=0,binding=0) uniform ShadowMappingInfoUBO{
+    int numShadowMaps;
+}smInfo;
+struct ShadowInfo{
     int projectionType;
     vec3 lightDirection;
     vec3 attenuations;
     float biasCoefficient;
     float maxBias;
 };
-layout(set=0,binding=0) uniform ShadowMappingLightInfosUBO{
-    ShadowMappingLightInfo smlInfos[MAX_NUM_SHADOW_MAPS];
+layout(set=0,binding=1) uniform ShadowInfosUBO{
+    ShadowInfo shadowInfos[MAX_NUM_SHADOW_MAPS];
 };
 layout(set=1,binding=0) uniform texture2D albedoTexture;
 layout(set=1,binding=1) uniform texture2D depthTexture;
@@ -37,20 +40,20 @@ void main(){
     vec3 shadowFactors=vec3(1.0);
 
     for(int i=0;i<smInfo.numShadowMaps;i++){
-        float cosTh=abs(dot(smlInfos[i].lightDirection,normal));
-        float bias=smlInfos[i].biasCoefficient*tan(acos(cosTh));
-        bias=clamp(bias,0.0,smlInfos[i].maxBias);
+        float cosTh=abs(dot(shadowInfos[i].lightDirection,normal));
+        float bias=shadowInfos[i].biasCoefficient*tan(acos(cosTh));
+        bias=clamp(bias,0.0,shadowInfos[i].maxBias);
 
         vec3 shadowCoords=texture(sampler2D(shadowCoordsTextures[i],textureSampler),fragTexCoords);
         float shadowDepth=texture(sampler2D(shadowDepthTextures[i],textureSampler),shadowCoords.xy).r;
 
-        if(smlInfos[i].projectionType==PROJECTION_TYPE_ORTHOGRAPHIC){
+        if(shadowInfos[i].projectionType==PROJECTION_TYPE_ORTHOGRAPHIC){
             if(shadowDepth<shadowCoords.z-bias){
-                shadowFactors*=smlInfos[i].attenuations;
+                shadowFactors*=shadowInfos[i].attenuations;
             }
-        }else if(smlInfos[i].projectionType==PROJECTION_TYPE_PERSPECTIVE){
+        }else if(shadowInfos[i].projectionType==PROJECTION_TYPE_PERSPECTIVE){
             if(shadowDepth<(shadowCoords.z-bias)/shadowCoords.w){
-                shadowFactors*=smlInfos[i].attenuations;
+                shadowFactors*=shadowInfos[i].attenuations;
             }
         }
     }

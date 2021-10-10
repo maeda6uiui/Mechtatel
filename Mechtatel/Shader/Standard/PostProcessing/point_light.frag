@@ -25,7 +25,7 @@ struct PointLight{
     float k1;
     float k2;
 };
-layout(set=0,binding=2) uniform LightUBOs{
+layout(set=0,binding=2) uniform LightsUBO{
     PointLight lights[MAX_NUM_LIGHTS];
 };
 layout(set=1,binding=0) uniform texture2D albedoTexture;

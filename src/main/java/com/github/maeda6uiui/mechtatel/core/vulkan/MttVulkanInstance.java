@@ -6,6 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.light.LightingInfo;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
+import com.github.maeda6uiui.mechtatel.core.shadow.Pass1Info;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
@@ -18,6 +19,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow.S
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.*;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass1InfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.MultisamplingUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.PhysicalDevicePicker;
@@ -348,10 +350,82 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         }
     }
 
-    private void runShadowMappingNabor(
-            
-    ) {
+    private void runShadowMappingPass1(PostProcessingNabor shadowMappingNabor, Pass1InfoUBO pass1InfoUBO) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
+            beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
 
+            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
+            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
+            renderPassInfo.renderPass(shadowMappingNabor.getRenderPass(0));
+            renderPassInfo.framebuffer(shadowMappingNabor.getFramebuffer(0));
+            VkRect2D renderArea = VkRect2D.callocStack(stack);
+            renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
+            renderArea.extent(shadowMappingNabor.getExtent());
+            renderPassInfo.renderArea(renderArea);
+            VkClearValue.Buffer clearValues = VkClearValue.callocStack(2, stack);
+            clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
+            clearValues.get(1).depthStencil().set(1.0f, 0);
+            renderPassInfo.pClearValues(clearValues);
+
+            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
+
+            vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+            {
+                vkCmdBindPipeline(
+                        commandBuffer,
+                        VK_PIPELINE_BIND_POINT_GRAPHICS,
+                        shadowMappingNabor.getGraphicsPipeline(0));
+
+                vkCmdBindDescriptorSets(
+                        commandBuffer,
+                        VK_PIPELINE_BIND_POINT_GRAPHICS,
+                        shadowMappingNabor.getPipelineLayout(0),
+                        0,
+                        shadowMappingNabor.pDescriptorSets(0),
+                        null);
+
+                for (var component : components) {
+                    ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
+                    component.getMat().get(matBuffer);
+
+                    vkCmdPushConstants(
+                            commandBuffer,
+                            shadowMappingNabor.getPipelineLayout(0),
+                            VK_SHADER_STAGE_VERTEX_BIT,
+                            0,
+                            matBuffer);
+
+                    component.draw(
+                            commandBuffer,
+                            0,
+                            shadowMappingNabor.getPipelineLayout(0),
+                            shadowMappingNabor.getTextureSampler(0));
+                }
+            }
+            vkCmdEndRenderPass(commandBuffer);
+
+            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
+        }
+    }
+
+    private void copyShadowMappingPass1Images() {
+
+    }
+
+    private void runShadowMappingNabor(
+            PostProcessingNabor shadowMappingNabor,
+            List<ParallelLight> parallelLights,
+            List<Spotlight> spotlights) {
+        //Pass 1
+        long pass1InfoUBOMemory = shadowMappingNabor.getUniformBufferMemory(0);
+        for (var parallelLight : parallelLights) {
+            var pass1Info = new Pass1Info(parallelLight);
+            var pass1InfoUBO = new Pass1InfoUBO(pass1Info);
+            pass1InfoUBO.update(device, pass1InfoUBOMemory);
+
+            this.runShadowMappingPass1(shadowMappingNabor, pass1InfoUBO);
+        }
     }
 
     private void runPostProcessingNabors(
@@ -363,11 +437,16 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             Vector3f pointLightAmbientColor,
             List<Spotlight> spotlights,
             Vector3f spotlightAmbientColor) {
-        lastPPNabor = null;
-
         for (var entry : ppNabors.entrySet()) {
             String naborName = entry.getKey();
             PostProcessingNabor ppNabor = entry.getValue();
+
+            if (naborName.equals("shadow_mapping")) {
+                this.runShadowMappingNabor(ppNabor, parallelLights, spotlights);
+                lastPPNabor = ppNabor;
+
+                continue;
+            }
 
             switch (naborName) {
                 case "fog": {

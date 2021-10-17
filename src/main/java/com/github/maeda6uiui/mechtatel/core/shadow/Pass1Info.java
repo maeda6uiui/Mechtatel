@@ -1,6 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.shadow;
 
+import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
+import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 /**
  * Pass 1 info
@@ -15,6 +18,24 @@ public class Pass1Info {
     public Pass1Info() {
         view = new Matrix4f();
         proj = new Matrix4f();
+        normalOffset = 0.05f;
+    }
+
+    public Pass1Info(ParallelLight light) {
+        view = new Matrix4f().lookAlong(light.getDirection(), new Vector3f(0.0f, 1.0f, 0.0f));
+        proj = new Matrix4f().ortho(
+                light.getOrthoLeft(),
+                light.getOrthoRight(),
+                light.getOrthoBottom(),
+                light.getOrthoTop(),
+                light.getzNear(),
+                light.getzFar());
+        normalOffset = 0.05f;
+    }
+
+    public Pass1Info(Spotlight light) {
+        view = new Matrix4f().lookAlong(light.getDirection(), new Vector3f(0.0f, 1.0f, 0.0f));
+        proj = new Matrix4f().perspective(light.getFovY(), light.getAspect(), light.getzNear(), light.getzFar());
         normalOffset = 0.05f;
     }
 

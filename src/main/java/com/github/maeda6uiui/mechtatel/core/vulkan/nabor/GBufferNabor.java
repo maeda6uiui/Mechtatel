@@ -129,7 +129,7 @@ public class GBufferNabor extends Nabor {
     public long getNormalImageView() {
         return this.getImageView(normalAttachmentIndex);
     }
-
+    
     @Override
     public void cleanup(boolean reserveForRecreation) {
         super.cleanup(reserveForRecreation);

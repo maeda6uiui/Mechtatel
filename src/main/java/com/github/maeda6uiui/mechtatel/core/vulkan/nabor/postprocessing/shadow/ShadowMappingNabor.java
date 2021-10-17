@@ -6,6 +6,8 @@ import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkExtent2D;
 import org.lwjgl.vulkan.VkQueue;
 
+import java.nio.LongBuffer;
+
 import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_1_BIT;
 
 /**
@@ -70,10 +72,28 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     }
 
     @Override
-    public long getRenderPass(int index) {
+    public long getTextureSampler(int passIndex) {
+        long textureSampler;
+
+        switch (passIndex) {
+            case 0:
+                textureSampler = pass1.getTextureSampler(0);
+                break;
+            case 1:
+                textureSampler = pass2.getTextureSampler(0);
+                break;
+            default:
+                throw new RuntimeException("Index out of bounds");
+        }
+
+        return textureSampler;
+    }
+
+    @Override
+    public long getRenderPass(int passIndex) {
         long renderPass;
 
-        switch (index) {
+        switch (passIndex) {
             case 0:
                 renderPass = pass1.getRenderPass();
                 break;
@@ -85,6 +105,78 @@ public class ShadowMappingNabor extends PostProcessingNabor {
         }
 
         return renderPass;
+    }
+
+    @Override
+    public LongBuffer pDescriptorSets(int passIndex) {
+        LongBuffer pSets;
+
+        switch (passIndex) {
+            case 0:
+                pSets = pass1.pDescriptorSets();
+                break;
+            case 1:
+                pSets = pass2.pDescriptorSets();
+                break;
+            default:
+                throw new RuntimeException("Index out of bounds");
+        }
+
+        return pSets;
+    }
+
+    @Override
+    public long getPipelineLayout(int passIndex) {
+        long pipelineLayout;
+
+        switch (passIndex) {
+            case 0:
+                pipelineLayout = pass1.getPipelineLayout(0);
+                break;
+            case 1:
+                pipelineLayout = pass2.getPipelineLayout(0);
+                break;
+            default:
+                throw new RuntimeException("Index out of bounds");
+        }
+
+        return pipelineLayout;
+    }
+
+    @Override
+    public long getGraphicsPipeline(int passIndex) {
+        long graphicsPipeline;
+
+        switch (passIndex) {
+            case 0:
+                graphicsPipeline = pass1.getGraphicsPipeline(0);
+                break;
+            case 1:
+                graphicsPipeline = pass2.getGraphicsPipeline(1);
+                break;
+            default:
+                throw new RuntimeException("Index out of bounds");
+        }
+
+        return graphicsPipeline;
+    }
+
+    @Override
+    public long getFramebuffer(int passIndex) {
+        long framebuffer;
+
+        switch (passIndex) {
+            case 0:
+                framebuffer = pass1.getFramebuffer(0);
+                break;
+            case 1:
+                framebuffer = pass2.getFramebuffer(0);
+                break;
+            default:
+                throw new RuntimeException("Index out of bounds");
+        }
+
+        return framebuffer;
     }
 
     @Override

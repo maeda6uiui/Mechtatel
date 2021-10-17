@@ -17,6 +17,14 @@ public class ParallelLight {
     private Vector3f specularClampMax;
     private float specularPowY;
 
+    private boolean castShadow;
+    private float orthoLeft;
+    private float orthoRight;
+    private float orthoBottom;
+    private float orthoTop;
+    private float zNear;
+    private float zFar;
+
     public ParallelLight() {
         direction = new Vector3f(-1.0f, -1.0f, -1.0f).normalize();
         diffuseColor = new Vector3f(1.0f, 1.0f, 1.0f);
@@ -26,6 +34,14 @@ public class ParallelLight {
         specularClampMin = new Vector3f(0.0f, 0.0f, 0.0f);
         specularClampMax = new Vector3f(0.2f, 0.2f, 0.2f);
         specularPowY = 2.0f;
+
+        castShadow = true;
+        orthoLeft = -10.0f;
+        orthoRight = 10.0f;
+        orthoBottom = -10.0f;
+        orthoTop = 10.0f;
+        zNear = 0.1f;
+        zFar = 50.0f;
     }
 
     public Vector3f getDirection() {
@@ -90,5 +106,61 @@ public class ParallelLight {
 
     public void setSpecularPowY(float specularPowY) {
         this.specularPowY = specularPowY;
+    }
+
+    public boolean isCastShadow() {
+        return castShadow;
+    }
+
+    public void setCastShadow(boolean castShadow) {
+        this.castShadow = castShadow;
+    }
+
+    public float getOrthoLeft() {
+        return orthoLeft;
+    }
+
+    public void setOrthoLeft(float orthoLeft) {
+        this.orthoLeft = orthoLeft;
+    }
+
+    public float getOrthoRight() {
+        return orthoRight;
+    }
+
+    public void setOrthoRight(float orthoRight) {
+        this.orthoRight = orthoRight;
+    }
+
+    public float getOrthoBottom() {
+        return orthoBottom;
+    }
+
+    public void setOrthoBottom(float orthoBottom) {
+        this.orthoBottom = orthoBottom;
+    }
+
+    public float getOrthoTop() {
+        return orthoTop;
+    }
+
+    public void setOrthoTop(float orthoTop) {
+        this.orthoTop = orthoTop;
+    }
+
+    public float getzNear() {
+        return zNear;
+    }
+
+    public void setzNear(float zNear) {
+        this.zNear = zNear;
+    }
+
+    public float getzFar() {
+        return zFar;
+    }
+
+    public void setzFar(float zFar) {
+        this.zFar = zFar;
     }
 }

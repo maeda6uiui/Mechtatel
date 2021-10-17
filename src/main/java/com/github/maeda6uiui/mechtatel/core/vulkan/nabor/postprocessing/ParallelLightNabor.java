@@ -24,7 +24,7 @@ public class ParallelLightNabor extends PostProcessingNabor {
     public static final int MAX_NUM_LIGHTS = 4;
 
     public ParallelLightNabor(VkDevice device) {
-        super(device, VK_SAMPLE_COUNT_1_BIT);
+        super(device, VK_SAMPLE_COUNT_1_BIT, false);
     }
 
     @Override

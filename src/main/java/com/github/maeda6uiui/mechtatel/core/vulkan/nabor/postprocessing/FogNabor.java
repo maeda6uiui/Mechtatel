@@ -21,7 +21,7 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class FogNabor extends PostProcessingNabor {
     public FogNabor(VkDevice device) {
-        super(device, VK_SAMPLE_COUNT_1_BIT);
+        super(device, VK_SAMPLE_COUNT_1_BIT, false);
     }
 
     @Override

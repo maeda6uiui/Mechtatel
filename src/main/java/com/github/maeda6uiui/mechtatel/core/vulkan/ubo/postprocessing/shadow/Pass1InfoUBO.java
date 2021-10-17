@@ -1,12 +1,15 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow;
 
 import com.github.maeda6uiui.mechtatel.core.shadow.Pass1Info;
+import org.joml.Matrix4f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkDevice;
 
 import java.nio.ByteBuffer;
 
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_FLOAT;
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_MAT4;
 import static org.lwjgl.vulkan.VK10.vkMapMemory;
 import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 
@@ -16,16 +19,22 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda
  */
 public class Pass1InfoUBO {
-    public static final int SIZEOF = 1 * Float.BYTES;
+    public static final int SIZEOF = 2 * SIZEOF_MAT4 + 1 * SIZEOF_FLOAT;
 
+    private Matrix4f view;
+    private Matrix4f proj;
     private float normalOffset;
 
     public Pass1InfoUBO(Pass1Info info) {
+        view = info.getView();
+        proj = info.getProj();
         normalOffset = info.getNormalOffset();
     }
 
     private void memcpy(ByteBuffer buffer) {
-        buffer.putFloat(normalOffset);
+        view.get(0, buffer);
+        proj.get(1 * SIZEOF_MAT4, buffer);
+        buffer.putFloat(2 * SIZEOF_MAT4, normalOffset);
 
         buffer.rewind();
     }

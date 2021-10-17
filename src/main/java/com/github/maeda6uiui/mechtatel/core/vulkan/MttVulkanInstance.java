@@ -14,6 +14,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.*;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow.ShadowMappingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.*;
@@ -252,6 +253,9 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 case "point_light":
                     ppNabor = new PointLightNabor(device);
                     break;
+                case "shadow_mapping":
+                    ppNabor = new ShadowMappingNabor(device, VK_FORMAT_R16G16B16A16_SFLOAT);
+                    break;
                 case "spotlight":
                     ppNabor = new SpotlightNabor(device);
                     break;
@@ -342,6 +346,12 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
             CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
         }
+    }
+
+    private void runShadowMappingNabor(
+            
+    ) {
+
     }
 
     private void runPostProcessingNabors(

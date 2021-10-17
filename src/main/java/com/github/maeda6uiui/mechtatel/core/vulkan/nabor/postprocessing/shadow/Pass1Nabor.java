@@ -3,7 +3,6 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass1InfoUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.ShadowMatricesUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
@@ -75,13 +74,6 @@ class Pass1Nabor extends Nabor {
     @Override
     protected void createUniformBuffers(int descriptorCount) {
         VkDevice device = this.getDevice();
-
-        var shadowMatricesUBOInfos = BufferCreator.createUBOBuffers(
-                device, descriptorCount, ShadowMatricesUBO.SIZEOF);
-        for (var shadowMatricesUBOInfo : shadowMatricesUBOInfos) {
-            this.getUniformBuffers().add(shadowMatricesUBOInfo.buffer);
-            this.getUniformBufferMemories().add(shadowMatricesUBOInfo.bufferMemory);
-        }
 
         var pass1InfoUBOInfos = BufferCreator.createUBOBuffers(
                 device, descriptorCount, Pass1InfoUBO.SIZEOF);
@@ -170,17 +162,10 @@ class Pass1Nabor extends Nabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.callocStack(2, stack);
+            VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.callocStack(1, stack);
 
-            VkDescriptorSetLayoutBinding shadowMatricesUBOLayoutBinding = uboBindings.get(0);
-            shadowMatricesUBOLayoutBinding.binding(0);
-            shadowMatricesUBOLayoutBinding.descriptorCount(1);
-            shadowMatricesUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            shadowMatricesUBOLayoutBinding.pImmutableSamplers(null);
-            shadowMatricesUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
-
-            VkDescriptorSetLayoutBinding pass1InfoUBOLayoutBinding = uboBindings.get(1);
-            pass1InfoUBOLayoutBinding.binding(1);
+            VkDescriptorSetLayoutBinding pass1InfoUBOLayoutBinding = uboBindings.get(0);
+            pass1InfoUBOLayoutBinding.binding(0);
             pass1InfoUBOLayoutBinding.descriptorCount(1);
             pass1InfoUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             pass1InfoUBOLayoutBinding.pImmutableSamplers(null);
@@ -210,13 +195,9 @@ class Pass1Nabor extends Nabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.callocStack(2, stack);
+            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.callocStack(1, stack);
 
-            VkDescriptorPoolSize shadowMatricesUBOPoolSize = uboPoolSizes.get(0);
-            shadowMatricesUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            shadowMatricesUBOPoolSize.descriptorCount(descriptorCount);
-
-            VkDescriptorPoolSize pass1InfoUBOPoolSize = uboPoolSizes.get(1);
+            VkDescriptorPoolSize pass1InfoUBOPoolSize = uboPoolSizes.get(0);
             pass1InfoUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             pass1InfoUBOPoolSize.descriptorCount(descriptorCount);
 
@@ -278,15 +259,10 @@ class Pass1Nabor extends Nabor {
             VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.callocStack(setCount, stack);
 
             //=== set 0 ===
-            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.callocStack(2, stack);
+            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.callocStack(1, stack);
 
-            VkDescriptorBufferInfo shadowMatricesUBOInfo = uboInfos.get(0);
-            shadowMatricesUBOInfo.buffer(this.getUniformBuffer(0));
-            shadowMatricesUBOInfo.offset(0);
-            shadowMatricesUBOInfo.range(ShadowMatricesUBO.SIZEOF);
-
-            VkDescriptorBufferInfo pass1InfoUBOInfo = uboInfos.get(1);
-            pass1InfoUBOInfo.buffer(this.getUniformBuffer(1));
+            VkDescriptorBufferInfo pass1InfoUBOInfo = uboInfos.get(0);
+            pass1InfoUBOInfo.buffer(this.getUniformBuffer(0));
             pass1InfoUBOInfo.offset(0);
             pass1InfoUBOInfo.range(Pass1InfoUBO.SIZEOF);
 

@@ -8,7 +8,7 @@ const int PROJECTION_TYPE_PERSPECTIVE=1;
 
 layout(set=0,binding=0) uniform Pass2InfoUBO{
     int numShadowMaps;
-}smInfo;
+}passInfo;
 struct ShadowInfo{
     int projectionType;
     vec3 lightDirection;
@@ -39,7 +39,7 @@ void main(){
 
     vec3 shadowFactors=vec3(1.0);
 
-    for(int i=0;i<smInfo.numShadowMaps;i++){
+    for(int i=0;i<passInfo.numShadowMaps;i++){
         float cosTh=abs(dot(shadowInfos[i].lightDirection,normal));
         float bias=shadowInfos[i].biasCoefficient*tan(acos(cosTh));
         bias=clamp(bias,0.0,shadowInfos[i].maxBias);

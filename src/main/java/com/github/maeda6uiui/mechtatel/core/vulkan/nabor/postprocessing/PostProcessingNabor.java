@@ -146,10 +146,6 @@ public class PostProcessingNabor extends Nabor {
             long depthImageView,
             long positionImageView,
             long normalImageView) {
-        if (this.isContainer()) {
-            throw new RuntimeException("This operation is not allowed because this nabor is a container");
-        }
-
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 

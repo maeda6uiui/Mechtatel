@@ -142,6 +142,7 @@ public class PostProcessingNabor extends Nabor {
 
     public void bindImages(
             VkCommandBuffer commandBuffer,
+            Nabor nabor,
             long colorImageView,
             long depthImageView,
             long positionImageView,
@@ -175,7 +176,7 @@ public class PostProcessingNabor extends Nabor {
             imageDescriptorWrite.descriptorCount(4);
             imageDescriptorWrite.pImageInfo(imageInfos);
 
-            long descriptorSet = this.getDescriptorSet(1);
+            long descriptorSet = nabor.getDescriptorSet(1);
             imageDescriptorWrite.dstSet(descriptorSet);
 
             vkUpdateDescriptorSets(device, imageDescriptorWrite, null);
@@ -183,10 +184,25 @@ public class PostProcessingNabor extends Nabor {
             vkCmdBindDescriptorSets(
                     commandBuffer,
                     VK_PIPELINE_BIND_POINT_GRAPHICS,
-                    this.getPipelineLayout(0),
+                    nabor.getPipelineLayout(0),
                     0,
-                    this.pDescriptorSets(),
+                    nabor.pDescriptorSets(),
                     null);
         }
+    }
+
+    public void bindImages(
+            VkCommandBuffer commandBuffer,
+            long colorImageView,
+            long depthImageView,
+            long positionImageView,
+            long normalImageView) {
+        this.bindImages(
+                commandBuffer,
+                this,
+                colorImageView,
+                depthImageView,
+                positionImageView,
+                normalImageView);
     }
 }

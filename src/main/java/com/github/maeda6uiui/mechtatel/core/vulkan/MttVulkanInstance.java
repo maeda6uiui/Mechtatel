@@ -117,23 +117,41 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         VkExtent2D extent = swapchain.getSwapchainExtent();
         //Shadow coords
         for (int i = 0; i < ShadowMappingNabor.MAX_NUM_SHADOW_MAPS; i++) {
-            shadowMappingNabor.createUserDefImage(
+            long image = shadowMappingNabor.createUserDefImage(
                     extent.width(),
                     extent.height(),
                     1,
                     VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     shadowCoordsImageFormat);
+            ImageUtils.transitionImageLayout(
+                    device,
+                    commandPool,
+                    graphicsQueue,
+                    image,
+                    false,
+                    VK_IMAGE_LAYOUT_UNDEFINED,
+                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                    1);
         }
         //Shadow depth
         for (int i = 0; i < ShadowMappingNabor.MAX_NUM_SHADOW_MAPS; i++) {
-            shadowMappingNabor.createUserDefImage(
+            long image = shadowMappingNabor.createUserDefImage(
                     extent.width(),
                     extent.height(),
                     1,
                     VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     shadowDepthImageFormat);
+            ImageUtils.transitionImageLayout(
+                    device,
+                    commandPool,
+                    graphicsQueue,
+                    image,
+                    false,
+                    VK_IMAGE_LAYOUT_UNDEFINED,
+                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                    1);
         }
     }
 
@@ -327,9 +345,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             var cameraUBO = new CameraUBO(camera);
             cameraUBO.update(device, cameraUBOMemory);
 
-            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
-            beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
-
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
             renderPassInfo.renderPass(gBufferNabor.getRenderPass());
@@ -409,9 +424,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         spotlights,
                         components,
                         quadDrawer,
-                        depthImageFormat,
-                        shadowCoordsImageFormat,
-                        shadowDepthImageFormat);
+                        depthImageFormat);
 
                 lastPPNabor = ppNabor;
 
@@ -498,9 +511,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             }
 
             try (MemoryStack stack = MemoryStack.stackPush()) {
-                VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
-                beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
-
                 VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
                 renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
                 renderPassInfo.renderPass(ppNabor.getRenderPass());

@@ -350,15 +350,19 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         }
     }
 
-    private void runShadowMappingPass1(PostProcessingNabor shadowMappingNabor, Pass1InfoUBO pass1InfoUBO) {
+    private void runShadowMappingPass1(PostProcessingNabor shadowMappingNabor, Pass1Info pass1Info) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
+            long pass1InfoUBOMemory = shadowMappingNabor.getUniformBufferMemory(0, 0);
+            var pass1InfoUBO = new Pass1InfoUBO(pass1Info);
+            pass1InfoUBO.update(device, pass1InfoUBOMemory);
+
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
 
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
             renderPassInfo.renderPass(shadowMappingNabor.getRenderPass(0));
-            renderPassInfo.framebuffer(shadowMappingNabor.getFramebuffer(0));
+            renderPassInfo.framebuffer(shadowMappingNabor.getFramebuffer(0, 0));
             VkRect2D renderArea = VkRect2D.callocStack(stack);
             renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
             renderArea.extent(shadowMappingNabor.getExtent());
@@ -375,12 +379,12 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 vkCmdBindPipeline(
                         commandBuffer,
                         VK_PIPELINE_BIND_POINT_GRAPHICS,
-                        shadowMappingNabor.getGraphicsPipeline(0));
+                        shadowMappingNabor.getGraphicsPipeline(0, 0));
 
                 vkCmdBindDescriptorSets(
                         commandBuffer,
                         VK_PIPELINE_BIND_POINT_GRAPHICS,
-                        shadowMappingNabor.getPipelineLayout(0),
+                        shadowMappingNabor.getPipelineLayout(0, 0),
                         0,
                         shadowMappingNabor.pDescriptorSets(0),
                         null);
@@ -391,7 +395,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
                     vkCmdPushConstants(
                             commandBuffer,
-                            shadowMappingNabor.getPipelineLayout(0),
+                            shadowMappingNabor.getPipelineLayout(0, 0),
                             VK_SHADER_STAGE_VERTEX_BIT,
                             0,
                             matBuffer);
@@ -399,8 +403,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     component.draw(
                             commandBuffer,
                             0,
-                            shadowMappingNabor.getPipelineLayout(0),
-                            shadowMappingNabor.getTextureSampler(0));
+                            shadowMappingNabor.getPipelineLayout(0, 0),
+                            shadowMappingNabor.getTextureSampler(0, 0));
                 }
             }
             vkCmdEndRenderPass(commandBuffer);
@@ -418,13 +422,9 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             List<ParallelLight> parallelLights,
             List<Spotlight> spotlights) {
         //Pass 1
-        long pass1InfoUBOMemory = shadowMappingNabor.getUniformBufferMemory(0);
         for (var parallelLight : parallelLights) {
             var pass1Info = new Pass1Info(parallelLight);
-            var pass1InfoUBO = new Pass1InfoUBO(pass1Info);
-            pass1InfoUBO.update(device, pass1InfoUBOMemory);
-
-            this.runShadowMappingPass1(shadowMappingNabor, pass1InfoUBO);
+            this.runShadowMappingPass1(shadowMappingNabor, pass1Info);
         }
     }
 

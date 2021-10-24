@@ -352,6 +352,10 @@ public class Nabor {
         return textureSamplers.get(index);
     }
 
+    public long getTextureSampler(int naborIndex, int arrayIndex) {
+        return textureSamplers.get(arrayIndex);
+    }
+
     protected List<Long> getTextureSamplers() {
         return textureSamplers;
     }
@@ -368,6 +372,10 @@ public class Nabor {
         return uniformBufferMemories.get(index);
     }
 
+    public long getUniformBufferMemory(int naborIndex, int arrayIndex) {
+        return uniformBufferMemories.get(arrayIndex);
+    }
+
     protected List<Long> getUniformBufferMemories() {
         return uniformBufferMemories;
     }
@@ -376,8 +384,8 @@ public class Nabor {
         return renderPass;
     }
 
-    public long getRenderPass(int index) {
-        return -1;
+    public long getRenderPass(int naborIndex) {
+        return renderPass;
     }
 
     protected void setRenderPass(long renderPass) {
@@ -430,8 +438,8 @@ public class Nabor {
         return pSets;
     }
 
-    public LongBuffer pDescriptorSets(int index) {
-        return null;
+    public LongBuffer pDescriptorSets(int naborIndex) {
+        return this.pDescriptorSets();
     }
 
     public long getVertShaderModule(int index) {
@@ -454,6 +462,10 @@ public class Nabor {
         return pipelineLayouts.get(index);
     }
 
+    public long getPipelineLayout(int naborIndex, int arrayIndex) {
+        return pipelineLayouts.get(arrayIndex);
+    }
+
     protected List<Long> getPipelineLayouts() {
         return pipelineLayouts;
     }
@@ -462,10 +474,14 @@ public class Nabor {
         return graphicsPipelines.get(index);
     }
 
+    public long getGraphicsPipeline(int naborIndex, int arrayIndex) {
+        return graphicsPipelines.get(arrayIndex);
+    }
+
     protected List<Long> getGraphicsPipelines() {
         return graphicsPipelines;
     }
-    
+
     public long getImage(int index) {
         return images.get(index);
     }
@@ -494,8 +510,16 @@ public class Nabor {
         return framebuffers.size();
     }
 
+    public int getNumFramebuffers(int naborIndex) {
+        return framebuffers.size();
+    }
+
     public long getFramebuffer(int index) {
         return framebuffers.get(index);
+    }
+
+    public long getFramebuffer(int naborIndex, int arrayIndex) {
+        return framebuffers.get(arrayIndex);
     }
 
     protected List<Long> getFramebuffers() {

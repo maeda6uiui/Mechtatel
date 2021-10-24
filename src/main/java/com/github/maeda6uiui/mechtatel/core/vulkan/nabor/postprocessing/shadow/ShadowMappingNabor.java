@@ -72,15 +72,15 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     }
 
     @Override
-    public long getTextureSampler(int passIndex) {
+    public long getTextureSampler(int naborIndex, int arrayIndex) {
         long textureSampler;
 
-        switch (passIndex) {
+        switch (naborIndex) {
             case 0:
-                textureSampler = pass1.getTextureSampler(0);
+                textureSampler = pass1.getTextureSampler(arrayIndex);
                 break;
             case 1:
-                textureSampler = pass2.getTextureSampler(0);
+                textureSampler = pass2.getTextureSampler(arrayIndex);
                 break;
             default:
                 throw new RuntimeException("Index out of bounds");
@@ -90,10 +90,28 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     }
 
     @Override
-    public long getRenderPass(int passIndex) {
+    public long getUniformBufferMemory(int naborIndex, int arrayIndex) {
+        long uniformBufferMemory;
+
+        switch (naborIndex) {
+            case 0:
+                uniformBufferMemory = pass1.getUniformBufferMemory(arrayIndex);
+                break;
+            case 1:
+                uniformBufferMemory = pass2.getUniformBufferMemory(arrayIndex);
+                break;
+            default:
+                throw new RuntimeException("Index out of bounds");
+        }
+
+        return uniformBufferMemory;
+    }
+
+    @Override
+    public long getRenderPass(int naborIndex) {
         long renderPass;
 
-        switch (passIndex) {
+        switch (naborIndex) {
             case 0:
                 renderPass = pass1.getRenderPass();
                 break;
@@ -108,10 +126,10 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     }
 
     @Override
-    public LongBuffer pDescriptorSets(int passIndex) {
+    public LongBuffer pDescriptorSets(int naborIndex) {
         LongBuffer pSets;
 
-        switch (passIndex) {
+        switch (naborIndex) {
             case 0:
                 pSets = pass1.pDescriptorSets();
                 break;
@@ -126,15 +144,15 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     }
 
     @Override
-    public long getPipelineLayout(int passIndex) {
+    public long getPipelineLayout(int naborIndex, int arrayIndex) {
         long pipelineLayout;
 
-        switch (passIndex) {
+        switch (naborIndex) {
             case 0:
-                pipelineLayout = pass1.getPipelineLayout(0);
+                pipelineLayout = pass1.getPipelineLayout(arrayIndex);
                 break;
             case 1:
-                pipelineLayout = pass2.getPipelineLayout(0);
+                pipelineLayout = pass2.getPipelineLayout(arrayIndex);
                 break;
             default:
                 throw new RuntimeException("Index out of bounds");
@@ -144,15 +162,15 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     }
 
     @Override
-    public long getGraphicsPipeline(int passIndex) {
+    public long getGraphicsPipeline(int naborIndex, int arrayIndex) {
         long graphicsPipeline;
 
-        switch (passIndex) {
+        switch (naborIndex) {
             case 0:
-                graphicsPipeline = pass1.getGraphicsPipeline(0);
+                graphicsPipeline = pass1.getGraphicsPipeline(arrayIndex);
                 break;
             case 1:
-                graphicsPipeline = pass2.getGraphicsPipeline(1);
+                graphicsPipeline = pass2.getGraphicsPipeline(arrayIndex);
                 break;
             default:
                 throw new RuntimeException("Index out of bounds");
@@ -162,15 +180,15 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     }
 
     @Override
-    public long getFramebuffer(int passIndex) {
+    public long getFramebuffer(int naborIndex, int arrayIndex) {
         long framebuffer;
 
-        switch (passIndex) {
+        switch (naborIndex) {
             case 0:
-                framebuffer = pass1.getFramebuffer(0);
+                framebuffer = pass1.getFramebuffer(arrayIndex);
                 break;
             case 1:
-                framebuffer = pass2.getFramebuffer(0);
+                framebuffer = pass2.getFramebuffer(arrayIndex);
                 break;
             default:
                 throw new RuntimeException("Index out of bounds");

@@ -64,27 +64,6 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     }
 
     @Override
-    public void transitionImageLayout(
-            long commandPool,
-            VkQueue graphicsQueue,
-            int naborIndex,
-            int arrayIndex,
-            boolean hasStencilComponent,
-            int oldLayout,
-            int newLayout) {
-        switch (naborIndex) {
-            case 0:
-                pass1.transitionImageLayout(commandPool, graphicsQueue, arrayIndex, hasStencilComponent, oldLayout, newLayout);
-                break;
-            case 1:
-                pass2.transitionImageLayout(commandPool, graphicsQueue, arrayIndex, hasStencilComponent, oldLayout, newLayout);
-                break;
-            default:
-                throw new RuntimeException("Index out of bounds");
-        }
-    }
-
-    @Override
     public void transitionColorImageLayout(long commandPool, VkQueue graphicsQueue) {
         pass2.transitionColorImageLayout(commandPool, graphicsQueue);
     }

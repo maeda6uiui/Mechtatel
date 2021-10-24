@@ -106,9 +106,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         } else {
             presentNabor.recreate(
                     swapchain.getSwapchainImageFormat(),
-                    swapchain.getSwapchainExtent(),
-                    commandPool,
-                    graphicsQueue);
+                    swapchain.getSwapchainExtent());
         }
         swapchain.createFramebuffers(presentNabor.getRenderPass());
     }
@@ -116,16 +114,12 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private void recreateNabors() {
         gBufferNabor.recreate(
                 swapchain.getSwapchainImageFormat(),
-                swapchain.getSwapchainExtent(),
-                commandPool,
-                graphicsQueue);
+                swapchain.getSwapchainExtent());
 
         for (var ppNabor : ppNabors.values()) {
             ppNabor.recreate(
                     swapchain.getSwapchainImageFormat(),
-                    swapchain.getSwapchainExtent(),
-                    commandPool,
-                    graphicsQueue);
+                    swapchain.getSwapchainExtent());
         }
     }
 

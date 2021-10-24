@@ -230,10 +230,7 @@ public class PostProcessingNabor extends Nabor {
     }
 
     @Override
-    protected void createImages(
-            long commandPool,
-            VkQueue graphicsQueue,
-            int colorImageFormat) {
+    protected void createImages(int colorImageFormat) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
             int msaaSamples = this.getMsaaSamples();

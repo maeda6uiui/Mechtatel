@@ -46,6 +46,10 @@ public class Nabor {
     private List<Long> imageViews;
     private List<Long> framebuffers;
 
+    private List<Long> userDefImages;
+    private List<Long> userDefImageMemories;
+    private List<Long> userDefImageViews;
+
     private int setCount;
 
     public Nabor(VkDevice device, int msaaSamples, boolean isContainer) {
@@ -71,27 +75,320 @@ public class Nabor {
         imageMemories = new ArrayList<>();
         imageViews = new ArrayList<>();
         framebuffers = new ArrayList<>();
+
+        userDefImages = new ArrayList<>();
+        userDefImageMemories = new ArrayList<>();
+        userDefImageViews = new ArrayList<>();
+    }
+
+    //===== Getters and setters =====
+    protected VkDevice getDevice() {
+        return device;
+    }
+
+    public int getMsaaSamples() {
+        return msaaSamples;
+    }
+
+    public int getMsaaSamples(int naborIndex) {
+        return msaaSamples;
+    }
+
+    public VkExtent2D getExtent() {
+        return extent;
+    }
+
+    public VkExtent2D getExtent(int naborIndex) {
+        return extent;
+    }
+
+    public boolean isContainer() {
+        return isContainer;
+    }
+
+    public boolean isContainer(int naborIndex) {
+        return isContainer;
+    }
+
+    protected long getDummyImage() {
+        return dummyImage;
+    }
+
+    protected long getDummyImageMemory() {
+        return dummyImageMemory;
     }
 
     protected long getDummyImageView() {
         return dummyImageView;
     }
 
-    public void transitionImage(long commandPool, VkQueue graphicsQueue, int index, int oldLayout) {
-        VkDevice device = this.getDevice();
-        long image = this.getImage(index);
-
-        ImageUtils.transitionImageLayout(
-                device,
-                commandPool,
-                graphicsQueue,
-                image,
-                false,
-                oldLayout,
-                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                1);
+    protected List<Long> getTextureSamplers() {
+        return textureSamplers;
     }
 
+    public long getTextureSampler(int index) {
+        return textureSamplers.get(index);
+    }
+
+    public long getTextureSampler(int naborIndex, int arrayIndex) {
+        return textureSamplers.get(arrayIndex);
+    }
+
+    protected List<Long> getUniformBuffers() {
+        return uniformBuffers;
+    }
+
+    public long getUniformBuffer(int index) {
+        return uniformBuffers.get(index);
+    }
+
+    public long getUniformBuffer(int naborIndex, int arrayIndex) {
+        return uniformBuffers.get(arrayIndex);
+    }
+
+    protected List<Long> getUniformBufferMemories() {
+        return uniformBufferMemories;
+    }
+
+    public long getUniformBufferMemory(int index) {
+        return uniformBufferMemories.get(index);
+    }
+
+    public long getUniformBufferMemory(int naborIndex, int arrayIndex) {
+        return uniformBufferMemories.get(arrayIndex);
+    }
+
+    public long getRenderPass() {
+        return renderPass;
+    }
+
+    public long getRenderPass(int naborIndex) {
+        return renderPass;
+    }
+
+    protected void setRenderPass(long renderPass) {
+        this.renderPass = renderPass;
+    }
+
+    protected List<Long> getDescriptorSetLayouts() {
+        return descriptorSetLayouts;
+    }
+
+    public long getDescriptorSetLayout(int index) {
+        return descriptorSetLayouts.get(index);
+    }
+
+    public long getDescriptorSetLayout(int naborIndex, int arrayIndex) {
+        return descriptorSetLayouts.get(arrayIndex);
+    }
+
+    protected LongBuffer pDescriptorSetLayouts() {
+        LongBuffer pLayouts = MemoryStack.stackGet().mallocLong(descriptorSetLayouts.size());
+        for (int i = 0; i < descriptorSetLayouts.size(); i++) {
+            pLayouts.put(i, descriptorSetLayouts.get(i));
+        }
+
+        return pLayouts;
+    }
+
+    protected List<Long> getDescriptorPools() {
+        return descriptorPools;
+    }
+
+    public long getDescriptorPool(int index) {
+        return descriptorPools.get(index);
+    }
+
+    public long getDescriptorPool(int naborIndex, int arrayIndex) {
+        return descriptorPools.get(arrayIndex);
+    }
+
+    public int getNumDescriptorSets() {
+        return descriptorSets.size();
+    }
+
+    public int getNumDescriptorSets(int naborIndex) {
+        return descriptorSets.size();
+    }
+
+    protected List<Long> getDescriptorSets() {
+        return descriptorSets;
+    }
+
+    public long getDescriptorSet(int index) {
+        return descriptorSets.get(index);
+    }
+
+    public long getDescriptorSet(int naborIndex, int arrayIndex) {
+        return descriptorSets.get(arrayIndex);
+    }
+
+    public LongBuffer pDescriptorSets() {
+        LongBuffer pSets = MemoryStack.stackGet().mallocLong(descriptorSets.size());
+        for (int i = 0; i < descriptorSets.size(); i++) {
+            pSets.put(i, descriptorSets.get(i));
+        }
+
+        return pSets;
+    }
+
+    public LongBuffer pDescriptorSets(int naborIndex) {
+        return this.pDescriptorSets();
+    }
+
+    protected List<Long> getVertShaderModules() {
+        return vertShaderModules;
+    }
+
+    public long getVertShaderModule(int index) {
+        return vertShaderModules.get(index);
+    }
+
+    public long getVertShaderModule(int naborIndex, int arrayIndex) {
+        return vertShaderModules.get(arrayIndex);
+    }
+
+    protected List<Long> getFragShaderModules() {
+        return fragShaderModules;
+    }
+
+    public long getFragShaderModule(int index) {
+        return fragShaderModules.get(index);
+    }
+
+    public long getFragShaderModule(int naborIndex, int arrayIndex) {
+        return fragShaderModules.get(arrayIndex);
+    }
+
+    protected List<Long> getPipelineLayouts() {
+        return pipelineLayouts;
+    }
+
+    public long getPipelineLayout(int index) {
+        return pipelineLayouts.get(index);
+    }
+
+    public long getPipelineLayout(int naborIndex, int arrayIndex) {
+        return pipelineLayouts.get(arrayIndex);
+    }
+
+    protected List<Long> getGraphicsPipelines() {
+        return graphicsPipelines;
+    }
+
+    public long getGraphicsPipeline(int index) {
+        return graphicsPipelines.get(index);
+    }
+
+    public long getGraphicsPipeline(int naborIndex, int arrayIndex) {
+        return graphicsPipelines.get(arrayIndex);
+    }
+
+    protected List<Long> getImages() {
+        return images;
+    }
+
+    public long getImage(int index) {
+        return images.get(index);
+    }
+
+    public long getImage(int naborIndex, int arrayIndex) {
+        return images.get(arrayIndex);
+    }
+
+    protected List<Long> getImageMemories() {
+        return imageMemories;
+    }
+
+    public long getImageMemory(int index) {
+        return imageMemories.get(index);
+    }
+
+    public long getImageMemory(int naborIndex, int arrayIndex) {
+        return imageMemories.get(arrayIndex);
+    }
+
+    protected List<Long> getImageViews() {
+        return imageViews;
+    }
+
+    public long getImageView(int index) {
+        return imageViews.get(index);
+    }
+
+    public long getImageView(int naborIndex, int arrayIndex) {
+        return imageViews.get(arrayIndex);
+    }
+
+    protected List<Long> getUserDefImages() {
+        return userDefImages;
+    }
+
+    public long getUserDefImage(int index) {
+        return userDefImages.get(index);
+    }
+
+    public long getUserDefImage(int naborIndex, int arrayIndex) {
+        return userDefImages.get(arrayIndex);
+    }
+
+    protected List<Long> getUserDefImageMemories() {
+        return userDefImageMemories;
+    }
+
+    public long getUserDefImageMemory(int index) {
+        return userDefImageMemories.get(index);
+    }
+
+    public long getUserDefImageMemory(int naborIndex, int arrayIndex) {
+        return userDefImageMemories.get(arrayIndex);
+    }
+
+    protected List<Long> getUserDefImageViews() {
+        return userDefImageViews;
+    }
+
+    public long getUserDefImageView(int index) {
+        return userDefImageViews.get(index);
+    }
+
+    public long getUserDefImageView(int naborIndex, int arrayIndex) {
+        return userDefImageViews.get(arrayIndex);
+    }
+
+    public int getNumFramebuffers() {
+        return framebuffers.size();
+    }
+
+    public int getNumFramebuffers(int naborIndex) {
+        return framebuffers.size();
+    }
+
+    public long getFramebuffer(int index) {
+        return framebuffers.get(index);
+    }
+
+    public long getFramebuffer(int naborIndex, int arrayIndex) {
+        return framebuffers.get(arrayIndex);
+    }
+
+    protected List<Long> getFramebuffers() {
+        return framebuffers;
+    }
+
+    public int getSetCount() {
+        return setCount;
+    }
+
+    public int getSetCount(int naborIndex) {
+        return setCount;
+    }
+
+    protected void setSetCount(int setCount) {
+        this.setCount = setCount;
+    }
+
+    //===== Methods executed in compile() and recreate() =====
     protected void createTextureSamplers() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkSamplerCreateInfo samplerInfo = VkSamplerCreateInfo.callocStack(stack);
@@ -198,10 +495,7 @@ public class Nabor {
 
     }
 
-    protected void createImages(
-            long commandPool,
-            VkQueue graphicsQueue,
-            int colorImageFormat) {
+    protected void createImages(int colorImageFormat) {
 
     }
 
@@ -239,6 +533,7 @@ public class Nabor {
             this.getFramebuffers().add(pFramebuffer.get(0));
         }
     }
+    //==========
 
     public void compile(
             int colorImageFormat,
@@ -259,15 +554,13 @@ public class Nabor {
         this.createDescriptorPools(descriptorCount);
         this.createDescriptorSets(descriptorCount, commandPool, graphicsQueue);
         this.createGraphicsPipelines();
-        this.createImages(commandPool, graphicsQueue, colorImageFormat);
+        this.createImages(colorImageFormat);
         this.createFramebuffers();
     }
 
     public void recreate(
             int colorImageFormat,
-            VkExtent2D extent,
-            long commandPool,
-            VkQueue graphicsQueue) {
+            VkExtent2D extent) {
         this.extent = extent;
 
         if (isContainer) {
@@ -278,7 +571,7 @@ public class Nabor {
 
         this.createRenderPass(colorImageFormat);
         this.createGraphicsPipelines();
-        this.createImages(commandPool, graphicsQueue, colorImageFormat);
+        this.createImages(colorImageFormat);
         this.createFramebuffers();
     }
 
@@ -306,6 +599,13 @@ public class Nabor {
             vkFreeMemory(device, dummyImageMemory, null);
             vkDestroyImageView(device, dummyImageView, null);
 
+            userDefImages.forEach(image -> vkDestroyImage(device, image, null));
+            userDefImageMemories.forEach(imageMemory -> vkFreeMemory(device, imageMemory, null));
+            userDefImageViews.forEach(imageView -> vkDestroyImageView(device, imageView, null));
+            userDefImages.clear();
+            userDefImageMemories.clear();
+            userDefImageViews.clear();
+
             vertShaderModules.forEach(vertShaderModule -> vkDestroyShaderModule(device, vertShaderModule, null));
             fragShaderModules.forEach(fragShaderModule -> vkDestroyShaderModule(device, fragShaderModule, null));
             vertShaderModules.clear();
@@ -332,208 +632,7 @@ public class Nabor {
         vkDestroyRenderPass(device, renderPass, null);
     }
 
-    protected VkDevice getDevice() {
-        return device;
-    }
-
-    public int getMsaaSamples() {
-        return msaaSamples;
-    }
-
-    public VkExtent2D getExtent() {
-        return extent;
-    }
-
-    public boolean isContainer() {
-        return isContainer;
-    }
-
-    public long getTextureSampler(int index) {
-        return textureSamplers.get(index);
-    }
-
-    public long getTextureSampler(int naborIndex, int arrayIndex) {
-        return textureSamplers.get(arrayIndex);
-    }
-
-    protected List<Long> getTextureSamplers() {
-        return textureSamplers;
-    }
-
-    public long getUniformBuffer(int index) {
-        return uniformBuffers.get(index);
-    }
-
-    protected List<Long> getUniformBuffers() {
-        return uniformBuffers;
-    }
-
-    public long getUniformBufferMemory(int index) {
-        return uniformBufferMemories.get(index);
-    }
-
-    public long getUniformBufferMemory(int naborIndex, int arrayIndex) {
-        return uniformBufferMemories.get(arrayIndex);
-    }
-
-    protected List<Long> getUniformBufferMemories() {
-        return uniformBufferMemories;
-    }
-
-    public long getRenderPass() {
-        return renderPass;
-    }
-
-    public long getRenderPass(int naborIndex) {
-        return renderPass;
-    }
-
-    protected void setRenderPass(long renderPass) {
-        this.renderPass = renderPass;
-    }
-
-    public long getDescriptorSetLayout(int index) {
-        return descriptorSetLayouts.get(index);
-    }
-
-    protected List<Long> getDescriptorSetLayouts() {
-        return descriptorSetLayouts;
-    }
-
-    protected LongBuffer pDescriptorSetLayouts() {
-        LongBuffer pLayouts = MemoryStack.stackGet().mallocLong(descriptorSetLayouts.size());
-        for (int i = 0; i < descriptorSetLayouts.size(); i++) {
-            pLayouts.put(i, descriptorSetLayouts.get(i));
-        }
-
-        return pLayouts;
-    }
-
-    public long getDescriptorPool(int index) {
-        return descriptorPools.get(index);
-    }
-
-    protected List<Long> getDescriptorPools() {
-        return descriptorPools;
-    }
-
-    public int getNumDescriptorSets() {
-        return descriptorSets.size();
-    }
-
-    public long getDescriptorSet(int index) {
-        return descriptorSets.get(index);
-    }
-
-    protected List<Long> getDescriptorSets() {
-        return descriptorSets;
-    }
-
-    public LongBuffer pDescriptorSets() {
-        LongBuffer pSets = MemoryStack.stackGet().mallocLong(descriptorSets.size());
-        for (int i = 0; i < descriptorSets.size(); i++) {
-            pSets.put(i, descriptorSets.get(i));
-        }
-
-        return pSets;
-    }
-
-    public LongBuffer pDescriptorSets(int naborIndex) {
-        return this.pDescriptorSets();
-    }
-
-    public long getVertShaderModule(int index) {
-        return vertShaderModules.get(index);
-    }
-
-    protected List<Long> getVertShaderModules() {
-        return vertShaderModules;
-    }
-
-    public long getFragShaderModule(int index) {
-        return fragShaderModules.get(index);
-    }
-
-    protected List<Long> getFragShaderModules() {
-        return fragShaderModules;
-    }
-
-    public long getPipelineLayout(int index) {
-        return pipelineLayouts.get(index);
-    }
-
-    public long getPipelineLayout(int naborIndex, int arrayIndex) {
-        return pipelineLayouts.get(arrayIndex);
-    }
-
-    protected List<Long> getPipelineLayouts() {
-        return pipelineLayouts;
-    }
-
-    public long getGraphicsPipeline(int index) {
-        return graphicsPipelines.get(index);
-    }
-
-    public long getGraphicsPipeline(int naborIndex, int arrayIndex) {
-        return graphicsPipelines.get(arrayIndex);
-    }
-
-    protected List<Long> getGraphicsPipelines() {
-        return graphicsPipelines;
-    }
-
-    public long getImage(int index) {
-        return images.get(index);
-    }
-
-    protected List<Long> getImages() {
-        return images;
-    }
-
-    public long getImageMemory(int index) {
-        return imageMemories.get(index);
-    }
-
-    protected List<Long> getImageMemories() {
-        return imageMemories;
-    }
-
-    public long getImageView(int index) {
-        return imageViews.get(index);
-    }
-
-    protected List<Long> getImageViews() {
-        return imageViews;
-    }
-
-    public int getNumFramebuffers() {
-        return framebuffers.size();
-    }
-
-    public int getNumFramebuffers(int naborIndex) {
-        return framebuffers.size();
-    }
-
-    public long getFramebuffer(int index) {
-        return framebuffers.get(index);
-    }
-
-    public long getFramebuffer(int naborIndex, int arrayIndex) {
-        return framebuffers.get(arrayIndex);
-    }
-
-    protected List<Long> getFramebuffers() {
-        return framebuffers;
-    }
-
-    public int getSetCount() {
-        return setCount;
-    }
-
-    protected void setSetCount(int setCount) {
-        this.setCount = setCount;
-    }
-
+    //==========
     protected long createShaderModule(VkDevice device, ByteBuffer spirvCode) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkShaderModuleCreateInfo createInfo = VkShaderModuleCreateInfo.callocStack(stack);
@@ -547,5 +646,112 @@ public class Nabor {
 
             return pShaderModule.get(0);
         }
+    }
+
+    public void transitionImage(long commandPool, VkQueue graphicsQueue, int index, int oldLayout) {
+        VkDevice device = this.getDevice();
+        long image = this.getImage(index);
+
+        ImageUtils.transitionImageLayout(
+                device,
+                commandPool,
+                graphicsQueue,
+                image,
+                false,
+                oldLayout,
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                1);
+    }
+
+    public long createUserDefImage(
+            int width,
+            int height,
+            int msaaSamples,
+            int usage,
+            int memProperties,
+            int imageFormat) {
+        try (MemoryStack stack = MemoryStack.stackGet()) {
+            LongBuffer pImage = stack.mallocLong(1);
+            LongBuffer pImageMemory = stack.mallocLong(1);
+            LongBuffer pImageView = stack.mallocLong(1);
+
+            ImageUtils.createImage(
+                    device,
+                    width,
+                    height,
+                    1,
+                    msaaSamples,
+                    imageFormat,
+                    VK_IMAGE_TILING_OPTIMAL,
+                    usage,
+                    memProperties,
+                    pImage,
+                    pImageMemory);
+
+            VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.callocStack(stack);
+            viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
+            viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
+            viewInfo.image(pImage.get(0));
+            viewInfo.format(imageFormat);
+            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+            viewInfo.subresourceRange().baseMipLevel(0);
+            viewInfo.subresourceRange().levelCount(1);
+            viewInfo.subresourceRange().baseArrayLayer(0);
+            viewInfo.subresourceRange().layerCount(1);
+
+            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create an image view");
+            }
+
+            userDefImages.add(pImage.get(0));
+            userDefImageMemories.add(pImageMemory.get(0));
+            userDefImageViews.add(pImageView.get(0));
+
+            return pImage.get(0);
+        }
+    }
+
+    public boolean deleteUserDefImage(long userDefImage) {
+        int imageIndex = -1;
+        for (int i = 0; i < userDefImages.size(); i++) {
+            if (userDefImages.get(i) == userDefImage) {
+                imageIndex = i;
+            }
+        }
+        if (imageIndex < 0) {
+            return false;
+        }
+
+        long userDefImageMemory = userDefImageMemories.get(imageIndex);
+        long userDefImageView = userDefImageViews.get(imageIndex);
+
+        vkDestroyImage(device, userDefImage, null);
+        vkFreeMemory(device, userDefImageMemory, null);
+        vkDestroyImageView(device, userDefImageView, null);
+
+        userDefImages.remove(imageIndex);
+        userDefImageMemories.remove(imageIndex);
+        userDefImageViews.remove(imageIndex);
+
+        return true;
+    }
+
+    public void transitionUserDefImage(
+            long commandPool,
+            VkQueue graphicsQueue,
+            long userDefImage,
+            int oldLayout,
+            int newLayout) {
+        VkDevice device = this.getDevice();
+
+        ImageUtils.transitionImageLayout(
+                device,
+                commandPool,
+                graphicsQueue,
+                userDefImage,
+                false,
+                oldLayout,
+                newLayout,
+                1);
     }
 }

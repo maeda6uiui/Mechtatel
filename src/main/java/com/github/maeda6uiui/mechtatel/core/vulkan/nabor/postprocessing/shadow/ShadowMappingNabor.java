@@ -54,13 +54,11 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     @Override
     public void recreate(
             int colorImageFormat,
-            VkExtent2D extent,
-            long commandPool,
-            VkQueue graphicsQueue) {
-        super.recreate(colorImageFormat, extent, commandPool, graphicsQueue);
+            VkExtent2D extent) {
+        super.recreate(colorImageFormat, extent);
 
-        pass1.recreate(colorImageFormat, extent, commandPool, graphicsQueue);
-        pass2.recreate(colorImageFormat, extent, commandPool, graphicsQueue);
+        pass1.recreate(colorImageFormat, extent);
+        pass2.recreate(colorImageFormat, extent);
     }
 
     @Override

@@ -8,6 +8,8 @@ import org.lwjgl.vulkan.*;
 
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -22,7 +24,13 @@ public class PostProcessingNabor extends Nabor {
     }
 
     public void transitionColorImage(long commandPool, VkQueue graphicsQueue) {
-        this.transitionImage(commandPool, graphicsQueue, 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+        this.transitionImage(
+                commandPool,
+                graphicsQueue,
+                0,
+                false,
+                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     }
 
     public long getColorImageView() {
@@ -278,43 +286,29 @@ public class PostProcessingNabor extends Nabor {
         }
     }
 
-    public void bindImages(
-            VkCommandBuffer commandBuffer,
-            Nabor nabor,
-            long colorImageView,
-            long depthImageView,
-            long positionImageView,
-            long normalImageView) {
+    public void bindImages(VkCommandBuffer commandBuffer, int dstBinding, List<Long> imageViews) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
+            int numImageViews = imageViews.size();
 
-            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.callocStack(4, stack);
+            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.callocStack(numImageViews, stack);
+            for (int i = 0; i < numImageViews; i++) {
+                long imageView = imageViews.get(i);
 
-            VkDescriptorImageInfo colorImageInfo = imageInfos.get(0);
-            colorImageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            colorImageInfo.imageView(colorImageView);
-
-            VkDescriptorImageInfo depthImageInfo = imageInfos.get(1);
-            depthImageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            depthImageInfo.imageView(depthImageView);
-
-            VkDescriptorImageInfo positionImageInfo = imageInfos.get(2);
-            positionImageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            positionImageInfo.imageView(positionImageView);
-
-            VkDescriptorImageInfo normalImageInfo = imageInfos.get(3);
-            normalImageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            normalImageInfo.imageView(normalImageView);
+                VkDescriptorImageInfo imageInfo = imageInfos.get(i);
+                imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+                imageInfo.imageView(imageView);
+            }
 
             VkWriteDescriptorSet.Buffer imageDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
             imageDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            imageDescriptorWrite.dstBinding(0);
+            imageDescriptorWrite.dstBinding(dstBinding);
             imageDescriptorWrite.dstArrayElement(0);
             imageDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            imageDescriptorWrite.descriptorCount(4);
+            imageDescriptorWrite.descriptorCount(numImageViews);
             imageDescriptorWrite.pImageInfo(imageInfos);
 
-            long descriptorSet = nabor.getDescriptorSet(1);
+            long descriptorSet = this.getDescriptorSet(1);
             imageDescriptorWrite.dstSet(descriptorSet);
 
             vkUpdateDescriptorSets(device, imageDescriptorWrite, null);
@@ -322,25 +316,38 @@ public class PostProcessingNabor extends Nabor {
             vkCmdBindDescriptorSets(
                     commandBuffer,
                     VK_PIPELINE_BIND_POINT_GRAPHICS,
-                    nabor.getPipelineLayout(0),
+                    this.getPipelineLayout(0),
                     0,
-                    nabor.pDescriptorSets(),
+                    this.pDescriptorSets(),
                     null);
         }
     }
 
+    public void bindImages(VkCommandBuffer commandBuffer, int naborIndex, int dstBinding, List<Long> imageViews) {
+        this.bindImages(commandBuffer, dstBinding, imageViews);
+    }
+
     public void bindImages(
             VkCommandBuffer commandBuffer,
+            int dstBinding,
             long colorImageView,
             long depthImageView,
             long positionImageView,
             long normalImageView) {
-        this.bindImages(
-                commandBuffer,
-                this,
-                colorImageView,
-                depthImageView,
-                positionImageView,
-                normalImageView);
+        var arrImageViews = new Long[]{colorImageView, depthImageView, positionImageView, normalImageView};
+        var imageViews = Arrays.asList(arrImageViews);
+
+        this.bindImages(commandBuffer, dstBinding, imageViews);
+    }
+
+    public void bindImages(
+            VkCommandBuffer commandBuffer,
+            int naborIndex,
+            int dstBinding,
+            long colorImageView,
+            long depthImageView,
+            long positionImageView,
+            long normalImageView) {
+        this.bindImages(commandBuffer, dstBinding, colorImageView, depthImageView, positionImageView, normalImageView);
     }
 }

@@ -577,6 +577,10 @@ public class Nabor {
 
     public void cleanup(boolean reserveForRecreation) {
         if (isContainer) {
+            if (!reserveForRecreation) {
+                this.cleanupUserDefImages();
+            }
+
             return;
         }
 
@@ -599,12 +603,7 @@ public class Nabor {
             vkFreeMemory(device, dummyImageMemory, null);
             vkDestroyImageView(device, dummyImageView, null);
 
-            userDefImages.forEach(image -> vkDestroyImage(device, image, null));
-            userDefImageMemories.forEach(imageMemory -> vkFreeMemory(device, imageMemory, null));
-            userDefImageViews.forEach(imageView -> vkDestroyImageView(device, imageView, null));
-            userDefImages.clear();
-            userDefImageMemories.clear();
-            userDefImageViews.clear();
+            this.cleanupUserDefImages();
 
             vertShaderModules.forEach(vertShaderModule -> vkDestroyShaderModule(device, vertShaderModule, null));
             fragShaderModules.forEach(fragShaderModule -> vkDestroyShaderModule(device, fragShaderModule, null));
@@ -648,7 +647,13 @@ public class Nabor {
         }
     }
 
-    public void transitionImage(long commandPool, VkQueue graphicsQueue, int index, int oldLayout) {
+    public void transitionImage(
+            long commandPool,
+            VkQueue graphicsQueue,
+            int index,
+            boolean hasStencilComponent,
+            int oldLayout,
+            int newLayout) {
         VkDevice device = this.getDevice();
         long image = this.getImage(index);
 
@@ -657,10 +662,21 @@ public class Nabor {
                 commandPool,
                 graphicsQueue,
                 image,
-                false,
+                hasStencilComponent,
                 oldLayout,
-                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                newLayout,
                 1);
+    }
+
+    public void transitionImage(
+            long commandPool,
+            VkQueue graphicsQueue,
+            int naborIndex,
+            int arrayIndex,
+            boolean hasStencilComponent,
+            int oldLayout,
+            int newLayout) {
+        this.transitionImage(commandPool, graphicsQueue, arrayIndex, hasStencilComponent, oldLayout, newLayout);
     }
 
     public long createUserDefImage(
@@ -736,20 +752,31 @@ public class Nabor {
         return true;
     }
 
+    public void cleanupUserDefImages() {
+        userDefImages.forEach(image -> vkDestroyImage(device, image, null));
+        userDefImageMemories.forEach(imageMemory -> vkFreeMemory(device, imageMemory, null));
+        userDefImageViews.forEach(imageView -> vkDestroyImageView(device, imageView, null));
+        userDefImages.clear();
+        userDefImageMemories.clear();
+        userDefImageViews.clear();
+    }
+
     public void transitionUserDefImage(
             long commandPool,
             VkQueue graphicsQueue,
-            long userDefImage,
+            int index,
+            boolean hasStencilComponent,
             int oldLayout,
             int newLayout) {
         VkDevice device = this.getDevice();
+        long userDefImage = userDefImages.get(index);
 
         ImageUtils.transitionImageLayout(
                 device,
                 commandPool,
                 graphicsQueue,
                 userDefImage,
-                false,
+                hasStencilComponent,
                 oldLayout,
                 newLayout,
                 1);

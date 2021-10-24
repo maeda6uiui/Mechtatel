@@ -7,6 +7,7 @@ import org.lwjgl.vulkan.VkExtent2D;
 import org.lwjgl.vulkan.VkQueue;
 
 import java.nio.LongBuffer;
+import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_1_BIT;
 
@@ -18,24 +19,17 @@ import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_1_BIT;
 public class ShadowMappingNabor extends PostProcessingNabor {
     public static final int MAX_NUM_SHADOW_MAPS = Pass2Nabor.MAX_NUM_SHADOW_MAPS;
 
+    public static final int SHADOW_COORDS_ATTACHMENT_INDEX = Pass1Nabor.SHADOW_COORDS_ATTACHMENT_INDEX;
+    public static final int SHADOW_DEPTH_ATTACHMENT_INDEX = Pass1Nabor.SHADOW_DEPTH_ATTACHMENT_INDEX;
+
     private Pass1Nabor pass1;
     private Pass2Nabor pass2;
 
-    public ShadowMappingNabor(VkDevice device, int shadowCoordsImageFormat) {
+    public ShadowMappingNabor(VkDevice device, int shadowCoordsImageFormat, int shadowDepthImageFormat) {
         super(device, VK_SAMPLE_COUNT_1_BIT, true);
 
-        pass1 = new Pass1Nabor(device, shadowCoordsImageFormat);
+        pass1 = new Pass1Nabor(device, shadowCoordsImageFormat, shadowDepthImageFormat);
         pass2 = new Pass2Nabor(device);
-    }
-
-    @Override
-    public void transitionColorImage(long commandPool, VkQueue graphicsQueue) {
-        pass2.transitionColorImage(commandPool, graphicsQueue);
-    }
-
-    @Override
-    public long getColorImageView() {
-        return pass2.getColorImageView();
     }
 
     @Override
@@ -67,6 +61,37 @@ public class ShadowMappingNabor extends PostProcessingNabor {
 
         pass1.cleanup(reserveForRecreation);
         pass2.cleanup(reserveForRecreation);
+    }
+
+    @Override
+    public void transitionImage(
+            long commandPool,
+            VkQueue graphicsQueue,
+            int naborIndex,
+            int arrayIndex,
+            boolean hasStencilComponent,
+            int oldLayout,
+            int newLayout) {
+        switch (naborIndex) {
+            case 0:
+                pass1.transitionImage(commandPool, graphicsQueue, arrayIndex, hasStencilComponent, oldLayout, newLayout);
+                break;
+            case 1:
+                pass2.transitionImage(commandPool, graphicsQueue, arrayIndex, hasStencilComponent, oldLayout, newLayout);
+                break;
+            default:
+                throw new RuntimeException("Index out of bounds");
+        }
+    }
+
+    @Override
+    public void transitionColorImage(long commandPool, VkQueue graphicsQueue) {
+        pass2.transitionColorImage(commandPool, graphicsQueue);
+    }
+
+    @Override
+    public long getColorImageView() {
+        return pass2.getColorImageView();
     }
 
     @Override
@@ -178,6 +203,24 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     }
 
     @Override
+    public long getImage(int naborIndex, int arrayIndex) {
+        long image;
+
+        switch (naborIndex) {
+            case 0:
+                image = pass1.getImage(arrayIndex);
+                break;
+            case 1:
+                image = pass2.getImage(arrayIndex);
+                break;
+            default:
+                throw new RuntimeException("Index out of bounds");
+        }
+
+        return image;
+    }
+
+    @Override
     public long getFramebuffer(int naborIndex, int arrayIndex) {
         long framebuffer;
 
@@ -198,16 +241,29 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     @Override
     public void bindImages(
             VkCommandBuffer commandBuffer,
+            int naborIndex,
+            int dstBinding,
+            List<Long> imageViews) {
+        if (naborIndex != 1) {
+            throw new RuntimeException("Unsupported operation");
+        }
+
+        pass2.bindImages(commandBuffer, dstBinding, imageViews);
+    }
+
+    @Override
+    public void bindImages(
+            VkCommandBuffer commandBuffer,
+            int naborIndex,
+            int dstBinding,
             long colorImageView,
             long depthImageView,
             long positionImageView,
             long normalImageView) {
-        this.bindImages(
-                commandBuffer,
-                pass2,
-                colorImageView,
-                depthImageView,
-                positionImageView,
-                normalImageView);
+        if (naborIndex != 1) {
+            throw new RuntimeException("Unsupported operation");
+        }
+
+        pass2.bindImages(commandBuffer, dstBinding, colorImageView, depthImageView, positionImageView, normalImageView);
     }
 }

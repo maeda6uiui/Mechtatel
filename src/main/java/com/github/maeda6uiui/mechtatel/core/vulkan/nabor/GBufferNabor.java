@@ -34,10 +34,10 @@ public class GBufferNabor extends Nabor {
     private int positionAttachmentIndex;
     private int normalAttachmentIndex;
 
-    public GBufferNabor(VkDevice device, int positionImageFormat, int normalImageFormat) {
+    public GBufferNabor(VkDevice device, int depthImageFormat, int positionImageFormat, int normalImageFormat) {
         super(device, VK_SAMPLE_COUNT_1_BIT, false);
 
-        this.depthImageFormat = DepthResourceUtils.findDepthFormat(device);
+        this.depthImageFormat = depthImageFormat;
         this.positionImageFormat = positionImageFormat;
         this.normalImageFormat = normalImageFormat;
     }

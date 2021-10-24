@@ -44,7 +44,7 @@ void main(){
         float bias=shadowInfos[i].biasCoefficient*tan(acos(cosTh));
         bias=clamp(bias,0.0,shadowInfos[i].maxBias);
 
-        vec3 shadowCoords=texture(sampler2D(shadowCoordsTextures[i],textureSampler),fragTexCoords);
+        vec4 shadowCoords=texture(sampler2D(shadowCoordsTextures[i],textureSampler),fragTexCoords);
         float shadowDepth=texture(sampler2D(shadowDepthTextures[i],textureSampler),shadowCoords.xy).r;
 
         if(shadowInfos[i].projectionType==PROJECTION_TYPE_ORTHOGRAPHIC){

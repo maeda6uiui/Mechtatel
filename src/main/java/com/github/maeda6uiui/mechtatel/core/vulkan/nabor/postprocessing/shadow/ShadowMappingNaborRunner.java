@@ -13,7 +13,6 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pas
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass2InfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.ShadowInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
@@ -85,11 +84,7 @@ public class ShadowMappingNaborRunner {
                             0,
                             matBuffer);
 
-                    component.draw(
-                            commandBuffer,
-                            0,
-                            shadowMappingNabor.getPipelineLayout(0, 0),
-                            shadowMappingNabor.getTextureSampler(0, 0));
+                    component.transfer(commandBuffer, shadowMappingNabor.getPipelineLayout(0, 0));
                 }
             }
             vkCmdEndRenderPass(commandBuffer);
@@ -115,23 +110,6 @@ public class ShadowMappingNaborRunner {
         long coordsCopyDstImage = shadowMappingNabor.getUserDefImage(index);
         long depthCopyDstImage = shadowMappingNabor.getUserDefImage(index + ShadowMappingNabor.MAX_NUM_SHADOW_MAPS);
 
-        shadowMappingNabor.transitionImage(
-                commandPool,
-                graphicsQueue,
-                0,
-                ShadowMappingNabor.SHADOW_COORDS_ATTACHMENT_INDEX,
-                false,
-                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-        shadowMappingNabor.transitionImage(
-                commandPool,
-                graphicsQueue,
-                0,
-                ShadowMappingNabor.SHADOW_DEPTH_ATTACHMENT_INDEX,
-                DepthResourceUtils.hasStencilComponent(depthImageFormat),
-                VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
         try (MemoryStack stack = MemoryStack.stackPush()) {
             //Copy shadow coords image
             VkImageCopy.Buffer imageCopyRegion = VkImageCopy.callocStack(1, stack);
@@ -144,20 +122,18 @@ public class ShadowMappingNaborRunner {
             vkCmdCopyImage(
                     commandBuffer,
                     shadowCoordsImage,
-                    shadowCoordsImageFormat,
+                    VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
                     coordsCopyDstImage,
-                    shadowCoordsImageFormat,
+                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                     imageCopyRegion);
 
             //Copy shadow depth image
-            imageCopyRegion.srcSubresource().aspectMask(VK_IMAGE_ASPECT_DEPTH_BIT);
-
             vkCmdCopyImage(
                     commandBuffer,
                     shadowDepthImage,
-                    shadowDepthImageFormat,
+                    VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
                     depthCopyDstImage,
-                    shadowDepthImageFormat,
+                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                     imageCopyRegion);
         }
     }
@@ -242,7 +218,7 @@ public class ShadowMappingNaborRunner {
                             gBufferNabor.getPositionImageView(),
                             gBufferNabor.getNormalImageView());
                 } else {
-                    lastPPNabor.transitionColorImage(commandPool, graphicsQueue);
+                    lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
 
                     shadowMappingNabor.bindImages(
                             commandBuffer,

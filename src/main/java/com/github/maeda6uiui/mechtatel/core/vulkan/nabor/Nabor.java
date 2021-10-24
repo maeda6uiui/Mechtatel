@@ -647,7 +647,7 @@ public class Nabor {
         }
     }
 
-    public void transitionImage(
+    public void transitionImageLayout(
             long commandPool,
             VkQueue graphicsQueue,
             int index,
@@ -668,7 +668,7 @@ public class Nabor {
                 1);
     }
 
-    public void transitionImage(
+    public void transitionImageLayout(
             long commandPool,
             VkQueue graphicsQueue,
             int naborIndex,
@@ -676,7 +676,7 @@ public class Nabor {
             boolean hasStencilComponent,
             int oldLayout,
             int newLayout) {
-        this.transitionImage(commandPool, graphicsQueue, arrayIndex, hasStencilComponent, oldLayout, newLayout);
+        this.transitionImageLayout(commandPool, graphicsQueue, arrayIndex, hasStencilComponent, oldLayout, newLayout);
     }
 
     public long createUserDefImage(
@@ -686,7 +686,7 @@ public class Nabor {
             int usage,
             int memProperties,
             int imageFormat) {
-        try (MemoryStack stack = MemoryStack.stackGet()) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
             LongBuffer pImage = stack.mallocLong(1);
             LongBuffer pImageMemory = stack.mallocLong(1);
             LongBuffer pImageView = stack.mallocLong(1);
@@ -761,7 +761,7 @@ public class Nabor {
         userDefImageViews.clear();
     }
 
-    public void transitionUserDefImage(
+    public void transitionUserDefImageLayout(
             long commandPool,
             VkQueue graphicsQueue,
             int index,

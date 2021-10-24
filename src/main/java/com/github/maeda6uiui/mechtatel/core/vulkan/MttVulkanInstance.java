@@ -121,7 +121,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     extent.width(),
                     extent.height(),
                     1,
-                    VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     shadowCoordsImageFormat);
         }
@@ -131,7 +131,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     extent.width(),
                     extent.height(),
                     1,
-                    VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     shadowDepthImageFormat);
         }
@@ -375,11 +375,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                             0,
                             matBuffer);
 
-                    component.draw(
-                            commandBuffer,
-                            0,
-                            gBufferNabor.getPipelineLayout(0),
-                            gBufferNabor.getTextureSampler(0));
+                    component.draw(commandBuffer, gBufferNabor.getPipelineLayout(0));
                 }
             }
             vkCmdEndRenderPass(commandBuffer);
@@ -538,7 +534,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                                 gBufferNabor.getPositionImageView(),
                                 gBufferNabor.getNormalImageView());
                     } else {
-                        lastPPNabor.transitionColorImage(commandPool, graphicsQueue);
+                        lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
 
                         ppNabor.bindImages(
                                 commandBuffer,
@@ -581,7 +577,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 gBufferNabor.transitionAlbedoImage(commandPool, graphicsQueue);
                 colorImageView = gBufferNabor.getAlbedoImageView();
             } else {
-                lastPPNabor.transitionColorImage(commandPool, graphicsQueue);
+                lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
                 colorImageView = lastPPNabor.getColorImageView();
             }
 

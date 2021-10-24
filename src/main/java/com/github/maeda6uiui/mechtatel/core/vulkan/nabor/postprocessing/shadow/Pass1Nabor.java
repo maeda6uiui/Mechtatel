@@ -22,16 +22,16 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 class Pass1Nabor extends Nabor {
     private int shadowCoordsImageFormat;
-    private int shadowDepthImageFormat;
+    private int depthImageFormat;
 
     public static final int SHADOW_COORDS_ATTACHMENT_INDEX = 0;
     public static final int SHADOW_DEPTH_ATTACHMENT_INDEX = 1;
 
-    public Pass1Nabor(VkDevice device, int shadowCoordsImageFormat, int shadowDepthImageFormat) {
+    public Pass1Nabor(VkDevice device, int shadowCoordsImageFormat, int depthImageFormat) {
         super(device, VK_SAMPLE_COUNT_1_BIT, false);
 
         this.shadowCoordsImageFormat = shadowCoordsImageFormat;
-        this.shadowDepthImageFormat = shadowDepthImageFormat;
+        this.depthImageFormat = depthImageFormat;
     }
 
     @Override
@@ -72,7 +72,7 @@ class Pass1Nabor extends Nabor {
 
             //Shadow depth attachment
             VkAttachmentDescription depthAttachment = attachments.get(SHADOW_DEPTH_ATTACHMENT_INDEX);
-            depthAttachment.format(shadowDepthImageFormat);
+            depthAttachment.format(depthImageFormat);
             depthAttachment.samples(msaaSamples);
             depthAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
             depthAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
@@ -88,7 +88,7 @@ class Pass1Nabor extends Nabor {
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.callocStack(1, stack);
             subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
             subpass.colorAttachmentCount(1);
-            subpass.pColorAttachments(VkAttachmentReference.callocStack(1, stack).put(colorAttachmentRef));
+            subpass.pColorAttachments(VkAttachmentReference.callocStack(1, stack).put(0, colorAttachmentRef));
             subpass.pDepthStencilAttachment(depthAttachmentRef);
 
             VkSubpassDependency.Buffer dependency = VkSubpassDependency.callocStack(1, stack);
@@ -257,7 +257,7 @@ class Pass1Nabor extends Nabor {
             fragShaderModule = this.getFragShaderModule(0);
         } else {
             final String vertShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/ShadowMapping/pass_1.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/GBuffer/PostProcessing/ShadowMapping/pass_1.frag";
+            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/ShadowMapping/pass_1.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;
@@ -352,7 +352,7 @@ class Pass1Nabor extends Nabor {
             depthStencil.stencilTestEnable(false);
 
             //Color blending
-            VkPipelineColorBlendAttachmentState.Buffer colorBlendAttachments = VkPipelineColorBlendAttachmentState.callocStack(3, stack);
+            VkPipelineColorBlendAttachmentState.Buffer colorBlendAttachments = VkPipelineColorBlendAttachmentState.callocStack(1, stack);
 
             VkPipelineColorBlendAttachmentState colorBlendAttachment = colorBlendAttachments.get(0);
             colorBlendAttachment.colorWriteMask(
@@ -361,22 +361,6 @@ class Pass1Nabor extends Nabor {
                             VK_COLOR_COMPONENT_B_BIT |
                             VK_COLOR_COMPONENT_A_BIT);
             colorBlendAttachment.blendEnable(false);
-
-            VkPipelineColorBlendAttachmentState positionBlendAttachment = colorBlendAttachments.get(1);
-            positionBlendAttachment.colorWriteMask(
-                    VK_COLOR_COMPONENT_R_BIT |
-                            VK_COLOR_COMPONENT_G_BIT |
-                            VK_COLOR_COMPONENT_B_BIT |
-                            VK_COLOR_COMPONENT_A_BIT);
-            positionBlendAttachment.blendEnable(false);
-
-            VkPipelineColorBlendAttachmentState normalBlendAttachment = colorBlendAttachments.get(2);
-            normalBlendAttachment.colorWriteMask(
-                    VK_COLOR_COMPONENT_R_BIT |
-                            VK_COLOR_COMPONENT_G_BIT |
-                            VK_COLOR_COMPONENT_B_BIT |
-                            VK_COLOR_COMPONENT_A_BIT);
-            normalBlendAttachment.blendEnable(false);
 
             VkPipelineColorBlendStateCreateInfo colorBlending = VkPipelineColorBlendStateCreateInfo.callocStack(stack);
             colorBlending.sType(VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO);
@@ -454,7 +438,7 @@ class Pass1Nabor extends Nabor {
                     msaaSamples,
                     shadowCoordsImageFormat,
                     VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     pImage,
                     pImageMemory);
@@ -465,7 +449,7 @@ class Pass1Nabor extends Nabor {
             viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
             viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
             viewInfo.image(shadowCoordsImage);
-            viewInfo.format(colorImageFormat);
+            viewInfo.format(shadowCoordsImageFormat);
             viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
             viewInfo.subresourceRange().baseMipLevel(0);
             viewInfo.subresourceRange().levelCount(1);
@@ -488,9 +472,9 @@ class Pass1Nabor extends Nabor {
                     extent.height(),
                     1,
                     msaaSamples,
-                    shadowDepthImageFormat,
+                    depthImageFormat,
                     VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     pImage,
                     pImageMemory);
@@ -498,7 +482,7 @@ class Pass1Nabor extends Nabor {
             long depthImageMemory = pImageMemory.get(0);
 
             viewInfo.image(depthImage);
-            viewInfo.format(shadowDepthImageFormat);
+            viewInfo.format(depthImageFormat);
             viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_DEPTH_BIT);
 
             if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {

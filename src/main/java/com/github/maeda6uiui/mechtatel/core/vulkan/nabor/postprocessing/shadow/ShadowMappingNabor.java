@@ -25,10 +25,10 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     private Pass1Nabor pass1;
     private Pass2Nabor pass2;
 
-    public ShadowMappingNabor(VkDevice device, int shadowCoordsImageFormat, int shadowDepthImageFormat) {
+    public ShadowMappingNabor(VkDevice device, int shadowCoordsImageFormat, int depthImageFormat) {
         super(device, VK_SAMPLE_COUNT_1_BIT, true);
 
-        pass1 = new Pass1Nabor(device, shadowCoordsImageFormat, shadowDepthImageFormat);
+        pass1 = new Pass1Nabor(device, shadowCoordsImageFormat, depthImageFormat);
         pass2 = new Pass2Nabor(device);
     }
 
@@ -64,7 +64,7 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     }
 
     @Override
-    public void transitionImage(
+    public void transitionImageLayout(
             long commandPool,
             VkQueue graphicsQueue,
             int naborIndex,
@@ -74,10 +74,10 @@ public class ShadowMappingNabor extends PostProcessingNabor {
             int newLayout) {
         switch (naborIndex) {
             case 0:
-                pass1.transitionImage(commandPool, graphicsQueue, arrayIndex, hasStencilComponent, oldLayout, newLayout);
+                pass1.transitionImageLayout(commandPool, graphicsQueue, arrayIndex, hasStencilComponent, oldLayout, newLayout);
                 break;
             case 1:
-                pass2.transitionImage(commandPool, graphicsQueue, arrayIndex, hasStencilComponent, oldLayout, newLayout);
+                pass2.transitionImageLayout(commandPool, graphicsQueue, arrayIndex, hasStencilComponent, oldLayout, newLayout);
                 break;
             default:
                 throw new RuntimeException("Index out of bounds");
@@ -85,8 +85,8 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     }
 
     @Override
-    public void transitionColorImage(long commandPool, VkQueue graphicsQueue) {
-        pass2.transitionColorImage(commandPool, graphicsQueue);
+    public void transitionColorImageLayout(long commandPool, VkQueue graphicsQueue) {
+        pass2.transitionColorImageLayout(commandPool, graphicsQueue);
     }
 
     @Override

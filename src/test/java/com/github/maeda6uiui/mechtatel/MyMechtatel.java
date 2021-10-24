@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
-import com.github.maeda6uiui.mechtatel.core.light.PointLight;
+import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -46,23 +46,12 @@ public class MyMechtatel extends Mechtatel {
         model1.translate(new Vector3f(-3.0f, 1.0f, -3.0f));
         model2.translate(new Vector3f(3.0f, 1.0f, 3.0f));
 
-        this.setPointLightAmbientColor(new Vector3f(0.0f, 0.0f, 0.0f));
-
-        PointLight pointLightR = this.createPointLight();
-        pointLightR.setPosition(new Vector3f(-5.0f, 5.0f, -5.0f));
-        pointLightR.setDiffuseColor(new Vector3f(1.0f, 0.0f, 0.0f));
-
-        PointLight pointLightG = this.createPointLight();
-        pointLightG.setPosition(new Vector3f(0.0f, 5.0f, 0.0f));
-        pointLightG.setDiffuseColor(new Vector3f(0.0f, 1.0f, 0.0f));
-
-        PointLight pointLightB = this.createPointLight();
-        pointLightB.setPosition(new Vector3f(5.0f, 5.0f, 5.0f));
-        pointLightB.setDiffuseColor(new Vector3f(0.0f, 0.0f, 1.0f));
-
         var ppNaborNames = new ArrayList<String>();
-        ppNaborNames.add("point_light");
+        ppNaborNames.add("parallel_light");
+        ppNaborNames.add("shadow_mapping");
         this.createPostProcessingNabors(ppNaborNames);
+
+        ParallelLight parallelLight = this.createParallelLight();
 
         cameraPosition = new Vector3f(4.0f, 4.0f, 4.0f);
         cameraCenter = new Vector3f(0.0f, 0.5f, 0.0f);

@@ -23,8 +23,8 @@ public class PostProcessingNabor extends Nabor {
         super(device, msaaSamples, isContainer);
     }
 
-    public void transitionColorImage(long commandPool, VkQueue graphicsQueue) {
-        this.transitionImage(
+    public void transitionColorImageLayout(long commandPool, VkQueue graphicsQueue) {
+        this.transitionImageLayout(
                 commandPool,
                 graphicsQueue,
                 0,

@@ -18,6 +18,7 @@ public class ParallelLight {
     private float specularPowY;
 
     private boolean castShadow;
+    private Vector3f position;
     private float orthoLeft;
     private float orthoRight;
     private float orthoBottom;
@@ -36,12 +37,13 @@ public class ParallelLight {
         specularPowY = 2.0f;
 
         castShadow = true;
+        position = new Vector3f(50.0f, 50.0f, 50.0f);
         orthoLeft = -10.0f;
         orthoRight = 10.0f;
         orthoBottom = -10.0f;
         orthoTop = 10.0f;
         zNear = 0.1f;
-        zFar = 50.0f;
+        zFar = 100.0f;
     }
 
     public Vector3f getDirection() {
@@ -114,6 +116,14 @@ public class ParallelLight {
 
     public void setCastShadow(boolean castShadow) {
         this.castShadow = castShadow;
+    }
+
+    public Vector3f getPosition() {
+        return position;
+    }
+
+    public void setPosition(Vector3f position) {
+        this.position = position;
     }
 
     public float getOrthoLeft() {

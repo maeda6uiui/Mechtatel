@@ -51,7 +51,7 @@ public class Spotlight {
         fovY = phi;
         aspect = 1.0f;
         zNear = 0.1f;
-        zFar = 50.0f;
+        zFar = 100.0f;
     }
 
     public Vector3f getPosition() {

@@ -273,7 +273,7 @@ public class ShadowMappingNaborRunner {
                 shadowInfo.setLightDirection(spotlight.getDirection());
 
                 var shadowInfoUBO = new ShadowInfoUBO(shadowInfo);
-                shadowInfoUBO.update(device, shadowInfosUBOMemory, i + parallelLightShadowMapCount);
+                shadowInfoUBO.update(device, shadowInfosUBOMemory, parallelLightShadowMapCount + i);
             }
 
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);

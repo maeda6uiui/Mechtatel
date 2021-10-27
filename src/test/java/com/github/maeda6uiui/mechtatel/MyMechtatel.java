@@ -36,6 +36,10 @@ public class MyMechtatel extends Mechtatel {
     private Vector3f cameraPosition;
     private Vector3f cameraCenter;
 
+    private ParallelLight parallelLight;
+    private Vector3f lightPosition;
+    private Vector3f lightCenter;
+
     @Override
     public void init() {
         ground = this.createModel3D("./Mechtatel/Model/Plane/plane.obj");
@@ -47,16 +51,21 @@ public class MyMechtatel extends Mechtatel {
         model2.translate(new Vector3f(3.0f, 1.0f, 3.0f));
 
         var ppNaborNames = new ArrayList<String>();
-        ppNaborNames.add("parallel_light");
+        //ppNaborNames.add("parallel_light");
         ppNaborNames.add("shadow_mapping");
         this.createPostProcessingNabors(ppNaborNames);
-
-        ParallelLight parallelLight = this.createParallelLight();
 
         cameraPosition = new Vector3f(4.0f, 4.0f, 4.0f);
         cameraCenter = new Vector3f(0.0f, 0.5f, 0.0f);
         this.getCamera().setEye(cameraPosition);
         this.getCamera().setCenter(cameraCenter);
+
+        parallelLight = this.createParallelLight();
+        lightPosition = new Vector3f(50.0f, 50.0f, 50.0f);
+        lightCenter = new Vector3f(0.0f, 0.0f, 0.0f);
+        var lightDirection = lightCenter.sub(lightPosition);
+        parallelLight.setPosition(lightPosition);
+        parallelLight.setDirection(lightDirection);
     }
 
     @Override
@@ -72,13 +81,12 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void update() {
-        /*
-        new Matrix4f().rotateY((float) Math.toRadians(0.3)).transformPosition(lightPosition);
-        var lightDirection = lightCenter.sub(lightPosition).normalize();
-        this.getParallelLight().setDirection(lightDirection);
-         */
+        new Matrix4f().rotateY((float) Math.toRadians(1)).transformPosition(lightPosition);
+        var lightDirection = lightCenter.sub(lightPosition);
+        parallelLight.setPosition(lightPosition);
+        parallelLight.setDirection(lightDirection);
 
-        new Matrix4f().rotateY((float) Math.toRadians(0.3)).transformPosition(cameraPosition);
-        this.getCamera().setEye(cameraPosition);
+        //new Matrix4f().rotateY((float) Math.toRadians(0.3)).transformPosition(cameraPosition);
+        //this.getCamera().setEye(cameraPosition);
     }
 }

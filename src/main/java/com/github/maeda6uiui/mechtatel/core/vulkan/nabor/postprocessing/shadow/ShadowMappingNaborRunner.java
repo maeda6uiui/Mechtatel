@@ -128,6 +128,25 @@ public class ShadowMappingNaborRunner {
         long shadowCoordsDstImage = shadowMappingNabor.getUserDefImage(index);
         long shadowDepthDstImage = shadowMappingNabor.getUserDefImage(index + ShadowMappingNabor.MAX_NUM_SHADOW_MAPS);
 
+        ImageUtils.transitionImageLayout(
+                device,
+                commandPool,
+                graphicsQueue,
+                shadowCoordsDstImage,
+                false,
+                VK_IMAGE_LAYOUT_UNDEFINED,
+                VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                1);
+        ImageUtils.transitionImageLayout(
+                device,
+                commandPool,
+                graphicsQueue,
+                shadowDepthDstImage,
+                false,
+                VK_IMAGE_LAYOUT_UNDEFINED,
+                VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                1);
+
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
 
@@ -146,6 +165,18 @@ public class ShadowMappingNaborRunner {
                     shadowCoordsDstImage,
                     VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                     imageCopyRegion);
+
+            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
+
+            ImageUtils.transitionImageLayout(
+                    device,
+                    commandPool,
+                    graphicsQueue,
+                    shadowCoordsDstImage,
+                    false,
+                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                    1);
 
             //Copy shadow depth image
             VkBufferImageCopy.Buffer bufferImageCopy = VkBufferImageCopy.callocStack(1, stack);
@@ -169,6 +200,8 @@ public class ShadowMappingNaborRunner {
             long buffer = pBuffer.get(0);
             long bufferMemory = pBufferMemory.get(0);
 
+            commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
+
             vkCmdCopyImageToBuffer(
                     commandBuffer,
                     shadowDepthSrcImage,
@@ -189,6 +222,16 @@ public class ShadowMappingNaborRunner {
 
             vkDestroyBuffer(device, buffer, null);
             vkFreeMemory(device, bufferMemory, null);
+
+            ImageUtils.transitionImageLayout(
+                    device,
+                    commandPool,
+                    graphicsQueue,
+                    shadowDepthDstImage,
+                    false,
+                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                    1);
         }
     }
 

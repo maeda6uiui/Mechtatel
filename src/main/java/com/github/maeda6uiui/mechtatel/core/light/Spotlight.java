@@ -25,6 +25,7 @@ public class Spotlight {
     private float specularPowY;
 
     private boolean castShadow;
+    private Vector3f center;
     private float fovY;
     private float aspect;
     private float zNear;
@@ -48,6 +49,7 @@ public class Spotlight {
         specularPowY = 2.0f;
 
         castShadow = true;
+        center = new Vector3f(0.0f, 0.0f, 0.0f);
         fovY = phi;
         aspect = 1.0f;
         zNear = 0.1f;
@@ -184,6 +186,10 @@ public class Spotlight {
 
     public void setCastShadow(boolean castShadow) {
         this.castShadow = castShadow;
+    }
+
+    public Vector3f getCenter() {
+        return center;
     }
 
     public float getFovY() {

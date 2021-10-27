@@ -19,6 +19,7 @@ public class ParallelLight {
 
     private boolean castShadow;
     private Vector3f position;
+    private Vector3f center;
     private float orthoLeft;
     private float orthoRight;
     private float orthoBottom;
@@ -38,6 +39,7 @@ public class ParallelLight {
 
         castShadow = true;
         position = new Vector3f(50.0f, 50.0f, 50.0f);
+        center = new Vector3f(0.0f, 0.0f, 0.0f);
         orthoLeft = -10.0f;
         orthoRight = 10.0f;
         orthoBottom = -10.0f;
@@ -124,6 +126,14 @@ public class ParallelLight {
 
     public void setPosition(Vector3f position) {
         this.position = position;
+    }
+
+    public Vector3f getCenter() {
+        return center;
+    }
+
+    public void setCenter(Vector3f center) {
+        this.center = center;
     }
 
     public float getOrthoLeft() {

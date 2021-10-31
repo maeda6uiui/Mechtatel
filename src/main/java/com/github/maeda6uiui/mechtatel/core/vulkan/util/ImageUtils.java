@@ -62,9 +62,7 @@ public class ImageUtils {
     }
 
     public static void transitionImageLayout(
-            VkDevice device,
-            long commandPool,
-            VkQueue graphicsQueue,
+            VkCommandBuffer commandBuffer,
             long image,
             boolean hasStencilComponent,
             int oldLayout,
@@ -159,8 +157,6 @@ public class ImageUtils {
                 throw new IllegalArgumentException("Unsupported layout transition");
             }
 
-            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
-
             vkCmdPipelineBarrier(
                     commandBuffer,
                     sourceStage,
@@ -169,8 +165,20 @@ public class ImageUtils {
                     null,
                     null,
                     barrier);
-
-            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
         }
+    }
+
+    public static void transitionImageLayout(
+            VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue,
+            long image,
+            boolean hasStencilComponent,
+            int oldLayout,
+            int newLayout,
+            int mipLevels) {
+        VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
+        transitionImageLayout(commandBuffer, image, hasStencilComponent, oldLayout, newLayout, mipLevels);
+        CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
     }
 }

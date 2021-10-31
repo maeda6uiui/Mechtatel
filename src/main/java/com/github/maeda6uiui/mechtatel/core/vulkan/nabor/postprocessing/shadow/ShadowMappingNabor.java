@@ -227,7 +227,7 @@ public class ShadowMappingNabor extends PostProcessingNabor {
             throw new RuntimeException("Unsupported operation");
         }
 
-        pass2.bindImages(commandBuffer, dstBinding, imageViews);
+        pass2.bindImages(commandBuffer, 1, dstBinding, imageViews);
     }
 
     @Override

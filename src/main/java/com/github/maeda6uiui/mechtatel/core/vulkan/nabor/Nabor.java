@@ -728,4 +728,50 @@ public class Nabor {
         userDefImageMemories.clear();
         userDefImageViews.clear();
     }
+
+    public void bindImages(VkCommandBuffer commandBuffer, int dstSet, int dstBinding, List<Long> imageViews) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDevice device = this.getDevice();
+            int numImageViews = imageViews.size();
+
+            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.callocStack(numImageViews, stack);
+            for (int i = 0; i < numImageViews; i++) {
+                long imageView = imageViews.get(i);
+
+                VkDescriptorImageInfo imageInfo = imageInfos.get(i);
+                imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+                imageInfo.imageView(imageView);
+            }
+
+            VkWriteDescriptorSet.Buffer imageDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            imageDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            imageDescriptorWrite.dstBinding(dstBinding);
+            imageDescriptorWrite.dstArrayElement(0);
+            imageDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            imageDescriptorWrite.descriptorCount(numImageViews);
+            imageDescriptorWrite.pImageInfo(imageInfos);
+
+            long descriptorSet = this.getDescriptorSet(dstSet);
+            imageDescriptorWrite.dstSet(descriptorSet);
+
+            vkUpdateDescriptorSets(device, imageDescriptorWrite, null);
+
+            vkCmdBindDescriptorSets(
+                    commandBuffer,
+                    VK_PIPELINE_BIND_POINT_GRAPHICS,
+                    this.getPipelineLayout(0),
+                    0,
+                    this.pDescriptorSets(),
+                    null);
+        }
+    }
+
+    public void bindImages(
+            VkCommandBuffer commandBuffer,
+            int naborIndex,
+            int dstSet,
+            int dstBinding,
+            List<Long> imageViews) {
+        this.bindImages(commandBuffer, dstSet, dstBinding, imageViews);
+    }
 }

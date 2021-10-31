@@ -91,7 +91,7 @@ public class Nabor {
     }
 
     public int getMsaaSamples(int naborIndex) {
-        return msaaSamples;
+        throw new RuntimeException("Unsupported operation");
     }
 
     public VkExtent2D getExtent() {
@@ -99,7 +99,7 @@ public class Nabor {
     }
 
     public VkExtent2D getExtent(int naborIndex) {
-        return extent;
+        throw new RuntimeException("Unsupported operation");
     }
 
     public boolean isContainer() {
@@ -107,7 +107,7 @@ public class Nabor {
     }
 
     public boolean isContainer(int naborIndex) {
-        return isContainer;
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected long getDummyImage() {
@@ -131,7 +131,7 @@ public class Nabor {
     }
 
     public long getTextureSampler(int naborIndex, int arrayIndex) {
-        return textureSamplers.get(arrayIndex);
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected List<Long> getUniformBuffers() {
@@ -143,7 +143,7 @@ public class Nabor {
     }
 
     public long getUniformBuffer(int naborIndex, int arrayIndex) {
-        return uniformBuffers.get(arrayIndex);
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected List<Long> getUniformBufferMemories() {
@@ -155,7 +155,7 @@ public class Nabor {
     }
 
     public long getUniformBufferMemory(int naborIndex, int arrayIndex) {
-        return uniformBufferMemories.get(arrayIndex);
+        throw new RuntimeException("Unsupported operation");
     }
 
     public long getRenderPass() {
@@ -163,7 +163,7 @@ public class Nabor {
     }
 
     public long getRenderPass(int naborIndex) {
-        return renderPass;
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected void setRenderPass(long renderPass) {
@@ -179,7 +179,7 @@ public class Nabor {
     }
 
     public long getDescriptorSetLayout(int naborIndex, int arrayIndex) {
-        return descriptorSetLayouts.get(arrayIndex);
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected LongBuffer pDescriptorSetLayouts() {
@@ -200,7 +200,7 @@ public class Nabor {
     }
 
     public long getDescriptorPool(int naborIndex, int arrayIndex) {
-        return descriptorPools.get(arrayIndex);
+        throw new RuntimeException("Unsupported operation");
     }
 
     public int getNumDescriptorSets() {
@@ -208,7 +208,7 @@ public class Nabor {
     }
 
     public int getNumDescriptorSets(int naborIndex) {
-        return descriptorSets.size();
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected List<Long> getDescriptorSets() {
@@ -220,7 +220,7 @@ public class Nabor {
     }
 
     public long getDescriptorSet(int naborIndex, int arrayIndex) {
-        return descriptorSets.get(arrayIndex);
+        throw new RuntimeException("Unsupported operation");
     }
 
     public LongBuffer pDescriptorSets() {
@@ -233,7 +233,7 @@ public class Nabor {
     }
 
     public LongBuffer pDescriptorSets(int naborIndex) {
-        return this.pDescriptorSets();
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected List<Long> getVertShaderModules() {
@@ -245,7 +245,7 @@ public class Nabor {
     }
 
     public long getVertShaderModule(int naborIndex, int arrayIndex) {
-        return vertShaderModules.get(arrayIndex);
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected List<Long> getFragShaderModules() {
@@ -257,7 +257,7 @@ public class Nabor {
     }
 
     public long getFragShaderModule(int naborIndex, int arrayIndex) {
-        return fragShaderModules.get(arrayIndex);
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected List<Long> getPipelineLayouts() {
@@ -269,7 +269,7 @@ public class Nabor {
     }
 
     public long getPipelineLayout(int naborIndex, int arrayIndex) {
-        return pipelineLayouts.get(arrayIndex);
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected List<Long> getGraphicsPipelines() {
@@ -281,7 +281,7 @@ public class Nabor {
     }
 
     public long getGraphicsPipeline(int naborIndex, int arrayIndex) {
-        return graphicsPipelines.get(arrayIndex);
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected List<Long> getImages() {
@@ -293,7 +293,7 @@ public class Nabor {
     }
 
     public long getImage(int naborIndex, int arrayIndex) {
-        return images.get(arrayIndex);
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected List<Long> getImageMemories() {
@@ -305,7 +305,7 @@ public class Nabor {
     }
 
     public long getImageMemory(int naborIndex, int arrayIndex) {
-        return imageMemories.get(arrayIndex);
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected List<Long> getImageViews() {
@@ -317,7 +317,7 @@ public class Nabor {
     }
 
     public long getImageView(int naborIndex, int arrayIndex) {
-        return imageViews.get(arrayIndex);
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected List<Long> getUserDefImages() {
@@ -329,7 +329,7 @@ public class Nabor {
     }
 
     public long getUserDefImage(int naborIndex, int arrayIndex) {
-        return userDefImages.get(arrayIndex);
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected List<Long> getUserDefImageMemories() {
@@ -341,7 +341,7 @@ public class Nabor {
     }
 
     public long getUserDefImageMemory(int naborIndex, int arrayIndex) {
-        return userDefImageMemories.get(arrayIndex);
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected List<Long> getUserDefImageViews() {
@@ -353,7 +353,7 @@ public class Nabor {
     }
 
     public long getUserDefImageView(int naborIndex, int arrayIndex) {
-        return userDefImageViews.get(arrayIndex);
+        throw new RuntimeException("Unsupported operation");
     }
 
     public int getNumFramebuffers() {
@@ -361,7 +361,7 @@ public class Nabor {
     }
 
     public int getNumFramebuffers(int naborIndex) {
-        return framebuffers.size();
+        throw new RuntimeException("Unsupported operation");
     }
 
     public long getFramebuffer(int index) {
@@ -369,7 +369,7 @@ public class Nabor {
     }
 
     public long getFramebuffer(int naborIndex, int arrayIndex) {
-        return framebuffers.get(arrayIndex);
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected List<Long> getFramebuffers() {
@@ -381,7 +381,7 @@ public class Nabor {
     }
 
     public int getSetCount(int naborIndex) {
-        return setCount;
+        throw new RuntimeException("Unsupported operation");
     }
 
     protected void setSetCount(int setCount) {
@@ -772,6 +772,6 @@ public class Nabor {
             int dstSet,
             int dstBinding,
             List<Long> imageViews) {
-        this.bindImages(commandBuffer, dstSet, dstBinding, imageViews);
+        throw new RuntimeException("Unsupported operation");
     }
 }

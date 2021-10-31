@@ -4,6 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
+import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -37,6 +38,7 @@ public class MyMechtatel extends Mechtatel {
     private Vector3f cameraCenter;
 
     private ParallelLight parallelLight;
+    private Spotlight spotlight;
     private Vector3f lightPosition;
     private Vector3f lightCenter;
 
@@ -66,6 +68,12 @@ public class MyMechtatel extends Mechtatel {
         var lightDirection = lightCenter.sub(lightPosition);
         parallelLight.setPosition(lightPosition);
         parallelLight.setDirection(lightDirection);
+        parallelLight.setCastShadow(true);
+
+        spotlight = this.createSpotlight();
+        spotlight.setPosition(lightPosition);
+        spotlight.setDirection(lightDirection);
+        spotlight.setCastShadow(false);
     }
 
     @Override
@@ -85,6 +93,9 @@ public class MyMechtatel extends Mechtatel {
         var lightDirection = lightCenter.sub(lightPosition);
         parallelLight.setPosition(lightPosition);
         parallelLight.setDirection(lightDirection);
+
+        spotlight.setPosition(lightPosition);
+        spotlight.setDirection(lightDirection);
 
         //new Matrix4f().rotateY((float) Math.toRadians(0.3)).transformPosition(cameraPosition);
         //this.getCamera().setEye(cameraPosition);

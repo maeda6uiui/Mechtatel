@@ -337,18 +337,22 @@ public class ShadowMappingNaborRunner {
                             shadowMappingNabor.getUserDefImageView(ShadowMappingNabor.MAX_NUM_SHADOW_MAPS + i));
                 }
 
-                shadowMappingNabor.bindImages(
-                        commandBuffer,
-                        1,
-                        1,
-                        4,
-                        shadowCoordsImageViews);
-                shadowMappingNabor.bindImages(
-                        commandBuffer,
-                        1,
-                        1,
-                        5,
-                        shadowDepthImageViews);
+                if (shadowCoordsImageViews.size() != 0) {
+                    shadowMappingNabor.bindImages(
+                            commandBuffer,
+                            1,
+                            1,
+                            4,
+                            shadowCoordsImageViews);
+                }
+                if (shadowDepthImageViews.size() != 0) {
+                    shadowMappingNabor.bindImages(
+                            commandBuffer,
+                            1,
+                            1,
+                            5,
+                            shadowDepthImageViews);
+                }
 
                 quadDrawer.draw(commandBuffer);
             }
@@ -409,7 +413,7 @@ public class ShadowMappingNaborRunner {
                     commandPool,
                     graphicsQueue,
                     shadowMappingNabor,
-                    ShadowMappingNabor.MAX_NUM_SHADOW_MAPS + spotlightShadowMapCount,
+                    parallelLightShadowMapCount + spotlightShadowMapCount,
                     depthImageFormat,
                     quadDrawer);
 

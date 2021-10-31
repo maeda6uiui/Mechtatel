@@ -311,7 +311,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     ppNabor = new PointLightNabor(device);
                     break;
                 case "shadow_mapping":
-                    ppNabor = new ShadowMappingNabor(device, shadowCoordsImageFormat, depthImageFormat);
+                    ppNabor = new ShadowMappingNabor(
+                            device,
+                            depthImageFormat,
+                            shadowCoordsImageFormat,
+                            shadowDepthImageFormat);
                     this.createShadowMappingNaborUserDefImages(ppNabor);
                     break;
                 case "spotlight":
@@ -423,8 +427,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         parallelLights,
                         spotlights,
                         components,
-                        quadDrawer,
-                        depthImageFormat);
+                        depthImageFormat,
+                        quadDrawer);
 
                 lastPPNabor = ppNabor;
 
@@ -536,7 +540,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         gBufferNabor.transitionPositionImage(commandPool, graphicsQueue);
                         gBufferNabor.transitionNormalImage(commandPool, graphicsQueue);
 
-                        ppNabor.bindImages(
+                        ppNabor.bindGBufferImages(
                                 commandBuffer,
                                 0,
                                 gBufferNabor.getAlbedoImageView(),
@@ -546,7 +550,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     } else {
                         lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
 
-                        ppNabor.bindImages(
+                        ppNabor.bindGBufferImages(
                                 commandBuffer,
                                 0,
                                 lastPPNabor.getColorImageView(),

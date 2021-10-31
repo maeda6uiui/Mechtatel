@@ -6,7 +6,6 @@ import com.github.maeda6uiui.mechtatel.core.shadow.Pass1Info;
 import com.github.maeda6uiui.mechtatel.core.shadow.Pass2Info;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowInfo;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNabor;
@@ -20,8 +19,8 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.nio.ByteBuffer;
-import java.nio.LongBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
@@ -99,58 +98,34 @@ public class ShadowMappingNaborRunner {
             long commandPool,
             VkQueue graphicsQueue,
             PostProcessingNabor shadowMappingNabor,
+            int shadowMapIndex,
             int depthImageFormat,
-            int index) {
-        VkExtent2D extent = shadowMappingNabor.getExtent();
-
-        long shadowCoordsSrcImage = shadowMappingNabor.getImage(0, ShadowMappingNabor.SHADOW_COORDS_ATTACHMENT_INDEX);
-        long shadowDepthSrcImage = shadowMappingNabor.getImage(0, ShadowMappingNabor.SHADOW_DEPTH_ATTACHMENT_INDEX);
-
-        ImageUtils.transitionImageLayout(
-                device,
-                commandPool,
-                graphicsQueue,
-                shadowCoordsSrcImage,
-                false,
-                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-                1);
-        ImageUtils.transitionImageLayout(
-                device,
-                commandPool,
-                graphicsQueue,
-                shadowDepthSrcImage,
-                DepthResourceUtils.hasStencilComponent(depthImageFormat),
-                VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-                VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-                1);
-
-        long shadowCoordsDstImage = shadowMappingNabor.getUserDefImage(index);
-        long shadowDepthDstImage = shadowMappingNabor.getUserDefImage(index + ShadowMappingNabor.MAX_NUM_SHADOW_MAPS);
-
-        ImageUtils.transitionImageLayout(
-                device,
-                commandPool,
-                graphicsQueue,
-                shadowCoordsDstImage,
-                false,
-                VK_IMAGE_LAYOUT_UNDEFINED,
-                VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                1);
-        ImageUtils.transitionImageLayout(
-                device,
-                commandPool,
-                graphicsQueue,
-                shadowDepthDstImage,
-                false,
-                VK_IMAGE_LAYOUT_UNDEFINED,
-                VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                1);
-
+            QuadDrawer quadDrawer) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkExtent2D extent = shadowMappingNabor.getExtent();
+
             VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
 
             //Copy shadow coords image
+            long shadowCoordsSrcImage = shadowMappingNabor.getImage(
+                    0, ShadowMappingNabor.SHADOW_COORDS_ATTACHMENT_INDEX);
+            ImageUtils.transitionImageLayout(
+                    commandBuffer,
+                    shadowCoordsSrcImage,
+                    false,
+                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                    VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                    1);
+
+            long shadowCoordsDstImage = shadowMappingNabor.getUserDefImage(shadowMapIndex);
+            ImageUtils.transitionImageLayout(
+                    commandBuffer,
+                    shadowCoordsDstImage,
+                    false,
+                    VK_IMAGE_LAYOUT_UNDEFINED,
+                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                    1);
+
             VkImageCopy.Buffer imageCopyRegion = VkImageCopy.callocStack(1, stack);
             imageCopyRegion.srcSubresource().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
             imageCopyRegion.srcSubresource().layerCount(1);
@@ -166,12 +141,8 @@ public class ShadowMappingNaborRunner {
                     VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                     imageCopyRegion);
 
-            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
-
             ImageUtils.transitionImageLayout(
-                    device,
-                    commandPool,
-                    graphicsQueue,
+                    commandBuffer,
                     shadowCoordsDstImage,
                     false,
                     VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
@@ -179,59 +150,81 @@ public class ShadowMappingNaborRunner {
                     1);
 
             //Copy shadow depth image
-            VkBufferImageCopy.Buffer bufferImageCopy = VkBufferImageCopy.callocStack(1, stack);
-            bufferImageCopy.bufferOffset(0);
-            bufferImageCopy.imageSubresource().aspectMask(VK_IMAGE_ASPECT_DEPTH_BIT);
-            bufferImageCopy.imageSubresource().layerCount(1);
-            bufferImageCopy.imageExtent(VkExtent3D.callocStack(stack).set(extent.width(), extent.height(), 1));
+            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
+            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
+            renderPassInfo.renderPass(shadowMappingNabor.getRenderPass(2));
+            renderPassInfo.framebuffer(shadowMappingNabor.getFramebuffer(2, 0));
+            VkRect2D renderArea = VkRect2D.callocStack(stack);
+            renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
+            renderArea.extent(shadowMappingNabor.getExtent());
+            renderPassInfo.renderArea(renderArea);
+            VkClearValue.Buffer clearValues = VkClearValue.callocStack(1, stack);
+            clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
+            renderPassInfo.pClearValues(clearValues);
 
-            LongBuffer pBuffer = stack.mallocLong(1);
-            LongBuffer pBufferMemory = stack.mallocLong(1);
+            long depthImage = shadowMappingNabor.getImage(
+                    0, ShadowMappingNabor.SHADOW_DEPTH_ATTACHMENT_INDEX);
+            ImageUtils.transitionImageLayout(
+                    commandBuffer,
+                    depthImage,
+                    DepthResourceUtils.hasStencilComponent(depthImageFormat),
+                    VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+                    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                    1);
 
-            long bufferSize = extent.width() * extent.height() * Float.BYTES;
+            vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+            {
+                vkCmdBindPipeline(
+                        commandBuffer,
+                        VK_PIPELINE_BIND_POINT_GRAPHICS,
+                        shadowMappingNabor.getGraphicsPipeline(2, 0));
 
-            BufferCreator.createBuffer(
-                    device,
-                    bufferSize,
-                    VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pBuffer,
-                    pBufferMemory);
-            long buffer = pBuffer.get(0);
-            long bufferMemory = pBufferMemory.get(0);
+                long depthImageView = shadowMappingNabor.getImageView(
+                        0, ShadowMappingNabor.SHADOW_DEPTH_ATTACHMENT_INDEX);
+                var arrImageViews = new Long[]{depthImageView};
+                var imageViews = Arrays.asList(arrImageViews);
+                shadowMappingNabor.bindImages(commandBuffer, 2, 0, 0, imageViews);
 
-            commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
+                quadDrawer.draw(commandBuffer);
+            }
+            vkCmdEndRenderPass(commandBuffer);
 
-            vkCmdCopyImageToBuffer(
+            long shadowDepthSrcImage = shadowMappingNabor.getImage(2, 0);
+            ImageUtils.transitionImageLayout(
+                    commandBuffer,
+                    shadowDepthSrcImage,
+                    false,
+                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                    VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                    1);
+
+            long shadowDepthDstImage = shadowMappingNabor.getUserDefImage(
+                    ShadowMappingNabor.MAX_NUM_SHADOW_MAPS + shadowMapIndex);
+            ImageUtils.transitionImageLayout(
+                    commandBuffer,
+                    shadowDepthDstImage,
+                    false,
+                    VK_IMAGE_LAYOUT_UNDEFINED,
+                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                    1);
+
+            vkCmdCopyImage(
                     commandBuffer,
                     shadowDepthSrcImage,
                     VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-                    buffer,
-                    bufferImageCopy);
-
-            bufferImageCopy.imageSubresource().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
-
-            vkCmdCopyBufferToImage(
-                    commandBuffer,
-                    buffer,
                     shadowDepthDstImage,
                     VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                    bufferImageCopy);
-
-            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
-
-            vkDestroyBuffer(device, buffer, null);
-            vkFreeMemory(device, bufferMemory, null);
+                    imageCopyRegion);
 
             ImageUtils.transitionImageLayout(
-                    device,
-                    commandPool,
-                    graphicsQueue,
+                    commandBuffer,
                     shadowDepthDstImage,
                     false,
                     VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                     1);
+
+            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
         }
     }
 
@@ -256,9 +249,12 @@ public class ShadowMappingNaborRunner {
 
             long shadowInfosUBOMemory = shadowMappingNabor.getUniformBufferMemory(1, 1);
             for (int i = 0; i < parallelLightShadowMapCount; i++) {
-                var shadowInfo = new ShadowInfo();
                 ParallelLight parallelLight = parallelLights.get(i);
+                if (!parallelLight.isCastShadow()) {
+                    continue;
+                }
 
+                var shadowInfo = new ShadowInfo();
                 shadowInfo.setProjectionType(ShadowInfo.PROJECTION_TYPE_ORTHOGRAPHIC);
                 shadowInfo.setLightDirection(parallelLight.getDirection());
 
@@ -266,9 +262,12 @@ public class ShadowMappingNaborRunner {
                 shadowInfoUBO.update(device, shadowInfosUBOMemory, i);
             }
             for (int i = 0; i < spotlightShadowMapCount; i++) {
-                var shadowInfo = new ShadowInfo();
                 Spotlight spotlight = spotlights.get(i);
+                if (!spotlight.isCastShadow()) {
+                    continue;
+                }
 
+                var shadowInfo = new ShadowInfo();
                 shadowInfo.setProjectionType(ShadowInfo.PROJECTION_TYPE_PERSPECTIVE);
                 shadowInfo.setLightDirection(spotlight.getDirection());
 
@@ -304,7 +303,7 @@ public class ShadowMappingNaborRunner {
                     gBufferNabor.transitionPositionImage(commandPool, graphicsQueue);
                     gBufferNabor.transitionNormalImage(commandPool, graphicsQueue);
 
-                    shadowMappingNabor.bindImages(
+                    shadowMappingNabor.bindGBufferImages(
                             commandBuffer,
                             1,
                             0,
@@ -315,7 +314,7 @@ public class ShadowMappingNaborRunner {
                 } else {
                     lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
 
-                    shadowMappingNabor.bindImages(
+                    shadowMappingNabor.bindGBufferImages(
                             commandBuffer,
                             1,
                             0,
@@ -341,10 +340,12 @@ public class ShadowMappingNaborRunner {
                 shadowMappingNabor.bindImages(
                         commandBuffer,
                         1,
+                        1,
                         4,
                         shadowCoordsImageViews);
                 shadowMappingNabor.bindImages(
                         commandBuffer,
+                        1,
                         1,
                         5,
                         shadowDepthImageViews);
@@ -367,13 +368,16 @@ public class ShadowMappingNaborRunner {
             List<ParallelLight> parallelLights,
             List<Spotlight> spotlights,
             List<VkComponent> components,
-            QuadDrawer quadDrawer,
-            int depthImageFormat) {
+            int depthImageFormat,
+            QuadDrawer quadDrawer) {
         //Pass 1
         int parallelLightShadowMapCount = 0;
         for (var parallelLight : parallelLights) {
             if (parallelLightShadowMapCount >= ShadowMappingNabor.MAX_NUM_SHADOW_MAPS) {
                 break;
+            }
+            if (!parallelLight.isCastShadow()) {
+                continue;
             }
 
             var pass1Info = new Pass1Info(parallelLight);
@@ -383,8 +387,9 @@ public class ShadowMappingNaborRunner {
                     commandPool,
                     graphicsQueue,
                     shadowMappingNabor,
+                    parallelLightShadowMapCount,
                     depthImageFormat,
-                    parallelLightShadowMapCount);
+                    quadDrawer);
 
             parallelLightShadowMapCount++;
         }
@@ -392,6 +397,9 @@ public class ShadowMappingNaborRunner {
         for (var spotlight : spotlights) {
             if (parallelLightShadowMapCount + spotlightShadowMapCount >= ShadowMappingNabor.MAX_NUM_SHADOW_MAPS) {
                 break;
+            }
+            if (!spotlight.isCastShadow()) {
+                continue;
             }
 
             var pass1Info = new Pass1Info(spotlight);
@@ -401,8 +409,9 @@ public class ShadowMappingNaborRunner {
                     commandPool,
                     graphicsQueue,
                     shadowMappingNabor,
+                    ShadowMappingNabor.MAX_NUM_SHADOW_MAPS + spotlightShadowMapCount,
                     depthImageFormat,
-                    ShadowMappingNabor.MAX_NUM_SHADOW_MAPS + spotlightShadowMapCount);
+                    quadDrawer);
 
             spotlightShadowMapCount++;
         }

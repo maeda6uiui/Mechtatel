@@ -290,7 +290,7 @@ public class PostProcessingNabor extends Nabor {
         }
     }
 
-    public void bindImages(
+    public void bindGBufferImages(
             VkCommandBuffer commandBuffer,
             int dstBinding,
             long colorImageView,
@@ -303,7 +303,7 @@ public class PostProcessingNabor extends Nabor {
         this.bindImages(commandBuffer, 1, dstBinding, imageViews);
     }
 
-    public void bindImages(
+    public void bindGBufferImages(
             VkCommandBuffer commandBuffer,
             int naborIndex,
             int dstBinding,
@@ -311,6 +311,6 @@ public class PostProcessingNabor extends Nabor {
             long depthImageView,
             long positionImageView,
             long normalImageView) {
-        this.bindImages(commandBuffer, dstBinding, colorImageView, depthImageView, positionImageView, normalImageView);
+        throw new RuntimeException("Unsupported operation");
     }
 }

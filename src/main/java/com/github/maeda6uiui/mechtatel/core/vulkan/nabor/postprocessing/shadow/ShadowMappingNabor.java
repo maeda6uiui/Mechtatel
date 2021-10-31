@@ -26,12 +26,16 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     private Pass2Nabor pass2;
     private CopyDepthNabor copyDepthNabor;
 
-    public ShadowMappingNabor(VkDevice device, int shadowCoordsImageFormat, int depthImageFormat) {
+    public ShadowMappingNabor(
+            VkDevice device,
+            int depthImageFormat,
+            int shadowCoordsImageFormat,
+            int shadowDepthImageFormat) {
         super(device, VK_SAMPLE_COUNT_1_BIT, true);
 
         pass1 = new Pass1Nabor(device, shadowCoordsImageFormat, depthImageFormat);
         pass2 = new Pass2Nabor(device);
-        copyDepthNabor = new CopyDepthNabor(device);
+        copyDepthNabor = new CopyDepthNabor(device, shadowDepthImageFormat);
     }
 
     @Override
@@ -223,6 +227,27 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     }
 
     @Override
+    public long getImageView(int naborIndex, int arrayIndex) {
+        long imageView;
+
+        switch (naborIndex) {
+            case 0:
+                imageView = pass1.getImageView(arrayIndex);
+                break;
+            case 1:
+                imageView = pass2.getImageView(arrayIndex);
+                break;
+            case 2:
+                imageView = copyDepthNabor.getImageView(arrayIndex);
+                break;
+            default:
+                throw new RuntimeException("Index out of bounds");
+        }
+
+        return imageView;
+    }
+
+    @Override
     public long getFramebuffer(int naborIndex, int arrayIndex) {
         long framebuffer;
 
@@ -247,19 +272,20 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     public void bindImages(
             VkCommandBuffer commandBuffer,
             int naborIndex,
+            int dstSet,
             int dstBinding,
             List<Long> imageViews) {
         if (naborIndex == 1) {
-            pass2.bindImages(commandBuffer, 1, dstBinding, imageViews);
+            pass2.bindImages(commandBuffer, dstSet, dstBinding, imageViews);
         } else if (naborIndex == 2) {
-            copyDepthNabor.bindImages(commandBuffer, 1, dstBinding, imageViews);
+            copyDepthNabor.bindImages(commandBuffer, dstSet, dstBinding, imageViews);
         } else {
             throw new RuntimeException("Unsupported operation");
         }
     }
 
     @Override
-    public void bindImages(
+    public void bindGBufferImages(
             VkCommandBuffer commandBuffer,
             int naborIndex,
             int dstBinding,
@@ -268,7 +294,7 @@ public class ShadowMappingNabor extends PostProcessingNabor {
             long positionImageView,
             long normalImageView) {
         if (naborIndex == 1) {
-            pass2.bindImages(
+            pass2.bindGBufferImages(
                     commandBuffer,
                     dstBinding,
                     colorImageView,

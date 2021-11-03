@@ -21,6 +21,7 @@ layout(location=0) out vec4 fragColor;
 layout(location=1) out vec2 fragTexCoords;
 layout(location=2) out vec3 fragPosition;
 layout(location=3) out vec3 fragNormal;
+layout(location=4) out mat4 fragMatModel;
 
 void main(){
     gl_Position=camera.proj*camera.view*pc.model*vec4(inPosition,1.0);
@@ -28,4 +29,5 @@ void main(){
     fragTexCoords=inTexCoords;
     fragPosition=(pc.model*vec4(inPosition,1.0)).xyz;
     fragNormal=inNormal;
+    fragMatModel=pc.model;
 }

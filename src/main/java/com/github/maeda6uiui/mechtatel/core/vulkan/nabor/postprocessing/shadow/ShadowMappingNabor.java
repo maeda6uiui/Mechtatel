@@ -19,23 +19,14 @@ import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_1_BIT;
 public class ShadowMappingNabor extends PostProcessingNabor {
     public static final int MAX_NUM_SHADOW_MAPS = Pass2Nabor.MAX_NUM_SHADOW_MAPS;
 
-    public static final int SHADOW_COORDS_ATTACHMENT_INDEX = Pass1Nabor.SHADOW_COORDS_ATTACHMENT_INDEX;
-    public static final int SHADOW_DEPTH_ATTACHMENT_INDEX = Pass1Nabor.SHADOW_DEPTH_ATTACHMENT_INDEX;
-
     private Pass1Nabor pass1;
     private Pass2Nabor pass2;
-    private CopyDepthNabor copyDepthNabor;
 
-    public ShadowMappingNabor(
-            VkDevice device,
-            int depthImageFormat,
-            int shadowCoordsImageFormat,
-            int shadowDepthImageFormat) {
+    public ShadowMappingNabor(VkDevice device, int depthImageFormat) {
         super(device, VK_SAMPLE_COUNT_1_BIT, true);
 
-        pass1 = new Pass1Nabor(device, shadowCoordsImageFormat, depthImageFormat);
+        pass1 = new Pass1Nabor(device, depthImageFormat);
         pass2 = new Pass2Nabor(device);
-        copyDepthNabor = new CopyDepthNabor(device, shadowDepthImageFormat);
     }
 
     @Override
@@ -49,7 +40,6 @@ public class ShadowMappingNabor extends PostProcessingNabor {
 
         pass1.compile(colorImageFormat, extent, commandPool, graphicsQueue, descriptorCount);
         pass2.compile(colorImageFormat, extent, commandPool, graphicsQueue, descriptorCount);
-        copyDepthNabor.compile(colorImageFormat, extent, commandPool, graphicsQueue, descriptorCount);
     }
 
     @Override
@@ -60,7 +50,6 @@ public class ShadowMappingNabor extends PostProcessingNabor {
 
         pass1.recreate(colorImageFormat, extent);
         pass2.recreate(colorImageFormat, extent);
-        copyDepthNabor.recreate(colorImageFormat, extent);
     }
 
     @Override
@@ -69,7 +58,6 @@ public class ShadowMappingNabor extends PostProcessingNabor {
 
         pass1.cleanup(reserveForRecreation);
         pass2.cleanup(reserveForRecreation);
-        copyDepthNabor.cleanup(reserveForRecreation);
     }
 
     @Override
@@ -92,9 +80,6 @@ public class ShadowMappingNabor extends PostProcessingNabor {
                 break;
             case 1:
                 textureSampler = pass2.getTextureSampler(arrayIndex);
-                break;
-            case 2:
-                textureSampler = copyDepthNabor.getTextureSampler(arrayIndex);
                 break;
             default:
                 throw new RuntimeException("Index out of bounds");
@@ -132,9 +117,6 @@ public class ShadowMappingNabor extends PostProcessingNabor {
             case 1:
                 renderPass = pass2.getRenderPass();
                 break;
-            case 2:
-                renderPass = copyDepthNabor.getRenderPass();
-                break;
             default:
                 throw new RuntimeException("Index out of bounds");
         }
@@ -152,9 +134,6 @@ public class ShadowMappingNabor extends PostProcessingNabor {
                 break;
             case 1:
                 pSets = pass2.pDescriptorSets();
-                break;
-            case 2:
-                pSets = copyDepthNabor.pDescriptorSets();
                 break;
             default:
                 throw new RuntimeException("Index out of bounds");
@@ -174,9 +153,6 @@ public class ShadowMappingNabor extends PostProcessingNabor {
             case 1:
                 pipelineLayout = pass2.getPipelineLayout(arrayIndex);
                 break;
-            case 2:
-                pipelineLayout = copyDepthNabor.getPipelineLayout(arrayIndex);
-                break;
             default:
                 throw new RuntimeException("Index out of bounds");
         }
@@ -194,9 +170,6 @@ public class ShadowMappingNabor extends PostProcessingNabor {
                 break;
             case 1:
                 graphicsPipeline = pass2.getGraphicsPipeline(arrayIndex);
-                break;
-            case 2:
-                graphicsPipeline = copyDepthNabor.getGraphicsPipeline(arrayIndex);
                 break;
             default:
                 throw new RuntimeException("Index out of bounds");
@@ -216,9 +189,6 @@ public class ShadowMappingNabor extends PostProcessingNabor {
             case 1:
                 image = pass2.getImage(arrayIndex);
                 break;
-            case 2:
-                image = copyDepthNabor.getImage(arrayIndex);
-                break;
             default:
                 throw new RuntimeException("Index out of bounds");
         }
@@ -236,9 +206,6 @@ public class ShadowMappingNabor extends PostProcessingNabor {
                 break;
             case 1:
                 imageView = pass2.getImageView(arrayIndex);
-                break;
-            case 2:
-                imageView = copyDepthNabor.getImageView(arrayIndex);
                 break;
             default:
                 throw new RuntimeException("Index out of bounds");
@@ -258,9 +225,6 @@ public class ShadowMappingNabor extends PostProcessingNabor {
             case 1:
                 framebuffer = pass2.getFramebuffer(arrayIndex);
                 break;
-            case 2:
-                framebuffer = copyDepthNabor.getFramebuffer(arrayIndex);
-                break;
             default:
                 throw new RuntimeException("Index out of bounds");
         }
@@ -277,8 +241,6 @@ public class ShadowMappingNabor extends PostProcessingNabor {
             List<Long> imageViews) {
         if (naborIndex == 1) {
             pass2.bindImages(commandBuffer, dstSet, dstBinding, imageViews);
-        } else if (naborIndex == 2) {
-            copyDepthNabor.bindImages(commandBuffer, dstSet, dstBinding, imageViews);
         } else {
             throw new RuntimeException("Unsupported operation");
         }

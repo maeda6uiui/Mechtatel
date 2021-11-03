@@ -1,6 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow;
 
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowInfo;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
@@ -8,8 +9,7 @@ import org.lwjgl.vulkan.VkDevice;
 
 import java.nio.ByteBuffer;
 
-import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_VEC3;
-import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_VEC4;
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.*;
 import static org.lwjgl.vulkan.VK10.vkMapMemory;
 import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 
@@ -19,28 +19,34 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda
  */
 public class ShadowInfoUBO {
-    public static final int SIZEOF = 3 * SIZEOF_VEC4;
+    public static final int SIZEOF = 2 * SIZEOF_MAT4 + 3 * SIZEOF_VEC4;
 
-    private int projectionType;
+    private Matrix4f lightView;
+    private Matrix4f lightProj;
     private Vector3f lightDirection;
     private Vector3f attenuations;
     private float biasCoefficient;
     private float maxBias;
+    private int projectionType;
 
     public ShadowInfoUBO(ShadowInfo info) {
-        projectionType = info.getProjectionType();
+        lightView = info.getLightView();
+        lightProj = info.getLightProj();
         lightDirection = info.getLightDirection();
         attenuations = info.getAttenuations();
         biasCoefficient = info.getBiasCoefficient();
         maxBias = info.getMaxBias();
+        projectionType = info.getProjectionType();
     }
 
     private void memcpy(ByteBuffer buffer) {
-        buffer.putInt(0, projectionType);
-        lightDirection.get(Integer.BYTES * 1, buffer);
-        attenuations.get(SIZEOF_VEC4 * 1, buffer);
-        buffer.putFloat(SIZEOF_VEC4 * 1 + SIZEOF_VEC3, biasCoefficient);
-        buffer.putFloat(SIZEOF_VEC4 * 2, maxBias);
+        lightView.get(0, buffer);
+        lightProj.get(SIZEOF_MAT4 * 1, buffer);
+        lightDirection.get(SIZEOF_MAT4 * 2, buffer);
+        attenuations.get(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 1, buffer);
+        buffer.putFloat(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 1 + SIZEOF_VEC3 * 1, biasCoefficient);
+        buffer.putFloat(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 2, maxBias);
+        buffer.putInt(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 2 + SIZEOF_FLOAT * 1, projectionType);
 
         buffer.rewind();
     }

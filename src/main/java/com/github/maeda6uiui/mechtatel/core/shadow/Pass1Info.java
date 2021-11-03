@@ -11,19 +11,19 @@ import org.joml.Vector3f;
  * @author maeda
  */
 public class Pass1Info {
-    private Matrix4f view;
-    private Matrix4f proj;
+    private Matrix4f lightView;
+    private Matrix4f lightProj;
     private float normalOffset;
 
     public Pass1Info() {
-        view = new Matrix4f();
-        proj = new Matrix4f();
+        lightView = new Matrix4f();
+        lightProj = new Matrix4f();
         normalOffset = 0.05f;
     }
 
     public Pass1Info(ParallelLight light) {
-        view = new Matrix4f().lookAt(light.getPosition(), light.getCenter(), new Vector3f(0.0f, 1.0f, 0.0f));
-        proj = new Matrix4f().ortho(
+        lightView = new Matrix4f().lookAt(light.getPosition(), light.getCenter(), new Vector3f(0.0f, 1.0f, 0.0f));
+        lightProj = new Matrix4f().ortho(
                 light.getOrthoLeft(),
                 light.getOrthoRight(),
                 light.getOrthoBottom(),
@@ -34,25 +34,25 @@ public class Pass1Info {
     }
 
     public Pass1Info(Spotlight light) {
-        view = new Matrix4f().lookAt(light.getPosition(), light.getCenter(), new Vector3f(0.0f, 1.0f, 0.0f));
-        proj = new Matrix4f().perspective(light.getFovY(), light.getAspect(), light.getzNear(), light.getzFar());
+        lightView = new Matrix4f().lookAt(light.getPosition(), light.getCenter(), new Vector3f(0.0f, 1.0f, 0.0f));
+        lightProj = new Matrix4f().perspective(light.getFovY(), light.getAspect(), light.getzNear(), light.getzFar());
         normalOffset = 0.05f;
     }
 
-    public Matrix4f getView() {
-        return view;
+    public Matrix4f getLightView() {
+        return lightView;
     }
 
-    public void setView(Matrix4f view) {
-        this.view = view;
+    public void setLightView(Matrix4f lightView) {
+        this.lightView = lightView;
     }
 
-    public Matrix4f getProj() {
-        return proj;
+    public Matrix4f getLightProj() {
+        return lightProj;
     }
 
-    public void setProj(Matrix4f proj) {
-        this.proj = proj;
+    public void setLightProj(Matrix4f lightProj) {
+        this.lightProj = lightProj;
     }
 
     public float getNormalOffset() {

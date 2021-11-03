@@ -10,11 +10,13 @@ layout(set=0,binding=0) uniform Pass2InfoUBO{
     int numShadowMaps;
 }passInfo;
 struct ShadowInfo{
-    int projectionType;
+    mat4 lightView;
+    mat4 lightProj;
     vec3 lightDirection;
     vec3 attenuations;
     float biasCoefficient;
     float maxBias;
+    int projectionType;
 };
 layout(set=0,binding=1) uniform ShadowInfosUBO{
     ShadowInfo shadowInfos[MAX_NUM_SHADOW_MAPS];
@@ -23,7 +25,7 @@ layout(set=1,binding=0) uniform texture2D albedoTexture;
 layout(set=1,binding=1) uniform texture2D depthTexture;
 layout(set=1,binding=2) uniform texture2D positionTexture;
 layout(set=1,binding=3) uniform texture2D normalTexture;
-layout(set=1,binding=4) uniform texture2D shadowCoordsTextures[MAX_NUM_SHADOW_MAPS];
+layout(set=1,binding=4) uniform texture2D modelMatTextures[4];
 layout(set=1,binding=5) uniform texture2D shadowDepthTextures[MAX_NUM_SHADOW_MAPS];
 layout(set=2,binding=0) uniform sampler textureSampler;
 
@@ -37,6 +39,11 @@ void main(){
     vec3 position=texture(sampler2D(positionTexture,textureSampler),fragTexCoords).rgb;
     vec3 normal=texture(sampler2D(normalTexture,textureSampler),fragTexCoords).rgb;
 
+    mat4 modelMat;
+    for(int i=0;i<4;i++){
+        modelMat[i]=texture(sampler2D(modelMatTextures[i],textureSampler),fragTexCoords);
+    }
+
     vec3 shadowFactors=vec3(1.0);
 
     for(int i=0;i<passInfo.numShadowMaps;i++){
@@ -44,7 +51,7 @@ void main(){
         float bias=shadowInfos[i].biasCoefficient*tan(acos(cosTh));
         bias=clamp(bias,0.0,shadowInfos[i].maxBias);
 
-        vec4 shadowCoords=texture(sampler2D(shadowCoordsTextures[i],textureSampler),fragTexCoords);
+        vec4 shadowCoords=shadowInfos[i].lightProj*shadowInfos[i].lightView*modelMat*vec4(position,1.0);
         float shadowDepth=texture(sampler2D(shadowDepthTextures[i],textureSampler),shadowCoords.xy).r;
 
         if(shadowInfos[i].projectionType==PROJECTION_TYPE_ORTHOGRAPHIC){

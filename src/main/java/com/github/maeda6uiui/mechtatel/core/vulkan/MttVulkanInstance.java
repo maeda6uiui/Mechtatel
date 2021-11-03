@@ -59,9 +59,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
     private int msaaSamples;
     private int depthImageFormat;
-
-    private int shadowCoordsImageFormat;
-    private int shadowDepthImageFormat;
+    private boolean hasStencilComponent;
 
     private Swapchain swapchain;
 
@@ -115,43 +113,16 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         shadowMappingNabor.cleanupUserDefImages();
 
         VkExtent2D extent = swapchain.getSwapchainExtent();
-        //Shadow coords
-        for (int i = 0; i < ShadowMappingNabor.MAX_NUM_SHADOW_MAPS; i++) {
-            long image = shadowMappingNabor.createUserDefImage(
-                    extent.width(),
-                    extent.height(),
-                    1,
-                    VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    shadowCoordsImageFormat);
-            ImageUtils.transitionImageLayout(
-                    device,
-                    commandPool,
-                    graphicsQueue,
-                    image,
-                    false,
-                    VK_IMAGE_LAYOUT_UNDEFINED,
-                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                    1);
-        }
+
         //Shadow depth
         for (int i = 0; i < ShadowMappingNabor.MAX_NUM_SHADOW_MAPS; i++) {
-            long image = shadowMappingNabor.createUserDefImage(
+            shadowMappingNabor.createUserDefImage(
                     extent.width(),
                     extent.height(),
                     1,
                     VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    shadowDepthImageFormat);
-            ImageUtils.transitionImageLayout(
-                    device,
-                    commandPool,
-                    graphicsQueue,
-                    image,
-                    false,
-                    VK_IMAGE_LAYOUT_UNDEFINED,
-                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                    1);
+                    depthImageFormat);
         }
     }
 
@@ -211,9 +182,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         //Get the image format for depth
         depthImageFormat = DepthResourceUtils.findDepthFormat(device);
-
-        shadowCoordsImageFormat = VK_FORMAT_R16G16B16A16_SFLOAT;
-        shadowDepthImageFormat = VK_FORMAT_R16_SFLOAT;
+        hasStencilComponent = DepthResourceUtils.hasStencilComponent(depthImageFormat);
 
         //Create a command pool
         commandPool = CommandPoolCreator.createCommandPool(device, surface);
@@ -225,6 +194,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         gBufferNabor = new GBufferNabor(
                 device,
                 depthImageFormat,
+                VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT);
         gBufferNabor.compile(
@@ -311,11 +281,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     ppNabor = new PointLightNabor(device);
                     break;
                 case "shadow_mapping":
-                    ppNabor = new ShadowMappingNabor(
-                            device,
-                            depthImageFormat,
-                            shadowCoordsImageFormat,
-                            shadowDepthImageFormat);
+                    ppNabor = new ShadowMappingNabor(device, depthImageFormat);
                     this.createShadowMappingNaborUserDefImages(ppNabor);
                     break;
                 case "spotlight":
@@ -357,7 +323,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
             renderArea.extent(gBufferNabor.getExtent());
             renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.callocStack(4, stack);
+            VkClearValue.Buffer clearValues = VkClearValue.callocStack(8, stack);
             clearValues.get(0).color().float32(
                     stack.floats(
                             backgroundColor.x,
@@ -367,6 +333,10 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             clearValues.get(1).depthStencil().set(1.0f, 0);
             clearValues.get(2).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             clearValues.get(3).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            clearValues.get(4).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            clearValues.get(5).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            clearValues.get(6).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            clearValues.get(7).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             renderPassInfo.pClearValues(clearValues);
 
             VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
@@ -427,7 +397,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         parallelLights,
                         spotlights,
                         components,
-                        depthImageFormat,
+                        hasStencilComponent,
                         quadDrawer);
 
                 lastPPNabor = ppNabor;

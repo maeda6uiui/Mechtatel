@@ -53,8 +53,8 @@ public class MyMechtatel extends Mechtatel {
         model2.translate(new Vector3f(3.0f, 1.0f, 3.0f));
 
         var ppNaborNames = new ArrayList<String>();
-        //ppNaborNames.add("parallel_light");
-        ppNaborNames.add("shadow_mapping");
+        ppNaborNames.add("parallel_light");
+        //ppNaborNames.add("shadow_mapping");
         this.createPostProcessingNabors(ppNaborNames);
 
         cameraPosition = new Vector3f(4.0f, 4.0f, 4.0f);

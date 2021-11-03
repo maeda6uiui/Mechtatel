@@ -21,19 +21,19 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 public class Pass1InfoUBO {
     public static final int SIZEOF = 2 * SIZEOF_MAT4 + 1 * SIZEOF_FLOAT;
 
-    private Matrix4f view;
-    private Matrix4f proj;
+    private Matrix4f lightView;
+    private Matrix4f lightProj;
     private float normalOffset;
 
     public Pass1InfoUBO(Pass1Info info) {
-        view = info.getView();
-        proj = info.getProj();
+        lightView = info.getLightView();
+        lightProj = info.getLightProj();
         normalOffset = info.getNormalOffset();
     }
 
     private void memcpy(ByteBuffer buffer) {
-        view.get(0, buffer);
-        proj.get(1 * SIZEOF_MAT4, buffer);
+        lightView.get(0, buffer);
+        lightProj.get(1 * SIZEOF_MAT4, buffer);
         buffer.putFloat(2 * SIZEOF_MAT4, normalOffset);
 
         buffer.rewind();

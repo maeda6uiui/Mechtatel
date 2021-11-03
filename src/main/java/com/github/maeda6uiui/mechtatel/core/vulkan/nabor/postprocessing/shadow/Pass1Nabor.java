@@ -21,16 +21,11 @@ import static org.lwjgl.vulkan.VK10.*;
  * Nabor to obtain depth for shadow mapping
  */
 class Pass1Nabor extends Nabor {
-    private int shadowCoordsImageFormat;
     private int depthImageFormat;
 
-    public static final int SHADOW_COORDS_ATTACHMENT_INDEX = 0;
-    public static final int SHADOW_DEPTH_ATTACHMENT_INDEX = 1;
-
-    public Pass1Nabor(VkDevice device, int shadowCoordsImageFormat, int depthImageFormat) {
+    public Pass1Nabor(VkDevice device, int depthImageFormat) {
         super(device, VK_SAMPLE_COUNT_1_BIT, false);
 
-        this.shadowCoordsImageFormat = shadowCoordsImageFormat;
         this.depthImageFormat = depthImageFormat;
     }
 
@@ -52,26 +47,11 @@ class Pass1Nabor extends Nabor {
             VkDevice device = this.getDevice();
             int msaaSamples = this.getMsaaSamples();
 
-            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(2, stack);
-            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(2, stack);
-
-            //Shadow coords attachment
-            VkAttachmentDescription colorAttachment = attachments.get(SHADOW_COORDS_ATTACHMENT_INDEX);
-            colorAttachment.format(shadowCoordsImageFormat);
-            colorAttachment.samples(msaaSamples);
-            colorAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
-            colorAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
-            colorAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
-            colorAttachment.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
-            colorAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
-            colorAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-
-            VkAttachmentReference colorAttachmentRef = attachmentRefs.get(SHADOW_COORDS_ATTACHMENT_INDEX);
-            colorAttachmentRef.attachment(SHADOW_COORDS_ATTACHMENT_INDEX);
-            colorAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(1, stack);
+            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(1, stack);
 
             //Shadow depth attachment
-            VkAttachmentDescription depthAttachment = attachments.get(SHADOW_DEPTH_ATTACHMENT_INDEX);
+            VkAttachmentDescription depthAttachment = attachments.get(0);
             depthAttachment.format(depthImageFormat);
             depthAttachment.samples(msaaSamples);
             depthAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -81,14 +61,13 @@ class Pass1Nabor extends Nabor {
             depthAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             depthAttachment.finalLayout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference depthAttachmentRef = attachmentRefs.get(SHADOW_DEPTH_ATTACHMENT_INDEX);
-            depthAttachmentRef.attachment(SHADOW_DEPTH_ATTACHMENT_INDEX);
+            VkAttachmentReference depthAttachmentRef = attachmentRefs.get(0);
+            depthAttachmentRef.attachment(0);
             depthAttachmentRef.layout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.callocStack(1, stack);
             subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
-            subpass.colorAttachmentCount(1);
-            subpass.pColorAttachments(VkAttachmentReference.callocStack(1, stack).put(0, colorAttachmentRef));
+            subpass.colorAttachmentCount(0);
             subpass.pDepthStencilAttachment(depthAttachmentRef);
 
             VkSubpassDependency.Buffer dependency = VkSubpassDependency.callocStack(1, stack);
@@ -425,47 +404,11 @@ class Pass1Nabor extends Nabor {
             int msaaSamples = this.getMsaaSamples();
             VkExtent2D extent = this.getExtent();
 
+            //Depth image
             LongBuffer pImage = stack.mallocLong(1);
             LongBuffer pImageMemory = stack.mallocLong(1);
             LongBuffer pImageView = stack.mallocLong(1);
 
-            //Shadow coords image
-            ImageUtils.createImage(
-                    device,
-                    extent.width(),
-                    extent.height(),
-                    1,
-                    msaaSamples,
-                    shadowCoordsImageFormat,
-                    VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pImage,
-                    pImageMemory);
-            long shadowCoordsImage = pImage.get(0);
-            long shadowCoordsImageMemory = pImageMemory.get(0);
-
-            VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.callocStack(stack);
-            viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
-            viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
-            viewInfo.image(shadowCoordsImage);
-            viewInfo.format(shadowCoordsImageFormat);
-            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
-            viewInfo.subresourceRange().baseMipLevel(0);
-            viewInfo.subresourceRange().levelCount(1);
-            viewInfo.subresourceRange().baseArrayLayer(0);
-            viewInfo.subresourceRange().layerCount(1);
-
-            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to create an image view");
-            }
-            long shadowCoordsImageView = pImageView.get(0);
-
-            this.getImages().add(shadowCoordsImage);
-            this.getImageMemories().add(shadowCoordsImageMemory);
-            this.getImageViews().add(shadowCoordsImageView);
-
-            //Depth image
             ImageUtils.createImage(
                     device,
                     extent.width(),
@@ -474,16 +417,23 @@ class Pass1Nabor extends Nabor {
                     msaaSamples,
                     depthImageFormat,
                     VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     pImage,
                     pImageMemory);
             long depthImage = pImage.get(0);
             long depthImageMemory = pImageMemory.get(0);
 
+            VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.callocStack(stack);
+            viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
+            viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
             viewInfo.image(depthImage);
             viewInfo.format(depthImageFormat);
             viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_DEPTH_BIT);
+            viewInfo.subresourceRange().baseMipLevel(0);
+            viewInfo.subresourceRange().levelCount(1);
+            viewInfo.subresourceRange().baseArrayLayer(0);
+            viewInfo.subresourceRange().layerCount(1);
 
             if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
                 throw new RuntimeException("Failed to create an image view");

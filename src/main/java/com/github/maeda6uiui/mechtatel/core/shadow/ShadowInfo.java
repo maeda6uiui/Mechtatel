@@ -1,5 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.shadow;
 
+import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
+import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 /**
@@ -11,26 +14,64 @@ public class ShadowInfo {
     public static final int PROJECTION_TYPE_ORTHOGRAPHIC = 0;
     public static final int PROJECTION_TYPE_PERSPECTIVE = 1;
 
-    private int projectionType;
+    private Matrix4f lightView;
+    private Matrix4f lightProj;
     private Vector3f lightDirection;
     private Vector3f attenuations;
     private float biasCoefficient;
     private float maxBias;
+    private int projectionType;
 
-    public ShadowInfo() {
-        projectionType = PROJECTION_TYPE_ORTHOGRAPHIC;
-        lightDirection = new Vector3f(-1.0f, -1.0f, -1.0f).normalize();
+    public ShadowInfo(ParallelLight parallelLight) {
+        lightView = new Matrix4f().lookAt(
+                parallelLight.getPosition(),
+                parallelLight.getCenter(),
+                new Vector3f(0.0f, 1.0f, 0.0f));
+        lightProj = new Matrix4f().ortho(
+                parallelLight.getOrthoLeft(),
+                parallelLight.getOrthoRight(),
+                parallelLight.getOrthoBottom(),
+                parallelLight.getOrthoTop(),
+                parallelLight.getzNear(),
+                parallelLight.getzFar());
+        lightDirection = parallelLight.getDirection();
         attenuations = new Vector3f(0.5f, 0.5f, 0.5f);
         biasCoefficient = 0.01f;
         maxBias = 0.1f;
+        projectionType = PROJECTION_TYPE_ORTHOGRAPHIC;
     }
 
-    public int getProjectionType() {
-        return projectionType;
+    public ShadowInfo(Spotlight spotlight) {
+        lightView = new Matrix4f().lookAt(
+                spotlight.getPosition(),
+                spotlight.getCenter(),
+                new Vector3f(0.0f, 1.0f, 0.0f));
+        lightProj = new Matrix4f().perspective(
+                spotlight.getFovY(),
+                spotlight.getAspect(),
+                spotlight.getzNear(),
+                spotlight.getzFar());
+        lightDirection = spotlight.getDirection();
+        attenuations = new Vector3f(0.5f, 0.5f, 0.5f);
+        biasCoefficient = 0.01f;
+        maxBias = 0.1f;
+        projectionType = PROJECTION_TYPE_PERSPECTIVE;
     }
 
-    public void setProjectionType(int projectionType) {
-        this.projectionType = projectionType;
+    public Matrix4f getLightView() {
+        return lightView;
+    }
+
+    public void setLightView(Matrix4f lightView) {
+        this.lightView = lightView;
+    }
+
+    public Matrix4f getLightProj() {
+        return lightProj;
+    }
+
+    public void setLightProj(Matrix4f lightProj) {
+        this.lightProj = lightProj;
     }
 
     public Vector3f getLightDirection() {
@@ -63,5 +104,13 @@ public class ShadowInfo {
 
     public void setMaxBias(float maxBias) {
         this.maxBias = maxBias;
+    }
+
+    public int getProjectionType() {
+        return projectionType;
+    }
+
+    public void setProjectionType(int projectionType) {
+        this.projectionType = projectionType;
     }
 }

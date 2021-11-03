@@ -89,7 +89,7 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void update() {
-        new Matrix4f().rotateY((float) Math.toRadians(1)).transformPosition(lightPosition);
+        new Matrix4f().rotateY((float) Math.toRadians(0.5)).transformPosition(lightPosition);
         var lightDirection = lightCenter.sub(lightPosition);
         parallelLight.setPosition(lightPosition);
         parallelLight.setDirection(lightDirection);

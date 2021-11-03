@@ -154,38 +154,31 @@ public class ShadowMappingNaborRunner {
             GBufferNabor gBufferNabor,
             PostProcessingNabor lastPPNabor,
             PostProcessingNabor shadowMappingNabor,
-            int parallelLightShadowMapCount,
-            int spotlightShadowMapCount,
-            List<ParallelLight> parallelLights,
-            List<Spotlight> spotlights,
+            List<ParallelLight> shadowParallelLights,
+            List<Spotlight> shadowSpotlights,
             QuadDrawer quadDrawer) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             long pass2InfoUBOMemory = shadowMappingNabor.getUniformBufferMemory(1, 0);
             var pass2Info = new Pass2Info();
-            pass2Info.setNumShadowMaps(parallelLightShadowMapCount + spotlightShadowMapCount);
+            pass2Info.setNumShadowMaps(shadowParallelLights.size() + shadowSpotlights.size());
             var pass2InfoUBO = new Pass2InfoUBO(pass2Info);
             pass2InfoUBO.update(device, pass2InfoUBOMemory);
 
             long shadowInfosUBOMemory = shadowMappingNabor.getUniformBufferMemory(1, 1);
-            for (int i = 0; i < parallelLightShadowMapCount; i++) {
-                ParallelLight parallelLight = parallelLights.get(i);
-                if (!parallelLight.isCastShadow()) {
-                    continue;
-                }
+
+            for (int i = 0; i < shadowParallelLights.size(); i++) {
+                ParallelLight parallelLight = shadowParallelLights.get(i);
 
                 var shadowInfo = new ShadowInfo(parallelLight);
                 var shadowInfoUBO = new ShadowInfoUBO(shadowInfo);
                 shadowInfoUBO.update(device, shadowInfosUBOMemory, i);
             }
-            for (int i = 0; i < spotlightShadowMapCount; i++) {
-                Spotlight spotlight = spotlights.get(i);
-                if (!spotlight.isCastShadow()) {
-                    continue;
-                }
+            for (int i = 0; i < shadowSpotlights.size(); i++) {
+                Spotlight spotlight = shadowSpotlights.get(i);
 
                 var shadowInfo = new ShadowInfo(spotlight);
                 var shadowInfoUBO = new ShadowInfoUBO(shadowInfo);
-                shadowInfoUBO.update(device, shadowInfosUBOMemory, parallelLightShadowMapCount + i);
+                shadowInfoUBO.update(device, shadowInfosUBOMemory, shadowParallelLights.size() + i);
             }
 
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
@@ -247,7 +240,7 @@ public class ShadowMappingNaborRunner {
                         4,
                         modelMatImageViews);
 
-                int numShadowMaps = parallelLightShadowMapCount + spotlightShadowMapCount;
+                int numShadowMaps = shadowParallelLights.size() + shadowSpotlights.size();
                 var shadowDepthImageViews = new ArrayList<Long>();
                 for (int i = 0; i < numShadowMaps; i++) {
                     shadowDepthImageViews.add(shadowMappingNabor.getUserDefImageView(i));
@@ -282,9 +275,10 @@ public class ShadowMappingNaborRunner {
             int depthImageAspect,
             QuadDrawer quadDrawer) {
         //Pass 1
-        int parallelLightShadowMapCount = 0;
+        var shadowParallelLights = new ArrayList<ParallelLight>();
+
         for (var parallelLight : parallelLights) {
-            if (parallelLightShadowMapCount >= ShadowMappingNabor.MAX_NUM_SHADOW_MAPS) {
+            if (shadowParallelLights.size() >= ShadowMappingNabor.MAX_NUM_SHADOW_MAPS) {
                 break;
             }
             if (!parallelLight.isCastShadow()) {
@@ -298,14 +292,16 @@ public class ShadowMappingNaborRunner {
                     commandPool,
                     graphicsQueue,
                     shadowMappingNabor,
-                    parallelLightShadowMapCount,
+                    shadowParallelLights.size(),
                     depthImageAspect);
 
-            parallelLightShadowMapCount++;
+            shadowParallelLights.add(parallelLight);
         }
-        int spotlightShadowMapCount = 0;
+
+        var shadowSpotlights = new ArrayList<Spotlight>();
+
         for (var spotlight : spotlights) {
-            if (parallelLightShadowMapCount + spotlightShadowMapCount >= ShadowMappingNabor.MAX_NUM_SHADOW_MAPS) {
+            if (shadowSpotlights.size() + shadowParallelLights.size() >= ShadowMappingNabor.MAX_NUM_SHADOW_MAPS) {
                 break;
             }
             if (!spotlight.isCastShadow()) {
@@ -319,10 +315,10 @@ public class ShadowMappingNaborRunner {
                     commandPool,
                     graphicsQueue,
                     shadowMappingNabor,
-                    parallelLightShadowMapCount + spotlightShadowMapCount,
+                    shadowSpotlights.size() + shadowParallelLights.size(),
                     depthImageAspect);
 
-            spotlightShadowMapCount++;
+            shadowSpotlights.add(spotlight);
         }
 
         //Pass 2
@@ -333,10 +329,8 @@ public class ShadowMappingNaborRunner {
                 gBufferNabor,
                 lastPPNabor,
                 shadowMappingNabor,
-                parallelLightShadowMapCount,
-                spotlightShadowMapCount,
-                parallelLights,
-                spotlights,
+                shadowParallelLights,
+                shadowSpotlights,
                 quadDrawer);
     }
 }

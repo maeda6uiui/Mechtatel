@@ -49,9 +49,8 @@ public class ShadowMappingNaborRunner {
             renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
             renderArea.extent(shadowMappingNabor.getExtent());
             renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.callocStack(2, stack);
-            clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
-            clearValues.get(1).depthStencil().set(1.0f, 0);
+            VkClearValue.Buffer clearValues = VkClearValue.callocStack(1, stack);
+            clearValues.get(0).depthStencil().set(1.0f, 0);
             renderPassInfo.pClearValues(clearValues);
 
             VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
@@ -97,14 +96,14 @@ public class ShadowMappingNaborRunner {
             VkQueue graphicsQueue,
             PostProcessingNabor shadowMappingNabor,
             int shadowMapIndex,
-            boolean hasStencilComponent) {
+            int depthImageAspect) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkExtent2D extent = shadowMappingNabor.getExtent();
 
             VkImageCopy.Buffer imageCopyRegion = VkImageCopy.callocStack(1, stack);
-            imageCopyRegion.srcSubresource().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+            imageCopyRegion.srcSubresource().aspectMask(VK_IMAGE_ASPECT_DEPTH_BIT);
             imageCopyRegion.srcSubresource().layerCount(1);
-            imageCopyRegion.dstSubresource().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+            imageCopyRegion.dstSubresource().aspectMask(VK_IMAGE_ASPECT_DEPTH_BIT);
             imageCopyRegion.dstSubresource().layerCount(1);
             imageCopyRegion.extent(VkExtent3D.callocStack(stack).set(extent.width(), extent.height(), 1));
 
@@ -116,14 +115,14 @@ public class ShadowMappingNaborRunner {
             ImageUtils.transitionImageLayout(
                     commandBuffer,
                     depthSrcImage,
-                    hasStencilComponent,
+                    depthImageAspect,
                     VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
                     VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
                     1);
             ImageUtils.transitionImageLayout(
                     commandBuffer,
                     depthDstImage,
-                    hasStencilComponent,
+                    depthImageAspect,
                     VK_IMAGE_LAYOUT_UNDEFINED,
                     VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                     1);
@@ -139,9 +138,9 @@ public class ShadowMappingNaborRunner {
             ImageUtils.transitionImageLayout(
                     commandBuffer,
                     depthDstImage,
-                    hasStencilComponent,
+                    depthImageAspect,
                     VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                    VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
+                    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                     1);
 
             CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
@@ -280,7 +279,7 @@ public class ShadowMappingNaborRunner {
             List<ParallelLight> parallelLights,
             List<Spotlight> spotlights,
             List<VkComponent> components,
-            boolean hasStencilComponent,
+            int depthImageAspect,
             QuadDrawer quadDrawer) {
         //Pass 1
         int parallelLightShadowMapCount = 0;
@@ -300,7 +299,7 @@ public class ShadowMappingNaborRunner {
                     graphicsQueue,
                     shadowMappingNabor,
                     parallelLightShadowMapCount,
-                    hasStencilComponent);
+                    depthImageAspect);
 
             parallelLightShadowMapCount++;
         }
@@ -321,7 +320,7 @@ public class ShadowMappingNaborRunner {
                     graphicsQueue,
                     shadowMappingNabor,
                     parallelLightShadowMapCount + spotlightShadowMapCount,
-                    hasStencilComponent);
+                    depthImageAspect);
 
             spotlightShadowMapCount++;
         }

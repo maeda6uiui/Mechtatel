@@ -464,7 +464,7 @@ public class Nabor {
                     commandPool,
                     graphicsQueue,
                     dummyImage,
-                    false,
+                    VK_IMAGE_ASPECT_COLOR_BIT,
                     VK_IMAGE_LAYOUT_UNDEFINED,
                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                     1);
@@ -653,7 +653,8 @@ public class Nabor {
             int msaaSamples,
             int usage,
             int memProperties,
-            int imageFormat) {
+            int format,
+            int aspect) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             LongBuffer pImage = stack.mallocLong(1);
             LongBuffer pImageMemory = stack.mallocLong(1);
@@ -665,7 +666,7 @@ public class Nabor {
                     height,
                     1,
                     msaaSamples,
-                    imageFormat,
+                    format,
                     VK_IMAGE_TILING_OPTIMAL,
                     usage,
                     memProperties,
@@ -676,8 +677,8 @@ public class Nabor {
             viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
             viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
             viewInfo.image(pImage.get(0));
-            viewInfo.format(imageFormat);
-            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+            viewInfo.format(format);
+            viewInfo.subresourceRange().aspectMask(aspect);
             viewInfo.subresourceRange().baseMipLevel(0);
             viewInfo.subresourceRange().levelCount(1);
             viewInfo.subresourceRange().baseArrayLayer(0);

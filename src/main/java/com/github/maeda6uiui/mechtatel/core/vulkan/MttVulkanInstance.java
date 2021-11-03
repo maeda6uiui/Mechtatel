@@ -59,7 +59,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
     private int msaaSamples;
     private int depthImageFormat;
-    private boolean hasStencilComponent;
+    private int depthImageAspect;
 
     private Swapchain swapchain;
 
@@ -122,7 +122,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     1,
                     VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    depthImageFormat);
+                    depthImageFormat,
+                    VK_IMAGE_ASPECT_DEPTH_BIT);
         }
     }
 
@@ -182,7 +183,12 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         //Get the image format for depth
         depthImageFormat = DepthResourceUtils.findDepthFormat(device);
-        hasStencilComponent = DepthResourceUtils.hasStencilComponent(depthImageFormat);
+        depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
+
+        boolean hasStencilComponent = DepthResourceUtils.hasStencilComponent(depthImageFormat);
+        if (hasStencilComponent) {
+            depthImageAspect |= VK_IMAGE_ASPECT_STENCIL_BIT;
+        }
 
         //Create a command pool
         commandPool = CommandPoolCreator.createCommandPool(device, surface);
@@ -397,7 +403,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         parallelLights,
                         spotlights,
                         components,
-                        hasStencilComponent,
+                        depthImageAspect,
                         quadDrawer);
 
                 lastPPNabor = ppNabor;

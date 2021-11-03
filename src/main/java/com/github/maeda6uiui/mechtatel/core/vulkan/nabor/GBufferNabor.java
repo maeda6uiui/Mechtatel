@@ -31,6 +31,8 @@ public class GBufferNabor extends Nabor {
     private int normalImageFormat;
     private int modelMatImageFormat;
 
+    private int depthImageAspect;
+
     private int albedoAttachmentIndex;
     private int depthAttachmentIndex;
     private int positionAttachmentIndex;
@@ -49,6 +51,11 @@ public class GBufferNabor extends Nabor {
         this.positionImageFormat = positionImageFormat;
         this.normalImageFormat = normalImageFormat;
         this.modelMatImageFormat = modelMatImageFormat;
+
+        depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
+        if (DepthResourceUtils.hasStencilComponent(depthImageFormat)) {
+            depthImageAspect |= VK_IMAGE_ASPECT_STENCIL_BIT;
+        }
     }
 
     public int getDepthImageFormat() {
@@ -72,7 +79,7 @@ public class GBufferNabor extends Nabor {
                 commandPool,
                 graphicsQueue,
                 albedoImage,
-                false,
+                VK_IMAGE_ASPECT_COLOR_BIT,
                 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 1);
@@ -91,7 +98,7 @@ public class GBufferNabor extends Nabor {
                 commandPool,
                 graphicsQueue,
                 depthImage,
-                DepthResourceUtils.hasStencilComponent(depthImageFormat),
+                depthImageAspect,
                 VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 1);
@@ -110,7 +117,7 @@ public class GBufferNabor extends Nabor {
                 commandPool,
                 graphicsQueue,
                 positionImage,
-                false,
+                VK_IMAGE_ASPECT_COLOR_BIT,
                 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 1);
@@ -129,7 +136,7 @@ public class GBufferNabor extends Nabor {
                 commandPool,
                 graphicsQueue,
                 normalImage,
-                false,
+                VK_IMAGE_ASPECT_COLOR_BIT,
                 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 1);
@@ -154,7 +161,7 @@ public class GBufferNabor extends Nabor {
             ImageUtils.transitionImageLayout(
                     commandBuffer,
                     modelMatImages[i],
-                    false,
+                    VK_IMAGE_ASPECT_COLOR_BIT,
                     VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                     1);

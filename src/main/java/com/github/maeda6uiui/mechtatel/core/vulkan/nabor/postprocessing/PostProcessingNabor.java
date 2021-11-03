@@ -31,7 +31,7 @@ public class PostProcessingNabor extends Nabor {
                 commandPool,
                 graphicsQueue,
                 colorImage,
-                false,
+                VK_IMAGE_ASPECT_COLOR_BIT,
                 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 1);

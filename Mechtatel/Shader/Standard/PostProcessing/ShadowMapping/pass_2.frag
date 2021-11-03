@@ -66,12 +66,4 @@ void main(){
     }
 
     outColor=vec4(shadowFactors*albedo.rgb,albedo.a);
-
-    //vec4 shadowCoords=texture(sampler2D(shadowCoordsTextures[0],textureSampler),fragTexCoords);
-    //float shadowDepth=texture(sampler2D(shadowDepthTextures[0],textureSampler),shadowCoords.xy).r;
-
-    //outColor=shadowCoords;
-    
-    //float shadowDepth=texture(sampler2D(shadowDepthTextures[0],textureSampler),fragTexCoords).r;
-    //outColor=vec4(shadowDepth);
 }

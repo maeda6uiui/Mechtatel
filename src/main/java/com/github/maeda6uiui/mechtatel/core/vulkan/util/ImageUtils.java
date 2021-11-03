@@ -64,7 +64,7 @@ public class ImageUtils {
     public static void transitionImageLayout(
             VkCommandBuffer commandBuffer,
             long image,
-            boolean hasStencilComponent,
+            int aspect,
             int oldLayout,
             int newLayout,
             int mipLevels) {
@@ -76,19 +76,11 @@ public class ImageUtils {
             barrier.srcQueueFamilyIndex(VK_QUEUE_FAMILY_IGNORED);
             barrier.dstQueueFamilyIndex(VK_QUEUE_FAMILY_IGNORED);
             barrier.image(image);
+            barrier.subresourceRange().aspectMask(aspect);
             barrier.subresourceRange().baseMipLevel(0);
             barrier.subresourceRange().levelCount(mipLevels);
             barrier.subresourceRange().baseArrayLayer(0);
             barrier.subresourceRange().layerCount(1);
-
-            if (oldLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL || newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
-                barrier.subresourceRange().aspectMask(VK_IMAGE_ASPECT_DEPTH_BIT);
-                if (hasStencilComponent) {
-                    barrier.subresourceRange().aspectMask(barrier.subresourceRange().aspectMask() | VK_IMAGE_ASPECT_STENCIL_BIT);
-                }
-            } else {
-                barrier.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
-            }
 
             int sourceStage = 0;
             int destinationStage = 0;
@@ -173,12 +165,12 @@ public class ImageUtils {
             long commandPool,
             VkQueue graphicsQueue,
             long image,
-            boolean hasStencilComponent,
+            int aspect,
             int oldLayout,
             int newLayout,
             int mipLevels) {
         VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
-        transitionImageLayout(commandBuffer, image, hasStencilComponent, oldLayout, newLayout, mipLevels);
+        transitionImageLayout(commandBuffer, image, aspect, oldLayout, newLayout, mipLevels);
         CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
     }
 }

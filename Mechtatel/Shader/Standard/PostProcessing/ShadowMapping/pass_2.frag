@@ -44,6 +44,12 @@ void main(){
         modelMat[i]=texture(sampler2D(modelMatTextures[i],textureSampler),fragTexCoords);
     }
 
+    mat4 biasMat;
+    biasMat[0]=vec4(0.5,0.0,0.0,0.5);
+    biasMat[1]=vec4(0.0,0.5,0.0,0.5);
+    biasMat[2]=vec4(0.0,0.0,0.5,0.5);
+    biasMat[3]=vec4(0.0,0.0,0.0,1.0);
+
     vec3 shadowFactors=vec3(1.0);
 
     for(int i=0;i<passInfo.numShadowMaps;i++){
@@ -51,7 +57,7 @@ void main(){
         float bias=shadowInfos[i].biasCoefficient*tan(acos(cosTh));
         bias=clamp(bias,0.0,shadowInfos[i].maxBias);
 
-        vec4 shadowCoords=shadowInfos[i].lightProj*shadowInfos[i].lightView*modelMat*vec4(position,1.0);
+        vec4 shadowCoords=biasMat*shadowInfos[i].lightProj*shadowInfos[i].lightView*modelMat*vec4(position,1.0);
         float shadowDepth=texture(sampler2D(shadowDepthTextures[i],textureSampler),shadowCoords.xy).r;
 
         if(shadowInfos[i].projectionType==PROJECTION_TYPE_ORTHOGRAPHIC){

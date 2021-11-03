@@ -34,6 +34,7 @@ public class ShadowInfo {
                 parallelLight.getOrthoTop(),
                 parallelLight.getzNear(),
                 parallelLight.getzFar());
+        lightProj.m11(lightProj.m11() * (-1.0f));
         lightDirection = parallelLight.getDirection();
         attenuations = new Vector3f(0.5f, 0.5f, 0.5f);
         biasCoefficient = 0.01f;
@@ -51,6 +52,7 @@ public class ShadowInfo {
                 spotlight.getAspect(),
                 spotlight.getzNear(),
                 spotlight.getzFar());
+        lightProj.m11(lightProj.m11() * (-1.0f));
         lightDirection = spotlight.getDirection();
         attenuations = new Vector3f(0.5f, 0.5f, 0.5f);
         biasCoefficient = 0.01f;

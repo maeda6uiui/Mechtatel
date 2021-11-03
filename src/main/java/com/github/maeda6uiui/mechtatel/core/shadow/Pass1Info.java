@@ -18,7 +18,7 @@ public class Pass1Info {
     public Pass1Info() {
         lightView = new Matrix4f();
         lightProj = new Matrix4f();
-        normalOffset = 0.05f;
+        normalOffset = 0.01f;
     }
 
     public Pass1Info(ParallelLight light) {
@@ -30,13 +30,15 @@ public class Pass1Info {
                 light.getOrthoTop(),
                 light.getzNear(),
                 light.getzFar());
-        normalOffset = 0.05f;
+        lightProj.m11(lightProj.m11() * (-1.0f));
+        normalOffset = 0.01f;
     }
 
     public Pass1Info(Spotlight light) {
         lightView = new Matrix4f().lookAt(light.getPosition(), light.getCenter(), new Vector3f(0.0f, 1.0f, 0.0f));
         lightProj = new Matrix4f().perspective(light.getFovY(), light.getAspect(), light.getzNear(), light.getzFar());
-        normalOffset = 0.05f;
+        lightProj.m11(lightProj.m11() * (-1.0f));
+        normalOffset = 0.01f;
     }
 
     public Matrix4f getLightView() {

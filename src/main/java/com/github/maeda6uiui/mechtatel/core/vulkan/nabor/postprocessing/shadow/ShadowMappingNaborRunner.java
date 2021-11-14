@@ -47,7 +47,7 @@ public class ShadowMappingNaborRunner {
             renderPassInfo.framebuffer(shadowMappingNabor.getFramebuffer(0, 0));
             VkRect2D renderArea = VkRect2D.callocStack(stack);
             renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
-            renderArea.extent(shadowMappingNabor.getExtent());
+            renderArea.extent(shadowMappingNabor.getExtent(0));
             renderPassInfo.renderArea(renderArea);
             VkClearValue.Buffer clearValues = VkClearValue.callocStack(1, stack);
             clearValues.get(0).depthStencil().set(1.0f, 0);
@@ -98,7 +98,7 @@ public class ShadowMappingNaborRunner {
             int shadowMapIndex,
             int depthImageAspect) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkExtent2D extent = shadowMappingNabor.getExtent();
+            VkExtent2D extent = shadowMappingNabor.getExtent(0);
 
             VkImageCopy.Buffer imageCopyRegion = VkImageCopy.callocStack(1, stack);
             imageCopyRegion.srcSubresource().aspectMask(VK_IMAGE_ASPECT_DEPTH_BIT);

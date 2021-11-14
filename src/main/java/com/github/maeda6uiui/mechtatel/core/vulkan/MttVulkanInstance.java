@@ -60,6 +60,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private int msaaSamples;
     private int depthImageFormat;
     private int depthImageAspect;
+    private int depthImageWidth;
+    private int depthImageHeight;
 
     private Swapchain swapchain;
 
@@ -112,13 +114,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private void createShadowMappingNaborUserDefImages(PostProcessingNabor shadowMappingNabor) {
         shadowMappingNabor.cleanupUserDefImages();
 
-        VkExtent2D extent = swapchain.getSwapchainExtent();
-
         //Shadow depth
         for (int i = 0; i < ShadowMappingNabor.MAX_NUM_SHADOW_MAPS; i++) {
             shadowMappingNabor.createUserDefImage(
-                    extent.width(),
-                    extent.height(),
+                    depthImageWidth,
+                    depthImageHeight,
                     1,
                     VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -184,6 +184,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         //Get the image format for depth
         depthImageFormat = DepthResourceUtils.findDepthFormat(device);
         depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
+        depthImageWidth = 1024;
+        depthImageHeight = 1024;
 
         boolean hasStencilComponent = DepthResourceUtils.hasStencilComponent(depthImageFormat);
         if (hasStencilComponent) {
@@ -287,7 +289,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     ppNabor = new PointLightNabor(device);
                     break;
                 case "shadow_mapping":
-                    ppNabor = new ShadowMappingNabor(device, depthImageFormat);
+                    ppNabor = new ShadowMappingNabor(device, depthImageFormat, depthImageWidth, depthImageHeight);
                     this.createShadowMappingNaborUserDefImages(ppNabor);
                     break;
                 case "spotlight":

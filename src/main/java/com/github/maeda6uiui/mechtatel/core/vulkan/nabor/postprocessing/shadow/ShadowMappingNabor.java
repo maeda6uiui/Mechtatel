@@ -19,11 +19,17 @@ import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_1_BIT;
 public class ShadowMappingNabor extends PostProcessingNabor {
     public static final int MAX_NUM_SHADOW_MAPS = Pass2Nabor.MAX_NUM_SHADOW_MAPS;
 
+    private int depthImageWidth;
+    private int depthImageHeight;
+
     private Pass1Nabor pass1;
     private Pass2Nabor pass2;
 
-    public ShadowMappingNabor(VkDevice device, int depthImageFormat) {
+    public ShadowMappingNabor(VkDevice device, int depthImageFormat, int depthImageWidth, int depthImageHeight) {
         super(device, VK_SAMPLE_COUNT_1_BIT, true);
+
+        this.depthImageWidth = depthImageWidth;
+        this.depthImageHeight = depthImageHeight;
 
         pass1 = new Pass1Nabor(device, depthImageFormat);
         pass2 = new Pass2Nabor(device);
@@ -38,7 +44,9 @@ public class ShadowMappingNabor extends PostProcessingNabor {
             int descriptorCount) {
         super.compile(colorImageFormat, extent, commandPool, graphicsQueue, descriptorCount);
 
-        pass1.compile(colorImageFormat, extent, commandPool, graphicsQueue, descriptorCount);
+        VkExtent2D depthExtent = VkExtent2D.create().set(depthImageWidth, depthImageHeight);
+        pass1.compile(colorImageFormat, depthExtent, commandPool, graphicsQueue, descriptorCount);
+
         pass2.compile(colorImageFormat, extent, commandPool, graphicsQueue, descriptorCount);
     }
 
@@ -48,7 +56,7 @@ public class ShadowMappingNabor extends PostProcessingNabor {
             VkExtent2D extent) {
         super.recreate(colorImageFormat, extent);
 
-        pass1.recreate(colorImageFormat, extent);
+        //pass1.recreate(colorImageFormat, extent);
         pass2.recreate(colorImageFormat, extent);
     }
 
@@ -68,6 +76,24 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     @Override
     public long getColorImageView() {
         return pass2.getColorImageView();
+    }
+
+    @Override
+    public VkExtent2D getExtent(int naborIndex) {
+        VkExtent2D extent;
+
+        switch (naborIndex) {
+            case 0:
+                extent = pass1.getExtent();
+                break;
+            case 1:
+                extent = pass2.getExtent();
+                break;
+            default:
+                throw new RuntimeException("Index out of bounds");
+        }
+
+        return extent;
     }
 
     @Override

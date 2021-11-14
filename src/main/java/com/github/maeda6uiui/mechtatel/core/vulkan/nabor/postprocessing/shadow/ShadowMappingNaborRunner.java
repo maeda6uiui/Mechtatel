@@ -315,7 +315,7 @@ public class ShadowMappingNaborRunner {
                     commandPool,
                     graphicsQueue,
                     shadowMappingNabor,
-                    shadowSpotlights.size() + shadowParallelLights.size(),
+                    shadowParallelLights.size() + shadowSpotlights.size(),
                     depthImageAspect);
 
             shadowSpotlights.add(spotlight);

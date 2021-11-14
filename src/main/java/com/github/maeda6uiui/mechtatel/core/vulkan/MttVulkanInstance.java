@@ -184,8 +184,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         //Get the image format for depth
         depthImageFormat = DepthResourceUtils.findDepthFormat(device);
         depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
-        depthImageWidth = 1024;
-        depthImageHeight = 1024;
+        depthImageWidth = 2048;
+        depthImageHeight = 2048;
 
         boolean hasStencilComponent = DepthResourceUtils.hasStencilComponent(depthImageFormat);
         if (hasStencilComponent) {

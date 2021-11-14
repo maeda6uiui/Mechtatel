@@ -8,7 +8,6 @@ import org.lwjgl.vulkan.VkDevice;
 
 import java.nio.ByteBuffer;
 
-import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_FLOAT;
 import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_MAT4;
 import static org.lwjgl.vulkan.VK10.vkMapMemory;
 import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
@@ -19,22 +18,19 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda
  */
 public class Pass1InfoUBO {
-    public static final int SIZEOF = 2 * SIZEOF_MAT4 + 1 * SIZEOF_FLOAT;
+    public static final int SIZEOF = 2 * SIZEOF_MAT4;
 
     private Matrix4f lightView;
     private Matrix4f lightProj;
-    private float normalOffset;
 
     public Pass1InfoUBO(Pass1Info info) {
         lightView = info.getLightView();
         lightProj = info.getLightProj();
-        normalOffset = info.getNormalOffset();
     }
 
     private void memcpy(ByteBuffer buffer) {
         lightView.get(0, buffer);
         lightProj.get(1 * SIZEOF_MAT4, buffer);
-        buffer.putFloat(2 * SIZEOF_MAT4, normalOffset);
 
         buffer.rewind();
     }

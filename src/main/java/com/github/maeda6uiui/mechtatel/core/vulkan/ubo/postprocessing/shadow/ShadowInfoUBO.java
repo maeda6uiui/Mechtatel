@@ -27,6 +27,7 @@ public class ShadowInfoUBO {
     private Vector3f attenuations;
     private float biasCoefficient;
     private float maxBias;
+    private float normalOffset;
     private int projectionType;
 
     public ShadowInfoUBO(ShadowInfo info) {
@@ -36,6 +37,7 @@ public class ShadowInfoUBO {
         attenuations = info.getAttenuations();
         biasCoefficient = info.getBiasCoefficient();
         maxBias = info.getMaxBias();
+        normalOffset = info.getNormalOffset();
         projectionType = info.getProjectionType();
     }
 
@@ -46,7 +48,8 @@ public class ShadowInfoUBO {
         attenuations.get(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 1, buffer);
         buffer.putFloat(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 1 + SIZEOF_VEC3 * 1, biasCoefficient);
         buffer.putFloat(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 2, maxBias);
-        buffer.putInt(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 2 + SIZEOF_FLOAT * 1, projectionType);
+        buffer.putFloat(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 2 + SIZEOF_FLOAT * 1, normalOffset);
+        buffer.putInt(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 2 + SIZEOF_FLOAT * 2, projectionType);
 
         buffer.rewind();
     }

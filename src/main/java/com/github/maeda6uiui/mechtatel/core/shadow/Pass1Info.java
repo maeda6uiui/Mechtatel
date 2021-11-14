@@ -13,12 +13,10 @@ import org.joml.Vector3f;
 public class Pass1Info {
     private Matrix4f lightView;
     private Matrix4f lightProj;
-    private float normalOffset;
 
     public Pass1Info() {
         lightView = new Matrix4f();
         lightProj = new Matrix4f();
-        normalOffset = 0.01f;
     }
 
     public Pass1Info(ParallelLight light) {
@@ -31,14 +29,12 @@ public class Pass1Info {
                 light.getzNear(),
                 light.getzFar());
         lightProj.m11(lightProj.m11() * (-1.0f));
-        normalOffset = 0.01f;
     }
 
     public Pass1Info(Spotlight light) {
         lightView = new Matrix4f().lookAt(light.getPosition(), light.getCenter(), new Vector3f(0.0f, 1.0f, 0.0f));
         lightProj = new Matrix4f().perspective(light.getFovY(), light.getAspect(), light.getzNear(), light.getzFar());
         lightProj.m11(lightProj.m11() * (-1.0f));
-        normalOffset = 0.01f;
     }
 
     public Matrix4f getLightView() {
@@ -55,13 +51,5 @@ public class Pass1Info {
 
     public void setLightProj(Matrix4f lightProj) {
         this.lightProj = lightProj;
-    }
-
-    public float getNormalOffset() {
-        return normalOffset;
-    }
-
-    public void setNormalOffset(float normalOffset) {
-        this.normalOffset = normalOffset;
     }
 }

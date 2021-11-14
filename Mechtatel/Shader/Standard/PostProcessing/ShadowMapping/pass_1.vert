@@ -4,7 +4,6 @@
 layout(set=0,binding=0) uniform Pass1InfoUBO{
     mat4 lightView;
     mat4 lightProj;
-    float normalOffset;
 }passInfo;
 layout(push_constant) uniform VertPC{
     mat4 model;
@@ -16,5 +15,5 @@ layout(location=2) in vec2 inTexCoords;
 layout(location=3) in vec3 inNormal;
 
 void main(){
-    gl_Position=passInfo.lightProj*passInfo.lightView*pc.model*vec4(inPosition+inNormal*passInfo.normalOffset,1.0);
+    gl_Position=passInfo.lightProj*passInfo.lightView*pc.model*vec4(inPosition,1.0);
 }

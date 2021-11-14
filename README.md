@@ -29,6 +29,36 @@ Javaでゲームエンジンを作ることを目標としているプロジェ�
 
 ## 報告
 
+### 2021-11-14
+
+ライトから見たDepthは正しいようだ。
+
+<img src="./Image/shadow_mapping_depth.jpg" alt="Shadow Mapping Depth" style="zoom:50%;" />
+
+こんなコードを書いてデバッグを試みた。
+
+```glsl
+vec4 shadowCoords=biasMat*shadowInfos[0].lightProj*shadowInfos[0].lightView*modelMat*vec4(position,1.0);
+float shadowDepth=texture(sampler2D(shadowDepthTextures[0],textureSampler),shadowCoords.xy).r;
+
+outColor=vec4(shadowCoords.z-shadowDepth);
+```
+
+<img src="./Image/shadow_mapping_debug.jpg" alt="Shadow Mapping Debug" style="zoom:50%;" />
+
+なんか影らしきものは出ている。
+
+shadowCoords.zが現在処理している座標のライトから見たDepthで、shadowDepthは先に取得しておいたライトから見たDepthになっている。
+shadowCoords.z > shadowDepthなら、その座標には影がかかっているということになる。
+逆に、shadowCoords.z = shadowDepthとなっている場合、その座標には影はかからない。
+
+つまり上の画像で、黒くなっている部分(shadowCoords.z - shadowDepth = 0)には影がかからず、灰色になっている部分には影がかかるはず...。
+
+ちゃんと灰色になっているから、この部分に影がかかるはずなんだが...。
+平面の一部が影がかかる場所ではないのに灰色になっているのも少し気になる。
+
+何がよくないんだ...。(迷走)
+
 ### 2021-11-13
 
 近いところまで来ている気がするけど、どこが間違っているのかわからない。

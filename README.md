@@ -57,6 +57,26 @@ shadowCoords.z > shadowDepthなら、その座標には影がかかっている�
 ちゃんと灰色になっているから、影がかかるはずなんだが...。
 平面の一部が影がかかる場所ではないのに灰色になっているのも少し気になる。
 
+---
+
+何とかできました。影が荒いのは許してください。
+
+<img src="./Image/shadow_mapping.jpg" alt="Shadow Mapping" style="zoom:50%;" />
+
+Fragment Shaderで使用しているbiasMatが原因でした。
+
+修正後のbiasMatは以下のとおり。
+
+```glsl
+mat4 biasMat;
+biasMat[0]=vec4(0.5,0.0,0.0,0.0);
+biasMat[1]=vec4(0.0,0.5,0.0,0.0);
+biasMat[2]=vec4(0.0,0.0,1.0,0.0);
+biasMat[3]=vec4(0.5,0.5,0.0,1.0);
+```
+
+詳しい原因究明はまた今度...
+
 ### 2021-11-13
 
 近いところまで来ている気がするけど、どこが間違っているのかわからない。

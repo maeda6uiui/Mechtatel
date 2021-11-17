@@ -7,6 +7,8 @@ import org.lwjgl.vulkan.VkDevice;
 
 import java.nio.ByteBuffer;
 
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_FLOAT;
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_VEC4;
 import static org.lwjgl.vulkan.VK10.vkMapMemory;
 import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 
@@ -16,16 +18,25 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda
  */
 public class Pass2InfoUBO {
-    public static final int SIZEOF = 1 * Integer.BYTES;
+    public static final int SIZEOF = 1 * SIZEOF_VEC4;
 
     private int numShadowMaps;
+    private float biasCoefficient;
+    private float maxBias;
+    private float normalOffset;
 
     public Pass2InfoUBO(Pass2Info info) {
         numShadowMaps = info.getNumShadowMaps();
+        biasCoefficient = info.getBiasCoefficient();
+        maxBias = info.getMaxBias();
+        normalOffset = info.getNormalOffset();
     }
 
     private void memcpy(ByteBuffer buffer) {
-        buffer.putInt(numShadowMaps);
+        buffer.putInt(0, numShadowMaps);
+        buffer.putFloat(1 * SIZEOF_FLOAT, biasCoefficient);
+        buffer.putFloat(2 * SIZEOF_FLOAT, maxBias);
+        buffer.putFloat(3 * SIZEOF_FLOAT, normalOffset);
 
         buffer.rewind();
     }

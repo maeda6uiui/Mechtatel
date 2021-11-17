@@ -9,7 +9,8 @@ import org.lwjgl.vulkan.VkDevice;
 
 import java.nio.ByteBuffer;
 
-import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.*;
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_MAT4;
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_VEC4;
 import static org.lwjgl.vulkan.VK10.vkMapMemory;
 import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 
@@ -25,9 +26,6 @@ public class ShadowInfoUBO {
     private Matrix4f lightProj;
     private Vector3f lightDirection;
     private Vector3f attenuations;
-    private float biasCoefficient;
-    private float maxBias;
-    private float normalOffset;
     private int projectionType;
 
     public ShadowInfoUBO(ShadowInfo info) {
@@ -35,9 +33,6 @@ public class ShadowInfoUBO {
         lightProj = info.getLightProj();
         lightDirection = info.getLightDirection();
         attenuations = info.getAttenuations();
-        biasCoefficient = info.getBiasCoefficient();
-        maxBias = info.getMaxBias();
-        normalOffset = info.getNormalOffset();
         projectionType = info.getProjectionType();
     }
 
@@ -46,10 +41,7 @@ public class ShadowInfoUBO {
         lightProj.get(SIZEOF_MAT4 * 1, buffer);
         lightDirection.get(SIZEOF_MAT4 * 2, buffer);
         attenuations.get(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 1, buffer);
-        buffer.putFloat(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 1 + SIZEOF_VEC3 * 1, biasCoefficient);
-        buffer.putFloat(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 2, maxBias);
-        buffer.putFloat(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 2 + SIZEOF_FLOAT * 1, normalOffset);
-        buffer.putInt(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 2 + SIZEOF_FLOAT * 2, projectionType);
+        buffer.putInt(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 2, projectionType);
 
         buffer.rewind();
     }

@@ -8,15 +8,15 @@ const int PROJECTION_TYPE_PERSPECTIVE=1;
 
 layout(set=0,binding=0) uniform Pass2InfoUBO{
     int numShadowMaps;
+    float biasCoefficient;
+    float maxBias;
+    float normalOffset;
 }passInfo;
 struct ShadowInfo{
     mat4 lightView;
     mat4 lightProj;
     vec3 lightDirection;
     vec3 attenuations;
-    float biasCoefficient;
-    float maxBias;
-    float normalOffset;
     int projectionType;
 };
 layout(set=0,binding=1) uniform ShadowInfosUBO{
@@ -55,10 +55,10 @@ void main(){
 
     for(int i=0;i<passInfo.numShadowMaps;i++){
         float cosTh=abs(dot(shadowInfos[i].lightDirection,normal));
-        float bias=shadowInfos[i].biasCoefficient*tan(acos(cosTh));
-        bias=clamp(bias,0.0,shadowInfos[i].maxBias);
+        float bias=passInfo.biasCoefficient*tan(acos(cosTh));
+        bias=clamp(bias,0.0,passInfo.maxBias);
 
-        vec4 shadowCoords=biasMat*shadowInfos[i].lightProj*shadowInfos[i].lightView*modelMat*vec4(position+normal*shadowInfos[i].normalOffset,1.0);
+        vec4 shadowCoords=biasMat*shadowInfos[i].lightProj*shadowInfos[i].lightView*modelMat*vec4(position+normal*passInfo.normalOffset,1.0);
         float shadowDepth=texture(sampler2D(shadowDepthTextures[i],textureSampler),shadowCoords.xy).r;
 
         if(shadowInfos[i].projectionType==PROJECTION_TYPE_ORTHOGRAPHIC){

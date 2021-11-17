@@ -41,7 +41,7 @@ class Pass2Nabor extends PostProcessingNabor {
             samplerInfo.addressModeW(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
             samplerInfo.anisotropyEnable(true);
             samplerInfo.maxAnisotropy(16.0f);
-            samplerInfo.borderColor(VK_BORDER_COLOR_INT_OPAQUE_BLACK);
+            samplerInfo.borderColor(VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE);
             samplerInfo.unnormalizedCoordinates(false);
             samplerInfo.compareEnable(false);
             samplerInfo.compareOp(VK_COMPARE_OP_ALWAYS);

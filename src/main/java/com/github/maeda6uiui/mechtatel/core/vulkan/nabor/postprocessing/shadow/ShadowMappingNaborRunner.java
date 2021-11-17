@@ -5,7 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.Pass1Info;
 import com.github.maeda6uiui.mechtatel.core.shadow.Pass2Info;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowInfo;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNabor;
@@ -35,7 +35,7 @@ public class ShadowMappingNaborRunner {
             VkQueue graphicsQueue,
             PostProcessingNabor shadowMappingNabor,
             Pass1Info pass1Info,
-            List<VkComponent> components) {
+            List<VkComponent3D> components) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             long pass1InfoUBOMemory = shadowMappingNabor.getUniformBufferMemory(0, 0);
             var pass1InfoUBO = new Pass1InfoUBO(pass1Info);
@@ -71,6 +71,10 @@ public class ShadowMappingNaborRunner {
                         null);
 
                 for (var component : components) {
+                    if (!component.isCastShadow()) {
+                        continue;
+                    }
+
                     ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
                     component.getMat().get(matBuffer);
 
@@ -271,7 +275,7 @@ public class ShadowMappingNaborRunner {
             PostProcessingNabor shadowMappingNabor,
             List<ParallelLight> parallelLights,
             List<Spotlight> spotlights,
-            List<VkComponent> components,
+            List<VkComponent3D> components,
             int depthImageAspect,
             QuadDrawer quadDrawer) {
         //Pass 1

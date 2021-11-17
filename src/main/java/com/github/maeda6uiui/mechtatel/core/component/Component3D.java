@@ -14,6 +14,16 @@ public class Component3D extends Component {
         super(vulkanInstance);
     }
 
+    public boolean isCastShadow() {
+        VkComponent3D vkComponent = (VkComponent3D) this.getVulkanComponent();
+        return vkComponent.isCastShadow();
+    }
+
+    public void setCastShadow(boolean castShadow) {
+        VkComponent3D vkComponent = (VkComponent3D) this.getVulkanComponent();
+        vkComponent.setCastShadow(castShadow);
+    }
+
     public void translate(Vector3fc v) {
         VkComponent3D vkComponent = (VkComponent3D) this.getVulkanComponent();
         vkComponent.translate(v);

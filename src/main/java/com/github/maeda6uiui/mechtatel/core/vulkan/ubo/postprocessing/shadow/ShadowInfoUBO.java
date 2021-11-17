@@ -9,8 +9,7 @@ import org.lwjgl.vulkan.VkDevice;
 
 import java.nio.ByteBuffer;
 
-import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_MAT4;
-import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_VEC4;
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.*;
 import static org.lwjgl.vulkan.VK10.vkMapMemory;
 import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 
@@ -20,7 +19,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda
  */
 public class ShadowInfoUBO {
-    public static final int SIZEOF = 2 * SIZEOF_MAT4 + 3 * SIZEOF_VEC4;
+    public static final int SIZEOF = 2 * SIZEOF_MAT4 + 2 * SIZEOF_VEC4;
 
     private Matrix4f lightView;
     private Matrix4f lightProj;
@@ -41,7 +40,7 @@ public class ShadowInfoUBO {
         lightProj.get(SIZEOF_MAT4 * 1, buffer);
         lightDirection.get(SIZEOF_MAT4 * 2, buffer);
         attenuations.get(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 1, buffer);
-        buffer.putInt(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 2, projectionType);
+        buffer.putInt(SIZEOF_MAT4 * 2 + SIZEOF_VEC4 * 1 + SIZEOF_VEC3 * 1, projectionType);
 
         buffer.rewind();
     }

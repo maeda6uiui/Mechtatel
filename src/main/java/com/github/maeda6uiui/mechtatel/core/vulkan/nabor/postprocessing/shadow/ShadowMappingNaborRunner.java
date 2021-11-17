@@ -5,6 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.Pass1Info;
 import com.github.maeda6uiui.mechtatel.core.shadow.Pass2Info;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowInfo;
+import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.GBufferNabor;
@@ -160,10 +161,11 @@ public class ShadowMappingNaborRunner {
             PostProcessingNabor shadowMappingNabor,
             List<ParallelLight> shadowParallelLights,
             List<Spotlight> shadowSpotlights,
+            ShadowMappingSettings settings,
             QuadDrawer quadDrawer) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             long pass2InfoUBOMemory = shadowMappingNabor.getUniformBufferMemory(1, 0);
-            var pass2Info = new Pass2Info();
+            var pass2Info = new Pass2Info(settings);
             pass2Info.setNumShadowMaps(shadowParallelLights.size() + shadowSpotlights.size());
             var pass2InfoUBO = new Pass2InfoUBO(pass2Info);
             pass2InfoUBO.update(device, pass2InfoUBOMemory);
@@ -277,6 +279,7 @@ public class ShadowMappingNaborRunner {
             List<Spotlight> spotlights,
             List<VkComponent3D> components,
             int depthImageAspect,
+            ShadowMappingSettings settings,
             QuadDrawer quadDrawer) {
         //Pass 1
         var shadowParallelLights = new ArrayList<ParallelLight>();
@@ -335,6 +338,7 @@ public class ShadowMappingNaborRunner {
                 shadowMappingNabor,
                 shadowParallelLights,
                 shadowSpotlights,
+                settings,
                 quadDrawer);
     }
 }

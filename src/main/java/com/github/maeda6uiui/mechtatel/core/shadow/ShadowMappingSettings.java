@@ -1,44 +1,27 @@
 package com.github.maeda6uiui.mechtatel.core.shadow;
 
-import static com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings.OUTPUT_MODE_SHADOW_MAPPING;
-
 /**
- * Pass 2 info
+ * Settings for shadow mapping
  *
  * @author maeda
  */
-public class Pass2Info {
-    private int numShadowMaps;
+public class ShadowMappingSettings {
+    public static final int OUTPUT_MODE_SHADOW_MAPPING = 0;
+    public static final int OUTPUT_MODE_SHADOW_FACTORS = 1;
+    public static final int OUTPUT_MODE_DEPTH_IMAGE = 2;
+
     private float biasCoefficient;
     private float maxBias;
     private float normalOffset;
     private int outputMode;
     private int outputDepthImageIndex;
 
-    public Pass2Info() {
-        numShadowMaps = 0;
+    public ShadowMappingSettings() {
         biasCoefficient = 0.0001f;
         maxBias = 0.001f;
         normalOffset = 0.005f;
-        outputMode = OUTPUT_MODE_SHADOW_MAPPING;
+        outputMode = 0;
         outputDepthImageIndex = 0;
-    }
-
-    public Pass2Info(ShadowMappingSettings settings) {
-        numShadowMaps = 0;
-        biasCoefficient = settings.getBiasCoefficient();
-        maxBias = settings.getMaxBias();
-        normalOffset = settings.getNormalOffset();
-        outputMode = settings.getOutputMode();
-        outputDepthImageIndex = settings.getOutputDepthImageIndex();
-    }
-
-    public int getNumShadowMaps() {
-        return numShadowMaps;
-    }
-
-    public void setNumShadowMaps(int numShadowMaps) {
-        this.numShadowMaps = numShadowMaps;
     }
 
     public float getBiasCoefficient() {

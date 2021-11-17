@@ -6,6 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.light.LightingInfo;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
+import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
@@ -390,7 +391,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             List<PointLight> pointLights,
             Vector3f pointLightAmbientColor,
             List<Spotlight> spotlights,
-            Vector3f spotlightAmbientColor) {
+            Vector3f spotlightAmbientColor,
+            ShadowMappingSettings shadowMappingSettings) {
         for (var entry : ppNabors.entrySet()) {
             String naborName = entry.getKey();
             PostProcessingNabor ppNabor = entry.getValue();
@@ -407,6 +409,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         spotlights,
                         components,
                         depthImageAspect,
+                        shadowMappingSettings,
                         quadDrawer);
 
                 lastPPNabor = ppNabor;
@@ -629,7 +632,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             List<PointLight> pointLights,
             Vector3f pointLightAmbientColor,
             List<Spotlight> spotlights,
-            Vector3f spotlightAmbientColor) {
+            Vector3f spotlightAmbientColor,
+            ShadowMappingSettings shadowMappingSettings) {
         this.runGBufferNabor(backgroundColor, camera);
         this.runPostProcessingNabors(
                 camera,
@@ -639,7 +643,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 pointLights,
                 pointLightAmbientColor,
                 spotlights,
-                spotlightAmbientColor);
+                spotlightAmbientColor,
+                shadowMappingSettings);
         this.presentToFrontScreen();
     }
 

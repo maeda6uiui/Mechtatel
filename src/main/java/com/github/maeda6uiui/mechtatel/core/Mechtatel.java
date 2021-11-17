@@ -6,6 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
+import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.slf4j.Logger;
@@ -95,6 +96,14 @@ public class Mechtatel implements IMechtatel {
 
     public void setSpotlightAmbientColor(Vector3f spotlightAmbientColor) {
         instance.setSpotlightAmbientColor(spotlightAmbientColor);
+    }
+
+    public ShadowMappingSettings getShadowMappingSettings() {
+        return instance.getShadowMappingSettings();
+    }
+
+    public void setShadowMappingSettings(ShadowMappingSettings shadowMappingSettings) {
+        instance.setShadowMappingSettings(shadowMappingSettings);
     }
 
     public Camera getCamera() {

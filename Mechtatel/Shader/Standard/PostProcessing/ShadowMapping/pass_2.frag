@@ -6,11 +6,17 @@ const int MAX_NUM_SHADOW_MAPS=16;
 const int PROJECTION_TYPE_ORTHOGRAPHIC=0;
 const int PROJECTION_TYPE_PERSPECTIVE=1;
 
+const int OUTPUT_MODE_SHADOW_MAPPING=0;
+const int OUTPUT_MODE_SHADOW_FACTORS=1;
+const int OUTPUT_MODE_DEPTH_IMAGE=2;
+
 layout(set=0,binding=0) uniform Pass2InfoUBO{
     int numShadowMaps;
     float biasCoefficient;
     float maxBias;
     float normalOffset;
+    int outputMode;
+    int outputDepthImageIndex;
 }passInfo;
 struct ShadowInfo{
     mat4 lightView;
@@ -72,5 +78,14 @@ void main(){
         }
     }
 
-    outColor=vec4(shadowFactors*albedo.rgb,albedo.a);
+    if(passInfo.outputMode==OUTPUT_MODE_SHADOW_MAPPING){
+        outColor=vec4(shadowFactors*albedo.rgb,albedo.a);
+    }else if(passInfo.outputMode==OUTPUT_MODE_SHADOW_FACTORS){
+        outColor=vec4(shadowFactors,1.0);
+    }else if(passInfo.outputMode==OUTPUT_MODE_DEPTH_IMAGE){
+        float shadowDepth=texture(sampler2D(shadowDepthTextures[passInfo.outputDepthImageIndex],textureSampler),fragTexCoords).r;
+        outColor=vec4(vec3(shadowDepth),1.0);
+    }else{
+        outColor=vec4(1.0);
+    }
 }

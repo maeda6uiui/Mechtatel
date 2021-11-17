@@ -41,8 +41,6 @@ Javaでゲームエンジンを作ることを目標としているプロジェ�
 
 <img src="./Image/shadow_mapping_4.jpg" alt="Shadow Mapping (Spotlight) 2" style="zoom:50%;" />
 
-シャドウマッピングにこだわり始めるときりがないので、このあたりで一度気持ちを落ち着けようと思います。
-
 ### 2021-11-14
 
 ライトから見たDepthは正しいようだ。

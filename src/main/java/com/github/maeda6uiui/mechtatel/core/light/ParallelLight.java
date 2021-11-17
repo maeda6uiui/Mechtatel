@@ -26,6 +26,7 @@ public class ParallelLight {
     private float orthoTop;
     private float zNear;
     private float zFar;
+    private Vector3f attenuations;
 
     public ParallelLight() {
         direction = new Vector3f(-1.0f, -1.0f, -1.0f).normalize();
@@ -46,6 +47,7 @@ public class ParallelLight {
         orthoTop = 10.0f;
         zNear = 0.1f;
         zFar = 100.0f;
+        attenuations = new Vector3f(0.5f, 0.5f, 0.5f);
     }
 
     public Vector3f getDirection() {
@@ -182,5 +184,13 @@ public class ParallelLight {
 
     public void setzFar(float zFar) {
         this.zFar = zFar;
+    }
+
+    public Vector3f getAttenuations() {
+        return attenuations;
+    }
+
+    public void setAttenuations(Vector3f attenuations) {
+        this.attenuations = attenuations;
     }
 }

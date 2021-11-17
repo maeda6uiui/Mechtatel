@@ -34,7 +34,7 @@ public class ShadowInfo {
                 parallelLight.getzFar());
         lightProj.m11(lightProj.m11() * (-1.0f));
         lightDirection = parallelLight.getDirection();
-        attenuations = new Vector3f(0.5f, 0.5f, 0.5f);
+        attenuations = parallelLight.getAttenuations();
         projectionType = PROJECTION_TYPE_ORTHOGRAPHIC;
     }
 
@@ -50,7 +50,7 @@ public class ShadowInfo {
                 spotlight.getzFar());
         lightProj.m11(lightProj.m11() * (-1.0f));
         lightDirection = spotlight.getDirection();
-        attenuations = new Vector3f(0.5f, 0.5f, 0.5f);
+        attenuations = spotlight.getAttenuations();
         projectionType = PROJECTION_TYPE_PERSPECTIVE;
     }
 

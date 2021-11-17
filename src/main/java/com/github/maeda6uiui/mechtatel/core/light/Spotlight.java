@@ -30,6 +30,7 @@ public class Spotlight {
     private float aspect;
     private float zNear;
     private float zFar;
+    private Vector3f attenuations;
 
     public Spotlight() {
         position = new Vector3f(5.0f, 5.0f, 5.0f);
@@ -50,10 +51,11 @@ public class Spotlight {
 
         castShadow = true;
         center = new Vector3f(0.0f, 0.0f, 0.0f);
-        fovY = phi;
+        fovY = 1.0f;
         aspect = 1.0f;
         zNear = 0.1f;
         zFar = 100.0f;
+        attenuations = new Vector3f(0.5f, 0.5f, 0.5f);
     }
 
     public Vector3f getPosition() {
@@ -222,5 +224,13 @@ public class Spotlight {
 
     public void setzFar(float zFar) {
         this.zFar = zFar;
+    }
+
+    public Vector3f getAttenuations() {
+        return attenuations;
+    }
+
+    public void setAttenuations(Vector3f attenuations) {
+        this.attenuations = attenuations;
     }
 }

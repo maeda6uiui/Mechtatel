@@ -29,21 +29,28 @@ public class GBufferNabor extends Nabor {
     private int positionImageFormat;
     private int normalImageFormat;
 
-    private long dummyImage;
-    private long dummyImageMemory;
-    private long dummyImageView;
+    private int depthImageAspect;
 
     private int albedoAttachmentIndex;
     private int depthAttachmentIndex;
     private int positionAttachmentIndex;
     private int normalAttachmentIndex;
 
-    public GBufferNabor(VkDevice device, int positionImageFormat, int normalImageFormat) {
-        super(device, VK_SAMPLE_COUNT_1_BIT);
+    public GBufferNabor(
+            VkDevice device,
+            int depthImageFormat,
+            int positionImageFormat,
+            int normalImageFormat) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false);
 
-        this.depthImageFormat = DepthResourceUtils.findDepthFormat(device);
+        this.depthImageFormat = depthImageFormat;
         this.positionImageFormat = positionImageFormat;
         this.normalImageFormat = normalImageFormat;
+
+        depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
+        if (DepthResourceUtils.hasStencilComponent(depthImageFormat)) {
+            depthImageAspect |= VK_IMAGE_ASPECT_STENCIL_BIT;
+        }
     }
 
     public int getDepthImageFormat() {
@@ -67,7 +74,7 @@ public class GBufferNabor extends Nabor {
                 commandPool,
                 graphicsQueue,
                 albedoImage,
-                false,
+                VK_IMAGE_ASPECT_COLOR_BIT,
                 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 1);
@@ -86,7 +93,7 @@ public class GBufferNabor extends Nabor {
                 commandPool,
                 graphicsQueue,
                 depthImage,
-                DepthResourceUtils.hasStencilComponent(depthImageFormat),
+                depthImageAspect,
                 VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 1);
@@ -105,7 +112,7 @@ public class GBufferNabor extends Nabor {
                 commandPool,
                 graphicsQueue,
                 positionImage,
-                false,
+                VK_IMAGE_ASPECT_COLOR_BIT,
                 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 1);
@@ -124,7 +131,7 @@ public class GBufferNabor extends Nabor {
                 commandPool,
                 graphicsQueue,
                 normalImage,
-                false,
+                VK_IMAGE_ASPECT_COLOR_BIT,
                 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 1);
@@ -137,14 +144,6 @@ public class GBufferNabor extends Nabor {
     @Override
     public void cleanup(boolean reserveForRecreation) {
         super.cleanup(reserveForRecreation);
-
-        VkDevice device = this.getDevice();
-
-        if (!reserveForRecreation) {
-            vkDestroyImage(device, dummyImage, null);
-            vkFreeMemory(device, dummyImageMemory, null);
-            vkDestroyImageView(device, dummyImageView, null);
-        }
     }
 
     @Override
@@ -168,7 +167,7 @@ public class GBufferNabor extends Nabor {
             VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(4, stack);
             VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(4, stack);
 
-            //Color attachment
+            //Albedo attachment
             albedoAttachmentIndex = 0;
 
             VkAttachmentDescription colorAttachment = attachments.get(albedoAttachmentIndex);
@@ -395,60 +394,10 @@ public class GBufferNabor extends Nabor {
         }
     }
 
-    private void createDummyImages(long commandPool, VkQueue graphicsQueue) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkDevice device = this.getDevice();
-
-            LongBuffer pImage = stack.mallocLong(1);
-            LongBuffer pImageMemory = stack.mallocLong(1);
-            LongBuffer pImageView = stack.mallocLong(1);
-
-            //Color image
-            ImageUtils.createImage(
-                    device,
-                    1,
-                    1,
-                    1,
-                    1,
-                    VK_FORMAT_R8_UNORM,
-                    VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_SAMPLED_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pImage,
-                    pImageMemory);
-            dummyImage = pImage.get(0);
-            dummyImageMemory = pImageMemory.get(0);
-
-            ImageUtils.transitionImageLayout(
-                    device,
-                    commandPool,
-                    graphicsQueue,
-                    dummyImage,
-                    false,
-                    VK_IMAGE_LAYOUT_UNDEFINED,
-                    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                    1);
-
-            VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.callocStack(stack);
-            viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
-            viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
-            viewInfo.image(dummyImage);
-            viewInfo.format(VK_FORMAT_R8_UNORM);
-            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
-            viewInfo.subresourceRange().baseMipLevel(0);
-            viewInfo.subresourceRange().levelCount(1);
-            viewInfo.subresourceRange().baseArrayLayer(0);
-            viewInfo.subresourceRange().layerCount(1);
-
-            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to create an image view");
-            }
-            dummyImageView = pImageView.get(0);
-        }
-    }
-
     @Override
     protected void createDescriptorSets(int descriptorCount, long commandPool, VkQueue graphicsQueue) {
+        super.createDescriptorSets(descriptorCount, commandPool, graphicsQueue);
+
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
@@ -502,14 +451,11 @@ public class GBufferNabor extends Nabor {
             uboDescriptorWrite.pBufferInfo(uboInfos);
 
             //=== set 1 ===
-            //Create dummy textures and fill the texture array
-            this.createDummyImages(commandPool, graphicsQueue);
-
             VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.callocStack(MAX_NUM_TEXTURES, stack);
             for (int i = 0; i < MAX_NUM_TEXTURES; i++) {
                 VkDescriptorImageInfo imageInfo = imageInfos.get(i);
                 imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-                imageInfo.imageView(dummyImageView);
+                imageInfo.imageView(this.getDummyImageView());
             }
 
             VkWriteDescriptorSet imageDescriptorWrite = descriptorWrites.get(1);
@@ -657,31 +603,17 @@ public class GBufferNabor extends Nabor {
             depthStencil.stencilTestEnable(false);
 
             //Color blending
-            VkPipelineColorBlendAttachmentState.Buffer colorBlendAttachments = VkPipelineColorBlendAttachmentState.callocStack(3, stack);
-
-            VkPipelineColorBlendAttachmentState colorBlendAttachment = colorBlendAttachments.get(0);
-            colorBlendAttachment.colorWriteMask(
-                    VK_COLOR_COMPONENT_R_BIT |
-                            VK_COLOR_COMPONENT_G_BIT |
-                            VK_COLOR_COMPONENT_B_BIT |
-                            VK_COLOR_COMPONENT_A_BIT);
-            colorBlendAttachment.blendEnable(false);
-
-            VkPipelineColorBlendAttachmentState positionBlendAttachment = colorBlendAttachments.get(1);
-            positionBlendAttachment.colorWriteMask(
-                    VK_COLOR_COMPONENT_R_BIT |
-                            VK_COLOR_COMPONENT_G_BIT |
-                            VK_COLOR_COMPONENT_B_BIT |
-                            VK_COLOR_COMPONENT_A_BIT);
-            positionBlendAttachment.blendEnable(false);
-
-            VkPipelineColorBlendAttachmentState normalBlendAttachment = colorBlendAttachments.get(2);
-            normalBlendAttachment.colorWriteMask(
-                    VK_COLOR_COMPONENT_R_BIT |
-                            VK_COLOR_COMPONENT_G_BIT |
-                            VK_COLOR_COMPONENT_B_BIT |
-                            VK_COLOR_COMPONENT_A_BIT);
-            normalBlendAttachment.blendEnable(false);
+            VkPipelineColorBlendAttachmentState.Buffer colorBlendAttachments
+                    = VkPipelineColorBlendAttachmentState.callocStack(3, stack);
+            for (int i = 0; i < 3; i++) {
+                VkPipelineColorBlendAttachmentState colorBlendAttachment = colorBlendAttachments.get(i);
+                colorBlendAttachment.colorWriteMask(
+                        VK_COLOR_COMPONENT_R_BIT |
+                                VK_COLOR_COMPONENT_G_BIT |
+                                VK_COLOR_COMPONENT_B_BIT |
+                                VK_COLOR_COMPONENT_A_BIT);
+                colorBlendAttachment.blendEnable(false);
+            }
 
             VkPipelineColorBlendStateCreateInfo colorBlending = VkPipelineColorBlendStateCreateInfo.callocStack(stack);
             colorBlending.sType(VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO);
@@ -745,10 +677,7 @@ public class GBufferNabor extends Nabor {
     }
 
     @Override
-    protected void createImages(
-            long commandPool,
-            VkQueue graphicsQueue,
-            int colorImageFormat) {
+    protected void createImages(int colorImageFormat) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
             int msaaSamples = this.getMsaaSamples();
@@ -880,38 +809,6 @@ public class GBufferNabor extends Nabor {
             this.getImages().add(normalImage);
             this.getImageMemories().add(normalImageMemory);
             this.getImageViews().add(normalImageView);
-        }
-    }
-
-    @Override
-    protected void createFramebuffers() {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkDevice device = this.getDevice();
-            VkExtent2D extent = this.getExtent();
-
-            long renderPass = this.getRenderPass();
-
-            List<Long> imageViews = this.getImageViews();
-            LongBuffer attachments = stack.mallocLong(imageViews.size());
-            for (int i = 0; i < imageViews.size(); i++) {
-                attachments.put(i, imageViews.get(i));
-            }
-
-            LongBuffer pFramebuffer = stack.mallocLong(1);
-
-            VkFramebufferCreateInfo framebufferInfo = VkFramebufferCreateInfo.callocStack(stack);
-            framebufferInfo.sType(VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO);
-            framebufferInfo.renderPass(renderPass);
-            framebufferInfo.width(extent.width());
-            framebufferInfo.height(extent.height());
-            framebufferInfo.layers(1);
-            framebufferInfo.pAttachments(attachments);
-
-            if (vkCreateFramebuffer(device, framebufferInfo, null, pFramebuffer) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to create a framebuffer");
-            }
-
-            this.getFramebuffers().add(pFramebuffer.get(0));
         }
     }
 }

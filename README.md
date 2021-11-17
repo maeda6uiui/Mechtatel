@@ -27,7 +27,85 @@ Javaでゲームエンジンを作ることを目標としているプロジェ�
 結局自分が死ぬまで何も成し遂げられないかもしれませんし、あるいは何か芸術的なゴミを生み出すことができるかもしれません。
 「この人を応援したい！」とか思うような頭のおかしい人は、Starでも付けていってください...。
 
-## 報告
+## 進捗報告
+
+### 2021-11-17
+
+基礎的なシャドウマッピングは実装できました。
+
+<img src="./Image/shadow_mapping_2.jpg" alt="Shadow Mapping (Parallel Light)" style="zoom:50%;" />
+
+<img src="./Image/shadow_mapping_3.jpg" alt="Shadow Mapping (Spotlight)" style="zoom:50%;" />
+
+色付きの影を出すこともできます。
+
+<img src="./Image/shadow_mapping_4.jpg" alt="Shadow Mapping (Spotlight) 2" style="zoom:50%;" />
+
+シャドウマッピングにこだわり始めるときりがないので、このあたりで一度気持ちを落ち着けようと思います。
+
+### 2021-11-14
+
+ライトから見たDepthは正しいようだ。
+
+<img src="./Image/shadow_mapping_depth.jpg" alt="Shadow Mapping Depth" style="zoom:50%;" />
+
+こんなコードを書いてデバッグを試みた。
+
+```glsl
+vec4 shadowCoords=biasMat*shadowInfos[0].lightProj*shadowInfos[0].lightView*modelMat*vec4(position,1.0);
+float shadowDepth=texture(sampler2D(shadowDepthTextures[0],textureSampler),shadowCoords.xy).r;
+
+outColor=vec4(shadowCoords.z-shadowDepth);
+```
+
+<img src="./Image/shadow_mapping_debug.jpg" alt="Shadow Mapping Debug" style="zoom:50%;" />
+
+なんか影らしきものは出ている。
+
+shadowCoords.zが現在処理している座標のライトから見たDepthで、shadowDepthは先に取得しておいたライトから見たDepthになっている。
+shadowCoords.z > shadowDepthなら、その座標には影がかかっているということになる。
+逆に、shadowCoords.z = shadowDepthとなっている場合、その座標には影はかからない。
+
+つまり上の画像で、黒くなっている部分(shadowCoords.z - shadowDepth = 0)には影がかからず、灰色になっている部分には影がかかるはず...。
+
+ちゃんと灰色になっているから、影がかかるはずなんだが...。
+平面の一部が影がかかる場所ではないのに灰色になっているのも少し気になる。
+
+---
+
+何とかできました。影が荒いのは許してください。
+
+<img src="./Image/shadow_mapping.jpg" alt="Shadow Mapping" style="zoom:50%;" />
+
+Fragment Shaderで使用しているbiasMatが原因でした。
+
+修正後のbiasMatは以下のとおり。
+
+```glsl
+mat4 biasMat;
+biasMat[0]=vec4(0.5,0.0,0.0,0.0);
+biasMat[1]=vec4(0.0,0.5,0.0,0.0);
+biasMat[2]=vec4(0.0,0.0,1.0,0.0);
+biasMat[3]=vec4(0.5,0.5,0.0,1.0);
+```
+
+~~詳しい原因究明はまた今度...~~
+
+### 2021-11-13
+
+近いところまで来ている気がするけど、どこが間違っているのかわからない。
+
+<img src="./Image/shadow_mapping_invalid.jpg" alt="Shadow Mapping Invalid" style="zoom:50%;" />
+
+遅延レンダリング(Deferred Rendering)を採用している関係で、今のやり方がそもそも間違っているのかもしれない。
+以前にOpenGLで前方レンダリング(Forward Rendering)を用いてシャドウマッピングを実装したときには、ここまで苦労しなかったような気がする...。
+
+これを何とかしてクリアしないと、(自分の心情的に)先に進めない。
+
+### 2021-11-03
+
+シャドウマッピングがなかなかうまくいかない...。
+惜しいところまでは来ている気がするけど。
 
 ### 2021-10-06
 

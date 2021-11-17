@@ -24,6 +24,14 @@ public class Spotlight {
     private float falloff;
     private float specularPowY;
 
+    private boolean castShadow;
+    private Vector3f center;
+    private float fovY;
+    private float aspect;
+    private float zNear;
+    private float zFar;
+    private Vector3f attenuations;
+
     public Spotlight() {
         position = new Vector3f(5.0f, 5.0f, 5.0f);
         direction = new Vector3f(-1.0f, -1.0f, -1.0f).normalize();
@@ -40,6 +48,14 @@ public class Spotlight {
         phi = (float) Math.toRadians(50);
         falloff = 2.0f;
         specularPowY = 2.0f;
+
+        castShadow = true;
+        center = new Vector3f(0.0f, 0.0f, 0.0f);
+        fovY = 1.0f;
+        aspect = 1.0f;
+        zNear = 0.1f;
+        zFar = 100.0f;
+        attenuations = new Vector3f(0.5f, 0.5f, 0.5f);
     }
 
     public Vector3f getPosition() {
@@ -164,5 +180,57 @@ public class Spotlight {
 
     public void setSpecularPowY(float specularPowY) {
         this.specularPowY = specularPowY;
+    }
+
+    public boolean isCastShadow() {
+        return castShadow;
+    }
+
+    public void setCastShadow(boolean castShadow) {
+        this.castShadow = castShadow;
+    }
+
+    public Vector3f getCenter() {
+        return center;
+    }
+
+    public float getFovY() {
+        return fovY;
+    }
+
+    public void setFovY(float fovY) {
+        this.fovY = fovY;
+    }
+
+    public float getAspect() {
+        return aspect;
+    }
+
+    public void setAspect(float aspect) {
+        this.aspect = aspect;
+    }
+
+    public float getzNear() {
+        return zNear;
+    }
+
+    public void setzNear(float zNear) {
+        this.zNear = zNear;
+    }
+
+    public float getzFar() {
+        return zFar;
+    }
+
+    public void setzFar(float zFar) {
+        this.zFar = zFar;
+    }
+
+    public Vector3f getAttenuations() {
+        return attenuations;
+    }
+
+    public void setAttenuations(Vector3f attenuations) {
+        this.attenuations = attenuations;
     }
 }

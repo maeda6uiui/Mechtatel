@@ -1,9 +1,9 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
+package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.LightingInfoUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.SpotlightUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass2InfoUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.ShadowInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -16,40 +16,66 @@ import java.util.List;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Nabor for spotlights
+ * Nabor to apply shadow mapping with images obtained from pass 1
  *
  * @author maeda
  */
-public class SpotlightNabor extends PostProcessingNabor {
-    public static final int MAX_NUM_LIGHTS = 64;
+class Pass2Nabor extends PostProcessingNabor {
+    public static final int MAX_NUM_SHADOW_MAPS = 16;
 
-    public SpotlightNabor(VkDevice device) {
+    public Pass2Nabor(VkDevice device) {
         super(device, VK_SAMPLE_COUNT_1_BIT, false);
+    }
+
+    @Override
+    protected void createTextureSamplers() {
+        VkDevice device = this.getDevice();
+
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkSamplerCreateInfo samplerInfo = VkSamplerCreateInfo.callocStack(stack);
+            samplerInfo.sType(VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO);
+            samplerInfo.magFilter(VK_FILTER_LINEAR);
+            samplerInfo.minFilter(VK_FILTER_LINEAR);
+            samplerInfo.addressModeU(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
+            samplerInfo.addressModeV(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
+            samplerInfo.addressModeW(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
+            samplerInfo.anisotropyEnable(true);
+            samplerInfo.maxAnisotropy(16.0f);
+            samplerInfo.borderColor(VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE);
+            samplerInfo.unnormalizedCoordinates(false);
+            samplerInfo.compareEnable(false);
+            samplerInfo.compareOp(VK_COMPARE_OP_ALWAYS);
+            samplerInfo.mipmapMode(VK_SAMPLER_MIPMAP_MODE_LINEAR);
+            samplerInfo.minLod(0.0f);
+            samplerInfo.maxLod(10.0f);
+            samplerInfo.mipLodBias(0.0f);
+
+            LongBuffer pTextureSampler = stack.mallocLong(1);
+            if (vkCreateSampler(device, samplerInfo, null, pTextureSampler) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create a texture sampler");
+            }
+
+            long textureSampler = pTextureSampler.get(0);
+            this.getTextureSamplers().add(textureSampler);
+        }
     }
 
     @Override
     protected void createUniformBuffers(int descriptorCount) {
         VkDevice device = this.getDevice();
 
-        var cameraUBOInfos = BufferCreator.createUBOBuffers(
-                device, descriptorCount, CameraUBO.SIZEOF);
-        for (var cameraUBOInfo : cameraUBOInfos) {
-            this.getUniformBuffers().add(cameraUBOInfo.buffer);
-            this.getUniformBufferMemories().add(cameraUBOInfo.bufferMemory);
+        var pass2InfoUBOInfos = BufferCreator.createUBOBuffers(
+                device, descriptorCount, Pass2InfoUBO.SIZEOF);
+        for (var pass2InfoUBOInfo : pass2InfoUBOInfos) {
+            this.getUniformBuffers().add(pass2InfoUBOInfo.buffer);
+            this.getUniformBufferMemories().add(pass2InfoUBOInfo.bufferMemory);
         }
 
-        var lightingInfoUBOInfos = BufferCreator.createUBOBuffers(
-                device, descriptorCount, LightingInfoUBO.SIZEOF);
-        for (var lightingInfoUBOInfo : lightingInfoUBOInfos) {
-            this.getUniformBuffers().add(lightingInfoUBOInfo.buffer);
-            this.getUniformBufferMemories().add(lightingInfoUBOInfo.bufferMemory);
-        }
-
-        var lightUBOInfos = BufferCreator.createUBOBuffers(
-                device, descriptorCount, SpotlightUBO.SIZEOF * MAX_NUM_LIGHTS);
-        for (var lightUBOInfo : lightUBOInfos) {
-            this.getUniformBuffers().add(lightUBOInfo.buffer);
-            this.getUniformBufferMemories().add(lightUBOInfo.bufferMemory);
+        var shadowInfoUBOInfos = BufferCreator.createUBOBuffers(
+                device, descriptorCount, ShadowInfoUBO.SIZEOF * MAX_NUM_SHADOW_MAPS);
+        for (var shadowInfoUBOInfo : shadowInfoUBOInfos) {
+            this.getUniformBuffers().add(shadowInfoUBOInfo.buffer);
+            this.getUniformBufferMemories().add(shadowInfoUBOInfo.bufferMemory);
         }
     }
 
@@ -59,31 +85,24 @@ public class SpotlightNabor extends PostProcessingNabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.callocStack(3, stack);
+            VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.callocStack(2, stack);
 
-            VkDescriptorSetLayoutBinding cameraUBOLayoutBinding = uboBindings.get(0);
-            cameraUBOLayoutBinding.binding(0);
-            cameraUBOLayoutBinding.descriptorCount(1);
-            cameraUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            cameraUBOLayoutBinding.pImmutableSamplers(null);
-            cameraUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+            VkDescriptorSetLayoutBinding pass2InfoUBOLayoutBinding = uboBindings.get(0);
+            pass2InfoUBOLayoutBinding.binding(0);
+            pass2InfoUBOLayoutBinding.descriptorCount(1);
+            pass2InfoUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            pass2InfoUBOLayoutBinding.pImmutableSamplers(null);
+            pass2InfoUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            VkDescriptorSetLayoutBinding lightingInfoUBOLayoutBinding = uboBindings.get(1);
-            lightingInfoUBOLayoutBinding.binding(1);
-            lightingInfoUBOLayoutBinding.descriptorCount(1);
-            lightingInfoUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            lightingInfoUBOLayoutBinding.pImmutableSamplers(null);
-            lightingInfoUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
-
-            VkDescriptorSetLayoutBinding lightUBOLayoutBinding = uboBindings.get(2);
-            lightUBOLayoutBinding.binding(2);
-            lightUBOLayoutBinding.descriptorCount(MAX_NUM_LIGHTS);
-            lightUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            lightUBOLayoutBinding.pImmutableSamplers(null);
-            lightUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+            VkDescriptorSetLayoutBinding shadowInfoUBOLayoutBinding = uboBindings.get(1);
+            shadowInfoUBOLayoutBinding.binding(1);
+            shadowInfoUBOLayoutBinding.descriptorCount(MAX_NUM_SHADOW_MAPS);
+            shadowInfoUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            shadowInfoUBOLayoutBinding.pImmutableSamplers(null);
+            shadowInfoUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 1 ===
-            VkDescriptorSetLayoutBinding.Buffer imageBindings = VkDescriptorSetLayoutBinding.callocStack(4, stack);
+            VkDescriptorSetLayoutBinding.Buffer imageBindings = VkDescriptorSetLayoutBinding.callocStack(5, stack);
 
             VkDescriptorSetLayoutBinding albedoImageLayoutBinding = imageBindings.get(0);
             albedoImageLayoutBinding.binding(0);
@@ -112,6 +131,13 @@ public class SpotlightNabor extends PostProcessingNabor {
             normalImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             normalImageLayoutBinding.pImmutableSamplers(null);
             normalImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+
+            VkDescriptorSetLayoutBinding shadowDepthImageLayoutBinding = imageBindings.get(4);
+            shadowDepthImageLayoutBinding.binding(4);
+            shadowDepthImageLayoutBinding.descriptorCount(MAX_NUM_SHADOW_MAPS);
+            shadowDepthImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            shadowDepthImageLayoutBinding.pImmutableSamplers(null);
+            shadowDepthImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 2 ===
             VkDescriptorSetLayoutBinding.Buffer samplerBindings = VkDescriptorSetLayoutBinding.callocStack(1, stack);
@@ -159,22 +185,18 @@ public class SpotlightNabor extends PostProcessingNabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.callocStack(3, stack);
+            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.callocStack(2, stack);
 
-            VkDescriptorPoolSize cameraUBOPoolSize = uboPoolSizes.get(0);
-            cameraUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            cameraUBOPoolSize.descriptorCount(descriptorCount);
+            VkDescriptorPoolSize pass2InfoUBOPoolSize = uboPoolSizes.get(0);
+            pass2InfoUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            pass2InfoUBOPoolSize.descriptorCount(descriptorCount);
 
-            VkDescriptorPoolSize lightingInfoUBOPoolSize = uboPoolSizes.get(1);
-            lightingInfoUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            lightingInfoUBOPoolSize.descriptorCount(descriptorCount);
-
-            VkDescriptorPoolSize lightUBOPoolSize = uboPoolSizes.get(2);
-            lightUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            lightUBOPoolSize.descriptorCount(descriptorCount * MAX_NUM_LIGHTS);
+            VkDescriptorPoolSize shadowInfoUBOPoolSize = uboPoolSizes.get(1);
+            shadowInfoUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            shadowInfoUBOPoolSize.descriptorCount(descriptorCount * MAX_NUM_SHADOW_MAPS);
 
             //=== set 1 ===
-            VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.callocStack(4, stack);
+            VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.callocStack(5, stack);
 
             VkDescriptorPoolSize albedoImagePoolSize = imagePoolSizes.get(0);
             albedoImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
@@ -191,6 +213,10 @@ public class SpotlightNabor extends PostProcessingNabor {
             VkDescriptorPoolSize normalImagePoolSize = imagePoolSizes.get(3);
             normalImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             normalImagePoolSize.descriptorCount(descriptorCount);
+
+            VkDescriptorPoolSize shadowDepthImagePoolSize = imagePoolSizes.get(4);
+            shadowDepthImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            shadowDepthImagePoolSize.descriptorCount(descriptorCount * MAX_NUM_SHADOW_MAPS);
 
             //=== set 2 ===
             VkDescriptorPoolSize.Buffer samplerPoolSizes = VkDescriptorPoolSize.callocStack(1, stack);
@@ -273,41 +299,36 @@ public class SpotlightNabor extends PostProcessingNabor {
             VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.callocStack(setCount, stack);
 
             //=== set 0 ===
-            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.callocStack(2, stack);
+            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.callocStack(1, stack);
 
-            VkDescriptorBufferInfo cameraUBOInfo = uboInfos.get(0);
-            cameraUBOInfo.buffer(this.getUniformBuffer(0));
-            cameraUBOInfo.offset(0);
-            cameraUBOInfo.range(CameraUBO.SIZEOF);
-
-            VkDescriptorBufferInfo lightingInfoUBOInfo = uboInfos.get(1);
-            lightingInfoUBOInfo.buffer(this.getUniformBuffer(1));
-            lightingInfoUBOInfo.offset(0);
-            lightingInfoUBOInfo.range(LightingInfoUBO.SIZEOF);
+            VkDescriptorBufferInfo pass2InfoUBOInfo = uboInfos.get(0);
+            pass2InfoUBOInfo.buffer(this.getUniformBuffer(0));
+            pass2InfoUBOInfo.offset(0);
+            pass2InfoUBOInfo.range(Pass2InfoUBO.SIZEOF);
 
             VkWriteDescriptorSet uboDescriptorWrite = descriptorWrites.get(0);
             uboDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
             uboDescriptorWrite.dstBinding(0);
             uboDescriptorWrite.dstArrayElement(0);
             uboDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            uboDescriptorWrite.descriptorCount(2);
+            uboDescriptorWrite.descriptorCount(1);
             uboDescriptorWrite.pBufferInfo(uboInfos);
 
-            VkWriteDescriptorSet.Buffer lightUBODescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
-            VkDescriptorBufferInfo.Buffer lightUBOInfos = VkDescriptorBufferInfo.callocStack(MAX_NUM_LIGHTS, stack);
-            for (int i = 0; i < MAX_NUM_LIGHTS; i++) {
-                VkDescriptorBufferInfo lightUBOInfo = lightUBOInfos.get(i);
-                lightUBOInfo.buffer(this.getUniformBuffer(2));
-                lightUBOInfo.offset(0);
-                lightUBOInfo.range(SpotlightUBO.SIZEOF);
+            VkWriteDescriptorSet.Buffer shadowInfoUBODescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            VkDescriptorBufferInfo.Buffer shadowInfoUBOInfos = VkDescriptorBufferInfo.callocStack(MAX_NUM_SHADOW_MAPS, stack);
+            for (int i = 0; i < MAX_NUM_SHADOW_MAPS; i++) {
+                VkDescriptorBufferInfo shadowInfoUBOInfo = shadowInfoUBOInfos.get(i);
+                shadowInfoUBOInfo.buffer(this.getUniformBuffer(1));
+                shadowInfoUBOInfo.offset(0);
+                shadowInfoUBOInfo.range(ShadowInfoUBO.SIZEOF);
             }
 
-            lightUBODescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            lightUBODescriptorWrite.dstBinding(2);
-            lightUBODescriptorWrite.dstArrayElement(0);
-            lightUBODescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            lightUBODescriptorWrite.descriptorCount(MAX_NUM_LIGHTS);
-            lightUBODescriptorWrite.pBufferInfo(lightUBOInfos);
+            shadowInfoUBODescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            shadowInfoUBODescriptorWrite.dstBinding(1);
+            shadowInfoUBODescriptorWrite.dstArrayElement(0);
+            shadowInfoUBODescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            shadowInfoUBODescriptorWrite.descriptorCount(MAX_NUM_SHADOW_MAPS);
+            shadowInfoUBODescriptorWrite.pBufferInfo(shadowInfoUBOInfos);
 
             //=== set 1 ===
             VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.callocStack(4, stack);
@@ -324,6 +345,21 @@ public class SpotlightNabor extends PostProcessingNabor {
             imageDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             imageDescriptorWrite.descriptorCount(4);
             imageDescriptorWrite.pImageInfo(imageInfos);
+
+            VkWriteDescriptorSet.Buffer shadowDepthImageDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            VkDescriptorImageInfo.Buffer shadowDepthImageInfos = VkDescriptorImageInfo.callocStack(MAX_NUM_SHADOW_MAPS, stack);
+            for (int i = 0; i < MAX_NUM_SHADOW_MAPS; i++) {
+                VkDescriptorImageInfo imageInfo = shadowDepthImageInfos.get(i);
+                imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+                imageInfo.imageView(this.getDummyImageView());
+            }
+
+            shadowDepthImageDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            shadowDepthImageDescriptorWrite.dstBinding(4);
+            shadowDepthImageDescriptorWrite.dstArrayElement(0);
+            shadowDepthImageDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            shadowDepthImageDescriptorWrite.descriptorCount(MAX_NUM_SHADOW_MAPS);
+            shadowDepthImageDescriptorWrite.pImageInfo(shadowDepthImageInfos);
 
             //=== set 2 ===
             VkDescriptorImageInfo.Buffer samplerInfos = VkDescriptorImageInfo.callocStack(1, stack);
@@ -346,8 +382,11 @@ public class SpotlightNabor extends PostProcessingNabor {
                 samplerDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount * 2));
                 vkUpdateDescriptorSets(device, descriptorWrites, null);
 
-                lightUBODescriptorWrite.dstSet(descriptorSets.get(i));
-                vkUpdateDescriptorSets(device, lightUBODescriptorWrite, null);
+                shadowInfoUBODescriptorWrite.dstSet(descriptorSets.get(i));
+                vkUpdateDescriptorSets(device, shadowInfoUBODescriptorWrite, null);
+
+                shadowDepthImageDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount));
+                vkUpdateDescriptorSets(device, shadowDepthImageDescriptorWrite, null);
             }
 
             for (int i = 0; i < descriptorSets.size(); i++) {
@@ -366,8 +405,8 @@ public class SpotlightNabor extends PostProcessingNabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/post_processing.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/spotlight.frag";
+            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/ShadowMapping/pass_2.vert";
+            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/ShadowMapping/pass_2.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

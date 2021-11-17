@@ -8,8 +8,18 @@ import org.joml.Vector3fc;
  * @author maeda
  */
 public class VkComponent3D extends VkComponent {
-    public VkComponent3D() {
+    private boolean castShadow;
 
+    public VkComponent3D() {
+        castShadow = true;
+    }
+
+    public boolean isCastShadow() {
+        return castShadow;
+    }
+
+    public void setCastShadow(boolean castShadow) {
+        this.castShadow = castShadow;
     }
 
     public void translate(Vector3fc v) {

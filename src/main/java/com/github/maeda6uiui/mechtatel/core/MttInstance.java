@@ -6,6 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
+import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.ParallelLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLightNabor;
@@ -37,6 +38,7 @@ class MttInstance {
     private Vector3f parallelLightAmbientColor;
     private Vector3f pointLightAmbientColor;
     private Vector3f spotlightAmbientColor;
+    private ShadowMappingSettings shadowMappingSettings;
 
     private Camera camera;
     private Fog fog;
@@ -93,6 +95,7 @@ class MttInstance {
         parallelLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
         pointLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
         spotlightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
+        shadowMappingSettings = new ShadowMappingSettings();
 
         camera = new Camera();
         fog = new Fog();
@@ -133,7 +136,8 @@ class MttInstance {
                         pointLights,
                         pointLightAmbientColor,
                         spotlights,
-                        spotlightAmbientColor);
+                        spotlightAmbientColor,
+                        shadowMappingSettings);
 
                 lastTime = glfwGetTime();
             }
@@ -184,6 +188,14 @@ class MttInstance {
 
     public void setSpotlightAmbientColor(Vector3f spotlightAmbientColor) {
         this.spotlightAmbientColor = spotlightAmbientColor;
+    }
+
+    public ShadowMappingSettings getShadowMappingSettings() {
+        return shadowMappingSettings;
+    }
+
+    public void setShadowMappingSettings(ShadowMappingSettings shadowMappingSettings) {
+        this.shadowMappingSettings = shadowMappingSettings;
     }
 
     public Camera getCamera() {

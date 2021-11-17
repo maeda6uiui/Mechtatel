@@ -46,18 +46,11 @@ public class VkComponent {
         this.mat.invert();
     }
 
-    public void draw(
-            VkCommandBuffer commandBuffer,
-            int commandBufferIndex,
-            long pipelineLayout) {
+    public void draw(VkCommandBuffer commandBuffer, long pipelineLayout) {
 
     }
 
-    public void draw(
-            VkCommandBuffer commandBuffer,
-            int commandBufferIndex,
-            long pipelineLayout,
-            long textureSampler) {
+    public void transfer(VkCommandBuffer commandBuffer, long pipelineLayout) {
 
     }
 

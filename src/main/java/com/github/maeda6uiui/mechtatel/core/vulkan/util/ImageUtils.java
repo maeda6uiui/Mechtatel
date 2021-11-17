@@ -62,11 +62,9 @@ public class ImageUtils {
     }
 
     public static void transitionImageLayout(
-            VkDevice device,
-            long commandPool,
-            VkQueue graphicsQueue,
+            VkCommandBuffer commandBuffer,
             long image,
-            boolean hasStencilComponent,
+            int aspect,
             int oldLayout,
             int newLayout,
             int mipLevels) {
@@ -78,19 +76,11 @@ public class ImageUtils {
             barrier.srcQueueFamilyIndex(VK_QUEUE_FAMILY_IGNORED);
             barrier.dstQueueFamilyIndex(VK_QUEUE_FAMILY_IGNORED);
             barrier.image(image);
+            barrier.subresourceRange().aspectMask(aspect);
             barrier.subresourceRange().baseMipLevel(0);
             barrier.subresourceRange().levelCount(mipLevels);
             barrier.subresourceRange().baseArrayLayer(0);
             barrier.subresourceRange().layerCount(1);
-
-            if (oldLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL || newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
-                barrier.subresourceRange().aspectMask(VK_IMAGE_ASPECT_DEPTH_BIT);
-                if (hasStencilComponent) {
-                    barrier.subresourceRange().aspectMask(barrier.subresourceRange().aspectMask() | VK_IMAGE_ASPECT_STENCIL_BIT);
-                }
-            } else {
-                barrier.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
-            }
 
             int sourceStage = 0;
             int destinationStage = 0;
@@ -107,6 +97,12 @@ public class ImageUtils {
 
                 sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
                 destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+            } else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+                barrier.srcAccessMask(VK_ACCESS_SHADER_READ_BIT);
+                barrier.dstAccessMask(VK_ACCESS_TRANSFER_WRITE_BIT);
+
+                sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+                destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
             } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
                 barrier.srcAccessMask(0);
                 barrier.dstAccessMask(VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT);
@@ -137,11 +133,21 @@ public class ImageUtils {
 
                 sourceStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
                 destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+            } else if (oldLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) {
+                barrier.srcAccessMask(VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
+                barrier.dstAccessMask(VK_ACCESS_TRANSFER_READ_BIT);
+
+                sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+                destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+            } else if (oldLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) {
+                barrier.srcAccessMask(VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT);
+                barrier.dstAccessMask(VK_ACCESS_TRANSFER_READ_BIT);
+
+                sourceStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+                destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
             } else {
                 throw new IllegalArgumentException("Unsupported layout transition");
             }
-
-            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
 
             vkCmdPipelineBarrier(
                     commandBuffer,
@@ -151,8 +157,20 @@ public class ImageUtils {
                     null,
                     null,
                     barrier);
-
-            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
         }
+    }
+
+    public static void transitionImageLayout(
+            VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue,
+            long image,
+            int aspect,
+            int oldLayout,
+            int newLayout,
+            int mipLevels) {
+        VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
+        transitionImageLayout(commandBuffer, image, aspect, oldLayout, newLayout, mipLevels);
+        CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
     }
 }

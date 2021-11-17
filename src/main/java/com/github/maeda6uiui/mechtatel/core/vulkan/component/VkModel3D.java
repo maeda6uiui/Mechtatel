@@ -144,11 +144,7 @@ public class VkModel3D extends VkComponent3D {
     }
 
     @Override
-    public void draw(
-            VkCommandBuffer commandBuffer,
-            int commandBufferIndex,
-            long pipelineLayout,
-            long textureSampler) {
+    public void draw(VkCommandBuffer commandBuffer, long pipelineLayout) {
         if (!this.isVisible()) {
             return;
         }
@@ -172,6 +168,32 @@ public class VkModel3D extends VkComponent3D {
                         1 * 16 * Float.BYTES,
                         textureIndexBuffer);
 
+                LongBuffer lVertexBuffers = stack.longs(vertexBuffers.get(i));
+                LongBuffer offsets = stack.longs(0);
+                vkCmdBindVertexBuffers(commandBuffer, 0, lVertexBuffers, offsets);
+
+                vkCmdBindIndexBuffer(commandBuffer, indexBuffers.get(i), 0, VK_INDEX_TYPE_UINT32);
+
+                vkCmdDrawIndexed(
+                        commandBuffer,
+                        model.meshes.get(i).indices.size(),
+                        1,
+                        0,
+                        0,
+                        0);
+            }
+        }
+    }
+
+    @Override
+    public void transfer(VkCommandBuffer commandBuffer, long pipelineLayout) {
+        if (!this.isVisible()) {
+            return;
+        }
+
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            int numMeshes = model.meshes.size();
+            for (int i = 0; i < numMeshes; i++) {
                 LongBuffer lVertexBuffers = stack.longs(vertexBuffers.get(i));
                 LongBuffer offsets = stack.longs(0);
                 vkCmdBindVertexBuffers(commandBuffer, 0, lVertexBuffers, offsets);

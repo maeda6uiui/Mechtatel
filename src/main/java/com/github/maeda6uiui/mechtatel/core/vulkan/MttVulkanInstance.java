@@ -6,7 +6,9 @@ import com.github.maeda6uiui.mechtatel.core.light.LightingInfo;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
+import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
@@ -14,12 +16,12 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.*;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow.ShadowMappingNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow.ShadowMappingNaborRunner;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.*;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.MultisamplingUtils;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.PhysicalDevicePicker;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.PointerBufferUtils;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.*;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -48,8 +50,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private boolean enableValidationLayer;
     private long debugMessenger;
 
-    private int msaaSamples;
-
     private VkPhysicalDevice physicalDevice;
 
     private VkDevice device;
@@ -58,6 +58,12 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private long window;
     private long surface;
     private VkQueue presentQueue;
+
+    private int msaaSamples;
+    private int depthImageFormat;
+    private int depthImageAspect;
+    private int depthImageWidth;
+    private int depthImageHeight;
 
     private Swapchain swapchain;
 
@@ -72,7 +78,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private Map<Integer, Frame> imagesInFlight;
     private int currentFrame;
 
-    private ArrayList<VkComponent> components;
+    private ArrayList<VkComponent3D> components;
 
     private QuadDrawer quadDrawer;
 
@@ -102,26 +108,43 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         } else {
             presentNabor.recreate(
                     swapchain.getSwapchainImageFormat(),
-                    swapchain.getSwapchainExtent(),
-                    commandPool,
-                    graphicsQueue);
+                    swapchain.getSwapchainExtent());
         }
         swapchain.createFramebuffers(presentNabor.getRenderPass());
+    }
+
+    private void createShadowMappingNaborUserDefImages(PostProcessingNabor shadowMappingNabor) {
+        shadowMappingNabor.cleanupUserDefImages();
+
+        //Shadow depth
+        for (int i = 0; i < ShadowMappingNabor.MAX_NUM_SHADOW_MAPS; i++) {
+            shadowMappingNabor.createUserDefImage(
+                    depthImageWidth,
+                    depthImageHeight,
+                    1,
+                    VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                    depthImageFormat,
+                    VK_IMAGE_ASPECT_DEPTH_BIT);
+        }
     }
 
     private void recreateNabors() {
         gBufferNabor.recreate(
                 swapchain.getSwapchainImageFormat(),
-                swapchain.getSwapchainExtent(),
-                commandPool,
-                graphicsQueue);
+                swapchain.getSwapchainExtent());
 
-        for (var ppNabor : ppNabors.values()) {
+        for (var entry : ppNabors.entrySet()) {
+            String naborName = entry.getKey();
+            PostProcessingNabor ppNabor = entry.getValue();
+
             ppNabor.recreate(
                     swapchain.getSwapchainImageFormat(),
-                    swapchain.getSwapchainExtent(),
-                    commandPool,
-                    graphicsQueue);
+                    swapchain.getSwapchainExtent());
+
+            if (naborName.equals("shadow_mapping")) {
+                this.createShadowMappingNaborUserDefImages(ppNabor);
+            }
         }
     }
 
@@ -160,6 +183,17 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         //Get the MSAA sample count
         this.msaaSamples = msaaSamples < 0 ? MultisamplingUtils.getMaxUsableSampleCount(device) : msaaSamples;
 
+        //Get the image format for depth
+        depthImageFormat = DepthResourceUtils.findDepthFormat(device);
+        depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
+        depthImageWidth = 2048;
+        depthImageHeight = 2048;
+
+        boolean hasStencilComponent = DepthResourceUtils.hasStencilComponent(depthImageFormat);
+        if (hasStencilComponent) {
+            depthImageAspect |= VK_IMAGE_ASPECT_STENCIL_BIT;
+        }
+
         //Create a command pool
         commandPool = CommandPoolCreator.createCommandPool(device, surface);
 
@@ -167,7 +201,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         this.createSwapchainObjects();
 
         //Create a nabor for G-Buffer
-        gBufferNabor = new GBufferNabor(device, VK_FORMAT_R16G16B16A16_SFLOAT, VK_FORMAT_R16G16B16A16_SFLOAT);
+        gBufferNabor = new GBufferNabor(
+                device,
+                depthImageFormat,
+                VK_FORMAT_R16G16B16A16_SFLOAT,
+                VK_FORMAT_R16G16B16A16_SFLOAT);
         gBufferNabor.compile(
                 swapchain.getSwapchainImageFormat(),
                 swapchain.getSwapchainExtent(),
@@ -251,6 +289,10 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 case "point_light":
                     ppNabor = new PointLightNabor(device);
                     break;
+                case "shadow_mapping":
+                    ppNabor = new ShadowMappingNabor(device, depthImageFormat, depthImageWidth, depthImageHeight);
+                    this.createShadowMappingNaborUserDefImages(ppNabor);
+                    break;
                 case "spotlight":
                     ppNabor = new SpotlightNabor(device);
                     break;
@@ -281,9 +323,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             long cameraUBOMemory = gBufferNabor.getUniformBufferMemory(0);
             var cameraUBO = new CameraUBO(camera);
             cameraUBO.update(device, cameraUBOMemory);
-
-            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
-            beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
 
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
@@ -330,11 +369,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                             0,
                             matBuffer);
 
-                    component.draw(
-                            commandBuffer,
-                            0,
-                            gBufferNabor.getPipelineLayout(0),
-                            gBufferNabor.getTextureSampler(0));
+                    component.draw(commandBuffer, gBufferNabor.getPipelineLayout(0));
                 }
             }
             vkCmdEndRenderPass(commandBuffer);
@@ -351,12 +386,31 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             List<PointLight> pointLights,
             Vector3f pointLightAmbientColor,
             List<Spotlight> spotlights,
-            Vector3f spotlightAmbientColor) {
-        lastPPNabor = null;
-
+            Vector3f spotlightAmbientColor,
+            ShadowMappingSettings shadowMappingSettings) {
         for (var entry : ppNabors.entrySet()) {
             String naborName = entry.getKey();
             PostProcessingNabor ppNabor = entry.getValue();
+
+            if (naborName.equals("shadow_mapping")) {
+                ShadowMappingNaborRunner.runShadowMappingNabor(
+                        device,
+                        commandPool,
+                        graphicsQueue,
+                        gBufferNabor,
+                        lastPPNabor,
+                        ppNabor,
+                        parallelLights,
+                        spotlights,
+                        components,
+                        depthImageAspect,
+                        shadowMappingSettings,
+                        quadDrawer);
+
+                lastPPNabor = ppNabor;
+
+                continue;
+            }
 
             switch (naborName) {
                 case "fog": {
@@ -438,9 +492,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             }
 
             try (MemoryStack stack = MemoryStack.stackPush()) {
-                VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
-                beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
-
                 VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
                 renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
                 renderPassInfo.renderPass(ppNabor.getRenderPass());
@@ -466,17 +517,19 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         gBufferNabor.transitionPositionImage(commandPool, graphicsQueue);
                         gBufferNabor.transitionNormalImage(commandPool, graphicsQueue);
 
-                        ppNabor.bindImages(
+                        ppNabor.bindGBufferImages(
                                 commandBuffer,
+                                0,
                                 gBufferNabor.getAlbedoImageView(),
                                 gBufferNabor.getDepthImageView(),
                                 gBufferNabor.getPositionImageView(),
                                 gBufferNabor.getNormalImageView());
                     } else {
-                        lastPPNabor.transitionColorImage(commandPool, graphicsQueue);
+                        lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
 
-                        ppNabor.bindImages(
+                        ppNabor.bindGBufferImages(
                                 commandBuffer,
+                                0,
                                 lastPPNabor.getColorImageView(),
                                 gBufferNabor.getDepthImageView(),
                                 gBufferNabor.getPositionImageView(),
@@ -515,7 +568,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 gBufferNabor.transitionAlbedoImage(commandPool, graphicsQueue);
                 colorImageView = gBufferNabor.getAlbedoImageView();
             } else {
-                lastPPNabor.transitionColorImage(commandPool, graphicsQueue);
+                lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
                 colorImageView = lastPPNabor.getColorImageView();
             }
 
@@ -574,7 +627,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             List<PointLight> pointLights,
             Vector3f pointLightAmbientColor,
             List<Spotlight> spotlights,
-            Vector3f spotlightAmbientColor) {
+            Vector3f spotlightAmbientColor,
+            ShadowMappingSettings shadowMappingSettings) {
         this.runGBufferNabor(backgroundColor, camera);
         this.runPostProcessingNabors(
                 camera,
@@ -584,7 +638,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 pointLights,
                 pointLightAmbientColor,
                 spotlights,
-                spotlightAmbientColor);
+                spotlightAmbientColor,
+                shadowMappingSettings);
         this.presentToFrontScreen();
     }
 

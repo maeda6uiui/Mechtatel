@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan.ubo;
+package com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing;
 
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import org.joml.Vector3f;
@@ -24,7 +24,7 @@ public class FogUBO {
     private Vector3f color;
     private float start;
     private float end;
-    
+
     public FogUBO(Fog fog) {
         color = fog.getColor();
         start = fog.getStart();

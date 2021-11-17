@@ -2,8 +2,8 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.LightingInfoUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.PointLightUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.LightingInfoUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.PointLightUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -24,7 +24,7 @@ public class PointLightNabor extends PostProcessingNabor {
     public static final int MAX_NUM_LIGHTS = 64;
 
     public PointLightNabor(VkDevice device) {
-        super(device, VK_SAMPLE_COUNT_1_BIT);
+        super(device, VK_SAMPLE_COUNT_1_BIT, false);
     }
 
     @Override

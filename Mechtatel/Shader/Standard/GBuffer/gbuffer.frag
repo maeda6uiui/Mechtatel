@@ -14,23 +14,13 @@ layout(location=0) in vec4 fragColor;
 layout(location=1) in vec2 fragTexCoords;
 layout(location=2) in vec3 fragPosition;
 layout(location=3) in vec3 fragNormal;
-layout(location=4) in mat4 fragMatModel;
 
 layout(location=0) out vec4 outColor;
 layout(location=1) out vec3 outPosition;
 layout(location=2) out vec3 outNormal;
-layout(location=3) out vec4 outMatModel0;
-layout(location=4) out vec4 outMatModel1;
-layout(location=5) out vec4 outMatModel2;
-layout(location=6) out vec4 outMatModel3;
 
 void main(){
     outColor=texture(sampler2D(textures[pc.textureIndex],textureSampler),fragTexCoords);
     outPosition=fragPosition;
     outNormal=fragNormal;
-
-    outMatModel0=fragMatModel[0];
-    outMatModel1=fragMatModel[1];
-    outMatModel2=fragMatModel[2];
-    outMatModel3=fragMatModel[3];
 }

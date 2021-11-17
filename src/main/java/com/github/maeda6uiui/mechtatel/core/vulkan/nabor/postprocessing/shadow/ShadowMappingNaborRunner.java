@@ -236,16 +236,6 @@ public class ShadowMappingNaborRunner {
                             gBufferNabor.getNormalImageView());
                 }
 
-                gBufferNabor.transitionModelMatImages(commandPool, graphicsQueue);
-
-                List<Long> modelMatImageViews = gBufferNabor.getModelMatImageViews();
-                shadowMappingNabor.bindImages(
-                        commandBuffer,
-                        1,
-                        1,
-                        4,
-                        modelMatImageViews);
-
                 int numShadowMaps = shadowParallelLights.size() + shadowSpotlights.size();
                 var shadowDepthImageViews = new ArrayList<Long>();
                 for (int i = 0; i < numShadowMaps; i++) {
@@ -256,7 +246,7 @@ public class ShadowMappingNaborRunner {
                             commandBuffer,
                             1,
                             1,
-                            5,
+                            4,
                             shadowDepthImageViews);
                 }
 

@@ -32,8 +32,7 @@ layout(set=1,binding=0) uniform texture2D albedoTexture;
 layout(set=1,binding=1) uniform texture2D depthTexture;
 layout(set=1,binding=2) uniform texture2D positionTexture;
 layout(set=1,binding=3) uniform texture2D normalTexture;
-layout(set=1,binding=4) uniform texture2D modelMatTextures[4];
-layout(set=1,binding=5) uniform texture2D shadowDepthTextures[MAX_NUM_SHADOW_MAPS];
+layout(set=1,binding=4) uniform texture2D shadowDepthTextures[MAX_NUM_SHADOW_MAPS];
 layout(set=2,binding=0) uniform sampler textureSampler;
 
 layout(location=0) in vec2 fragTexCoords;
@@ -45,11 +44,6 @@ void main(){
     float depth=texture(sampler2D(depthTexture,textureSampler),fragTexCoords).r;
     vec3 position=texture(sampler2D(positionTexture,textureSampler),fragTexCoords).rgb;
     vec3 normal=texture(sampler2D(normalTexture,textureSampler),fragTexCoords).rgb;
-
-    mat4 modelMat;
-    for(int i=0;i<4;i++){
-        modelMat[i]=texture(sampler2D(modelMatTextures[i],textureSampler),fragTexCoords);
-    }
 
     mat4 biasMat;
     biasMat[0]=vec4(0.5,0.0,0.0,0.0);
@@ -64,7 +58,7 @@ void main(){
         float bias=passInfo.biasCoefficient*tan(acos(cosTh));
         bias=clamp(bias,0.0,passInfo.maxBias);
 
-        vec4 shadowCoords=biasMat*shadowInfos[i].lightProj*shadowInfos[i].lightView*modelMat*vec4(position+normal*passInfo.normalOffset,1.0);
+        vec4 shadowCoords=biasMat*shadowInfos[i].lightProj*shadowInfos[i].lightView*vec4(position+normal*passInfo.normalOffset,1.0);
         float shadowDepth=texture(sampler2D(shadowDepthTextures[i],textureSampler),shadowCoords.xy).r;
 
         if(shadowInfos[i].projectionType==PROJECTION_TYPE_ORTHOGRAPHIC){

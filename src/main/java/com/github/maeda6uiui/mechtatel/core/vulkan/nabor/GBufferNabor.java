@@ -3,7 +3,6 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
@@ -29,7 +28,6 @@ public class GBufferNabor extends Nabor {
     private int depthImageFormat;
     private int positionImageFormat;
     private int normalImageFormat;
-    private int modelMatImageFormat;
 
     private int depthImageAspect;
 
@@ -37,20 +35,17 @@ public class GBufferNabor extends Nabor {
     private int depthAttachmentIndex;
     private int positionAttachmentIndex;
     private int normalAttachmentIndex;
-    private int modelMatAttachmentIndex;
 
     public GBufferNabor(
             VkDevice device,
             int depthImageFormat,
             int positionImageFormat,
-            int normalImageFormat,
-            int modelMatImageFormat) {
+            int normalImageFormat) {
         super(device, VK_SAMPLE_COUNT_1_BIT, false);
 
         this.depthImageFormat = depthImageFormat;
         this.positionImageFormat = positionImageFormat;
         this.normalImageFormat = normalImageFormat;
-        this.modelMatImageFormat = modelMatImageFormat;
 
         depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
         if (DepthResourceUtils.hasStencilComponent(depthImageFormat)) {
@@ -146,45 +141,6 @@ public class GBufferNabor extends Nabor {
         return this.getImageView(normalAttachmentIndex);
     }
 
-    public void transitionModelMatImages(long commandPool, VkQueue graphicsQueue) {
-        VkDevice device = this.getDevice();
-
-        long modelMat0Image = this.getImage(modelMatAttachmentIndex);
-        long modelMat1Image = this.getImage(modelMatAttachmentIndex + 1);
-        long modelMat2Image = this.getImage(modelMatAttachmentIndex + 2);
-        long modelMat3Image = this.getImage(modelMatAttachmentIndex + 3);
-        var modelMatImages = new long[]{modelMat0Image, modelMat1Image, modelMat2Image, modelMat3Image};
-
-        VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
-
-        for (int i = 0; i < modelMatImages.length; i++) {
-            ImageUtils.transitionImageLayout(
-                    commandBuffer,
-                    modelMatImages[i],
-                    VK_IMAGE_ASPECT_COLOR_BIT,
-                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                    1);
-        }
-
-        CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
-    }
-
-    public List<Long> getModelMatImageViews() {
-        long modelMat0ImageView = this.getImageView(modelMatAttachmentIndex);
-        long modelMat1ImageView = this.getImageView(modelMatAttachmentIndex + 1);
-        long modelMat2ImageView = this.getImageView(modelMatAttachmentIndex + 2);
-        long modelMat3ImageView = this.getImageView(modelMatAttachmentIndex + 3);
-
-        var modelMatImageViews = new ArrayList<Long>();
-        modelMatImageViews.add(modelMat0ImageView);
-        modelMatImageViews.add(modelMat1ImageView);
-        modelMatImageViews.add(modelMat2ImageView);
-        modelMatImageViews.add(modelMat3ImageView);
-
-        return modelMatImageViews;
-    }
-
     @Override
     public void cleanup(boolean reserveForRecreation) {
         super.cleanup(reserveForRecreation);
@@ -208,8 +164,8 @@ public class GBufferNabor extends Nabor {
             VkDevice device = this.getDevice();
             int msaaSamples = this.getMsaaSamples();
 
-            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(8, stack);
-            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(8, stack);
+            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(4, stack);
+            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(4, stack);
 
             //Albedo attachment
             albedoAttachmentIndex = 0;
@@ -279,36 +235,14 @@ public class GBufferNabor extends Nabor {
             normalAttachmentRef.attachment(normalAttachmentIndex);
             normalAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            //Model matrix attachments
-            modelMatAttachmentIndex = 4;
-
-            for (int i = 0; i < 4; i++) {
-                VkAttachmentDescription modelMatAttachment = attachments.get(modelMatAttachmentIndex + i);
-                modelMatAttachment.format(modelMatImageFormat);
-                modelMatAttachment.samples(msaaSamples);
-                modelMatAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
-                modelMatAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
-                modelMatAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
-                modelMatAttachment.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
-                modelMatAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
-                modelMatAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-
-                VkAttachmentReference modelMatAttachmentRef = attachmentRefs.get(modelMatAttachmentIndex + i);
-                modelMatAttachmentRef.attachment(modelMatAttachmentIndex + i);
-                modelMatAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-            }
-
-            VkAttachmentReference.Buffer colorAttachmentRefs = VkAttachmentReference.callocStack(7, stack);
+            VkAttachmentReference.Buffer colorAttachmentRefs = VkAttachmentReference.callocStack(3, stack);
             colorAttachmentRefs.put(0, colorAttachmentRef);
             colorAttachmentRefs.put(1, positionAttachmentRef);
             colorAttachmentRefs.put(2, normalAttachmentRef);
-            for (int i = 0; i < 4; i++) {
-                colorAttachmentRefs.put(3 + i, attachmentRefs.get(modelMatAttachmentIndex + i));
-            }
 
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.callocStack(1, stack);
             subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
-            subpass.colorAttachmentCount(7);
+            subpass.colorAttachmentCount(3);
             subpass.pColorAttachments(colorAttachmentRefs);
             subpass.pDepthStencilAttachment(depthAttachmentRef);
 
@@ -670,8 +604,8 @@ public class GBufferNabor extends Nabor {
 
             //Color blending
             VkPipelineColorBlendAttachmentState.Buffer colorBlendAttachments
-                    = VkPipelineColorBlendAttachmentState.callocStack(7, stack);
-            for (int i = 0; i < 7; i++) {
+                    = VkPipelineColorBlendAttachmentState.callocStack(3, stack);
+            for (int i = 0; i < 3; i++) {
                 VkPipelineColorBlendAttachmentState colorBlendAttachment = colorBlendAttachments.get(i);
                 colorBlendAttachment.colorWriteMask(
                         VK_COLOR_COMPONENT_R_BIT |
@@ -875,37 +809,6 @@ public class GBufferNabor extends Nabor {
             this.getImages().add(normalImage);
             this.getImageMemories().add(normalImageMemory);
             this.getImageViews().add(normalImageView);
-
-            //Model matrix images
-            for (int i = 0; i < 4; i++) {
-                ImageUtils.createImage(
-                        device,
-                        extent.width(),
-                        extent.height(),
-                        1,
-                        msaaSamples,
-                        modelMatImageFormat,
-                        VK_IMAGE_TILING_OPTIMAL,
-                        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-                        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                        pImage,
-                        pImageMemory);
-                long modelMatImage = pImage.get(0);
-                long modelMatImageMemory = pImageMemory.get(0);
-
-                viewInfo.image(modelMatImage);
-                viewInfo.format(modelMatImageFormat);
-                viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
-
-                if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
-                    throw new RuntimeException("Failed to create an image view");
-                }
-                long modelMatImageView = pImageView.get(0);
-
-                this.getImages().add(modelMatImage);
-                this.getImageMemories().add(modelMatImageMemory);
-                this.getImageViews().add(modelMatImageView);
-            }
         }
     }
 }

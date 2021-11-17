@@ -31,7 +31,6 @@ public class MyMechtatel extends Mechtatel {
     }
 
     private Model3D ground;
-    private Model3D teapot;
     private Model3D[] cubes;
 
     private Vector3f cameraPosition;
@@ -45,9 +44,6 @@ public class MyMechtatel extends Mechtatel {
     @Override
     public void init() {
         ground = this.createModel3D("./Mechtatel/Model/Plane/plane.obj");
-        teapot = this.createModel3D("./Mechtatel/Model/Teapot/teapot.obj");
-        teapot.setVisible(false);
-        teapot.setCastShadow(false);
 
         cubes = new Model3D[5];
         cubes[0] = this.createModel3D("./Mechtatel/Model/Cube/cube.obj");
@@ -68,7 +64,7 @@ public class MyMechtatel extends Mechtatel {
         this.getFog().setStart(5.0f);
         this.getFog().setEnd(10.0f);
 
-        cameraPosition = new Vector3f(5.0f, 5.0f, 5.0f);
+        cameraPosition = new Vector3f(4.0f, 4.0f, 4.0f);
         cameraCenter = new Vector3f(0.0f, 0.0f, 0.0f);
         this.getCamera().setEye(cameraPosition);
         this.getCamera().setCenter(cameraCenter);

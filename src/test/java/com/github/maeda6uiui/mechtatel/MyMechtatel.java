@@ -59,7 +59,7 @@ public class MyMechtatel extends Mechtatel {
 
         var ppNaborNames = new ArrayList<String>();
         ppNaborNames.add("shadow_mapping");
-        ppNaborNames.add("fog");
+        ppNaborNames.add("spotlight");
         this.createPostProcessingNabors(ppNaborNames);
 
         this.getFog().setStart(10.0f);
@@ -70,18 +70,15 @@ public class MyMechtatel extends Mechtatel {
         this.getCamera().setEye(cameraPosition);
         this.getCamera().setCenter(cameraCenter);
 
-        parallelLight = this.createParallelLight();
-        lightPosition = new Vector3f(50.0f, 50.0f, 50.0f);
+        lightPosition = new Vector3f(10.0f, 10.0f, 10.0f);
         lightCenter = new Vector3f(0.0f, 0.0f, 0.0f);
         var lightDirection = lightCenter.sub(lightPosition);
-        parallelLight.setPosition(lightPosition);
-        parallelLight.setDirection(lightDirection);
-        parallelLight.setCastShadow(true);
 
         spotlight = this.createSpotlight();
         spotlight.setPosition(lightPosition);
         spotlight.setDirection(lightDirection);
-        spotlight.setCastShadow(false);
+        spotlight.setCastShadow(true);
+        this.setSpotlightAmbientColor(new Vector3f(0.0f, 0.0f, 0.0f));
     }
 
     @Override
@@ -99,13 +96,8 @@ public class MyMechtatel extends Mechtatel {
     public void update() {
         new Matrix4f().rotateY((float) Math.toRadians(0.5)).transformPosition(lightPosition);
         var lightDirection = lightCenter.sub(lightPosition);
-        parallelLight.setPosition(lightPosition);
-        parallelLight.setDirection(lightDirection);
 
         spotlight.setPosition(lightPosition);
         spotlight.setDirection(lightDirection);
-
-        //new Matrix4f().rotateY((float) Math.toRadians(0.3)).transformPosition(cameraPosition);
-        //this.getCamera().setEye(cameraPosition);
     }
 }

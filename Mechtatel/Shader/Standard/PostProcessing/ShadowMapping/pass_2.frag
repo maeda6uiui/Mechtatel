@@ -59,13 +59,14 @@ void main(){
         bias=clamp(bias,0.0,passInfo.maxBias);
 
         vec4 shadowCoords=biasMat*shadowInfos[i].lightProj*shadowInfos[i].lightView*vec4(position+normal*passInfo.normalOffset,1.0);
-        float shadowDepth=texture(sampler2D(shadowDepthTextures[i],textureSampler),shadowCoords.xy).r;
 
         if(shadowInfos[i].projectionType==PROJECTION_TYPE_ORTHOGRAPHIC){
+            float shadowDepth=texture(sampler2D(shadowDepthTextures[i],textureSampler),shadowCoords.xy).r;
             if(shadowDepth<shadowCoords.z-bias){
                 shadowFactors*=shadowInfos[i].attenuations;
             }
         }else if(shadowInfos[i].projectionType==PROJECTION_TYPE_PERSPECTIVE){
+            float shadowDepth=texture(sampler2D(shadowDepthTextures[i],textureSampler),shadowCoords.xy/shadowCoords.w).r;
             if(shadowDepth<(shadowCoords.z-bias)/shadowCoords.w){
                 shadowFactors*=shadowInfos[i].attenuations;
             }

@@ -3,7 +3,6 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
-import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -36,7 +35,6 @@ public class MyMechtatel extends Mechtatel {
     private Vector3f cameraPosition;
     private Vector3f cameraCenter;
 
-    private ParallelLight parallelLight;
     private Spotlight spotlight;
     private Vector3f lightPosition;
     private Vector3f lightCenter;
@@ -58,12 +56,9 @@ public class MyMechtatel extends Mechtatel {
         cubes[4].rescale(new Vector3f(1.0f, 2.0f, 1.0f));
 
         var ppNaborNames = new ArrayList<String>();
-        ppNaborNames.add("shadow_mapping");
         ppNaborNames.add("spotlight");
+        ppNaborNames.add("shadow_mapping");
         this.createPostProcessingNabors(ppNaborNames);
-
-        this.getFog().setStart(10.0f);
-        this.getFog().setEnd(20.0f);
 
         cameraPosition = new Vector3f(5.0f, 5.0f, 5.0f);
         cameraCenter = new Vector3f(0.0f, 0.0f, 0.0f);
@@ -77,7 +72,6 @@ public class MyMechtatel extends Mechtatel {
         spotlight = this.createSpotlight();
         spotlight.setPosition(lightPosition);
         spotlight.setDirection(lightDirection);
-        spotlight.setCastShadow(true);
         this.setSpotlightAmbientColor(new Vector3f(0.0f, 0.0f, 0.0f));
     }
 

@@ -59,12 +59,13 @@ public class MyMechtatel extends Mechtatel {
 
         var ppNaborNames = new ArrayList<String>();
         ppNaborNames.add("shadow_mapping");
+        ppNaborNames.add("fog");
         this.createPostProcessingNabors(ppNaborNames);
 
-        this.getFog().setStart(5.0f);
-        this.getFog().setEnd(10.0f);
+        this.getFog().setStart(10.0f);
+        this.getFog().setEnd(20.0f);
 
-        cameraPosition = new Vector3f(4.0f, 4.0f, 4.0f);
+        cameraPosition = new Vector3f(5.0f, 5.0f, 5.0f);
         cameraCenter = new Vector3f(0.0f, 0.0f, 0.0f);
         this.getCamera().setEye(cameraPosition);
         this.getCamera().setCenter(cameraCenter);

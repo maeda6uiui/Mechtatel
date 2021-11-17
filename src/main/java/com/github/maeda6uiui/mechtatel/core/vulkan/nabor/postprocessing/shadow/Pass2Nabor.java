@@ -28,6 +28,39 @@ class Pass2Nabor extends PostProcessingNabor {
     }
 
     @Override
+    protected void createTextureSamplers() {
+        VkDevice device = this.getDevice();
+
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkSamplerCreateInfo samplerInfo = VkSamplerCreateInfo.callocStack(stack);
+            samplerInfo.sType(VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO);
+            samplerInfo.magFilter(VK_FILTER_LINEAR);
+            samplerInfo.minFilter(VK_FILTER_LINEAR);
+            samplerInfo.addressModeU(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
+            samplerInfo.addressModeV(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
+            samplerInfo.addressModeW(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
+            samplerInfo.anisotropyEnable(true);
+            samplerInfo.maxAnisotropy(16.0f);
+            samplerInfo.borderColor(VK_BORDER_COLOR_INT_OPAQUE_BLACK);
+            samplerInfo.unnormalizedCoordinates(false);
+            samplerInfo.compareEnable(false);
+            samplerInfo.compareOp(VK_COMPARE_OP_ALWAYS);
+            samplerInfo.mipmapMode(VK_SAMPLER_MIPMAP_MODE_LINEAR);
+            samplerInfo.minLod(0.0f);
+            samplerInfo.maxLod(10.0f);
+            samplerInfo.mipLodBias(0.0f);
+
+            LongBuffer pTextureSampler = stack.mallocLong(1);
+            if (vkCreateSampler(device, samplerInfo, null, pTextureSampler) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create a texture sampler");
+            }
+
+            long textureSampler = pTextureSampler.get(0);
+            this.getTextureSamplers().add(textureSampler);
+        }
+    }
+
+    @Override
     protected void createUniformBuffers(int descriptorCount) {
         VkDevice device = this.getDevice();
 

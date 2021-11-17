@@ -27,7 +27,21 @@ Javaでゲームエンジンを作ることを目標としているプロジェ�
 結局自分が死ぬまで何も成し遂げられないかもしれませんし、あるいは何か芸術的なゴミを生み出すことができるかもしれません。
 「この人を応援したい！」とか思うような頭のおかしい人は、Starでも付けていってください...。
 
-## 報告
+## 進捗報告
+
+### 2021-11-17
+
+基礎的なシャドウマッピングは実装できました。
+
+<img src="./Image/shadow_mapping_2.jpg" alt="Shadow Mapping (Parallel Light)" style="zoom:50%;" />
+
+<img src="./Image/shadow_mapping_3.jpg" alt="Shadow Mapping (Spotlight)" style="zoom:50%;" />
+
+色付きの影を出すこともできます。
+
+<img src="./Image/shadow_mapping_4.jpg" alt="Shadow Mapping (Spotlight) 2" style="zoom:50%;" />
+
+シャドウマッピングにこだわり始めるときりがないので、このあたりで一度気持ちを落ち着けようと思います。
 
 ### 2021-11-14
 
@@ -75,7 +89,7 @@ biasMat[2]=vec4(0.0,0.0,1.0,0.0);
 biasMat[3]=vec4(0.5,0.5,0.0,1.0);
 ```
 
-詳しい原因究明はまた今度...
+~~詳しい原因究明はまた今度...~~
 
 ### 2021-11-13
 

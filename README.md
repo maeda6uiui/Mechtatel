@@ -29,6 +29,27 @@ Javaでゲームエンジンを作ることを目標としているプロジェ�
 
 ## 進捗報告
 
+### 2021-12-12
+
+開発環境をUbuntuに移行しました。
+Ubuntuでも問題なく動作しているように見えます。
+
+<img src="./Image/run_on_ubuntu.jpg" alt="Ubuntuで実行" style="zoom:50%;" />
+
+ただ、Windowsで開発していたときには出なかったValidation Errorが出ます。
+
+```
+Validation Error: [ VUID-VkPipelineLayoutCreateInfo-pSetLayouts-00288 ] Object 0: handle = 0x7f82a0d39be0, type = VK_OBJECT_TYPE_DEVICE; | MessageID = 0xef93e10c | vkCreatePipelineLayout(): max per-stage uniform buffer bindings count (66) exceeds device maxPerStageDescriptorUniformBuffers limit (64). The Vulkan spec states: The total number of descriptors of the type VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER and VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC accessible to any shader stage across all elements of pSetLayouts must be less than or equal to VkPhysicalDeviceLimits::maxPerStageDescriptorUniformBuffers (https://vulkan.lunarg.com/doc/view/1.2.198.0/linux/1.2-extensions/vkspec.html#VUID-VkPipelineLayoutCreateInfo-pSetLayouts-00288)
+```
+
+スポットライトでUBOを64個割り当てているので、それが上限値を超えていますよ、というエラーだと思います。
+カメラで1個、ライティング情報で1個、スポットライトで64個なので、エラーメッセージに出力されている数(66)とも一致します。
+試しにスポットライトに割り当てるUBOを32個にしたら、このValidation Errorは出なくなりました。
+
+Windowsで開発しているときにはこのValidation Errorは出なかったはずなんですが、原因はよくわかりません。
+
+このエラーを無視しても動作に問題はなさそうなので、とりあえずはこのまま進めていきたいと思います。
+
 ### 2021-11-17
 
 基礎的なシャドウマッピングは実装できました。

@@ -20,7 +20,7 @@ public class CommandPoolCreator {
             QueueFamilyUtils.QueueFamilyIndices queueFamilyIndices
                     = QueueFamilyUtils.findQueueFamilies(device.getPhysicalDevice(), surface);
 
-            VkCommandPoolCreateInfo poolInfo = VkCommandPoolCreateInfo.callocStack(stack);
+            VkCommandPoolCreateInfo poolInfo = VkCommandPoolCreateInfo.calloc(stack);
             poolInfo.sType(VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO);
             poolInfo.queueFamilyIndex(queueFamilyIndices.graphicsFamily);
 

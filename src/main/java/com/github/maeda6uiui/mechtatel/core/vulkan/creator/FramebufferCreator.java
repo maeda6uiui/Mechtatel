@@ -30,7 +30,7 @@ public class FramebufferCreator {
             LongBuffer attachments = stack.longs(colorImageView, depthImageView, VK_NULL_HANDLE);
             LongBuffer pFramebuffer = stack.mallocLong(1);
 
-            VkFramebufferCreateInfo framebufferInfo = VkFramebufferCreateInfo.callocStack(stack);
+            VkFramebufferCreateInfo framebufferInfo = VkFramebufferCreateInfo.calloc(stack);
             framebufferInfo.sType(VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO);
             framebufferInfo.renderPass(renderPass);
             framebufferInfo.width(extent.width());
@@ -62,7 +62,7 @@ public class FramebufferCreator {
             LongBuffer attachments = stack.longs(colorImageView, depthImageView);
             LongBuffer pFramebuffer = stack.mallocLong(1);
 
-            VkFramebufferCreateInfo framebufferInfo = VkFramebufferCreateInfo.callocStack(stack);
+            VkFramebufferCreateInfo framebufferInfo = VkFramebufferCreateInfo.calloc(stack);
             framebufferInfo.sType(VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO);
             framebufferInfo.renderPass(renderPass);
             framebufferInfo.width(extent.width());

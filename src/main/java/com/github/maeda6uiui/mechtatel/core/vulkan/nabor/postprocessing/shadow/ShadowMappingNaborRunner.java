@@ -42,15 +42,15 @@ public class ShadowMappingNaborRunner {
             var pass1InfoUBO = new Pass1InfoUBO(pass1Info);
             pass1InfoUBO.update(device, pass1InfoUBOMemory);
 
-            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
+            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
             renderPassInfo.renderPass(shadowMappingNabor.getRenderPass(0));
             renderPassInfo.framebuffer(shadowMappingNabor.getFramebuffer(0, 0));
-            VkRect2D renderArea = VkRect2D.callocStack(stack);
-            renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
+            VkRect2D renderArea = VkRect2D.calloc(stack);
+            renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
             renderArea.extent(shadowMappingNabor.getExtent(0));
             renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.callocStack(1, stack);
+            VkClearValue.Buffer clearValues = VkClearValue.calloc(1, stack);
             clearValues.get(0).depthStencil().set(1.0f, 0);
             renderPassInfo.pClearValues(clearValues);
 
@@ -105,12 +105,12 @@ public class ShadowMappingNaborRunner {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkExtent2D extent = shadowMappingNabor.getExtent(0);
 
-            VkImageCopy.Buffer imageCopyRegion = VkImageCopy.callocStack(1, stack);
+            VkImageCopy.Buffer imageCopyRegion = VkImageCopy.calloc(1, stack);
             imageCopyRegion.srcSubresource().aspectMask(VK_IMAGE_ASPECT_DEPTH_BIT);
             imageCopyRegion.srcSubresource().layerCount(1);
             imageCopyRegion.dstSubresource().aspectMask(VK_IMAGE_ASPECT_DEPTH_BIT);
             imageCopyRegion.dstSubresource().layerCount(1);
-            imageCopyRegion.extent(VkExtent3D.callocStack(stack).set(extent.width(), extent.height(), 1));
+            imageCopyRegion.extent(VkExtent3D.calloc(stack).set(extent.width(), extent.height(), 1));
 
             long depthSrcImage = shadowMappingNabor.getImage(0, 0);
             long depthDstImage = shadowMappingNabor.getUserDefImage(shadowMapIndex);
@@ -187,15 +187,15 @@ public class ShadowMappingNaborRunner {
                 shadowInfoUBO.update(device, shadowInfosUBOMemory, shadowParallelLights.size() + i);
             }
 
-            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
+            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
             renderPassInfo.renderPass(shadowMappingNabor.getRenderPass(1));
             renderPassInfo.framebuffer(shadowMappingNabor.getFramebuffer(1, 0));
-            VkRect2D renderArea = VkRect2D.callocStack(stack);
-            renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
+            VkRect2D renderArea = VkRect2D.calloc(stack);
+            renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
             renderArea.extent(shadowMappingNabor.getExtent());
             renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.callocStack(1, stack);
+            VkClearValue.Buffer clearValues = VkClearValue.calloc(1, stack);
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
             renderPassInfo.pClearValues(clearValues);
 

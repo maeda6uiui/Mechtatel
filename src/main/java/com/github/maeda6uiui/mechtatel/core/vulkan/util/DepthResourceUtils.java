@@ -16,7 +16,7 @@ import static org.lwjgl.vulkan.VK10.*;
 public class DepthResourceUtils {
     public static int findSupportedFormat(VkDevice device, IntBuffer formatCandidates, int tiling, int features) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkFormatProperties props = VkFormatProperties.callocStack(stack);
+            VkFormatProperties props = VkFormatProperties.calloc(stack);
 
             for (int i = 0; i < formatCandidates.capacity(); i++) {
                 int format = formatCandidates.get(i);

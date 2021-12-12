@@ -28,16 +28,16 @@ public class LogicalDeviceCreator {
             QueueFamilyUtils.QueueFamilyIndices indices
                     = QueueFamilyUtils.findQueueFamilies(physicalDevice, surface);
 
-            VkDeviceQueueCreateInfo.Buffer queueCreateInfos = VkDeviceQueueCreateInfo.callocStack(1, stack);
+            VkDeviceQueueCreateInfo.Buffer queueCreateInfos = VkDeviceQueueCreateInfo.calloc(1, stack);
             queueCreateInfos.sType(VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO);
             queueCreateInfos.queueFamilyIndex(indices.graphicsFamily);
             queueCreateInfos.pQueuePriorities(stack.floats(1.0f));
 
-            VkPhysicalDeviceFeatures deviceFeatures = VkPhysicalDeviceFeatures.callocStack(stack);
+            VkPhysicalDeviceFeatures deviceFeatures = VkPhysicalDeviceFeatures.calloc(stack);
             deviceFeatures.samplerAnisotropy(true);
             deviceFeatures.sampleRateShading(true);
 
-            VkDeviceCreateInfo createInfo = VkDeviceCreateInfo.callocStack(stack);
+            VkDeviceCreateInfo createInfo = VkDeviceCreateInfo.calloc(stack);
             createInfo.sType(VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO);
             createInfo.pQueueCreateInfos(queueCreateInfos);
             createInfo.pEnabledFeatures(deviceFeatures);

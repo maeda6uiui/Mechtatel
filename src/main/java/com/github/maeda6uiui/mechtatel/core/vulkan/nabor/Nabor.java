@@ -391,7 +391,7 @@ public class Nabor {
     //===== Methods executed in compile() and recreate() =====
     protected void createTextureSamplers() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkSamplerCreateInfo samplerInfo = VkSamplerCreateInfo.callocStack(stack);
+            VkSamplerCreateInfo samplerInfo = VkSamplerCreateInfo.calloc(stack);
             samplerInfo.sType(VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO);
             samplerInfo.magFilter(VK_FILTER_LINEAR);
             samplerInfo.minFilter(VK_FILTER_LINEAR);
@@ -469,7 +469,7 @@ public class Nabor {
                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                     1);
 
-            VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.callocStack(stack);
+            VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.calloc(stack);
             viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
             viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
             viewInfo.image(dummyImage);
@@ -518,7 +518,7 @@ public class Nabor {
 
             LongBuffer pFramebuffer = stack.mallocLong(1);
 
-            VkFramebufferCreateInfo framebufferInfo = VkFramebufferCreateInfo.callocStack(stack);
+            VkFramebufferCreateInfo framebufferInfo = VkFramebufferCreateInfo.calloc(stack);
             framebufferInfo.sType(VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO);
             framebufferInfo.renderPass(renderPass);
             framebufferInfo.width(extent.width());
@@ -634,7 +634,7 @@ public class Nabor {
     //==========
     protected long createShaderModule(VkDevice device, ByteBuffer spirvCode) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkShaderModuleCreateInfo createInfo = VkShaderModuleCreateInfo.callocStack(stack);
+            VkShaderModuleCreateInfo createInfo = VkShaderModuleCreateInfo.calloc(stack);
             createInfo.sType(VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO);
             createInfo.pCode(spirvCode);
 
@@ -673,7 +673,7 @@ public class Nabor {
                     pImage,
                     pImageMemory);
 
-            VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.callocStack(stack);
+            VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.calloc(stack);
             viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
             viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
             viewInfo.image(pImage.get(0));
@@ -735,7 +735,7 @@ public class Nabor {
             VkDevice device = this.getDevice();
             int numImageViews = imageViews.size();
 
-            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.callocStack(numImageViews, stack);
+            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.calloc(numImageViews, stack);
             for (int i = 0; i < numImageViews; i++) {
                 long imageView = imageViews.get(i);
 
@@ -744,7 +744,7 @@ public class Nabor {
                 imageInfo.imageView(imageView);
             }
 
-            VkWriteDescriptorSet.Buffer imageDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            VkWriteDescriptorSet.Buffer imageDescriptorWrite = VkWriteDescriptorSet.calloc(1, stack);
             imageDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
             imageDescriptorWrite.dstBinding(dstBinding);
             imageDescriptorWrite.dstArrayElement(0);

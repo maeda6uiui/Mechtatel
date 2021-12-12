@@ -65,7 +65,7 @@ public class ModelLoader {
     private static void processMaterial(AIMaterial aiMaterial, Material material) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             //Get the filepath of the diffuse texture
-            AIString aiDiffuseTexFilepath = AIString.callocStack(stack);
+            AIString aiDiffuseTexFilepath = AIString.calloc(stack);
             aiGetMaterialTexture(
                     aiMaterial,
                     aiTextureType_DIFFUSE,
@@ -82,7 +82,7 @@ public class ModelLoader {
             material.diffuseTexFilepath = diffuseTextFilepath;
 
             //Get the material colors
-            AIColor4D color = AIColor4D.callocStack(stack);
+            AIColor4D color = AIColor4D.calloc(stack);
 
             int result = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_AMBIENT, aiTextureType_NONE, 0, color);
             if (result == 0) {

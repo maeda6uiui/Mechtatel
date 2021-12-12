@@ -84,7 +84,7 @@ public class Texture {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
 
-            VkBufferImageCopy.Buffer region = VkBufferImageCopy.callocStack(1, stack);
+            VkBufferImageCopy.Buffer region = VkBufferImageCopy.calloc(1, stack);
             region.bufferOffset(0);
             region.bufferRowLength(0);
             region.bufferImageHeight(0);
@@ -93,7 +93,7 @@ public class Texture {
             region.imageSubresource().baseArrayLayer(0);
             region.imageSubresource().layerCount(1);
             region.imageOffset().set(0, 0, 0);
-            region.imageExtent(VkExtent3D.callocStack(stack).set(width, height, 1));
+            region.imageExtent(VkExtent3D.calloc(stack).set(width, height, 1));
 
             vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, region);
 
@@ -112,7 +112,7 @@ public class Texture {
 
             VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
 
-            VkImageMemoryBarrier.Buffer barrier = VkImageMemoryBarrier.callocStack(1, stack);
+            VkImageMemoryBarrier.Buffer barrier = VkImageMemoryBarrier.calloc(1, stack);
             barrier.sType(VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER);
             barrier.image(textureImage);
             barrier.srcQueueFamilyIndex(VK_QUEUE_FAMILY_IGNORED);
@@ -141,7 +141,7 @@ public class Texture {
                         null,
                         barrier);
 
-                VkImageBlit.Buffer blit = VkImageBlit.callocStack(1, stack);
+                VkImageBlit.Buffer blit = VkImageBlit.calloc(1, stack);
                 blit.srcOffsets(0).set(0, 0, 0);
                 blit.srcOffsets(1).set(mipWidth, mipHeight, 1);
                 blit.srcSubresource().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
@@ -309,11 +309,11 @@ public class Texture {
             List<Long> descriptorSets,
             int setCount) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkDescriptorImageInfo.Buffer textureInfo = VkDescriptorImageInfo.callocStack(1, stack);
+            VkDescriptorImageInfo.Buffer textureInfo = VkDescriptorImageInfo.calloc(1, stack);
             textureInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
             textureInfo.imageView(textureImageView);
 
-            VkWriteDescriptorSet.Buffer textureDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            VkWriteDescriptorSet.Buffer textureDescriptorWrite = VkWriteDescriptorSet.calloc(1, stack);
             textureDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
             textureDescriptorWrite.dstBinding(0);
             textureDescriptorWrite.dstArrayElement(textureIndex);

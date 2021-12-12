@@ -19,7 +19,7 @@ public class CommandBufferUtils {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             var commandBuffers = new ArrayList<VkCommandBuffer>(numSwapchainImages);
 
-            VkCommandBufferAllocateInfo allocInfo = VkCommandBufferAllocateInfo.callocStack(stack);
+            VkCommandBufferAllocateInfo allocInfo = VkCommandBufferAllocateInfo.calloc(stack);
             allocInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO);
             allocInfo.level(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
             allocInfo.commandPool(commandPool);
@@ -40,7 +40,7 @@ public class CommandBufferUtils {
 
     public static VkCommandBuffer beginSingleTimeCommands(VkDevice device, long commandPool) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkCommandBufferAllocateInfo allocInfo = VkCommandBufferAllocateInfo.callocStack(stack);
+            VkCommandBufferAllocateInfo allocInfo = VkCommandBufferAllocateInfo.calloc(stack);
             allocInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO);
             allocInfo.level(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
             allocInfo.commandPool(commandPool);
@@ -50,7 +50,7 @@ public class CommandBufferUtils {
             vkAllocateCommandBuffers(device, allocInfo, pCommandBuffer);
             var commandBuffer = new VkCommandBuffer(pCommandBuffer.get(0), device);
 
-            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
+            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.calloc(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
             beginInfo.flags(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
@@ -68,7 +68,7 @@ public class CommandBufferUtils {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             vkEndCommandBuffer(commandBuffer);
 
-            VkSubmitInfo.Buffer submitInfo = VkSubmitInfo.callocStack(1, stack);
+            VkSubmitInfo.Buffer submitInfo = VkSubmitInfo.calloc(1, stack);
             submitInfo.sType(VK_STRUCTURE_TYPE_SUBMIT_INFO);
             submitInfo.pCommandBuffers(stack.pointers(commandBuffer));
 

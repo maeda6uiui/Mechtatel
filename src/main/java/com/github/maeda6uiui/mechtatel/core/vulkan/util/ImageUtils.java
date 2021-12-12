@@ -26,7 +26,7 @@ public class ImageUtils {
             LongBuffer pImage,
             LongBuffer pImageMemory) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkImageCreateInfo imageInfo = VkImageCreateInfo.callocStack(stack);
+            VkImageCreateInfo imageInfo = VkImageCreateInfo.calloc(stack);
             imageInfo.sType(VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO);
             imageInfo.imageType(VK_IMAGE_TYPE_2D);
             imageInfo.extent().width(width);
@@ -48,7 +48,7 @@ public class ImageUtils {
             VkMemoryRequirements memRequirements = VkMemoryRequirements.mallocStack(stack);
             vkGetImageMemoryRequirements(device, pImage.get(0), memRequirements);
 
-            VkMemoryAllocateInfo allocInfo = VkMemoryAllocateInfo.callocStack(stack);
+            VkMemoryAllocateInfo allocInfo = VkMemoryAllocateInfo.calloc(stack);
             allocInfo.sType(VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO);
             allocInfo.allocationSize(memRequirements.size());
             allocInfo.memoryTypeIndex(MemoryUtils.findMemoryType(device, memRequirements.memoryTypeBits(), memProperties));
@@ -69,7 +69,7 @@ public class ImageUtils {
             int newLayout,
             int mipLevels) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkImageMemoryBarrier.Buffer barrier = VkImageMemoryBarrier.callocStack(1, stack);
+            VkImageMemoryBarrier.Buffer barrier = VkImageMemoryBarrier.calloc(1, stack);
             barrier.sType(VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER);
             barrier.oldLayout(oldLayout);
             barrier.newLayout(newLayout);

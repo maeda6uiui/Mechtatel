@@ -90,7 +90,7 @@ public class Swapchain {
 
             swapchainImageFormat = surfaceFormat.format();
 
-            VkSwapchainCreateInfoKHR createInfo = VkSwapchainCreateInfoKHR.callocStack(stack);
+            VkSwapchainCreateInfoKHR createInfo = VkSwapchainCreateInfoKHR.calloc(stack);
             createInfo.sType(VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR);
             createInfo.surface(surface);
             createInfo.minImageCount(imageCount.get(0));
@@ -135,7 +135,7 @@ public class Swapchain {
             //Create swapchain image views
             swapchainImageViews = new ArrayList<>(swapchainImages.size());
 
-            VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.callocStack(stack);
+            VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.calloc(stack);
             viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
             viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
             viewInfo.format(swapchainImageFormat);
@@ -175,7 +175,7 @@ public class Swapchain {
             LongBuffer attachments = stack.longs(VK_NULL_HANDLE);
             LongBuffer pFramebuffer = stack.mallocLong(1);
 
-            VkFramebufferCreateInfo framebufferInfo = VkFramebufferCreateInfo.callocStack(stack);
+            VkFramebufferCreateInfo framebufferInfo = VkFramebufferCreateInfo.calloc(stack);
             framebufferInfo.sType(VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO);
             framebufferInfo.renderPass(renderPass);
             framebufferInfo.width(swapchainExtent.width());

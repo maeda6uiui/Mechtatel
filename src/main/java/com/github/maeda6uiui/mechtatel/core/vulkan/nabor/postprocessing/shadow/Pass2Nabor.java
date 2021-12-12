@@ -32,7 +32,7 @@ class Pass2Nabor extends PostProcessingNabor {
         VkDevice device = this.getDevice();
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkSamplerCreateInfo samplerInfo = VkSamplerCreateInfo.callocStack(stack);
+            VkSamplerCreateInfo samplerInfo = VkSamplerCreateInfo.calloc(stack);
             samplerInfo.sType(VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO);
             samplerInfo.magFilter(VK_FILTER_LINEAR);
             samplerInfo.minFilter(VK_FILTER_LINEAR);
@@ -85,7 +85,7 @@ class Pass2Nabor extends PostProcessingNabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.callocStack(2, stack);
+            VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.calloc(2, stack);
 
             VkDescriptorSetLayoutBinding pass2InfoUBOLayoutBinding = uboBindings.get(0);
             pass2InfoUBOLayoutBinding.binding(0);
@@ -102,7 +102,7 @@ class Pass2Nabor extends PostProcessingNabor {
             shadowInfoUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 1 ===
-            VkDescriptorSetLayoutBinding.Buffer imageBindings = VkDescriptorSetLayoutBinding.callocStack(5, stack);
+            VkDescriptorSetLayoutBinding.Buffer imageBindings = VkDescriptorSetLayoutBinding.calloc(5, stack);
 
             VkDescriptorSetLayoutBinding albedoImageLayoutBinding = imageBindings.get(0);
             albedoImageLayoutBinding.binding(0);
@@ -140,7 +140,7 @@ class Pass2Nabor extends PostProcessingNabor {
             shadowDepthImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 2 ===
-            VkDescriptorSetLayoutBinding.Buffer samplerBindings = VkDescriptorSetLayoutBinding.callocStack(1, stack);
+            VkDescriptorSetLayoutBinding.Buffer samplerBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
 
             VkDescriptorSetLayoutBinding samplerLayoutBinding = samplerBindings.get(0);
             samplerLayoutBinding.binding(0);
@@ -150,7 +150,7 @@ class Pass2Nabor extends PostProcessingNabor {
             samplerLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //Create descriptor set layouts
-            VkDescriptorSetLayoutCreateInfo.Buffer layoutInfos = VkDescriptorSetLayoutCreateInfo.callocStack(3, stack);
+            VkDescriptorSetLayoutCreateInfo.Buffer layoutInfos = VkDescriptorSetLayoutCreateInfo.calloc(3, stack);
 
             //=== set 0 ===
             VkDescriptorSetLayoutCreateInfo uboLayoutInfo = layoutInfos.get(0);
@@ -185,7 +185,7 @@ class Pass2Nabor extends PostProcessingNabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.callocStack(2, stack);
+            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.calloc(2, stack);
 
             VkDescriptorPoolSize pass2InfoUBOPoolSize = uboPoolSizes.get(0);
             pass2InfoUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
@@ -196,7 +196,7 @@ class Pass2Nabor extends PostProcessingNabor {
             shadowInfoUBOPoolSize.descriptorCount(descriptorCount * MAX_NUM_SHADOW_MAPS);
 
             //=== set 1 ===
-            VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.callocStack(5, stack);
+            VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.calloc(5, stack);
 
             VkDescriptorPoolSize albedoImagePoolSize = imagePoolSizes.get(0);
             albedoImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
@@ -219,14 +219,14 @@ class Pass2Nabor extends PostProcessingNabor {
             shadowDepthImagePoolSize.descriptorCount(descriptorCount * MAX_NUM_SHADOW_MAPS);
 
             //=== set 2 ===
-            VkDescriptorPoolSize.Buffer samplerPoolSizes = VkDescriptorPoolSize.callocStack(1, stack);
+            VkDescriptorPoolSize.Buffer samplerPoolSizes = VkDescriptorPoolSize.calloc(1, stack);
 
             VkDescriptorPoolSize samplerPoolSize = samplerPoolSizes.get(0);
             samplerPoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLER);
             samplerPoolSize.descriptorCount(descriptorCount);
 
             //Create descriptor pools
-            VkDescriptorPoolCreateInfo.Buffer poolInfos = VkDescriptorPoolCreateInfo.callocStack(3, stack);
+            VkDescriptorPoolCreateInfo.Buffer poolInfos = VkDescriptorPoolCreateInfo.calloc(3, stack);
 
             //=== set 0 ===
             VkDescriptorPoolCreateInfo uboPoolInfo = poolInfos.get(0);
@@ -272,7 +272,7 @@ class Pass2Nabor extends PostProcessingNabor {
             int setCount = descriptorSetLayouts.size();
             this.setSetCount(setCount);
 
-            VkDescriptorSetAllocateInfo.Buffer allocInfos = VkDescriptorSetAllocateInfo.callocStack(setCount, stack);
+            VkDescriptorSetAllocateInfo.Buffer allocInfos = VkDescriptorSetAllocateInfo.calloc(setCount, stack);
 
             for (int i = 0; i < setCount; i++) {
                 LongBuffer layouts = stack.mallocLong(descriptorCount);
@@ -296,10 +296,10 @@ class Pass2Nabor extends PostProcessingNabor {
                 }
             }
 
-            VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.callocStack(setCount, stack);
+            VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.calloc(setCount, stack);
 
             //=== set 0 ===
-            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.callocStack(1, stack);
+            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.calloc(1, stack);
 
             VkDescriptorBufferInfo pass2InfoUBOInfo = uboInfos.get(0);
             pass2InfoUBOInfo.buffer(this.getUniformBuffer(0));
@@ -314,8 +314,8 @@ class Pass2Nabor extends PostProcessingNabor {
             uboDescriptorWrite.descriptorCount(1);
             uboDescriptorWrite.pBufferInfo(uboInfos);
 
-            VkWriteDescriptorSet.Buffer shadowInfoUBODescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
-            VkDescriptorBufferInfo.Buffer shadowInfoUBOInfos = VkDescriptorBufferInfo.callocStack(MAX_NUM_SHADOW_MAPS, stack);
+            VkWriteDescriptorSet.Buffer shadowInfoUBODescriptorWrite = VkWriteDescriptorSet.calloc(1, stack);
+            VkDescriptorBufferInfo.Buffer shadowInfoUBOInfos = VkDescriptorBufferInfo.calloc(MAX_NUM_SHADOW_MAPS, stack);
             for (int i = 0; i < MAX_NUM_SHADOW_MAPS; i++) {
                 VkDescriptorBufferInfo shadowInfoUBOInfo = shadowInfoUBOInfos.get(i);
                 shadowInfoUBOInfo.buffer(this.getUniformBuffer(1));
@@ -331,7 +331,7 @@ class Pass2Nabor extends PostProcessingNabor {
             shadowInfoUBODescriptorWrite.pBufferInfo(shadowInfoUBOInfos);
 
             //=== set 1 ===
-            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.callocStack(4, stack);
+            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.calloc(4, stack);
             for (int i = 0; i < 4; i++) {
                 VkDescriptorImageInfo imageInfo = imageInfos.get(i);
                 imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -346,8 +346,8 @@ class Pass2Nabor extends PostProcessingNabor {
             imageDescriptorWrite.descriptorCount(4);
             imageDescriptorWrite.pImageInfo(imageInfos);
 
-            VkWriteDescriptorSet.Buffer shadowDepthImageDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
-            VkDescriptorImageInfo.Buffer shadowDepthImageInfos = VkDescriptorImageInfo.callocStack(MAX_NUM_SHADOW_MAPS, stack);
+            VkWriteDescriptorSet.Buffer shadowDepthImageDescriptorWrite = VkWriteDescriptorSet.calloc(1, stack);
+            VkDescriptorImageInfo.Buffer shadowDepthImageInfos = VkDescriptorImageInfo.calloc(MAX_NUM_SHADOW_MAPS, stack);
             for (int i = 0; i < MAX_NUM_SHADOW_MAPS; i++) {
                 VkDescriptorImageInfo imageInfo = shadowDepthImageInfos.get(i);
                 imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -362,7 +362,7 @@ class Pass2Nabor extends PostProcessingNabor {
             shadowDepthImageDescriptorWrite.pImageInfo(shadowDepthImageInfos);
 
             //=== set 2 ===
-            VkDescriptorImageInfo.Buffer samplerInfos = VkDescriptorImageInfo.callocStack(1, stack);
+            VkDescriptorImageInfo.Buffer samplerInfos = VkDescriptorImageInfo.calloc(1, stack);
 
             VkDescriptorImageInfo samplerInfo = samplerInfos.get(0);
             samplerInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);

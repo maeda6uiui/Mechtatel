@@ -13,7 +13,7 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class VkVertex3DUV {
     public static VkVertexInputBindingDescription.Buffer getBindingDescription() {
-        VkVertexInputBindingDescription.Buffer bindingDescription = VkVertexInputBindingDescription.callocStack(1);
+        VkVertexInputBindingDescription.Buffer bindingDescription = VkVertexInputBindingDescription.calloc(1);
         bindingDescription.binding(0);
         bindingDescription.stride(Vertex3DUV.SIZEOF);
         bindingDescription.inputRate(VK_VERTEX_INPUT_RATE_VERTEX);
@@ -22,7 +22,7 @@ public class VkVertex3DUV {
     }
 
     public static VkVertexInputAttributeDescription.Buffer getAttributeDescriptions() {
-        VkVertexInputAttributeDescription.Buffer attributeDescriptions = VkVertexInputAttributeDescription.callocStack(4);
+        VkVertexInputAttributeDescription.Buffer attributeDescriptions = VkVertexInputAttributeDescription.calloc(4);
 
         //Position
         VkVertexInputAttributeDescription posDescription = attributeDescriptions.get(0);

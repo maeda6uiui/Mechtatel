@@ -29,8 +29,8 @@ public class PresentNabor extends Nabor {
 
             int msaaSamples = this.getMsaaSamples();
 
-            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.callocStack(1, stack);
-            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.callocStack(1, stack);
+            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.calloc(1, stack);
+            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(1, stack);
 
             //Color attachment
             VkAttachmentDescription colorAttachment = attachments.get(0);
@@ -47,12 +47,12 @@ public class PresentNabor extends Nabor {
             colorAttachmentRef.attachment(0);
             colorAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkSubpassDescription.Buffer subpass = VkSubpassDescription.callocStack(1, stack);
+            VkSubpassDescription.Buffer subpass = VkSubpassDescription.calloc(1, stack);
             subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
             subpass.colorAttachmentCount(1);
-            subpass.pColorAttachments(VkAttachmentReference.callocStack(1, stack).put(0, colorAttachmentRef));
+            subpass.pColorAttachments(VkAttachmentReference.calloc(1, stack).put(0, colorAttachmentRef));
 
-            VkSubpassDependency.Buffer dependency = VkSubpassDependency.callocStack(1, stack);
+            VkSubpassDependency.Buffer dependency = VkSubpassDependency.calloc(1, stack);
             dependency.srcSubpass(VK_SUBPASS_EXTERNAL);
             dependency.dstSubpass(0);
             dependency.srcStageMask(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
@@ -60,7 +60,7 @@ public class PresentNabor extends Nabor {
             dependency.dstStageMask(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
             dependency.dstAccessMask(VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
 
-            VkRenderPassCreateInfo renderPassInfo = VkRenderPassCreateInfo.callocStack(stack);
+            VkRenderPassCreateInfo renderPassInfo = VkRenderPassCreateInfo.calloc(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO);
             renderPassInfo.pAttachments(attachments);
             renderPassInfo.pSubpasses(subpass);
@@ -81,7 +81,7 @@ public class PresentNabor extends Nabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            VkDescriptorSetLayoutBinding.Buffer bindings = VkDescriptorSetLayoutBinding.callocStack(1, stack);
+            VkDescriptorSetLayoutBinding.Buffer bindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
 
             VkDescriptorSetLayoutBinding samplerLayoutBinding = bindings.get(0);
             samplerLayoutBinding.binding(0);
@@ -90,7 +90,7 @@ public class PresentNabor extends Nabor {
             samplerLayoutBinding.pImmutableSamplers(null);
             samplerLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            VkDescriptorSetLayoutCreateInfo layoutInfo = VkDescriptorSetLayoutCreateInfo.callocStack(stack);
+            VkDescriptorSetLayoutCreateInfo layoutInfo = VkDescriptorSetLayoutCreateInfo.calloc(stack);
             layoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
             layoutInfo.pBindings(bindings);
 
@@ -109,13 +109,13 @@ public class PresentNabor extends Nabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            VkDescriptorPoolSize.Buffer poolSizes = VkDescriptorPoolSize.callocStack(1, stack);
+            VkDescriptorPoolSize.Buffer poolSizes = VkDescriptorPoolSize.calloc(1, stack);
 
             VkDescriptorPoolSize samplerPoolSize = poolSizes.get(0);
             samplerPoolSize.type(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
             samplerPoolSize.descriptorCount(descriptorCount);
 
-            VkDescriptorPoolCreateInfo poolInfo = VkDescriptorPoolCreateInfo.callocStack(stack);
+            VkDescriptorPoolCreateInfo poolInfo = VkDescriptorPoolCreateInfo.calloc(stack);
             poolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
             poolInfo.pPoolSizes(poolSizes);
             poolInfo.maxSets(descriptorCount);
@@ -143,7 +143,7 @@ public class PresentNabor extends Nabor {
                 layouts.put(i, descriptorSetLayout);
             }
 
-            VkDescriptorSetAllocateInfo allocInfo = VkDescriptorSetAllocateInfo.callocStack(stack);
+            VkDescriptorSetAllocateInfo allocInfo = VkDescriptorSetAllocateInfo.calloc(stack);
             allocInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO);
             allocInfo.descriptorPool(descriptorPool);
             allocInfo.pSetLayouts(layouts);
@@ -194,7 +194,7 @@ public class PresentNabor extends Nabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             ByteBuffer entryPoint = stack.UTF8("main");
 
-            VkPipelineShaderStageCreateInfo.Buffer shaderStages = VkPipelineShaderStageCreateInfo.callocStack(2, stack);
+            VkPipelineShaderStageCreateInfo.Buffer shaderStages = VkPipelineShaderStageCreateInfo.calloc(2, stack);
 
             VkPipelineShaderStageCreateInfo vertShaderStageInfo = shaderStages.get(0);
             vertShaderStageInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO);
@@ -209,19 +209,19 @@ public class PresentNabor extends Nabor {
             fragShaderStageInfo.pName(entryPoint);
 
             //Vertex stage
-            VkPipelineVertexInputStateCreateInfo vertexInputInfo = VkPipelineVertexInputStateCreateInfo.callocStack(stack);
+            VkPipelineVertexInputStateCreateInfo vertexInputInfo = VkPipelineVertexInputStateCreateInfo.calloc(stack);
             vertexInputInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO);
             vertexInputInfo.pVertexBindingDescriptions(VkVertex2DUV.getBindingDescription());
             vertexInputInfo.pVertexAttributeDescriptions(VkVertex2DUV.getAttributeDescriptions());
 
             //Assembly stage
-            VkPipelineInputAssemblyStateCreateInfo inputAssembly = VkPipelineInputAssemblyStateCreateInfo.callocStack(stack);
+            VkPipelineInputAssemblyStateCreateInfo inputAssembly = VkPipelineInputAssemblyStateCreateInfo.calloc(stack);
             inputAssembly.sType(VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO);
             inputAssembly.topology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
             inputAssembly.primitiveRestartEnable(false);
 
             //Viewport and scissor
-            VkViewport.Buffer viewport = VkViewport.callocStack(1, stack);
+            VkViewport.Buffer viewport = VkViewport.calloc(1, stack);
             viewport.x(0.0f);
             viewport.y(0.0f);
             viewport.width(extent.width());
@@ -229,17 +229,17 @@ public class PresentNabor extends Nabor {
             viewport.minDepth(0.0f);
             viewport.maxDepth(1.0f);
 
-            VkRect2D.Buffer scissor = VkRect2D.callocStack(1, stack);
-            scissor.offset(VkOffset2D.callocStack(stack).set(0, 0));
+            VkRect2D.Buffer scissor = VkRect2D.calloc(1, stack);
+            scissor.offset(VkOffset2D.calloc(stack).set(0, 0));
             scissor.extent(extent);
 
-            VkPipelineViewportStateCreateInfo viewportState = VkPipelineViewportStateCreateInfo.callocStack(stack);
+            VkPipelineViewportStateCreateInfo viewportState = VkPipelineViewportStateCreateInfo.calloc(stack);
             viewportState.sType(VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO);
             viewportState.pViewports(viewport);
             viewportState.pScissors(scissor);
 
             //Rasterization stage
-            VkPipelineRasterizationStateCreateInfo rasterizer = VkPipelineRasterizationStateCreateInfo.callocStack(stack);
+            VkPipelineRasterizationStateCreateInfo rasterizer = VkPipelineRasterizationStateCreateInfo.calloc(stack);
             rasterizer.sType(VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO);
             rasterizer.depthClampEnable(false);
             rasterizer.rasterizerDiscardEnable(false);
@@ -250,14 +250,14 @@ public class PresentNabor extends Nabor {
             rasterizer.depthBiasEnable(false);
 
             //Multisampling
-            VkPipelineMultisampleStateCreateInfo multisampling = VkPipelineMultisampleStateCreateInfo.callocStack(stack);
+            VkPipelineMultisampleStateCreateInfo multisampling = VkPipelineMultisampleStateCreateInfo.calloc(stack);
             multisampling.sType(VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO);
             multisampling.sampleShadingEnable(true);
             multisampling.minSampleShading(0.2f);
             multisampling.rasterizationSamples(msaaSamples);
 
             //Color blending
-            VkPipelineColorBlendAttachmentState.Buffer colorBlendAttachment = VkPipelineColorBlendAttachmentState.callocStack(1, stack);
+            VkPipelineColorBlendAttachmentState.Buffer colorBlendAttachment = VkPipelineColorBlendAttachmentState.calloc(1, stack);
             colorBlendAttachment.colorWriteMask(
                     VK_COLOR_COMPONENT_R_BIT |
                             VK_COLOR_COMPONENT_G_BIT |
@@ -265,7 +265,7 @@ public class PresentNabor extends Nabor {
                             VK_COLOR_COMPONENT_A_BIT);
             colorBlendAttachment.blendEnable(false);
 
-            VkPipelineColorBlendStateCreateInfo colorBlending = VkPipelineColorBlendStateCreateInfo.callocStack(stack);
+            VkPipelineColorBlendStateCreateInfo colorBlending = VkPipelineColorBlendStateCreateInfo.calloc(stack);
             colorBlending.sType(VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO);
             colorBlending.logicOpEnable(false);
             colorBlending.logicOp(VK_LOGIC_OP_COPY);
@@ -273,7 +273,7 @@ public class PresentNabor extends Nabor {
             colorBlending.blendConstants(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
 
             //Pipeline layout creation
-            VkPipelineLayoutCreateInfo pipelineLayoutInfo = VkPipelineLayoutCreateInfo.callocStack(stack);
+            VkPipelineLayoutCreateInfo pipelineLayoutInfo = VkPipelineLayoutCreateInfo.calloc(stack);
             pipelineLayoutInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO);
             pipelineLayoutInfo.pSetLayouts(stack.longs(this.getDescriptorSetLayout(0)));
 
@@ -286,7 +286,7 @@ public class PresentNabor extends Nabor {
             this.getPipelineLayouts().add(pipelineLayout);
 
             //Graphics pipeline creation
-            VkGraphicsPipelineCreateInfo.Buffer pipelineInfo = VkGraphicsPipelineCreateInfo.callocStack(1, stack);
+            VkGraphicsPipelineCreateInfo.Buffer pipelineInfo = VkGraphicsPipelineCreateInfo.calloc(1, stack);
             pipelineInfo.sType(VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO);
             pipelineInfo.pStages(shaderStages);
             pipelineInfo.pVertexInputState(vertexInputInfo);
@@ -315,12 +315,12 @@ public class PresentNabor extends Nabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            VkDescriptorImageInfo.Buffer imageInfo = VkDescriptorImageInfo.callocStack(1, stack);
+            VkDescriptorImageInfo.Buffer imageInfo = VkDescriptorImageInfo.calloc(1, stack);
             imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
             imageInfo.imageView(imageView);
             imageInfo.sampler(this.getTextureSampler(0));
 
-            VkWriteDescriptorSet.Buffer samplerDescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
+            VkWriteDescriptorSet.Buffer samplerDescriptorWrite = VkWriteDescriptorSet.calloc(1, stack);
             samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
             samplerDescriptorWrite.dstBinding(0);
             samplerDescriptorWrite.dstArrayElement(0);

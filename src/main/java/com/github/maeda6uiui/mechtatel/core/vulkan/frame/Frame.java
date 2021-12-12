@@ -81,7 +81,7 @@ public class Frame {
 
             imagesInFlight.put(imageIndex, this);
 
-            VkSubmitInfo submitInfo = VkSubmitInfo.callocStack(stack);
+            VkSubmitInfo submitInfo = VkSubmitInfo.calloc(stack);
             submitInfo.sType(VK_STRUCTURE_TYPE_SUBMIT_INFO);
             submitInfo.waitSemaphoreCount(1);
             submitInfo.pWaitSemaphores(this.pImageAvailableSemaphore());
@@ -95,7 +95,7 @@ public class Frame {
                 throw new RuntimeException("Failed to submit a draw command buffer");
             }
 
-            VkPresentInfoKHR presentInfo = VkPresentInfoKHR.callocStack(stack);
+            VkPresentInfoKHR presentInfo = VkPresentInfoKHR.calloc(stack);
             presentInfo.sType(VK_STRUCTURE_TYPE_PRESENT_INFO_KHR);
             presentInfo.pWaitSemaphores(this.pRenderFinishedSemaphore());
             presentInfo.swapchainCount(1);

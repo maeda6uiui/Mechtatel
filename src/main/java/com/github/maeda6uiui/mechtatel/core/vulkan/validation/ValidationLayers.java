@@ -84,7 +84,7 @@ public class ValidationLayers {
 
     public static long setupDebugMessenger(VkInstance instance) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkDebugUtilsMessengerCreateInfoEXT createInfo = VkDebugUtilsMessengerCreateInfoEXT.callocStack(stack);
+            VkDebugUtilsMessengerCreateInfoEXT createInfo = VkDebugUtilsMessengerCreateInfoEXT.calloc(stack);
             populateDebugMessengerCreateInfo(createInfo);
 
             LongBuffer pDebugMessenger = stack.longs(VK_NULL_HANDLE);

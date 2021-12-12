@@ -59,7 +59,7 @@ public class PointLightNabor extends PostProcessingNabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.callocStack(3, stack);
+            VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.calloc(3, stack);
 
             VkDescriptorSetLayoutBinding cameraUBOLayoutBinding = uboBindings.get(0);
             cameraUBOLayoutBinding.binding(0);
@@ -83,7 +83,7 @@ public class PointLightNabor extends PostProcessingNabor {
             lightUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 1 ===
-            VkDescriptorSetLayoutBinding.Buffer imageBindings = VkDescriptorSetLayoutBinding.callocStack(4, stack);
+            VkDescriptorSetLayoutBinding.Buffer imageBindings = VkDescriptorSetLayoutBinding.calloc(4, stack);
 
             VkDescriptorSetLayoutBinding albedoImageLayoutBinding = imageBindings.get(0);
             albedoImageLayoutBinding.binding(0);
@@ -114,7 +114,7 @@ public class PointLightNabor extends PostProcessingNabor {
             normalImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 2 ===
-            VkDescriptorSetLayoutBinding.Buffer samplerBindings = VkDescriptorSetLayoutBinding.callocStack(1, stack);
+            VkDescriptorSetLayoutBinding.Buffer samplerBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
 
             VkDescriptorSetLayoutBinding samplerLayoutBinding = samplerBindings.get(0);
             samplerLayoutBinding.binding(0);
@@ -124,7 +124,7 @@ public class PointLightNabor extends PostProcessingNabor {
             samplerLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //Create descriptor set layouts
-            VkDescriptorSetLayoutCreateInfo.Buffer layoutInfos = VkDescriptorSetLayoutCreateInfo.callocStack(3, stack);
+            VkDescriptorSetLayoutCreateInfo.Buffer layoutInfos = VkDescriptorSetLayoutCreateInfo.calloc(3, stack);
 
             //=== set 0 ===
             VkDescriptorSetLayoutCreateInfo uboLayoutInfo = layoutInfos.get(0);
@@ -159,7 +159,7 @@ public class PointLightNabor extends PostProcessingNabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.callocStack(3, stack);
+            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.calloc(3, stack);
 
             VkDescriptorPoolSize cameraUBOPoolSize = uboPoolSizes.get(0);
             cameraUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
@@ -174,7 +174,7 @@ public class PointLightNabor extends PostProcessingNabor {
             lightUBOPoolSize.descriptorCount(descriptorCount * MAX_NUM_LIGHTS);
 
             //=== set 1 ===
-            VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.callocStack(4, stack);
+            VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.calloc(4, stack);
 
             VkDescriptorPoolSize albedoImagePoolSize = imagePoolSizes.get(0);
             albedoImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
@@ -193,14 +193,14 @@ public class PointLightNabor extends PostProcessingNabor {
             normalImagePoolSize.descriptorCount(descriptorCount);
 
             //=== set 2 ===
-            VkDescriptorPoolSize.Buffer samplerPoolSizes = VkDescriptorPoolSize.callocStack(1, stack);
+            VkDescriptorPoolSize.Buffer samplerPoolSizes = VkDescriptorPoolSize.calloc(1, stack);
 
             VkDescriptorPoolSize samplerPoolSize = samplerPoolSizes.get(0);
             samplerPoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLER);
             samplerPoolSize.descriptorCount(descriptorCount);
 
             //Create descriptor pools
-            VkDescriptorPoolCreateInfo.Buffer poolInfos = VkDescriptorPoolCreateInfo.callocStack(3, stack);
+            VkDescriptorPoolCreateInfo.Buffer poolInfos = VkDescriptorPoolCreateInfo.calloc(3, stack);
 
             //=== set 0 ===
             VkDescriptorPoolCreateInfo uboPoolInfo = poolInfos.get(0);
@@ -246,7 +246,7 @@ public class PointLightNabor extends PostProcessingNabor {
             int setCount = descriptorSetLayouts.size();
             this.setSetCount(setCount);
 
-            VkDescriptorSetAllocateInfo.Buffer allocInfos = VkDescriptorSetAllocateInfo.callocStack(setCount, stack);
+            VkDescriptorSetAllocateInfo.Buffer allocInfos = VkDescriptorSetAllocateInfo.calloc(setCount, stack);
 
             for (int i = 0; i < setCount; i++) {
                 LongBuffer layouts = stack.mallocLong(descriptorCount);
@@ -270,10 +270,10 @@ public class PointLightNabor extends PostProcessingNabor {
                 }
             }
 
-            VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.callocStack(setCount, stack);
+            VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.calloc(setCount, stack);
 
             //=== set 0 ===
-            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.callocStack(2, stack);
+            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.calloc(2, stack);
 
             VkDescriptorBufferInfo cameraUBOInfo = uboInfos.get(0);
             cameraUBOInfo.buffer(this.getUniformBuffer(0));
@@ -293,8 +293,8 @@ public class PointLightNabor extends PostProcessingNabor {
             uboDescriptorWrite.descriptorCount(2);
             uboDescriptorWrite.pBufferInfo(uboInfos);
 
-            VkWriteDescriptorSet.Buffer lightUBODescriptorWrite = VkWriteDescriptorSet.callocStack(1, stack);
-            VkDescriptorBufferInfo.Buffer lightUBOInfos = VkDescriptorBufferInfo.callocStack(MAX_NUM_LIGHTS, stack);
+            VkWriteDescriptorSet.Buffer lightUBODescriptorWrite = VkWriteDescriptorSet.calloc(1, stack);
+            VkDescriptorBufferInfo.Buffer lightUBOInfos = VkDescriptorBufferInfo.calloc(MAX_NUM_LIGHTS, stack);
             for (int i = 0; i < MAX_NUM_LIGHTS; i++) {
                 VkDescriptorBufferInfo lightUBOInfo = lightUBOInfos.get(i);
                 lightUBOInfo.buffer(this.getUniformBuffer(2));
@@ -310,7 +310,7 @@ public class PointLightNabor extends PostProcessingNabor {
             lightUBODescriptorWrite.pBufferInfo(lightUBOInfos);
 
             //=== set 1 ===
-            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.callocStack(4, stack);
+            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.calloc(4, stack);
             for (int i = 0; i < 4; i++) {
                 VkDescriptorImageInfo imageInfo = imageInfos.get(i);
                 imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -326,7 +326,7 @@ public class PointLightNabor extends PostProcessingNabor {
             imageDescriptorWrite.pImageInfo(imageInfos);
 
             //=== set 2 ===
-            VkDescriptorImageInfo.Buffer samplerInfos = VkDescriptorImageInfo.callocStack(1, stack);
+            VkDescriptorImageInfo.Buffer samplerInfos = VkDescriptorImageInfo.calloc(1, stack);
 
             VkDescriptorImageInfo samplerInfo = samplerInfos.get(0);
             samplerInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);

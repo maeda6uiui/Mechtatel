@@ -324,15 +324,15 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             var cameraUBO = new CameraUBO(camera);
             cameraUBO.update(device, cameraUBOMemory);
 
-            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
+            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
             renderPassInfo.renderPass(gBufferNabor.getRenderPass());
             renderPassInfo.framebuffer(gBufferNabor.getFramebuffer(0));
-            VkRect2D renderArea = VkRect2D.callocStack(stack);
-            renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
+            VkRect2D renderArea = VkRect2D.calloc(stack);
+            renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
             renderArea.extent(gBufferNabor.getExtent());
             renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.callocStack(4, stack);
+            VkClearValue.Buffer clearValues = VkClearValue.calloc(4, stack);
             clearValues.get(0).color().float32(
                     stack.floats(
                             backgroundColor.x,
@@ -492,15 +492,15 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             }
 
             try (MemoryStack stack = MemoryStack.stackPush()) {
-                VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
+                VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
                 renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
                 renderPassInfo.renderPass(ppNabor.getRenderPass());
                 renderPassInfo.framebuffer(ppNabor.getFramebuffer(0));
-                VkRect2D renderArea = VkRect2D.callocStack(stack);
-                renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
+                VkRect2D renderArea = VkRect2D.calloc(stack);
+                renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
                 renderArea.extent(ppNabor.getExtent());
                 renderPassInfo.renderArea(renderArea);
-                VkClearValue.Buffer clearValues = VkClearValue.callocStack(1, stack);
+                VkClearValue.Buffer clearValues = VkClearValue.calloc(1, stack);
                 clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
                 renderPassInfo.pClearValues(clearValues);
 
@@ -549,17 +549,17 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
     private void presentToFrontScreen() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
+            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.calloc(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
 
-            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.callocStack(stack);
+            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
             renderPassInfo.renderPass(presentNabor.getRenderPass());
-            VkRect2D renderArea = VkRect2D.callocStack(stack);
-            renderArea.offset(VkOffset2D.callocStack(stack).set(0, 0));
+            VkRect2D renderArea = VkRect2D.calloc(stack);
+            renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
             renderArea.extent(presentNabor.getExtent());
             renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.callocStack(1, stack);
+            VkClearValue.Buffer clearValues = VkClearValue.calloc(1, stack);
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
             renderPassInfo.pClearValues(clearValues);
 

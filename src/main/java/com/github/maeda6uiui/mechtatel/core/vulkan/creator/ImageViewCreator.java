@@ -16,7 +16,7 @@ import static org.lwjgl.vulkan.VK10.*;
 public class ImageViewCreator {
     public static long createImageView(VkDevice device, long image, int format, int aspectFlags, int mipLevels) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.callocStack(stack);
+            VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.calloc(stack);
             viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
             viewInfo.image(image);
             viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);

@@ -28,7 +28,7 @@ public class BufferCreator {
 
     public static void createBuffer(VkDevice device, long size, int usage, int properties, LongBuffer pBuffer, LongBuffer pBufferMemory) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkBufferCreateInfo bufferInfo = VkBufferCreateInfo.callocStack(stack);
+            VkBufferCreateInfo bufferInfo = VkBufferCreateInfo.calloc(stack);
             bufferInfo.sType(VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO);
             bufferInfo.size(size);
             bufferInfo.usage(usage);
@@ -41,7 +41,7 @@ public class BufferCreator {
             VkMemoryRequirements memRequirements = VkMemoryRequirements.mallocStack(stack);
             vkGetBufferMemoryRequirements(device, pBuffer.get(0), memRequirements);
 
-            VkMemoryAllocateInfo allocInfo = VkMemoryAllocateInfo.callocStack(stack);
+            VkMemoryAllocateInfo allocInfo = VkMemoryAllocateInfo.calloc(stack);
             allocInfo.sType(VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO);
             allocInfo.allocationSize(memRequirements.size());
             allocInfo.memoryTypeIndex(MemoryUtils.findMemoryType(device, memRequirements.memoryTypeBits(), properties));
@@ -56,7 +56,7 @@ public class BufferCreator {
 
     private static void copyBuffer(VkDevice device, long commandPool, VkQueue graphicsQueue, long srcBuffer, long dstBuffer, long size) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkCommandBufferAllocateInfo allocInfo = VkCommandBufferAllocateInfo.callocStack(stack);
+            VkCommandBufferAllocateInfo allocInfo = VkCommandBufferAllocateInfo.calloc(stack);
             allocInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO);
             allocInfo.level(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
             allocInfo.commandPool(commandPool);
@@ -66,19 +66,19 @@ public class BufferCreator {
             vkAllocateCommandBuffers(device, allocInfo, pCommandBuffer);
             VkCommandBuffer commandBuffer = new VkCommandBuffer(pCommandBuffer.get(0), device);
 
-            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.callocStack(stack);
+            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.calloc(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
             beginInfo.flags(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
             vkBeginCommandBuffer(commandBuffer, beginInfo);
             {
-                VkBufferCopy.Buffer copyRegion = VkBufferCopy.callocStack(1, stack);
+                VkBufferCopy.Buffer copyRegion = VkBufferCopy.calloc(1, stack);
                 copyRegion.size(size);
                 vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, copyRegion);
             }
             vkEndCommandBuffer(commandBuffer);
 
-            VkSubmitInfo submitInfo = VkSubmitInfo.callocStack(stack);
+            VkSubmitInfo submitInfo = VkSubmitInfo.calloc(stack);
             submitInfo.sType(VK_STRUCTURE_TYPE_SUBMIT_INFO);
             submitInfo.pCommandBuffers(pCommandBuffer);
 

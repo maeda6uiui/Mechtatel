@@ -14,7 +14,7 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class VkVertex2D {
     public static VkVertexInputBindingDescription.Buffer getBindingDescription() {
-        VkVertexInputBindingDescription.Buffer bindingDescription = VkVertexInputBindingDescription.callocStack(1);
+        VkVertexInputBindingDescription.Buffer bindingDescription = VkVertexInputBindingDescription.calloc(1);
         bindingDescription.binding(0);
         bindingDescription.stride(Vertex2D.SIZEOF);
         bindingDescription.inputRate(VK_VERTEX_INPUT_RATE_VERTEX);
@@ -23,7 +23,7 @@ public class VkVertex2D {
     }
 
     public static VkVertexInputAttributeDescription.Buffer getAttributeDescriptions() {
-        VkVertexInputAttributeDescription.Buffer attributeDescriptions = VkVertexInputAttributeDescription.callocStack(2);
+        VkVertexInputAttributeDescription.Buffer attributeDescriptions = VkVertexInputAttributeDescription.calloc(2);
 
         //Position
         VkVertexInputAttributeDescription posDescription = attributeDescriptions.get(0);

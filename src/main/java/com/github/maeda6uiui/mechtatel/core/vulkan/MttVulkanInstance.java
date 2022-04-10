@@ -709,10 +709,10 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     }
 
     public VkModel3D createModel3D(String modelFilepath) {
-        int numDescriptorSets = gBufferNabor.getNumDescriptorSets();
+        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
         var descriptorSets = new ArrayList<Long>();
         for (int i = 0; i < numDescriptorSets; i++) {
-            descriptorSets.add(gBufferNabor.getDescriptorSet(i));
+            descriptorSets.add(gBufferNabor.getDescriptorSet(0,i));
         }
 
         var model = new VkModel3D(
@@ -720,7 +720,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 commandPool,
                 graphicsQueue,
                 descriptorSets,
-                gBufferNabor.getSetCount(),
+                gBufferNabor.getSetCount(0),
                 modelFilepath);
         components.add(model);
 

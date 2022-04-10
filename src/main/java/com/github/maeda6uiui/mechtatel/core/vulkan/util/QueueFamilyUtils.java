@@ -23,7 +23,7 @@ public class QueueFamilyUtils {
             return graphicsFamily != null && presentFamily != null;
         }
     }
-    
+
     public static QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, long surface) {
         var indices = new QueueFamilyIndices();
 

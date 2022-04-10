@@ -1,22 +1,13 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3DUV;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
-import org.lwjgl.system.MemoryStack;
-import org.lwjgl.vulkan.*;
+import org.lwjgl.vulkan.VkDevice;
+import org.lwjgl.vulkan.VkExtent2D;
+import org.lwjgl.vulkan.VkQueue;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
-import static org.lwjgl.vulkan.VK10.*;
+import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_1_BIT;
 
 /**
  * Nabor for G-Buffer
@@ -24,7 +15,7 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda
  */
 public class GBufferNabor extends Nabor {
-    public static final int MAX_NUM_TEXTURES=AlbedoNabor.MAX_NUM_TEXTURES;
+    public static final int MAX_NUM_TEXTURES = AlbedoNabor.MAX_NUM_TEXTURES;
 
     private AlbedoNabor albedoNabor;
     private PropertiesNabor propertiesNabor;
@@ -34,11 +25,11 @@ public class GBufferNabor extends Nabor {
             int albedoMsaaSamples,
             int depthImageFormat,
             int positionImageFormat,
-            int normalImageFormat){
-        super(device,VK_SAMPLE_COUNT_1_BIT,true);
+            int normalImageFormat) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, true);
 
-        albedoNabor=new AlbedoNabor(device,albedoMsaaSamples,depthImageFormat);
-        propertiesNabor=new PropertiesNabor(device,depthImageFormat,positionImageFormat,normalImageFormat);
+        albedoNabor = new AlbedoNabor(device, albedoMsaaSamples, depthImageFormat);
+        propertiesNabor = new PropertiesNabor(device, depthImageFormat, positionImageFormat, normalImageFormat);
     }
 
     @Override
@@ -71,36 +62,36 @@ public class GBufferNabor extends Nabor {
         albedoNabor.cleanup(reserveForRecreation);
         propertiesNabor.cleanup(reserveForRecreation);
     }
-    
-    public void transitionAlbedoImage(long commandPool,VkQueue graphicsQueue){
+
+    public void transitionAlbedoImage(long commandPool, VkQueue graphicsQueue) {
         albedoNabor.transitionAlbedoResolveImage(commandPool, graphicsQueue);
     }
-    
-    public long getAlbedoImageView(){
+
+    public long getAlbedoImageView() {
         return albedoNabor.getAlbedoResolveImageView();
     }
-    
-    public void transitionDepthImage(long commandPool,VkQueue graphicsQueue){
+
+    public void transitionDepthImage(long commandPool, VkQueue graphicsQueue) {
         propertiesNabor.transitionDepthImage(commandPool, graphicsQueue);
     }
-    
-    public long getDepthImageView(){
+
+    public long getDepthImageView() {
         return propertiesNabor.getDepthImageView();
     }
-    
-    public void transitionPositionImage(long commandPool,VkQueue graphicsQueue){
+
+    public void transitionPositionImage(long commandPool, VkQueue graphicsQueue) {
         propertiesNabor.transitionPositionImage(commandPool, graphicsQueue);
     }
-    
-    public long getPositionImageView(){
+
+    public long getPositionImageView() {
         return propertiesNabor.getPositionImageView();
     }
-    
-    public void transitionNormalImage(long commandPool,VkQueue graphicsQueue){
+
+    public void transitionNormalImage(long commandPool, VkQueue graphicsQueue) {
         propertiesNabor.transitionNormalImage(commandPool, graphicsQueue);
     }
-    
-    public long getNormalImageView(){
+
+    public long getNormalImageView() {
         return propertiesNabor.getNormalImageView();
     }
 

@@ -14,7 +14,6 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.Spotligh
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.vulkan.VK10;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;

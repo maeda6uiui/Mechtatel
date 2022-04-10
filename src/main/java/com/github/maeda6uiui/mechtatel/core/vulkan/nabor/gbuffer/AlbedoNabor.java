@@ -28,8 +28,8 @@ class AlbedoNabor extends Nabor {
     private int albedoAttachmentIndex;
     private int albedoResolveAttachmentIndex;
 
-    public AlbedoNabor(VkDevice device,int msaaSamples,int depthImageFormat){
-        super(device,msaaSamples,false);
+    public AlbedoNabor(VkDevice device, int msaaSamples, int depthImageFormat) {
+        super(device, msaaSamples, false);
 
         this.depthImageFormat = depthImageFormat;
         depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
@@ -72,7 +72,7 @@ class AlbedoNabor extends Nabor {
                 1);
     }
 
-    public long getAlbedoResolveImageView(){
+    public long getAlbedoResolveImageView() {
         return this.getImageView(albedoResolveAttachmentIndex);
     }
 
@@ -137,9 +137,9 @@ class AlbedoNabor extends Nabor {
             albedoAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             //Albedo resolve attachment
-            albedoResolveAttachmentIndex=2;
+            albedoResolveAttachmentIndex = 2;
 
-            VkAttachmentDescription albedoResolveAttachment=attachments.get(albedoResolveAttachmentIndex);
+            VkAttachmentDescription albedoResolveAttachment = attachments.get(albedoResolveAttachmentIndex);
             albedoResolveAttachment.format(colorImageFormat);
             albedoResolveAttachment.samples(VK_SAMPLE_COUNT_1_BIT);
             albedoResolveAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
@@ -157,8 +157,8 @@ class AlbedoNabor extends Nabor {
             subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
             subpass.colorAttachmentCount(1);
             subpass.pDepthStencilAttachment(depthAttachmentRef);
-            subpass.pColorAttachments(VkAttachmentReference.calloc(1,stack).put(0,albedoAttachmentRef));
-            subpass.pResolveAttachments(VkAttachmentReference.calloc(1,stack).put(0,albedoResolveAttachmentRef));
+            subpass.pColorAttachments(VkAttachmentReference.calloc(1, stack).put(0, albedoAttachmentRef));
+            subpass.pResolveAttachments(VkAttachmentReference.calloc(1, stack).put(0, albedoResolveAttachmentRef));
 
             VkSubpassDependency.Buffer dependency = VkSubpassDependency.calloc(1, stack);
             dependency.srcSubpass(VK_SUBPASS_EXTERNAL);
@@ -185,7 +185,7 @@ class AlbedoNabor extends Nabor {
     }
 
     @Override
-    protected void createDescriptorSetLayouts(){
+    protected void createDescriptorSetLayouts() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
@@ -677,8 +677,8 @@ class AlbedoNabor extends Nabor {
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     pImage,
                     pImageMemory);
-            long albedoResolveImage=pImage.get(0);
-            long albedoResolveImageMemory=pImageMemory.get(0);
+            long albedoResolveImage = pImage.get(0);
+            long albedoResolveImageMemory = pImageMemory.get(0);
 
             viewInfo.image(albedoResolveImage);
             viewInfo.format(colorImageFormat);
@@ -687,7 +687,7 @@ class AlbedoNabor extends Nabor {
             if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
                 throw new RuntimeException("Failed to create an image view");
             }
-            long albedoResolveImageView=pImageView.get(0);
+            long albedoResolveImageView = pImageView.get(0);
 
             this.getImages().add(albedoResolveImage);
             this.getImageMemories().add(albedoResolveImageMemory);

@@ -13,7 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <lwjgl.version>3.3.0</lwjgl.version>
+        <lwjgl.version>3.3.1</lwjgl.version>
         <lwjgl.natives>natives-linux</lwjgl.natives>
     </properties>
 
@@ -132,7 +132,7 @@
         <dependency>
             <groupId>org.joml</groupId>
             <artifactId>joml</artifactId>
-            <version>1.10.1</version>
+            <version>1.10.4</version>
         </dependency>
 
         <dependency>
@@ -149,7 +149,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.12.5</version>
+            <version>2.13.2.2</version>
         </dependency>
     </dependencies>
 </project>

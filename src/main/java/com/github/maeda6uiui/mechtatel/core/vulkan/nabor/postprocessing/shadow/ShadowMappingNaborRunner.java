@@ -8,7 +8,7 @@ import com.github.maeda6uiui.mechtatel.core.shadow.ShadowInfo;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.GBufferNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass1InfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass2InfoUBO;

@@ -13,7 +13,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.GBufferNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow.ShadowMappingNabor;
@@ -59,7 +59,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private long surface;
     private VkQueue presentQueue;
 
-    private int msaaSamples;
+    private int albedoMsaaSamples;
     private int depthImageFormat;
     private int depthImageAspect;
     private int depthImageWidth;
@@ -151,7 +151,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     public MttVulkanInstance(
             boolean enableValidationLayer,
             long window,
-            int msaaSamples) {
+            int albedoMsaaSamples) {
         //Load the Shaderc library
         System.setProperty("java.library.path", "./Mechtatel/Bin");
         System.loadLibrary("shaderc_shared");
@@ -181,7 +181,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         presentQueue = deviceAndQueues.presentQueue;
 
         //Get the MSAA sample count
-        this.msaaSamples = msaaSamples < 0 ? MultisamplingUtils.getMaxUsableSampleCount(device) : msaaSamples;
+        this.albedoMsaaSamples = albedoMsaaSamples < 0 ? MultisamplingUtils.getMaxUsableSampleCount(device) : albedoMsaaSamples;
 
         //Get the image format for depth
         depthImageFormat = DepthResourceUtils.findDepthFormat(device);
@@ -203,6 +203,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         //Create a nabor for G-Buffer
         gBufferNabor = new GBufferNabor(
                 device,
+                this.albedoMsaaSamples,
                 depthImageFormat,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT);
@@ -318,44 +319,40 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         this.compilePostProcessingNabors(naborNames);
     }
 
-    private void runGBufferNabor(Vector4f backgroundColor, Camera camera) {
+    private void runAlbedoNabor(VkCommandBuffer commandBuffer,Vector4f backgroundColor,Camera camera){
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            long cameraUBOMemory = gBufferNabor.getUniformBufferMemory(0);
+            long cameraUBOMemory = gBufferNabor.getUniformBufferMemory(0,0);
             var cameraUBO = new CameraUBO(camera);
             cameraUBO.update(device, cameraUBOMemory);
 
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
-            renderPassInfo.renderPass(gBufferNabor.getRenderPass());
-            renderPassInfo.framebuffer(gBufferNabor.getFramebuffer(0));
+            renderPassInfo.renderPass(gBufferNabor.getRenderPass(0));
+            renderPassInfo.framebuffer(gBufferNabor.getFramebuffer(0,0));
             VkRect2D renderArea = VkRect2D.calloc(stack);
             renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
-            renderArea.extent(gBufferNabor.getExtent());
+            renderArea.extent(gBufferNabor.getExtent(0));
             renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.calloc(4, stack);
-            clearValues.get(0).color().float32(
+            VkClearValue.Buffer clearValues = VkClearValue.calloc(2, stack);
+            clearValues.get(0).depthStencil().set(1.0f,0);
+            clearValues.get(1).color().float32(
                     stack.floats(
                             backgroundColor.x,
                             backgroundColor.y,
                             backgroundColor.z,
                             backgroundColor.w));
-            clearValues.get(1).depthStencil().set(1.0f, 0);
-            clearValues.get(2).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
-            clearValues.get(3).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             renderPassInfo.pClearValues(clearValues);
-
-            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
 
             vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
             {
-                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gBufferNabor.getGraphicsPipeline(0));
+                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gBufferNabor.getGraphicsPipeline(0,0));
 
                 vkCmdBindDescriptorSets(
                         commandBuffer,
                         VK_PIPELINE_BIND_POINT_GRAPHICS,
-                        gBufferNabor.getPipelineLayout(0),
+                        gBufferNabor.getPipelineLayout(0,0),
                         0,
-                        gBufferNabor.pDescriptorSets(),
+                        gBufferNabor.pDescriptorSets(0),
                         null);
 
                 for (var component : components) {
@@ -364,18 +361,73 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
                     vkCmdPushConstants(
                             commandBuffer,
-                            gBufferNabor.getPipelineLayout(0),
+                            gBufferNabor.getPipelineLayout(0,0),
                             VK_SHADER_STAGE_VERTEX_BIT,
                             0,
                             matBuffer);
 
-                    component.draw(commandBuffer, gBufferNabor.getPipelineLayout(0));
+                    component.draw(commandBuffer, gBufferNabor.getPipelineLayout(0,0));
                 }
             }
             vkCmdEndRenderPass(commandBuffer);
-
-            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
         }
+    }
+
+    private void runPropertiesNabor(VkCommandBuffer commandBuffer,Camera camera){
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            long cameraUBOMemory = gBufferNabor.getUniformBufferMemory(1,0);
+            var cameraUBO = new CameraUBO(camera);
+            cameraUBO.update(device, cameraUBOMemory);
+
+            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
+            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
+            renderPassInfo.renderPass(gBufferNabor.getRenderPass(1));
+            renderPassInfo.framebuffer(gBufferNabor.getFramebuffer(1,0));
+            VkRect2D renderArea = VkRect2D.calloc(stack);
+            renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
+            renderArea.extent(gBufferNabor.getExtent(1));
+            renderPassInfo.renderArea(renderArea);
+            VkClearValue.Buffer clearValues = VkClearValue.calloc(3, stack);
+            clearValues.get(0).depthStencil().set(1.0f,0);
+            clearValues.get(1).color().float32(stack.floats(0.0f,0.0f,0.0f,0.0f));
+            clearValues.get(2).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            renderPassInfo.pClearValues(clearValues);
+
+            vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+            {
+                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gBufferNabor.getGraphicsPipeline(1,0));
+
+                vkCmdBindDescriptorSets(
+                        commandBuffer,
+                        VK_PIPELINE_BIND_POINT_GRAPHICS,
+                        gBufferNabor.getPipelineLayout(1,0),
+                        0,
+                        gBufferNabor.pDescriptorSets(1),
+                        null);
+
+                for (var component : components) {
+                    ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
+                    component.getMat().get(matBuffer);
+
+                    vkCmdPushConstants(
+                            commandBuffer,
+                            gBufferNabor.getPipelineLayout(1,0),
+                            VK_SHADER_STAGE_VERTEX_BIT,
+                            0,
+                            matBuffer);
+
+                    component.transfer(commandBuffer,gBufferNabor.getPipelineLayout(1,0));
+                }
+            }
+            vkCmdEndRenderPass(commandBuffer);
+        }
+    }
+
+    private void runGBufferNabor(Vector4f backgroundColor, Camera camera) {
+        VkCommandBuffer commandBuffer=CommandBufferUtils.beginSingleTimeCommands(device,commandPool);
+        this.runAlbedoNabor(commandBuffer,backgroundColor,camera);
+        this.runPropertiesNabor(commandBuffer,camera);
+        CommandBufferUtils.endSingleTimeCommands(device,commandPool,commandBuffer,graphicsQueue);
     }
 
     private void runPostProcessingNabors(

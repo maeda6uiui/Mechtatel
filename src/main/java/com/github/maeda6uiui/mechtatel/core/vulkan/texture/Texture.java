@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.texture;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.ImageViewCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.GBufferNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.PointerBuffer;

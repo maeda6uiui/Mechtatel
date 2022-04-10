@@ -55,10 +55,12 @@ public class MyMechtatel extends Mechtatel {
         cubes[4].translate(new Vector3f(0.0f, 1.0f, 0.0f));
         cubes[4].rescale(new Vector3f(1.0f, 2.0f, 1.0f));
 
+        /*
         var ppNaborNames = new ArrayList<String>();
         ppNaborNames.add("spotlight");
         ppNaborNames.add("shadow_mapping");
         this.createPostProcessingNabors(ppNaborNames);
+         */
 
         cameraPosition = new Vector3f(5.0f, 5.0f, 5.0f);
         cameraCenter = new Vector3f(0.0f, 0.0f, 0.0f);

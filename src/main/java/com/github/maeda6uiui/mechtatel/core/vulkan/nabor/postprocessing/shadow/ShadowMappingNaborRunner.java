@@ -86,7 +86,7 @@ public class ShadowMappingNaborRunner {
                             0,
                             matBuffer);
 
-                    component.transfer(commandBuffer, shadowMappingNabor.getPipelineLayout(0, 0));
+                    component.transfer(commandBuffer);
                 }
             }
             vkCmdEndRenderPass(commandBuffer);

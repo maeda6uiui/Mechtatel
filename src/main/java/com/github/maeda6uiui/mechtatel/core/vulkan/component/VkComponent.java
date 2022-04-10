@@ -50,7 +50,7 @@ public class VkComponent {
 
     }
 
-    public void transfer(VkCommandBuffer commandBuffer, long pipelineLayout) {
+    public void transfer(VkCommandBuffer commandBuffer) {
 
     }
 

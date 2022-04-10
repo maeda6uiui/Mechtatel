@@ -186,7 +186,7 @@ public class VkModel3D extends VkComponent3D {
     }
 
     @Override
-    public void transfer(VkCommandBuffer commandBuffer, long pipelineLayout) {
+    public void transfer(VkCommandBuffer commandBuffer) {
         if (!this.isVisible()) {
             return;
         }

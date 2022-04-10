@@ -416,7 +416,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                             0,
                             matBuffer);
 
-                    component.transfer(commandBuffer, gBufferNabor.getPipelineLayout(1, 0));
+                    component.transfer(commandBuffer);
                 }
             }
             vkCmdEndRenderPass(commandBuffer);

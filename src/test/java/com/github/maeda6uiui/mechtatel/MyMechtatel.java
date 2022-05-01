@@ -3,8 +3,6 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
-import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.io.IOException;
@@ -35,10 +33,6 @@ public class MyMechtatel extends Mechtatel {
     private Vector3f cameraPosition;
     private Vector3f cameraCenter;
 
-    private Spotlight spotlight;
-    private Vector3f lightPosition;
-    private Vector3f lightCenter;
-
     @Override
     public void init() {
         ground = this.createModel3D("./Mechtatel/Model/Plane/plane.obj");
@@ -56,28 +50,18 @@ public class MyMechtatel extends Mechtatel {
         cubes[4].rescale(new Vector3f(1.0f, 2.0f, 1.0f));
 
         var ppNaborNames = new ArrayList<String>();
-        ppNaborNames.add("spotlight");
-        ppNaborNames.add("shadow_mapping");
+        ppNaborNames.add("parallel_light");
         this.createPostProcessingNabors(ppNaborNames);
 
         cameraPosition = new Vector3f(5.0f, 5.0f, 5.0f);
         cameraCenter = new Vector3f(0.0f, 0.0f, 0.0f);
         this.getCamera().setEye(cameraPosition);
         this.getCamera().setCenter(cameraCenter);
-
-        lightPosition = new Vector3f(10.0f, 10.0f, 10.0f);
-        lightCenter = new Vector3f(0.0f, 0.0f, 0.0f);
-        var lightDirection = lightCenter.sub(lightPosition);
-
-        spotlight = this.createSpotlight();
-        spotlight.setPosition(lightPosition);
-        spotlight.setDirection(lightDirection);
-        this.setSpotlightAmbientColor(new Vector3f(0.0f, 0.0f, 0.0f));
     }
 
     @Override
     public void dispose() {
-        //Components are automatically cleaned up, so you don't have to explicitly clean up the component.
+        //Components are automatically cleaned up, so you don't have to explicitly clean up the components.
         //model.cleanup();
     }
 
@@ -88,10 +72,8 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void update() {
-        new Matrix4f().rotateY((float) Math.toRadians(0.5)).transformPosition(lightPosition);
-        var lightDirection = lightCenter.sub(lightPosition);
-
-        spotlight.setPosition(lightPosition);
-        spotlight.setDirection(lightDirection);
+        int pressingCount = this.getKeyboardPressingCount("A");
+        int releasingCount = this.getKeyboardReleasingCount("A");
+        System.out.printf("Pressing: %d  Releasing: %d\n", pressingCount, releasingCount);
     }
 }

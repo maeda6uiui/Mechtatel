@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
@@ -31,10 +32,10 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 class MttInstance {
     private IMechtatel mtt;
     private long window;
+    private Keyboard keyboard;
     private MttVulkanInstance vulkanInstance;
 
     private int fps;
-
     private Vector4f backgroundColor;
     private Vector3f parallelLightAmbientColor;
     private Vector3f pointLightAmbientColor;
@@ -55,6 +56,11 @@ class MttInstance {
         }
 
         camera.setAspect((float) width / (float) height);
+    }
+
+    private void keyCallback(long window, int key, int scancode, int action, int mods) {
+        boolean pressingFlag = (action == GLFW_PRESS || action == GLFW_REPEAT) ? true : false;
+        keyboard.setPressingFlag(key, pressingFlag);
     }
 
     public MttInstance(
@@ -81,7 +87,10 @@ class MttInstance {
             throw new RuntimeException("Failed to create a window");
         }
 
+        keyboard = new Keyboard();
+
         glfwSetFramebufferSizeCallback(window, this::framebufferResizeCallback);
+        glfwSetKeyCallback(window, this::keyCallback);
 
         vulkanInstance = new MttVulkanInstance(
                 true,
@@ -127,6 +136,7 @@ class MttInstance {
             elapsedTime = currentTime - lastTime;
 
             if (elapsedTime >= 1.0 / fps) {
+                keyboard.update();
                 mtt.update();
                 vulkanInstance.draw(
                         backgroundColor,
@@ -157,6 +167,14 @@ class MttInstance {
 
     public void createPostProcessingNabors(List<String> naborNames) {
         vulkanInstance.createPostProcessingNabors(naborNames);
+    }
+
+    public int getKeyboardPressingCount(String key) {
+        return keyboard.getPressingCount(key);
+    }
+
+    public int getKeyboardReleasingCount(String key) {
+        return keyboard.getReleasingCount(key);
     }
 
     public Vector4f getBackgroundColor() {

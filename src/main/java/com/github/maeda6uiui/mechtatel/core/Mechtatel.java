@@ -66,6 +66,14 @@ public class Mechtatel implements IMechtatel {
         instance.createPostProcessingNabors(naborNames);
     }
 
+    public int getKeyboardPressingCount(String key) {
+        return instance.getKeyboardPressingCount(key);
+    }
+
+    public int getKeyboardReleasingCount(String key) {
+        return instance.getKeyboardReleasingCount(key);
+    }
+
     public Vector4f getBackgroundColor() {
         return instance.getBackgroundColor();
     }

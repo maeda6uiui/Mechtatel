@@ -4,6 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
+import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
@@ -15,7 +16,6 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.Spotligh
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.vulkan.VK10;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
+import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_2_BIT;
 
 /**
  * Provides abstraction of the low-level operations
@@ -33,6 +34,8 @@ class MttInstance {
     private IMechtatel mtt;
     private long window;
     private Keyboard keyboard;
+    private Mouse mouse;
+    private boolean fixCursorFlag;
     private MttVulkanInstance vulkanInstance;
 
     private int fps;
@@ -63,6 +66,19 @@ class MttInstance {
         keyboard.setPressingFlag(key, pressingFlag);
     }
 
+    private void mouseButtonCallback(long window, int button, int action, int mods) {
+        boolean pressingFlag = (action == GLFW_PRESS) ? true : false;
+        mouse.setPressingFlag(button, pressingFlag);
+    }
+
+    private void cursorPositionCallback(long window, double xpos, double ypos) {
+        mouse.setCursorPos((int) xpos, (int) ypos);
+
+        if (fixCursorFlag) {
+            glfwSetCursorPos(window, 0, 0);
+        }
+    }
+
     public MttInstance(
             IMechtatel mtt,
             MttSettings settings) {
@@ -88,14 +104,18 @@ class MttInstance {
         }
 
         keyboard = new Keyboard();
+        mouse = new Mouse();
+        fixCursorFlag = false;
 
         glfwSetFramebufferSizeCallback(window, this::framebufferResizeCallback);
         glfwSetKeyCallback(window, this::keyCallback);
+        glfwSetMouseButtonCallback(window, this::mouseButtonCallback);
+        glfwSetCursorPosCallback(window, this::cursorPositionCallback);
 
         vulkanInstance = new MttVulkanInstance(
                 true,
                 window,
-                VK10.VK_SAMPLE_COUNT_2_BIT);
+                VK_SAMPLE_COUNT_2_BIT);
 
         this.fps = settings.systemSettings.fps;
 
@@ -137,6 +157,7 @@ class MttInstance {
 
             if (elapsedTime >= 1.0 / fps) {
                 keyboard.update();
+                mouse.update();
                 mtt.update();
                 vulkanInstance.draw(
                         backgroundColor,
@@ -165,6 +186,10 @@ class MttInstance {
         glfwTerminate();
     }
 
+    public void closeWindow() {
+        glfwSetWindowShouldClose(window, true);
+    }
+
     public void createPostProcessingNabors(List<String> naborNames) {
         vulkanInstance.createPostProcessingNabors(naborNames);
     }
@@ -175,6 +200,51 @@ class MttInstance {
 
     public int getKeyboardReleasingCount(String key) {
         return keyboard.getReleasingCount(key);
+    }
+
+    public int getMousePressingCount(String key) {
+        return mouse.getPressingCount(key);
+    }
+
+    public int getMouseReleasingCount(String key) {
+        return mouse.getReleasingCount(key);
+    }
+
+    public int getCursorPosX() {
+        return mouse.getCursorPosX();
+    }
+
+    public int getCursorPosY() {
+        return mouse.getCursorPosY();
+    }
+
+    public void setCursorPos(int x, int y) {
+        glfwSetCursorPos(window, x, y);
+    }
+
+    public void setFixCursorFlag(boolean fixCursorFlag) {
+        this.fixCursorFlag = fixCursorFlag;
+    }
+
+    public int setCursorMode(String cursorMode) {
+        int ret = 0;
+
+        switch (cursorMode) {
+            case "normal":
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                break;
+            case "disabled":
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                break;
+            case "hidden":
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+                break;
+            default:
+                ret = -1;
+                break;
+        }
+
+        return ret;
     }
 
     public Vector4f getBackgroundColor() {

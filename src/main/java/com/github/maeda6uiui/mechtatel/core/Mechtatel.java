@@ -62,6 +62,10 @@ public class Mechtatel implements IMechtatel {
 
     }
 
+    public void closeWindow() {
+        instance.closeWindow();
+    }
+
     public void createPostProcessingNabors(List<String> naborNames) {
         instance.createPostProcessingNabors(naborNames);
     }
@@ -72,6 +76,38 @@ public class Mechtatel implements IMechtatel {
 
     public int getKeyboardReleasingCount(String key) {
         return instance.getKeyboardReleasingCount(key);
+    }
+
+    public int getMousePressingCount(String key) {
+        return instance.getMousePressingCount(key);
+    }
+
+    public int getMouseReleasingCount(String key) {
+        return instance.getMouseReleasingCount(key);
+    }
+
+    public int getCursorPosX() {
+        return instance.getCursorPosX();
+    }
+
+    public int getCursorPosY() {
+        return instance.getCursorPosY();
+    }
+
+    /**
+     * Fixes the cursor to (0,0).
+     */
+    public void fixCursor() {
+        instance.setCursorPos(0, 0);
+        instance.setFixCursorFlag(true);
+    }
+
+    public void unfixCursor() {
+        instance.setFixCursorFlag(false);
+    }
+
+    public int setCursorMode(String cursorMode) {
+        return instance.setCursorMode(cursorMode);
     }
 
     public Vector4f getBackgroundColor() {

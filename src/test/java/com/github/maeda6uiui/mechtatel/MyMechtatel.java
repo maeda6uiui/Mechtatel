@@ -2,13 +2,8 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import com.github.maeda6uiui.mechtatel.core.component.Model3D;
-import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class MyMechtatel extends Mechtatel {
     public MyMechtatel(MttSettings settings) {
@@ -29,56 +24,15 @@ public class MyMechtatel extends Mechtatel {
         new MyMechtatel(settings);
     }
 
-    private Model3D ground;
-    private Model3D[] cubes;
-
-    private Vector3f cameraPosition;
-    private Vector3f cameraCenter;
-
-    private Spotlight spotlight;
-    private Vector3f lightPosition;
-    private Vector3f lightCenter;
-
     @Override
     public void init() {
-        ground = this.createModel3D("./Mechtatel/Model/Plane/plane.obj");
-
-        cubes = new Model3D[5];
-        cubes[0] = this.createModel3D("./Mechtatel/Model/Cube/cube.obj");
-        for (int i = 1; i < 5; i++) {
-            cubes[i] = this.duplicateModel3D(cubes[0]);
-        }
-        cubes[0].translate(new Vector3f(-3.0f, 1.0f, -3.0f));
-        cubes[1].translate(new Vector3f(-3.0f, 1.0f, 3.0f));
-        cubes[2].translate(new Vector3f(3.0f, 1.0f, -3.0f));
-        cubes[3].translate(new Vector3f(3.0f, 1.0f, 3.0f));
-        cubes[4].translate(new Vector3f(0.0f, 1.0f, 0.0f));
-        cubes[4].rescale(new Vector3f(1.0f, 2.0f, 1.0f));
-
-        var ppNaborNames = new ArrayList<String>();
-        ppNaborNames.add("spotlight");
-        ppNaborNames.add("shadow_mapping");
-        this.createPostProcessingNabors(ppNaborNames);
-
-        cameraPosition = new Vector3f(5.0f, 5.0f, 5.0f);
-        cameraCenter = new Vector3f(0.0f, 0.0f, 0.0f);
-        this.getCamera().setEye(cameraPosition);
-        this.getCamera().setCenter(cameraCenter);
-
-        lightPosition = new Vector3f(10.0f, 10.0f, 10.0f);
-        lightCenter = new Vector3f(0.0f, 0.0f, 0.0f);
-        var lightDirection = lightCenter.sub(lightPosition);
-
-        spotlight = this.createSpotlight();
-        spotlight.setPosition(lightPosition);
-        spotlight.setDirection(lightDirection);
-        this.setSpotlightAmbientColor(new Vector3f(0.0f, 0.0f, 0.0f));
+        this.setCursorMode("disabled");
+        this.fixCursor();
     }
 
     @Override
     public void dispose() {
-        //Components are automatically cleaned up, so you don't have to explicitly clean up the component.
-        //model.cleanup();
+
     }
 
     @Override
@@ -88,10 +42,12 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void update() {
-        new Matrix4f().rotateY((float) Math.toRadians(0.5)).transformPosition(lightPosition);
-        var lightDirection = lightCenter.sub(lightPosition);
+        int x = this.getCursorPosX();
+        int y = this.getCursorPosY();
+        System.out.printf("(x,y)=(%d,%d)\n", x, y);
 
-        spotlight.setPosition(lightPosition);
-        spotlight.setDirection(lightDirection);
+        if (this.getKeyboardPressingCount("ESCAPE") == 1) {
+            this.closeWindow();
+        }
     }
 }

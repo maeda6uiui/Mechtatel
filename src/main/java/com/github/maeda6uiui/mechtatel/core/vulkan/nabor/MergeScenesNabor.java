@@ -753,16 +753,31 @@ public class MergeScenesNabor extends Nabor {
         }
     }
 
-    public void bindImages(
-            VkCommandBuffer commandBuffer,
-            int dstBinding,
-            long colorImageView,
-            long depthImageView,
-            long positionImageView,
-            long normalImageView) {
-        var arrImageViews = new Long[]{colorImageView, depthImageView, positionImageView, normalImageView};
+    public void bindAlbedoImages(VkCommandBuffer commandBuffer, long albedoImageViewA, long albedoImageViewB) {
+        var arrImageViews = new Long[]{albedoImageViewA, albedoImageViewB};
         var imageViews = Arrays.asList(arrImageViews);
 
-        this.bindImages(commandBuffer, 1, dstBinding, imageViews);
+        this.bindImages(commandBuffer, 1, albedoAttachmentIndex, imageViews);
+    }
+
+    public void bindDepthImages(VkCommandBuffer commandBuffer, long depthImageViewA, long depthImageViewB) {
+        var arrImageViews = new Long[]{depthImageViewA, depthImageViewB};
+        var imageViews = Arrays.asList(arrImageViews);
+
+        this.bindImages(commandBuffer, 1, depthAttachmentIndex, imageViews);
+    }
+
+    public void bindPositionImages(VkCommandBuffer commandBuffer, long positionImageViewA, long positionImageViewB) {
+        var arrImageViews = new Long[]{positionImageViewA, positionImageViewB};
+        var imageViews = Arrays.asList(arrImageViews);
+
+        this.bindImages(commandBuffer, 1, positionAttachmentIndex, imageViews);
+    }
+
+    public void bindNormalImages(VkCommandBuffer commandBuffer, long normalImageViewA, long normalImageViewB) {
+        var arrImageViews = new Long[]{normalImageViewA, normalImageViewB};
+        var imageViews = Arrays.asList(arrImageViews);
+
+        this.bindImages(commandBuffer, 1, normalAttachmentIndex, imageViews);
     }
 }

@@ -25,16 +25,27 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class PrimitiveNabor extends Nabor {
     private int depthImageFormat;
+    private int positionImageFormat;
+    private int normalImageFormat;
+
     private int depthImageAspect;
 
     private int depthAttachmentIndex;
     private int albedoAttachmentIndex;
-    private int albedoResolveAttachmentIndex;
+    private int positionAttachmentIndex;
+    private int normalAttachmentIndex;
 
-    public PrimitiveNabor(VkDevice device, int msaaSamples, int depthImageFormat) {
-        super(device, msaaSamples, false);
+    public PrimitiveNabor(
+            VkDevice device,
+            int depthImageFormat,
+            int positionImageFormat,
+            int normalImageFormat) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false);
 
         this.depthImageFormat = depthImageFormat;
+        this.positionImageFormat = positionImageFormat;
+        this.normalImageFormat = normalImageFormat;
+
         depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
         if (DepthResourceUtils.hasStencilComponent(depthImageFormat)) {
             depthImageAspect |= VK_IMAGE_ASPECT_STENCIL_BIT;
@@ -60,9 +71,9 @@ public class PrimitiveNabor extends Nabor {
         return this.getImageView(depthAttachmentIndex);
     }
 
-    public void transitionAlbedoResolveImage(long commandPool, VkQueue graphicsQueue) {
+    public void transitionAlbedoImage(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long albedoResolveImage = this.getImage(albedoResolveAttachmentIndex);
+        long albedoResolveImage = this.getImage(albedoAttachmentIndex);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -75,8 +86,46 @@ public class PrimitiveNabor extends Nabor {
                 1);
     }
 
-    public long getAlbedoResolveImageView() {
-        return this.getImageView(albedoResolveAttachmentIndex);
+    public long getAlbedoImageView() {
+        return this.getImageView(albedoAttachmentIndex);
+    }
+
+    public void transitionPositionImage(long commandPool, VkQueue graphicsQueue) {
+        VkDevice device = this.getDevice();
+        long positionImage = this.getImage(positionAttachmentIndex);
+
+        ImageUtils.transitionImageLayout(
+                device,
+                commandPool,
+                graphicsQueue,
+                positionImage,
+                VK_IMAGE_ASPECT_COLOR_BIT,
+                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                1);
+    }
+
+    public long getPositionImageView() {
+        return this.getImageView(positionAttachmentIndex);
+    }
+
+    public void transitionNormalImage(long commandPool, VkQueue graphicsQueue) {
+        VkDevice device = this.getDevice();
+        long normalImage = this.getImage(normalAttachmentIndex);
+
+        ImageUtils.transitionImageLayout(
+                device,
+                commandPool,
+                graphicsQueue,
+                normalImage,
+                VK_IMAGE_ASPECT_COLOR_BIT,
+                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                1);
+    }
+
+    public long getNormalImageView() {
+        return this.getImageView(normalAttachmentIndex);
     }
 
     @Override
@@ -102,8 +151,8 @@ public class PrimitiveNabor extends Nabor {
             VkDevice device = this.getDevice();
             int msaaSamples = this.getMsaaSamples();
 
-            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.calloc(3, stack);
-            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(3, stack);
+            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.calloc(4, stack);
+            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(4, stack);
 
             //Depth-stencil attachment
             depthAttachmentIndex = 0;
@@ -139,29 +188,50 @@ public class PrimitiveNabor extends Nabor {
             albedoAttachmentRef.attachment(albedoAttachmentIndex);
             albedoAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            //Albedo resolve attachment
-            albedoResolveAttachmentIndex = 2;
+            //Position attachment
+            positionAttachmentIndex = 2;
 
-            VkAttachmentDescription albedoResolveAttachment = attachments.get(albedoResolveAttachmentIndex);
-            albedoResolveAttachment.format(colorImageFormat);
-            albedoResolveAttachment.samples(VK_SAMPLE_COUNT_1_BIT);
-            albedoResolveAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
-            albedoResolveAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
-            albedoResolveAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
-            albedoResolveAttachment.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
-            albedoResolveAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
-            albedoResolveAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+            VkAttachmentDescription positionAttachment = attachments.get(positionAttachmentIndex);
+            positionAttachment.format(colorImageFormat);
+            positionAttachment.samples(VK_SAMPLE_COUNT_1_BIT);
+            positionAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
+            positionAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
+            positionAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
+            positionAttachment.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
+            positionAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
+            positionAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference albedoResolveAttachmentRef = attachmentRefs.get(albedoResolveAttachmentIndex);
-            albedoResolveAttachmentRef.attachment(albedoResolveAttachmentIndex);
-            albedoResolveAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+            VkAttachmentReference positionAttachmentRef = attachmentRefs.get(positionAttachmentIndex);
+            positionAttachmentRef.attachment(positionAttachmentIndex);
+            positionAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
+            //Normal attachment
+            normalAttachmentIndex = 3;
+
+            VkAttachmentDescription normalAttachment = attachments.get(normalAttachmentIndex);
+            normalAttachment.format(normalImageFormat);
+            normalAttachment.samples(msaaSamples);
+            normalAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
+            normalAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
+            normalAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
+            normalAttachment.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
+            normalAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
+            normalAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
+            VkAttachmentReference normalAttachmentRef = attachmentRefs.get(normalAttachmentIndex);
+            normalAttachmentRef.attachment(normalAttachmentIndex);
+            normalAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
+            VkAttachmentReference.Buffer colorAttachmentRefs = VkAttachmentReference.calloc(3, stack);
+            colorAttachmentRefs.put(0, albedoAttachmentRef);
+            colorAttachmentRefs.put(1, positionAttachmentRef);
+            colorAttachmentRefs.put(2, normalAttachmentRef);
 
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.calloc(1, stack);
             subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
-            subpass.colorAttachmentCount(1);
+            subpass.colorAttachmentCount(3);
             subpass.pDepthStencilAttachment(depthAttachmentRef);
-            subpass.pColorAttachments(VkAttachmentReference.calloc(1, stack).put(0, albedoAttachmentRef));
-            subpass.pResolveAttachments(VkAttachmentReference.calloc(1, stack).put(0, albedoResolveAttachmentRef));
+            subpass.pColorAttachments(colorAttachmentRefs);
 
             VkSubpassDependency.Buffer dependency = VkSubpassDependency.calloc(1, stack);
             dependency.srcSubpass(VK_SUBPASS_EXTERNAL);
@@ -568,34 +638,63 @@ public class PrimitiveNabor extends Nabor {
             this.getImageMemories().add(albedoImageMemory);
             this.getImageViews().add(albedoImageView);
 
-            //Albedo resolve image
+            //Position image
             ImageUtils.createImage(
                     device,
                     extent.width(),
                     extent.height(),
                     1,
-                    VK_SAMPLE_COUNT_1_BIT,
-                    colorImageFormat,
+                    msaaSamples,
+                    positionImageFormat,
                     VK_IMAGE_TILING_OPTIMAL,
                     VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     pImage,
                     pImageMemory);
-            long albedoResolveImage = pImage.get(0);
-            long albedoResolveImageMemory = pImageMemory.get(0);
+            long positionImage = pImage.get(0);
+            long positionImageMemory = pImageMemory.get(0);
 
-            viewInfo.image(albedoResolveImage);
-            viewInfo.format(colorImageFormat);
+            viewInfo.image(positionImage);
+            viewInfo.format(positionImageFormat);
             viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
 
             if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
                 throw new RuntimeException("Failed to create an image view");
             }
-            long albedoResolveImageView = pImageView.get(0);
+            long positionImageView = pImageView.get(0);
 
-            this.getImages().add(albedoResolveImage);
-            this.getImageMemories().add(albedoResolveImageMemory);
-            this.getImageViews().add(albedoResolveImageView);
+            this.getImages().add(positionImage);
+            this.getImageMemories().add(positionImageMemory);
+            this.getImageViews().add(positionImageView);
+
+            //Normal image
+            ImageUtils.createImage(
+                    device,
+                    extent.width(),
+                    extent.height(),
+                    1,
+                    msaaSamples,
+                    normalImageFormat,
+                    VK_IMAGE_TILING_OPTIMAL,
+                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                    pImage,
+                    pImageMemory);
+            long normalImage = pImage.get(0);
+            long normalImageMemory = pImageMemory.get(0);
+
+            viewInfo.image(normalImage);
+            viewInfo.format(normalImageFormat);
+            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+
+            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create an image view");
+            }
+            long normalImageView = pImageView.get(0);
+
+            this.getImages().add(normalImage);
+            this.getImageMemories().add(normalImageMemory);
+            this.getImageViews().add(normalImageView);
         }
     }
 }

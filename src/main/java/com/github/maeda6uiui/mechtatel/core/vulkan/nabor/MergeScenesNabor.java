@@ -24,8 +24,8 @@ public class MergeScenesNabor extends Nabor {
     private int positionImageFormat;
     private int normalImageFormat;
 
-    private int depthAttachmentIndex;
     private int albedoAttachmentIndex;
+    private int depthAttachmentIndex;
     private int positionAttachmentIndex;
     private int normalAttachmentIndex;
 

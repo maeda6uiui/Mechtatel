@@ -12,10 +12,12 @@ import org.lwjgl.vulkan.VkCommandBuffer;
 public class VkComponent {
     private Matrix4f mat;
     private boolean visible;
+    private String componentType;
 
     public VkComponent() {
         mat = new Matrix4f().identity();
         visible = true;
+        componentType = "unknown";
     }
 
     public Matrix4fc getMat() {
@@ -34,8 +36,16 @@ public class VkComponent {
         this.visible = visible;
     }
 
+    protected void setComponentType(String componentType) {
+        this.componentType = componentType;
+    }
+
     public boolean isVisible() {
         return visible;
+    }
+
+    public String getComponentType() {
+        return componentType;
     }
 
     public void applyMat(Matrix4fc right) {

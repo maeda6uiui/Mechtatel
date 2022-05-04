@@ -47,6 +47,8 @@ public class VkLine3D extends VkComponent3D {
         vertices.add(v2);
 
         this.createBuffer(commandPool, graphicsQueue, vertices);
+
+        this.setComponentType("primitive");
     }
 
     @Override

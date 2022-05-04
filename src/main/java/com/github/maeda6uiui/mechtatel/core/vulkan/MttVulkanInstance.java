@@ -650,7 +650,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         gBufferNabor.transitionPositionImage(commandPool, graphicsQueue);
                         gBufferNabor.transitionNormalImage(commandPool, graphicsQueue);
 
-                        ppNabor.bindGBufferImages(
+                        ppNabor.bindImages(
                                 commandBuffer,
                                 0,
                                 gBufferNabor.getAlbedoImageView(),
@@ -660,7 +660,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     } else {
                         lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
 
-                        ppNabor.bindGBufferImages(
+                        ppNabor.bindImages(
                                 commandBuffer,
                                 0,
                                 lastPPNabor.getColorImageView(),

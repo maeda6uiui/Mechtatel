@@ -215,7 +215,7 @@ public class ShadowMappingNaborRunner {
                     gBufferNabor.transitionPositionImage(commandPool, graphicsQueue);
                     gBufferNabor.transitionNormalImage(commandPool, graphicsQueue);
 
-                    shadowMappingNabor.bindGBufferImages(
+                    shadowMappingNabor.bindImages(
                             commandBuffer,
                             1,
                             0,
@@ -226,7 +226,7 @@ public class ShadowMappingNaborRunner {
                 } else {
                     lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
 
-                    shadowMappingNabor.bindGBufferImages(
+                    shadowMappingNabor.bindImages(
                             commandBuffer,
                             1,
                             0,

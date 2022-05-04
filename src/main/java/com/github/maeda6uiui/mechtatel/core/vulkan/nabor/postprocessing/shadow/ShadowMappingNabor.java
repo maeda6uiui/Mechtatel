@@ -273,7 +273,7 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     }
 
     @Override
-    public void bindGBufferImages(
+    public void bindImages(
             VkCommandBuffer commandBuffer,
             int naborIndex,
             int dstBinding,
@@ -282,7 +282,7 @@ public class ShadowMappingNabor extends PostProcessingNabor {
             long positionImageView,
             long normalImageView) {
         if (naborIndex == 1) {
-            pass2.bindGBufferImages(
+            pass2.bindImages(
                     commandBuffer,
                     dstBinding,
                     colorImageView,

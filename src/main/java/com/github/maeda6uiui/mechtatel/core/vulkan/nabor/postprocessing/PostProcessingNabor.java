@@ -290,7 +290,7 @@ public class PostProcessingNabor extends Nabor {
         }
     }
 
-    public void bindGBufferImages(
+    public void bindImages(
             VkCommandBuffer commandBuffer,
             int dstBinding,
             long colorImageView,
@@ -303,7 +303,7 @@ public class PostProcessingNabor extends Nabor {
         this.bindImages(commandBuffer, 1, dstBinding, imageViews);
     }
 
-    public void bindGBufferImages(
+    public void bindImages(
             VkCommandBuffer commandBuffer,
             int naborIndex,
             int dstBinding,

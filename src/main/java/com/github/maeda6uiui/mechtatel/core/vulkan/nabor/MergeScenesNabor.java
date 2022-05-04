@@ -42,7 +42,7 @@ public class MergeScenesNabor extends Nabor {
         this.normalImageFormat = normalImageFormat;
     }
 
-    public void transitionAlbedoImageLayout(long commandPool, VkQueue graphicsQueue) {
+    public void transitionAlbedoImage(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long colorImage = this.getImage(albedoAttachmentIndex);
 
@@ -61,7 +61,7 @@ public class MergeScenesNabor extends Nabor {
         return this.getImageView(albedoAttachmentIndex);
     }
 
-    public void transitionDepthImageLayout(long commandPool, VkQueue graphicsQueue) {
+    public void transitionDepthImage(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long colorImage = this.getImage(depthAttachmentIndex);
 

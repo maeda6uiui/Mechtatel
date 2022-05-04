@@ -41,25 +41,6 @@ public class MergeScenesNabor extends Nabor {
         this.normalImageFormat = normalImageFormat;
     }
 
-    public void transitionDepthImageLayout(long commandPool, VkQueue graphicsQueue) {
-        VkDevice device = this.getDevice();
-        long colorImage = this.getImage(depthAttachmentIndex);
-
-        ImageUtils.transitionImageLayout(
-                device,
-                commandPool,
-                graphicsQueue,
-                colorImage,
-                VK_IMAGE_ASPECT_COLOR_BIT,
-                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                1);
-    }
-
-    public long getDepthImageView() {
-        return this.getImageView(depthAttachmentIndex);
-    }
-
     public void transitionAlbedoImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long colorImage = this.getImage(albedoAttachmentIndex);
@@ -77,6 +58,25 @@ public class MergeScenesNabor extends Nabor {
 
     public long getAlbedoImageView() {
         return this.getImageView(albedoAttachmentIndex);
+    }
+
+    public void transitionDepthImageLayout(long commandPool, VkQueue graphicsQueue) {
+        VkDevice device = this.getDevice();
+        long colorImage = this.getImage(depthAttachmentIndex);
+
+        ImageUtils.transitionImageLayout(
+                device,
+                commandPool,
+                graphicsQueue,
+                colorImage,
+                VK_IMAGE_ASPECT_COLOR_BIT,
+                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                1);
+    }
+
+    public long getDepthImageView() {
+        return this.getImageView(depthAttachmentIndex);
     }
 
     public void transitionPositionImage(long commandPool, VkQueue graphicsQueue) {

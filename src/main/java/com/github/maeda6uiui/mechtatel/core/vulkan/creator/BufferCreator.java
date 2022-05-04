@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.creator;
 
 import com.github.maeda6uiui.mechtatel.core.component.Vertex2D;
 import com.github.maeda6uiui.mechtatel.core.component.Vertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.component.Vertex3D;
 import com.github.maeda6uiui.mechtatel.core.component.Vertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.util.MemcpyUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.MemoryUtils;
@@ -168,6 +169,57 @@ public class BufferCreator {
             vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, data);
             {
                 MemcpyUtils.memcpyVertex2DUV(data.getByteBuffer(0, (int) bufferSize), vertices);
+            }
+            vkUnmapMemory(device, stagingBufferMemory);
+
+            createBuffer(
+                    device,
+                    bufferSize,
+                    VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                    pBuffer,
+                    pBufferMemory);
+            long vertexBuffer = pBuffer.get(0);
+            long vertexBufferMemory = pBufferMemory.get(0);
+
+            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize);
+
+            vkDestroyBuffer(device, stagingBuffer, null);
+            vkFreeMemory(device, stagingBufferMemory, null);
+
+            var ret = new BufferInfo();
+            ret.buffer = vertexBuffer;
+            ret.bufferMemory = vertexBufferMemory;
+
+            return ret;
+        }
+    }
+
+    public static BufferInfo createVertexBuffer3D(
+            VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue,
+            List<Vertex3D> vertices) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            long bufferSize = Vertex3D.SIZEOF * vertices.size();
+
+            LongBuffer pBuffer = stack.mallocLong(1);
+            LongBuffer pBufferMemory = stack.mallocLong(1);
+            createBuffer(
+                    device,
+                    bufferSize,
+                    VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                    pBuffer,
+                    pBufferMemory);
+            long stagingBuffer = pBuffer.get(0);
+            long stagingBufferMemory = pBufferMemory.get(0);
+
+            PointerBuffer data = stack.mallocPointer(1);
+
+            vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, data);
+            {
+                MemcpyUtils.memcpyVertex3D(data.getByteBuffer(0, (int) bufferSize), vertices);
             }
             vkUnmapMemory(device, stagingBufferMemory);
 

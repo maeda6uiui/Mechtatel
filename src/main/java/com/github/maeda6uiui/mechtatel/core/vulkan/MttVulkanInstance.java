@@ -226,7 +226,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 device,
                 depthImageFormat,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
-                VK_FORMAT_R16G16B16A16_SFLOAT);
+                VK_FORMAT_R16G16B16A16_SFLOAT,
+                false);
         primitiveNabor.compile(
                 swapchain.getSwapchainImageFormat(),
                 swapchain.getSwapchainExtent(),

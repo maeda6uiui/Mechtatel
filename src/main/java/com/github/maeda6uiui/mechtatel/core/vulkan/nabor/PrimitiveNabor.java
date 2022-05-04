@@ -34,11 +34,14 @@ public class PrimitiveNabor extends Nabor {
     private int positionAttachmentIndex;
     private int normalAttachmentIndex;
 
+    private boolean fill;
+
     public PrimitiveNabor(
             VkDevice device,
             int depthImageFormat,
             int positionImageFormat,
-            int normalImageFormat) {
+            int normalImageFormat,
+            boolean fill) {
         super(device, VK_SAMPLE_COUNT_1_BIT, false);
 
         this.depthImageFormat = depthImageFormat;
@@ -49,6 +52,8 @@ public class PrimitiveNabor extends Nabor {
         if (DepthResourceUtils.hasStencilComponent(depthImageFormat)) {
             depthImageAspect |= VK_IMAGE_ASPECT_STENCIL_BIT;
         }
+
+        this.fill = fill;
     }
 
     public void transitionDepthImage(long commandPool, VkQueue graphicsQueue) {
@@ -444,7 +449,11 @@ public class PrimitiveNabor extends Nabor {
             //Assembly stage
             VkPipelineInputAssemblyStateCreateInfo inputAssembly = VkPipelineInputAssemblyStateCreateInfo.calloc(stack);
             inputAssembly.sType(VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO);
-            inputAssembly.topology(VK_PRIMITIVE_TOPOLOGY_LINE_LIST);
+            if (this.fill) {
+                inputAssembly.topology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+            } else {
+                inputAssembly.topology(VK_PRIMITIVE_TOPOLOGY_LINE_LIST);
+            }
             inputAssembly.primitiveRestartEnable(false);
 
             //Viewport and scissor

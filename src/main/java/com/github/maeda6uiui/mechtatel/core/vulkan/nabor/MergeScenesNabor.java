@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
@@ -750,5 +751,18 @@ public class MergeScenesNabor extends Nabor {
             this.getImageMemories().add(normalImageMemory);
             this.getImageViews().add(normalImageView);
         }
+    }
+
+    public void bindImages(
+            VkCommandBuffer commandBuffer,
+            int dstBinding,
+            long colorImageView,
+            long depthImageView,
+            long positionImageView,
+            long normalImageView) {
+        var arrImageViews = new Long[]{colorImageView, depthImageView, positionImageView, normalImageView};
+        var imageViews = Arrays.asList(arrImageViews);
+
+        this.bindImages(commandBuffer, 1, dstBinding, imageViews);
     }
 }

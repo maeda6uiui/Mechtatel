@@ -277,7 +277,7 @@ public class ShadowMappingNabor extends PostProcessingNabor {
             VkCommandBuffer commandBuffer,
             int naborIndex,
             int dstBinding,
-            long colorImageView,
+            long albedoImageView,
             long depthImageView,
             long positionImageView,
             long normalImageView) {
@@ -285,7 +285,7 @@ public class ShadowMappingNabor extends PostProcessingNabor {
             pass2.bindImages(
                     commandBuffer,
                     dstBinding,
-                    colorImageView,
+                    albedoImageView,
                     depthImageView,
                     positionImageView,
                     normalImageView);

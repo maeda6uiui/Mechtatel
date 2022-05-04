@@ -168,12 +168,12 @@ public class GBufferNabor extends Nabor {
     }
 
     @Override
-    public int getNumDescriptorSets(int naborIndex){
+    public int getNumDescriptorSets(int naborIndex) {
         int numDescriptorSets;
 
         switch (naborIndex) {
             case 0:
-                numDescriptorSets=albedoNabor.getNumDescriptorSets();
+                numDescriptorSets = albedoNabor.getNumDescriptorSets();
                 break;
             case 1:
                 numDescriptorSets = propertiesNabor.getNumDescriptorSets();
@@ -186,15 +186,15 @@ public class GBufferNabor extends Nabor {
     }
 
     @Override
-    public long getDescriptorSet(int naborIndex,int arrayIndex){
+    public long getDescriptorSet(int naborIndex, int arrayIndex) {
         long descriptorSet;
 
         switch (naborIndex) {
             case 0:
-                descriptorSet=albedoNabor.getDescriptorSet(arrayIndex);
+                descriptorSet = albedoNabor.getDescriptorSet(arrayIndex);
                 break;
             case 1:
-                descriptorSet=propertiesNabor.getDescriptorSet(arrayIndex);
+                descriptorSet = propertiesNabor.getDescriptorSet(arrayIndex);
                 break;
             default:
                 throw new RuntimeException("Index out of bounds");
@@ -312,15 +312,15 @@ public class GBufferNabor extends Nabor {
     }
 
     @Override
-    public int getSetCount(int naborIndex){
+    public int getSetCount(int naborIndex) {
         int setCount;
 
         switch (naborIndex) {
             case 0:
-                setCount=albedoNabor.getSetCount();
+                setCount = albedoNabor.getSetCount();
                 break;
             case 1:
-                setCount=propertiesNabor.getSetCount();
+                setCount = propertiesNabor.getSetCount();
                 break;
             default:
                 throw new RuntimeException("Index out of bounds");

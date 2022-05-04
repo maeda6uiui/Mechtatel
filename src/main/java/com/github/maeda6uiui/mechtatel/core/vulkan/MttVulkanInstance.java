@@ -712,7 +712,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
         var descriptorSets = new ArrayList<Long>();
         for (int i = 0; i < numDescriptorSets; i++) {
-            descriptorSets.add(gBufferNabor.getDescriptorSet(0,i));
+            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
         }
 
         var model = new VkModel3D(

@@ -1,6 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
+import com.github.maeda6uiui.mechtatel.core.component.Vertex3D;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.LightingInfo;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
@@ -9,6 +10,7 @@ import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent3D;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkLine3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
@@ -732,5 +734,12 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         components.add(model);
 
         return model;
+    }
+
+    public VkLine3D createLine3D(Vertex3D v1, Vertex3D v2) {
+        var line = new VkLine3D(device, commandPool, graphicsQueue, v1, v2);
+        components.add(line);
+
+        return line;
     }
 }

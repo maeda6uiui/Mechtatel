@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
+import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
 
@@ -22,5 +23,11 @@ public class Vertex3D {
         this.pos = pos;
         this.color = color;
         this.normal = normal;
+    }
+
+    public Vertex3D(Vector3fc pos, Vector4fc color) {
+        this.pos = pos;
+        this.color = color;
+        this.normal = new Vector3f(0.0f, 0.0f, 0.0f);
     }
 }

@@ -63,13 +63,13 @@ public class MergeScenesNabor extends Nabor {
 
     public void transitionDepthImage(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long colorImage = this.getImage(depthAttachmentIndex);
+        long depthImage = this.getImage(depthAttachmentIndex);
 
         ImageUtils.transitionImageLayout(
                 device,
                 commandPool,
                 graphicsQueue,
-                colorImage,
+                depthImage,
                 VK_IMAGE_ASPECT_COLOR_BIT,
                 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
@@ -155,7 +155,7 @@ public class MergeScenesNabor extends Nabor {
             depthAttachmentIndex = 1;
 
             VkAttachmentDescription depthAttachment = attachments.get(depthAttachmentIndex);
-            depthAttachment.format(colorImageFormat);
+            depthAttachment.format(depthImageFormat);
             depthAttachment.samples(msaaSamples);
             depthAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
             depthAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
@@ -210,7 +210,7 @@ public class MergeScenesNabor extends Nabor {
 
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.calloc(1, stack);
             subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
-            subpass.colorAttachmentCount(3);
+            subpass.colorAttachmentCount(4);
             subpass.pColorAttachments(colorAttachmentRefs);
 
             VkSubpassDependency.Buffer dependency = VkSubpassDependency.calloc(1, stack);
@@ -242,7 +242,7 @@ public class MergeScenesNabor extends Nabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            //=== set 1 ===
+            //=== set 0 ===
             VkDescriptorSetLayoutBinding.Buffer imageBindings = VkDescriptorSetLayoutBinding.calloc(4, stack);
 
             VkDescriptorSetLayoutBinding albedoImageLayoutBinding = imageBindings.get(0);
@@ -273,7 +273,7 @@ public class MergeScenesNabor extends Nabor {
             normalImageLayoutBinding.pImmutableSamplers(null);
             normalImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            //=== set 2 ===
+            //=== set 1 ===
             VkDescriptorSetLayoutBinding.Buffer samplerBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
 
             VkDescriptorSetLayoutBinding samplerLayoutBinding = samplerBindings.get(0);
@@ -286,12 +286,12 @@ public class MergeScenesNabor extends Nabor {
             //Create descriptor set layouts
             VkDescriptorSetLayoutCreateInfo.Buffer layoutInfos = VkDescriptorSetLayoutCreateInfo.calloc(2, stack);
 
-            //=== set 1 ===
+            //=== set 0 ===
             VkDescriptorSetLayoutCreateInfo imageLayoutInfo = layoutInfos.get(0);
             imageLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
             imageLayoutInfo.pBindings(imageBindings);
 
-            //=== set 2 ===
+            //=== set 1 ===
             VkDescriptorSetLayoutCreateInfo samplerLayoutInfo = layoutInfos.get(1);
             samplerLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
             samplerLayoutInfo.pBindings(samplerBindings);
@@ -313,26 +313,26 @@ public class MergeScenesNabor extends Nabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            //=== set 1 ===
+            //=== set 0 ===
             VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.calloc(4, stack);
 
             VkDescriptorPoolSize albedoImagePoolSize = imagePoolSizes.get(0);
             albedoImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            albedoImagePoolSize.descriptorCount(descriptorCount);
+            albedoImagePoolSize.descriptorCount(descriptorCount * 2);
 
             VkDescriptorPoolSize depthImagePoolSize = imagePoolSizes.get(1);
             depthImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            depthImagePoolSize.descriptorCount(descriptorCount);
+            depthImagePoolSize.descriptorCount(descriptorCount * 2);
 
             VkDescriptorPoolSize positionImagePoolSize = imagePoolSizes.get(2);
             positionImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            positionImagePoolSize.descriptorCount(descriptorCount);
+            positionImagePoolSize.descriptorCount(descriptorCount * 2);
 
             VkDescriptorPoolSize normalImagePoolSize = imagePoolSizes.get(3);
             normalImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            normalImagePoolSize.descriptorCount(descriptorCount);
+            normalImagePoolSize.descriptorCount(descriptorCount * 2);
 
-            //=== set 2 ===
+            //=== set 1 ===
             VkDescriptorPoolSize.Buffer samplerPoolSizes = VkDescriptorPoolSize.calloc(1, stack);
 
             VkDescriptorPoolSize samplerPoolSize = samplerPoolSizes.get(0);
@@ -342,13 +342,13 @@ public class MergeScenesNabor extends Nabor {
             //Create descriptor pools
             VkDescriptorPoolCreateInfo.Buffer poolInfos = VkDescriptorPoolCreateInfo.calloc(2, stack);
 
-            //=== set 1 ===
+            //=== set 0 ===
             VkDescriptorPoolCreateInfo imagePoolInfo = poolInfos.get(0);
             imagePoolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
             imagePoolInfo.pPoolSizes(imagePoolSizes);
             imagePoolInfo.maxSets(descriptorCount);
 
-            //=== set 2 ===
+            //=== set 1 ===
             VkDescriptorPoolCreateInfo samplerPoolInfo = poolInfos.get(1);
             samplerPoolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
             samplerPoolInfo.pPoolSizes(samplerPoolSizes);
@@ -406,7 +406,7 @@ public class MergeScenesNabor extends Nabor {
 
             VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.calloc(setCount, stack);
 
-            //=== set 1 ===
+            //=== set 0 ===
             VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.calloc(2 * 4, stack);
             for (int i = 0; i < 2 * 4; i++) {
                 VkDescriptorImageInfo imageInfo = imageInfos.get(i);
@@ -414,7 +414,7 @@ public class MergeScenesNabor extends Nabor {
                 imageInfo.imageView(this.getDummyImageView());
             }
 
-            VkWriteDescriptorSet imageDescriptorWrite = descriptorWrites.get(1);
+            VkWriteDescriptorSet imageDescriptorWrite = descriptorWrites.get(0);
             imageDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
             imageDescriptorWrite.dstBinding(0);
             imageDescriptorWrite.dstArrayElement(0);
@@ -422,14 +422,14 @@ public class MergeScenesNabor extends Nabor {
             imageDescriptorWrite.descriptorCount(2 * 4);
             imageDescriptorWrite.pImageInfo(imageInfos);
 
-            //=== set 2 ===
+            //=== set 1 ===
             VkDescriptorImageInfo.Buffer samplerInfos = VkDescriptorImageInfo.calloc(1, stack);
 
             VkDescriptorImageInfo samplerInfo = samplerInfos.get(0);
             samplerInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
             samplerInfo.sampler(this.getTextureSampler(0));
 
-            VkWriteDescriptorSet samplerDescriptorWrite = descriptorWrites.get(2);
+            VkWriteDescriptorSet samplerDescriptorWrite = descriptorWrites.get(1);
             samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
             samplerDescriptorWrite.dstBinding(0);
             samplerDescriptorWrite.dstArrayElement(0);
@@ -438,8 +438,8 @@ public class MergeScenesNabor extends Nabor {
             samplerDescriptorWrite.pImageInfo(samplerInfos);
 
             for (int i = 0; i < descriptorCount; i++) {
-                imageDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount));
-                samplerDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount * 2));
+                imageDescriptorWrite.dstSet(descriptorSets.get(i));
+                samplerDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount));
 
                 vkUpdateDescriptorSets(device, descriptorWrites, null);
             }
@@ -559,8 +559,8 @@ public class MergeScenesNabor extends Nabor {
 
             //Color blending
             VkPipelineColorBlendAttachmentState.Buffer colorBlendAttachments
-                    = VkPipelineColorBlendAttachmentState.calloc(2, stack);
-            for (int i = 0; i < 2; i++) {
+                    = VkPipelineColorBlendAttachmentState.calloc(4, stack);
+            for (int i = 0; i < 4; i++) {
                 VkPipelineColorBlendAttachmentState colorBlendAttachment = colorBlendAttachments.get(i);
                 colorBlendAttachment.colorWriteMask(
                         VK_COLOR_COMPONENT_R_BIT |
@@ -681,7 +681,7 @@ public class MergeScenesNabor extends Nabor {
             long depthImageMemory = pImageMemory.get(0);
 
             viewInfo.image(depthImage);
-            viewInfo.format(colorImageFormat);
+            viewInfo.format(depthImageFormat);
             viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
 
             if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
@@ -757,27 +757,27 @@ public class MergeScenesNabor extends Nabor {
         var arrImageViews = new Long[]{albedoImageViewA, albedoImageViewB};
         var imageViews = Arrays.asList(arrImageViews);
 
-        this.bindImages(commandBuffer, 1, albedoAttachmentIndex, imageViews);
+        this.bindImages(commandBuffer, 0, albedoAttachmentIndex, imageViews);
     }
 
     public void bindDepthImages(VkCommandBuffer commandBuffer, long depthImageViewA, long depthImageViewB) {
         var arrImageViews = new Long[]{depthImageViewA, depthImageViewB};
         var imageViews = Arrays.asList(arrImageViews);
 
-        this.bindImages(commandBuffer, 1, depthAttachmentIndex, imageViews);
+        this.bindImages(commandBuffer, 0, depthAttachmentIndex, imageViews);
     }
 
     public void bindPositionImages(VkCommandBuffer commandBuffer, long positionImageViewA, long positionImageViewB) {
         var arrImageViews = new Long[]{positionImageViewA, positionImageViewB};
         var imageViews = Arrays.asList(arrImageViews);
 
-        this.bindImages(commandBuffer, 1, positionAttachmentIndex, imageViews);
+        this.bindImages(commandBuffer, 0, positionAttachmentIndex, imageViews);
     }
 
     public void bindNormalImages(VkCommandBuffer commandBuffer, long normalImageViewA, long normalImageViewB) {
         var arrImageViews = new Long[]{normalImageViewA, normalImageViewB};
         var imageViews = Arrays.asList(arrImageViews);
 
-        this.bindImages(commandBuffer, 1, normalAttachmentIndex, imageViews);
+        this.bindImages(commandBuffer, 0, normalAttachmentIndex, imageViews);
     }
 }

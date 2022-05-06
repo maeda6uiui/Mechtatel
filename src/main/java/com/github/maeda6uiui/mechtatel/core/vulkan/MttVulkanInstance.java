@@ -489,7 +489,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
             renderArea.extent(primitiveNabor.getExtent());
             renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.calloc(2, stack);
+            VkClearValue.Buffer clearValues = VkClearValue.calloc(4, stack);
             clearValues.get(0).depthStencil().set(1.0f, 0);
             clearValues.get(1).color().float32(
                     stack.floats(
@@ -497,6 +497,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                             backgroundColor.y,
                             backgroundColor.z,
                             backgroundColor.w));
+            clearValues.get(2).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            clearValues.get(3).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             renderPassInfo.pClearValues(clearValues);
 
             VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
@@ -768,8 +770,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
             long colorImageView;
             if (lastPPNabor == null) {
-                gBufferNabor.transitionAlbedoImage(commandPool, graphicsQueue);
-                colorImageView = gBufferNabor.getAlbedoImageView();
+                mergeScenesNabor.transitionAlbedoImage(commandPool, graphicsQueue);
+                colorImageView = mergeScenesNabor.getAlbedoImageView();
             } else {
                 lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
                 colorImageView = lastPPNabor.getColorImageView();

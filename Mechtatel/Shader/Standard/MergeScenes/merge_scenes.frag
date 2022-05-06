@@ -1,11 +1,11 @@
 #version 450
 #extension GL_ARB_separate_shader_objects:enable
 
-layout(set=1,binding=0) uniform texture2D albedoTextures[2];
-layout(set=1,binding=1) uniform texture2D depthTextures[2];
-layout(set=1,binding=2) uniform texture2D positionTexture[2];
-layout(set=1,binding=3) uniform texture2D normalTexture[2];
-layout(set=2,binding=0) uniform sampler textureSampler;
+layout(set=0,binding=0) uniform texture2D albedoTextures[2];
+layout(set=0,binding=1) uniform texture2D depthTextures[2];
+layout(set=0,binding=2) uniform texture2D positionTextures[2];
+layout(set=0,binding=3) uniform texture2D normalTextures[2];
+layout(set=1,binding=0) uniform sampler textureSampler;
 
 layout(location=0) in vec2 fragTexCoords;
 

@@ -196,7 +196,7 @@ public class PrimitiveNabor extends Nabor {
             positionAttachmentIndex = 2;
 
             VkAttachmentDescription positionAttachment = attachments.get(positionAttachmentIndex);
-            positionAttachment.format(colorImageFormat);
+            positionAttachment.format(positionImageFormat);
             positionAttachment.samples(VK_SAMPLE_COUNT_1_BIT);
             positionAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
             positionAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
@@ -505,14 +505,16 @@ public class PrimitiveNabor extends Nabor {
 
             //Color blending
             VkPipelineColorBlendAttachmentState.Buffer colorBlendAttachments
-                    = VkPipelineColorBlendAttachmentState.calloc(1, stack);
-            VkPipelineColorBlendAttachmentState colorBlendAttachment = colorBlendAttachments.get(0);
-            colorBlendAttachment.colorWriteMask(
-                    VK_COLOR_COMPONENT_R_BIT |
-                            VK_COLOR_COMPONENT_G_BIT |
-                            VK_COLOR_COMPONENT_B_BIT |
-                            VK_COLOR_COMPONENT_A_BIT);
-            colorBlendAttachment.blendEnable(false);
+                    = VkPipelineColorBlendAttachmentState.calloc(3, stack);
+            for (int i = 0; i < 3; i++) {
+                VkPipelineColorBlendAttachmentState colorBlendAttachment = colorBlendAttachments.get(i);
+                colorBlendAttachment.colorWriteMask(
+                        VK_COLOR_COMPONENT_R_BIT |
+                                VK_COLOR_COMPONENT_G_BIT |
+                                VK_COLOR_COMPONENT_B_BIT |
+                                VK_COLOR_COMPONENT_A_BIT);
+                colorBlendAttachment.blendEnable(false);
+            }
 
             VkPipelineColorBlendStateCreateInfo colorBlending = VkPipelineColorBlendStateCreateInfo.calloc(stack);
             colorBlending.sType(VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO);

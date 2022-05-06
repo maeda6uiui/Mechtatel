@@ -26,8 +26,7 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void init() {
-        this.setCursorMode("disabled");
-        this.fixCursor();
+
     }
 
     @Override
@@ -42,12 +41,6 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void update() {
-        int x = this.getCursorPosX();
-        int y = this.getCursorPosY();
-        System.out.printf("(x,y)=(%d,%d)\n", x, y);
-
-        if (this.getKeyboardPressingCount("ESCAPE") == 1) {
-            this.closeWindow();
-        }
+        
     }
 }

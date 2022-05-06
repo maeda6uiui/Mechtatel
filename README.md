@@ -37,6 +37,8 @@ Javaでゲームエンジンを作ることを目標としているプロジェ�
 
 <img src="./Image/lines.png" alt="直線の描画" style="zoom:50%;" />
 
+<img src="./Image/grid.png" alt="グリッドの描画" style="zoom:50%;" />
+
 関係ないですが、開発環境を再びWindowsに戻しました。
 
 ### 2022-05-01

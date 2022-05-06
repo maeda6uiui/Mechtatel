@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.Line3D;
+import com.github.maeda6uiui.mechtatel.core.component.Line3DSet;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import com.github.maeda6uiui.mechtatel.core.component.Vertex3D;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
@@ -233,5 +234,9 @@ public class Mechtatel implements IMechtatel {
         var v1 = new Vertex3D(p1, color);
         var v2 = new Vertex3D(p2, color);
         return instance.createLine3D(v1, v2);
+    }
+
+    public Line3DSet createLine3DSet() {
+        return instance.createLine3DSet();
     }
 }

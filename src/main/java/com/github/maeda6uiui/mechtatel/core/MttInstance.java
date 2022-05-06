@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.Line3D;
+import com.github.maeda6uiui.mechtatel.core.component.Line3DSet;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import com.github.maeda6uiui.mechtatel.core.component.Vertex3D;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
@@ -383,5 +384,10 @@ class MttInstance {
     public Line3D createLine3D(Vertex3D v1, Vertex3D v2) {
         var line = new Line3D(vulkanInstance, v1, v2);
         return line;
+    }
+
+    public Line3DSet createLine3DSet() {
+        var lineSet = new Line3DSet(vulkanInstance);
+        return lineSet;
     }
 }

@@ -9,7 +9,7 @@ import org.joml.Vector4fc;
  * @author maeda
  */
 public class Vertex3D {
-    public static final int SIZEOF = (3 + 4 + 4) * Float.BYTES;
+    public static final int SIZEOF = (3 + 4 + 3) * Float.BYTES;
     public static final int OFFSETOF_POS = 0;
     public static final int OFFSETOF_COLOR = 3 * Float.BYTES;
     public static final int OFFSETOF_NORMAL = (3 + 4) * Float.BYTES;

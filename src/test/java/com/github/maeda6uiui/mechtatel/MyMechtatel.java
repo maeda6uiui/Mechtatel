@@ -2,6 +2,9 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.component.Vertex3D;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import java.io.IOException;
 
@@ -26,7 +29,15 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void init() {
-
+        var v1 = new Vertex3D(
+                new Vector3f(-100.0f, 0.0f, 0.0f),
+                new Vector4f(1.0f, 0.0f, 0.0f, 1.0f),
+                new Vector3f(0.0f, 1.0f, 0.0f));
+        var v2 = new Vertex3D(
+                new Vector3f(100.0f, 0.0f, 0.0f),
+                new Vector4f(1.0f, 0.0f, 0.0f, 1.0f),
+                new Vector3f(0.0f, 1.0f, 0.0f));
+        var line = this.createLine3D(v1, v2);
     }
 
     @Override
@@ -41,6 +52,6 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void update() {
-        
+
     }
 }

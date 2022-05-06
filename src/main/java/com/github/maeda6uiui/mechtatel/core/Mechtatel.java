@@ -1,7 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
+import com.github.maeda6uiui.mechtatel.core.component.Line3D;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
+import com.github.maeda6uiui.mechtatel.core.component.Vertex3D;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
@@ -213,5 +215,9 @@ public class Mechtatel implements IMechtatel {
 
     public Model3D duplicateModel3D(Model3D srcModel) {
         return instance.duplicateModel3D(srcModel);
+    }
+
+    public Line3D createLine3D(Vertex3D v1, Vertex3D v2) {
+        return instance.createLine3D(v1, v2);
     }
 }

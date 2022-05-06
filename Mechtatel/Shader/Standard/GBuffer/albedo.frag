@@ -13,8 +13,8 @@ layout(push_constant) uniform FragPC{
 layout(location=0) in vec4 fragColor;
 layout(location=1) in vec2 fragTexCoords;
 
-layout(location=0) out vec4 outColor;
+layout(location=0) out vec4 outAlbedo;
 
 void main(){
-    outColor=texture(sampler2D(textures[pc.textureIndex],textureSampler),fragTexCoords);
+    outAlbedo=texture(sampler2D(textures[pc.textureIndex],textureSampler),fragTexCoords);
 }

@@ -5,12 +5,12 @@ layout(location=0) in vec3 fragPosition;
 layout(location=1) in vec4 fragColor;
 layout(location=2) in vec3 fragNormal;
 
-layout(location=0) out vec4 outColor;
+layout(location=0) out vec4 outAlbedo;
 layout(location=1) out vec3 outPosition;
 layout(location=2) out vec3 outNormal;
 
 void main(){
-    outColor=fragColor;
+    outAlbedo=fragColor;
     outPosition=fragPosition;
     outNormal=fragNormal;
 }

@@ -10,7 +10,9 @@ import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.joml.Vector4f;
+import org.joml.Vector4fc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -218,6 +220,18 @@ public class Mechtatel implements IMechtatel {
     }
 
     public Line3D createLine3D(Vertex3D v1, Vertex3D v2) {
+        return instance.createLine3D(v1, v2);
+    }
+
+    public Line3D createLine3D(Vector3fc p1, Vector4fc color1, Vector3fc p2, Vector4fc color2) {
+        var v1 = new Vertex3D(p1, color1);
+        var v2 = new Vertex3D(p2, color2);
+        return instance.createLine3D(v1, v2);
+    }
+
+    public Line3D createLine3D(Vector3fc p1, Vector3fc p2, Vector4fc color) {
+        var v1 = new Vertex3D(p1, color);
+        var v2 = new Vertex3D(p2, color);
         return instance.createLine3D(v1, v2);
     }
 }

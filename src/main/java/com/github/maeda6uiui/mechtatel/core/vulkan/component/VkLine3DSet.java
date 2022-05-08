@@ -108,7 +108,7 @@ public class VkLine3DSet extends VkComponent3D {
             vkCmdDraw(
                     commandBuffer,
                     vertices.size(),
-                    vertices.size() / 2,
+                    1,
                     0,
                     0);
         }

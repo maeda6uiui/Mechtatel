@@ -28,6 +28,6 @@ public class Vertex3D {
     public Vertex3D(Vector3fc pos, Vector4fc color) {
         this.pos = pos;
         this.color = color;
-        this.normal = new Vector3f(0.0f, 0.0f, 0.0f);
+        this.normal = new Vector3f(0.0f, 1.0f, 0.0f);
     }
 }

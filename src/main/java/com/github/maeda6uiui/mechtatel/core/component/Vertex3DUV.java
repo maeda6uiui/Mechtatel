@@ -33,6 +33,6 @@ public class Vertex3DUV {
         this.pos = pos;
         this.color = color;
         this.texCoords = texCoords;
-        this.normal = new Vector3f(0.0f, 0.0f, 0.0f);
+        this.normal = new Vector3f(0.0f, 1.0f, 0.0f);
     }
 }

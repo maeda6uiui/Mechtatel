@@ -1,10 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
-import com.github.maeda6uiui.mechtatel.core.component.Line3D;
-import com.github.maeda6uiui.mechtatel.core.component.Line3DSet;
-import com.github.maeda6uiui.mechtatel.core.component.Model3D;
-import com.github.maeda6uiui.mechtatel.core.component.Vertex3D;
+import com.github.maeda6uiui.mechtatel.core.component.*;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
@@ -17,7 +14,9 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.Parallel
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.SpotlightNabor;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.joml.Vector4f;
+import org.joml.Vector4fc;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
@@ -389,5 +388,10 @@ class MttInstance {
     public Line3DSet createLine3DSet() {
         var lineSet = new Line3DSet(vulkanInstance);
         return lineSet;
+    }
+
+    public Sphere3D createSphere3D(Vector3fc center, float radius, int numVDivs, int numHDivs, Vector4fc color) {
+        var sphere = new Sphere3D(vulkanInstance, center, radius, numVDivs, numHDivs, color);
+        return sphere;
     }
 }

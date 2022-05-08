@@ -25,7 +25,9 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.joml.Vector4f;
+import org.joml.Vector4fc;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
@@ -898,5 +900,17 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         components.add(lineSet);
 
         return lineSet;
+    }
+
+    public VkSphere3D createSphere3D(
+            Vector3fc center,
+            float radius,
+            int numVDivs,
+            int numHDivs,
+            Vector4fc color) {
+        var sphere = new VkSphere3D(device, commandPool, graphicsQueue, center, radius, numVDivs, numHDivs, color);
+        components.add(sphere);
+
+        return sphere;
     }
 }

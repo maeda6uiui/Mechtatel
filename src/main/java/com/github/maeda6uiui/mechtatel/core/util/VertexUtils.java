@@ -63,19 +63,19 @@ public class VertexUtils {
             indices.add(0);
             indices.add(i);
         }
-        for (int i = 0; i < numVDivs - 1; i++) {
+        for (int i = 0; i < numVDivs - 2; i++) {
             for (int j = 0; j < numHDivs; j++) {
                 indices.add(1 + i * numHDivs + j);
                 indices.add(1 + (i + 1) * numHDivs + j);
             }
         }
         for (int i = 0; i < numHDivs; i++) {
-            indices.add(1 + (numVDivs - 1) * numHDivs + i);
-            indices.add(1 + numVDivs * numHDivs);
+            indices.add(1 + (numVDivs - 2) * numHDivs + i);
+            indices.add(1 + (numVDivs - 1) * numHDivs);
         }
 
         //Horizontal lines
-        for (int i = 0; i < numVDivs; i++) {
+        for (int i = 0; i < numVDivs - 1; i++) {
             for (int j = 0; j < numHDivs; j++) {
                 indices.add(1 + i * numHDivs + j);
                 indices.add(1 + i * numHDivs + (j + 1) % numHDivs);

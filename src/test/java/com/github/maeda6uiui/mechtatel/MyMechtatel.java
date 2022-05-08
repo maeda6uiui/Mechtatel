@@ -6,7 +6,6 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class MyMechtatel extends Mechtatel {
     public MyMechtatel(MttSettings settings) {
@@ -29,33 +28,12 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void init() {
-        var lineSet = this.createLine3DSet();
-        for (int x = -100; x <= 100; x++) {
-            lineSet.add(
-                    new Vector3f((float) x, 0.0f, -100.0f),
-                    new Vector3f((float) x, 0.0f, 100.0f),
-                    new Vector4f(1.0f, 1.0f, 1.0f, 1.0f)
-            );
-        }
-        for (int z = -100; z <= 100; z++) {
-            lineSet.add(
-                    new Vector3f(-100.0f, 0.0f, (float) z),
-                    new Vector3f(100.0f, 0.0f, (float) z),
-                    new Vector4f(1.0f, 1.0f, 1.0f, 1.0f)
-            );
-        }
-        lineSet.createBuffer();
-
-        var camera = this.getCamera();
-        camera.setEye(new Vector3f(50.0f, 20.0f, 50.0f));
-
-        var ppNaborNames = new ArrayList<String>();
-        ppNaborNames.add("fog");
-        this.createPostProcessingNabors(ppNaborNames);
-
-        var fog = this.getFog();
-        fog.setStart(50.0f);
-        fog.setEnd(100.0f);
+        var sphere = this.createSphere3D(
+                new Vector3f(0.0f, 0.0f, 0.0f),
+                4.0f,
+                32,
+                32,
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
     }
 
     @Override

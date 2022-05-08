@@ -83,10 +83,12 @@ public class VkLine3DSet extends VkComponent3D {
 
     @Override
     public void cleanup() {
-        vkDestroyBuffer(device, vertexBuffer, null);
-        vkFreeMemory(device, vertexBufferMemory, null);
+        if (bufferCreated) {
+            vkDestroyBuffer(device, vertexBuffer, null);
+            vkFreeMemory(device, vertexBufferMemory, null);
 
-        bufferCreated = false;
+            bufferCreated = false;
+        }
     }
 
     @Override

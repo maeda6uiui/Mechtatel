@@ -84,4 +84,73 @@ public class VertexUtils {
 
         return indices;
     }
+
+    public static List<Vertex3D> createCapsuleVertices(
+            Vector3fc p1,
+            Vector3fc p2,
+            float radius,
+            int numVDivs,
+            int numHDivs,
+            Vector4fc color) {
+        var positions = new ArrayList<Vector3f>();
+
+        var capsuleAxis = new Vector3f();
+        p2.sub(p1, capsuleAxis);
+
+        float d = capsuleAxis.length();
+        float halfD = d / 2.0f;
+
+        float thV = capsuleAxis.angle(new Vector3f(capsuleAxis.x, 0.0f, capsuleAxis.z));
+        float thH = new Vector3f(capsuleAxis.x, 0.0f, capsuleAxis.z).angle(new Vector3f(1.0f, 0.0f, 0.0f));
+
+        var pCenter = new Vector3f();
+        p1.add(capsuleAxis.mul(0.5f), pCenter);
+
+        float vAngle = (float) Math.PI / numVDivs;
+        float hAngle = 2.0f * (float) Math.PI / numHDivs;
+
+        for (int i = 0; i <= numVDivs; i++) {
+            //North Pole
+            if (i == 0) {
+                positions.add(new Vector3f(0.0f, radius + halfD, 0.0f));
+            }
+            //South Pole
+            else if (i == numVDivs) {
+                positions.add(new Vector3f(0.0f, -radius - halfD, 0.0f));
+            } else {
+                float y;
+                if (i < numVDivs / 2) {
+                    y = radius * (float) Math.sin(Math.PI / 2.0 - i * vAngle) + halfD;
+                } else {
+                    y = radius * (float) Math.sin(Math.PI / 2.0 - i * vAngle) - halfD;
+                }
+                float sliceRadius = radius * (float) Math.cos(Math.PI / 2.0 - i * vAngle);
+
+                for (int j = 0; j < numHDivs; j++) {
+                    float x = sliceRadius * (float) Math.cos(j * hAngle);
+                    float z = sliceRadius * (float) Math.sin(j * hAngle);
+
+                    positions.add(new Vector3f(x, y, z));
+                }
+            }
+        }
+
+        var transPositions = new ArrayList<Vector3f>();
+        positions.forEach(pos -> {
+            var transPosition = pos.rotateZ(thV).rotateY(thH).add(pCenter);
+            transPositions.add(transPosition);
+        });
+
+        var vertices = new ArrayList<Vertex3D>();
+        transPositions.forEach(pos -> {
+            var vertex = new Vertex3D(pos, color);
+            vertices.add(vertex);
+        });
+
+        return vertices;
+    }
+
+    public static List<Integer> createCapsuleIndices(int numVDivs, int numHDivs) {
+        return createSphereIndices(numVDivs, numHDivs);
+    }
 }

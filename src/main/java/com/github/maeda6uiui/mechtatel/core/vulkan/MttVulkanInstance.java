@@ -913,4 +913,17 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         return sphere;
     }
+
+    public VkCapsule3D createCapsule3D(
+            Vector3fc p1,
+            Vector3fc p2,
+            float radius,
+            int numVDivs,
+            int numHDivs,
+            Vector4fc color) {
+        var capsule = new VkCapsule3D(device, commandPool, graphicsQueue, p1, p2, radius, numVDivs, numHDivs, color);
+        components.add(capsule);
+
+        return capsule;
+    }
 }

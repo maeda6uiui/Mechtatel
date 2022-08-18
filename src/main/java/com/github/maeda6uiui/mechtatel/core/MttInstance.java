@@ -394,4 +394,9 @@ class MttInstance {
         var sphere = new Sphere3D(vulkanInstance, center, radius, numVDivs, numHDivs, color);
         return sphere;
     }
+
+    public Capsule3D createCapsule3D(Vector3fc p1, Vector3fc p2, float radius, int numVDivs, int numHDivs, Vector4fc color) {
+        var capsule = new Capsule3D(vulkanInstance, p1, p2, radius, numVDivs, numHDivs, color);
+        return capsule;
+    }
 }

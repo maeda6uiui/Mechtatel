@@ -237,6 +237,28 @@ public class Mechtatel implements IMechtatel {
         return instance.createLine3DSet();
     }
 
+    public Line3DSet createAxesLine3DSet() {
+        Line3DSet axes = instance.createLine3DSet();
+
+        axes.add(new Vector3f(-100.0f, 0.0f, 0.0f), new Vector3f(100.0f, 0.0f, 0.0f), new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
+        axes.add(new Vector3f(0.0f, -100.0f, 0.0f), new Vector3f(0.0f, 100.0f, 0.0f), new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
+        axes.add(new Vector3f(0.0f, 0.0f, -100.0f), new Vector3f(0.0f, 0.0f, 100.0f), new Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
+        axes.createBuffer();
+
+        return axes;
+    }
+
+    public Line3DSet createPositiveAxesLine3DSet() {
+        Line3DSet axes = instance.createLine3DSet();
+
+        axes.add(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(100.0f, 0.0f, 0.0f), new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
+        axes.add(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 100.0f, 0.0f), new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
+        axes.add(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 100.0f), new Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
+        axes.createBuffer();
+
+        return axes;
+    }
+
     public Sphere3D createSphere3D(Vector3fc center, float radius, int numVDivs, int numHDivs, Vector4fc color) {
         return instance.createSphere3D(center, radius, numVDivs, numHDivs, color);
     }

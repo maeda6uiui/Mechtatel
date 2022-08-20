@@ -143,9 +143,12 @@ public class VertexUtils {
             }
         }
 
+        System.out.println(thV);
+        System.out.println(thH);
+
         var transPositions = new ArrayList<Vector3f>();
         for (var pos : positions) {
-            var transPosition = pos.rotateZ(thV - (float) Math.PI / 2.0f).rotateY(-thH).add(pCenter);
+            var transPosition = pos.rotateZ(-thV).rotateY(-thH).add(pCenter);
             transPositions.add(transPosition);
         }
 

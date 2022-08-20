@@ -237,23 +237,23 @@ public class Mechtatel implements IMechtatel {
         return instance.createLine3DSet();
     }
 
-    public Line3DSet createAxesLine3DSet() {
+    public Line3DSet createAxesLine3DSet(float length) {
         Line3DSet axes = instance.createLine3DSet();
 
-        axes.add(new Vector3f(-100.0f, 0.0f, 0.0f), new Vector3f(100.0f, 0.0f, 0.0f), new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
-        axes.add(new Vector3f(0.0f, -100.0f, 0.0f), new Vector3f(0.0f, 100.0f, 0.0f), new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
-        axes.add(new Vector3f(0.0f, 0.0f, -100.0f), new Vector3f(0.0f, 0.0f, 100.0f), new Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
+        axes.add(new Vector3f(-length, 0.0f, 0.0f), new Vector3f(length, 0.0f, 0.0f), new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
+        axes.add(new Vector3f(0.0f, -length, 0.0f), new Vector3f(0.0f, length, 0.0f), new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
+        axes.add(new Vector3f(0.0f, 0.0f, -length), new Vector3f(0.0f, 0.0f, length), new Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
         axes.createBuffer();
 
         return axes;
     }
 
-    public Line3DSet createPositiveAxesLine3DSet() {
+    public Line3DSet createPositiveAxesLine3DSet(float length) {
         Line3DSet axes = instance.createLine3DSet();
 
-        axes.add(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(100.0f, 0.0f, 0.0f), new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
-        axes.add(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 100.0f, 0.0f), new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
-        axes.add(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 100.0f), new Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
+        axes.add(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(length, 0.0f, 0.0f), new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
+        axes.add(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, length, 0.0f), new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
+        axes.add(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, length), new Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
         axes.createBuffer();
 
         return axes;

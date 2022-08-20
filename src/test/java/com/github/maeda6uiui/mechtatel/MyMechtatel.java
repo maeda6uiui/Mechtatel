@@ -36,7 +36,7 @@ public class MyMechtatel extends Mechtatel {
                 32,
                 new Vector4f(1.0f, 1.0f, 1.0f, 1.0f)
         );
-        var axes = this.createPositiveAxesLine3DSet();
+        var axes = this.createPositiveAxesLine3DSet(100.0f);
     }
 
     @Override

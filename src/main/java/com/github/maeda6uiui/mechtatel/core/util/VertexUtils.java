@@ -100,8 +100,16 @@ public class VertexUtils {
         float d = capsuleAxis.length();
         float halfD = d / 2.0f;
 
+        capsuleAxis = capsuleAxis.normalize();
+
         float thV = capsuleAxis.angle(new Vector3f(capsuleAxis.x, 0.0f, capsuleAxis.z));
+        if (capsuleAxis.y < 0.0f) {
+            thV *= (-1.0f);
+        }
         float thH = new Vector3f(capsuleAxis.x, 0.0f, capsuleAxis.z).angle(new Vector3f(1.0f, 0.0f, 0.0f));
+        if (capsuleAxis.z < 0.0f) {
+            thH *= (-1.0f);
+        }
 
         var pCenter = new Vector3f();
         p1.add(capsuleAxis.mul(0.5f), pCenter);
@@ -136,10 +144,10 @@ public class VertexUtils {
         }
 
         var transPositions = new ArrayList<Vector3f>();
-        positions.forEach(pos -> {
-            var transPosition = pos.rotateZ(thV).rotateY(thH).add(pCenter);
+        for (var pos : positions) {
+            var transPosition = pos.rotateZ(thV - (float) Math.PI / 2.0f).rotateY(-thH).add(pCenter);
             transPositions.add(transPosition);
-        });
+        }
 
         var vertices = new ArrayList<Vertex3D>();
         transPositions.forEach(pos -> {

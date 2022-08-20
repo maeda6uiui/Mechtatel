@@ -29,14 +29,14 @@ public class MyMechtatel extends Mechtatel {
     @Override
     public void init() {
         var capsule = this.createCapsule3D(
-                new Vector3f(0.0f, 1.0f, 0.0f),
-                new Vector3f(0.0f, -1.0f, 0.0f),
+                new Vector3f(0.0f, 0.0f, 0.0f),
+                new Vector3f(1.0f, 1.0f, 1.0f),
                 1.0f,
                 32,
                 32,
                 new Vector4f(1.0f, 1.0f, 1.0f, 1.0f)
         );
-        var axes = this.createPositiveAxesLine3DSet(100.0f);
+        var axes = this.createPositiveAxesLine3DSet(10.0f);
     }
 
     @Override

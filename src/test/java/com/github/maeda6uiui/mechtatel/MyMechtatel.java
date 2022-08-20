@@ -2,6 +2,8 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import java.io.IOException;
 
@@ -26,8 +28,15 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void init() {
-        this.setCursorMode("disabled");
-        this.fixCursor();
+        var capsule = this.createCapsule3D(
+                new Vector3f(0.0f, 0.0f, 0.0f),
+                new Vector3f(1.0f, 1.0f, 1.0f),
+                1.0f,
+                32,
+                32,
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f)
+        );
+        var axes = this.createPositiveAxesLine3DSet(10.0f);
     }
 
     @Override
@@ -42,12 +51,6 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void update() {
-        int x = this.getCursorPosX();
-        int y = this.getCursorPosY();
-        System.out.printf("(x,y)=(%d,%d)\n", x, y);
 
-        if (this.getKeyboardPressingCount("ESCAPE") == 1) {
-            this.closeWindow();
-        }
     }
 }

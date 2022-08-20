@@ -110,6 +110,8 @@ public class VkModel3D extends VkComponent3D {
                 setCount,
                 modelFilepath);
         this.createBuffers(commandPool, graphicsQueue);
+
+        this.setComponentType("model");
     }
 
     public VkModel3D(

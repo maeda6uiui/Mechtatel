@@ -290,24 +290,24 @@ public class PostProcessingNabor extends Nabor {
         }
     }
 
-    public void bindGBufferImages(
+    public void bindImages(
             VkCommandBuffer commandBuffer,
             int dstBinding,
-            long colorImageView,
+            long albedoImageView,
             long depthImageView,
             long positionImageView,
             long normalImageView) {
-        var arrImageViews = new Long[]{colorImageView, depthImageView, positionImageView, normalImageView};
+        var arrImageViews = new Long[]{albedoImageView, depthImageView, positionImageView, normalImageView};
         var imageViews = Arrays.asList(arrImageViews);
 
         this.bindImages(commandBuffer, 1, dstBinding, imageViews);
     }
 
-    public void bindGBufferImages(
+    public void bindImages(
             VkCommandBuffer commandBuffer,
             int naborIndex,
             int dstBinding,
-            long colorImageView,
+            long albedoImageView,
             long depthImageView,
             long positionImageView,
             long normalImageView) {

@@ -1,14 +1,16 @@
 package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
-import com.github.maeda6uiui.mechtatel.core.component.Model3D;
+import com.github.maeda6uiui.mechtatel.core.component.*;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.joml.Vector4f;
+import org.joml.Vector4fc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,5 +215,55 @@ public class Mechtatel implements IMechtatel {
 
     public Model3D duplicateModel3D(Model3D srcModel) {
         return instance.duplicateModel3D(srcModel);
+    }
+
+    public Line3D createLine3D(Vertex3D v1, Vertex3D v2) {
+        return instance.createLine3D(v1, v2);
+    }
+
+    public Line3D createLine3D(Vector3fc p1, Vector4fc color1, Vector3fc p2, Vector4fc color2) {
+        var v1 = new Vertex3D(p1, color1);
+        var v2 = new Vertex3D(p2, color2);
+        return instance.createLine3D(v1, v2);
+    }
+
+    public Line3D createLine3D(Vector3fc p1, Vector3fc p2, Vector4fc color) {
+        var v1 = new Vertex3D(p1, color);
+        var v2 = new Vertex3D(p2, color);
+        return instance.createLine3D(v1, v2);
+    }
+
+    public Line3DSet createLine3DSet() {
+        return instance.createLine3DSet();
+    }
+
+    public Line3DSet createAxesLine3DSet(float length) {
+        Line3DSet axes = instance.createLine3DSet();
+
+        axes.add(new Vector3f(-length, 0.0f, 0.0f), new Vector3f(length, 0.0f, 0.0f), new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
+        axes.add(new Vector3f(0.0f, -length, 0.0f), new Vector3f(0.0f, length, 0.0f), new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
+        axes.add(new Vector3f(0.0f, 0.0f, -length), new Vector3f(0.0f, 0.0f, length), new Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
+        axes.createBuffer();
+
+        return axes;
+    }
+
+    public Line3DSet createPositiveAxesLine3DSet(float length) {
+        Line3DSet axes = instance.createLine3DSet();
+
+        axes.add(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(length, 0.0f, 0.0f), new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
+        axes.add(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, length, 0.0f), new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
+        axes.add(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, length), new Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
+        axes.createBuffer();
+
+        return axes;
+    }
+
+    public Sphere3D createSphere3D(Vector3fc center, float radius, int numVDivs, int numHDivs, Vector4fc color) {
+        return instance.createSphere3D(center, radius, numVDivs, numHDivs, color);
+    }
+
+    public Capsule3D createCapsule3D(Vector3fc p1, Vector3fc p2, float radius, int numVDivs, int numHDivs, Vector4fc color) {
+        return instance.createCapsule3D(p1, p2, radius, numVDivs, numHDivs, color);
     }
 }

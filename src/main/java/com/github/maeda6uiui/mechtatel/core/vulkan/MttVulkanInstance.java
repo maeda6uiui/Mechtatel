@@ -1,19 +1,20 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
+import com.github.maeda6uiui.mechtatel.core.component.Vertex3D;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.LightingInfo;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent3D;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PrimitiveNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow.ShadowMappingNabor;
@@ -24,7 +25,9 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.joml.Vector4f;
+import org.joml.Vector4fc;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
@@ -69,6 +72,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
     private PresentNabor presentNabor;
     private GBufferNabor gBufferNabor;
+    private PrimitiveNabor primitiveNabor;
+    private MergeScenesNabor mergeScenesNabor;
     private Map<String, PostProcessingNabor> ppNabors;
     private PostProcessingNabor lastPPNabor;
 
@@ -131,6 +136,12 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
     private void recreateNabors() {
         gBufferNabor.recreate(
+                swapchain.getSwapchainImageFormat(),
+                swapchain.getSwapchainExtent());
+        primitiveNabor.recreate(
+                swapchain.getSwapchainImageFormat(),
+                swapchain.getSwapchainExtent());
+        mergeScenesNabor.recreate(
                 swapchain.getSwapchainImageFormat(),
                 swapchain.getSwapchainExtent());
 
@@ -214,6 +225,33 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 graphicsQueue,
                 1);
 
+        //Create a nabor for primitives
+        primitiveNabor = new PrimitiveNabor(
+                device,
+                depthImageFormat,
+                VK_FORMAT_R16G16B16A16_SFLOAT,
+                VK_FORMAT_R16G16B16A16_SFLOAT,
+                false);
+        primitiveNabor.compile(
+                swapchain.getSwapchainImageFormat(),
+                swapchain.getSwapchainExtent(),
+                commandPool,
+                graphicsQueue,
+                1);
+
+        //Create a nabor to merge two scenes
+        mergeScenesNabor = new MergeScenesNabor(
+                device,
+                VK_FORMAT_R16G16B16A16_SFLOAT,
+                VK_FORMAT_R16G16B16A16_SFLOAT,
+                VK_FORMAT_R16G16B16A16_SFLOAT);
+        mergeScenesNabor.compile(
+                swapchain.getSwapchainImageFormat(),
+                swapchain.getSwapchainExtent(),
+                commandPool,
+                graphicsQueue,
+                1);
+
         ppNabors = new LinkedHashMap<>();
 
         //Create sync objects
@@ -242,6 +280,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         swapchain.cleanup();
         presentNabor.cleanup(false);
         gBufferNabor.cleanup(false);
+        primitiveNabor.cleanup(false);
+        mergeScenesNabor.cleanup(false);
         ppNabors.forEach((k, ppNabor) -> ppNabor.cleanup(false));
 
         vkDestroyCommandPool(device, commandPool, null);
@@ -356,17 +396,19 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         null);
 
                 for (var component : components) {
-                    ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
-                    component.getMat().get(matBuffer);
+                    if (component.getComponentType() == "model") {
+                        ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
+                        component.getMat().get(matBuffer);
 
-                    vkCmdPushConstants(
-                            commandBuffer,
-                            gBufferNabor.getPipelineLayout(0, 0),
-                            VK_SHADER_STAGE_VERTEX_BIT,
-                            0,
-                            matBuffer);
+                        vkCmdPushConstants(
+                                commandBuffer,
+                                gBufferNabor.getPipelineLayout(0, 0),
+                                VK_SHADER_STAGE_VERTEX_BIT,
+                                0,
+                                matBuffer);
 
-                    component.draw(commandBuffer, gBufferNabor.getPipelineLayout(0, 0));
+                        component.draw(commandBuffer, gBufferNabor.getPipelineLayout(0, 0));
+                    }
                 }
             }
             vkCmdEndRenderPass(commandBuffer);
@@ -406,17 +448,19 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         null);
 
                 for (var component : components) {
-                    ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
-                    component.getMat().get(matBuffer);
+                    if (component.getComponentType() == "model") {
+                        ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
+                        component.getMat().get(matBuffer);
 
-                    vkCmdPushConstants(
-                            commandBuffer,
-                            gBufferNabor.getPipelineLayout(1, 0),
-                            VK_SHADER_STAGE_VERTEX_BIT,
-                            0,
-                            matBuffer);
+                        vkCmdPushConstants(
+                                commandBuffer,
+                                gBufferNabor.getPipelineLayout(1, 0),
+                                VK_SHADER_STAGE_VERTEX_BIT,
+                                0,
+                                matBuffer);
 
-                    component.transfer(commandBuffer);
+                        component.transfer(commandBuffer);
+                    }
                 }
             }
             vkCmdEndRenderPass(commandBuffer);
@@ -428,6 +472,114 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         this.runAlbedoNabor(commandBuffer, backgroundColor, camera);
         this.runPropertiesNabor(commandBuffer, camera);
         CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
+    }
+
+    private void runPrimitiveNabor(Vector4f backgroundColor, Camera camera) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            long cameraUBOMemory = primitiveNabor.getUniformBufferMemory(0);
+            var cameraUBO = new CameraUBO(camera);
+            cameraUBO.update(device, cameraUBOMemory);
+
+            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
+            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
+            renderPassInfo.renderPass(primitiveNabor.getRenderPass());
+            renderPassInfo.framebuffer(primitiveNabor.getFramebuffer(0));
+            VkRect2D renderArea = VkRect2D.calloc(stack);
+            renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
+            renderArea.extent(primitiveNabor.getExtent());
+            renderPassInfo.renderArea(renderArea);
+            VkClearValue.Buffer clearValues = VkClearValue.calloc(4, stack);
+            clearValues.get(0).depthStencil().set(1.0f, 0);
+            clearValues.get(1).color().float32(
+                    stack.floats(
+                            backgroundColor.x,
+                            backgroundColor.y,
+                            backgroundColor.z,
+                            backgroundColor.w));
+            clearValues.get(2).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            clearValues.get(3).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            renderPassInfo.pClearValues(clearValues);
+
+            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
+
+            vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+            {
+                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, primitiveNabor.getGraphicsPipeline(0));
+
+                vkCmdBindDescriptorSets(
+                        commandBuffer,
+                        VK_PIPELINE_BIND_POINT_GRAPHICS,
+                        primitiveNabor.getPipelineLayout(0),
+                        0,
+                        primitiveNabor.pDescriptorSets(),
+                        null);
+
+                for (var component : components) {
+                    if (component.getComponentType() == "primitive") {
+                        ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
+                        component.getMat().get(matBuffer);
+
+                        vkCmdPushConstants(
+                                commandBuffer,
+                                primitiveNabor.getPipelineLayout(0),
+                                VK_SHADER_STAGE_VERTEX_BIT,
+                                0,
+                                matBuffer);
+
+                        component.draw(commandBuffer, primitiveNabor.getPipelineLayout(0));
+                    }
+                }
+            }
+            vkCmdEndRenderPass(commandBuffer);
+
+            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
+        }
+    }
+
+    private void runMergeScenesNabor() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
+            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
+            renderPassInfo.renderPass(mergeScenesNabor.getRenderPass());
+            renderPassInfo.framebuffer(mergeScenesNabor.getFramebuffer(0));
+            VkRect2D renderArea = VkRect2D.calloc(stack);
+            renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
+            renderArea.extent(mergeScenesNabor.getExtent());
+            renderPassInfo.renderArea(renderArea);
+            VkClearValue.Buffer clearValues = VkClearValue.calloc(4, stack);
+            clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            clearValues.get(1).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            clearValues.get(2).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            clearValues.get(3).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            renderPassInfo.pClearValues(clearValues);
+
+            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
+
+            vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+            {
+                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mergeScenesNabor.getGraphicsPipeline(0));
+
+                gBufferNabor.transitionAlbedoImage(commandPool, graphicsQueue);
+                gBufferNabor.transitionDepthImage(commandPool, graphicsQueue);
+                gBufferNabor.transitionPositionImage(commandPool, graphicsQueue);
+                gBufferNabor.transitionNormalImage(commandPool, graphicsQueue);
+
+                primitiveNabor.transitionAlbedoImage(commandPool, graphicsQueue);
+                primitiveNabor.transitionDepthImage(commandPool, graphicsQueue);
+                primitiveNabor.transitionPositionImage(commandPool, graphicsQueue);
+                primitiveNabor.transitionNormalImage(commandPool, graphicsQueue);
+
+                mergeScenesNabor.bindAlbedoImages(commandBuffer, gBufferNabor.getAlbedoImageView(), primitiveNabor.getAlbedoImageView());
+                mergeScenesNabor.bindDepthImages(commandBuffer, gBufferNabor.getDepthImageView(), primitiveNabor.getDepthImageView());
+                mergeScenesNabor.bindPositionImages(commandBuffer, gBufferNabor.getPositionImageView(), primitiveNabor.getPositionImageView());
+                mergeScenesNabor.bindNormalImages(commandBuffer, gBufferNabor.getNormalImageView(), primitiveNabor.getNormalImageView());
+
+                quadDrawer.draw(commandBuffer);
+            }
+            vkCmdEndRenderPass(commandBuffer);
+
+            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
+        }
     }
 
     private void runPostProcessingNabors(
@@ -564,28 +716,28 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
                     //First post-processing
                     if (lastPPNabor == null) {
-                        gBufferNabor.transitionAlbedoImage(commandPool, graphicsQueue);
-                        gBufferNabor.transitionDepthImage(commandPool, graphicsQueue);
-                        gBufferNabor.transitionPositionImage(commandPool, graphicsQueue);
-                        gBufferNabor.transitionNormalImage(commandPool, graphicsQueue);
+                        mergeScenesNabor.transitionAlbedoImage(commandPool, graphicsQueue);
+                        mergeScenesNabor.transitionDepthImage(commandPool, graphicsQueue);
+                        mergeScenesNabor.transitionPositionImage(commandPool, graphicsQueue);
+                        mergeScenesNabor.transitionNormalImage(commandPool, graphicsQueue);
 
-                        ppNabor.bindGBufferImages(
+                        ppNabor.bindImages(
                                 commandBuffer,
                                 0,
-                                gBufferNabor.getAlbedoImageView(),
-                                gBufferNabor.getDepthImageView(),
-                                gBufferNabor.getPositionImageView(),
-                                gBufferNabor.getNormalImageView());
+                                mergeScenesNabor.getAlbedoImageView(),
+                                mergeScenesNabor.getDepthImageView(),
+                                mergeScenesNabor.getPositionImageView(),
+                                mergeScenesNabor.getNormalImageView());
                     } else {
                         lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
 
-                        ppNabor.bindGBufferImages(
+                        ppNabor.bindImages(
                                 commandBuffer,
                                 0,
                                 lastPPNabor.getColorImageView(),
-                                gBufferNabor.getDepthImageView(),
-                                gBufferNabor.getPositionImageView(),
-                                gBufferNabor.getNormalImageView());
+                                mergeScenesNabor.getDepthImageView(),
+                                mergeScenesNabor.getPositionImageView(),
+                                mergeScenesNabor.getNormalImageView());
                     }
 
                     quadDrawer.draw(commandBuffer);
@@ -617,8 +769,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
             long colorImageView;
             if (lastPPNabor == null) {
-                gBufferNabor.transitionAlbedoImage(commandPool, graphicsQueue);
-                colorImageView = gBufferNabor.getAlbedoImageView();
+                mergeScenesNabor.transitionAlbedoImage(commandPool, graphicsQueue);
+                colorImageView = mergeScenesNabor.getAlbedoImageView();
             } else {
                 lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
                 colorImageView = lastPPNabor.getColorImageView();
@@ -682,6 +834,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             Vector3f spotlightAmbientColor,
             ShadowMappingSettings shadowMappingSettings) {
         this.runGBufferNabor(backgroundColor, camera);
+        this.runPrimitiveNabor(backgroundColor, camera);
+        this.runMergeScenesNabor();
         this.runPostProcessingNabors(
                 camera,
                 fog,
@@ -712,7 +866,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
         var descriptorSets = new ArrayList<Long>();
         for (int i = 0; i < numDescriptorSets; i++) {
-            descriptorSets.add(gBufferNabor.getDescriptorSet(0,i));
+            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
         }
 
         var model = new VkModel3D(
@@ -732,5 +886,44 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         components.add(model);
 
         return model;
+    }
+
+    public VkLine3D createLine3D(Vertex3D v1, Vertex3D v2) {
+        var line = new VkLine3D(device, commandPool, graphicsQueue, v1, v2);
+        components.add(line);
+
+        return line;
+    }
+
+    public VkLine3DSet createLine3DSet() {
+        var lineSet = new VkLine3DSet(device, commandPool, graphicsQueue);
+        components.add(lineSet);
+
+        return lineSet;
+    }
+
+    public VkSphere3D createSphere3D(
+            Vector3fc center,
+            float radius,
+            int numVDivs,
+            int numHDivs,
+            Vector4fc color) {
+        var sphere = new VkSphere3D(device, commandPool, graphicsQueue, center, radius, numVDivs, numHDivs, color);
+        components.add(sphere);
+
+        return sphere;
+    }
+
+    public VkCapsule3D createCapsule3D(
+            Vector3fc p1,
+            Vector3fc p2,
+            float radius,
+            int numVDivs,
+            int numHDivs,
+            Vector4fc color) {
+        var capsule = new VkCapsule3D(device, commandPool, graphicsQueue, p1, p2, radius, numVDivs, numHDivs, color);
+        components.add(capsule);
+
+        return capsule;
     }
 }

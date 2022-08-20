@@ -25,13 +25,13 @@ public class QueueFamilyUtils {
     }
 
     public static QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, long surface) {
-        var indices = new QueueFamilyIndices();
-
         try (MemoryStack stack = MemoryStack.stackPush()) {
+            var indices = new QueueFamilyIndices();
+
             IntBuffer queueFamilyCount = stack.ints(0);
             vkGetPhysicalDeviceQueueFamilyProperties(device, queueFamilyCount, null);
 
-            VkQueueFamilyProperties.Buffer queueFamilies = VkQueueFamilyProperties.mallocStack(queueFamilyCount.get(0), stack);
+            VkQueueFamilyProperties.Buffer queueFamilies = VkQueueFamilyProperties.malloc(queueFamilyCount.get(0), stack);
             vkGetPhysicalDeviceQueueFamilyProperties(device, queueFamilyCount, queueFamilies);
 
             IntBuffer presentSupport = stack.ints(VK_FALSE);

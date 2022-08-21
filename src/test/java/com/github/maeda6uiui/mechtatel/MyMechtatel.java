@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -26,6 +27,8 @@ public class MyMechtatel extends Mechtatel {
         new MyMechtatel(settings);
     }
 
+    private FreeCamera camera;
+
     @Override
     public void init() {
         var capsule = this.createCapsule3D(
@@ -37,6 +40,8 @@ public class MyMechtatel extends Mechtatel {
                 new Vector4f(1.0f, 1.0f, 1.0f, 1.0f)
         );
         var axes = this.createPositiveAxesLine3DSet(10.0f);
+
+        camera = new FreeCamera(this.getCamera());
     }
 
     @Override
@@ -51,6 +56,11 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void update() {
+        int keyFront = this.getKeyboardPressingCount("W");
+        int keyBack = this.getKeyboardPressingCount("S");
+        int keyLeft = this.getKeyboardPressingCount("A");
+        int keyRight = this.getKeyboardPressingCount("D");
 
+        camera.translate(keyFront, keyBack, keyLeft, keyRight);
     }
 }

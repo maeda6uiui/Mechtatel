@@ -60,7 +60,12 @@ public class MyMechtatel extends Mechtatel {
         int keyBack = this.getKeyboardPressingCount("S");
         int keyLeft = this.getKeyboardPressingCount("A");
         int keyRight = this.getKeyboardPressingCount("D");
-
         camera.translate(keyFront, keyBack, keyLeft, keyRight);
+
+        int keyRotateTop = this.getKeyboardPressingCount("UP");
+        int keyRotateBottom = this.getKeyboardPressingCount("DOWN");
+        int keyRotateLeft = this.getKeyboardPressingCount("LEFT");
+        int keyRotateRight = this.getKeyboardPressingCount("RIGHT");
+        camera.rotate(keyRotateTop, keyRotateBottom, keyRotateLeft, keyRotateRight);
     }
 }

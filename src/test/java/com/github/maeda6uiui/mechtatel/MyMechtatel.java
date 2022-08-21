@@ -30,8 +30,8 @@ public class MyMechtatel extends Mechtatel {
     public void init() {
         var capsule = this.createCapsule3D(
                 new Vector3f(0.0f, 0.0f, 0.0f),
-                5.0f,
-                1.0f,
+                2.0f,
+                2.0f,
                 32,
                 32,
                 new Vector4f(1.0f, 1.0f, 1.0f, 1.0f)

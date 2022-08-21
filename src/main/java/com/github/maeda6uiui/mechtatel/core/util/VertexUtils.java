@@ -86,33 +86,15 @@ public class VertexUtils {
     }
 
     public static List<Vertex3D> createCapsuleVertices(
-            Vector3fc p1,
-            Vector3fc p2,
+            Vector3fc center,
+            float length,
             float radius,
             int numVDivs,
             int numHDivs,
             Vector4fc color) {
         var positions = new ArrayList<Vector3f>();
 
-        var capsuleAxis = new Vector3f();
-        p2.sub(p1, capsuleAxis);
-
-        float d = capsuleAxis.length();
-        float halfD = d / 2.0f;
-
-        capsuleAxis = capsuleAxis.normalize();
-
-        float thV = capsuleAxis.angle(new Vector3f(capsuleAxis.x, 0.0f, capsuleAxis.z));
-        if (capsuleAxis.y < 0.0f) {
-            thV *= (-1.0f);
-        }
-        float thH = new Vector3f(capsuleAxis.x, 0.0f, capsuleAxis.z).angle(new Vector3f(1.0f, 0.0f, 0.0f));
-        if (capsuleAxis.z < 0.0f) {
-            thH *= (-1.0f);
-        }
-
-        var pCenter = new Vector3f();
-        p1.add(capsuleAxis.mul(0.5f), pCenter);
+        float halfLength = length / 2.0f;
 
         float vAngle = (float) Math.PI / numVDivs;
         float hAngle = 2.0f * (float) Math.PI / numHDivs;
@@ -120,17 +102,17 @@ public class VertexUtils {
         for (int i = 0; i <= numVDivs; i++) {
             //North Pole
             if (i == 0) {
-                positions.add(new Vector3f(0.0f, radius + halfD, 0.0f));
+                positions.add(new Vector3f(0.0f, halfLength + radius, 0.0f));
             }
             //South Pole
             else if (i == numVDivs) {
-                positions.add(new Vector3f(0.0f, -radius - halfD, 0.0f));
+                positions.add(new Vector3f(0.0f, -halfLength - radius, 0.0f));
             } else {
                 float y;
                 if (i < numVDivs / 2) {
-                    y = radius * (float) Math.sin(Math.PI / 2.0 - i * vAngle) + halfD;
+                    y = radius * (float) Math.sin(Math.PI / 2.0 - i * vAngle) + halfLength;
                 } else {
-                    y = radius * (float) Math.sin(Math.PI / 2.0 - i * vAngle) - halfD;
+                    y = radius * (float) Math.sin(Math.PI / 2.0 - i * vAngle) - halfLength;
                 }
                 float sliceRadius = radius * (float) Math.cos(Math.PI / 2.0 - i * vAngle);
 
@@ -143,14 +125,11 @@ public class VertexUtils {
             }
         }
 
-        System.out.println(thV);
-        System.out.println(thH);
-
         var transPositions = new ArrayList<Vector3f>();
-        for (var pos : positions) {
-            var transPosition = pos.rotateZ(-thV).rotateY(-thH).add(pCenter);
+        positions.forEach(pos -> {
+            var transPosition = pos.add(center);
             transPositions.add(transPosition);
-        }
+        });
 
         var vertices = new ArrayList<Vertex3D>();
         transPositions.forEach(pos -> {

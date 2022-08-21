@@ -56,15 +56,15 @@ public class VkCapsule3D extends VkComponent3D {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            Vector3fc p1,
-            Vector3fc p2,
+            Vector3fc center,
+            float length,
             float radius,
             int numVDivs,
             int numHDivs,
             Vector4fc color) {
         this.device = device;
 
-        List<Vertex3D> vertices = VertexUtils.createCapsuleVertices(p1, p2, radius, numVDivs, numHDivs, color);
+        List<Vertex3D> vertices = VertexUtils.createCapsuleVertices(center, length, radius, numVDivs, numHDivs, color);
         List<Integer> indices = VertexUtils.createCapsuleIndices(numVDivs, numHDivs);
 
         numIndices = indices.size();

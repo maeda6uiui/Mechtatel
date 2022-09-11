@@ -515,9 +515,15 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         null);
 
                 for (var component : components) {
-                    if (component.getComponentType() == "primitive") {
-                        ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
+                    String componentType = component.getComponentType();
+                    if (componentType == "primitive" || componentType == "primitive_2d") {
+                        ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
                         component.getMat().get(matBuffer);
+                        if (componentType == "primitive") {
+                            matBuffer.putInt(1 * 16 * Float.BYTES, 0);
+                        } else if (componentType == "primitive_2d") {
+                            matBuffer.putInt(1 * 16 * Float.BYTES, 1);
+                        }
 
                         vkCmdPushConstants(
                                 commandBuffer,

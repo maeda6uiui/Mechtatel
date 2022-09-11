@@ -528,7 +528,7 @@ public class PrimitiveNabor extends Nabor {
 
             VkPushConstantRange vertPC = pushConstants.get(0);
             vertPC.offset(0);
-            vertPC.size(1 * 16 * Float.BYTES);
+            vertPC.size(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
             vertPC.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
 
             //Pipeline layout creation

@@ -399,4 +399,9 @@ class MttInstance {
         var capsule = new Capsule3D(vulkanInstance, center, length, radius, numVDivs, numHDivs, color);
         return capsule;
     }
+
+    public Line2D createLine2D(Vertex2D p1, Vertex2D p2, float z) {
+        var line = new Line2D(vulkanInstance, p1, p2, z);
+        return line;
+    }
 }

@@ -266,4 +266,8 @@ public class Mechtatel implements IMechtatel {
     public Capsule3D createCapsule3D(Vector3fc center, float length, float radius, int numVDivs, int numHDivs, Vector4fc color) {
         return instance.createCapsule3D(center, length, radius, numVDivs, numHDivs, color);
     }
+
+    public Line2D createLine2D(Vertex2D p1, Vertex2D p2, float z) {
+        return instance.createLine2D(p1, p2, z);
+    }
 }

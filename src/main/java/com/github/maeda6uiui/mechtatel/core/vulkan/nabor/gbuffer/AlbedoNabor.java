@@ -19,7 +19,7 @@ import java.util.List;
 import static org.lwjgl.vulkan.VK10.*;
 
 class AlbedoNabor extends Nabor {
-    public static final int MAX_NUM_TEXTURES = 128;
+    public static final int MAX_NUM_TEXTURES = 1024;
 
     private int depthImageFormat;
     private int depthImageAspect;

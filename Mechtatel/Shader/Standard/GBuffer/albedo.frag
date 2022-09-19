@@ -1,7 +1,7 @@
 #version 450
 #extension GL_ARB_separate_shader_objects:enable
 
-const int MAX_NUM_TEXTURES=128;
+const int MAX_NUM_TEXTURES=1024;
 const int SIZEOF_FLOAT=4;
 
 layout(set=1,binding=0) uniform texture2D textures[MAX_NUM_TEXTURES];

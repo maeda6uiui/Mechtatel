@@ -953,4 +953,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         return line;
     }
+
+    public VkLine2DSet createLine2DSet() {
+        var lineSet = new VkLine2DSet(device, commandPool, graphicsQueue);
+        components.add(lineSet);
+
+        return lineSet;
+    }
 }

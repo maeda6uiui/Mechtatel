@@ -270,4 +270,8 @@ public class Mechtatel implements IMechtatel {
     public Line2D createLine2D(Vertex2D p1, Vertex2D p2, float z) {
         return instance.createLine2D(p1, p2, z);
     }
+
+    public Line2DSet createLine2DSet() {
+        return instance.createLine2DSet();
+    }
 }

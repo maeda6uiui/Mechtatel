@@ -3,7 +3,6 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.Vertex2D;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -32,11 +31,11 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void init() {
-        var line = this.createLine2D(
-                new Vertex2D(new Vector2f(-0.5f, 0.0f), new Vector4f(1.0f, 0.0f, 0.0f, 1.0f)),
-                new Vertex2D(new Vector2f(0.5f, 0.0f), new Vector4f(0.0f, 0.0f, 1.0f, 1.0f)),
-                0.0f
-        );
+        var lineSet = this.createLine2DSet();
+        lineSet.add(new Vector2f(-0.5f, -0.5f), new Vector2f(0.5f, -0.5f), new Vector4f(1.0f, 0.0f, 0.0f, 1.0f), 0.0f);
+        lineSet.add(new Vector2f(-0.5f, 0.0f), new Vector2f(0.5f, 0.0f), new Vector4f(1.0f, 0.0f, 0.0f, 1.0f), 0.0f);
+        lineSet.add(new Vector2f(-0.5f, 0.5f), new Vector2f(0.5f, 0.5f), new Vector4f(1.0f, 0.0f, 0.0f, 1.0f), 0.0f);
+        lineSet.createBuffer();
 
         camera = new FreeCamera(this.getCamera());
     }

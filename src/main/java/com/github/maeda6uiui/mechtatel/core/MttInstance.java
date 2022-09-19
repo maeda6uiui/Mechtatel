@@ -404,4 +404,9 @@ class MttInstance {
         var line = new Line2D(vulkanInstance, p1, p2, z);
         return line;
     }
+
+    public Line2DSet createLine2DSet() {
+        var lineSet = new Line2DSet(vulkanInstance);
+        return lineSet;
+    }
 }

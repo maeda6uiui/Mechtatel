@@ -205,23 +205,16 @@ public class Texture {
         }
     }
 
-    private void createTextureImage(long commandPool, VkQueue graphicsQueue) {
+    private void createTextureImageFromByteBuffer(
+            long commandPool,
+            VkQueue graphicsQueue,
+            ByteBuffer pixels,
+            int width,
+            int height) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer pWidth = stack.mallocInt(1);
-            IntBuffer pHeight = stack.mallocInt(1);
-            IntBuffer pChannels = stack.mallocInt(1);
-
-            ByteBuffer pixels = stbi_load(textureFilepath, pWidth, pHeight, pChannels, STBI_rgb_alpha);
-
-            long imageSize = pWidth.get(0) * pHeight.get(0) * 4;
-            width = pWidth.get(0);
-            height = pHeight.get(0);
+            long imageSize = width * height;
 
             mipLevels = (int) Math.floor(this.log2(Math.max(width, height))) + 1;
-
-            if (pixels == null) {
-                throw new RuntimeException("Failed to load a texture image " + textureFilepath);
-            }
 
             LongBuffer pStagingBuffer = stack.mallocLong(1);
             LongBuffer pStagingBufferMemory = stack.mallocLong(1);
@@ -240,14 +233,12 @@ public class Texture {
             }
             vkUnmapMemory(device, pStagingBufferMemory.get(0));
 
-            stbi_image_free(pixels);
-
             LongBuffer pTextureImage = stack.mallocLong(1);
             LongBuffer pTextureImageMemory = stack.mallocLong(1);
             ImageUtils.createImage(
                     device,
-                    pWidth.get(0),
-                    pHeight.get(0),
+                    width,
+                    height,
                     mipLevels,
                     VK_SAMPLE_COUNT_1_BIT,
                     VK_FORMAT_R8G8B8A8_SRGB,
@@ -274,8 +265,8 @@ public class Texture {
                     graphicsQueue,
                     pStagingBuffer.get(0),
                     textureImage,
-                    pWidth.get(0),
-                    pHeight.get(0));
+                    width,
+                    height);
 
             if (generateMipmaps) {
                 this.generateMipmaps(commandPool, graphicsQueue);
@@ -293,6 +284,23 @@ public class Texture {
 
             vkDestroyBuffer(device, pStagingBuffer.get(0), null);
             vkFreeMemory(device, pStagingBufferMemory.get(0), null);
+        }
+    }
+
+    private void createTextureImage(long commandPool, VkQueue graphicsQueue) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer pWidth = stack.mallocInt(1);
+            IntBuffer pHeight = stack.mallocInt(1);
+            IntBuffer pChannels = stack.mallocInt(1);
+
+            ByteBuffer pixels = stbi_load(textureFilepath, pWidth, pHeight, pChannels, STBI_rgb_alpha);
+            if (pixels == null) {
+                throw new RuntimeException("Failed to load a texture image " + textureFilepath);
+            }
+
+            this.createTextureImageFromByteBuffer(commandPool, graphicsQueue, pixels, pWidth.get(0), pHeight.get(0));
+
+            stbi_image_free(pixels);
         }
     }
 
@@ -352,6 +360,33 @@ public class Texture {
 
         //Create a texture image and a texture image view
         this.createTextureImage(commandPool, graphicsQueue);
+        this.createTextureImageView();
+
+        this.updateDescriptorSets(descriptorSets, setCount);
+    }
+
+    public Texture(
+            VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue,
+            List<Long> descriptorSets,
+            int setCount,
+            ByteBuffer pixels,
+            int width,
+            int height,
+            boolean generateMipmaps) {
+        textureIndex = allocateTextureIndex();
+        if (textureIndex < 0) {
+            String msg = String.format("Cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
+            throw new RuntimeException(msg);
+        }
+
+        this.device = device;
+
+        this.generateMipmaps = generateMipmaps;
+
+        //Create a texture image and a texture image view
+        this.createTextureImageFromByteBuffer(commandPool, graphicsQueue, pixels, width, height);
         this.createTextureImageView();
 
         this.updateDescriptorSets(descriptorSets, setCount);

@@ -103,7 +103,7 @@ public class Texture {
 
     private void generateMipmaps(long commandPool, VkQueue graphicsQueue) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkFormatProperties formatProperties = VkFormatProperties.mallocStack(stack);
+            VkFormatProperties formatProperties = VkFormatProperties.malloc(stack);
             vkGetPhysicalDeviceFormatProperties(device.getPhysicalDevice(), VK_FORMAT_R8G8B8A8_SRGB, formatProperties);
 
             if ((formatProperties.optimalTilingFeatures() & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT) == 0) {
@@ -212,7 +212,9 @@ public class Texture {
             int width,
             int height) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            long imageSize = width * height;
+            long imageSize = width * height * 4;
+            this.width = width;
+            this.height = height;
 
             mipLevels = (int) Math.floor(this.log2(Math.max(width, height))) + 1;
 

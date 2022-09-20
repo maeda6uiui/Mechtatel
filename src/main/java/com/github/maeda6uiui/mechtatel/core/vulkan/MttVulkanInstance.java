@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.Vertex3D;
+import com.github.maeda6uiui.mechtatel.core.component.Vertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.LightingInfo;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
@@ -399,7 +400,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         null);
 
                 for (var component : components3D) {
-                    if (component.getComponentType() == "model") {
+                    if (component.getComponentType() == "gbuffer") {
                         ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
                         component.getMat().get(matBuffer);
 
@@ -959,5 +960,44 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         components.add(lineSet);
 
         return lineSet;
+    }
+
+    public VkTexturedQuad3D createTexturedQuad3D(String textureFilepath, boolean generateMipmaps, List<Vertex3DUV> vertices) {
+        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
+        var descriptorSets = new ArrayList<Long>();
+        for (int i = 0; i < numDescriptorSets; i++) {
+            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
+        }
+
+        var texturedQuad = new VkTexturedQuad3D(
+                device,
+                commandPool,
+                graphicsQueue,
+                descriptorSets,
+                gBufferNabor.getSetCount(0),
+                textureFilepath,
+                generateMipmaps,
+                vertices);
+        components3D.add(texturedQuad);
+
+        return texturedQuad;
+    }
+
+    public VkTexturedQuad3D duplicateTexturedQuad3D(VkTexturedQuad3D srcQuad, List<Vertex3DUV> vertices) {
+        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
+        var descriptorSets = new ArrayList<Long>();
+        for (int i = 0; i < numDescriptorSets; i++) {
+            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
+        }
+
+        var texturedQuad = new VkTexturedQuad3D(
+                device,
+                commandPool,
+                graphicsQueue,
+                srcQuad,
+                vertices);
+        components3D.add(texturedQuad);
+
+        return texturedQuad;
     }
 }

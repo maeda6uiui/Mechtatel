@@ -274,4 +274,12 @@ public class Mechtatel implements IMechtatel {
     public Line2DSet createLine2DSet() {
         return instance.createLine2DSet();
     }
+
+    public TexturedQuad3D createTexturedQuad3D(String textureFilepath, boolean generateMipmaps, List<Vertex3DUV> vertices) {
+        return instance.createTexturedQuad3D(textureFilepath, generateMipmaps, vertices);
+    }
+
+    public TexturedQuad3D duplicateTexturedQuad3D(TexturedQuad3D srcQuad, List<Vertex3DUV> vertices) {
+        return instance.duplicateTexturedQuad3D(srcQuad, vertices);
+    }
 }

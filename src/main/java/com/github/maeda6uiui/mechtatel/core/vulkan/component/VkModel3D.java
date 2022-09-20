@@ -111,7 +111,7 @@ public class VkModel3D extends VkComponent3D {
                 modelFilepath);
         this.createBuffers(commandPool, graphicsQueue);
 
-        this.setComponentType("model");
+        this.setComponentType("gbuffer");
     }
 
     public VkModel3D(
@@ -127,6 +127,8 @@ public class VkModel3D extends VkComponent3D {
         this.createBuffers(commandPool, graphicsQueue);
 
         textures = srcModel.textures;
+
+        this.setComponentType("gbuffer");
     }
 
     @Override

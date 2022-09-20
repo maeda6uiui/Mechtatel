@@ -80,23 +80,23 @@ public class VkTexturedQuad3D extends VkComponent3D {
                 generateMipmaps);
         this.createBuffers(commandPool, graphicsQueue, vertices);
 
-        this.setComponentType("textured_polygon");
+        this.setComponentType("gbuffer");
     }
 
     public VkTexturedQuad3D(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            Texture texture,
+            VkTexturedQuad3D srcQuad,
             List<Vertex3DUV> vertices) {
         this.device = device;
 
         isExternalTexture = true;
 
-        this.texture = texture;
+        texture = srcQuad.texture;
         this.createBuffers(commandPool, graphicsQueue, vertices);
 
-        this.setComponentType("textured_polygon");
+        this.setComponentType("gbuffer");
     }
 
     @Override

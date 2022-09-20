@@ -409,4 +409,14 @@ class MttInstance {
         var lineSet = new Line2DSet(vulkanInstance);
         return lineSet;
     }
+
+    public TexturedQuad3D createTexturedQuad3D(String textureFilepath, boolean generateMipmaps, List<Vertex3DUV> vertices) {
+        var texturedQuad = new TexturedQuad3D(vulkanInstance, textureFilepath, generateMipmaps, vertices);
+        return texturedQuad;
+    }
+
+    public TexturedQuad3D duplicateTexturedQuad3D(TexturedQuad3D srcQuad, List<Vertex3DUV> vertices) {
+        var texturedQuad = new TexturedQuad3D(vulkanInstance, srcQuad, vertices);
+        return texturedQuad;
+    }
 }

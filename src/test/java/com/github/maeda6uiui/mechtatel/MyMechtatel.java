@@ -47,7 +47,7 @@ public class MyMechtatel extends Mechtatel {
 
         var axes = this.createAxesLine3DSet(10.0f);
 
-        var texturedQuad = this.createTexturedQuad3D("./Mechtatel/Texture/lenna.jpg", false, vertices);
+        var texturedQuad = this.createTexturedQuad3D("./Mechtatel/Texture/lenna.jpg", true, vertices);
 
         var model = this.createModel3D("./Mechtatel/Model/Plane/plane.obj");
 

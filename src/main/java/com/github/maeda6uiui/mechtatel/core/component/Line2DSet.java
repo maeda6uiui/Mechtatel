@@ -22,20 +22,20 @@ public class Line2DSet extends Component {
     }
 
     public void add(Vertex2D p1, Vertex2D p2, float z) {
-        var v1 = new Vertex3D(new Vector3f(p1.pos.x(), p1.pos.y(), z), p1.color, new Vector3f(0.0f, 1.0f, 0.0f));
-        var v2 = new Vertex3D(new Vector3f(p2.pos.x(), p2.pos.y(), z), p2.color, new Vector3f(0.0f, 1.0f, 0.0f));
+        var v1 = new Vertex3D(new Vector3f(p1.pos.x(), p1.pos.y(), z), p1.color);
+        var v2 = new Vertex3D(new Vector3f(p2.pos.x(), p2.pos.y(), z), p2.color);
         vkLineSet.add(v1, v2);
     }
 
     public void add(Vector2fc p1, Vector4fc color1, Vector2fc p2, Vector4fc color2, float z) {
-        var v1 = new Vertex3D(new Vector3f(p1.x(), p1.y(), z), color1, new Vector3f(0.0f, 1.0f, 0.0f));
-        var v2 = new Vertex3D(new Vector3f(p2.x(), p2.y(), z), color2, new Vector3f(0.0f, 1.0f, 0.0f));
+        var v1 = new Vertex3D(new Vector3f(p1.x(), p1.y(), z), color1);
+        var v2 = new Vertex3D(new Vector3f(p2.x(), p2.y(), z), color2);
         vkLineSet.add(v1, v2);
     }
 
     public void add(Vector2fc p1, Vector2fc p2, Vector4fc color, float z) {
-        var v1 = new Vertex3D(new Vector3f(p1.x(), p1.y(), z), color, new Vector3f(0.0f, 1.0f, 0.0f));
-        var v2 = new Vertex3D(new Vector3f(p2.x(), p2.y(), z), color, new Vector3f(0.0f, 1.0f, 0.0f));
+        var v1 = new Vertex3D(new Vector3f(p1.x(), p1.y(), z), color);
+        var v2 = new Vertex3D(new Vector3f(p2.x(), p2.y(), z), color);
         vkLineSet.add(v1, v2);
     }
 

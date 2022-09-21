@@ -15,8 +15,8 @@ public class Line2D extends Component {
     public Line2D(MttVulkanInstance vulkanInstance, Vertex2D p1, Vertex2D p2, float z) {
         super(vulkanInstance);
 
-        var v1 = new Vertex3D(new Vector3f(p1.pos.x(), p1.pos.y(), z), p1.color, new Vector3f(0.0f, 1.0f, 0.0f));
-        var v2 = new Vertex3D(new Vector3f(p2.pos.x(), p2.pos.y(), z), p2.color, new Vector3f(0.0f, 1.0f, 0.0f));
+        var v1 = new Vertex3D(new Vector3f(p1.pos.x(), p1.pos.y(), z), p1.color);
+        var v2 = new Vertex3D(new Vector3f(p2.pos.x(), p2.pos.y(), z), p2.color);
         vkLine = vulkanInstance.createLine2D(v1, v2);
         this.associateVulkanComponent(vkLine);
     }

@@ -48,7 +48,7 @@ public class VkLine2D extends VkComponent {
 
         this.createBuffer(commandPool, graphicsQueue, vertices);
 
-        this.setComponentType("primitive_2d");
+        this.setComponentType("primitive");
     }
 
     @Override

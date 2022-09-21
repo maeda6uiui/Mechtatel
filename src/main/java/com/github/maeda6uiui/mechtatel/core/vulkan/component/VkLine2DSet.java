@@ -40,7 +40,7 @@ public class VkLine2DSet extends VkComponent {
 
         bufferCreated = false;
 
-        this.setComponentType("primitive_2d");
+        this.setComponentType("primitive");
     }
 
     public void add(Vertex3D v1, Vertex3D v2) {

@@ -535,7 +535,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                     }
                 }
                 for (var component : components) {
-                    if (component.getComponentType() == "primitive_2d") {
+                    if (component.getComponentType() == "primitive") {
                         ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
                         component.getMat().get(matBuffer);
                         matBuffer.putInt(1 * 16 * Float.BYTES, 1);
@@ -1000,4 +1000,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         return texturedQuad;
     }
+    
+    public VkTexturedQuad2D createTexturedQuad2D(String textureFilepath,)
 }

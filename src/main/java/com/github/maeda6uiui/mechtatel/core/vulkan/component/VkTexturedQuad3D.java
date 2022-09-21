@@ -148,4 +148,27 @@ public class VkTexturedQuad3D extends VkComponent3D {
                     0);
         }
     }
+
+    @Override
+    public void transfer(VkCommandBuffer commandBuffer) {
+        if (!this.isVisible()) {
+            return;
+        }
+
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            LongBuffer lVertexBuffers = stack.longs(vertexBuffer);
+            LongBuffer offsets = stack.longs(0);
+            vkCmdBindVertexBuffers(commandBuffer, 0, lVertexBuffers, offsets);
+
+            vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+
+            vkCmdDrawIndexed(
+                    commandBuffer,
+                    6,
+                    1,
+                    0,
+                    0,
+                    0);
+        }
+    }
 }

@@ -49,7 +49,7 @@ public class MyMechtatel extends Mechtatel {
 
         var texturedQuad = this.createTexturedQuad3D("./Mechtatel/Texture/lenna.jpg", true, vertices);
 
-        var model = this.createModel3D("./Mechtatel/Model/Plane/plane.obj");
+        //var model = this.createModel3D("./Mechtatel/Model/Plane/plane.obj");
 
         camera = new FreeCamera(this.getCamera());
     }

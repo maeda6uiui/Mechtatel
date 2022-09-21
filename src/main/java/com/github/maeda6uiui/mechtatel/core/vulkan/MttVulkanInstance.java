@@ -452,7 +452,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         null);
 
                 for (var component : components3D) {
-                    if (component.getComponentType() == "model") {
+                    if (component.getComponentType() == "gbuffer") {
                         ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
                         component.getMat().get(matBuffer);
 

@@ -410,13 +410,37 @@ class MttInstance {
         return lineSet;
     }
 
-    public TexturedQuad3D createTexturedQuad3D(String textureFilepath, boolean generateMipmaps, List<Vertex3DUV> vertices) {
-        var texturedQuad = new TexturedQuad3D(vulkanInstance, textureFilepath, generateMipmaps, vertices);
+    public TexturedQuad3D createTexturedQuad3D(
+            String textureFilepath,
+            boolean generateMipmaps,
+            Vertex3DUV v1,
+            Vertex3DUV v2,
+            Vertex3DUV v3,
+            Vertex3DUV v4) {
+        var texturedQuad = new TexturedQuad3D(
+                vulkanInstance,
+                textureFilepath,
+                generateMipmaps,
+                v1,
+                v2,
+                v3,
+                v4);
         return texturedQuad;
     }
 
-    public TexturedQuad3D duplicateTexturedQuad3D(TexturedQuad3D srcQuad, List<Vertex3DUV> vertices) {
-        var texturedQuad = new TexturedQuad3D(vulkanInstance, srcQuad, vertices);
+    public TexturedQuad3D duplicateTexturedQuad3D(
+            TexturedQuad3D srcQuad,
+            Vertex3DUV v1,
+            Vertex3DUV v2,
+            Vertex3DUV v3,
+            Vertex3DUV v4) {
+        var texturedQuad = new TexturedQuad3D(
+                vulkanInstance,
+                srcQuad,
+                v1,
+                v2,
+                v3,
+                v4);
         return texturedQuad;
     }
 

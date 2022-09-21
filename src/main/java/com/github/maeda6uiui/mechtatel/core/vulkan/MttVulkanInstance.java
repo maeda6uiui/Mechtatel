@@ -401,15 +401,32 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
                 for (var component : components3D) {
                     if (component.getComponentType() == "gbuffer") {
-                        ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
-                        component.getMat().get(matBuffer);
+                        ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * Integer.BYTES);
+                        component.getMat().get(pcBuffer);
+                        pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
 
                         vkCmdPushConstants(
                                 commandBuffer,
                                 gBufferNabor.getPipelineLayout(0, 0),
                                 VK_SHADER_STAGE_VERTEX_BIT,
                                 0,
-                                matBuffer);
+                                pcBuffer);
+
+                        component.draw(commandBuffer, gBufferNabor.getPipelineLayout(0, 0));
+                    }
+                }
+                for (var component : components) {
+                    if (component.getComponentType() == "gbuffer") {
+                        ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * Integer.BYTES);
+                        component.getMat().get(pcBuffer);
+                        pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
+
+                        vkCmdPushConstants(
+                                commandBuffer,
+                                gBufferNabor.getPipelineLayout(0, 0),
+                                VK_SHADER_STAGE_VERTEX_BIT,
+                                0,
+                                pcBuffer);
 
                         component.draw(commandBuffer, gBufferNabor.getPipelineLayout(0, 0));
                     }
@@ -453,15 +470,32 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
                 for (var component : components3D) {
                     if (component.getComponentType() == "gbuffer") {
-                        ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES);
-                        component.getMat().get(matBuffer);
+                        ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * Integer.BYTES);
+                        component.getMat().get(pcBuffer);
+                        pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
 
                         vkCmdPushConstants(
                                 commandBuffer,
                                 gBufferNabor.getPipelineLayout(1, 0),
                                 VK_SHADER_STAGE_VERTEX_BIT,
                                 0,
-                                matBuffer);
+                                pcBuffer);
+
+                        component.transfer(commandBuffer);
+                    }
+                }
+                for (var component : components) {
+                    if (component.getComponentType() == "gbuffer") {
+                        ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * Integer.BYTES);
+                        component.getMat().get(pcBuffer);
+                        pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
+
+                        vkCmdPushConstants(
+                                commandBuffer,
+                                gBufferNabor.getPipelineLayout(1, 0),
+                                VK_SHADER_STAGE_VERTEX_BIT,
+                                0,
+                                pcBuffer);
 
                         component.transfer(commandBuffer);
                     }
@@ -520,32 +554,32 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
                 for (var component : components3D) {
                     if (component.getComponentType() == "primitive") {
-                        ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
-                        component.getMat().get(matBuffer);
-                        matBuffer.putInt(1 * 16 * Float.BYTES, 0);
+                        ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
+                        component.getMat().get(pcBuffer);
+                        pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
 
                         vkCmdPushConstants(
                                 commandBuffer,
                                 primitiveNabor.getPipelineLayout(0),
                                 VK_SHADER_STAGE_VERTEX_BIT,
                                 0,
-                                matBuffer);
+                                pcBuffer);
 
                         component.draw(commandBuffer, primitiveNabor.getPipelineLayout(0));
                     }
                 }
                 for (var component : components) {
                     if (component.getComponentType() == "primitive") {
-                        ByteBuffer matBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
-                        component.getMat().get(matBuffer);
-                        matBuffer.putInt(1 * 16 * Float.BYTES, 1);
+                        ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
+                        component.getMat().get(pcBuffer);
+                        pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
 
                         vkCmdPushConstants(
                                 commandBuffer,
                                 primitiveNabor.getPipelineLayout(0),
                                 VK_SHADER_STAGE_VERTEX_BIT,
                                 0,
-                                matBuffer);
+                                pcBuffer);
 
                         component.draw(commandBuffer, primitiveNabor.getPipelineLayout(0));
                     }

@@ -10,6 +10,7 @@ layout(set=0,binding=0) uniform CameraUBO{
 }camera;
 layout(push_constant) uniform VertPC{
     mat4 model;
+    int is2DDrawing;
 }pc;
 
 layout(location=0) in vec3 inPosition;
@@ -21,7 +22,11 @@ layout(location=0) out vec3 fragPosition;
 layout(location=1) out vec3 fragNormal;
 
 void main(){
-    gl_Position=camera.proj*camera.view*pc.model*vec4(inPosition,1.0);
+    if(pc.is2DDrawing==0){
+        gl_Position=camera.proj*camera.view*pc.model*vec4(inPosition,1.0);
+    }else{
+        gl_Position=vec4(inPosition,1.0);
+    }
     fragPosition=(pc.model*vec4(inPosition,1.0)).xyz;
     fragNormal=inNormal;
 }

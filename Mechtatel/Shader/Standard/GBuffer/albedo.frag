@@ -3,11 +3,12 @@
 
 const int MAX_NUM_TEXTURES=1024;
 const int SIZEOF_FLOAT=4;
+const int SIZEOF_INT=4;
 
 layout(set=1,binding=0) uniform texture2D textures[MAX_NUM_TEXTURES];
 layout(set=2,binding=0) uniform sampler textureSampler;
 layout(push_constant) uniform FragPC{
-    layout(offset=1*16*SIZEOF_FLOAT) int textureIndex;
+    layout(offset=1*16*SIZEOF_FLOAT+1*SIZEOF_INT) int textureIndex;
 }pc;
 
 layout(location=0) in vec4 fragColor;

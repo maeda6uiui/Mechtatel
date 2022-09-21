@@ -130,7 +130,7 @@ public class VkTexturedQuad2D extends VkComponent {
                     commandBuffer,
                     pipelineLayout,
                     VK_SHADER_STAGE_FRAGMENT_BIT,
-                    1 * 16 * Float.BYTES,
+                    1 * 16 * Float.BYTES + 1 * Integer.BYTES,
                     textureIndexBuffer);
 
             LongBuffer lVertexBuffers = stack.longs(vertexBuffer);

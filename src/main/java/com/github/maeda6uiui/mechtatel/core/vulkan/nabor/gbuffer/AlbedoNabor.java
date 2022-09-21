@@ -539,11 +539,11 @@ class AlbedoNabor extends Nabor {
 
             VkPushConstantRange vertPC = pushConstants.get(0);
             vertPC.offset(0);
-            vertPC.size(1 * 16 * Float.BYTES);
+            vertPC.size(1 * 16 * Float.BYTES + 1 * Integer.BYTES);
             vertPC.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
 
             VkPushConstantRange fragPC = pushConstants.get(1);
-            fragPC.offset(1 * 16 * Float.BYTES);
+            fragPC.offset(1 * 16 * Float.BYTES + 1 * Integer.BYTES);
             fragPC.size(1 * Integer.BYTES);
             fragPC.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 

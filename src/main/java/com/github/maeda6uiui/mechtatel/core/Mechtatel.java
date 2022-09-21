@@ -314,4 +314,8 @@ public class Mechtatel implements IMechtatel {
         var p4 = new Vertex2DUV(new Vector2f(bottomRight.x(), topLeft.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 0.0f));
         return instance.duplicateTexturedQuad2D(srcQuad, p1, p2, p3, p4, z);
     }
+
+    public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String textureFilepath) {
+        return instance.createTexturedQuad2DSingleTextureSet(textureFilepath);
+    }
 }

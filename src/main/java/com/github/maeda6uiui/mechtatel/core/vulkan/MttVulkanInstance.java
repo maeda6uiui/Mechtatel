@@ -21,6 +21,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow.ShadowMappingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow.ShadowMappingNaborRunner;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
+import com.github.maeda6uiui.mechtatel.core.vulkan.texture.Texture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
@@ -1072,5 +1073,31 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         components.add(texturedQuad);
 
         return texturedQuad;
+    }
+
+    public VkTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(Texture texture) {
+        var texturedQuadSet = new VkTexturedQuad2DSingleTextureSet(device, commandPool, graphicsQueue, texture);
+        components.add(texturedQuadSet);
+
+        return texturedQuadSet;
+    }
+
+    public VkTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String textureFilepath) {
+        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
+        var descriptorSets = new ArrayList<Long>();
+        for (int i = 0; i < numDescriptorSets; i++) {
+            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
+        }
+
+        var texturedQuadSet = new VkTexturedQuad2DSingleTextureSet(
+                device,
+                commandPool,
+                graphicsQueue,
+                descriptorSets,
+                gBufferNabor.getSetCount(0),
+                textureFilepath);
+        components.add(texturedQuadSet);
+
+        return texturedQuadSet;
     }
 }

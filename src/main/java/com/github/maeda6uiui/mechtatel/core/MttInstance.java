@@ -453,4 +453,9 @@ class MttInstance {
         var texturedQuad = new TexturedQuad2D(vulkanInstance, srcQuad, p1, p2, p3, p4, z);
         return texturedQuad;
     }
+
+    public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String textureFilepath) {
+        var texturedQuadSet = new TexturedQuad2DSingleTextureSet(vulkanInstance, textureFilepath);
+        return texturedQuadSet;
+    }
 }

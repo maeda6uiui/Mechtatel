@@ -31,11 +31,11 @@ public class MyMechtatel extends Mechtatel {
     @Override
     public void init() {
         var axes = this.createAxesLine3DSet(10.0f);
-        var texturedQuad = this.createTexturedQuad2D(
-                "./Mechtatel/Texture/lenna.jpg",
-                new Vector2f(-0.5f, -0.5f),
-                new Vector2f(0.5f, 0.5f),
-                0.0f);
+        var texturedQuadSet = this.createTexturedQuad2DSingleTextureSet("./Mechtatel/Texture/lenna.jpg");
+
+        texturedQuadSet.add(new Vector2f(-1.0f, -1.0f), new Vector2f(-0.5f, -0.5f), 0.0f);
+        texturedQuadSet.add(new Vector2f(0.5f, 0.5f), new Vector2f(1.0f, 1.0f), 0.0f);
+        texturedQuadSet.createBuffers();
 
         camera = new FreeCamera(this.getCamera());
     }

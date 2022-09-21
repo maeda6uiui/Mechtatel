@@ -282,4 +282,12 @@ public class Mechtatel implements IMechtatel {
     public TexturedQuad3D duplicateTexturedQuad3D(TexturedQuad3D srcQuad, List<Vertex3DUV> vertices) {
         return instance.duplicateTexturedQuad3D(srcQuad, vertices);
     }
+
+    public TexturedQuad2D createTexturedQuad2D(String textureFilepath, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
+        return instance.createTexturedQuad2D(textureFilepath, p1, p2, p3, p4, z);
+    }
+
+    public TexturedQuad2D duplicateTexturedQuad2D(TexturedQuad2D srcQuad, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
+        return instance.duplicateTexturedQuad2D(srcQuad, p1, p2, p3, p4, z);
+    }
 }

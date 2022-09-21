@@ -1000,6 +1000,43 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         return texturedQuad;
     }
-    
-    public VkTexturedQuad2D createTexturedQuad2D(String textureFilepath,)
+
+    public VkTexturedQuad2D createTexturedQuad2D(String textureFilepath, List<Vertex3DUV> vertices) {
+        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
+        var descriptorSets = new ArrayList<Long>();
+        for (int i = 0; i < numDescriptorSets; i++) {
+            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
+        }
+
+        var texturedQuad = new VkTexturedQuad2D(
+                device,
+                commandPool,
+                graphicsQueue,
+                descriptorSets,
+                gBufferNabor.getSetCount(0),
+                textureFilepath,
+                false,
+                vertices);
+        components.add(texturedQuad);
+
+        return texturedQuad;
+    }
+
+    public VkTexturedQuad2D duplicateTexturedQuad2D(VkTexturedQuad2D srcQuad, List<Vertex3DUV> vertices) {
+        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
+        var descriptorSets = new ArrayList<Long>();
+        for (int i = 0; i < numDescriptorSets; i++) {
+            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
+        }
+
+        var texturedQuad = new VkTexturedQuad2D(
+                device,
+                commandPool,
+                graphicsQueue,
+                srcQuad,
+                vertices);
+        components.add(texturedQuad);
+
+        return texturedQuad;
+    }
 }

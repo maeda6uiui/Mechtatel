@@ -7,10 +7,7 @@ import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
-import org.joml.Vector3f;
-import org.joml.Vector3fc;
-import org.joml.Vector4f;
-import org.joml.Vector4fc;
+import org.joml.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -298,7 +295,23 @@ public class Mechtatel implements IMechtatel {
         return instance.createTexturedQuad2D(textureFilepath, p1, p2, p3, p4, z);
     }
 
+    public TexturedQuad2D createTexturedQuad2D(String textureFilepath, Vector2fc topLeft, Vector2fc bottomRight, float z) {
+        var p1 = new Vertex2DUV(topLeft, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
+        var p2 = new Vertex2DUV(new Vector2f(topLeft.x(), bottomRight.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 1.0f));
+        var p3 = new Vertex2DUV(bottomRight, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
+        var p4 = new Vertex2DUV(new Vector2f(bottomRight.x(), topLeft.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 0.0f));
+        return instance.createTexturedQuad2D(textureFilepath, p1, p2, p3, p4, z);
+    }
+
     public TexturedQuad2D duplicateTexturedQuad2D(TexturedQuad2D srcQuad, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
+        return instance.duplicateTexturedQuad2D(srcQuad, p1, p2, p3, p4, z);
+    }
+
+    public TexturedQuad2D duplicateTexturedQuad2D(TexturedQuad2D srcQuad, Vector2fc topLeft, Vector2fc bottomRight, float z) {
+        var p1 = new Vertex2DUV(topLeft, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
+        var p2 = new Vertex2DUV(new Vector2f(topLeft.x(), bottomRight.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 1.0f));
+        var p3 = new Vertex2DUV(bottomRight, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
+        var p4 = new Vertex2DUV(new Vector2f(bottomRight.x(), topLeft.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 0.0f));
         return instance.duplicateTexturedQuad2D(srcQuad, p1, p2, p3, p4, z);
     }
 }

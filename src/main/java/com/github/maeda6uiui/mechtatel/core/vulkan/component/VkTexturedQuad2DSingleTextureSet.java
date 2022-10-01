@@ -1,8 +1,11 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
+import com.github.maeda6uiui.mechtatel.core.component.Vertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.component.Vertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.Texture;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
@@ -82,6 +85,22 @@ public class VkTexturedQuad2DSingleTextureSet extends VkComponent {
     }
 
     public void add(Vertex3DUV v1, Vertex3DUV v2, Vertex3DUV v3, Vertex3DUV v4) {
+        vertices.add(v1);
+        vertices.add(v2);
+        vertices.add(v3);
+        vertices.add(v4);
+    }
+
+    public void add(Vertex2DUV topLeft, Vertex2DUV bottomRight, float z) {
+        var v1 = new Vertex3DUV(
+                new Vector3f(topLeft.pos.x(), topLeft.pos.y(), z), topLeft.color, topLeft.texCoords);
+        var v2 = new Vertex3DUV(
+                new Vector3f(topLeft.pos.x(), bottomRight.pos.y(), z), topLeft.color, new Vector2f(topLeft.texCoords.x(), bottomRight.texCoords.y()));
+        var v3 = new Vertex3DUV(
+                new Vector3f(bottomRight.pos.x(), bottomRight.pos.y(), z), topLeft.color, bottomRight.texCoords);
+        var v4 = new Vertex3DUV(
+                new Vector3f(bottomRight.pos.x(), topLeft.pos.y(), z), topLeft.color, new Vector2f(bottomRight.texCoords.x(), topLeft.texCoords.y()));
+
         vertices.add(v1);
         vertices.add(v2);
         vertices.add(v3);

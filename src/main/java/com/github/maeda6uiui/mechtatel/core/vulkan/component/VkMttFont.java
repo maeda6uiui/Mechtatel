@@ -55,8 +55,8 @@ public class VkMttFont extends VkComponent {
                 texture
         );
 
-        var topLeft = new Vertex2DUV(new Vector2f(-1.0f, -1.0f), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
-        var bottomRight = new Vertex2DUV(new Vector2f(1.0f, 1.0f), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
+        var topLeft = new Vertex2DUV(new Vector2f(-1.0f, -0.3f), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.3f, 0.0f));
+        var bottomRight = new Vertex2DUV(new Vector2f(1.0f, 0.3f), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.4f, -1.0f));
         vkQuadSet.add(topLeft, bottomRight, 0.0f);
         vkQuadSet.createBuffers();
 

@@ -36,6 +36,10 @@ Javaでゲームエンジンを作ることを目標としているプロジェ�
 
 <img src="./Image/text_rendering.png" alt="テキストの描画" style="zoom:50%;" />
 
+まだ修正すべき点も多いですが、任意のASCII文字を表示できるようになりました。
+
+<img src="./Image/text_rendering_2.png" alt="テキストの描画2" style="zoom:50%;" />
+
 ### 2022-09-11
 
 2D直線の描画機能を実装しました。

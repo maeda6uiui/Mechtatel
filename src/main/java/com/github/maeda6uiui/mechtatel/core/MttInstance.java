@@ -19,6 +19,7 @@ import org.joml.Vector4f;
 import org.joml.Vector4fc;
 import org.lwjgl.system.MemoryStack;
 
+import java.awt.*;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -457,5 +458,10 @@ class MttInstance {
     public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String textureFilepath) {
         var texturedQuadSet = new TexturedQuad2DSingleTextureSet(vulkanInstance, textureFilepath);
         return texturedQuadSet;
+    }
+
+    public MttFont createMttFont(Font font, boolean antiAlias, Color color) {
+        var mttFont = new MttFont(vulkanInstance, font, antiAlias, color);
+        return mttFont;
     }
 }

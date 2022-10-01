@@ -11,6 +11,7 @@ import org.joml.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.util.List;
 
 /**
@@ -317,5 +318,9 @@ public class Mechtatel implements IMechtatel {
 
     public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String textureFilepath) {
         return instance.createTexturedQuad2DSingleTextureSet(textureFilepath);
+    }
+
+    public MttFont createMttFont(Font font, boolean antiAlias, Color color) {
+        return instance.createMttFont(font, antiAlias, color);
     }
 }

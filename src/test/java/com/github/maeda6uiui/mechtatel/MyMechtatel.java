@@ -3,8 +3,8 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import org.joml.Vector2f;
 
+import java.awt.*;
 import java.io.IOException;
 
 public class MyMechtatel extends Mechtatel {
@@ -31,11 +31,10 @@ public class MyMechtatel extends Mechtatel {
     @Override
     public void init() {
         var axes = this.createAxesLine3DSet(10.0f);
-        var texturedQuadSet = this.createTexturedQuad2DSingleTextureSet("./Mechtatel/Texture/lenna.jpg");
-
-        texturedQuadSet.add(new Vector2f(-1.0f, -1.0f), new Vector2f(-0.5f, -0.5f), 0.0f);
-        texturedQuadSet.add(new Vector2f(0.5f, 0.5f), new Vector2f(1.0f, 1.0f), 0.0f);
-        texturedQuadSet.createBuffers();
+        var mttFont = this.createMttFont(
+                new Font("Serif", Font.PLAIN, 40),
+                true,
+                Color.WHITE);
 
         camera = new FreeCamera(this.getCamera());
     }

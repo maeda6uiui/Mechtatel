@@ -33,8 +33,10 @@ import org.joml.Vector4fc;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.awt.*;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.List;
 import java.util.*;
 
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
@@ -1099,5 +1101,26 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         components.add(texturedQuadSet);
 
         return texturedQuadSet;
+    }
+
+    public VkMttFont createMttFont(Font font, boolean antiAlias, Color color) {
+        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
+        var descriptorSets = new ArrayList<Long>();
+        for (int i = 0; i < numDescriptorSets; i++) {
+            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
+        }
+
+        var mttFont = new VkMttFont(
+                device,
+                commandPool,
+                graphicsQueue,
+                descriptorSets,
+                gBufferNabor.getSetCount(0),
+                font,
+                antiAlias,
+                color);
+        components.add(mttFont);
+
+        return mttFont;
     }
 }

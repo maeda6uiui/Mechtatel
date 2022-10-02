@@ -38,17 +38,23 @@ public class MyMechtatel extends Mechtatel {
 
         camera = new FreeCamera(this.getCamera());
 
+        String requiredChars = "";
+        for (int i = 0; i < 256; i++) {
+            requiredChars += (char) i;
+        }
+
         mttFont = this.createMttFont(
                 new Font("Serif", Font.PLAIN, 50),
                 true,
-                Color.WHITE);
+                Color.WHITE,
+                requiredChars);
         mttFont.prepare(
                 "Hello, world\nMechtatel!",
                 new Vector2f(-1.0f, -1.0f),
                 0.0f,
                 0.002f,
                 0.005f,
-                0.1f);
+                0.0f);
         mttFont.createBuffers();
     }
 

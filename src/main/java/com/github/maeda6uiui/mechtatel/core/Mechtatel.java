@@ -328,7 +328,7 @@ public class Mechtatel implements IMechtatel {
         return instance.createTexturedQuad2DSingleTextureSet(textureFilepath);
     }
 
-    public MttFont createMttFont(Font font, boolean antiAlias, Color color) {
-        return instance.createMttFont(font, antiAlias, color);
+    public MttFont createMttFont(Font font, boolean antiAlias, Color color, String requiredChars) {
+        return instance.createMttFont(font, antiAlias, color, requiredChars);
     }
 }

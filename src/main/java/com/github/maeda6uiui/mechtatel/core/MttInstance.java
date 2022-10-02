@@ -476,8 +476,8 @@ class MttInstance {
         return texturedQuadSet;
     }
 
-    public MttFont createMttFont(Font font, boolean antiAlias, Color color) {
-        var mttFont = new MttFont(vulkanInstance, font, antiAlias, color);
+    public MttFont createMttFont(Font font, boolean antiAlias, Color color, String requiredChars) {
+        var mttFont = new MttFont(vulkanInstance, font, antiAlias, color, requiredChars);
         return mttFont;
     }
 }

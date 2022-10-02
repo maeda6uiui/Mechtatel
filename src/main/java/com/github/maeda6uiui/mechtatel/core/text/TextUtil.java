@@ -2,9 +2,13 @@ package com.github.maeda6uiui.mechtatel.core.text;
 
 import org.lwjgl.system.MemoryUtil;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,41 +54,55 @@ public class TextUtil {
         return image;
     }
 
-    public static FontImageInfo createFontImage(Font font, boolean antiAlias, Color color) {
+    public static FontImageInfo createFontImage(Font font, boolean antiAlias, Color color, String requiredChars) {
         var fontImageInfo = new FontImageInfo();
-        fontImageInfo.glyphs = new HashMap<Character, Glyph>();
+        fontImageInfo.glyphs = new HashMap<>();
 
-        int imageWidth = 0;
-        int imageHeight = 0;
+        int lineWidth = 0;
+        int lineHeight = 0;
+        var lineHeights = new ArrayList<Integer>();
+        lineHeights.add(0);
 
-        for (int i = 32; i < 256; i++) {
-            if (i == 127) {
-                continue;
-            }
+        int totalImageWidth = 0;
+        int totalImageHeight = 0;
 
-            char c = (char) i;
+        int numRequiredChars = requiredChars.length();
+        final int NUM_CHARS_PER_LINE = 32;
+
+        for (int i = 0; i < numRequiredChars; i++) {
+            char c = requiredChars.charAt(i);
             BufferedImage ch = createCharImage(font, c, antiAlias, color);
             if (ch == null) {
                 continue;
             }
 
-            imageWidth += ch.getWidth();
-            imageHeight = Math.max(imageHeight, ch.getHeight());
+            lineWidth += ch.getWidth();
+            lineHeight = Math.max(lineHeight, ch.getHeight());
+
+            if ((i + 1) % NUM_CHARS_PER_LINE == 0) {
+                totalImageWidth = Math.max(lineWidth, totalImageWidth);
+                totalImageHeight += lineHeight;
+                lineHeights.add(lineHeight);
+                lineWidth = 0;
+                lineHeight = 0;
+            }
+        }
+        if (totalImageWidth == 0) {
+            totalImageWidth = lineWidth;
+            totalImageHeight = lineHeight;
         }
 
-        fontImageInfo.imageWidth = imageWidth;
-        fontImageInfo.imageHeight = imageHeight;
+        fontImageInfo.imageWidth = totalImageWidth;
+        fontImageInfo.imageHeight = totalImageHeight;
 
-        BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage image = new BufferedImage(totalImageWidth, totalImageHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
 
         int x = 0;
-        for (int i = 32; i < 256; i++) {
-            if (i == 127) {
-                continue;
-            }
-
-            char c = (char) i;
+        int y = 0;
+        int lineCount = 1;
+        for (int i = 0; i < numRequiredChars; i++) {
+            char c = requiredChars.charAt(i);
             BufferedImage charImage = createCharImage(font, c, antiAlias, color);
             if (charImage == null) {
                 continue;
@@ -93,10 +111,22 @@ public class TextUtil {
             int charWidth = charImage.getWidth();
             int charHeight = charImage.getHeight();
 
-            Glyph ch = new Glyph(charWidth, charHeight, x, image.getHeight() - charHeight, 0.0f);
-            g.drawImage(charImage, x, 0, null);
+            Glyph ch = new Glyph(charWidth, charHeight, x, y, 0.0f);
+            g.drawImage(charImage, x, y, null);
             x += ch.width;
             fontImageInfo.glyphs.put(c, ch);
+
+            if ((i + 1) % NUM_CHARS_PER_LINE == 0) {
+                x = 0;
+                y += lineHeights.get(lineCount);
+                lineCount++;
+            }
+        }
+
+        try {
+            ImageIO.write(image, "png", new File("font.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         int width = image.getWidth();

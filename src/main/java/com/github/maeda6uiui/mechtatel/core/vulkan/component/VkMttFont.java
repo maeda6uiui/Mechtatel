@@ -38,7 +38,8 @@ public class VkMttFont extends VkComponent {
             int setCount,
             Font font,
             boolean antiAlias,
-            Color color) {
+            Color color,
+            String requiredChars) {
         this.device = device;
 
         texture = this.createFontTexture(
@@ -48,7 +49,8 @@ public class VkMttFont extends VkComponent {
                 setCount,
                 font,
                 antiAlias,
-                color
+                color,
+                requiredChars
         );
         vkQuadSet = new VkTexturedQuad2DSingleTextureSet(
                 device,
@@ -67,8 +69,9 @@ public class VkMttFont extends VkComponent {
             int setCount,
             Font font,
             boolean antiAlias,
-            Color color) {
-        TextUtil.FontImageInfo fontImageInfo = TextUtil.createFontImage(font, antiAlias, color);
+            Color color,
+            String requiredChars) {
+        TextUtil.FontImageInfo fontImageInfo = TextUtil.createFontImage(font, antiAlias, color, requiredChars);
         this.glyphs = fontImageInfo.glyphs;
         this.imageWidth = fontImageInfo.imageWidth;
         this.imageHeight = fontImageInfo.imageHeight;
@@ -123,18 +126,20 @@ public class VkMttFont extends VkComponent {
                 Glyph glyph = glyphs.get(ch);
                 float uLeft = glyph.x / (float) imageWidth;
                 float uRight = (glyph.x + glyph.width) / (float) imageWidth;
+                float vTop = glyph.y / (float) imageHeight;
+                float vBottom = (glyph.y + glyph.height) / (float) imageHeight;
                 float scaledGlyphWidth = glyph.width * glyphWidthScale;
 
                 var topLeft = new Vertex2DUV(
                         new Vector2f(drawX, drawY),
                         new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
-                        new Vector2f(uLeft, vOffset));
+                        new Vector2f(uLeft, vTop + vOffset));
                 var bottomRight = new Vertex2DUV(
                         new Vector2f(
                                 drawX + scaledGlyphWidth,
                                 drawY + scaledLineHeight),
                         new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
-                        new Vector2f(uRight, 1.0f - vOffset));
+                        new Vector2f(uRight, vBottom - vOffset));
                 vkQuadSet.add(topLeft, bottomRight, z);
 
                 drawX += scaledGlyphWidth;

@@ -6,6 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.text.TextUtil;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 import java.awt.*;
 import java.io.IOException;
@@ -54,12 +55,15 @@ public class MyMechtatel extends Mechtatel {
                 requiredChars);
         mttFont.prepare(
                 texts,
-                new Vector2f(-1.0f, -1.0f),
+                new Vector2f(-0.5f, -0.5f),
                 0.0f,
                 0.002f,
                 0.004f,
                 0.0f);
         mttFont.createBuffers();
+
+        var model = this.createModel3D("./Mechtatel/Model/Cube/cube.obj");
+        model.rescale(new Vector3f(2.0f, 2.0f, 2.0f));
     }
 
     @Override

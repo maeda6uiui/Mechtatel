@@ -36,6 +36,8 @@ import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_2_BIT;
 class MttInstance {
     private IMechtatel mtt;
     private long window;
+    private int windowWidth;
+    private int windowHeight;
     private Keyboard keyboard;
     private Mouse mouse;
     private boolean fixCursorFlag;
@@ -62,6 +64,9 @@ class MttInstance {
         }
 
         camera.setAspect((float) width / (float) height);
+
+        windowWidth = width;
+        windowHeight = height;
     }
 
     private void keyCallback(long window, int key, int scancode, int action, int mods) {
@@ -105,6 +110,9 @@ class MttInstance {
         if (window == NULL) {
             throw new RuntimeException("Failed to create a window");
         }
+
+        this.windowWidth = settings.windowSettings.width;
+        this.windowHeight = settings.windowSettings.height;
 
         keyboard = new Keyboard();
         mouse = new Mouse();
@@ -191,6 +199,14 @@ class MttInstance {
 
     public void closeWindow() {
         glfwSetWindowShouldClose(window, true);
+    }
+
+    public int getWindowWidth() {
+        return windowWidth;
+    }
+
+    public int getWindowHeight() {
+        return windowHeight;
     }
 
     public void createPostProcessingNabors(List<String> naborNames) {

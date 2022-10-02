@@ -97,20 +97,22 @@ public class VkMttFont extends VkComponent {
     }
 
     public void clear() {
-        vkQuadSet.clear(false);
+        vkQuadSet.clear();
     }
 
-    public void prepare(List<String> lines, Vector2fc pTopLeft, float z) {
+    public void prepare(
+            List<String> lines,
+            Vector2fc pTopLeft,
+            float z,
+            float glyphWidthScale,
+            float lineHeightScale,
+            float vOffset) {
         float drawX = pTopLeft.x();
         float drawY = pTopLeft.y();
 
-        for (var line : lines) {
-            CharSequence text = line;
-
-            int textHeight = TextUtil.getHeight(text, glyphs);
-            float normalizedTextHeight = textHeight / (float) imageHeight / 2.0f;
-
-            int textWidth = TextUtil.getWidth(text, glyphs);
+        for (var text : lines) {
+            int lineHeight = TextUtil.getHeight(text, glyphs);
+            float scaledLineHeight = lineHeight * lineHeightScale;
 
             for (int i = 0; i < text.length(); i++) {
                 char ch = text.charAt(i);
@@ -121,23 +123,30 @@ public class VkMttFont extends VkComponent {
                 Glyph glyph = glyphs.get(ch);
                 float uLeft = glyph.x / (float) imageWidth;
                 float uRight = (glyph.x + glyph.width) / (float) imageWidth;
-                float normalizedGlyphWidth = glyph.width / (float) textWidth / 2.0f;
+                float scaledGlyphWidth = glyph.width * glyphWidthScale;
 
                 var topLeft = new Vertex2DUV(
-                        new Vector2f(drawX, drawY), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(uLeft, 0.0f));
+                        new Vector2f(drawX, drawY),
+                        new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
+                        new Vector2f(uLeft, vOffset));
                 var bottomRight = new Vertex2DUV(
-                        new Vector2f(drawX + normalizedGlyphWidth, drawY + normalizedTextHeight), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(uRight, -1.0f));
+                        new Vector2f(
+                                drawX + scaledGlyphWidth,
+                                drawY + scaledLineHeight),
+                        new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
+                        new Vector2f(uRight, 1.0f - vOffset));
                 vkQuadSet.add(topLeft, bottomRight, z);
 
-                drawX += normalizedGlyphWidth;
+                drawX += scaledGlyphWidth;
             }
 
-            drawY += normalizedTextHeight;
+            drawY += scaledLineHeight;
             drawX = pTopLeft.x();
         }
     }
 
     public void createBuffers() {
+        vkQuadSet.cleanup();
         vkQuadSet.createBuffers();
     }
 

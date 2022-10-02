@@ -55,8 +55,8 @@ public class TexturedQuad2DSingleTextureSet extends Component {
         vkTexturedQuadSet.add(v1, v2, v3, v4);
     }
 
-    public void clear(boolean doCleanup) {
-        vkTexturedQuadSet.clear(doCleanup);
+    public void clear() {
+        vkTexturedQuadSet.clear();
     }
 
     public void createBuffers() {

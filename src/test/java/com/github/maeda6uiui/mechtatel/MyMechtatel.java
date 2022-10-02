@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
+import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import org.joml.Vector2f;
 
 import java.awt.*;
@@ -29,17 +30,26 @@ public class MyMechtatel extends Mechtatel {
 
     private FreeCamera camera;
 
+    private MttFont mttFont;
+
     @Override
     public void init() {
         var axes = this.createAxesLine3DSet(10.0f);
-        var mttFont = this.createMttFont(
-                new Font("Serif", Font.PLAIN, 100),
-                true,
-                Color.WHITE);
-        mttFont.prepare("Hello, world\nMechtatel!", new Vector2f(-1.0f, -1.0f), 0.0f);
-        mttFont.createBuffers();
 
         camera = new FreeCamera(this.getCamera());
+
+        mttFont = this.createMttFont(
+                new Font("Serif", Font.PLAIN, 50),
+                true,
+                Color.WHITE);
+        mttFont.prepare(
+                "Hello, world\nMechtatel!",
+                new Vector2f(-1.0f, -1.0f),
+                0.0f,
+                0.002f,
+                0.005f,
+                0.1f);
+        mttFont.createBuffers();
     }
 
     @Override

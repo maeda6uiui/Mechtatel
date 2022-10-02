@@ -31,11 +31,23 @@ public class MttFont extends Component {
         vkMttFont.clear();
     }
 
-    public void prepare(List<String> lines, Vector2fc pTopLeft, float z) {
-        vkMttFont.prepare(lines, pTopLeft, z);
+    public void prepare(
+            List<String> lines,
+            Vector2fc pTopLeft,
+            float z,
+            float glyphWidthScale,
+            float lineHeightScale,
+            float vOffset) {
+        vkMttFont.prepare(lines, pTopLeft, z, glyphWidthScale, lineHeightScale, vOffset);
     }
 
-    public void prepare(String text, Vector2fc pTopLeft, float z) {
+    public void prepare(
+            String text,
+            Vector2fc pTopLeft,
+            float z,
+            float glyphWidthScale,
+            float lineHeightScale,
+            float vOffset) {
         var lines = new ArrayList<String>();
         if (text.contains("\n")) {
             String[] splits = text.split("\n");
@@ -46,7 +58,7 @@ public class MttFont extends Component {
             lines.add(text);
         }
 
-        vkMttFont.prepare(lines, pTopLeft, z);
+        vkMttFont.prepare(lines, pTopLeft, z, glyphWidthScale, lineHeightScale, vOffset);
     }
 
     public void createBuffers() {

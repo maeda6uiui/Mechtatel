@@ -3,8 +3,6 @@ package com.github.maeda6uiui.mechtatel.core.text;
 import org.lwjgl.system.MemoryUtil;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -100,11 +98,6 @@ public class TextUtil {
             x += ch.width;
             fontImageInfo.glyphs.put(c, ch);
         }
-
-        AffineTransform transform = AffineTransform.getScaleInstance(1.0f, -1.0f);
-        transform.translate(0.0f, -image.getHeight());
-        AffineTransformOp operation = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-        image = operation.filter(image, null);
 
         int width = image.getWidth();
         int height = image.getHeight();

@@ -66,6 +66,14 @@ public class Mechtatel implements IMechtatel {
         instance.closeWindow();
     }
 
+    public int getWindowWidth() {
+        return instance.getWindowWidth();
+    }
+
+    public int getWindowHeight() {
+        return instance.getWindowHeight();
+    }
+
     public void createPostProcessingNabors(List<String> naborNames) {
         instance.createPostProcessingNabors(naborNames);
     }

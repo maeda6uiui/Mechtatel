@@ -107,11 +107,8 @@ public class VkTexturedQuad2DSingleTextureSet extends VkComponent {
         vertices.add(v4);
     }
 
-    public void clear(boolean doCleanup) {
+    public void clear() {
         vertices.clear();
-        if (doCleanup) {
-            this.cleanup();
-        }
     }
 
     public void createBuffers() {
@@ -159,7 +156,6 @@ public class VkTexturedQuad2DSingleTextureSet extends VkComponent {
             vkFreeMemory(device, indexBufferMemory, null);
 
             bufferCreated = false;
-            isExternalTexture = false;
         }
     }
 

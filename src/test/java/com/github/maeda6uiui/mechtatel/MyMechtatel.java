@@ -44,10 +44,11 @@ public class MyMechtatel extends Mechtatel {
         texts.add("Hello!");
         texts.add("こんにちは！");
         texts.add("Здравствуйте!");
+        texts.add("你好！");
         String requiredChars = TextUtil.getRequiredChars(texts);
 
         mttFont = this.createMttFont(
-                new Font("Meiryo UI", Font.PLAIN, 50),
+                new Font("Sans", Font.PLAIN, 50),
                 false,
                 Color.WHITE,
                 requiredChars);

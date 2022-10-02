@@ -2,15 +2,11 @@ package com.github.maeda6uiui.mechtatel.core.text;
 
 import org.lwjgl.system.MemoryUtil;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.*;
 
 /**
  * Utility methods for text rendering
@@ -122,12 +118,6 @@ public class TextUtil {
             }
         }
 
-        try {
-            ImageIO.write(image, "png", new File("font.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         int width = image.getWidth();
         int height = image.getHeight();
 
@@ -192,5 +182,29 @@ public class TextUtil {
         }
         height += lineHeight;
         return height;
+    }
+
+    public static String getRequiredChars(List<String> texts) {
+        var charSet = new HashSet<Character>();
+        for (var text : texts) {
+            for (int i = 0; i < text.length(); i++) {
+                char c = text.charAt(i);
+                charSet.add(c);
+            }
+        }
+
+        var sb = new StringBuilder();
+        for (var c : charSet) {
+            sb.append(c);
+        }
+
+        return sb.toString();
+    }
+
+    public static String getRequiredChars(String text) {
+        var texts = new ArrayList<String>();
+        texts.add(text);
+
+        return getRequiredChars(texts);
     }
 }

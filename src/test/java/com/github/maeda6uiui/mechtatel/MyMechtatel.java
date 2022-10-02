@@ -4,10 +4,12 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.MttFont;
+import com.github.maeda6uiui.mechtatel.core.text.TextUtil;
 import org.joml.Vector2f;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MyMechtatel extends Mechtatel {
     public MyMechtatel(MttSettings settings) {
@@ -38,19 +40,23 @@ public class MyMechtatel extends Mechtatel {
 
         camera = new FreeCamera(this.getCamera());
 
-        String requiredChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890,.!? こんにちは世界";
+        var texts = new ArrayList<String>();
+        texts.add("Hello!");
+        texts.add("こんにちは！");
+        texts.add("Здравствуйте!");
+        String requiredChars = TextUtil.getRequiredChars(texts);
 
         mttFont = this.createMttFont(
-                new Font("MS Gothic", Font.PLAIN, 50),
-                true,
+                new Font("Meiryo UI", Font.PLAIN, 50),
+                false,
                 Color.WHITE,
                 requiredChars);
         mttFont.prepare(
-                "Hello, world\nMechtatel\nこんにちは世界",
+                texts,
                 new Vector2f(-1.0f, -1.0f),
                 0.0f,
                 0.002f,
-                0.005f,
+                0.004f,
                 0.0f);
         mttFont.createBuffers();
     }

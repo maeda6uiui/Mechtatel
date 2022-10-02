@@ -61,7 +61,6 @@ public class TextUtil {
         int lineWidth = 0;
         int lineHeight = 0;
         var lineHeights = new ArrayList<Integer>();
-        lineHeights.add(0);
 
         int totalImageWidth = 0;
         int totalImageHeight = 0;
@@ -89,8 +88,8 @@ public class TextUtil {
         }
         if (totalImageWidth == 0) {
             totalImageWidth = lineWidth;
-            totalImageHeight = lineHeight;
         }
+        totalImageHeight += lineHeight;
 
         fontImageInfo.imageWidth = totalImageWidth;
         fontImageInfo.imageHeight = totalImageHeight;
@@ -100,7 +99,7 @@ public class TextUtil {
 
         int x = 0;
         int y = 0;
-        int lineCount = 1;
+        int lineCount = 0;
         for (int i = 0; i < numRequiredChars; i++) {
             char c = requiredChars.charAt(i);
             BufferedImage charImage = createCharImage(font, c, antiAlias, color);

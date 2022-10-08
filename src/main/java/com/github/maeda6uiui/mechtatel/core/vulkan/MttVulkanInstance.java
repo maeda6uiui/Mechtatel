@@ -910,14 +910,19 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     //=== Methods relating to components ===
     @Override
     public boolean removeComponent(VkComponent component) {
-        if (!components3D.contains(component)) {
-            return false;
+        boolean componentExists = false;
+
+        if (components.contains(component)) {
+            component.cleanup();
+            components.remove(component);
+            componentExists = true;
+        } else if (components3D.contains(component)) {
+            component.cleanup();
+            components3D.remove(component);
+            componentExists = true;
         }
 
-        component.cleanup();
-        components3D.remove(component);
-
-        return true;
+        return componentExists;
     }
 
     public VkModel3D createModel3D(String modelFilepath) {

@@ -6,6 +6,7 @@ import java.io.IOException;
 
 /**
  * 3D sound
+ * 3D functionalities are supposed to work only when you load a monaural sound
  *
  * @author maeda
  */

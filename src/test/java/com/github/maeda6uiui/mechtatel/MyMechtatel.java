@@ -3,14 +3,12 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.MttFont;
-import com.github.maeda6uiui.mechtatel.core.text.TextUtil;
-import org.joml.Vector2f;
+import com.github.maeda6uiui.mechtatel.core.component.Sphere3D;
+import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
-import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class MyMechtatel extends Mechtatel {
     public MyMechtatel(MttSettings settings) {
@@ -33,37 +31,22 @@ public class MyMechtatel extends Mechtatel {
 
     private FreeCamera camera;
 
-    private MttFont mttFont;
+    private Sound3D sound;
+    private Vector3f soundSourcePosition;
+    private Sphere3D sphere;
 
     @Override
     public void init() {
-        var axes = this.createAxesLine3DSet(10.0f);
-
+        var axes = this.createPositiveAxesLine3DSet(10.0f);
         camera = new FreeCamera(this.getCamera());
 
-        var texts = new ArrayList<String>();
-        texts.add("Hello!");
-        texts.add("こんにちは！");
-        texts.add("Здравствуйте!");
-        texts.add("你好！");
-        String requiredChars = TextUtil.getRequiredChars(texts);
+        soundSourcePosition = new Vector3f(5.0f, 0.0f, 0.0f);
 
-        mttFont = this.createMttFont(
-                new Font("Sans", Font.PLAIN, 50),
-                false,
-                Color.WHITE,
-                requiredChars);
-        mttFont.prepare(
-                texts,
-                new Vector2f(-0.5f, -0.5f),
-                0.0f,
-                0.002f,
-                0.004f,
-                0.0f);
-        mttFont.createBuffers();
+        sound = this.createSound3D("./Mechtatel/Sound/sample_monaural.ogg", false, false);
+        sound.setPosition(soundSourcePosition);
+        sound.play();
 
-        var model = this.createModel3D("./Mechtatel/Model/Cube/cube.obj");
-        model.rescale(new Vector3f(2.0f, 2.0f, 2.0f));
+        sphere = this.createSphere3D(soundSourcePosition, 1.0f, 16, 16, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
     }
 
     @Override
@@ -89,5 +72,9 @@ public class MyMechtatel extends Mechtatel {
         int keyRotateLeft = this.getKeyboardPressingCount("LEFT");
         int keyRotateRight = this.getKeyboardPressingCount("RIGHT");
         camera.rotate(keyRotateTop, keyRotateBottom, keyRotateLeft, keyRotateRight);
+
+        soundSourcePosition = soundSourcePosition.rotateY(0.01f);
+        sphere.rotY(0.01f);
+        sound.setPosition(soundSourcePosition);
     }
 }

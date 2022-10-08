@@ -8,6 +8,8 @@ import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
+import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObject3D;
+import com.github.maeda6uiui.mechtatel.core.physics.PhysicalSphere3D;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
@@ -62,6 +64,9 @@ class MttInstance {
     private List<ParallelLight> parallelLights;
     private List<PointLight> pointLights;
     private List<Spotlight> spotlights;
+
+    private List<PhysicalObject3D> physicalObjects;
+    private float physicsSimulationTimeScale;
 
     private List<Sound3D> sounds3D;
 
@@ -162,6 +167,9 @@ class MttInstance {
             camera.setAspect((float) width.get(0) / (float) height.get(0));
         }
 
+        physicalObjects = new ArrayList<>();
+        physicsSimulationTimeScale = 1.0f;
+
         //Set up OpenAL
         long alcDevice = alcOpenDevice((ByteBuffer) null);
         if (alcDevice == 0) {
@@ -195,7 +203,11 @@ class MttInstance {
             if (elapsedTime >= 1.0 / fps) {
                 keyboard.update();
                 mouse.update();
+                physicalObjects.forEach(physicalObject -> {
+                    physicalObject.updateObject();
+                });
                 mtt.update();
+                PhysicalObject3D.updatePhysicsSpace((float) elapsedTime, physicsSimulationTimeScale);
                 vulkanInstance.draw(
                         backgroundColor,
                         camera,
@@ -218,6 +230,9 @@ class MttInstance {
     public void cleanup() {
         mtt.dispose();
         vulkanInstance.cleanup();
+        physicalObjects.forEach(physicalObject -> {
+            physicalObject.cleanup();
+        });
         sounds3D.forEach(sound -> {
             sound.cleanup();
         });
@@ -508,6 +523,38 @@ class MttInstance {
     public MttFont createMttFont(Font font, boolean antiAlias, Color color, String requiredChars) {
         var mttFont = new MttFont(vulkanInstance, font, antiAlias, color, requiredChars);
         return mttFont;
+    }
+
+    public PhysicalSphere3D createPhysicalSphere3D(float radius, float mass) {
+        var physicalSphere = new PhysicalSphere3D(radius, mass);
+        physicalObjects.add(physicalSphere);
+
+        return physicalSphere;
+    }
+
+    public PhysicalSphere3D createPhysicalSphere3DWithComponent(
+            float radius, float mass, int numVDivs, int numHDivs, Vector4fc color) {
+        var physicalSphere = new PhysicalSphere3D(radius, mass);
+        physicalObjects.add(physicalSphere);
+
+        var sphere = new Sphere3D(vulkanInstance, new Vector3f(0.0f, 0.0f, 0.0f), radius, numVDivs, numHDivs, color);
+        physicalSphere.setComponent(sphere);
+
+        return physicalSphere;
+    }
+
+    public boolean removePhysicalObject3D(PhysicalObject3D physicalObject) {
+        if (physicalObjects.contains(physicalObject)) {
+            physicalObject.cleanup();
+            physicalObjects.remove(physicalObject);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void setPhysicsSimulationTimeScale(float physicsSimulationTimeScale) {
+        this.physicsSimulationTimeScale = physicsSimulationTimeScale;
     }
 
     public Sound3D createSound3D(String filepath, boolean loop, boolean relative) throws IOException {

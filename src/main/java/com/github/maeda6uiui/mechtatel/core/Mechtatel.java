@@ -6,6 +6,8 @@ import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
+import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObject3D;
+import com.github.maeda6uiui.mechtatel.core.physics.PhysicalSphere3D;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
 import org.joml.*;
@@ -332,6 +334,23 @@ public class Mechtatel implements IMechtatel {
 
     public MttFont createMttFont(Font font, boolean antiAlias, Color color, String requiredChars) {
         return instance.createMttFont(font, antiAlias, color, requiredChars);
+    }
+
+    public PhysicalSphere3D createPhysicalSphere3D(float radius, float mass) {
+        return instance.createPhysicalSphere3D(radius, mass);
+    }
+
+    public PhysicalSphere3D createPhysicalSphere3DWithComponent(
+            float radius, float mass, int numVDivs, int numHDivs, Vector4fc color) {
+        return instance.createPhysicalSphere3DWithComponent(radius, mass, numVDivs, numHDivs, color);
+    }
+
+    public boolean removePhysicalObject3D(PhysicalObject3D physicalObject) {
+        return instance.removePhysicalObject3D(physicalObject);
+    }
+
+    public void setPhysicsSimulationTimeScale(float physicsSimulationTimeScale) {
+        instance.setPhysicsSimulationTimeScale(physicsSimulationTimeScale);
     }
 
     public Sound3D createSound3D(String filepath, boolean loop, boolean relative) {

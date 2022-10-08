@@ -13,24 +13,31 @@ public class Sound3D {
     private SoundBuffer buffer;
     private SoundSource source;
     private boolean isDuplicatedSound;
+    private boolean isCleanedUp;
 
     public Sound3D(String filepath, boolean loop, boolean relative) throws IOException {
         buffer = new SoundBuffer(filepath);
         source = new SoundSource(buffer, loop, relative);
         isDuplicatedSound = false;
+        isCleanedUp = false;
     }
 
     public Sound3D(Sound3D srcSound, boolean loop, boolean relative) {
         buffer = srcSound.buffer;
         source = new SoundSource(buffer, loop, relative);
         isDuplicatedSound = true;
+        isCleanedUp = false;
     }
 
     public void cleanup() {
-        if (!isDuplicatedSound) {
-            buffer.cleanup();
+        if (!isCleanedUp) {
+            if (!isDuplicatedSound) {
+                buffer.cleanup();
+            }
+            source.cleanup();
+
+            isCleanedUp = true;
         }
-        source.cleanup();
     }
 
     public void setPosition(Vector3fc position) {

@@ -7,11 +7,13 @@ import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
+import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
 import org.joml.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -330,5 +332,25 @@ public class Mechtatel implements IMechtatel {
 
     public MttFont createMttFont(Font font, boolean antiAlias, Color color, String requiredChars) {
         return instance.createMttFont(font, antiAlias, color, requiredChars);
+    }
+
+    public Sound3D createSound3D(String filepath, boolean loop, boolean relative) {
+        Sound3D sound;
+        try {
+            sound = instance.createSound3D(filepath, loop, relative);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not load a sound " + filepath);
+        }
+
+        return sound;
+    }
+
+    public Sound3D duplicateSound3D(Sound3D srcSound, boolean loop, boolean relative) {
+        Sound3D sound = instance.duplicateSound3D(srcSound, loop, relative);
+        return sound;
+    }
+
+    public boolean removeSound3D(Sound3D sound) {
+        return instance.removeSound3D(sound);
     }
 }

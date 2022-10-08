@@ -9,6 +9,7 @@ import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
+import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.ParallelLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLightNabor;
@@ -23,6 +24,7 @@ import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.system.MemoryStack;
 
 import java.awt.*;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -60,6 +62,8 @@ class MttInstance {
     private List<ParallelLight> parallelLights;
     private List<PointLight> pointLights;
     private List<Spotlight> spotlights;
+
+    private List<Sound3D> sounds3D;
 
     private void framebufferResizeCallback(long window, int width, int height) {
         mtt.reshape(width, height);
@@ -172,6 +176,8 @@ class MttInstance {
 
         alcMakeContextCurrent(alcContext);
         AL.createCapabilities(deviceCaps);
+
+        sounds3D = new ArrayList<>();
     }
 
     public void run() {
@@ -212,6 +218,9 @@ class MttInstance {
     public void cleanup() {
         mtt.dispose();
         vulkanInstance.cleanup();
+        sounds3D.forEach(sound -> {
+            sound.cleanup();
+        });
 
         glfwDestroyWindow(window);
         glfwTerminate();
@@ -499,5 +508,29 @@ class MttInstance {
     public MttFont createMttFont(Font font, boolean antiAlias, Color color, String requiredChars) {
         var mttFont = new MttFont(vulkanInstance, font, antiAlias, color, requiredChars);
         return mttFont;
+    }
+
+    public Sound3D createSound3D(String filepath, boolean loop, boolean relative) throws IOException {
+        var sound = new Sound3D(filepath, loop, relative);
+        sounds3D.add(sound);
+
+        return sound;
+    }
+
+    public Sound3D duplicateSound3D(Sound3D srcSound, boolean loop, boolean relative) {
+        var sound = new Sound3D(srcSound, loop, relative);
+        sounds3D.add(sound);
+
+        return sound;
+    }
+
+    public boolean removeSound3D(Sound3D sound) {
+        if (sounds3D.contains(sound)) {
+            sound.cleanup();
+            sounds3D.remove(sound);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

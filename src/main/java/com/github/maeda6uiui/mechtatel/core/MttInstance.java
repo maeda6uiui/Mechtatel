@@ -17,14 +17,19 @@ import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.joml.Vector4f;
 import org.joml.Vector4fc;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.ALC;
+import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.system.MemoryStack;
 
 import java.awt.*;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.openal.ALC10.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_2_BIT;
 
@@ -152,6 +157,21 @@ class MttInstance {
 
             camera.setAspect((float) width.get(0) / (float) height.get(0));
         }
+
+        //Set up OpenAL
+        long alcDevice = alcOpenDevice((ByteBuffer) null);
+        if (alcDevice == 0) {
+            throw new RuntimeException("Failed to open default OpenAL device");
+        }
+        ALCCapabilities deviceCaps = ALC.createCapabilities(alcDevice);
+
+        long alcContext = alcCreateContext(alcDevice, (IntBuffer) null);
+        if (alcContext == 0) {
+            throw new RuntimeException("Failed to create OpenAL context");
+        }
+
+        alcMakeContextCurrent(alcContext);
+        AL.createCapabilities(deviceCaps);
     }
 
     public void run() {

@@ -8,6 +8,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.io.IOException;
+import java.util.Random;
 
 public class MyMechtatel extends Mechtatel {
     public MyMechtatel(MttSettings settings) {
@@ -35,16 +36,12 @@ public class MyMechtatel extends Mechtatel {
         camera = new FreeCamera(this.getCamera());
 
         var plane = this.createPhysicalPlane3DWithComponent(
-                new Vector3f(-10.0f, 0.0f, -10.0f),
-                new Vector3f(-10.0f, 0.0f, 10.0f),
-                new Vector3f(10.0f, 0.0f, 10.0f),
-                new Vector3f(10.0f, 0.0f, -10.0f),
+                new Vector3f(-100.0f, 0.0f, -100.0f),
+                new Vector3f(-100.0f, 0.0f, 100.0f),
+                new Vector3f(100.0f, 0.0f, 100.0f),
+                new Vector3f(100.0f, 0.0f, -100.0f),
                 new Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
-        var sphere = this.createPhysicalSphere3DWithComponent(
-                1.0f, 1.0f, 16, 16, new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
-        sphere.getBody().setPhysicsLocation(
-                ClassConversionUtils.convertJOMLVector3fToJMEVector3f(new Vector3f(0.0f, 10.0f, 0.0f))
-        );
+        plane.getBody().setRestitution(1.0f);
     }
 
     @Override
@@ -70,5 +67,23 @@ public class MyMechtatel extends Mechtatel {
         int keyRotateLeft = this.getKeyboardPressingCount("LEFT");
         int keyRotateRight = this.getKeyboardPressingCount("RIGHT");
         camera.rotate(keyRotateTop, keyRotateBottom, keyRotateLeft, keyRotateRight);
+
+        if (this.getKeyboardPressingCount("ENTER") == 1) {
+            var random = new Random();
+
+            int xSign = random.nextInt() % 2 == 0 ? 1 : -1;
+            int zSign = random.nextInt() % 2 == 0 ? 1 : -1;
+            float x = random.nextFloat(0.2f) * xSign;
+            float z = random.nextFloat(0.2f) * zSign;
+
+            var sphere = this.createPhysicalSphere3DWithComponent(
+                    1.0f, 1.0f, 16, 16, new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
+            sphere.getBody().setPhysicsLocation(
+                    ClassConversionUtils.convertJOMLVector3fToJMEVector3f(new Vector3f(x, 10.0f, z))
+            );
+            sphere.getBody().setRestitution(0.8f);
+            sphere.getBody().setRollingFriction(0.5f);
+            sphere.getBody().setSpinningFriction(0.5f);
+        }
     }
 }

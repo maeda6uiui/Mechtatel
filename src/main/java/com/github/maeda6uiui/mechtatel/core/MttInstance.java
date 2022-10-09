@@ -212,10 +212,10 @@ class MttInstance {
             if (elapsedTime >= 1.0 / fps) {
                 keyboard.update();
                 mouse.update();
+                mtt.update();
                 physicalObjects.forEach(physicalObject -> {
                     physicalObject.updateObject();
                 });
-                mtt.update();
                 PhysicalObject3D.updatePhysicsSpace((float) elapsedTime, physicsSimulationTimeScale);
                 vulkanInstance.draw(
                         backgroundColor,

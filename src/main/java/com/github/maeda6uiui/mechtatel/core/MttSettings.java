@@ -39,17 +39,34 @@ public class MttSettings {
         }
     }
 
+    public class BulletSettings {
+        public boolean dist;
+        public String dirname;
+        public String buildType;
+        public String flavor;
+
+        @Override
+        public String toString() {
+            String ret = String.format(
+                    "Bullet settings: {dist=%s, dirname=%s, buildType=%s, flavor=%s}", dist, dirname, buildType, flavor);
+            return ret;
+        }
+    }
+
     public WindowSettings windowSettings;
     public SystemSettings systemSettings;
+    public BulletSettings bulletSettings;
 
     public MttSettings() {
         windowSettings = new WindowSettings();
         systemSettings = new SystemSettings();
+        bulletSettings = new BulletSettings();
     }
 
     public MttSettings(String jsonFilepath) throws IOException {
         windowSettings = new WindowSettings();
         systemSettings = new SystemSettings();
+        bulletSettings = new BulletSettings();
 
         List<String> lines = Files.readAllLines(Paths.get(jsonFilepath));
 
@@ -71,11 +88,17 @@ public class MttSettings {
 
         JsonNode systemNode = node.get("system");
         systemSettings.fps = systemNode.get("fps").asInt();
+
+        JsonNode bulletNode = node.get("bullet");
+        bulletSettings.dist = bulletNode.get("dist").asBoolean();
+        bulletSettings.dirname = bulletNode.get("dirname").asText();
+        bulletSettings.buildType = bulletNode.get("buildType").asText();
+        bulletSettings.flavor = bulletNode.get("flavor").asText();
     }
 
     @Override
     public String toString() {
-        String ret = windowSettings.toString() + " " + systemSettings.toString();
+        String ret = windowSettings.toString() + " " + systemSettings.toString() + " " + bulletSettings.toString();
         return ret;
     }
 }

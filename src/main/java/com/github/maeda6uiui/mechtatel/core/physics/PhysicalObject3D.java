@@ -1,11 +1,12 @@
 package com.github.maeda6uiui.mechtatel.core.physics;
 
 import com.github.maeda6uiui.mechtatel.core.component.Component3D;
+import com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 /**
  * Base class for physical objects
@@ -22,10 +23,15 @@ public class PhysicalObject3D {
 
     static {
         physicsSpace = new PhysicsSpace(PhysicsSpace.BroadphaseType.DBVT);
+        physicsSpace.setGravity(new com.jme3.math.Vector3f(0.0f, -9.8f, 0.0f));
     }
 
     public static PhysicsSpace getPhysicsSpace() {
         return physicsSpace;
+    }
+
+    public static void setGravity(Vector3fc gravity) {
+        physicsSpace.setGravity(new com.jme3.math.Vector3f(gravity.x(), gravity.y(), gravity.z()));
     }
 
     public static void updatePhysicsSpace(float timeDelta, float scale) {
@@ -63,17 +69,11 @@ public class PhysicalObject3D {
         if (body != null) {
             var bodyLocation = new com.jme3.math.Vector3f();
             body.getPhysicsLocation(bodyLocation);
-            var translation = new Vector3f(bodyLocation.x, bodyLocation.y, bodyLocation.z);
+            var translation = ClassConversionUtils.convertJMEVector3fToJOMLVector3f(bodyLocation);
 
             var bodyRotMat = new com.jme3.math.Matrix3f();
             body.getPhysicsRotationMatrix(bodyRotMat);
-
-            var rotMat = new Matrix4f().identity();
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    rotMat.set(i, j, bodyRotMat.get(i, j));
-                }
-            }
+            var rotMat = ClassConversionUtils.convertJMEMatrix3fToJOMLMatrix4f(bodyRotMat);
 
             mat = rotMat.translate(translation);
         }

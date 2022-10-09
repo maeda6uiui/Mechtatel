@@ -9,6 +9,7 @@ import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObject3D;
+import com.github.maeda6uiui.mechtatel.core.physics.PhysicalPlane3D;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalSphere3D;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
@@ -16,6 +17,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.ParallelLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.SpotlightNabor;
+import com.jme3.system.NativeLibraryLoader;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.joml.Vector4f;
@@ -26,6 +28,7 @@ import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.system.MemoryStack;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -169,6 +172,12 @@ class MttInstance {
 
         physicalObjects = new ArrayList<>();
         physicsSimulationTimeScale = 1.0f;
+
+        NativeLibraryLoader.loadLibbulletjme(
+                settings.bulletSettings.dist,
+                new File(settings.bulletSettings.dirname),
+                settings.bulletSettings.buildType,
+                settings.bulletSettings.flavor);
 
         //Set up OpenAL
         long alcDevice = alcOpenDevice((ByteBuffer) null);
@@ -520,9 +529,51 @@ class MttInstance {
         return texturedQuadSet;
     }
 
+    public Quad3D createQuad3D(Vertex3D v1, Vertex3D v2, Vertex3D v3, Vertex3D v4) {
+        var quad = new Quad3D(vulkanInstance, v1, v2, v3, v4);
+        return quad;
+    }
+
+    public Quad3D createQuad3D(Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, Vector4fc color) {
+        var quad = new Quad3D(vulkanInstance, p1, p2, p3, p4, color);
+        return quad;
+    }
+
     public MttFont createMttFont(Font font, boolean antiAlias, Color color, String requiredChars) {
         var mttFont = new MttFont(vulkanInstance, font, antiAlias, color, requiredChars);
         return mttFont;
+    }
+
+    public PhysicalPlane3D createPhysicalPlane3D(Vector3fc normal, float constant) {
+        var physicalPlane = new PhysicalPlane3D(normal, constant);
+        physicalObjects.add(physicalPlane);
+
+        return physicalPlane;
+    }
+
+    public PhysicalPlane3D createPhysicalPlane3DWithComponent(
+            Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, Vector4fc color) {
+        var edge1 = new Vector3f();
+        var edge2 = new Vector3f();
+        p2.sub(p1, edge1);
+        p4.sub(p1, edge2);
+
+        var normal = edge1.cross(edge2).normalize();
+
+        var center = new Vector3f();
+        center.x = (p1.x() + p2.x() + p3.x() + p4.x()) / 4.0f;
+        center.y = (p1.y() + p2.y() + p3.y() + p4.y()) / 4.0f;
+        center.z = (p1.z() + p2.z() + p3.z() + p4.z()) / 4.0f;
+
+        float constant = center.length();
+
+        var physicalPlane = new PhysicalPlane3D(normal, constant);
+        physicalObjects.add(physicalPlane);
+
+        var quad = new Quad3D(vulkanInstance, p1, p2, p3, p4, color);
+        physicalPlane.setComponent(quad);
+
+        return physicalPlane;
     }
 
     public PhysicalSphere3D createPhysicalSphere3D(float radius, float mass) {

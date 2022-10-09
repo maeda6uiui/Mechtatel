@@ -7,6 +7,7 @@ import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObject3D;
+import com.github.maeda6uiui.mechtatel.core.physics.PhysicalPlane3D;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalSphere3D;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
@@ -332,8 +333,25 @@ public class Mechtatel implements IMechtatel {
         return instance.createTexturedQuad2DSingleTextureSet(textureFilepath);
     }
 
+    public Quad3D createQuad3D(Vertex3D v1, Vertex3D v2, Vertex3D v3, Vertex3D v4) {
+        return instance.createQuad3D(v1, v2, v3, v4);
+    }
+
+    public Quad3D createQuad3D(Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, Vector4fc color) {
+        return instance.createQuad3D(p1, p2, p3, p4, color);
+    }
+
     public MttFont createMttFont(Font font, boolean antiAlias, Color color, String requiredChars) {
         return instance.createMttFont(font, antiAlias, color, requiredChars);
+    }
+
+    public PhysicalPlane3D createPhysicalPlane3D(Vector3fc normal, float constant) {
+        return instance.createPhysicalPlane3D(normal, constant);
+    }
+
+    public PhysicalPlane3D createPhysicalPlane3DWithComponent(
+            Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, Vector4fc color) {
+        return instance.createPhysicalPlane3DWithComponent(p1, p2, p3, p4, color);
     }
 
     public PhysicalSphere3D createPhysicalSphere3D(float radius, float mass) {

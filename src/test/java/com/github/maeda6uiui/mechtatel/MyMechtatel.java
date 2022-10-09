@@ -3,8 +3,7 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.Sphere3D;
-import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
+import com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -31,22 +30,21 @@ public class MyMechtatel extends Mechtatel {
 
     private FreeCamera camera;
 
-    private Sound3D sound;
-    private Vector3f soundSourcePosition;
-    private Sphere3D sphere;
-
     @Override
     public void init() {
-        var axes = this.createPositiveAxesLine3DSet(10.0f);
         camera = new FreeCamera(this.getCamera());
 
-        soundSourcePosition = new Vector3f(5.0f, 0.0f, 0.0f);
-
-        sound = this.createSound3D("./Mechtatel/Sound/sample_monaural.ogg", false, false);
-        sound.setPosition(soundSourcePosition);
-        sound.play();
-
-        sphere = this.createSphere3D(soundSourcePosition, 1.0f, 16, 16, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+        var plane = this.createPhysicalPlane3DWithComponent(
+                new Vector3f(-10.0f, 0.0f, -10.0f),
+                new Vector3f(-10.0f, 0.0f, 10.0f),
+                new Vector3f(10.0f, 0.0f, 10.0f),
+                new Vector3f(10.0f, 0.0f, -10.0f),
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+        var sphere = this.createPhysicalSphere3DWithComponent(
+                1.0f, 1.0f, 16, 16, new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
+        sphere.getBody().setPhysicsLocation(
+                ClassConversionUtils.convertJOMLVector3fToJMEVector3f(new Vector3f(0.0f, 10.0f, 0.0f))
+        );
     }
 
     @Override
@@ -72,9 +70,5 @@ public class MyMechtatel extends Mechtatel {
         int keyRotateLeft = this.getKeyboardPressingCount("LEFT");
         int keyRotateRight = this.getKeyboardPressingCount("RIGHT");
         camera.rotate(keyRotateTop, keyRotateBottom, keyRotateLeft, keyRotateRight);
-
-        soundSourcePosition = soundSourcePosition.rotateY(0.01f);
-        sphere.rotY(0.01f);
-        sound.setPosition(soundSourcePosition);
     }
 }

@@ -7,5 +7,11 @@
     },
     "system":{
         "fps":60
+    },
+    "bullet":{
+        "dist":true,
+        "dirname":"./Mechtatel/Bin",
+        "buildType":"Debug",
+        "flavor":"Sp"
     }
 }

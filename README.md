@@ -4,6 +4,8 @@ Mechtatel (露: Мечтатель 英: Dreamer)
 
 > Мечтай до тех пор, пока не узнаешь, что давно пора повзрослеть и бросить эту фигню.
 
+> Dream until you realize that it's high time you grew up and gave up this garbage.
+
 ## 概要
 
 Javaでゲームエンジンを作ることを目標としているプロジェクトです。

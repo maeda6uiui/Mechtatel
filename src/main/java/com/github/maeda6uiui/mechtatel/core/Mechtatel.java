@@ -341,6 +341,14 @@ public class Mechtatel implements IMechtatel {
         return instance.createQuad3D(p1, p2, p3, p4, color);
     }
 
+    public Box3D createBox3D(float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
+        return instance.createBox3D(xHalfExtent, yHalfExtent, zHalfExtent, color);
+    }
+
+    public Box3D createBox3D(float halfExtent, Vector4fc color) {
+        return instance.createBox3D(halfExtent, color);
+    }
+
     public MttFont createMttFont(Font font, boolean antiAlias, Color color, String requiredChars) {
         return instance.createMttFont(font, antiAlias, color, requiredChars);
     }

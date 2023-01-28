@@ -539,6 +539,15 @@ class MttInstance {
         return quad;
     }
 
+    public Box3D createBox3D(float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
+        var box = new Box3D(vulkanInstance, xHalfExtent, yHalfExtent, zHalfExtent, color);
+        return box;
+    }
+
+    public Box3D createBox3D(float halfExtent, Vector4fc color) {
+        return this.createBox3D(halfExtent, halfExtent, halfExtent, color);
+    }
+
     public MttFont createMttFont(Font font, boolean antiAlias, Color color, String requiredChars) {
         var mttFont = new MttFont(vulkanInstance, font, antiAlias, color, requiredChars);
         return mttFont;

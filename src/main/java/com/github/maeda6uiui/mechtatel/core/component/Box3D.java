@@ -45,6 +45,7 @@ public class Box3D extends Component3D {
 
         lineSet = new Line3DSet(vulkanInstance);
         this.setupLineSet(xHalfExtent, yHalfExtent, zHalfExtent, color);
+        this.associateVulkanComponent(lineSet.getVulkanComponent());
     }
 
     public Box3D(MttVulkanInstance vulkanInstance, float halfExtent, Vector4fc color) {

@@ -15,7 +15,7 @@ public class PhysicalCapsule3D extends PhysicalObject3D {
         var body = new PhysicsRigidBody(shape, mass);
         PhysicalCapsule3D.getPhysicsSpace().addCollisionObject(body);
         body.setPhysicsLocation(new Vector3f(0.0f, 0.0f, 0.0f));
-
+        
         this.setShape(shape);
         this.setBody(body);
     }

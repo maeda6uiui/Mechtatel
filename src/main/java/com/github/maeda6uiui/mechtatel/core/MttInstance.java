@@ -643,6 +643,13 @@ class MttInstance {
         return this.createPhysicalBox3DWithComponent(halfExtent, halfExtent, halfExtent, mass, color);
     }
 
+    public PhysicalMesh3D createPhysicalMesh3D(Model3D model, float mass) {
+        var physicalMesh = new PhysicalMesh3D(model, mass);
+        physicalObjects.add(physicalMesh);
+
+        return physicalMesh;
+    }
+
     public boolean removePhysicalObject3D(PhysicalObject3D physicalObject) {
         if (physicalObjects.contains(physicalObject)) {
             physicalObject.cleanup();

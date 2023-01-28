@@ -393,6 +393,10 @@ public class Mechtatel implements IMechtatel {
         return instance.createPhysicalBox3DWithComponent(halfExtent, mass, color);
     }
 
+    public PhysicalMesh3D createPhysicalMesh3D(Model3D model, float mass) {
+        return instance.createPhysicalMesh3D(model, mass);
+    }
+
     public boolean removePhysicalObject3D(PhysicalObject3D physicalObject) {
         return instance.removePhysicalObject3D(physicalObject);
     }

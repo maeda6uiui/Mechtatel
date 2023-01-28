@@ -35,6 +35,10 @@ public class VkModel3D extends VkComponent3D {
     private Map<Integer, Long> indexBuffers;
     private Map<Integer, Long> indexBufferMemories;
 
+    public ModelLoader.Model getModel() {
+        return model;
+    }
+
     private void loadTextures(
             long commandPool,
             VkQueue graphicsQueue,

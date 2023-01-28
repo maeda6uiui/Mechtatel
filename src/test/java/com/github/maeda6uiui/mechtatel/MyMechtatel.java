@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
+import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObject3D;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -77,11 +78,26 @@ public class MyMechtatel extends Mechtatel {
             float x = random.nextFloat(0.2f) * xSign;
             float z = random.nextFloat(0.2f) * zSign;
 
-            var box = this.createPhysicalBox3DWithComponent(1.0f, 1.0f, new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
-            box.getBody().setPhysicsLocation(convertJOMLVector3fToJMEVector3f(new Vector3f(x, 10.0f, z)));
-            box.getBody().setRestitution(0.8f);
-            box.getBody().setRollingFriction(0.5f);
-            box.getBody().setSpinningFriction(0.5f);
+            PhysicalObject3D physicalObject = null;
+            if (this.getKeyboardPressingCount("1") > 0) {
+                physicalObject = this.createPhysicalSphere3DWithComponent(
+                        1.0f, 1.0f, 16, 16, new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
+            }
+            if (this.getKeyboardPressingCount("2") > 0) {
+                physicalObject = this.createPhysicalCapsule3DWithComponent(
+                        1.0f, 2.0f, 1.0f, 16, 16, new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
+            }
+            if (this.getKeyboardPressingCount("3") > 0) {
+                physicalObject = this.createPhysicalBox3DWithComponent(
+                        1.0f, 1.0f, new Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
+            }
+
+            if (physicalObject != null) {
+                physicalObject.getBody().setPhysicsLocation(convertJOMLVector3fToJMEVector3f(new Vector3f(x, 10.0f, z)));
+                physicalObject.getBody().setRestitution(0.8f);
+                physicalObject.getBody().setRollingFriction(0.5f);
+                physicalObject.getBody().setSpinningFriction(0.5f);
+            }
         }
     }
 }

@@ -3,11 +3,13 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
+import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObject3D;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJOMLVector3fToJMEVector3f;
@@ -32,18 +34,33 @@ public class MyMechtatel extends Mechtatel {
     }
 
     private FreeCamera camera;
+    private Model3D cube;
 
     @Override
     public void init() {
         camera = new FreeCamera(this.getCamera());
 
-        var plane = this.createPhysicalPlane3DWithComponent(
-                new Vector3f(-100.0f, 0.0f, -100.0f),
-                new Vector3f(-100.0f, 0.0f, 100.0f),
-                new Vector3f(100.0f, 0.0f, 100.0f),
-                new Vector3f(100.0f, 0.0f, -100.0f),
-                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
-        plane.getBody().setRestitution(1.0f);
+        var naborNames = new ArrayList<String>();
+        naborNames.add("spotlight");
+        naborNames.add("shadow_mapping");
+        this.createPostProcessingNabors(naborNames);
+
+        this.setSpotlightAmbientColor(new Vector3f(0.0f, 0.0f, 0.0f));
+
+        var spotlight = this.createSpotlight();
+        spotlight.setDiffuseColor(new Vector3f(1.0f, 1.0f, 1.0f));
+        spotlight.setPosition(new Vector3f(-10.0f, 10.0f, -10.0f));
+        spotlight.setDirection(new Vector3f(-10.0f, 10.0f, -10.0f).mul(-1.0f));
+
+        var ground = this.createModel3D("./Mechtatel/Model/Plane/plane.obj");
+        var physicalGround = this.createPhysicalBox3D(10.0f, 0.01f, 10.0f, 0.0f);
+        physicalGround.setComponent(ground);
+        physicalGround.getBody().setRestitution(0.8f);
+        physicalGround.getBody().setRollingFriction(0.5f);
+        physicalGround.getBody().setSpinningFriction(0.5f);
+
+        cube = this.createModel3D("./Mechtatel/Model/Cube/cube.obj");
+        cube.setVisible(false);
     }
 
     @Override
@@ -90,6 +107,11 @@ public class MyMechtatel extends Mechtatel {
             if (this.getKeyboardPressingCount("3") > 0) {
                 physicalObject = this.createPhysicalBox3DWithComponent(
                         1.0f, 1.0f, new Vector4f(0.0f, 0.0f, 1.0f, 1.0f));
+            }
+            if (this.getKeyboardPressingCount("4") > 0) {
+                var dupCube = this.duplicateModel3D(cube);
+                physicalObject = this.createPhysicalBox3D(1.0f, 1.0f);
+                physicalObject.setComponent(dupCube);
             }
 
             if (physicalObject != null) {

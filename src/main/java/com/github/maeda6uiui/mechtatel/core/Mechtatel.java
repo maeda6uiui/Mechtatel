@@ -6,9 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
-import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObject3D;
-import com.github.maeda6uiui.mechtatel.core.physics.PhysicalPlane3D;
-import com.github.maeda6uiui.mechtatel.core.physics.PhysicalSphere3D;
+import com.github.maeda6uiui.mechtatel.core.physics.*;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
 import org.joml.*;
@@ -369,6 +367,30 @@ public class Mechtatel implements IMechtatel {
     public PhysicalSphere3D createPhysicalSphere3DWithComponent(
             float radius, float mass, int numVDivs, int numHDivs, Vector4fc color) {
         return instance.createPhysicalSphere3DWithComponent(radius, mass, numVDivs, numHDivs, color);
+    }
+
+    public PhysicalCapsule3D createPhysicalCapsule3D(float radius, float height, float mass) {
+        return instance.createPhysicalCapsule3D(radius, height, mass);
+    }
+
+    public PhysicalCapsule3D createPhysicalCapsule3DWithComponent(float radius, float height, float mass, int numVDivs, int numHDivs, Vector4fc color) {
+        return instance.createPhysicalCapsule3DWithComponent(radius, height, mass, numVDivs, numHDivs, color);
+    }
+
+    public PhysicalBox3D createPhysicalBox3D(float xHalfExtent, float yHalfExtent, float zHalfExtent, float mass) {
+        return instance.createPhysicalBox3D(xHalfExtent, yHalfExtent, zHalfExtent, mass);
+    }
+
+    public PhysicalBox3D createPhysicalBox3D(float halfExtent, float mass) {
+        return instance.createPhysicalBox3D(halfExtent, mass);
+    }
+
+    public PhysicalBox3D createPhysicalBox3DWithComponent(float xHalfExtent, float yHalfExtent, float zHalfExtent, float mass, Vector4fc color) {
+        return instance.createPhysicalBox3DWithComponent(xHalfExtent, yHalfExtent, zHalfExtent, mass, color);
+    }
+
+    public PhysicalBox3D createPhysicalBox3DWithComponent(float halfExtent, float mass, Vector4fc color) {
+        return instance.createPhysicalBox3DWithComponent(halfExtent, mass, color);
     }
 
     public boolean removePhysicalObject3D(PhysicalObject3D physicalObject) {

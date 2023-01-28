@@ -8,9 +8,7 @@ import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
-import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObject3D;
-import com.github.maeda6uiui.mechtatel.core.physics.PhysicalPlane3D;
-import com.github.maeda6uiui.mechtatel.core.physics.PhysicalSphere3D;
+import com.github.maeda6uiui.mechtatel.core.physics.*;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
@@ -601,6 +599,48 @@ class MttInstance {
         physicalSphere.setComponent(sphere);
 
         return physicalSphere;
+    }
+
+    public PhysicalCapsule3D createPhysicalCapsule3D(float radius, float height, float mass) {
+        var physicalCapsule = new PhysicalCapsule3D(radius, height, mass);
+        physicalObjects.add(physicalCapsule);
+
+        return physicalCapsule;
+    }
+
+    public PhysicalCapsule3D createPhysicalCapsule3DWithComponent(float radius, float height, float mass, int numVDivs, int numHDivs, Vector4fc color) {
+        var physicalCapsule = new PhysicalCapsule3D(radius, height, mass);
+        physicalObjects.add(physicalCapsule);
+
+        var capsule = new Capsule3D(vulkanInstance, new Vector3f(0.0f, 0.0f, 0.0f), height, radius, numVDivs, numHDivs, color);
+        physicalCapsule.setComponent(capsule);
+
+        return physicalCapsule;
+    }
+
+    public PhysicalBox3D createPhysicalBox3D(float xHalfExtent, float yHalfExtent, float zHalfExtent, float mass) {
+        var physicalBox = new PhysicalBox3D(xHalfExtent, yHalfExtent, zHalfExtent, mass);
+        physicalObjects.add(physicalBox);
+
+        return physicalBox;
+    }
+
+    public PhysicalBox3D createPhysicalBox3D(float halfExtent, float mass) {
+        return this.createPhysicalBox3D(halfExtent, halfExtent, halfExtent, mass);
+    }
+
+    public PhysicalBox3D createPhysicalBox3DWithComponent(float xHalfExtent, float yHalfExtent, float zHalfExtent, float mass, Vector4fc color) {
+        var physicalBox = new PhysicalBox3D(xHalfExtent, yHalfExtent, zHalfExtent, mass);
+        physicalObjects.add(physicalBox);
+
+        var box = new Box3D(vulkanInstance, xHalfExtent, yHalfExtent, zHalfExtent, color);
+        physicalBox.setComponent(box);
+
+        return physicalBox;
+    }
+
+    public PhysicalBox3D createPhysicalBox3DWithComponent(float halfExtent, float mass, Vector4fc color) {
+        return this.createPhysicalBox3DWithComponent(halfExtent, halfExtent, halfExtent, mass, color);
     }
 
     public boolean removePhysicalObject3D(PhysicalObject3D physicalObject) {

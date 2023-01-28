@@ -3,12 +3,13 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.io.IOException;
 import java.util.Random;
+
+import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJOMLVector3fToJMEVector3f;
 
 public class MyMechtatel extends Mechtatel {
     public MyMechtatel(MttSettings settings) {
@@ -76,14 +77,11 @@ public class MyMechtatel extends Mechtatel {
             float x = random.nextFloat(0.2f) * xSign;
             float z = random.nextFloat(0.2f) * zSign;
 
-            var sphere = this.createPhysicalSphere3DWithComponent(
-                    1.0f, 1.0f, 16, 16, new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
-            sphere.getBody().setPhysicsLocation(
-                    ClassConversionUtils.convertJOMLVector3fToJMEVector3f(new Vector3f(x, 10.0f, z))
-            );
-            sphere.getBody().setRestitution(0.8f);
-            sphere.getBody().setRollingFriction(0.5f);
-            sphere.getBody().setSpinningFriction(0.5f);
+            var box = this.createPhysicalBox3DWithComponent(1.0f, 1.0f, new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
+            box.getBody().setPhysicsLocation(convertJOMLVector3fToJMEVector3f(new Vector3f(x, 10.0f, z)));
+            box.getBody().setRestitution(0.8f);
+            box.getBody().setRollingFriction(0.5f);
+            box.getBody().setSpinningFriction(0.5f);
         }
     }
 }

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 /**
  * 3D mesh
+ * Note that collision detection between two meshes doesn't work.
  *
  * @author maeda
  */

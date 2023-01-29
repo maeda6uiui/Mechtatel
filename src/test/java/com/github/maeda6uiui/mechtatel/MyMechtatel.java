@@ -44,13 +44,18 @@ public class MyMechtatel extends Mechtatel {
         naborNames.add("spotlight");
         naborNames.add("shadow_mapping");
         this.createPostProcessingNabors(naborNames);
-
+        
         this.setSpotlightAmbientColor(new Vector3f(0.0f, 0.0f, 0.0f));
 
-        var spotlight = this.createSpotlight();
-        spotlight.setDiffuseColor(new Vector3f(1.0f, 1.0f, 1.0f));
-        spotlight.setPosition(new Vector3f(-10.0f, 10.0f, -10.0f));
-        spotlight.setDirection(new Vector3f(-10.0f, 10.0f, -10.0f).mul(-1.0f));
+        var spotlightR = this.createSpotlight();
+        spotlightR.setDiffuseColor(new Vector3f(1.0f, 0.0f, 0.0f));
+        spotlightR.setPosition(new Vector3f(-10.0f, 10.0f, -10.0f));
+        spotlightR.setDirection(new Vector3f(-10.0f, 10.0f, -10.0f).mul(-1.0f));
+
+        var spotlightG = this.createSpotlight();
+        spotlightG.setDiffuseColor(new Vector3f(0.0f, 1.0f, 0.0f));
+        spotlightG.setPosition(new Vector3f(10.0f, 10.0f, -10.0f));
+        spotlightG.setDirection(new Vector3f(10.0f, 10.0f, -10.0f).mul(-1.0f));
 
         var ground = this.createModel3D("./Mechtatel/Model/Plane/plane.obj");
         var physicalGround = this.createPhysicalBox3D(10.0f, 0.01f, 10.0f, 0.0f);

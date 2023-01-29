@@ -7,7 +7,7 @@ import org.lwjgl.vulkan.VkCommandBuffer;
 /**
  * Component
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class VkComponent {
     private Matrix4f mat;

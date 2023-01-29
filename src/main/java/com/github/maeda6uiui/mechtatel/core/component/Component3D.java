@@ -7,7 +7,7 @@ import org.joml.Vector3fc;
 /**
  * Component 3D
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Component3D extends Component {
     public Component3D(IMttVulkanInstanceForComponent vulkanInstance) {

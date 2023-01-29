@@ -7,7 +7,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
 /**
  * 3D model
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Model3D extends Component3D {
     private String modelFilepath;

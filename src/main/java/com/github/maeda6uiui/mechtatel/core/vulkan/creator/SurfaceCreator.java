@@ -12,7 +12,7 @@ import static org.lwjgl.vulkan.VK10.VK_SUCCESS;
 /**
  * Creates a window surface
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class SurfaceCreator {
     public static long createSurface(VkInstance instance, long window) {

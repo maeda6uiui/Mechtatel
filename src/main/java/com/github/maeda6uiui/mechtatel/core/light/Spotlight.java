@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 /**
  * Spotlight
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Spotlight {
     private Vector3f position;

@@ -14,7 +14,7 @@ import static org.lwjgl.assimp.Assimp.*;
 /**
  * Loads 3D models with Assimp
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class ModelLoader {
     public static class Material {

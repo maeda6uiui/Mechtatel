@@ -7,7 +7,7 @@ import org.joml.Vector3f;
 /**
  * 2D line
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Line2D extends Component {
     private VkLine2D vkLine;

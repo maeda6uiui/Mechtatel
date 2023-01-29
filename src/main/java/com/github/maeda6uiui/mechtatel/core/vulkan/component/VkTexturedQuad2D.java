@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * 2D textured quadrangle
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class VkTexturedQuad2D extends VkComponent {
     private VkDevice device;

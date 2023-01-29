@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 /**
  * Parallel light
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class ParallelLight {
     private Vector3f direction;

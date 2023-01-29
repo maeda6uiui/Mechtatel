@@ -15,7 +15,7 @@ import static org.lwjgl.stb.STBVorbis.*;
 /**
  * Sound buffer
  *
- * @author maeda
+ * @author maeda6uiui
  */
 class SoundBuffer {
     private int buffer;

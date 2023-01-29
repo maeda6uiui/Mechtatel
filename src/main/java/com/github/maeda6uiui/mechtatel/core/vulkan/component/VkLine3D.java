@@ -16,7 +16,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * 3D line
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class VkLine3D extends VkComponent3D {
     private VkDevice device;

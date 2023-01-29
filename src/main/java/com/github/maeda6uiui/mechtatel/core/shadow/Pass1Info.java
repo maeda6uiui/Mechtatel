@@ -8,7 +8,7 @@ import org.joml.Vector3f;
 /**
  * Pass 1 info
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Pass1Info {
     private Matrix4f lightView;

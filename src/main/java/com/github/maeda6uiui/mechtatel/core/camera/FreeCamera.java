@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 /**
  * Camera that moves according to user input
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class FreeCamera {
     private Camera camera;

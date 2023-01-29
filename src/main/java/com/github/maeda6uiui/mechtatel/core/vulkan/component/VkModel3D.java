@@ -20,7 +20,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * 3D model
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class VkModel3D extends VkComponent3D {
     private VkDevice device;

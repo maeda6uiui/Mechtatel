@@ -6,7 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkLine3D;
 /**
  * 3D line
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Line3D extends Component3D {
     private VkLine3D vkLine;

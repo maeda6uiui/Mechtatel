@@ -9,7 +9,7 @@ import org.joml.Vector3fc;
 /**
  * Utility methods for class conversion
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class ClassConversionUtils {
     public static Vector3f convertJMEVector3fToJOMLVector3f(com.jme3.math.Vector3f src) {

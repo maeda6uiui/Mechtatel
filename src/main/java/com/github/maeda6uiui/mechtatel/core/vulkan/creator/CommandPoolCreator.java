@@ -12,7 +12,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Creates command pools
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class CommandPoolCreator {
     public static long createCommandPool(VkDevice device, long surface) {

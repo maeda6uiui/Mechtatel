@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Nabor for parallel lights
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class ParallelLightNabor extends PostProcessingNabor {
     public static final int MAX_NUM_LIGHTS = 4;

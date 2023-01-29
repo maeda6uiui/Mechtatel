@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.text;
 /**
  * Glyph
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Glyph {
     public final int width;

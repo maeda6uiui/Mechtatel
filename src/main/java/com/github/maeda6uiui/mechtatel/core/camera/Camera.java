@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 /**
  * Camera
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Camera {
     public Vector3f eye;

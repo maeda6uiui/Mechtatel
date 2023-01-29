@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Sphere
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class VkSphere3D extends VkComponent3D {
     private VkDevice device;

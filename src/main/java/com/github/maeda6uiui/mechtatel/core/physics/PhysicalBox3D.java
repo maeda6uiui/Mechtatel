@@ -7,7 +7,7 @@ import com.jme3.math.Vector3f;
 /**
  * Box 3D
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class PhysicalBox3D extends PhysicalObject3D {
     public PhysicalBox3D(float xHalfExtent, float yHalfExtent, float zHalfExtent, float mass) {

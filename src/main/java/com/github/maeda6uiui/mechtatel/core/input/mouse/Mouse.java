@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Mouse
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Mouse {
     private InputCounter counter;

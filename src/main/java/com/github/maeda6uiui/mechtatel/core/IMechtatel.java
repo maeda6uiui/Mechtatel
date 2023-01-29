@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core;
 /**
  * Provides an interface of Mechtatel to the subordinate classes
  *
- * @author maeda
+ * @author maeda6uiui
  */
 interface IMechtatel {
     public void init();

@@ -27,7 +27,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Runs ShadowMappingNabor
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class ShadowMappingNaborRunner {
     private static void runShadowMappingPass1(

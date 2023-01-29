@@ -16,7 +16,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 /**
  * Uniform buffer object for lighting info
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class LightingInfoUBO {
     public static final int SIZEOF = 3 * SIZEOF_VEC4;

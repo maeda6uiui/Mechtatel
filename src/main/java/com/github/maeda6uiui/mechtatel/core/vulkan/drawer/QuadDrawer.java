@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Draws a quadrangle
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class QuadDrawer {
     private VkDevice device;

@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Set of 3D lines
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class VkLine3DSet extends VkComponent3D {
     private VkDevice device;

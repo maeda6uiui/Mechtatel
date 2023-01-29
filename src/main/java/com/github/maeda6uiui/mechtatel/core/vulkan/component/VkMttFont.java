@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Font
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class VkMttFont extends VkComponent {
     private VkDevice device;

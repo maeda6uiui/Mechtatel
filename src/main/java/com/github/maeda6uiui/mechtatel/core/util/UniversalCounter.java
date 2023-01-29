@@ -4,7 +4,7 @@ package com.github.maeda6uiui.mechtatel.core.util;
  * Returns a unique number starting from 0.
  * The number is augmented every time get() is called.
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class UniversalCounter {
     private static int count;

@@ -8,7 +8,7 @@ import org.joml.Vector3f;
 /**
  * Shadow info
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class ShadowInfo {
     public static final int PROJECTION_TYPE_ORTHOGRAPHIC = 0;

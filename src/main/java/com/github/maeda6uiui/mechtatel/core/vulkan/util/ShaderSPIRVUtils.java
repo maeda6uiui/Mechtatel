@@ -13,7 +13,7 @@ import static org.lwjgl.util.shaderc.Shaderc.*;
 /**
  * Provides utility methods for Shaderc
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class ShaderSPIRVUtils {
     public enum ShaderKind {

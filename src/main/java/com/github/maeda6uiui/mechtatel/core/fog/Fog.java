@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 /**
  * Fog
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Fog {
     private Vector3f color;

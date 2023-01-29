@@ -9,7 +9,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Vertex3D with a UV
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class VkVertex3DUV {
     public static VkVertexInputBindingDescription.Buffer getBindingDescription() {

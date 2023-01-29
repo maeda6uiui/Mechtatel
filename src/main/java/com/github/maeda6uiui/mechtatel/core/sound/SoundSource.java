@@ -7,7 +7,7 @@ import static org.lwjgl.openal.AL10.*;
 /**
  * Sound source
  *
- * @author maeda
+ * @author maeda6uiui
  */
 class SoundSource {
     private int source;

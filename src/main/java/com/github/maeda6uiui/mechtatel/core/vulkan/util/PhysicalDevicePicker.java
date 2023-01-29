@@ -12,7 +12,7 @@ import static org.lwjgl.vulkan.VK10.vkEnumeratePhysicalDevices;
 /**
  * Picks up suitable physical devices
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class PhysicalDevicePicker {
     public static VkPhysicalDevice pickPhysicalDevice(VkInstance instance, long surface) {

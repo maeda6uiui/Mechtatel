@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Utility methods for vertices
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class VertexUtils {
     public static List<Vertex3D> createSphereVertices(

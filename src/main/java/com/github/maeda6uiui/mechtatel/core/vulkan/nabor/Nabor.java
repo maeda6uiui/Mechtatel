@@ -14,7 +14,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Set of necessary objects for rendering with Vulkan
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Nabor {
     private VkDevice device;

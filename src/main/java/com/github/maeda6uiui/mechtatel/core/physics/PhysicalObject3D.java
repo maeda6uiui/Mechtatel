@@ -11,7 +11,7 @@ import org.joml.Vector3fc;
 /**
  * Base class for physical objects
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class PhysicalObject3D {
     private static PhysicsSpace physicsSpace;

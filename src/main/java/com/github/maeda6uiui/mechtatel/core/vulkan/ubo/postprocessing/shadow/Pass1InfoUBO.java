@@ -15,7 +15,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 /**
  * Uniform buffer object for pass 1 info
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Pass1InfoUBO {
     public static final int SIZEOF = 2 * SIZEOF_MAT4;

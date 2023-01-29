@@ -14,7 +14,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Frame
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Frame {
     private static final long UINT64_MAX = 0xFFFFFFFFFFFFFFFFL;

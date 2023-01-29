@@ -7,7 +7,7 @@ import com.jme3.math.Vector3f;
 /**
  * 3D capsule
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class PhysicalCapsule3D extends PhysicalObject3D {
     public PhysicalCapsule3D(float radius, float height, float mass) {
@@ -15,7 +15,7 @@ public class PhysicalCapsule3D extends PhysicalObject3D {
         var body = new PhysicsRigidBody(shape, mass);
         PhysicalCapsule3D.getPhysicsSpace().addCollisionObject(body);
         body.setPhysicsLocation(new Vector3f(0.0f, 0.0f, 0.0f));
-        
+
         this.setShape(shape);
         this.setBody(body);
     }

@@ -11,7 +11,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Creates image views
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class ImageViewCreator {
     public static long createImageView(VkDevice device, long image, int format, int aspectFlags, int mipLevels) {

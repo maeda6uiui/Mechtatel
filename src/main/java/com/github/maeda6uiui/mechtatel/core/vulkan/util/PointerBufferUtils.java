@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Provides utility methods relating to PointerBuffer
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class PointerBufferUtils {
     public static PointerBuffer asPointerBuffer(Collection<String> collection) {

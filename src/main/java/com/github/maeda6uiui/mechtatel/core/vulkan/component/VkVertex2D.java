@@ -10,7 +10,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Vertex2D
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class VkVertex2D {
     public static VkVertexInputBindingDescription.Buffer getBindingDescription() {

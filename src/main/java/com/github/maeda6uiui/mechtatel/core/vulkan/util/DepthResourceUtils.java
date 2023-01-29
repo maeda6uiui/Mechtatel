@@ -11,7 +11,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Utility methods for depth resources
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class DepthResourceUtils {
     public static int findSupportedFormat(VkDevice device, IntBuffer formatCandidates, int tiling, int features) {

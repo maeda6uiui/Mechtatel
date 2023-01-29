@@ -12,7 +12,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Utility methods for command buffers
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class CommandBufferUtils {
     public static List<VkCommandBuffer> createCommandBuffers(VkDevice device, long commandPool, int numSwapchainImages) {

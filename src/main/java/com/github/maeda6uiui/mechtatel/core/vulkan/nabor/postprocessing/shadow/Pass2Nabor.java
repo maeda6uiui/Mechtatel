@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Nabor to apply shadow mapping with images obtained from pass 1
  *
- * @author maeda
+ * @author maeda6uiui
  */
 class Pass2Nabor extends PostProcessingNabor {
     public static final int MAX_NUM_SHADOW_MAPS = 16;

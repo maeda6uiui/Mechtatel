@@ -12,7 +12,7 @@ import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_1_BIT;
 /**
  * Nabor for G-Buffer
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class GBufferNabor extends Nabor {
     public static final int MAX_NUM_TEXTURES = AlbedoNabor.MAX_NUM_TEXTURES;

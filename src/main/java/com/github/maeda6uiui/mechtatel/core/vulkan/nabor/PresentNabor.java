@@ -15,7 +15,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Nabor to present an image to the swapchain
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class PresentNabor extends Nabor {
     public PresentNabor(VkDevice device) {

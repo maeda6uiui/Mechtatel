@@ -7,7 +7,7 @@ import org.joml.Vector4fc;
 /**
  * Vertex3D
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Vertex3D {
     public static final int SIZEOF = (3 + 4 + 3) * Float.BYTES;

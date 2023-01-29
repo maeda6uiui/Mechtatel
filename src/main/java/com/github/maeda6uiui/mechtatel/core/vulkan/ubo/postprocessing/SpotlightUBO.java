@@ -15,7 +15,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 /**
  * Uniform buffer object for a spotlight
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class SpotlightUBO {
     public static final int SIZEOF = 10 * SIZEOF_VEC4;

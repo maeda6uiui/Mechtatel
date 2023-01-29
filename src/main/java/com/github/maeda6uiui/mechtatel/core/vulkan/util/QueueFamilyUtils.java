@@ -12,7 +12,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Utility methods for queue families
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class QueueFamilyUtils {
     public static class QueueFamilyIndices {

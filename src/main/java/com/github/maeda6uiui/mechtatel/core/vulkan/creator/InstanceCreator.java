@@ -16,7 +16,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Creates Vulkan instances
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class InstanceCreator {
     private static PointerBuffer getRequiredExtensions(boolean enableValidationLayer) {

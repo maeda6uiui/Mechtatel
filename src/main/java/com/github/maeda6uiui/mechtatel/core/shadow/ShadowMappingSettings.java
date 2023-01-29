@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.shadow;
 /**
  * Settings for shadow mapping
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class ShadowMappingSettings {
     public static final int OUTPUT_MODE_SHADOW_MAPPING = 0;

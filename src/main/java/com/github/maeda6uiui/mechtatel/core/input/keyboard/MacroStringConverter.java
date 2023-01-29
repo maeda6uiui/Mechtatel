@@ -8,7 +8,7 @@ import static org.lwjgl.glfw.GLFW.*;
 /**
  * Converts macro-defined values to corresponding strings
  *
- * @author maeda
+ * @author maeda6uiui
  */
 class MacroStringConverter {
     public static String convertMacroToString(int macro) {

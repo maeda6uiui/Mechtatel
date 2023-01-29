@@ -5,7 +5,7 @@ import static com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings.
 /**
  * Pass 2 info
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Pass2Info {
     private int numShadowMaps;

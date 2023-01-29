@@ -15,7 +15,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Creates sync objects
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class SyncObjectsCreator {
     public static List<Frame> createSyncObjects(VkDevice device, int maxFramesInFlight) {

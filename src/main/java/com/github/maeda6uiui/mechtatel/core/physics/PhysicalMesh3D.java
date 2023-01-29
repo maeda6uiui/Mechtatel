@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * 3D mesh
  * Note that collision detection between two meshes doesn't work.
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class PhysicalMesh3D extends PhysicalObject3D {
     public PhysicalMesh3D(Model3D model, float mass) {

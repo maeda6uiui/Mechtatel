@@ -20,7 +20,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Nabor for primitives
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class PrimitiveNabor extends Nabor {
     private int depthImageFormat;

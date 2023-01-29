@@ -7,7 +7,7 @@ import com.jme3.math.Vector3f;
 /**
  * 3D sphere
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class PhysicalSphere3D extends PhysicalObject3D {
     public PhysicalSphere3D(float radius, float mass) {

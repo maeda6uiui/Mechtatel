@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Nabor to merge two scenes by comparing the depths
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class MergeScenesNabor extends Nabor {
     private int depthImageFormat;

@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 /**
  * Point light
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class PointLight {
     private Vector3f position;

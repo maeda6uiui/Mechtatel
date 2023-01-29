@@ -13,7 +13,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Creates logical devices
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class LogicalDeviceCreator {
     public static class VkDeviceAndVkQueues {

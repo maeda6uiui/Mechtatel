@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Keyboard
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Keyboard {
     private InputCounter counter;

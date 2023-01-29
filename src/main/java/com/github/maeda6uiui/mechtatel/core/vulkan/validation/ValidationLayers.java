@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Validation layer for Vulkan
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class ValidationLayers {
     private static final Logger logger = LoggerFactory.getLogger(ValidationLayers.class);

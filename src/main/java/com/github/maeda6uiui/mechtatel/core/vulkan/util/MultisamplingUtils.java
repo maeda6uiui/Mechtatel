@@ -9,7 +9,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Utility methods for multisampling
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class MultisamplingUtils {
     public static int getMaxUsableSampleCount(VkDevice device) {

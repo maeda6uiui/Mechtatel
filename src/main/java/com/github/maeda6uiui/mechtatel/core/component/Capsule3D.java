@@ -8,7 +8,7 @@ import org.joml.Vector4fc;
 /**
  * Capsule
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Capsule3D extends Component3D {
     private VkCapsule3D vkCapsule;

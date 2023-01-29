@@ -8,7 +8,7 @@ import org.joml.Vector4fc;
 /**
  * Vertex3D with a UV
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Vertex3DUV {
     public static final int SIZEOF = (3 + 4 + 2 + 3) * Float.BYTES;

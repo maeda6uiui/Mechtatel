@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 /**
  * Lighting info
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class LightingInfo {
     private Vector3f ambientColor;

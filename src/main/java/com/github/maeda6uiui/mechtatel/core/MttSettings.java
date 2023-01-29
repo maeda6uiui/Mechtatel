@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Settings for Mechtatel
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class MttSettings {
     public class WindowSettings {

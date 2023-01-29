@@ -21,7 +21,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Set of 2D textured quadrangles with a single texture
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class VkTexturedQuad2DSingleTextureSet extends VkComponent {
     private VkDevice device;

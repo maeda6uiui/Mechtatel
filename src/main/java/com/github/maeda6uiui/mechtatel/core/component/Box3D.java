@@ -7,7 +7,7 @@ import org.joml.Vector4fc;
 /**
  * 3D box
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Box3D extends Component3D {
     private Line3DSet lineSet;

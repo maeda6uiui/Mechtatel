@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * Utility methods for text rendering
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class TextUtil {
     public static class FontImageInfo {

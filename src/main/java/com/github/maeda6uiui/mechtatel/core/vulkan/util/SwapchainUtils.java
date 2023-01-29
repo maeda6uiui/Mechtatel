@@ -16,7 +16,7 @@ import static org.lwjgl.vulkan.KHRSwapchain.VK_KHR_SWAPCHAIN_EXTENSION_NAME;
 /**
  * Utility methods for swapchains
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class SwapchainUtils {
     public static final Set<String> DEVICE_EXTENSIONS = Stream.of(VK_KHR_SWAPCHAIN_EXTENSION_NAME).collect(Collectors.toSet());

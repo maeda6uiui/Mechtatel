@@ -9,7 +9,7 @@ import java.util.ArrayList;
 /**
  * 2D textured quadrangle
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class TexturedQuad2D extends Component {
     private VkTexturedQuad2D vkTexturedQuad;

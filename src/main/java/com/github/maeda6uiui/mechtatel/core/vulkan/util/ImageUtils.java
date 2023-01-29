@@ -10,7 +10,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Utility methods for images
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class ImageUtils {
     public static void createImage(

@@ -16,7 +16,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 /**
  * Uniform buffer object for fog
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class FogUBO {
     public static final int SIZEOF = 1 * SIZEOF_VEC3 + 2 * SIZEOF_FLOAT;

@@ -15,7 +15,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 /**
  * Uniform buffer object for a point light
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class PointLightUBO {
     public static final int SIZEOF = 5 * SIZEOF_VEC4;

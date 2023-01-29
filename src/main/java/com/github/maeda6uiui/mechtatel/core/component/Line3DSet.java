@@ -8,7 +8,7 @@ import org.joml.Vector4fc;
 /**
  * Set of 3D lines
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Line3DSet extends Component3D {
     private VkLine3DSet vkLineSet;

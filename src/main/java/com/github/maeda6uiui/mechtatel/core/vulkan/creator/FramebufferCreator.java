@@ -14,7 +14,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Creates framebuffers
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class FramebufferCreator {
     public static List<Long> createSwapchainFramebuffers(

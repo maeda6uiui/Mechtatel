@@ -8,7 +8,7 @@ import org.joml.Vector4fc;
 /**
  * Sphere
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Sphere3D extends Component3D {
     private VkSphere3D vkSphere;

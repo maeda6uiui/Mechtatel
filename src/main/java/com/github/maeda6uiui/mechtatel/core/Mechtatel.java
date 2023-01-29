@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Base class of the Mechtatel engine
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Mechtatel implements IMechtatel {
     private final Logger logger = LoggerFactory.getLogger(Mechtatel.class);

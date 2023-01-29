@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Memcpy methods
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class MemcpyUtils {
     public static void memcpyVertex2D(ByteBuffer buffer, List<Vertex2D> vertices) {

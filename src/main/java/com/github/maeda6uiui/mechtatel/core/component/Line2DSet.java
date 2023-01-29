@@ -9,7 +9,7 @@ import org.joml.Vector4fc;
 /**
  * Set of 2D lines
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Line2DSet extends Component {
     private VkLine2DSet vkLineSet;

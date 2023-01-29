@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * 3D textured quadrangle
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class VkTexturedQuad3D extends VkComponent3D {
     private VkDevice device;

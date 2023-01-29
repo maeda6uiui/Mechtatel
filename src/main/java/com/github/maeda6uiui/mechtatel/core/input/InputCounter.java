@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Counter for user input
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class InputCounter {
     private Map<String, Boolean> pressingFlags;

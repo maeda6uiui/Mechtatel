@@ -14,7 +14,7 @@ import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_1_BIT;
 /**
  * Nabor for shadow mapping
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class ShadowMappingNabor extends PostProcessingNabor {
     public static final int MAX_NUM_SHADOW_MAPS = Pass2Nabor.MAX_NUM_SHADOW_MAPS;

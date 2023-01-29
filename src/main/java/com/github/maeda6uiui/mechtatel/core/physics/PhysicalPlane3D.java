@@ -10,7 +10,7 @@ import org.joml.Vector3fc;
 /**
  * 3D plane
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class PhysicalPlane3D extends PhysicalObject3D {
     public PhysicalPlane3D(Vector3fc normal, float constant) {

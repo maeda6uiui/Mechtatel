@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 /**
  * Uniform buffer object for a camera
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class CameraUBO {
     public static final int SIZEOF = 2 * SIZEOF_MAT4 + 2 * SIZEOF_VEC4;

@@ -41,7 +41,7 @@ import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_2_BIT;
 /**
  * Provides abstraction of the low-level operations
  *
- * @author maeda
+ * @author maeda6uiui
  */
 class MttInstance {
     private IMechtatel mtt;

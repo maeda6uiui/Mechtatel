@@ -47,7 +47,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Provides functionality relating to Vulkan
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private static final int MAX_FRAMES_IN_FLIGHT = 2;

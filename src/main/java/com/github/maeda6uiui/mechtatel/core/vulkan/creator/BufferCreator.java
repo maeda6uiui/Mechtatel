@@ -19,7 +19,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Creates buffers
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class BufferCreator {
     public static class BufferInfo {

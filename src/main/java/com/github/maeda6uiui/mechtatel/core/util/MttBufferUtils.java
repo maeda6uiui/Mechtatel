@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 /**
  * Buffer utilities
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class MttBufferUtils {
     private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {

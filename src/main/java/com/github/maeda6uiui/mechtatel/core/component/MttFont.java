@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Font
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class MttFont extends Component {
     private VkMttFont vkMttFont;

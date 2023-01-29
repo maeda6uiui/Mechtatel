@@ -7,7 +7,7 @@ import static org.lwjgl.openal.AL10.*;
 /**
  * Sound listener
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class SoundListener {
     public static void setPosition(Vector3fc position) {

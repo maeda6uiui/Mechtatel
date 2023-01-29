@@ -22,7 +22,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Texture
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Texture {
     private static Map<Integer, Boolean> allocationStatus;

@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.ubo;
 /**
  * Sizeof info
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class SizeofInfo {
     public static final int SIZEOF_INT = Integer.BYTES;

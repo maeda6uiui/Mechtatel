@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Nabor for spotlights
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class SpotlightNabor extends PostProcessingNabor {
     public static final int MAX_NUM_LIGHTS = 64;

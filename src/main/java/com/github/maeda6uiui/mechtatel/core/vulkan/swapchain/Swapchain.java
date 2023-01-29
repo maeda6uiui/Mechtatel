@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Swapchain
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Swapchain {
     private static final int UINT32_MAX = 0xFFFFFFFF;

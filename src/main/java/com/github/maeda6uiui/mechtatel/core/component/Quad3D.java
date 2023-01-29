@@ -7,7 +7,7 @@ import org.joml.Vector4fc;
 /**
  * 3D quadrangle
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Quad3D extends Component3D {
     private Line3DSet lineSet;

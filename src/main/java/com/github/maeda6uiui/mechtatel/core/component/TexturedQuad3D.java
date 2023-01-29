@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * 3D textured quadrangle
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class TexturedQuad3D extends Component3D {
     private VkTexturedQuad3D vkTexturedQuad;

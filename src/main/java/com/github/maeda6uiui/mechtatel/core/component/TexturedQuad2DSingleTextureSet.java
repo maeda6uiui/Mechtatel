@@ -10,7 +10,7 @@ import org.joml.Vector4f;
 /**
  * Set of 2D textured quadrangles with a single texture
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class TexturedQuad2DSingleTextureSet extends Component {
     private VkTexturedQuad2DSingleTextureSet vkTexturedQuadSet;

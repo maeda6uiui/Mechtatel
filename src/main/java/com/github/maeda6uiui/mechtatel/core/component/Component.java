@@ -8,7 +8,7 @@ import org.joml.Matrix4fc;
 /**
  * Component
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class Component {
     private String tag;

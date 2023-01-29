@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Set of 2D lines
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class VkLine2DSet extends VkComponent {
     private VkDevice device;

@@ -17,7 +17,7 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Nabor for fog
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class FogNabor extends PostProcessingNabor {
     public FogNabor(VkDevice device) {

@@ -5,7 +5,7 @@ import org.joml.Vector3fc;
 /**
  * Component 3D
  *
- * @author maeda
+ * @author maeda6uiui
  */
 public class VkComponent3D extends VkComponent {
     private boolean castShadow;

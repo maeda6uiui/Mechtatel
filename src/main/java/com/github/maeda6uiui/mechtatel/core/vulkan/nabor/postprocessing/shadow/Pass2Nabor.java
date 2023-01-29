@@ -96,7 +96,7 @@ class Pass2Nabor extends PostProcessingNabor {
 
             VkDescriptorSetLayoutBinding shadowInfoUBOLayoutBinding = uboBindings.get(1);
             shadowInfoUBOLayoutBinding.binding(1);
-            shadowInfoUBOLayoutBinding.descriptorCount(MAX_NUM_SHADOW_MAPS);
+            shadowInfoUBOLayoutBinding.descriptorCount(1);
             shadowInfoUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             shadowInfoUBOLayoutBinding.pImmutableSamplers(null);
             shadowInfoUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
@@ -299,36 +299,25 @@ class Pass2Nabor extends PostProcessingNabor {
             VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.calloc(setCount, stack);
 
             //=== set 0 ===
-            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.calloc(1, stack);
+            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.calloc(2, stack);
 
             VkDescriptorBufferInfo pass2InfoUBOInfo = uboInfos.get(0);
             pass2InfoUBOInfo.buffer(this.getUniformBuffer(0));
             pass2InfoUBOInfo.offset(0);
             pass2InfoUBOInfo.range(Pass2InfoUBO.SIZEOF);
 
+            VkDescriptorBufferInfo shadowInfoUBOInfo = uboInfos.get(1);
+            shadowInfoUBOInfo.buffer(this.getUniformBuffer(1));
+            shadowInfoUBOInfo.offset(0);
+            shadowInfoUBOInfo.range(ShadowInfoUBO.SIZEOF * MAX_NUM_SHADOW_MAPS);
+
             VkWriteDescriptorSet uboDescriptorWrite = descriptorWrites.get(0);
             uboDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
             uboDescriptorWrite.dstBinding(0);
             uboDescriptorWrite.dstArrayElement(0);
             uboDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            uboDescriptorWrite.descriptorCount(1);
+            uboDescriptorWrite.descriptorCount(2);
             uboDescriptorWrite.pBufferInfo(uboInfos);
-
-            VkWriteDescriptorSet.Buffer shadowInfoUBODescriptorWrite = VkWriteDescriptorSet.calloc(1, stack);
-            VkDescriptorBufferInfo.Buffer shadowInfoUBOInfos = VkDescriptorBufferInfo.calloc(MAX_NUM_SHADOW_MAPS, stack);
-            for (int i = 0; i < MAX_NUM_SHADOW_MAPS; i++) {
-                VkDescriptorBufferInfo shadowInfoUBOInfo = shadowInfoUBOInfos.get(i);
-                shadowInfoUBOInfo.buffer(this.getUniformBuffer(1));
-                shadowInfoUBOInfo.offset(0);
-                shadowInfoUBOInfo.range(ShadowInfoUBO.SIZEOF);
-            }
-
-            shadowInfoUBODescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            shadowInfoUBODescriptorWrite.dstBinding(1);
-            shadowInfoUBODescriptorWrite.dstArrayElement(0);
-            shadowInfoUBODescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            shadowInfoUBODescriptorWrite.descriptorCount(MAX_NUM_SHADOW_MAPS);
-            shadowInfoUBODescriptorWrite.pBufferInfo(shadowInfoUBOInfos);
 
             //=== set 1 ===
             VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.calloc(4, stack);
@@ -381,9 +370,6 @@ class Pass2Nabor extends PostProcessingNabor {
                 imageDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount));
                 samplerDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount * 2));
                 vkUpdateDescriptorSets(device, descriptorWrites, null);
-
-                shadowInfoUBODescriptorWrite.dstSet(descriptorSets.get(i));
-                vkUpdateDescriptorSets(device, shadowInfoUBODescriptorWrite, null);
 
                 shadowDepthImageDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount));
                 vkUpdateDescriptorSets(device, shadowDepthImageDescriptorWrite, null);

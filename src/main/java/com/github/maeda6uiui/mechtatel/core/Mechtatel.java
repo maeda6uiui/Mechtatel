@@ -339,6 +339,10 @@ public class Mechtatel implements IMechtatel {
         return instance.createQuad2D(p1, p2, p3, p4, z, color);
     }
 
+    public Quad2D createQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, Vector4fc color) {
+        return instance.createQuad2D(topLeft, bottomRight, z, color);
+    }
+
     public Quad3D createQuad3D(Vertex3D v1, Vertex3D v2, Vertex3D v3, Vertex3D v4) {
         return instance.createQuad3D(v1, v2, v3, v4);
     }

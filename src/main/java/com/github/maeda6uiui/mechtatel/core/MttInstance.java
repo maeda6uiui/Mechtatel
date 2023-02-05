@@ -534,6 +534,14 @@ class MttInstance {
         return quad;
     }
 
+    public Quad2D createQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, Vector4fc color) {
+        var p1 = new Vector2f(topLeft);
+        var p2 = new Vector2f(topLeft.x(), bottomRight.y());
+        var p3 = new Vector2f(bottomRight);
+        var p4 = new Vector2f(bottomRight.x(), topLeft.y());
+        return this.createQuad2D(p1, p2, p3, p4, z, color);
+    }
+
     public Quad3D createQuad3D(Vertex3D v1, Vertex3D v2, Vertex3D v3, Vertex3D v4) {
         var quad = new Quad3D(vulkanInstance, v1, v2, v3, v4);
         return quad;

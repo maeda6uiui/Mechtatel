@@ -1,10 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.util;
 
 import com.jme3.math.Matrix3f;
-import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
-import org.joml.Vector3f;
-import org.joml.Vector3fc;
+import org.joml.*;
+
+import java.awt.*;
 
 /**
  * Utility methods for class conversion
@@ -40,6 +39,16 @@ public class ClassConversionUtils {
                 ret.set(i, j, src.get(i, j));
             }
         }
+
+        return ret;
+    }
+
+    public static Vector4f convertJavaColorToJOMLVector4f(Color color) {
+        float r = color.getRed() / 255.0f;
+        float g = color.getGreen() / 255.0f;
+        float b = color.getBlue() / 255.0f;
+
+        var ret = new Vector4f(r, g, b, 1.0f);
 
         return ret;
     }

@@ -2,8 +2,8 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.component.gui.MttButtonSettings;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
 import java.io.IOException;
 
@@ -28,14 +28,18 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void init() {
-        var quad1 = this.createQuad2D(
-                new Vector2f(-0.5f, -0.5f),
-                new Vector2f(0.5f, -0.5f),
-                new Vector2f(0.5f, 0.5f),
-                new Vector2f(-0.5f, 0.5f),
-                0.0f,
-                new Vector4f(0.0f, 1.0f, 0.0f, 1.0f)
-        );
+        for (int i = 0; i < 10; i++) {
+            var buttonSettings = new MttButtonSettings();
+            buttonSettings.topLeft = new Vector2f(-0.9f, -0.9f + i * 0.1f);
+            buttonSettings.bottomRight = new Vector2f(-0.55f, -0.9f + (i + 1) * 0.1f);
+            var button = this.createMttButton(buttonSettings);
+        }
+        for (int i = 0; i < 10; i++) {
+            var buttonSettings = new MttButtonSettings();
+            buttonSettings.topLeft = new Vector2f(-0.5f, -0.9f + i * 0.1f);
+            buttonSettings.bottomRight = new Vector2f(-0.15f, -0.9f + (i + 1) * 0.1f);
+            var button = this.createMttButton(buttonSettings);
+        }
     }
 
     @Override

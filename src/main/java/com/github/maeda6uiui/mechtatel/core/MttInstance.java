@@ -2,6 +2,9 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.*;
+import com.github.maeda6uiui.mechtatel.core.component.gui.MttButton;
+import com.github.maeda6uiui.mechtatel.core.component.gui.MttButtonSettings;
+import com.github.maeda6uiui.mechtatel.core.component.gui.MttGuiComponent;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
@@ -62,6 +65,8 @@ class MttInstance {
     private List<ParallelLight> parallelLights;
     private List<PointLight> pointLights;
     private List<Spotlight> spotlights;
+
+    private List<MttGuiComponent> guiComponents;
 
     private List<PhysicalObject3D> physicalObjects;
     private float physicsSimulationTimeScale;
@@ -165,6 +170,8 @@ class MttInstance {
             camera.setAspect((float) width.get(0) / (float) height.get(0));
         }
 
+        guiComponents = new ArrayList<>();
+
         physicalObjects = new ArrayList<>();
         physicsSimulationTimeScale = 1.0f;
 
@@ -208,6 +215,15 @@ class MttInstance {
                 keyboard.update();
                 mouse.update();
                 mtt.update();
+                guiComponents.forEach(guiComponent -> {
+                    guiComponent.updateCursorPos(
+                            this.getCursorPosX(),
+                            this.getCursorPosY(),
+                            this.getWindowWidth(),
+                            this.getWindowHeight()
+                    );
+                    guiComponent.updateState();
+                });
                 physicalObjects.forEach(physicalObject -> {
                     physicalObject.updateObject();
                 });
@@ -563,6 +579,19 @@ class MttInstance {
         return mttFont;
     }
 
+    //=== Methods relating to GUI components ===
+    public MttButton createMttButton(MttButtonSettings settings) {
+        var mttButton = new MttButton(vulkanInstance, settings);
+        guiComponents.add(mttButton);
+
+        return mttButton;
+    }
+
+    public boolean removeGuiComponent(MttGuiComponent guiComponent) {
+        return guiComponents.remove(guiComponent);
+    }
+
+    //=== Methods relating to physical objects ===
     public PhysicalPlane3D createPhysicalPlane3D(Vector3fc normal, float constant) {
         var physicalPlane = new PhysicalPlane3D(normal, constant);
         physicalObjects.add(physicalPlane);
@@ -676,6 +705,7 @@ class MttInstance {
         this.physicsSimulationTimeScale = physicsSimulationTimeScale;
     }
 
+    //=== Methods relating to sound ===
     public Sound3D createSound3D(String filepath, boolean loop, boolean relative) throws IOException {
         var sound = new Sound3D(filepath, loop, relative);
         sounds3D.add(sound);

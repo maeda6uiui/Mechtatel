@@ -16,10 +16,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.Parallel
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.SpotlightNabor;
 import com.jme3.system.NativeLibraryLoader;
-import org.joml.Vector3f;
-import org.joml.Vector3fc;
-import org.joml.Vector4f;
-import org.joml.Vector4fc;
+import org.joml.*;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
@@ -525,6 +522,16 @@ class MttInstance {
     public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String textureFilepath) {
         var texturedQuadSet = new TexturedQuad2DSingleTextureSet(vulkanInstance, textureFilepath);
         return texturedQuadSet;
+    }
+
+    public Quad2D createQuad2D(Vertex2D v1, Vertex2D v2, Vertex2D v3, Vertex2D v4, float z) {
+        var quad = new Quad2D(vulkanInstance, v1, v2, v3, v4, z);
+        return quad;
+    }
+
+    public Quad2D createQuad2D(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4, float z, Vector4fc color) {
+        var quad = new Quad2D(vulkanInstance, p1, p2, p3, p4, z, color);
+        return quad;
     }
 
     public Quad3D createQuad3D(Vertex3D v1, Vertex3D v2, Vertex3D v3, Vertex3D v4) {

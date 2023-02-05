@@ -331,6 +331,14 @@ public class Mechtatel implements IMechtatel {
         return instance.createTexturedQuad2DSingleTextureSet(textureFilepath);
     }
 
+    public Quad2D createQuad2D(Vertex2D v1, Vertex2D v2, Vertex2D v3, Vertex2D v4, float z) {
+        return instance.createQuad2D(v1, v2, v3, v4, z);
+    }
+
+    public Quad2D createQuad2D(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4, float z, Vector4fc color) {
+        return instance.createQuad2D(p1, p2, p3, p4, z, color);
+    }
+
     public Quad3D createQuad3D(Vertex3D v1, Vertex3D v2, Vertex3D v3, Vertex3D v4) {
         return instance.createQuad3D(v1, v2, v3, v4);
     }

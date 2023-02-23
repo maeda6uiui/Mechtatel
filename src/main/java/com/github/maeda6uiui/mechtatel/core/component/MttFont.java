@@ -59,7 +59,11 @@ public class MttFont extends Component {
             lines.add(text);
         }
 
-        vkMttFont.prepare(lines, pTopLeft, z, glyphWidthScale, lineHeightScale, vOffset);
+        this.prepare(lines, pTopLeft, z, glyphWidthScale, lineHeightScale, vOffset);
+    }
+
+    public void prepare(String text, Vector2fc pTopLeft) {
+        this.prepare(text, pTopLeft, 0.0f, 0.0005f, 0.001f, 0.0f);
     }
 
     public void createBuffers() {

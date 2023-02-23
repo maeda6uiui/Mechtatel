@@ -2,9 +2,10 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttButtonSettings;
+import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import org.joml.Vector2f;
 
+import java.awt.*;
 import java.io.IOException;
 
 public class MyMechtatel extends Mechtatel {
@@ -28,18 +29,9 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void init() {
-        for (int i = 0; i < 10; i++) {
-            var buttonSettings = new MttButtonSettings();
-            buttonSettings.topLeft = new Vector2f(-0.9f, -0.9f + i * 0.1f);
-            buttonSettings.bottomRight = new Vector2f(-0.55f, -0.9f + (i + 1) * 0.1f);
-            var button = this.createMttButton(buttonSettings);
-        }
-        for (int i = 0; i < 10; i++) {
-            var buttonSettings = new MttButtonSettings();
-            buttonSettings.topLeft = new Vector2f(-0.5f, -0.9f + i * 0.1f);
-            buttonSettings.bottomRight = new Vector2f(-0.15f, -0.9f + (i + 1) * 0.1f);
-            var button = this.createMttButton(buttonSettings);
-        }
+        MttFont font = this.createMttFont(new Font(Font.SERIF, Font.PLAIN, 60), true, Color.WHITE, "ここにテキストを表示します");
+        font.prepare("ここにテキストを表示します", new Vector2f(-1.0f, -1.0f));
+        font.createBuffers();
     }
 
     @Override

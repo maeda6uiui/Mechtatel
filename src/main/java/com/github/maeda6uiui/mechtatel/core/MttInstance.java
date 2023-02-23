@@ -3,7 +3,6 @@ package com.github.maeda6uiui.mechtatel.core;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.*;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttButton;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttButtonSettings;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttGuiComponent;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
@@ -216,13 +215,15 @@ class MttInstance {
                 mouse.update();
                 mtt.update();
                 guiComponents.forEach(guiComponent -> {
-                    guiComponent.updateCursorPos(
+                    guiComponent.update(
                             this.getCursorPosX(),
                             this.getCursorPosY(),
                             this.getWindowWidth(),
-                            this.getWindowHeight()
+                            this.getWindowHeight(),
+                            this.getMousePressingCount("BUTTON_LEFT"),
+                            this.getMousePressingCount("BUTTON_MIDDLE"),
+                            this.getMousePressingCount("BUTTON_RIGHT")
                     );
-                    guiComponent.updateState();
                 });
                 physicalObjects.forEach(physicalObject -> {
                     physicalObject.updateObject();
@@ -580,8 +581,19 @@ class MttInstance {
     }
 
     //=== Methods relating to GUI components ===
-    public MttButton createMttButton(MttButtonSettings settings) {
-        var mttButton = new MttButton(vulkanInstance, settings);
+    public MttButton createMttButton(
+            float x,
+            float y,
+            float width,
+            float height,
+            String text,
+            String fontName,
+            int fontStyle,
+            int fontSize,
+            Color fontColor,
+            Color frameColor) {
+        var mttButton = new MttButton(
+                vulkanInstance, x, y, width, height, text, fontName, fontStyle, fontSize, fontColor, frameColor);
         guiComponents.add(mttButton);
 
         return mttButton;

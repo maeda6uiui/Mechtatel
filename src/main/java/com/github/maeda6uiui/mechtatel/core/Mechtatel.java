@@ -3,7 +3,6 @@ package com.github.maeda6uiui.mechtatel.core;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.*;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttButton;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttButtonSettings;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
@@ -365,8 +364,18 @@ public class Mechtatel implements IMechtatel {
         return instance.createMttFont(font, antiAlias, color, requiredChars);
     }
 
-    public MttButton createMttButton(MttButtonSettings settings) {
-        return instance.createMttButton(settings);
+    public MttButton createMttButton(
+            float x,
+            float y,
+            float width,
+            float height,
+            String text,
+            String fontName,
+            int fontStyle,
+            int fontSize,
+            Color fontColor,
+            Color frameColor) {
+        return instance.createMttButton(x, y, width, height, text, fontName, fontStyle, fontSize, fontColor, frameColor);
     }
 
     public PhysicalPlane3D createPhysicalPlane3D(Vector3fc normal, float constant) {

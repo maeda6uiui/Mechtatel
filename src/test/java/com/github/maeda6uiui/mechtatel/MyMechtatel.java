@@ -2,8 +2,7 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import com.github.maeda6uiui.mechtatel.core.component.MttFont;
-import org.joml.Vector2f;
+import com.github.maeda6uiui.mechtatel.core.component.gui.MttButton;
 
 import java.awt.*;
 import java.io.IOException;
@@ -29,9 +28,9 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void init() {
-        MttFont font = this.createMttFont(new Font(Font.SERIF, Font.PLAIN, 60), true, Color.WHITE, "ここにテキストを表示します");
-        font.prepare("ここにテキストを表示します", new Vector2f(-1.0f, -1.0f));
-        font.createBuffers();
+        MttButton button = this.createMttButton(
+                -0.9f, -0.9f, 0.2f, 0.1f,
+                "ボタンです", Font.SERIF, Font.PLAIN, 65, Color.WHITE, Color.WHITE);
     }
 
     @Override

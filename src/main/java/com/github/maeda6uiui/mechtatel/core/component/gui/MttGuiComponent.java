@@ -19,6 +19,8 @@ public class MttGuiComponent extends Component {
     private float height;
     private MttFont font;
 
+    private MttGuiComponentCallbacks callbacks;
+
     public MttGuiComponent(
             MttVulkanInstance vulkanInstance,
             float x,
@@ -40,6 +42,12 @@ public class MttGuiComponent extends Component {
         font = new MttFont(vulkanInstance, new Font(fontName, fontStyle, fontSize), true, fontColor, text);
         font.prepare(text, new Vector2f(x, y));
         font.createBuffers();
+
+        callbacks = new MttGuiComponentCallbacks();
+    }
+
+    public void setCallbacks(MttGuiComponentCallbacks callbacks) {
+        this.callbacks = callbacks;
     }
 
     public void update(
@@ -55,33 +63,17 @@ public class MttGuiComponent extends Component {
 
         if ((x < fCursorX && fCursorX < x + width)
                 && (y < fCursorY && fCursorY < y + height)) {
-            this.onCursorOnComponent();
+            callbacks.onCursorOnComponent();
 
             if (lButtonPressingCount == 1) {
-                this.onLButtonDown();
+                callbacks.onLButtonDown();
             }
             if (mButtonPressingCount == 1) {
-                this.onMButtonDown();
+                callbacks.onMButtonDown();
             }
             if (rButtonPressingCount == 1) {
-                this.onRButtonDown();
+                callbacks.onRButtonDown();
             }
         }
-    }
-
-    public void onCursorOnComponent() {
-
-    }
-
-    public void onLButtonDown() {
-
-    }
-
-    public void onMButtonDown() {
-
-    }
-
-    public void onRButtonDown() {
-
     }
 }

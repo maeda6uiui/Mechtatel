@@ -25,7 +25,7 @@ void main(){
     if(pc.is2DDrawing==0){
         gl_Position=camera.proj*camera.view*pc.model*vec4(inPosition,1.0);
     }else{
-        gl_Position=vec4(inPosition,1.0);
+        gl_Position=pc.model*vec4(inPosition,1.0);
     }
     fragPosition=inPosition;
     fragColor=inColor;

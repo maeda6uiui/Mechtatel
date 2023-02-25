@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 import com.github.maeda6uiui.mechtatel.core.component.Line2DSet;
 import com.github.maeda6uiui.mechtatel.core.component.Quad2D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -99,6 +100,13 @@ public class MttCheckbox extends MttGuiComponent {
         }
     }
 
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        checkboxFrame.setVisible(visible);
+        checkboxCross.setVisible(visible);
+    }
+
     public void setSelected(boolean selected) {
         this.selected = selected;
         checkboxCross.setVisible(selected);
@@ -106,5 +114,12 @@ public class MttCheckbox extends MttGuiComponent {
 
     public boolean isSelected() {
         return selected;
+    }
+
+    @Override
+    public void translate(float diffX, float diffY) {
+        super.translate(diffX, diffY);
+        checkboxFrame.applyMat(new Matrix4f().translate(diffX, diffY, 0.0f));
+        checkboxCross.applyMat(new Matrix4f().translate(diffX, diffY, 0.0f));
     }
 }

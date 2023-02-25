@@ -7,6 +7,8 @@ import org.joml.Vector2f;
 import org.joml.Vector4f;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Listbox
@@ -25,6 +27,8 @@ public class MttListbox extends MttGuiComponent {
     private float prevFCursorY;
     private boolean grabbed;
 
+    private List<MttButton> itemButtons;
+
     public MttListbox(
             MttVulkanInstance vulkanInstance,
             float x,
@@ -35,7 +39,9 @@ public class MttListbox extends MttGuiComponent {
             int fontStyle,
             int fontSize,
             Color fontColor,
-            Color frameColor) {
+            Color frameColor,
+            List<String> items,
+            float itemHeight) {
         super(vulkanInstance, x, y, width, height, "Listbox", fontName, fontStyle, fontSize, fontColor);
 
         float fFrameColorR = frameColor.getRed() / 255.0f;
@@ -70,6 +76,21 @@ public class MttListbox extends MttGuiComponent {
 
         prevFCursorY = 0.0f;
         grabbed = false;
+
+        itemButtons = new ArrayList<>();
+        for (int i = 0; i < items.size(); i++) {
+            var itemButton = new MttButton(
+                    vulkanInstance, x, y + itemHeight * i, width - width * SCROLLBAR_FRAME_WIDTH_RATIO, itemHeight,
+                    items.get(i), fontName, fontStyle, fontSize, fontColor, frameColor
+            );
+            itemButton.setFrameVisible(false);
+
+            if (y + itemHeight * (i + 1) > y + height) {
+                itemButton.setVisible(false);
+            }
+
+            itemButtons.add(itemButton);
+        }
     }
 
     @Override
@@ -119,5 +140,29 @@ public class MttListbox extends MttGuiComponent {
         }
 
         prevFCursorY = fCursorY;
+
+        itemButtons.forEach(itemButton -> {
+            itemButton.update(
+                    cursorX, cursorY, windowWidth, windowHeight,
+                    lButtonPressingCount, mButtonPressingCount, rButtonPressingCount);
+            if (itemButton.isCursorOn()) {
+                float bottomY = itemButton.getY() + itemButton.getHeight();
+                float frameBottomY = this.getY() + this.getHeight();
+                if (bottomY < frameBottomY) {
+                    itemButton.setFrameVisible(true);
+                }
+            } else {
+                itemButton.setFrameVisible(false);
+            }
+        });
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        frame.setVisible(visible);
+        scrollbarFrame.setVisible(visible);
+        scrollbarGrabFrame.setVisible(visible);
+        itemButtons.forEach(itemButton -> itemButton.setVisible(visible));
     }
 }

@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 import com.github.maeda6uiui.mechtatel.core.component.Component;
 import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 import java.awt.*;
@@ -20,6 +21,7 @@ public class MttGuiComponent extends Component {
     private MttFont font;
 
     private MttGuiComponentCallbacks callbacks;
+    private boolean cursorOn;
 
     public MttGuiComponent(
             MttVulkanInstance vulkanInstance,
@@ -44,10 +46,16 @@ public class MttGuiComponent extends Component {
         font.createBuffers();
 
         callbacks = new MttGuiComponentCallbacks();
+        cursorOn = false;
     }
 
     public void setCallbacks(MttGuiComponentCallbacks callbacks) {
         this.callbacks = callbacks;
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        font.setVisible(visible);
     }
 
     protected float getX() {
@@ -70,6 +78,16 @@ public class MttGuiComponent extends Component {
         return font;
     }
 
+    public void translate(float diffX, float diffY) {
+        x += diffX;
+        y += diffY;
+        font.applyMat(new Matrix4f().translate(diffX, diffY, 0.0f));
+    }
+
+    public boolean isCursorOn() {
+        return cursorOn;
+    }
+
     public void update(
             int cursorX,
             int cursorY,
@@ -83,7 +101,7 @@ public class MttGuiComponent extends Component {
 
         if ((x < fCursorX && fCursorX < x + width)
                 && (y < fCursorY && fCursorY < y + height)) {
-            callbacks.onCursorOnComponent();
+            cursorOn = true;
 
             if (lButtonPressingCount == 1) {
                 callbacks.onLButtonDown();
@@ -94,6 +112,8 @@ public class MttGuiComponent extends Component {
             if (rButtonPressingCount == 1) {
                 callbacks.onRButtonDown();
             }
+        } else {
+            cursorOn = false;
         }
     }
 }

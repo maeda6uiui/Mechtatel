@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 import com.github.maeda6uiui.mechtatel.core.component.Quad2D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -40,5 +41,21 @@ public class MttButton extends MttGuiComponent {
                 0.0f,
                 new Vector4f(fFrameColorR, fFrameColorG, fFrameColorB, 1.0f)
         );
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        frame.setVisible(visible);
+    }
+
+    public void setFrameVisible(boolean visible) {
+        frame.setVisible(visible);
+    }
+
+    @Override
+    public void translate(float diffX, float diffY) {
+        super.translate(diffX, diffY);
+        frame.setMat(new Matrix4f().translate(diffX, diffY, 0.0f));
     }
 }

@@ -628,9 +628,12 @@ class MttInstance {
             int fontStyle,
             int fontSize,
             Color fontColor,
-            Color frameColor) {
+            Color frameColor,
+            List<String> items,
+            float itemHeight) {
         var mttListbox = new MttListbox(
-                vulkanInstance, x, y, width, height, fontName, fontStyle, fontSize, fontColor, frameColor);
+                vulkanInstance, x, y, width, height,
+                fontName, fontStyle, fontSize, fontColor, frameColor, items, itemHeight);
         guiComponents.add(mttListbox);
 
         return mttListbox;

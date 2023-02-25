@@ -6,6 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.component.gui.MttListbox;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MyMechtatel extends Mechtatel {
     public MyMechtatel(MttSettings settings) {
@@ -28,9 +29,14 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void init() {
+        var items = new ArrayList<String>();
+        for (int i = 0; i < 30; i++) {
+            items.add(String.format("Item%d", i));
+        }
+
         MttListbox listbox = this.createMttListbox(
                 -0.9f, -0.9f, 0.5f, 1.8f,
-                Font.SERIF, Font.PLAIN, 60, Color.WHITE, Color.WHITE);
+                Font.SERIF, Font.PLAIN, 60, Color.WHITE, Color.WHITE, items, 0.07f);
     }
 
     @Override

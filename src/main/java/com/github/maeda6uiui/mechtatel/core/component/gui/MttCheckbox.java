@@ -14,8 +14,8 @@ import java.awt.*;
  * @author maeda6uiui
  */
 public class MttCheckbox extends MttGuiComponent {
-    public static final float CHECKBOX_MARGIN_X_HEIGHT_RATIO = 0.3f;
-    public static final float CHECKBOX_MARGIN_Y_HEIGHT_RATIO = 0.25f;
+    private static final float CHECKBOX_MARGIN_X_HEIGHT_RATIO = 0.3f;
+    private static final float CHECKBOX_MARGIN_Y_HEIGHT_RATIO = 0.25f;
 
     private Quad2D checkboxFrame;
     private Line2DSet checkboxCross;

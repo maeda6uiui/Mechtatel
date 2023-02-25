@@ -2,10 +2,7 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttButton;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttCheckbox;
 
-import java.awt.*;
 import java.io.IOException;
 
 public class MyMechtatel extends Mechtatel {
@@ -29,18 +26,7 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void init() {
-        MttButton button = this.createMttButton(
-                -0.9f, -0.9f, 0.18f, 0.1f,
-                "ボタンです", Font.SERIF, Font.PLAIN, 65, Color.WHITE, Color.WHITE);
-        MttCheckbox checkbox = this.createMttCheckbox(
-                -0.9f, -0.7f, 0.3f, 0.1f,
-                "チェックボックスです", Font.SERIF, Font.PLAIN, 65, Color.WHITE, Color.WHITE);
-        MttCheckbox checkbox2 = this.createMttCheckbox(
-                -0.9f, -0.6f, 0.3f, 0.1f,
-                "チェックボックスです", Font.SERIF, Font.PLAIN, 65, Color.WHITE, Color.WHITE);
-        MttCheckbox checkbox3 = this.createMttCheckbox(
-                -0.9f, -0.5f, 0.3f, 0.1f,
-                "チェックボックスです", Font.SERIF, Font.PLAIN, 65, Color.WHITE, Color.WHITE);
+
     }
 
     @Override

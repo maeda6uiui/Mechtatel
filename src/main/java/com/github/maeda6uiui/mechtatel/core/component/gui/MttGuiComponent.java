@@ -50,6 +50,26 @@ public class MttGuiComponent extends Component {
         this.callbacks = callbacks;
     }
 
+    protected float getX() {
+        return x;
+    }
+
+    protected float getY() {
+        return y;
+    }
+
+    protected float getWidth() {
+        return width;
+    }
+
+    protected float getHeight() {
+        return height;
+    }
+
+    protected MttFont getFont() {
+        return font;
+    }
+
     public void update(
             int cursorX,
             int cursorY,

@@ -5,6 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.component.*;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttButton;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttCheckbox;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttGuiComponent;
+import com.github.maeda6uiui.mechtatel.core.component.gui.MttListbox;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
@@ -616,6 +617,23 @@ class MttInstance {
         guiComponents.add(mttCheckbox);
 
         return mttCheckbox;
+    }
+
+    public MttListbox createMttListbox(
+            float x,
+            float y,
+            float width,
+            float height,
+            String fontName,
+            int fontStyle,
+            int fontSize,
+            Color fontColor,
+            Color frameColor) {
+        var mttListbox = new MttListbox(
+                vulkanInstance, x, y, width, height, fontName, fontStyle, fontSize, fontColor, frameColor);
+        guiComponents.add(mttListbox);
+
+        return mttListbox;
     }
 
     public boolean removeGuiComponent(MttGuiComponent guiComponent) {

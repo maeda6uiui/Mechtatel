@@ -157,13 +157,19 @@ public class VkMttFont extends VkComponent {
 
     @Override
     public void draw(VkCommandBuffer commandBuffer, long pipelineLayout) {
-        if (this.isVisible()) {
-            vkQuadSet.draw(commandBuffer, pipelineLayout);
+        if (!this.isVisible()) {
+            return;
         }
+        
+        vkQuadSet.draw(commandBuffer, pipelineLayout);
     }
 
     @Override
     public void transfer(VkCommandBuffer commandBuffer) {
+        if (!this.isVisible()) {
+            return;
+        }
+
         vkQuadSet.transfer(commandBuffer);
     }
 }

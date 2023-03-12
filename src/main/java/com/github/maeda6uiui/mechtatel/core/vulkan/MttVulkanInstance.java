@@ -1164,6 +1164,20 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         return lineSet;
     }
 
+    public VkFilledQuad3D createFilledQuad3D(List<Vertex3D> vertices) {
+        var filledQuad = new VkFilledQuad3D(device, commandPool, graphicsQueue, vertices);
+        components3D.add(filledQuad);
+
+        return filledQuad;
+    }
+
+    public VkFilledQuad2D createFilledQuad2D(List<Vertex3D> vertices) {
+        var filledQuad = new VkFilledQuad2D(device, commandPool, graphicsQueue, vertices);
+        components.add(filledQuad);
+
+        return filledQuad;
+    }
+
     public VkTexturedQuad3D createTexturedQuad3D(String textureFilepath, boolean generateMipmaps, List<Vertex3DUV> vertices) {
         int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
         var descriptorSets = new ArrayList<Long>();

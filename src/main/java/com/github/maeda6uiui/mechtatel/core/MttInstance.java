@@ -494,6 +494,16 @@ class MttInstance {
         return lineSet;
     }
 
+    public FilledQuad3D createFilledQuad3D(Vertex3D v1, Vertex3D v2, Vertex3D v3, Vertex3D v4) {
+        var filledQuad = new FilledQuad3D(vulkanInstance, v1, v2, v3, v4);
+        return filledQuad;
+    }
+
+    public FilledQuad2D createFilledQuad2D(Vertex2D p1, Vertex2D p2, Vertex2D p3, Vertex2D p4, float z) {
+        var filledQuad = new FilledQuad2D(vulkanInstance, p1, p2, p3, p4, z);
+        return filledQuad;
+    }
+
     public TexturedQuad3D createTexturedQuad3D(
             String textureFilepath,
             boolean generateMipmaps,

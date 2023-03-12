@@ -287,6 +287,32 @@ public class Mechtatel implements IMechtatel {
         return instance.createLine2DSet();
     }
 
+    public FilledQuad3D createFilledQuad3D(Vertex3D v1, Vertex3D v2, Vertex3D v3, Vertex3D v4) {
+        return instance.createFilledQuad3D(v1, v2, v3, v4);
+    }
+
+    public FilledQuad3D createFilledQuad3D(Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, Vector4fc color) {
+        var v1 = new Vertex3D(p1, color);
+        var v2 = new Vertex3D(p2, color);
+        var v3 = new Vertex3D(p3, color);
+        var v4 = new Vertex3D(p4, color);
+
+        return instance.createFilledQuad3D(v1, v2, v3, v4);
+    }
+
+    public FilledQuad2D createFilledQuad2D(Vertex2D p1, Vertex2D p2, Vertex2D p3, Vertex2D p4, float z) {
+        return instance.createFilledQuad2D(p1, p2, p3, p4, z);
+    }
+
+    public FilledQuad2D createFilledQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, Vector4fc color) {
+        var p1 = new Vertex2D(topLeft, color);
+        var p2 = new Vertex2D(new Vector2f(topLeft.x(), bottomRight.y()), color);
+        var p3 = new Vertex2D(bottomRight, color);
+        var p4 = new Vertex2D(new Vector2f(bottomRight.x(), topLeft.y()), color);
+
+        return instance.createFilledQuad2D(p1, p2, p3, p4, z);
+    }
+
     public TexturedQuad3D createTexturedQuad3D(
             String textureFilepath,
             boolean generateMipmaps,

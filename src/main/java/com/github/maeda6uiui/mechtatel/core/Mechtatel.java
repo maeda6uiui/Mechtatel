@@ -304,13 +304,12 @@ public class Mechtatel implements IMechtatel {
         return instance.createFilledQuad2D(p1, p2, p3, p4, z);
     }
 
-    public FilledQuad2D createFilledQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, Vector4fc color) {
-        var p1 = new Vertex2D(topLeft, color);
-        var p2 = new Vertex2D(new Vector2f(topLeft.x(), bottomRight.y()), color);
-        var p3 = new Vertex2D(bottomRight, color);
-        var p4 = new Vertex2D(new Vector2f(bottomRight.x(), topLeft.y()), color);
+    public FilledQuad2D createFilledQuad2D(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4, float z, Vector4fc color) {
+        return instance.createFilledQuad2D(p1, p2, p3, p4, z, color);
+    }
 
-        return instance.createFilledQuad2D(p1, p2, p3, p4, z);
+    public FilledQuad2D createFilledQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, Vector4fc color) {
+        return instance.createFilledQuad2D(topLeft, bottomRight, z, color);
     }
 
     public TexturedQuad3D createTexturedQuad3D(

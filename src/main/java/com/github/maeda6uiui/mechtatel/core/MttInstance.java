@@ -504,6 +504,16 @@ class MttInstance {
         return filledQuad;
     }
 
+    public FilledQuad2D createFilledQuad2D(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4, float z, Vector4fc color) {
+        var filledQuad = new FilledQuad2D(vulkanInstance, p1, p2, p3, p4, z, color);
+        return filledQuad;
+    }
+
+    public FilledQuad2D createFilledQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, Vector4fc color) {
+        var filledQuad = new FilledQuad2D(vulkanInstance, topLeft, bottomRight, z, color);
+        return filledQuad;
+    }
+
     public TexturedQuad3D createTexturedQuad3D(
             String textureFilepath,
             boolean generateMipmaps,

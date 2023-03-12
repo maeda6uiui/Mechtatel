@@ -160,7 +160,7 @@ public class VkMttFont extends VkComponent {
         if (!this.isVisible()) {
             return;
         }
-        
+
         vkQuadSet.draw(commandBuffer, pipelineLayout);
     }
 

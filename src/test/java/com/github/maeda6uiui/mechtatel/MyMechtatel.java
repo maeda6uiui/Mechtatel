@@ -28,6 +28,8 @@ public class MyMechtatel extends Mechtatel {
     @Override
     public void init() {
         this.createMttVerticalScrollbar(-0.9f, -0.9f, 0.05f, 1.8f, 0.1f, Color.WHITE, Color.GRAY);
+        this.createMttVerticalScrollbar(-0.8f, -0.9f, 0.05f, 1.8f, 0.1f, Color.GREEN, Color.YELLOW);
+        this.createMttVerticalScrollbar(-0.7f, -0.9f, 0.05f, 1.8f, 0.1f, Color.BLUE, Color.PINK);
     }
 
     @Override

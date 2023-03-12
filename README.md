@@ -37,7 +37,13 @@ Javaでゲームエンジンを作ることを目標としているプロジェ�
 塗りつぶした四角形の描画機能を実装しました。
 今までありそうで地味に実装していなかった機能です。
 
-![塗りつぶしされた四角形](./Image/filled_quadrangles.png)
+<img src="./Image/filled_quadrangles.png" alt="塗りつぶしされた四角形" style="zoom:50%;" />
+
+塗りつぶした四角形を用いて縦向きのスクロールバーを実装しました。
+
+<img src="./Image/vertical_scrollbars.png" alt="縦向きのスクロールバー" style="zoom:70%;" />
+
+どのくらいスクロールされたのか取得するメソッドはこれから用意します。
 
 ### 2023-02-23
 

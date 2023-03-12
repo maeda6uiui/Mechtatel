@@ -2,10 +2,7 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.*;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttButton;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttCheckbox;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttGuiComponent;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttListbox;
+import com.github.maeda6uiui.mechtatel.core.component.gui.*;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
@@ -637,6 +634,21 @@ class MttInstance {
         guiComponents.add(mttCheckbox);
 
         return mttCheckbox;
+    }
+
+    public MttVerticalScrollbar createMttVerticalScrollbar(
+            float x,
+            float y,
+            float width,
+            float height,
+            float grabHeight,
+            Color frameColor,
+            Color grabFrameColor) {
+        var mttScrollbar = new MttVerticalScrollbar(
+                vulkanInstance, x, y, width, height, grabHeight, frameColor, grabFrameColor);
+        guiComponents.add(mttScrollbar);
+
+        return mttScrollbar;
     }
 
     public MttListbox createMttListbox(

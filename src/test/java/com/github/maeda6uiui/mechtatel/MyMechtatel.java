@@ -2,9 +2,8 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import org.joml.Vector2f;
-import org.joml.Vector4f;
 
+import java.awt.*;
 import java.io.IOException;
 
 public class MyMechtatel extends Mechtatel {
@@ -28,24 +27,7 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void init() {
-        this.createFilledQuad2D(
-                new Vector2f(-0.9f, -0.9f),
-                new Vector2f(-0.5f, -0.5f),
-                0.0f,
-                new Vector4f(1.0f, 0.0f, 0.0f, 1.0f)
-        );
-        this.createFilledQuad2D(
-                new Vector2f(-0.6f, -0.6f),
-                new Vector2f(-0.2f, -0.2f),
-                0.01f,
-                new Vector4f(0.0f, 1.0f, 0.0f, 1.0f)
-        );
-        this.createFilledQuad2D(
-                new Vector2f(-0.3f, -0.3f),
-                new Vector2f(0.1f, 0.1f),
-                0.02f,
-                new Vector4f(0.0f, 0.0f, 1.0f, 1.0f)
-        );
+        this.createMttVerticalScrollbar(-0.9f, -0.9f, 0.05f, 1.8f, 0.1f, Color.WHITE, Color.GRAY);
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.component.*;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttButton;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttCheckbox;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttListbox;
+import com.github.maeda6uiui.mechtatel.core.component.gui.MttVerticalScrollbar;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
@@ -418,6 +419,17 @@ public class Mechtatel implements IMechtatel {
             Color checkboxColor) {
         return instance.createMttCheckbox(
                 x, y, width, height, text, fontName, fontStyle, fontSize, fontColor, checkboxColor);
+    }
+
+    public MttVerticalScrollbar createMttVerticalScrollbar(
+            float x,
+            float y,
+            float width,
+            float height,
+            float grabHeight,
+            Color frameColor,
+            Color grabFrameColor) {
+        return instance.createMttVerticalScrollbar(x, y, width, height, grabHeight, frameColor, grabFrameColor);
     }
 
     public MttListbox createMttListbox(

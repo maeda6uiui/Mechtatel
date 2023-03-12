@@ -41,7 +41,7 @@ Javaでゲームエンジンを作ることを目標としているプロジェ�
 
 塗りつぶした四角形を用いて縦向きのスクロールバーを実装しました。
 
-<img src="./Image/vertical_scrollbars.png" alt="縦向きのスクロールバー" style="zoom:70%;" />
+<img src="./Image/vertical_scrollbars.png" alt="縦向きのスクロールバー" style="zoom:50%;" />
 
 どのくらいスクロールされたのか取得するメソッドはこれから用意します。
 

@@ -30,6 +30,13 @@ Javaでゲームエンジンを作ることを目標としているプロジェ�
 結局自分が死ぬまで何も成し遂げられないかもしれませんし、あるいは何か芸術的なゴミを生み出すことができるかもしれません。
 「この人を応援したい！」とか思うような頭のおかしい人は、Starでも付けていってください...。
 
+## 依存関係
+
+./Mechtatel/Binディレクトリ配下に以下のバイナリを配置します。
+
+- [shaderc](https://github.com/google/shaderc)
+- [Libbulletjme](https://github.com/stephengold/Libbulletjme)
+
 ## 進捗報告
 
 ### 2023-03-12

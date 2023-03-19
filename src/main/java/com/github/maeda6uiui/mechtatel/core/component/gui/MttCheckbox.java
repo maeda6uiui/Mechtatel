@@ -2,10 +2,10 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 import com.github.maeda6uiui.mechtatel.core.component.Line2DSet;
 import com.github.maeda6uiui.mechtatel.core.component.Quad2D;
+import com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
 import java.awt.*;
 
@@ -42,27 +42,24 @@ public class MttCheckbox extends MttGuiComponent {
         checkboxTopLeft = new Vector2f(x + height * CHECKBOX_MARGIN_X_HEIGHT_RATIO, y + height * CHECKBOX_MARGIN_Y_HEIGHT_RATIO);
         checkboxBottomRight = new Vector2f(x + height * (1.0f - CHECKBOX_MARGIN_X_HEIGHT_RATIO), y + height * (1.0f - CHECKBOX_MARGIN_Y_HEIGHT_RATIO));
 
-        float fCheckboxColorR = checkboxColor.getRed() / 255.0f;
-        float fCheckboxColorG = checkboxColor.getGreen() / 255.0f;
-        float fCheckboxColorB = checkboxColor.getBlue() / 255.0f;
         checkboxFrame = new Quad2D(
                 vulkanInstance,
                 checkboxTopLeft,
                 checkboxBottomRight,
                 0.0f,
-                new Vector4f(fCheckboxColorR, fCheckboxColorG, fCheckboxColorB, 1.0f)
+                ClassConversionUtils.convertJavaColorToJOMLVector4f(checkboxColor)
         );
         checkboxCross = new Line2DSet(vulkanInstance);
         checkboxCross.add(
                 checkboxTopLeft,
                 checkboxBottomRight,
-                new Vector4f(fCheckboxColorR, fCheckboxColorG, fCheckboxColorB, 1.0f),
+                ClassConversionUtils.convertJavaColorToJOMLVector4f(checkboxColor),
                 0.0f
         );
         checkboxCross.add(
                 new Vector2f(checkboxTopLeft.x, checkboxBottomRight.y),
                 new Vector2f(checkboxBottomRight.x, checkboxTopLeft.y),
-                new Vector4f(fCheckboxColorR, fCheckboxColorG, fCheckboxColorB, 1.0f),
+                ClassConversionUtils.convertJavaColorToJOMLVector4f(checkboxColor),
                 0.0f
         );
         checkboxCross.createBuffer();

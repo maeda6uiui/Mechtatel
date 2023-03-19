@@ -120,4 +120,12 @@ public class MttVerticalScrollbar extends MttGuiComponent {
         frame.setVisible(visible);
         grabFrame.setVisible(visible);
     }
+
+    public float getScrollAmount() {
+        float grabHeight = grabBottomRight.y - grabTopLeft.y;
+        float grabWholeAmount = this.getHeight() - grabHeight;
+        float scrollAmount = (grabTopLeft.y - this.getY()) / grabWholeAmount;
+
+        return scrollAmount;
+    }
 }

@@ -594,8 +594,9 @@ class MttInstance {
         return this.createBox3D(halfExtent, halfExtent, halfExtent, color);
     }
 
-    public MttFont createMttFont(Font font, boolean antiAlias, Color color, String requiredChars) {
-        var mttFont = new MttFont(vulkanInstance, font, antiAlias, color, requiredChars);
+    public MttFont createMttFont(
+            Font font, boolean antiAlias, Color fontColor, Color backgroundColor, String requiredChars) {
+        var mttFont = new MttFont(vulkanInstance, font, antiAlias, fontColor, backgroundColor, requiredChars);
         return mttFont;
     }
 
@@ -676,11 +677,12 @@ class MttInstance {
             int fontSize,
             Color fontColor,
             Color frameColor,
-            List<String> items,
-            float itemHeight) {
+            List<String> itemTexts,
+            float itemHeight,
+            Color backgroundColor) {
         var mttListbox = new MttListbox(
                 vulkanInstance, x, y, width, height,
-                fontName, fontStyle, fontSize, fontColor, frameColor, items, itemHeight);
+                fontName, fontStyle, fontSize, fontColor, frameColor, itemTexts, itemHeight, backgroundColor);
         guiComponents.add(mttListbox);
 
         return mttListbox;

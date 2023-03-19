@@ -50,7 +50,8 @@ public class TextUtil {
         return image;
     }
 
-    public static FontImageInfo createFontImage(Font font, boolean antiAlias, Color color, String requiredChars) {
+    public static FontImageInfo createFontImage(
+            Font font, boolean antiAlias, Color fontColor, Color backgroundColor, String requiredChars) {
         var fontImageInfo = new FontImageInfo();
         fontImageInfo.glyphs = new HashMap<>();
 
@@ -66,7 +67,7 @@ public class TextUtil {
 
         for (int i = 0; i < numRequiredChars; i++) {
             char c = requiredChars.charAt(i);
-            BufferedImage ch = createCharImage(font, c, antiAlias, color);
+            BufferedImage ch = createCharImage(font, c, antiAlias, fontColor);
             if (ch == null) {
                 continue;
             }
@@ -91,6 +92,13 @@ public class TextUtil {
         fontImageInfo.imageHeight = totalImageHeight;
 
         BufferedImage image = new BufferedImage(totalImageWidth, totalImageHeight, BufferedImage.TYPE_INT_ARGB);
+        for (int x = 0; x < totalImageWidth; x++) {
+            for (int y = 0; y < totalImageHeight; y++) {
+                //ここを修正する
+                image.setRGB(x, y, backgroundColor.getRGB());
+            }
+        }
+
         Graphics2D g = image.createGraphics();
 
         int x = 0;
@@ -98,7 +106,7 @@ public class TextUtil {
         int lineCount = 0;
         for (int i = 0; i < numRequiredChars; i++) {
             char c = requiredChars.charAt(i);
-            BufferedImage charImage = createCharImage(font, c, antiAlias, color);
+            BufferedImage charImage = createCharImage(font, c, antiAlias, fontColor);
             if (charImage == null) {
                 continue;
             }

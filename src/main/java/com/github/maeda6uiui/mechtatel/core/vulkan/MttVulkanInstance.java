@@ -1282,7 +1282,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         return texturedQuadSet;
     }
 
-    public VkMttFont createMttFont(Font font, boolean antiAlias, Color color, String requiredChars) {
+    public VkMttFont createMttFont(
+            Font font, boolean antiAlias, Color fontColor, Color backgroundColor, String requiredChars) {
         int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
         var descriptorSets = new ArrayList<Long>();
         for (int i = 0; i < numDescriptorSets; i++) {
@@ -1297,7 +1298,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 gBufferNabor.getSetCount(0),
                 font,
                 antiAlias,
-                color,
+                fontColor,
+                backgroundColor,
                 requiredChars);
         components.add(mttFont);
 

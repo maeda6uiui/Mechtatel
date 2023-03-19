@@ -385,8 +385,9 @@ public class Mechtatel implements IMechtatel {
         return instance.createBox3D(halfExtent, color);
     }
 
-    public MttFont createMttFont(Font font, boolean antiAlias, Color color, String requiredChars) {
-        return instance.createMttFont(font, antiAlias, color, requiredChars);
+    public MttFont createMttFont(
+            Font font, boolean antiAlias, Color fontColor, Color backgroundColor, String requiredChars) {
+        return instance.createMttFont(font, antiAlias, fontColor, backgroundColor, requiredChars);
     }
 
     public MttButton createMttButton(
@@ -450,11 +451,12 @@ public class Mechtatel implements IMechtatel {
             int fontSize,
             Color fontColor,
             Color frameColor,
-            List<String> items,
-            float itemHeight) {
+            List<String> itemTexts,
+            float itemHeight,
+            Color backgroundColor) {
         return instance.createMttListbox(
                 x, y, width, height,
-                fontName, fontStyle, fontSize, fontColor, frameColor, items, itemHeight);
+                fontName, fontStyle, fontSize, fontColor, frameColor, itemTexts, itemHeight, backgroundColor);
     }
 
     public PhysicalPlane3D createPhysicalPlane3D(Vector3fc normal, float constant) {

@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttVerticalScrollbar;
+import com.github.maeda6uiui.mechtatel.core.component.gui.MttHorizontalScrollbar;
 
 import java.awt.*;
 import java.io.IOException;
@@ -26,12 +26,12 @@ public class MyMechtatel extends Mechtatel {
         new MyMechtatel(settings);
     }
 
-    private MttVerticalScrollbar scrollbar;
+    private MttHorizontalScrollbar scrollbar;
 
     @Override
     public void init() {
-        scrollbar = this.createMttVerticalScrollbar(
-                -0.9f, -0.9f, 0.05f, 1.8f, 0.1f, Color.WHITE, Color.GRAY);
+        scrollbar = this.createMttHorizontalScrollbar(
+                -0.9f, -0.9f, 1.8f, 0.1f, 0.1f, Color.WHITE, Color.GRAY);
     }
 
     @Override

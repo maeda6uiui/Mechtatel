@@ -651,6 +651,21 @@ class MttInstance {
         return mttScrollbar;
     }
 
+    public MttHorizontalScrollbar createMttHorizontalScrollbar(
+            float x,
+            float y,
+            float width,
+            float height,
+            float grabWidth,
+            Color frameColor,
+            Color grabFrameColor) {
+        var mttScrollbar = new MttHorizontalScrollbar(
+                vulkanInstance, x, y, width, height, grabWidth, frameColor, grabFrameColor);
+        guiComponents.add(mttScrollbar);
+
+        return mttScrollbar;
+    }
+
     public MttListbox createMttListbox(
             float x,
             float y,

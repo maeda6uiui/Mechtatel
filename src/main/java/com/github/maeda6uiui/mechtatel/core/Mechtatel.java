@@ -2,10 +2,7 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.*;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttButton;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttCheckbox;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttListbox;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttVerticalScrollbar;
+import com.github.maeda6uiui.mechtatel.core.component.gui.*;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
@@ -430,6 +427,17 @@ public class Mechtatel implements IMechtatel {
             Color frameColor,
             Color grabFrameColor) {
         return instance.createMttVerticalScrollbar(x, y, width, height, grabHeight, frameColor, grabFrameColor);
+    }
+
+    public MttHorizontalScrollbar createMttHorizontalScrollbar(
+            float x,
+            float y,
+            float width,
+            float height,
+            float grabWidth,
+            Color frameColor,
+            Color grabFrameColor) {
+        return instance.createMttHorizontalScrollbar(x, y, width, height, grabWidth, frameColor, grabFrameColor);
     }
 
     public MttListbox createMttListbox(

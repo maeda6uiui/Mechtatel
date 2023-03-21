@@ -50,6 +50,9 @@ public class MttHorizontalScrollbar extends MttGuiComponent {
                 convertJavaColorToJOMLVector4f(grabFrameColor)
         );
 
+        frame.setDrawOrder(1);
+        vulkanInstance.sortComponents();
+
         grabTopLeft = new Vector2f(x, y);
         grabBottomRight = new Vector2f(x + grabWidth, y + height);
 

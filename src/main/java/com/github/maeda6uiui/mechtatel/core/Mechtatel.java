@@ -219,6 +219,10 @@ public class Mechtatel implements IMechtatel {
     }
 
     //=== Methods relating to components ===
+    public void sortComponents() {
+        instance.sortComponents();
+    }
+
     public Model3D createModel3D(String modelFilepath) {
         return instance.createModel3D(modelFilepath);
     }

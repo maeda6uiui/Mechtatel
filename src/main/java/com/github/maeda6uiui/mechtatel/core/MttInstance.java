@@ -451,6 +451,10 @@ class MttInstance {
     }
 
     //=== Methods relating to components ===
+    public void sortComponents() {
+        vulkanInstance.sortComponents();
+    }
+
     public Model3D createModel3D(String modelFilepath) {
         var model = new Model3D(vulkanInstance, modelFilepath);
         return model;

@@ -3,11 +3,12 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 import com.github.maeda6uiui.mechtatel.core.component.Line2DSet;
 import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.component.Quad2D;
-import com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import org.joml.Vector2f;
 
 import java.awt.*;
+
+import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJavaColorToJOMLVector4f;
 
 /**
  * Checkbox
@@ -49,19 +50,19 @@ public class MttCheckbox extends MttGuiComponent {
                 checkboxTopLeft,
                 checkboxBottomRight,
                 0.0f,
-                ClassConversionUtils.convertJavaColorToJOMLVector4f(checkboxColor)
+                convertJavaColorToJOMLVector4f(checkboxColor)
         );
         checkboxCross = new Line2DSet(vulkanInstance);
         checkboxCross.add(
                 checkboxTopLeft,
                 checkboxBottomRight,
-                ClassConversionUtils.convertJavaColorToJOMLVector4f(checkboxColor),
+                convertJavaColorToJOMLVector4f(checkboxColor),
                 0.0f
         );
         checkboxCross.add(
                 new Vector2f(checkboxTopLeft.x, checkboxBottomRight.y),
                 new Vector2f(checkboxBottomRight.x, checkboxTopLeft.y),
-                ClassConversionUtils.convertJavaColorToJOMLVector4f(checkboxColor),
+                convertJavaColorToJOMLVector4f(checkboxColor),
                 0.0f
         );
         checkboxCross.createBuffer();

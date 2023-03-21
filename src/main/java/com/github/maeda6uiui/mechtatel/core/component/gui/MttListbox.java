@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component.gui;
 
-import com.github.maeda6uiui.mechtatel.core.component.FilledQuad2D;
+import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.component.Quad2D;
 import com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class MttListbox extends MttGuiComponent {
     public static class MttListboxItem extends MttGuiComponent {
-        private FilledQuad2D backgroundQuad;
+        private MttFont selectedFont;
 
         public MttListboxItem(
                 MttVulkanInstance vulkanInstance,
@@ -30,22 +30,43 @@ public class MttListbox extends MttGuiComponent {
                 int fontStyle,
                 int fontSize,
                 Color fontColor,
-                Color backgroundColor,
-                float backgroundZ) {
+                String selectedFontName,
+                int selectedFontStyle,
+                int selectedFontSize,
+                Color selectedFontColor) {
             super(vulkanInstance, x, y, width, height, text, fontName, fontStyle, fontSize, fontColor);
 
-            backgroundQuad = new FilledQuad2D(
+            selectedFont = new MttFont(
                     vulkanInstance,
-                    new Vector2f(x, y),
-                    new Vector2f(x + width, y + height),
-                    backgroundZ,
-                    ClassConversionUtils.convertJavaColorToJOMLVector4f(backgroundColor)
+                    new Font(selectedFontName, selectedFontStyle, selectedFontSize),
+                    true,
+                    selectedFontColor,
+                    text
             );
-            backgroundQuad.setVisible(false);
+            selectedFont.prepare(text, new Vector2f(x, y));
+            selectedFont.createBuffers();
+            selectedFont.setVisible(false);
         }
 
-        public void setBackgroundVisible(boolean visible) {
-            backgroundQuad.setVisible(visible);
+        public void changeToSelectedFont() {
+            this.getFont().setVisible(false);
+            selectedFont.setVisible(true);
+        }
+
+        public void changeToNonSelectedFont() {
+            this.getFont().setVisible(true);
+            selectedFont.setVisible(false);
+        }
+
+        @Override
+        public void setVisible(boolean visible) {
+            super.setVisible(visible);
+            selectedFont.setVisible(visible);
+        }
+
+        @Override
+        public boolean isVisible() {
+            return super.isVisible() || selectedFont.isVisible();
         }
     }
 
@@ -65,7 +86,10 @@ public class MttListbox extends MttGuiComponent {
             Color frameColor,
             List<String> itemTexts,
             float itemHeight,
-            Color backgroundColor) {
+            String selectedFontName,
+            int selectedFontStyle,
+            int selectedFontSize,
+            Color selectedFontColor) {
         super(vulkanInstance, x, y, width, height, "Listbox", Font.SERIF, Font.PLAIN, 50, Color.WHITE);
 
         this.getFont().setVisible(false);
@@ -82,7 +106,8 @@ public class MttListbox extends MttGuiComponent {
         for (int i = 0; i < itemTexts.size(); i++) {
             var item = new MttListboxItem(
                     vulkanInstance, x, y + itemHeight * i, width, itemHeight,
-                    itemTexts.get(i), fontName, fontStyle, fontSize, fontColor, backgroundColor, 0.01f);
+                    itemTexts.get(i), fontName, fontStyle, fontSize, fontColor,
+                    selectedFontName, selectedFontStyle, selectedFontSize, selectedFontColor);
             items.add(item);
 
             if (y + itemHeight * (i + 1) > y + height) {
@@ -108,14 +133,14 @@ public class MttListbox extends MttGuiComponent {
             item.update(
                     cursorX, cursorY, windowWidth, windowHeight,
                     lButtonPressingCount, mButtonPressingCount, rButtonPressingCount);
-            if (item.isCursorOn()) {
-                float bottomY = item.getY() + item.getHeight();
-                float frameBottomY = this.getY() + this.getHeight();
-                if (bottomY < frameBottomY) {
-                    item.setBackgroundVisible(true);
+            if (item.isVisible()) {
+                if (item.isCursorOn()) {
+                    item.changeToSelectedFont();
+                } else {
+                    item.changeToNonSelectedFont();
                 }
             } else {
-                item.setBackgroundVisible(false);
+
             }
         });
     }

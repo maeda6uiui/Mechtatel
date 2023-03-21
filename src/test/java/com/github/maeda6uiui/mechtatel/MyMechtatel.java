@@ -33,9 +33,9 @@ public class MyMechtatel extends Mechtatel {
             itemTexts.add(String.format("Item %d", i));
         }
         this.createMttListbox(
-                -0.9f, -0.9f, 0.9f, 0.9f,
-                Font.SANS_SERIF, Font.PLAIN, 32, Color.WHITE, Color.WHITE,
-                itemTexts, 0.1f, Color.GRAY);
+                -0.9f, -0.9f, 0.9f, 0.91f,
+                Font.SANS_SERIF, Font.PLAIN, 32, Color.LIGHT_GRAY, Color.WHITE,
+                itemTexts, 0.1f, Font.SANS_SERIF, Font.BOLD, 32, Color.WHITE);
     }
 
     @Override

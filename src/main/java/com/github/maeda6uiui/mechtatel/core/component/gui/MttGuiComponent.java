@@ -59,6 +59,11 @@ public class MttGuiComponent extends Component {
         font.setVisible(visible);
     }
 
+    @Override
+    public boolean isVisible() {
+        return font.isVisible();
+    }
+
     protected float getX() {
         return x;
     }

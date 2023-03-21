@@ -456,10 +456,14 @@ public class Mechtatel implements IMechtatel {
             Color frameColor,
             List<String> itemTexts,
             float itemHeight,
-            Color backgroundColor) {
+            String selectedFontName,
+            int selectedFontStyle,
+            int selectedFontSize,
+            Color selectedFontColor) {
         return instance.createMttListbox(
                 x, y, width, height,
-                fontName, fontStyle, fontSize, fontColor, frameColor, itemTexts, itemHeight, backgroundColor);
+                fontName, fontStyle, fontSize, fontColor, frameColor, itemTexts, itemHeight,
+                selectedFontName, selectedFontStyle, selectedFontSize, selectedFontColor);
     }
 
     public PhysicalPlane3D createPhysicalPlane3D(Vector3fc normal, float constant) {

@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.component.Quad2D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 import java.awt.*;
@@ -80,11 +81,25 @@ public class MttListbox extends MttGuiComponent {
         public boolean isVisible() {
             return nonSelectedFont.isVisible() || selectedFont.isVisible();
         }
+
+        @Override
+        public void setPosition(float x, float y) {
+            float diffX = x - this.getX();
+            float diffY = y - this.getY();
+
+            nonSelectedFont.applyMat(new Matrix4f().translate(diffX, diffY, 0.0f));
+            selectedFont.applyMat(new Matrix4f().translate(diffX, diffY, 0.0f));
+
+            super.setPosition(x, y);
+        }
     }
 
     private Quad2D frame;
     private MttVerticalScrollbar scrollbar;
     private List<MttListboxItem> items;
+    private float itemHeight;
+    private int numDisplayedItems;
+    private float scrollAmountPerItem;
 
     public MttListbox(
             MttVulkanInstance vulkanInstance,
@@ -123,6 +138,8 @@ public class MttListbox extends MttGuiComponent {
         );
 
         items = new ArrayList<>();
+        this.itemHeight = itemHeight;
+        numDisplayedItems = 0;
         for (int i = 0; i < itemTexts.size(); i++) {
             var item = new MttListboxItem(
                     vulkanInstance, x, y + itemHeight * i, width - scrollbarWidth, itemHeight, itemTexts.get(i),
@@ -132,7 +149,15 @@ public class MttListbox extends MttGuiComponent {
 
             if (y + itemHeight * (i + 1) > y + height) {
                 item.setVisible(false);
+            } else {
+                numDisplayedItems++;
             }
+        }
+
+        if (numDisplayedItems == items.size()) {
+            scrollAmountPerItem = -1.0f;
+        } else {
+            scrollAmountPerItem = 1.0f / (items.size() - numDisplayedItems);
         }
     }
 
@@ -153,6 +178,25 @@ public class MttListbox extends MttGuiComponent {
                 cursorX, cursorY, windowWidth, windowHeight,
                 lButtonPressingCount, mButtonPressingCount, rButtonPressingCount);
 
+        float scrollAmount = scrollbar.getScrollAmount();
+        if (scrollAmountPerItem > 0.0f) {
+            int expectedTopItemIndex = Math.round(scrollAmount / scrollAmountPerItem);
+            int expectedBottomItemIndex = expectedTopItemIndex + numDisplayedItems - 1;
+
+            for (int i = 0; i < items.size(); i++) {
+                var item = items.get(i);
+
+                if (i >= expectedTopItemIndex && i <= expectedBottomItemIndex) {
+                    float expectedItemDiffY = itemHeight * (i - expectedTopItemIndex);
+                    item.setPosition(this.getX(), this.getY() + expectedItemDiffY);
+
+                    item.setVisible(true);
+                } else {
+                    item.setVisible(false);
+                }
+            }
+        }
+
         items.forEach(item -> {
             item.update(
                     cursorX, cursorY, windowWidth, windowHeight,
@@ -163,8 +207,6 @@ public class MttListbox extends MttGuiComponent {
                 } else {
                     item.changeToNonSelectedFont();
                 }
-            } else {
-
             }
         });
     }

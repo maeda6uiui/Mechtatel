@@ -86,4 +86,9 @@ public class MttGuiComponent extends Component {
             cursorOn = false;
         }
     }
+
+    public void setPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
 }

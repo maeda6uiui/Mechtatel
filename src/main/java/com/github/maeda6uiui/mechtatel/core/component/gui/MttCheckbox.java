@@ -1,10 +1,10 @@
 package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 import com.github.maeda6uiui.mechtatel.core.component.Line2DSet;
+import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.component.Quad2D;
 import com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
-import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 import java.awt.*;
@@ -20,6 +20,8 @@ public class MttCheckbox extends MttGuiComponent {
 
     private Quad2D checkboxFrame;
     private Line2DSet checkboxCross;
+    private MttFont font;
+
     private Vector2f checkboxTopLeft;
     private Vector2f checkboxBottomRight;
 
@@ -37,7 +39,7 @@ public class MttCheckbox extends MttGuiComponent {
             int fontSize,
             Color fontColor,
             Color checkboxColor) {
-        super(vulkanInstance, x + height, y, width - height, height, text, fontName, fontStyle, fontSize, fontColor);
+        super(vulkanInstance, x + height, y, width - height, height);
 
         checkboxTopLeft = new Vector2f(x + height * CHECKBOX_MARGIN_X_HEIGHT_RATIO, y + height * CHECKBOX_MARGIN_Y_HEIGHT_RATIO);
         checkboxBottomRight = new Vector2f(x + height * (1.0f - CHECKBOX_MARGIN_X_HEIGHT_RATIO), y + height * (1.0f - CHECKBOX_MARGIN_Y_HEIGHT_RATIO));
@@ -63,6 +65,11 @@ public class MttCheckbox extends MttGuiComponent {
                 0.0f
         );
         checkboxCross.createBuffer();
+
+        font = new MttFont(vulkanInstance, new Font(
+                fontName, fontStyle, fontSize), true, fontColor, text);
+        font.prepare(text, new Vector2f(x, y));
+        font.createBuffers();
 
         selected = false;
         checkboxCross.setVisible(false);
@@ -99,9 +106,9 @@ public class MttCheckbox extends MttGuiComponent {
 
     @Override
     public void setVisible(boolean visible) {
-        super.setVisible(visible);
         checkboxFrame.setVisible(visible);
         checkboxCross.setVisible(visible);
+        font.setVisible(visible);
     }
 
     public void setSelected(boolean selected) {
@@ -111,12 +118,5 @@ public class MttCheckbox extends MttGuiComponent {
 
     public boolean isSelected() {
         return selected;
-    }
-
-    @Override
-    public void translate(float diffX, float diffY) {
-        super.translate(diffX, diffY);
-        checkboxFrame.applyMat(new Matrix4f().translate(diffX, diffY, 0.0f));
-        checkboxCross.applyMat(new Matrix4f().translate(diffX, diffY, 0.0f));
     }
 }

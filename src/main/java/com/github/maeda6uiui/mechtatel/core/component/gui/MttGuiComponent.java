@@ -33,8 +33,7 @@ public class MttGuiComponent extends Component {
             String fontName,
             int fontStyle,
             int fontSize,
-            Color fontColor,
-            Color backgroundColor) {
+            Color fontColor) {
         super(vulkanInstance);
 
         this.x = x;
@@ -43,26 +42,12 @@ public class MttGuiComponent extends Component {
         this.height = height;
 
         font = new MttFont(vulkanInstance, new Font(
-                fontName, fontStyle, fontSize), true, fontColor, backgroundColor, text);
+                fontName, fontStyle, fontSize), true, fontColor, text);
         font.prepare(text, new Vector2f(x, y));
         font.createBuffers();
 
         callbacks = new MttGuiComponentCallbacks();
         cursorOn = false;
-    }
-
-    public MttGuiComponent(
-            MttVulkanInstance vulkanInstance,
-            float x,
-            float y,
-            float width,
-            float height,
-            String text,
-            String fontName,
-            int fontStyle,
-            int fontSize,
-            Color fontColor) {
-        this(vulkanInstance, x, y, width, height, text, fontName, fontStyle, fontSize, fontColor, Color.BLACK);
     }
 
     public void setCallbacks(MttGuiComponentCallbacks callbacks) {

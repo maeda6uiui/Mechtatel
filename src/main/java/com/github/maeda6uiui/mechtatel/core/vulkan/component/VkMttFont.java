@@ -39,7 +39,6 @@ public class VkMttFont extends VkComponent {
             Font font,
             boolean antiAlias,
             Color fontColor,
-            Color backgroundColor,
             String requiredChars) {
         this.device = device;
 
@@ -51,7 +50,6 @@ public class VkMttFont extends VkComponent {
                 font,
                 antiAlias,
                 fontColor,
-                backgroundColor,
                 requiredChars
         );
         vkQuadSet = new VkTexturedQuad2DSingleTextureSet(
@@ -72,10 +70,9 @@ public class VkMttFont extends VkComponent {
             Font font,
             boolean antiAlias,
             Color fontColor,
-            Color backgroundColor,
             String requiredChars) {
         TextUtil.FontImageInfo fontImageInfo = TextUtil.createFontImage(
-                font, antiAlias, fontColor, backgroundColor, requiredChars);
+                font, antiAlias, fontColor, requiredChars);
         this.glyphs = fontImageInfo.glyphs;
         this.imageWidth = fontImageInfo.imageWidth;
         this.imageHeight = fontImageInfo.imageHeight;

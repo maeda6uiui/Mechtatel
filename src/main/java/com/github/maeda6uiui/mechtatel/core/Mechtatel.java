@@ -385,9 +385,8 @@ public class Mechtatel implements IMechtatel {
         return instance.createBox3D(halfExtent, color);
     }
 
-    public MttFont createMttFont(
-            Font font, boolean antiAlias, Color fontColor, Color backgroundColor, String requiredChars) {
-        return instance.createMttFont(font, antiAlias, fontColor, backgroundColor, requiredChars);
+    public MttFont createMttFont(Font font, boolean antiAlias, Color fontColor, String requiredChars) {
+        return instance.createMttFont(font, antiAlias, fontColor, requiredChars);
     }
 
     public MttButton createMttButton(

@@ -51,7 +51,7 @@ public class TextUtil {
     }
 
     public static FontImageInfo createFontImage(
-            Font font, boolean antiAlias, Color fontColor, Color backgroundColor, String requiredChars) {
+            Font font, boolean antiAlias, Color fontColor, String requiredChars) {
         var fontImageInfo = new FontImageInfo();
         fontImageInfo.glyphs = new HashMap<>();
 
@@ -92,13 +92,6 @@ public class TextUtil {
         fontImageInfo.imageHeight = totalImageHeight;
 
         BufferedImage image = new BufferedImage(totalImageWidth, totalImageHeight, BufferedImage.TYPE_INT_ARGB);
-        for (int x = 0; x < totalImageWidth; x++) {
-            for (int y = 0; y < totalImageHeight; y++) {
-                //ここを修正する
-                image.setRGB(x, y, backgroundColor.getRGB());
-            }
-        }
-
         Graphics2D g = image.createGraphics();
 
         int x = 0;

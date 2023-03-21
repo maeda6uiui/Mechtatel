@@ -595,8 +595,8 @@ class MttInstance {
     }
 
     public MttFont createMttFont(
-            Font font, boolean antiAlias, Color fontColor, Color backgroundColor, String requiredChars) {
-        var mttFont = new MttFont(vulkanInstance, font, antiAlias, fontColor, backgroundColor, requiredChars);
+            Font font, boolean antiAlias, Color fontColor, String requiredChars) {
+        var mttFont = new MttFont(vulkanInstance, font, antiAlias, fontColor, requiredChars);
         return mttFont;
     }
 

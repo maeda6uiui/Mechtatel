@@ -32,7 +32,7 @@ public class MttListbox extends MttGuiComponent {
                 Color fontColor,
                 Color backgroundColor,
                 float backgroundZ) {
-            super(vulkanInstance, x, y, width, height, text, fontName, fontStyle, fontSize, fontColor, backgroundColor);
+            super(vulkanInstance, x, y, width, height, text, fontName, fontStyle, fontSize, fontColor);
 
             backgroundQuad = new FilledQuad2D(
                     vulkanInstance,

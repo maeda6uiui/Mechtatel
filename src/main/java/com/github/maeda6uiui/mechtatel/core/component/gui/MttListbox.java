@@ -152,6 +152,9 @@ public class MttListbox extends MttGuiComponent {
             } else {
                 numDisplayedItems++;
             }
+
+            var callbacks = new MttListboxItemDefaultCallbacks(i);
+            item.setCallbacks(callbacks);
         }
 
         if (numDisplayedItems == items.size()) {
@@ -215,5 +218,9 @@ public class MttListbox extends MttGuiComponent {
     public void setVisible(boolean visible) {
         frame.setVisible(visible);
         items.forEach(item -> item.setVisible(visible));
+    }
+
+    public void setScrollbarItemCallbacks(int index, MttGuiComponentCallbacks callbacks) {
+        items.get(index).setCallbacks(callbacks);
     }
 }

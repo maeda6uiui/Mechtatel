@@ -7,6 +7,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
+
 public class MyMechtatel extends Mechtatel {
     public MyMechtatel(MttSettings settings) {
         super(settings);
@@ -30,7 +31,7 @@ public class MyMechtatel extends Mechtatel {
     public void init() {
         var itemTexts = new ArrayList<String>();
         for (int i = 0; i < 30; i++) {
-            itemTexts.add(String.format("Item %d", i));
+            itemTexts.add(String.format("アイテム#%d", i));
         }
         this.createMttListbox(
                 -0.9f, -0.9f, 0.9f, 0.91f,

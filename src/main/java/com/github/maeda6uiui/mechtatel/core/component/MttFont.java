@@ -63,7 +63,7 @@ public class MttFont extends Component {
     }
 
     public void prepare(String text, Vector2fc pTopLeft) {
-        this.prepare(text, pTopLeft, 0.0f, 0.001f, 0.002f, 0.0f);
+        this.prepare(text, pTopLeft, 0.0f, 0.001f, 0.002f, 0.01f);
     }
 
     public void createBuffers() {

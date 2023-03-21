@@ -680,10 +680,10 @@ class MttInstance {
             float scrollbarGrabHeight,
             Color scrollbarFrameColor,
             Color scrollbarGrabColor,
-            String fontName,
-            int fontStyle,
-            int fontSize,
-            Color fontColor,
+            String nonSelectedFontName,
+            int nonSelectedFontStyle,
+            int nonSelectedFontSize,
+            Color nonSelectedFontColor,
             Color frameColor,
             List<String> itemTexts,
             float itemHeight,
@@ -694,7 +694,8 @@ class MttInstance {
         var mttListbox = new MttListbox(
                 vulkanInstance, x, y, width, height,
                 scrollbarWidth, scrollbarGrabHeight, scrollbarFrameColor, scrollbarGrabColor,
-                fontName, fontStyle, fontSize, fontColor, frameColor, itemTexts, itemHeight,
+                nonSelectedFontName, nonSelectedFontStyle, nonSelectedFontSize, nonSelectedFontColor,
+                frameColor, itemTexts, itemHeight,
                 selectedFontName, selectedFontStyle, selectedFontSize, selectedFontColor);
         guiComponents.add(mttListbox);
 

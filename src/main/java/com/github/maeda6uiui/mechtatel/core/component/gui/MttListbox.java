@@ -17,6 +17,7 @@ import java.util.List;
  */
 public class MttListbox extends MttGuiComponent {
     public static class MttListboxItem extends MttGuiComponent {
+        private MttFont nonSelectedFont;
         private MttFont selectedFont;
 
         public MttListboxItem(
@@ -26,15 +27,25 @@ public class MttListbox extends MttGuiComponent {
                 float width,
                 float height,
                 String text,
-                String fontName,
-                int fontStyle,
-                int fontSize,
-                Color fontColor,
+                String nonSelectedFontName,
+                int nonSelectedFontStyle,
+                int nonSelectedFontSize,
+                Color nonSelectedFontColor,
                 String selectedFontName,
                 int selectedFontStyle,
                 int selectedFontSize,
                 Color selectedFontColor) {
-            super(vulkanInstance, x, y, width, height, text, fontName, fontStyle, fontSize, fontColor);
+            super(vulkanInstance, x, y, width, height);
+
+            nonSelectedFont = new MttFont(
+                    vulkanInstance,
+                    new Font(nonSelectedFontName, nonSelectedFontStyle, nonSelectedFontSize),
+                    true,
+                    nonSelectedFontColor,
+                    text
+            );
+            nonSelectedFont.prepare(text, new Vector2f(x, y));
+            nonSelectedFont.createBuffers();
 
             selectedFont = new MttFont(
                     vulkanInstance,
@@ -49,24 +60,24 @@ public class MttListbox extends MttGuiComponent {
         }
 
         public void changeToSelectedFont() {
-            this.getFont().setVisible(false);
+            nonSelectedFont.setVisible(false);
             selectedFont.setVisible(true);
         }
 
         public void changeToNonSelectedFont() {
-            this.getFont().setVisible(true);
+            nonSelectedFont.setVisible(true);
             selectedFont.setVisible(false);
         }
 
         @Override
         public void setVisible(boolean visible) {
-            super.setVisible(visible);
+            nonSelectedFont.setVisible(visible);
             selectedFont.setVisible(visible);
         }
 
         @Override
         public boolean isVisible() {
-            return super.isVisible() || selectedFont.isVisible();
+            return nonSelectedFont.isVisible() || selectedFont.isVisible();
         }
     }
 
@@ -84,10 +95,10 @@ public class MttListbox extends MttGuiComponent {
             float scrollbarGrabHeight,
             Color scrollbarFrameColor,
             Color scrollbarGrabColor,
-            String fontName,
-            int fontStyle,
-            int fontSize,
-            Color fontColor,
+            String nonSelectedFontName,
+            int nonSelectedFontStyle,
+            int nonSelectedFontSize,
+            Color nonSelectedFontColor,
             Color frameColor,
             List<String> itemTexts,
             float itemHeight,
@@ -95,9 +106,7 @@ public class MttListbox extends MttGuiComponent {
             int selectedFontStyle,
             int selectedFontSize,
             Color selectedFontColor) {
-        super(vulkanInstance, x, y, width - scrollbarWidth, height,
-                "Listbox", Font.SERIF, Font.PLAIN, 50, Color.WHITE);
-        this.getFont().setVisible(false);
+        super(vulkanInstance, x, y, width, height);
 
         frame = new Quad2D(
                 vulkanInstance,
@@ -115,8 +124,8 @@ public class MttListbox extends MttGuiComponent {
         items = new ArrayList<>();
         for (int i = 0; i < itemTexts.size(); i++) {
             var item = new MttListboxItem(
-                    vulkanInstance, x, y + itemHeight * i, width - scrollbarWidth, itemHeight,
-                    itemTexts.get(i), fontName, fontStyle, fontSize, fontColor,
+                    vulkanInstance, x, y + itemHeight * i, width - scrollbarWidth, itemHeight, itemTexts.get(i),
+                    nonSelectedFontName, nonSelectedFontStyle, nonSelectedFontSize, nonSelectedFontColor,
                     selectedFontName, selectedFontStyle, selectedFontSize, selectedFontColor);
             items.add(item);
 
@@ -161,7 +170,6 @@ public class MttListbox extends MttGuiComponent {
 
     @Override
     public void setVisible(boolean visible) {
-        super.setVisible(visible);
         frame.setVisible(visible);
         items.forEach(item -> item.setVisible(visible));
     }

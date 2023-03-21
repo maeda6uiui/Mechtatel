@@ -1,12 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 import com.github.maeda6uiui.mechtatel.core.component.Component;
-import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-
-import java.awt.*;
 
 /**
  * Base class for GUI components
@@ -18,7 +13,6 @@ public class MttGuiComponent extends Component {
     private float y;
     private float width;
     private float height;
-    private MttFont font;
 
     private MttGuiComponentCallbacks callbacks;
     private boolean cursorOn;
@@ -28,12 +22,7 @@ public class MttGuiComponent extends Component {
             float x,
             float y,
             float width,
-            float height,
-            String text,
-            String fontName,
-            int fontStyle,
-            int fontSize,
-            Color fontColor) {
+            float height) {
         super(vulkanInstance);
 
         this.x = x;
@@ -41,27 +30,12 @@ public class MttGuiComponent extends Component {
         this.width = width;
         this.height = height;
 
-        font = new MttFont(vulkanInstance, new Font(
-                fontName, fontStyle, fontSize), true, fontColor, text);
-        font.prepare(text, new Vector2f(x, y));
-        font.createBuffers();
-
         callbacks = new MttGuiComponentCallbacks();
         cursorOn = false;
     }
 
     public void setCallbacks(MttGuiComponentCallbacks callbacks) {
         this.callbacks = callbacks;
-    }
-
-    @Override
-    public void setVisible(boolean visible) {
-        font.setVisible(visible);
-    }
-
-    @Override
-    public boolean isVisible() {
-        return font.isVisible();
     }
 
     protected float getX() {
@@ -78,16 +52,6 @@ public class MttGuiComponent extends Component {
 
     protected float getHeight() {
         return height;
-    }
-
-    protected MttFont getFont() {
-        return font;
-    }
-
-    public void translate(float diffX, float diffY) {
-        x += diffX;
-        y += diffY;
-        font.applyMat(new Matrix4f().translate(diffX, diffY, 0.0f));
     }
 
     public boolean isCursorOn() {

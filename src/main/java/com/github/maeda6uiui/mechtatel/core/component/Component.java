@@ -58,6 +58,18 @@ public class Component {
         return vkComponent.isVisible();
     }
 
+    public int getDrawOrder() {
+        return vkComponent.getDrawOrder();
+    }
+
+    public void setDrawOrder(int drawOrder) {
+        vkComponent.setDrawOrder(drawOrder);
+    }
+
+    public boolean isTwoDComponent() {
+        return vkComponent.isTwoDComponent();
+    }
+
     public void applyMat(Matrix4fc right) {
         vkComponent.applyMat(right);
     }

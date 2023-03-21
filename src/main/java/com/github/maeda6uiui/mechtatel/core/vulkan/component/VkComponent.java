@@ -9,15 +9,30 @@ import org.lwjgl.vulkan.VkCommandBuffer;
  *
  * @author maeda6uiui
  */
-public class VkComponent {
+public class VkComponent implements Comparable<VkComponent> {
     private Matrix4f mat;
     private boolean visible;
     private String componentType;
+    private boolean twoDComponent;
+    private int drawOrder;
 
     public VkComponent() {
         mat = new Matrix4f().identity();
         visible = true;
         componentType = "unknown";
+        twoDComponent = true;
+        drawOrder = 0;
+    }
+
+    @Override
+    public int compareTo(VkComponent component) {
+        if (this.drawOrder < component.drawOrder) {
+            return -1;
+        } else if (this.drawOrder > component.drawOrder) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     public Matrix4fc getMat() {
@@ -46,6 +61,22 @@ public class VkComponent {
 
     public String getComponentType() {
         return componentType;
+    }
+
+    public int getDrawOrder() {
+        return drawOrder;
+    }
+
+    public void setDrawOrder(int drawOrder) {
+        this.drawOrder = drawOrder;
+    }
+
+    public boolean isTwoDComponent() {
+        return twoDComponent;
+    }
+
+    protected void setTwoDComponent(boolean twoDComponent) {
+        this.twoDComponent = twoDComponent;
     }
 
     public void applyMat(Matrix4fc right) {

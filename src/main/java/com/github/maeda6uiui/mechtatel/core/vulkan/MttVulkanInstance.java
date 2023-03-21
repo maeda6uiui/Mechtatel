@@ -89,7 +89,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private Map<Integer, Frame> imagesInFlight;
     private int currentFrame;
 
-    private List<VkComponent3D> components3D;
     private List<VkComponent> components;
 
     private QuadDrawer quadDrawer;
@@ -294,8 +293,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
         imagesInFlight = new HashMap<>(swapchain.getNumSwapchainImages());
 
-        //Create components
-        components3D = new ArrayList<>();
+        //Create an array list for components
         components = new ArrayList<>();
 
         //Create a quad drawer to present the back screen to the front screen
@@ -305,7 +303,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     public void cleanup() {
         quadDrawer.cleanup();
 
-        components3D.forEach(component -> component.cleanup());
         components.forEach(component -> component.cleanup());
 
         inFlightFrames.forEach(frame -> {
@@ -435,27 +432,15 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         gBufferNabor.pDescriptorSets(0),
                         null);
 
-                for (var component : components3D) {
-                    if (component.getComponentType() == "gbuffer") {
-                        ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * Integer.BYTES);
-                        component.getMat().get(pcBuffer);
-                        pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
-
-                        vkCmdPushConstants(
-                                commandBuffer,
-                                gBufferNabor.getPipelineLayout(0, 0),
-                                VK_SHADER_STAGE_VERTEX_BIT,
-                                0,
-                                pcBuffer);
-
-                        component.draw(commandBuffer, gBufferNabor.getPipelineLayout(0, 0));
-                    }
-                }
                 for (var component : components) {
                     if (component.getComponentType() == "gbuffer") {
                         ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * Integer.BYTES);
                         component.getMat().get(pcBuffer);
-                        pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
+                        if (component.isTwoDComponent()) {
+                            pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
+                        } else {
+                            pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
+                        }
 
                         vkCmdPushConstants(
                                 commandBuffer,
@@ -504,27 +489,15 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         gBufferNabor.pDescriptorSets(1),
                         null);
 
-                for (var component : components3D) {
-                    if (component.getComponentType() == "gbuffer") {
-                        ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * Integer.BYTES);
-                        component.getMat().get(pcBuffer);
-                        pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
-
-                        vkCmdPushConstants(
-                                commandBuffer,
-                                gBufferNabor.getPipelineLayout(1, 0),
-                                VK_SHADER_STAGE_VERTEX_BIT,
-                                0,
-                                pcBuffer);
-
-                        component.transfer(commandBuffer);
-                    }
-                }
                 for (var component : components) {
                     if (component.getComponentType() == "gbuffer") {
                         ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * Integer.BYTES);
                         component.getMat().get(pcBuffer);
-                        pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
+                        if (component.isTwoDComponent()) {
+                            pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
+                        } else {
+                            pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
+                        }
 
                         vkCmdPushConstants(
                                 commandBuffer,
@@ -588,27 +561,15 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         primitiveNabor.pDescriptorSets(),
                         null);
 
-                for (var component : components3D) {
-                    if (component.getComponentType() == "primitive") {
-                        ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
-                        component.getMat().get(pcBuffer);
-                        pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
-
-                        vkCmdPushConstants(
-                                commandBuffer,
-                                primitiveNabor.getPipelineLayout(0),
-                                VK_SHADER_STAGE_VERTEX_BIT,
-                                0,
-                                pcBuffer);
-
-                        component.draw(commandBuffer, primitiveNabor.getPipelineLayout(0));
-                    }
-                }
                 for (var component : components) {
                     if (component.getComponentType() == "primitive") {
                         ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
                         component.getMat().get(pcBuffer);
-                        pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
+                        if (component.isTwoDComponent()) {
+                            pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
+                        } else {
+                            pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
+                        }
 
                         vkCmdPushConstants(
                                 commandBuffer,
@@ -667,27 +628,15 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         primitiveFillNabor.pDescriptorSets(),
                         null);
 
-                for (var component : components3D) {
-                    if (component.getComponentType() == "primitive_fill") {
-                        ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
-                        component.getMat().get(pcBuffer);
-                        pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
-
-                        vkCmdPushConstants(
-                                commandBuffer,
-                                primitiveFillNabor.getPipelineLayout(0),
-                                VK_SHADER_STAGE_VERTEX_BIT,
-                                0,
-                                pcBuffer);
-
-                        component.draw(commandBuffer, primitiveFillNabor.getPipelineLayout(0));
-                    }
-                }
                 for (var component : components) {
                     if (component.getComponentType() == "primitive_fill") {
                         ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
                         component.getMat().get(pcBuffer);
-                        pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
+                        if (component.isTwoDComponent()) {
+                            pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
+                        } else {
+                            pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
+                        }
 
                         vkCmdPushConstants(
                                 commandBuffer,
@@ -822,7 +771,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         ppNabor,
                         parallelLights,
                         spotlights,
-                        components3D,
+                        components,
                         depthImageAspect,
                         shadowMappingSettings,
                         quadDrawer);
@@ -1070,19 +1019,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     //=== Methods relating to components ===
     @Override
     public boolean removeComponent(VkComponent component) {
-        boolean componentExists = false;
+        return components.remove(component);
+    }
 
-        if (components.contains(component)) {
-            component.cleanup();
-            components.remove(component);
-            componentExists = true;
-        } else if (components3D.contains(component)) {
-            component.cleanup();
-            components3D.remove(component);
-            componentExists = true;
-        }
-
-        return componentExists;
+    public void sortComponents() {
+        Collections.sort(components);
     }
 
     public VkModel3D createModel3D(String modelFilepath) {
@@ -1099,28 +1040,28 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 descriptorSets,
                 gBufferNabor.getSetCount(0),
                 modelFilepath);
-        components3D.add(model);
+        components.add(model);
 
         return model;
     }
 
     public VkModel3D duplicateModel3D(VkModel3D srcModel) {
         var model = new VkModel3D(device, commandPool, graphicsQueue, srcModel);
-        components3D.add(model);
+        components.add(model);
 
         return model;
     }
 
     public VkLine3D createLine3D(Vertex3D v1, Vertex3D v2) {
         var line = new VkLine3D(device, commandPool, graphicsQueue, v1, v2);
-        components3D.add(line);
+        components.add(line);
 
         return line;
     }
 
     public VkLine3DSet createLine3DSet() {
         var lineSet = new VkLine3DSet(device, commandPool, graphicsQueue);
-        components3D.add(lineSet);
+        components.add(lineSet);
 
         return lineSet;
     }
@@ -1132,7 +1073,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             int numHDivs,
             Vector4fc color) {
         var sphere = new VkSphere3D(device, commandPool, graphicsQueue, center, radius, numVDivs, numHDivs, color);
-        components3D.add(sphere);
+        components.add(sphere);
 
         return sphere;
     }
@@ -1145,7 +1086,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             int numHDivs,
             Vector4fc color) {
         var capsule = new VkCapsule3D(device, commandPool, graphicsQueue, center, length, radius, numVDivs, numHDivs, color);
-        components3D.add(capsule);
+        components.add(capsule);
 
         return capsule;
     }
@@ -1166,7 +1107,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
     public VkFilledQuad3D createFilledQuad3D(List<Vertex3D> vertices) {
         var filledQuad = new VkFilledQuad3D(device, commandPool, graphicsQueue, vertices);
-        components3D.add(filledQuad);
+        components.add(filledQuad);
 
         return filledQuad;
     }
@@ -1194,7 +1135,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 textureFilepath,
                 generateMipmaps,
                 vertices);
-        components3D.add(texturedQuad);
+        components.add(texturedQuad);
 
         return texturedQuad;
     }
@@ -1212,7 +1153,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 graphicsQueue,
                 srcQuad,
                 vertices);
-        components3D.add(texturedQuad);
+        components.add(texturedQuad);
 
         return texturedQuad;
     }

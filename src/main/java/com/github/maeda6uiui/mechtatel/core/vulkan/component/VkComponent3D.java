@@ -12,6 +12,7 @@ public class VkComponent3D extends VkComponent {
 
     public VkComponent3D() {
         castShadow = true;
+        this.setTwoDComponent(false);
     }
 
     public boolean isCastShadow() {

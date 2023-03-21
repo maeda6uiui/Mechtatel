@@ -71,6 +71,7 @@ public class MttListbox extends MttGuiComponent {
     }
 
     private Quad2D frame;
+    private MttVerticalScrollbar scrollbar;
     private List<MttListboxItem> items;
 
     public MttListbox(
@@ -79,6 +80,10 @@ public class MttListbox extends MttGuiComponent {
             float y,
             float width,
             float height,
+            float scrollbarWidth,
+            float scrollbarGrabHeight,
+            Color scrollbarFrameColor,
+            Color scrollbarGrabColor,
             String fontName,
             int fontStyle,
             int fontSize,
@@ -90,8 +95,8 @@ public class MttListbox extends MttGuiComponent {
             int selectedFontStyle,
             int selectedFontSize,
             Color selectedFontColor) {
-        super(vulkanInstance, x, y, width, height, "Listbox", Font.SERIF, Font.PLAIN, 50, Color.WHITE);
-
+        super(vulkanInstance, x, y, width - scrollbarWidth, height,
+                "Listbox", Font.SERIF, Font.PLAIN, 50, Color.WHITE);
         this.getFont().setVisible(false);
 
         frame = new Quad2D(
@@ -102,10 +107,15 @@ public class MttListbox extends MttGuiComponent {
                 ClassConversionUtils.convertJavaColorToJOMLVector4f(frameColor)
         );
 
+        scrollbar = new MttVerticalScrollbar(
+                vulkanInstance, x + width - scrollbarWidth, y, scrollbarWidth, height, scrollbarGrabHeight,
+                scrollbarFrameColor, scrollbarGrabColor
+        );
+
         items = new ArrayList<>();
         for (int i = 0; i < itemTexts.size(); i++) {
             var item = new MttListboxItem(
-                    vulkanInstance, x, y + itemHeight * i, width, itemHeight,
+                    vulkanInstance, x, y + itemHeight * i, width - scrollbarWidth, itemHeight,
                     itemTexts.get(i), fontName, fontStyle, fontSize, fontColor,
                     selectedFontName, selectedFontStyle, selectedFontSize, selectedFontColor);
             items.add(item);
@@ -126,6 +136,10 @@ public class MttListbox extends MttGuiComponent {
             int mButtonPressingCount,
             int rButtonPressingCount) {
         super.update(
+                cursorX, cursorY, windowWidth, windowHeight,
+                lButtonPressingCount, mButtonPressingCount, rButtonPressingCount);
+
+        scrollbar.update(
                 cursorX, cursorY, windowWidth, windowHeight,
                 lButtonPressingCount, mButtonPressingCount, rButtonPressingCount);
 

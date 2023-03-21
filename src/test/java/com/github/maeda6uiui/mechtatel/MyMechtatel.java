@@ -34,6 +34,7 @@ public class MyMechtatel extends Mechtatel {
         }
         this.createMttListbox(
                 -0.9f, -0.9f, 0.9f, 0.91f,
+                0.05f, 0.1f, Color.LIGHT_GRAY, Color.DARK_GRAY,
                 Font.SANS_SERIF, Font.PLAIN, 32, Color.LIGHT_GRAY, Color.WHITE,
                 itemTexts, 0.1f, Font.SANS_SERIF, Font.BOLD, 32, Color.WHITE);
     }

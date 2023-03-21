@@ -449,6 +449,10 @@ public class Mechtatel implements IMechtatel {
             float y,
             float width,
             float height,
+            float scrollbarWidth,
+            float scrollbarGrabHeight,
+            Color scrollbarFrameColor,
+            Color scrollbarGrabColor,
             String fontName,
             int fontStyle,
             int fontSize,
@@ -462,6 +466,7 @@ public class Mechtatel implements IMechtatel {
             Color selectedFontColor) {
         return instance.createMttListbox(
                 x, y, width, height,
+                scrollbarWidth, scrollbarGrabHeight, scrollbarFrameColor, scrollbarGrabColor,
                 fontName, fontStyle, fontSize, fontColor, frameColor, itemTexts, itemHeight,
                 selectedFontName, selectedFontStyle, selectedFontSize, selectedFontColor);
     }

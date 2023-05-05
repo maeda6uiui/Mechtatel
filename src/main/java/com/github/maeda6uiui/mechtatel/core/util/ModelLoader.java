@@ -1,11 +1,15 @@
 package com.github.maeda6uiui.mechtatel.core.util;
 
+import com.github.dabasan.jxm.bd1.BD1Buffer;
+import com.github.dabasan.jxm.bd1.BD1Manipulator;
 import com.github.maeda6uiui.mechtatel.core.component.Vertex3DUV;
 import org.joml.*;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 import org.lwjgl.system.MemoryStack;
 
+import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.*;
 
@@ -165,11 +169,61 @@ public class ModelLoader {
         }
     }
 
-    public static Model loadModel(String modelFilepath) {
+    private static Model loadModelWithJXM(String modelFilepath) throws IOException {
+        var manipulator = new BD1Manipulator(modelFilepath);
+
+        //Rescale the model so that 1 coord represents 1 meter
+        final float RESCALE_FACTOR = 1.7f / 20.0f;
+        manipulator.rescale(RESCALE_FACTOR, RESCALE_FACTOR, RESCALE_FACTOR);
+
+        List<BD1Buffer> buffers = manipulator.getBuffers(false);
+
+        var model = new Model(buffers.size(), buffers.size());
+        for (int i = 0; i < buffers.size(); i++) {
+            BD1Buffer buffer = buffers.get(i);
+
+            String textureFilename = manipulator.getTextureFilename(buffer.textureID);
+            model.materials.get(i).diffuseTexFilepath = textureFilename;
+            model.meshes.get(i).materialIndex = i;
+
+            IntBuffer indexBuffer = buffer.indexBuffer;
+            for (int j = 0; j < indexBuffer.capacity(); j++) {
+                model.meshes.get(i).indices.add(indexBuffer.get(j));
+            }
+
+            FloatBuffer posBuffer = buffer.posBuffer;
+            FloatBuffer normBuffer = buffer.normBuffer;
+            FloatBuffer uvBuffer = buffer.uvBuffer;
+            int numVertices = posBuffer.capacity() / 3;
+            for (int j = 0; j < numVertices; j++) {
+                var position = new Vector3f(
+                        posBuffer.get(j * 3),
+                        posBuffer.get(j * 3 + 1),
+                        posBuffer.get(j * 3 + 2)
+                );
+                var normal = new Vector3f(
+                        normBuffer.get(j * 3),
+                        normBuffer.get(j * 3 + 1),
+                        normBuffer.get(j * 3 + 2)
+                );
+                var texCoords = new Vector2f(
+                        uvBuffer.get(j * 2) * (-1.0f),
+                        uvBuffer.get(j * 2 + 1)
+                );
+
+                var vertex = new Vertex3DUV(position, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), texCoords, normal);
+                model.meshes.get(i).vertices.add(vertex);
+            }
+        }
+
+        return model;
+    }
+
+    private static Model loadModelWithAssimp(String modelFilepath) throws IOException {
         try (AIScene scene = aiImportFile(modelFilepath, aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs)) {
             if (scene == null || scene.mRootNode() == null) {
                 String errorStr = String.format("Could not load a model %s\n%s", modelFilepath, aiGetErrorString());
-                throw new RuntimeException(errorStr);
+                throw new IOException(errorStr);
             }
 
             int numMaterials = scene.mNumMaterials();
@@ -193,6 +247,14 @@ public class ModelLoader {
             }
 
             return model;
+        }
+    }
+
+    public static Model loadModel(String modelFilepath) throws IOException {
+        if (modelFilepath.endsWith(".bd1") || modelFilepath.endsWith(".BD1")) {
+            return loadModelWithJXM(modelFilepath);
+        } else {
+            return loadModelWithAssimp(modelFilepath);
         }
     }
 }

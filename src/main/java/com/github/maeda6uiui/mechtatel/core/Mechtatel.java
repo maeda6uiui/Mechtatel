@@ -223,7 +223,7 @@ public class Mechtatel implements IMechtatel {
         instance.sortComponents();
     }
 
-    public Model3D createModel3D(String modelFilepath) {
+    public Model3D createModel3D(String modelFilepath) throws IOException {
         return instance.createModel3D(modelFilepath);
     }
 

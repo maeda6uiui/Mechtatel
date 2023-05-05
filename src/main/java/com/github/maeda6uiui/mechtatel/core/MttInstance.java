@@ -455,7 +455,7 @@ class MttInstance {
         vulkanInstance.sortComponents();
     }
 
-    public Model3D createModel3D(String modelFilepath) {
+    public Model3D createModel3D(String modelFilepath) throws IOException {
         var model = new Model3D(vulkanInstance, modelFilepath);
         return model;
     }

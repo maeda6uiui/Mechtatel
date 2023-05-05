@@ -8,6 +8,7 @@ import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkQueue;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.nio.file.Paths;
@@ -101,7 +102,7 @@ public class VkModel3D extends VkComponent3D {
             VkQueue graphicsQueue,
             List<Long> descriptorSets,
             int setCount,
-            String modelFilepath) {
+            String modelFilepath) throws IOException {
         this.device = device;
 
         isDuplicatedModel = false;

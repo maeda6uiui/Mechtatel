@@ -4,6 +4,8 @@ import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
 
+import java.io.IOException;
+
 /**
  * 3D model
  *
@@ -13,7 +15,7 @@ public class Model3D extends Component3D {
     private String modelFilepath;
     private VkModel3D vkModel;
 
-    public Model3D(MttVulkanInstance vulkanInstance, String modelFilepath) {
+    public Model3D(MttVulkanInstance vulkanInstance, String modelFilepath) throws IOException {
         super(vulkanInstance);
 
         this.modelFilepath = modelFilepath;

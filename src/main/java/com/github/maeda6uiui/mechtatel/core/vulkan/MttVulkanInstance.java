@@ -34,6 +34,7 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.awt.*;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
@@ -1026,7 +1027,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         Collections.sort(components);
     }
 
-    public VkModel3D createModel3D(String modelFilepath) {
+    public VkModel3D createModel3D(String modelFilepath) throws IOException {
         int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
         var descriptorSets = new ArrayList<Long>();
         for (int i = 0; i < numDescriptorSets; i++) {

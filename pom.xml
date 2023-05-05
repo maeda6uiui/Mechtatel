@@ -164,5 +164,11 @@
             <artifactId>Libbulletjme</artifactId>
             <version>17.5.4</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.dabasan</groupId>
+            <artifactId>jxm-bd1</artifactId>
+            <version>1.0.3</version>
+        </dependency>
     </dependencies>
 </project>

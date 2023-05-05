@@ -2,9 +2,8 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttLabel;
+import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 
-import java.awt.*;
 import java.io.IOException;
 
 
@@ -28,18 +27,17 @@ public class MyMechtatel extends Mechtatel {
         new MyMechtatel(settings);
     }
 
-    private int enterPressCount;
-    private MttLabel label;
+    private FreeCamera camera;
 
     @Override
     public void init() {
-        enterPressCount = 0;
+        try {
+            this.createModel3D("./Mechtatel/Model/Cube/cube.bd1");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        var requiredChars = "0123456789";
-        label = this.createMttLabel(
-                -0.9f, -0.9f, 0.9f, 0.2f, requiredChars,
-                Font.SANS_SERIF, Font.PLAIN, 32, Color.WHITE, Color.WHITE);
-        label.prepare(String.valueOf(enterPressCount));
+        camera = new FreeCamera(this.getCamera());
     }
 
     @Override
@@ -54,9 +52,17 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void update() {
-        if (this.getKeyboardPressingCount("ENTER") == 1) {
-            enterPressCount++;
-            label.prepare(String.valueOf(enterPressCount));
-        }
+        camera.translate(
+                this.getKeyboardPressingCount("W"),
+                this.getKeyboardPressingCount("S"),
+                this.getKeyboardPressingCount("A"),
+                this.getKeyboardPressingCount("D")
+        );
+        camera.rotate(
+                this.getKeyboardPressingCount("UP"),
+                this.getKeyboardPressingCount("DOWN"),
+                this.getKeyboardPressingCount("LEFT"),
+                this.getKeyboardPressingCount("RIGHT")
+        );
     }
 }

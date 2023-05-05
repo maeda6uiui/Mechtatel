@@ -31,7 +31,7 @@ public class InputCounter {
     }
 
     public Map<String, Integer> getPressingCounts() {
-        return pressingCounts;
+        return new HashMap<>(pressingCounts);
     }
 
     public int getReleasingCount(String key) {
@@ -39,7 +39,7 @@ public class InputCounter {
     }
 
     public Map<String, Integer> getReleasingCounts() {
-        return releasingCounts;
+        return new HashMap<>(releasingCounts);
     }
 
     public void setPressingFlag(String key, boolean pressingFlag) {

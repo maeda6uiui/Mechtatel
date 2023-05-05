@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.input.keyboard;
 import com.github.maeda6uiui.mechtatel.core.input.InputCounter;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Keyboard
@@ -21,8 +22,16 @@ public class Keyboard {
         return counter.getPressingCount(key);
     }
 
+    public Map<String, Integer> getPressingCounts() {
+        return counter.getPressingCounts();
+    }
+
     public int getReleasingCount(String key) {
         return counter.getReleasingCount(key);
+    }
+
+    public Map<String, Integer> getReleasingCounts() {
+        return counter.getReleasingCounts();
     }
 
     public void setPressingFlag(int keyCode, boolean pressingFlag) {

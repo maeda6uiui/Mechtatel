@@ -30,8 +30,16 @@ public class InputCounter {
         return pressingCounts.get(key);
     }
 
+    public Map<String, Integer> getPressingCounts() {
+        return pressingCounts;
+    }
+
     public int getReleasingCount(String key) {
         return releasingCounts.get(key);
+    }
+
+    public Map<String, Integer> getReleasingCounts() {
+        return releasingCounts;
     }
 
     public void setPressingFlag(String key, boolean pressingFlag) {

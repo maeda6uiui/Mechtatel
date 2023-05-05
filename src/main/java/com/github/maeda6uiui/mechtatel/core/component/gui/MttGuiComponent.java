@@ -3,6 +3,8 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 import com.github.maeda6uiui.mechtatel.core.component.Component;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 
+import java.util.Map;
+
 /**
  * Base class for GUI components
  *
@@ -85,6 +87,10 @@ public class MttGuiComponent extends Component {
         } else {
             cursorOn = false;
         }
+    }
+
+    public void updateKeyInputs(Map<String, Integer> pressingCounts) {
+
     }
 
     public void setPosition(float x, float y) {

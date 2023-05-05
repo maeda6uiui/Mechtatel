@@ -223,6 +223,7 @@ class MttInstance {
                             this.getMousePressingCount("BUTTON_MIDDLE"),
                             this.getMousePressingCount("BUTTON_RIGHT")
                     );
+                    guiComponent.updateKeyInputs(keyboard.getPressingCounts());
                 });
                 physicalObjects.forEach(physicalObject -> {
                     physicalObject.updateObject();

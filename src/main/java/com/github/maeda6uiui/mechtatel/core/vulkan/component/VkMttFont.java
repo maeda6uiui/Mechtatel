@@ -111,6 +111,8 @@ public class VkMttFont extends VkComponent {
             float glyphWidthScale,
             float lineHeightScale,
             float vOffset) {
+        this.clear();
+
         float drawX = pTopLeft.x();
         float drawY = pTopLeft.y();
 

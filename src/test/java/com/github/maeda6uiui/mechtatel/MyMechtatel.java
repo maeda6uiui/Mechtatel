@@ -2,10 +2,10 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.component.gui.MttLabel;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
 
 
 public class MyMechtatel extends Mechtatel {
@@ -21,23 +21,25 @@ public class MyMechtatel extends Mechtatel {
         }
         //If the program fails to load the JSON file, then use the default settings
         catch (IOException e) {
+            System.out.println("Failed to load setting file. Use default settings");
             settings = new MttSettings();
         }
 
         new MyMechtatel(settings);
     }
 
+    private int enterPressCount;
+    private MttLabel label;
+
     @Override
     public void init() {
-        var itemTexts = new ArrayList<String>();
-        for (int i = 0; i < 30; i++) {
-            itemTexts.add(String.format("アイテム#%d", i));
-        }
-        this.createMttListbox(
-                -0.9f, -0.9f, 0.9f, 0.91f,
-                0.05f, 0.1f, Color.LIGHT_GRAY, Color.DARK_GRAY,
-                Font.SANS_SERIF, Font.PLAIN, 32, Color.LIGHT_GRAY, Color.WHITE,
-                itemTexts, 0.1f, Font.SANS_SERIF, Font.BOLD, 32, Color.WHITE);
+        enterPressCount = 0;
+
+        var requiredChars = "0123456789";
+        label = this.createMttLabel(
+                -0.9f, -0.9f, 0.9f, 0.2f, requiredChars,
+                Font.SANS_SERIF, Font.PLAIN, 32, Color.WHITE, Color.WHITE);
+        label.prepare(String.valueOf(enterPressCount));
     }
 
     @Override
@@ -52,6 +54,9 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void update() {
-
+        if (this.getKeyboardPressingCount("ENTER") == 1) {
+            enterPressCount++;
+            label.prepare(String.valueOf(enterPressCount));
+        }
     }
 }

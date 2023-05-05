@@ -472,6 +472,21 @@ public class Mechtatel implements IMechtatel {
                 selectedFontName, selectedFontStyle, selectedFontSize, selectedFontColor);
     }
 
+    public MttLabel createMttLabel(
+            float x,
+            float y,
+            float width,
+            float height,
+            String requiredChars,
+            String fontName,
+            int fontStyle,
+            int fontSize,
+            Color fontColor,
+            Color frameColor) {
+        return instance.createMttLabel(
+                x, y, width, height, requiredChars, fontName, fontStyle, fontSize, fontColor, frameColor);
+    }
+
     public PhysicalPlane3D createPhysicalPlane3D(Vector3fc normal, float constant) {
         return instance.createPhysicalPlane3D(normal, constant);
     }

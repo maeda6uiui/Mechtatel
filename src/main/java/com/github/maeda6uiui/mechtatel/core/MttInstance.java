@@ -702,6 +702,24 @@ class MttInstance {
         return mttListbox;
     }
 
+    public MttLabel createMttLabel(
+            float x,
+            float y,
+            float width,
+            float height,
+            String requiredChars,
+            String fontName,
+            int fontStyle,
+            int fontSize,
+            Color fontColor,
+            Color frameColor) {
+        var mttLabel = new MttLabel(
+                vulkanInstance, x, y, width, height, requiredChars, fontName, fontStyle, fontSize, fontColor, frameColor);
+        guiComponents.add(mttLabel);
+
+        return mttLabel;
+    }
+
     public boolean removeGuiComponent(MttGuiComponent guiComponent) {
         return guiComponents.remove(guiComponent);
     }

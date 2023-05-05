@@ -176,6 +176,10 @@ public class ModelLoader {
         final float RESCALE_FACTOR = 1.7f / 20.0f;
         manipulator.rescale(RESCALE_FACTOR, RESCALE_FACTOR, RESCALE_FACTOR);
 
+        //Invert the model along the Z-axis
+        //so that it matches the right-handed coordinate system of OpenGL and Vulkan
+        manipulator.invertZ();
+
         List<BD1Buffer> buffers = manipulator.getBuffers(false);
 
         var model = new Model(buffers.size(), buffers.size());
@@ -207,7 +211,7 @@ public class ModelLoader {
                         normBuffer.get(j * 3 + 2)
                 );
                 var texCoords = new Vector2f(
-                        uvBuffer.get(j * 2) * (-1.0f),
+                        uvBuffer.get(j * 2),
                         uvBuffer.get(j * 2 + 1)
                 );
 

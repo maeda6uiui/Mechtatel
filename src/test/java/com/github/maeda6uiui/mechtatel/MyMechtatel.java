@@ -2,10 +2,14 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import com.github.maeda6uiui.mechtatel.core.sound.Sound2D;
-import com.goxr3plus.streamplayer.stream.StreamPlayerException;
+import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
+import com.github.maeda6uiui.mechtatel.core.component.Model3D;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MyMechtatel extends Mechtatel {
@@ -28,20 +32,51 @@ public class MyMechtatel extends Mechtatel {
         new MyMechtatel(settings);
     }
 
-    private Sound2D sound;
+    private FreeCamera camera;
+    private Model3D plane;
+    private Model3D teapot;
+    private List<Model3D> cubes;
+    private List<Vector3f> cubePositions;
+    private List<Float> cubeRotations;
 
     @Override
     public void init() {
+        camera = new FreeCamera(this.getCamera());
+
+        cubes = new ArrayList<>();
+        cubePositions = new ArrayList<>();
+        cubeRotations = new ArrayList<>();
         try {
-            sound = new Sound2D("./Mechtatel/Sound/no_9.mp3");
-        } catch (StreamPlayerException e) {
+            plane = this.createModel3D("./Mechtatel/Model/Plane/plane.obj");
+            plane.rescale(new Vector3f(2.0f, 1.0f, 2.0f));
+
+            teapot = this.createModel3D("./Mechtatel/Model/Teapot/teapot.obj");
+            teapot.rescale(new Vector3f(2.0f, 2.0f, 2.0f));
+
+            var cube = this.createModel3D("./Mechtatel/Model/Cube/cube.obj");
+            cube.translate(new Vector3f(6.0f, 2.0f, 0.0f));
+            cubes.add(cube);
+            cubePositions.add(new Vector3f(6.0f, 2.0f, 0.0f));
+            cubeRotations.add(0.0f);
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
+        var naborNames = new ArrayList<String>();
+        naborNames.add("parallel_light");
+        naborNames.add("fog");
+        naborNames.add("shadow_mapping");
+        this.createPostProcessingNabors(naborNames);
+
+        var parallelLight = this.createParallelLight();
+
+        this.getFog().setStart(10.0f);
+        this.getFog().setEnd(20.0f);
     }
 
     @Override
     public void dispose() {
-        sound.stop();
+
     }
 
     @Override
@@ -51,18 +86,52 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void update() {
+        camera.translate(
+                this.getKeyboardPressingCount("W"),
+                this.getKeyboardPressingCount("S"),
+                this.getKeyboardPressingCount("A"),
+                this.getKeyboardPressingCount("D")
+        );
+        camera.rotate(
+                this.getKeyboardPressingCount("UP"),
+                this.getKeyboardPressingCount("DOWN"),
+                this.getKeyboardPressingCount("LEFT"),
+                this.getKeyboardPressingCount("RIGHT")
+        );
+
         if (this.getKeyboardPressingCount("ENTER") == 1) {
-            try {
-                sound.play();
-            } catch (StreamPlayerException e) {
-                e.printStackTrace();
-            }
-        } else if (this.getKeyboardPressingCount("P") == 1) {
-            sound.pause();
-        } else if (this.getKeyboardPressingCount("R") == 1) {
-            sound.resume();
-        } else if (this.getKeyboardPressingCount("S") == 1) {
-            sound.stop();
+            var srcCube = cubes.get(0);
+            var dupCube = this.duplicateModel3D(srcCube);
+
+            dupCube.translate(new Vector3f(6.0f, 2.0f, 0.0f));
+            cubes.add(dupCube);
+            cubePositions.add(new Vector3f(6.0f, 2.0f, 0.0f));
+            cubeRotations.add(0.0f);
+        }
+
+        for (int i = 0; i < cubes.size(); i++) {
+            var cube = cubes.get(i);
+            var cubePosition = cubePositions.get(i);
+            var cubeRotation = cubeRotations.get(i);
+
+            //Translation
+            var posRotMat = new Matrix4f().rotate((float) Math.toRadians(0.5f), 0.0f, 1.0f, 0.0f);
+            var newCubePosition = posRotMat.transformPosition(cubePosition);
+            cubePositions.set(i, newCubePosition);
+
+            var translateMat = new Matrix4f().translate(newCubePosition);
+
+            //Rotation
+            final float CUBE_ROT_ANGLE = (float) Math.toRadians(0.5f);
+            var newCubeRotation = cubeRotation + CUBE_ROT_ANGLE;
+            cubeRotations.set(i, newCubeRotation);
+
+            var rotXMat = new Matrix4f().rotateX(newCubeRotation);
+            var rotYMat = new Matrix4f().rotateY(newCubeRotation);
+            var rotZMat = new Matrix4f().rotateZ(newCubeRotation);
+
+            var mat = translateMat.mul(rotZMat).mul(rotYMat).mul(rotXMat);
+            cube.setMat(mat);
         }
     }
 }

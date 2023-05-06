@@ -4,6 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
+import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -12,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MyMechtatel extends Mechtatel {
-    public MyMechtatel(MttSettings settings) {
+public class ShadowMappingTest extends Mechtatel {
+    public ShadowMappingTest(MttSettings settings) {
         super(settings);
     }
 
@@ -29,7 +30,7 @@ public class MyMechtatel extends Mechtatel {
             settings = new MttSettings();
         }
 
-        new MyMechtatel(settings);
+        new ShadowMappingTest(settings);
     }
 
     private FreeCamera camera;
@@ -72,6 +73,10 @@ public class MyMechtatel extends Mechtatel {
 
         this.getFog().setStart(10.0f);
         this.getFog().setEnd(20.0f);
+
+        var shadowMappingSettings = new ShadowMappingSettings();
+        shadowMappingSettings.setBiasCoefficient(0.002f);
+        this.setShadowMappingSettings(shadowMappingSettings);
     }
 
     @Override

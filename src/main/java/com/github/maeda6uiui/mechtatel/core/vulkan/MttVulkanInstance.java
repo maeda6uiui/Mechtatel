@@ -767,7 +767,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                         device,
                         commandPool,
                         graphicsQueue,
-                        gBufferNabor,
+                        mergeScenesFillNabor,
                         lastPPNabor,
                         ppNabor,
                         parallelLights,

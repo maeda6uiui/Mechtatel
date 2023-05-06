@@ -9,7 +9,7 @@ import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass1InfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass2InfoUBO;
@@ -160,7 +160,7 @@ public class ShadowMappingNaborRunner {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            GBufferNabor gBufferNabor,
+            MergeScenesNabor mergeScenesFillNabor,
             PostProcessingNabor lastPPNabor,
             PostProcessingNabor shadowMappingNabor,
             List<ParallelLight> shadowParallelLights,
@@ -214,19 +214,19 @@ public class ShadowMappingNaborRunner {
 
                 //First post-processing
                 if (lastPPNabor == null) {
-                    gBufferNabor.transitionAlbedoImage(commandPool, graphicsQueue);
-                    gBufferNabor.transitionDepthImage(commandPool, graphicsQueue);
-                    gBufferNabor.transitionPositionImage(commandPool, graphicsQueue);
-                    gBufferNabor.transitionNormalImage(commandPool, graphicsQueue);
+                    mergeScenesFillNabor.transitionAlbedoImage(commandPool, graphicsQueue);
+                    mergeScenesFillNabor.transitionDepthImage(commandPool, graphicsQueue);
+                    mergeScenesFillNabor.transitionPositionImage(commandPool, graphicsQueue);
+                    mergeScenesFillNabor.transitionNormalImage(commandPool, graphicsQueue);
 
                     shadowMappingNabor.bindImages(
                             commandBuffer,
                             1,
                             0,
-                            gBufferNabor.getAlbedoImageView(),
-                            gBufferNabor.getDepthImageView(),
-                            gBufferNabor.getPositionImageView(),
-                            gBufferNabor.getNormalImageView());
+                            mergeScenesFillNabor.getAlbedoImageView(),
+                            mergeScenesFillNabor.getDepthImageView(),
+                            mergeScenesFillNabor.getPositionImageView(),
+                            mergeScenesFillNabor.getNormalImageView());
                 } else {
                     lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
 
@@ -235,9 +235,9 @@ public class ShadowMappingNaborRunner {
                             1,
                             0,
                             lastPPNabor.getColorImageView(),
-                            gBufferNabor.getDepthImageView(),
-                            gBufferNabor.getPositionImageView(),
-                            gBufferNabor.getNormalImageView());
+                            mergeScenesFillNabor.getDepthImageView(),
+                            mergeScenesFillNabor.getPositionImageView(),
+                            mergeScenesFillNabor.getNormalImageView());
                 }
 
                 int numShadowMaps = shadowParallelLights.size() + shadowSpotlights.size();
@@ -266,7 +266,7 @@ public class ShadowMappingNaborRunner {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            GBufferNabor gBufferNabor,
+            MergeScenesNabor mergeScenesFillNabor,
             PostProcessingNabor lastPPNabor,
             PostProcessingNabor shadowMappingNabor,
             List<ParallelLight> parallelLights,
@@ -327,7 +327,7 @@ public class ShadowMappingNaborRunner {
                 device,
                 commandPool,
                 graphicsQueue,
-                gBufferNabor,
+                mergeScenesFillNabor,
                 lastPPNabor,
                 shadowMappingNabor,
                 shadowParallelLights,

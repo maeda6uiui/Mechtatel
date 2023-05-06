@@ -83,11 +83,11 @@ BD1ファイルの読込機能を実装しました。
 塗りつぶした四角形の描画機能を実装しました。
 今までありそうで地味に実装していなかった機能です。
 
-<img src="./Image/filled_quadrangles.png" alt="塗りつぶしされた四角形" style="zoom:50%;" />
+![塗りつぶしされた四角形](./Image/filled_quadrangles.png)
 
 塗りつぶした四角形を用いて縦向きのスクロールバーを実装しました。
 
-<img src="./Image/vertical_scrollbars.png" alt="縦向きのスクロールバー" style="zoom:50%;" />
+![縦向きのスクロールバー](./Image/vertical_scrollbars.png)
 
 どのくらいスクロールされたのか取得するメソッドはこれから用意します。
 
@@ -108,14 +108,14 @@ BD1ファイルの読込機能を実装しました。
 ボタンのつもりです。
 カーソルを合わせると色が変化します。
 
-<img src="./Image/button.png" alt="ボタン" style="zoom:50%;" />
+![ボタン](./Image/button.png)
 
 クリックしたときの動作はまだ実装できていません。
 最初はボタンの外枠も描画するようにしていましたが、自分の力量不足でただ鬱陶しいだけになってしまったので、文字だけ描画するようにしました。
 
 ### 2023-01-29
 
-<img src="./Image/collision_3.png" alt="モデルとボックスの衝突判定" style="zoom:50%;" />
+![モデルとボックスの衝突判定](./Image/collision_3.png)
 
 この画像の撮影のためにスポットライトを複数設置しようとしたら、なぜか最初に設定したライトしか反映されず、バリデーションエラーも特に出ていなかったので、原因を突き止めるのに時間がかかってしまいました。
 原因としては、VkDescriptorSetLayoutBinding.descriptorCountにセットする値が間違っていたのと、余計なVkWriteDescriptorSetを作成してvkUpdateDescriptorSetsを実行していたことでした。
@@ -132,7 +132,7 @@ BD1ファイルの読込機能を実装しました。
 カプセルとボックスの当たり判定も実装しました。
 ゲームを作る上で必要な当たり判定はこれで一通り実装できたと思います。
 
-<img src="./Image/collision_2.png" alt="球、カプセル、ボックス、平面の衝突判定" style="zoom:50%;" />
+![球、カプセル、ボックス、平面の衝突判定](./Image/collision_2.png)
 
 ### 2022-10-09
 
@@ -140,7 +140,7 @@ BD1ファイルの読込機能を実装しました。
 物理演算にはBulletを使用しています。
 画像だけだとイマイチわかりにくいですね...。
 
-<img src="./Image/collision.png" alt="球と平面の衝突判定" style="zoom:50%;" />
+![球と平面の衝突判定](./Image/collision.png)
 
 ### 2022-10-08
 
@@ -153,23 +153,23 @@ BD1ファイルの読込機能を実装しました。
 任意のUnicode文字を表示できるようになりました。
 (表示する文字に対応しているフォントを使用する必要があります)
 
-<img src="./Image/text_rendering_3.png" alt="テキストの描画3" style="zoom:50%;" />
+![テキストの描画3](./Image/text_rendering_3.png)
 
 ### 2022-10-01
 
 まだ完全ではないですが、それっぽい描画結果を得ることができました。
 
-<img src="./Image/text_rendering.png" alt="テキストの描画" style="zoom:50%;" />
+![テキストの描画](./Image/text_rendering.png)
 
 まだ修正すべき点も多いですが、任意のASCII文字を表示できるようになりました。
 
-<img src="./Image/text_rendering_2.png" alt="テキストの描画2" style="zoom:50%;" />
+![テキストの描画2](./Image/text_rendering_2.png)
 
 ### 2022-09-11
 
 2D直線の描画機能を実装しました。
 
-<img src="./Image/line_2d.png" alt="2D直線の描画" style="zoom:50%;" />
+![2D直線の描画](./Image/line_2d.png)
 
 2Dの描画機能を一通り実装できたら、次はテキストの描画に移る予定です。
 ちょっと調べてみたところ、テキストの描画はそんなに簡単ではなさそうですね...。
@@ -178,7 +178,7 @@ BD1ファイルの読込機能を実装しました。
 
 カプセルの描画機能を実装しました。
 
-<img src="./Image/capsule.png" alt="カプセルの描画" style="zoom:50%;" />
+![カプセルの描画](./Image/capsule.png)
 
 キーボードでカメラを操作できる機能(`FreeCamera`)を実装しました。
 
@@ -186,15 +186,15 @@ BD1ファイルの読込機能を実装しました。
 
 球の描画機能を実装しました。
 
-<img src="./Image/sphere.png" alt="球の描画" style="zoom:50%;" />
+![球の描画](./Image/sphere.png)
 
 ### 2022-05-06
 
 直線の描画機能を実装しました。
 
-<img src="./Image/lines.png" alt="直線の描画" style="zoom:50%;" />
+![直線の描画](./Image/lines.png)
 
-<img src="./Image/grid.png" alt="グリッドの描画" style="zoom:50%;" />
+![グリッドの描画](./Image/grid.png)
 
 関係ないですが、開発環境を再びWindowsに戻しました。
 
@@ -207,7 +207,7 @@ BD1ファイルの読込機能を実装しました。
 開発環境をUbuntuに移行しました。
 Ubuntuでも問題なく動作しているように見えます。
 
-<img src="./Image/run_on_ubuntu.jpg" alt="Ubuntuで実行" style="zoom:50%;" />
+![Ubuntuで実行](./Image/run_on_ubuntu.jpg)
 
 ただ、Windowsで開発していたときには出なかったValidation Errorが出ます。
 
@@ -227,19 +227,19 @@ Windowsで開発しているときにはこのValidation Errorは出なかった
 
 基礎的なシャドウマッピングは実装できました。
 
-<img src="./Image/shadow_mapping_2.jpg" alt="Shadow Mapping (Parallel Light)" style="zoom:50%;" />
+![Shadow](./Image/shadow_mapping_2.jpg)
 
-<img src="./Image/shadow_mapping_3.jpg" alt="Shadow Mapping (Spotlight)" style="zoom:50%;" />
+![Shadow](./Image/shadow_mapping_3.jpg)
 
 色付きの影を出すこともできます。
 
-<img src="./Image/shadow_mapping_4.jpg" alt="Shadow Mapping (Spotlight) 2" style="zoom:50%;" />
+![Shadow](./Image/shadow_mapping_4.jpg)
 
 ### 2021-11-14
 
 ライトから見たDepthは正しいようだ。
 
-<img src="./Image/shadow_mapping_depth.jpg" alt="Shadow Mapping Depth" style="zoom:50%;" />
+![Shadow](./Image/shadow_mapping_depth.jpg)
 
 こんなコードを書いてデバッグを試みた。
 
@@ -250,7 +250,7 @@ float shadowDepth=texture(sampler2D(shadowDepthTextures[0],textureSampler),shado
 outColor=vec4(shadowCoords.z-shadowDepth);
 ```
 
-<img src="./Image/shadow_mapping_debug.jpg" alt="Shadow Mapping Debug" style="zoom:50%;" />
+![Shadow](./Image/shadow_mapping_debug.jpg)
 
 なんか影らしきものは出ている。
 
@@ -267,7 +267,7 @@ shadowCoords.z > shadowDepthなら、その座標には影がかかっている�
 
 何とかできました。影が荒いのは許してください。
 
-<img src="./Image/shadow_mapping.jpg" alt="Shadow Mapping" style="zoom:50%;" />
+![Shadow](./Image/shadow_mapping.jpg)
 
 Fragment Shaderで使用しているbiasMatが原因でした。
 
@@ -287,7 +287,7 @@ biasMat[3]=vec4(0.5,0.5,0.0,1.0);
 
 近いところまで来ている気がするけど、どこが間違っているのかわからない。
 
-<img src="./Image/shadow_mapping_invalid.jpg" alt="Shadow Mapping Invalid" style="zoom:50%;" />
+![Shadow](./Image/shadow_mapping_invalid.jpg)
 
 遅延レンダリング(Deferred Rendering)を採用している関係で、今のやり方がそもそも間違っているのかもしれない。
 以前にOpenGLで前方レンダリング(Forward Rendering)を用いてシャドウマッピングを実装したときには、ここまで苦労しなかったような気がする...。
@@ -303,13 +303,13 @@ biasMat[3]=vec4(0.5,0.5,0.0,1.0);
 
 点光源(ポイントライト)を実装しました。
 
-<img src="./Image/point_light.jpg" alt="Point Light" style="zoom:50%;" />
+![Point](./Image/point_light.jpg)
 
 複数のポイントライトを設置するとこんな感じになります。
 
-<img src="./Image/point_lights.jpg" alt="Point Lights" style="zoom:50%;" />
+![Point](./Image/point_lights.jpg)
 
-<img src="./Image/point_lights_2.jpg" alt="Point Lights 2" style="zoom:50%;" />
+![Point](./Image/point_lights_2.jpg)
 
 スポットライトのコードを流用することで比較的簡単に実装できました。
 
@@ -319,7 +319,7 @@ biasMat[3]=vec4(0.5,0.5,0.0,1.0);
 
 スポットライトを実装しました。
 
-<img src="./Image/spotlights.jpg" alt="Spotlights" style="zoom:50%;" />
+![Spotlights](./Image/spotlights.jpg)
 
 Post Processing用のNaborを接続するのは比較的簡単にできるようになりました。
 ユーザが書くコードとしては、以下のような感じになります。
@@ -347,13 +347,13 @@ this.createPostProcessingNabors(ppNaborNames);
 
 フォグを実装しました。
 
-<img src="./Image/fog.jpg" alt="Fog" style="zoom:50%;" />
+![Fog](./Image/fog.jpg)
 
 ### 2021-09-25
 
 シェーディングを実装しました。
 
-<img src="./Image/shading.jpg" alt="Shading" style="zoom:50%;" />
+![Shading](./Image/shading.jpg)
 
 ### 2021-09-20
 
@@ -368,19 +368,19 @@ GBufferNaborから出力される内容としては、以下のようになり�
 
 #### Albedo
 
-<img src="./Image/cube_albedo.jpg" alt="Cube (Albedo)" style="zoom:50%;" />
+![Cube](./Image/cube_albedo.jpg)
 
 #### Depth
 
-<img src="./Image/cube_depth.jpg" alt="Cube (Depth)" style="zoom:50%;" />
+![Cube](./Image/cube_depth.jpg)
 
 #### Position
 
-<img src="./Image/cube_position.jpg" alt="Cube (Position)" style="zoom:50%;" />
+![Cube](./Image/cube_position.jpg)
 
 #### Normal
 
-<img src="./Image/cube_normal.jpg" alt="Cube (Normal)" style="zoom:50%;" />
+![Cube](./Image/cube_normal.jpg)
 
 あまり詳しく理解していないのですが、これらの出力を利用して、遅延シェーディング(Deferred Shading)というのを行いたいと思っています。
 
@@ -389,7 +389,7 @@ GBufferNaborから出力される内容としては、以下のようになり�
 ノードを連結して描画結果を自由にカスタマイズできる、みたいなことをやりたい。
 イメージとしては、Blenderのノードビュー(?)みたいな感じです。
 
-<img src="./Image/blender_node_view.jpg" alt="Blenderのノードビュー" style="zoom:50%;" />
+![Blenderのノードビュー](./Image/blender_node_view.jpg)
 
 VulkanのSubpassあたりを使えば実装できるのかなと考えていますが、Render PassとかSubpassとか、まだあんまりはっきりと理解できていないので、ここからしばらくは彷徨うことになりそうです。
 
@@ -397,7 +397,7 @@ VulkanのSubpassあたりを使えば実装できるのかなと考えていま�
 
 そこはかとなくいい感じのものができました。
 
-<img src="./Image/cube_2.jpg" alt="Cube" style="zoom:50%;" />
+![Cube](./Image/cube_2.jpg)
 
 描画結果はこれまでと同じですが、それを実現するコードの方に進歩があったと思います。
 ユーザはMechtatelクラスを継承して自身のクラスを作成し、そのinit()、dispose()、reshape()、update()という四つのメソッド内に処理を記述します。
@@ -470,7 +470,7 @@ Specフォルダ内のREADME.mdを更新しただけですが、もう一度プ�
 
 複数のモデルを表示することができました。
 
-<img src="./Image/two_cubes.jpg" alt="Two cubes" style="zoom:50%;" />
+![Two](./Image/two_cubes.jpg)
 
 このあたりで一度立ち止まって、仕様書の作成に戻りたいと思います。
 
@@ -480,7 +480,7 @@ Specフォルダ内のREADME.mdを更新しただけですが、もう一度プ�
 これで[チュートリアル](https://github.com/Naitsirc98/Vulkan-Tutorial-Java)の内容を一通り実装したことになります。
 このチュートリアルなしではここまでたどり着けなかったので、感謝しかないです。
 
-<img src="./Image/teapot.jpg" alt="Utah Teapot" style="zoom:50%;" />
+![Utah](./Image/teapot.jpg)
 
 ところで、複数のテクスチャを表示する方法がわかりません。
 自分が変な操作をしているのが原因なのは明確ですが、Validation Errorが出ます。
@@ -490,7 +490,7 @@ Specフォルダ内のREADME.mdを更新しただけですが、もう一度プ�
 
 複数のテクスチャを使用するモデルを表示できました。
 
-<img src="./Image/cube.jpg" alt="Cube" style="zoom:50%;" />
+![Cube](./Image/cube.jpg)
 
 テクスチャごとにDescriptor Setを作成するという手法を取りましたが、これが正しいのかどうかはよくわかりません。
 
@@ -498,7 +498,7 @@ Specフォルダ内のREADME.mdを更新しただけですが、もう一度プ�
 
 テクスチャを表示できました。
 
-<img src="./Image/lenna.jpg" alt="Lenna" style="zoom:50%;" />
+![Lenna](./Image/lenna.jpg)
 
 現状、Vulkan関連のコードはほとんど[ここ](https://github.com/Naitsirc98/Vulkan-Tutorial-Java)からコピーしている感じです。
 一つのクラスに全部のコードを入れたくないので、可能な限り細かく複数のクラスに分けています。
@@ -507,7 +507,7 @@ Specフォルダ内のREADME.mdを更新しただけですが、もう一度プ�
 
 ようやく三角形を描画するところまで来ました。
 
-<img src="./Image/triangle.jpg" alt="三角形" style="zoom:50%;" />
+![三角形](./Image/triangle.jpg)
 
 ### 2021-07-18
 

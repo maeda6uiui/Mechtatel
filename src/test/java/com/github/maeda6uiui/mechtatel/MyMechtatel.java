@@ -2,7 +2,8 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
+import com.github.maeda6uiui.mechtatel.core.sound.Sound2D;
+import com.goxr3plus.streamplayer.stream.StreamPlayerException;
 
 import java.io.IOException;
 
@@ -27,22 +28,20 @@ public class MyMechtatel extends Mechtatel {
         new MyMechtatel(settings);
     }
 
-    private FreeCamera camera;
+    private Sound2D sound;
 
     @Override
     public void init() {
         try {
-            this.createModel3D("./Mechtatel/Model/Cube/cube.bd1");
-        } catch (IOException e) {
+            sound = new Sound2D("./Mechtatel/Sound/no_9.mp3");
+        } catch (StreamPlayerException e) {
             e.printStackTrace();
         }
-
-        camera = new FreeCamera(this.getCamera());
     }
 
     @Override
     public void dispose() {
-
+        sound.stop();
     }
 
     @Override
@@ -52,17 +51,18 @@ public class MyMechtatel extends Mechtatel {
 
     @Override
     public void update() {
-        camera.translate(
-                this.getKeyboardPressingCount("W"),
-                this.getKeyboardPressingCount("S"),
-                this.getKeyboardPressingCount("A"),
-                this.getKeyboardPressingCount("D")
-        );
-        camera.rotate(
-                this.getKeyboardPressingCount("UP"),
-                this.getKeyboardPressingCount("DOWN"),
-                this.getKeyboardPressingCount("LEFT"),
-                this.getKeyboardPressingCount("RIGHT")
-        );
+        if (this.getKeyboardPressingCount("ENTER") == 1) {
+            try {
+                sound.play();
+            } catch (StreamPlayerException e) {
+                e.printStackTrace();
+            }
+        } else if (this.getKeyboardPressingCount("P") == 1) {
+            sound.pause();
+        } else if (this.getKeyboardPressingCount("R") == 1) {
+            sound.resume();
+        } else if (this.getKeyboardPressingCount("S") == 1) {
+            sound.stop();
+        }
     }
 }

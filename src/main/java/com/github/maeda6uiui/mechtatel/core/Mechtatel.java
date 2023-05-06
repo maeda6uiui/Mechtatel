@@ -40,9 +40,10 @@ public class Mechtatel implements IMechtatel {
 
             logger.info("Start cleaning up Mechtatel");
             instance.cleanup();
+
+            System.exit(0);
         } catch (Exception e) {
             logger.error("Fatal error", e);
-            return;
         }
     }
 

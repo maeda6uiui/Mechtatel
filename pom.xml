@@ -15,6 +15,10 @@
             <id>mvnrepository</id>
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <properties>
@@ -169,6 +173,12 @@
             <groupId>com.github.dabasan</groupId>
             <artifactId>jxm-bd1</artifactId>
             <version>1.0.3</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.github.goxr3plus</groupId>
+            <artifactId>java-stream-player</artifactId>
+            <version>9.0.4</version>
         </dependency>
     </dependencies>
 </project>

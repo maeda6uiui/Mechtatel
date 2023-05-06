@@ -1,13 +1,22 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
+import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -774,5 +783,104 @@ public class Nabor {
             int dstBinding,
             List<Long> imageViews) {
         throw new RuntimeException("Unsupported operation");
+    }
+
+    private void copyImageToBuffer(
+            long commandPool,
+            VkQueue graphicsQueue,
+            long buffer,
+            long image,
+            int width,
+            int height) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
+
+            VkBufferImageCopy.Buffer region = VkBufferImageCopy.calloc(1, stack);
+            region.bufferOffset(0);
+            region.bufferRowLength(0);
+            region.bufferImageHeight(0);
+            region.imageSubresource().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+            region.imageSubresource().mipLevel(0);
+            region.imageSubresource().baseArrayLayer(0);
+            region.imageSubresource().layerCount(1);
+            region.imageOffset().set(0, 0, 0);
+            region.imageExtent(VkExtent3D.calloc(stack).set(width, height, 1));
+
+            vkCmdCopyImageToBuffer(commandBuffer, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, buffer, region);
+
+            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
+        }
+    }
+
+    private void memcpy(ByteBuffer dst, ByteBuffer src, long size) {
+        src.limit((int) size);
+        dst.put(src);
+        src.limit(src.capacity()).rewind();
+    }
+
+    private ByteBuffer createByteBufferFromImage(long commandPool, VkQueue graphicsQueue, int imageIndex) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            long imageSize = extent.width() * extent.height() * 4;
+            ByteBuffer pixels = ByteBuffer.allocate((int) imageSize);
+
+            LongBuffer pStagingBuffer = stack.mallocLong(1);
+            LongBuffer pStagingBufferMemory = stack.mallocLong(1);
+            BufferCreator.createBuffer(
+                    device,
+                    imageSize,
+                    VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                    pStagingBuffer,
+                    pStagingBufferMemory);
+
+            ImageUtils.transitionImageLayout(
+                    device,
+                    commandPool,
+                    graphicsQueue,
+                    images.get(imageIndex),
+                    VK_IMAGE_ASPECT_COLOR_BIT,
+                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                    VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                    1);
+
+            this.copyImageToBuffer(
+                    commandPool, graphicsQueue, pStagingBuffer.get(0),
+                    images.get(imageIndex), extent.width(), extent.height());
+
+            PointerBuffer data = stack.mallocPointer(1);
+            vkMapMemory(device, pStagingBufferMemory.get(0), 0, imageSize, 0, data);
+            {
+                this.memcpy(pixels, data.getByteBuffer(0, (int) imageSize), imageSize);
+            }
+            vkUnmapMemory(device, pStagingBufferMemory.get(0));
+
+            ImageUtils.transitionImageLayout(
+                    device,
+                    commandPool,
+                    graphicsQueue,
+                    images.get(imageIndex),
+                    VK_IMAGE_ASPECT_COLOR_BIT,
+                    VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                    1);
+
+            vkDestroyBuffer(device, pStagingBuffer.get(0), null);
+            vkFreeMemory(device, pStagingBufferMemory.get(0), null);
+
+            return pixels;
+        }
+    }
+
+    public void save(long commandPool, VkQueue graphicsQueue, int imageIndex, String outputFilepath) throws IOException {
+        ByteBuffer pixels = this.createByteBufferFromImage(commandPool, graphicsQueue, imageIndex);
+        byte[] bin = new byte[pixels.capacity()];
+        pixels.get(bin);
+
+        BufferedImage image = ImageIO.read(new ByteArrayInputStream(bin));
+
+        String[] splits = outputFilepath.split(Pattern.quote("."));
+        String formatName = splits[splits.length - 1];
+
+        ImageIO.write(image, formatName, new File(outputFilepath));
     }
 }

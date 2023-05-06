@@ -1246,4 +1246,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         return mttFont;
     }
+
+    public void saveScreenshot(String outputFilepath) throws IOException {
+        mergeScenesFillNabor.save(commandPool, graphicsQueue, 0, outputFilepath);
+    }
 }

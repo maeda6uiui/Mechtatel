@@ -561,4 +561,8 @@ public class Mechtatel implements IMechtatel {
     public boolean removeSound3D(Sound3D sound) {
         return instance.removeSound3D(sound);
     }
+
+    public void saveScreenshot(String outputFilepath) throws IOException {
+        instance.saveScreenshot(outputFilepath);
+    }
 }

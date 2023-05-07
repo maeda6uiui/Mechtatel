@@ -6,6 +6,7 @@ import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkExtent2D;
 import org.lwjgl.vulkan.VkQueue;
 
+import java.io.IOException;
 import java.nio.LongBuffer;
 import java.util.List;
 
@@ -292,5 +293,12 @@ public class ShadowMappingNabor extends PostProcessingNabor {
         } else {
             throw new RuntimeException("Unsupported operation");
         }
+    }
+
+    @Override
+    public void save(
+            long commandPool, VkQueue graphicsQueue,
+            int imageIndex, String srcImageFormat, String outputFilepath) throws IOException {
+        pass2.save(commandPool, graphicsQueue, imageIndex, srcImageFormat, outputFilepath);
     }
 }

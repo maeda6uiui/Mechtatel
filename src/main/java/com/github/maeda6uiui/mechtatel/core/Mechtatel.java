@@ -562,7 +562,7 @@ public class Mechtatel implements IMechtatel {
         return instance.removeSound3D(sound);
     }
 
-    public void saveScreenshot(String outputFilepath) throws IOException {
-        instance.saveScreenshot(outputFilepath);
+    public void saveScreenshot(String srcImageFormat, String outputFilepath) throws IOException {
+        instance.saveScreenshot(srcImageFormat, outputFilepath);
     }
 }

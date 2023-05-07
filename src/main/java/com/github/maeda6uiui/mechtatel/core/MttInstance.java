@@ -864,7 +864,7 @@ class MttInstance {
     }
 
     //=== Other methods ===
-    public void saveScreenshot(String outputFilepath) throws IOException {
-        vulkanInstance.saveScreenshot(outputFilepath);
+    public void saveScreenshot(String srcImageFormat, String outputFilepath) throws IOException {
+        vulkanInstance.saveScreenshot(srcImageFormat, outputFilepath);
     }
 }

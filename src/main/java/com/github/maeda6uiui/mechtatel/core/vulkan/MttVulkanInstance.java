@@ -758,6 +758,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             List<Spotlight> spotlights,
             Vector3f spotlightAmbientColor,
             ShadowMappingSettings shadowMappingSettings) {
+        lastPPNabor = null;
+
         for (var entry : ppNabors.entrySet()) {
             String naborName = entry.getKey();
             PostProcessingNabor ppNabor = entry.getValue();
@@ -941,8 +943,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
                 colorImageView = lastPPNabor.getColorImageView();
             }
-
-            lastPPNabor = null;
 
             var commandBuffers
                     = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchain.getNumSwapchainImages());
@@ -1247,7 +1247,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         return mttFont;
     }
 
-    public void saveScreenshot(String outputFilepath) throws IOException {
-        mergeScenesFillNabor.save(commandPool, graphicsQueue, 0, outputFilepath);
+    public void saveScreenshot(String srcImageFormat, String outputFilepath) throws IOException {
+        if (lastPPNabor == null) {
+            mergeScenesFillNabor.save(commandPool, graphicsQueue, 0, srcImageFormat, outputFilepath);
+        } else {
+            lastPPNabor.save(commandPool, graphicsQueue, 0, srcImageFormat, outputFilepath);
+        }
     }
 }

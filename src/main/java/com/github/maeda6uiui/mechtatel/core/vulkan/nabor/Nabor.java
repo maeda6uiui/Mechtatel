@@ -9,12 +9,12 @@ import org.lwjgl.vulkan.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -839,7 +839,7 @@ public class Nabor {
                     graphicsQueue,
                     images.get(imageIndex),
                     VK_IMAGE_ASPECT_COLOR_BIT,
-                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                     VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
                     1);
 
@@ -861,22 +861,54 @@ public class Nabor {
                     images.get(imageIndex),
                     VK_IMAGE_ASPECT_COLOR_BIT,
                     VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                     1);
 
             vkDestroyBuffer(device, pStagingBuffer.get(0), null);
             vkFreeMemory(device, pStagingBufferMemory.get(0), null);
 
+            pixels.flip();
+
             return pixels;
         }
     }
 
-    public void save(long commandPool, VkQueue graphicsQueue, int imageIndex, String outputFilepath) throws IOException {
-        ByteBuffer pixels = this.createByteBufferFromImage(commandPool, graphicsQueue, imageIndex);
-        byte[] bin = new byte[pixels.capacity()];
-        pixels.get(bin);
+    public void save(
+            long commandPool, VkQueue graphicsQueue,
+            int imageIndex, String srcImageFormat, String outputFilepath) throws IOException {
+        final String[] supportedSrcImageFormats = new String[]{"rgba", "bgra"};
+        if (Arrays.asList(supportedSrcImageFormats).contains(srcImageFormat) == false) {
+            throw new IllegalArgumentException("Supported source image format is rgba and bgra");
+        }
 
-        BufferedImage image = ImageIO.read(new ByteArrayInputStream(bin));
+        ByteBuffer pixels = this.createByteBufferFromImage(commandPool, graphicsQueue, imageIndex);
+
+        var image = new BufferedImage(extent.width(), extent.height(), BufferedImage.TYPE_3BYTE_BGR);
+        int pos = 0;
+        for (int y = 0; y < extent.height(); y++) {
+            for (int x = 0; x < extent.width(); x++) {
+                int r = 0;
+                int g = 0;
+                int b = 0;
+                int a = 0;
+                if (srcImageFormat.equals("rgba")) {
+                    r = Byte.toUnsignedInt(pixels.get(pos));
+                    g = Byte.toUnsignedInt(pixels.get(pos + 1));
+                    b = Byte.toUnsignedInt(pixels.get(pos + 2));
+                    a = Byte.toUnsignedInt(pixels.get(pos + 3));
+                } else if (srcImageFormat.equals("bgra")) {
+                    b = Byte.toUnsignedInt(pixels.get(pos));
+                    g = Byte.toUnsignedInt(pixels.get(pos + 1));
+                    r = Byte.toUnsignedInt(pixels.get(pos + 2));
+                    a = Byte.toUnsignedInt(pixels.get(pos + 3));
+                }
+
+                int rgba = (a << 24) | (r << 16) | (g << 8) | b;
+                image.setRGB(x, y, rgba);
+
+                pos += 4;
+            }
+        }
 
         String[] splits = outputFilepath.split(Pattern.quote("."));
         String formatName = splits[splits.length - 1];

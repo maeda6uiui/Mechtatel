@@ -6,6 +6,8 @@ Mechtatel (露: Мечтатель 英: Dreamer)
 
 > Dream until you realize that it's high time you grew up and gave up this garbage.
 
+> もう大人なんだからこんなの諦めよう、と思えるまでは夢を見たっていいじゃない。
+
 ## 概要(Overview)
 
 This project aims to create a Vulkan-based game engine in Java with help of [LWJGL](https://www.lwjgl.org/).

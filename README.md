@@ -6,16 +6,33 @@ Mechtatel (露: Мечтатель 英: Dreamer)
 
 > Dream until you realize that it's high time you grew up and gave up this garbage.
 
-## 概要
+## 概要(Overview)
+
+This project aims to create a Vulkan-based game engine in Java with help of [LWJGL](https://www.lwjgl.org/).
+It's still far from what you call a game engine, but I'll keep on developing little by little in my free time.
+Leave a star in this repo if you like it!
+
+---
 
 Javaでゲームエンジンを作ることを目標としているプロジェクトです。
-
 [LWJGL](https://www.lwjgl.org/)でVulkanを使用して開発を進めています。
-開発が進めばいつかOpenGLにも対応するかもしれません。
-
 現状はまだゲームエンジンと呼べるような代物ではありませんが、気力と時間があるときに少しずつ開発を進めていきたいと思っています。
 
-## 開発者のコメント
+## 開発者からのメッセージ(Message from developer)
+
+It's been years since I came up with an idea like "Isn't it great if I could create a game engine and build my own game upon it?"
+If you just want to create a game, then you should take advantage of the great game engines such as Unity and Unreal Engine.
+As for me, I simply love to wrie code, and want to develop a game starting from the lowest level possible.
+
+*Mechtatel* is a word that means "Dreamer" in Russian.
+It's a word that best describes me, only dreaming and being far from achivements.
+Maybe I wouldn't achieve anything until I die, maybe I would make some aesthetic garbage, I don't know...
+But if you are a nerd or something and like my work, then leave a star in this repo.
+It'll be my great mental support.
+
+Thank you!
+
+---
 
 「自作のゲームエンジンを作りたい」と思ってから何年も経ち、思いつきでコードを書いては捨て、書いては捨て、そんなことを繰り返しながら、ただのゴミを生産してきた人生です。
 
@@ -30,7 +47,9 @@ Javaでゲームエンジンを作ることを目標としているプロジェ�
 結局自分が死ぬまで何も成し遂げられないかもしれませんし、あるいは何か芸術的なゴミを生み出すことができるかもしれません。
 「この人を応援したい！」とか思うような頭のおかしい人は、Starでも付けていってください...。
 
-## 依存関係
+## 依存関係(Dependencies)
+
+Place following binaries under ./Mechtatel/Bin.
 
 ./Mechtatel/Binディレクトリ配下に以下のバイナリを配置します。
 

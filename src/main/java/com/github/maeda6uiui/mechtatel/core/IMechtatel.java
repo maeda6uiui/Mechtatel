@@ -6,11 +6,11 @@ package com.github.maeda6uiui.mechtatel.core;
  * @author maeda6uiui
  */
 interface IMechtatel {
-    public void init();
+    void init();
 
-    public void dispose();
+    void dispose();
 
-    public void reshape(int width, int height);
+    void reshape(int width, int height);
 
-    public void update();
+    void update();
 }

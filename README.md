@@ -24,7 +24,7 @@ Javaでゲームエンジンを作ることを目標としているプロジェ�
 
 It's been years since I came up with an idea like "Isn't it great if I could create a game engine and build my own game upon it?"
 If you just want to create a game, then you should take advantage of the great game engines such as Unity and Unreal Engine.
-As for me, I simply love to wrie code, and want to develop a game starting from the lowest level possible.
+As for me, I simply love to write code, and want to develop a game starting from the lowest level possible.
 
 *Mechtatel* is a word that means "Dreamer" in Russian.
 It's a word that best describes me, only dreaming and being far from achivements.

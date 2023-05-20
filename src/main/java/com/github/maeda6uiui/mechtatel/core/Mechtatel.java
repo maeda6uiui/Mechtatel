@@ -79,16 +79,16 @@ public class Mechtatel implements IMechtatel {
         return instance.getWindowHeight();
     }
 
-    public void addPostProcessingNaborChain(String chainName, List<String> naborNames) {
-        instance.addPostProcessingNaborChain(chainName, naborNames);
+    public void addScene(String sceneName, List<String> ppNaborNames) {
+        instance.addScene(sceneName, ppNaborNames);
     }
 
-    public boolean removePostProcessingNaborChain(String chainName) {
-        return instance.removePostProcessingNaborChain(chainName);
+    public boolean removeScene(String sceneName) {
+        return instance.removeScene(sceneName);
     }
 
-    public void removeAllPostProcessingNaborChains() {
-        instance.removeAllPostProcessingNaborChains();
+    public void removeAllScenes() {
+        instance.removeAllScenes();
     }
 
     public int getKeyboardPressingCount(String key) {
@@ -570,7 +570,7 @@ public class Mechtatel implements IMechtatel {
         return instance.removeSound3D(sound);
     }
 
-    public void saveScreenshot(String srcImageFormat, String outputFilepath) throws IOException {
-        instance.saveScreenshot(srcImageFormat, outputFilepath);
+    public void saveScreenshot(String sceneName, String srcImageFormat, String outputFilepath) throws IOException {
+        instance.saveScreenshot(sceneName, srcImageFormat, outputFilepath);
     }
 }

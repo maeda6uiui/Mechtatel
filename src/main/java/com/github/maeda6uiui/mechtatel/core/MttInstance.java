@@ -142,6 +142,7 @@ class MttInstance {
                 true,
                 window,
                 VK_SAMPLE_COUNT_2_BIT);
+        vulkanInstance.addScene("default", null);
 
         this.fps = settings.systemSettings.fps;
 
@@ -273,16 +274,16 @@ class MttInstance {
         return windowHeight;
     }
 
-    public void addPostProcessingNaborChain(String chainName, List<String> naborNames) {
-        vulkanInstance.addPostProcessingNaborChain(chainName, naborNames);
+    public void addScene(String sceneName, List<String> ppNaborNames) {
+        vulkanInstance.addScene(sceneName, ppNaborNames);
     }
 
-    public boolean removePostProcessingNaborChain(String chainName) {
-        return vulkanInstance.removePostProcessingNaborChain(chainName);
+    public boolean removeScene(String sceneName) {
+        return vulkanInstance.removeScene(sceneName);
     }
 
-    public void removeAllPostProcessingNaborChains() {
-        vulkanInstance.removeAllPostProcessingNabors();
+    public void removeAllScenes() {
+        vulkanInstance.removeAllScenes();
     }
 
     public int getKeyboardPressingCount(String key) {
@@ -872,7 +873,7 @@ class MttInstance {
     }
 
     //=== Other methods ===
-    public void saveScreenshot(String srcImageFormat, String outputFilepath) throws IOException {
-        vulkanInstance.saveScreenshot(srcImageFormat, outputFilepath);
+    public void saveScreenshot(String sceneName, String srcImageFormat, String outputFilepath) throws IOException {
+        vulkanInstance.saveScreenshot(sceneName, srcImageFormat, outputFilepath);
     }
 }

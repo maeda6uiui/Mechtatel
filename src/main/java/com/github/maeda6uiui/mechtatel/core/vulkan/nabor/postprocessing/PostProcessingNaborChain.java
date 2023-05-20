@@ -70,7 +70,7 @@ public class PostProcessingNaborChain {
             int depthImageWidth,
             int depthImageHeight,
             int depthImageAspect,
-            int imageFormat,
+            int colorImageFormat,
             VkExtent2D extent,
             List<String> naborNames) {
         this.device = device;
@@ -110,7 +110,7 @@ public class PostProcessingNaborChain {
             }
 
             ppNabor.compile(
-                    imageFormat,
+                    colorImageFormat,
                     extent,
                     commandPool,
                     graphicsQueue,

@@ -121,12 +121,12 @@ public class PostProcessingNaborChain {
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
     }
 
-    public void recreate(int swapchainImageFormat, VkExtent2D swapchainExtent) {
+    public void recreate(int imageFormat, VkExtent2D extent) {
         for (var entry : ppNabors.entrySet()) {
             String naborName = entry.getKey();
             PostProcessingNabor ppNabor = entry.getValue();
 
-            ppNabor.recreate(swapchainImageFormat, swapchainExtent);
+            ppNabor.recreate(imageFormat, extent);
 
             if (naborName.equals("shadow_mapping")) {
                 this.createShadowMappingNaborUserDefImages(ppNabor);

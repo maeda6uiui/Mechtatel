@@ -4,7 +4,6 @@ import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.Vertex3D;
 import com.github.maeda6uiui.mechtatel.core.component.Vertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
-import com.github.maeda6uiui.mechtatel.core.light.LightingInfo;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
@@ -17,13 +16,10 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PrimitiveNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.*;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow.ShadowMappingNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow.ShadowMappingNaborRunner;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNaborChain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.Texture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.joml.Vector3f;
@@ -81,8 +77,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private PrimitiveNabor primitiveFillNabor;
     private MergeScenesNabor mergeScenesNabor;
     private MergeScenesNabor mergeScenesFillNabor;
-    private Map<String, PostProcessingNabor> ppNabors;
-    private PostProcessingNabor lastPPNabor;
+    private Map<String, PostProcessingNaborChain> ppNaborChains;
+    private PostProcessingNaborChain lastPPNaborChain;
 
     private long commandPool;
 
@@ -125,22 +121,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         swapchain.createFramebuffers(presentNabor.getRenderPass());
     }
 
-    private void createShadowMappingNaborUserDefImages(PostProcessingNabor shadowMappingNabor) {
-        shadowMappingNabor.cleanupUserDefImages();
-
-        //Shadow depth
-        for (int i = 0; i < ShadowMappingNabor.MAX_NUM_SHADOW_MAPS; i++) {
-            shadowMappingNabor.createUserDefImage(
-                    depthImageWidth,
-                    depthImageHeight,
-                    1,
-                    VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    depthImageFormat,
-                    VK_IMAGE_ASPECT_DEPTH_BIT);
-        }
-    }
-
     private void recreateNabors() {
         gBufferNabor.recreate(
                 swapchain.getSwapchainImageFormat(),
@@ -158,17 +138,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 swapchain.getSwapchainImageFormat(),
                 swapchain.getSwapchainExtent());
 
-        for (var entry : ppNabors.entrySet()) {
-            String naborName = entry.getKey();
-            PostProcessingNabor ppNabor = entry.getValue();
-
-            ppNabor.recreate(
-                    swapchain.getSwapchainImageFormat(),
-                    swapchain.getSwapchainExtent());
-
-            if (naborName.equals("shadow_mapping")) {
-                this.createShadowMappingNaborUserDefImages(ppNabor);
-            }
+        for (var ppNaborChain : ppNaborChains.values()) {
+            ppNaborChain.recreate(swapchain.getSwapchainImageFormat(), swapchain.getSwapchainExtent());
         }
     }
 
@@ -288,7 +259,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
                 graphicsQueue,
                 1);
 
-        ppNabors = new LinkedHashMap<>();
+        ppNaborChains = new LinkedHashMap<>();
 
         //Create sync objects
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
@@ -320,7 +291,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         primitiveFillNabor.cleanup(false);
         mergeScenesNabor.cleanup(false);
         mergeScenesFillNabor.cleanup(false);
-        ppNabors.forEach((k, ppNabor) -> ppNabor.cleanup(false));
+        ppNaborChains.forEach((k, v) -> v.cleanup());
 
         vkDestroyCommandPool(device, commandPool, null);
 
@@ -354,47 +325,42 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         this.recreateNabors();
     }
 
-    private void compilePostProcessingNabors(List<String> naborNames) {
-        for (var naborName : naborNames) {
-            PostProcessingNabor ppNabor;
-
-            switch (naborName) {
-                case "fog":
-                    ppNabor = new FogNabor(device);
-                    break;
-                case "parallel_light":
-                    ppNabor = new ParallelLightNabor(device);
-                    break;
-                case "point_light":
-                    ppNabor = new PointLightNabor(device);
-                    break;
-                case "shadow_mapping":
-                    ppNabor = new ShadowMappingNabor(device, depthImageFormat, depthImageWidth, depthImageHeight);
-                    this.createShadowMappingNaborUserDefImages(ppNabor);
-                    break;
-                case "spotlight":
-                    ppNabor = new SpotlightNabor(device);
-                    break;
-                default:
-                    String msg = String.format("Unsupported nabor specified: %s", naborName);
-                    throw new IllegalArgumentException(msg);
-            }
-
-            ppNabor.compile(
-                    swapchain.getSwapchainImageFormat(),
-                    swapchain.getSwapchainExtent(),
-                    commandPool,
-                    graphicsQueue,
-                    1);
-            ppNabors.put(naborName, ppNabor);
+    public void addPostProcessingNaborChain(String chainName, List<String> naborNames) {
+        if (ppNaborChains.containsKey(chainName)) {
+            ppNaborChains.get(chainName).cleanup();
         }
+
+        var ppNaborChain = new PostProcessingNaborChain(
+                device,
+                depthImageFormat,
+                depthImageWidth,
+                depthImageHeight,
+                depthImageAspect,
+                swapchain.getSwapchainImageFormat(),
+                swapchain.getSwapchainExtent(),
+                commandPool,
+                graphicsQueue,
+                naborNames
+        );
+        ppNaborChains.put(chainName, ppNaborChain);
     }
 
-    public void createPostProcessingNabors(List<String> naborNames) {
-        ppNabors.forEach((k, ppNabor) -> ppNabor.cleanup(false));
-        ppNabors.clear();
+    public boolean removePostProcessingNaborChain(String chainName) {
+        if (ppNaborChains.containsKey(chainName)) {
+            ppNaborChains.get(chainName).cleanup();
+            ppNaborChains.remove(chainName);
 
-        this.compilePostProcessingNabors(naborNames);
+            return true;
+        }
+
+        return false;
+    }
+
+    public void removeAllPostProcessingNabors() {
+        for (var ppNaborChain : ppNaborChains.values()) {
+            ppNaborChain.cleanup();
+        }
+        ppNaborChains.clear();
     }
 
     private void runAlbedoNabor(VkCommandBuffer commandBuffer, Vector4f backgroundColor, Camera camera) {
@@ -758,164 +724,23 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             List<Spotlight> spotlights,
             Vector3f spotlightAmbientColor,
             ShadowMappingSettings shadowMappingSettings) {
-        lastPPNabor = null;
+        lastPPNaborChain = null;
 
-        for (var entry : ppNabors.entrySet()) {
-            String naborName = entry.getKey();
-            PostProcessingNabor ppNabor = entry.getValue();
-
-            if (naborName.equals("shadow_mapping")) {
-                ShadowMappingNaborRunner.runShadowMappingNabor(
-                        device,
-                        commandPool,
-                        graphicsQueue,
-                        mergeScenesFillNabor,
-                        lastPPNabor,
-                        ppNabor,
-                        parallelLights,
-                        spotlights,
-                        components,
-                        depthImageAspect,
-                        shadowMappingSettings,
-                        quadDrawer);
-
-                lastPPNabor = ppNabor;
-
-                continue;
-            }
-
-            switch (naborName) {
-                case "fog": {
-                    long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
-                    var cameraUBO = new CameraUBO(camera);
-                    cameraUBO.update(device, cameraUBOMemory);
-
-                    long fogUBOMemory = ppNabor.getUniformBufferMemory(1);
-                    var fogUBO = new FogUBO(fog);
-                    fogUBO.update(device, fogUBOMemory);
-                }
-                break;
-
-                case "parallel_light": {
-                    long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
-                    var cameraUBO = new CameraUBO(camera);
-                    cameraUBO.update(device, cameraUBOMemory);
-
-                    var lightingInfo = new LightingInfo();
-                    lightingInfo.setNumLights(parallelLights.size());
-                    lightingInfo.setAmbientColor(parallelLightAmbientColor);
-
-                    long lightingInfoUBOMemory = ppNabor.getUniformBufferMemory(1);
-                    var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
-                    lightingInfoUBO.update(device, lightingInfoUBOMemory);
-
-                    long lightUBOMemory = ppNabor.getUniformBufferMemory(2);
-                    for (int i = 0; i < parallelLights.size(); i++) {
-                        var lightUBO = new ParallelLightUBO(parallelLights.get(i));
-                        lightUBO.update(device, lightUBOMemory, i);
-                    }
-                }
-                break;
-
-                case "point_light": {
-                    long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
-                    var cameraUBO = new CameraUBO(camera);
-                    cameraUBO.update(device, cameraUBOMemory);
-
-                    var lightingInfo = new LightingInfo();
-                    lightingInfo.setNumLights(pointLights.size());
-                    lightingInfo.setAmbientColor(pointLightAmbientColor);
-
-                    long lightingInfoUBOMemory = ppNabor.getUniformBufferMemory(1);
-                    var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
-                    lightingInfoUBO.update(device, lightingInfoUBOMemory);
-
-                    long lightUBOMemory = ppNabor.getUniformBufferMemory(2);
-                    for (int i = 0; i < pointLights.size(); i++) {
-                        var lightUBO = new PointLightUBO(pointLights.get(i));
-                        lightUBO.update(device, lightUBOMemory, i);
-                    }
-                }
-                break;
-
-                case "spotlight": {
-                    long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
-                    var cameraUBO = new CameraUBO(camera);
-                    cameraUBO.update(device, cameraUBOMemory);
-
-                    var lightingInfo = new LightingInfo();
-                    lightingInfo.setNumLights(spotlights.size());
-                    lightingInfo.setAmbientColor(spotlightAmbientColor);
-
-                    long lightingInfoUBOMemory = ppNabor.getUniformBufferMemory(1);
-                    var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
-                    lightingInfoUBO.update(device, lightingInfoUBOMemory);
-
-                    long lightUBOMemory = ppNabor.getUniformBufferMemory(2);
-                    for (int i = 0; i < spotlights.size(); i++) {
-                        var lightUBO = new SpotlightUBO(spotlights.get(i));
-                        lightUBO.update(device, lightUBOMemory, i);
-                    }
-                }
-                break;
-
-                default:
-                    throw new RuntimeException("Unsupported nabor specified");
-            }
-
-            try (MemoryStack stack = MemoryStack.stackPush()) {
-                VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
-                renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
-                renderPassInfo.renderPass(ppNabor.getRenderPass());
-                renderPassInfo.framebuffer(ppNabor.getFramebuffer(0));
-                VkRect2D renderArea = VkRect2D.calloc(stack);
-                renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
-                renderArea.extent(ppNabor.getExtent());
-                renderPassInfo.renderArea(renderArea);
-                VkClearValue.Buffer clearValues = VkClearValue.calloc(1, stack);
-                clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
-                renderPassInfo.pClearValues(clearValues);
-
-                VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
-
-                vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-                {
-                    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, ppNabor.getGraphicsPipeline(0));
-
-                    //First post-processing
-                    if (lastPPNabor == null) {
-                        mergeScenesFillNabor.transitionAlbedoImage(commandPool, graphicsQueue);
-                        mergeScenesFillNabor.transitionDepthImage(commandPool, graphicsQueue);
-                        mergeScenesFillNabor.transitionPositionImage(commandPool, graphicsQueue);
-                        mergeScenesFillNabor.transitionNormalImage(commandPool, graphicsQueue);
-
-                        ppNabor.bindImages(
-                                commandBuffer,
-                                0,
-                                mergeScenesFillNabor.getAlbedoImageView(),
-                                mergeScenesFillNabor.getDepthImageView(),
-                                mergeScenesFillNabor.getPositionImageView(),
-                                mergeScenesFillNabor.getNormalImageView());
-                    } else {
-                        lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
-
-                        ppNabor.bindImages(
-                                commandBuffer,
-                                0,
-                                lastPPNabor.getColorImageView(),
-                                mergeScenesFillNabor.getDepthImageView(),
-                                mergeScenesFillNabor.getPositionImageView(),
-                                mergeScenesFillNabor.getNormalImageView());
-                    }
-
-                    quadDrawer.draw(commandBuffer);
-                }
-                vkCmdEndRenderPass(commandBuffer);
-
-                CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
-            }
-
-            lastPPNabor = ppNabor;
+        for (var ppNaborChain : ppNaborChains.values()) {
+            ppNaborChain.run(
+                    camera,
+                    fog,
+                    parallelLights,
+                    parallelLightAmbientColor,
+                    pointLights,
+                    pointLightAmbientColor,
+                    spotlights,
+                    spotlightAmbientColor,
+                    shadowMappingSettings,
+                    mergeScenesFillNabor,
+                    components
+            );
+            lastPPNaborChain = ppNaborChain;
         }
     }
 
@@ -936,12 +761,12 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             renderPassInfo.pClearValues(clearValues);
 
             long colorImageView;
-            if (lastPPNabor == null) {
+            if (lastPPNaborChain == null) {
                 mergeScenesFillNabor.transitionAlbedoImage(commandPool, graphicsQueue);
                 colorImageView = mergeScenesFillNabor.getAlbedoImageView();
             } else {
-                lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
-                colorImageView = lastPPNabor.getColorImageView();
+                lastPPNaborChain.transitionLastPPNaborColorImageLayout();
+                colorImageView = lastPPNaborChain.getLastPPNaborColorImageView();
             }
 
             var commandBuffers
@@ -1248,10 +1073,10 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     }
 
     public void saveScreenshot(String srcImageFormat, String outputFilepath) throws IOException {
-        if (lastPPNabor == null) {
+        if (lastPPNaborChain == null) {
             mergeScenesFillNabor.save(commandPool, graphicsQueue, 0, srcImageFormat, outputFilepath);
         } else {
-            lastPPNabor.save(commandPool, graphicsQueue, 0, srcImageFormat, outputFilepath);
+            lastPPNaborChain.save(srcImageFormat, outputFilepath);
         }
     }
 }

@@ -79,8 +79,16 @@ public class Mechtatel implements IMechtatel {
         return instance.getWindowHeight();
     }
 
-    public void createPostProcessingNabors(List<String> naborNames) {
-        instance.createPostProcessingNabors(naborNames);
+    public void addPostProcessingNaborChain(String chainName, List<String> naborNames) {
+        instance.addPostProcessingNaborChain(chainName, naborNames);
+    }
+
+    public boolean removePostProcessingNaborChain(String chainName) {
+        return instance.removePostProcessingNaborChain(chainName);
+    }
+
+    public void removeAllPostProcessingNaborChains() {
+        instance.removeAllPostProcessingNaborChains();
     }
 
     public int getKeyboardPressingCount(String key) {

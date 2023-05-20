@@ -59,7 +59,7 @@ public class ScreenshotTest extends Mechtatel {
         naborNames.add("parallel_light");
         naborNames.add("fog");
         naborNames.add("shadow_mapping");
-        this.createPostProcessingNabors(naborNames);
+        this.addPostProcessingNaborChain("main", naborNames);
 
         this.createParallelLight();
 

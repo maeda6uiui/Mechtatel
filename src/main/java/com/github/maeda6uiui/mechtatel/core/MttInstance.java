@@ -273,8 +273,16 @@ class MttInstance {
         return windowHeight;
     }
 
-    public void createPostProcessingNabors(List<String> naborNames) {
-        vulkanInstance.createPostProcessingNabors(naborNames);
+    public void addPostProcessingNaborChain(String chainName, List<String> naborNames) {
+        vulkanInstance.addPostProcessingNaborChain(chainName, naborNames);
+    }
+
+    public boolean removePostProcessingNaborChain(String chainName) {
+        return vulkanInstance.removePostProcessingNaborChain(chainName);
+    }
+
+    public void removeAllPostProcessingNaborChains() {
+        vulkanInstance.removeAllPostProcessingNabors();
     }
 
     public int getKeyboardPressingCount(String key) {

@@ -160,7 +160,7 @@ public class ShadowMappingNaborRunner {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            MergeScenesNabor mergeScenesFillNabor,
+            MergeScenesNabor lastMergeNabor,
             PostProcessingNabor lastPPNabor,
             PostProcessingNabor shadowMappingNabor,
             List<ParallelLight> shadowParallelLights,
@@ -214,19 +214,19 @@ public class ShadowMappingNaborRunner {
 
                 //First post-processing
                 if (lastPPNabor == null) {
-                    mergeScenesFillNabor.transitionAlbedoImage(commandPool, graphicsQueue);
-                    mergeScenesFillNabor.transitionDepthImage(commandPool, graphicsQueue);
-                    mergeScenesFillNabor.transitionPositionImage(commandPool, graphicsQueue);
-                    mergeScenesFillNabor.transitionNormalImage(commandPool, graphicsQueue);
+                    lastMergeNabor.transitionAlbedoImage(commandPool, graphicsQueue);
+                    lastMergeNabor.transitionDepthImage(commandPool, graphicsQueue);
+                    lastMergeNabor.transitionPositionImage(commandPool, graphicsQueue);
+                    lastMergeNabor.transitionNormalImage(commandPool, graphicsQueue);
 
                     shadowMappingNabor.bindImages(
                             commandBuffer,
                             1,
                             0,
-                            mergeScenesFillNabor.getAlbedoImageView(),
-                            mergeScenesFillNabor.getDepthImageView(),
-                            mergeScenesFillNabor.getPositionImageView(),
-                            mergeScenesFillNabor.getNormalImageView());
+                            lastMergeNabor.getAlbedoImageView(),
+                            lastMergeNabor.getDepthImageView(),
+                            lastMergeNabor.getPositionImageView(),
+                            lastMergeNabor.getNormalImageView());
                 } else {
                     lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
 
@@ -235,9 +235,9 @@ public class ShadowMappingNaborRunner {
                             1,
                             0,
                             lastPPNabor.getColorImageView(),
-                            mergeScenesFillNabor.getDepthImageView(),
-                            mergeScenesFillNabor.getPositionImageView(),
-                            mergeScenesFillNabor.getNormalImageView());
+                            lastMergeNabor.getDepthImageView(),
+                            lastMergeNabor.getPositionImageView(),
+                            lastMergeNabor.getNormalImageView());
                 }
 
                 int numShadowMaps = shadowParallelLights.size() + shadowSpotlights.size();
@@ -266,7 +266,7 @@ public class ShadowMappingNaborRunner {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            MergeScenesNabor mergeScenesFillNabor,
+            MergeScenesNabor lastMergeNabor,
             PostProcessingNabor lastPPNabor,
             PostProcessingNabor shadowMappingNabor,
             List<ParallelLight> parallelLights,
@@ -327,7 +327,7 @@ public class ShadowMappingNaborRunner {
                 device,
                 commandPool,
                 graphicsQueue,
-                mergeScenesFillNabor,
+                lastMergeNabor,
                 lastPPNabor,
                 shadowMappingNabor,
                 shadowParallelLights,

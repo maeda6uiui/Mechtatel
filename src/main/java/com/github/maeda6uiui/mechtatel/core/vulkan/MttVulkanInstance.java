@@ -340,6 +340,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         }
     }
 
+    //ここを修正する
     public void draw(
             String screenName,
             Vector4f backgroundColor,

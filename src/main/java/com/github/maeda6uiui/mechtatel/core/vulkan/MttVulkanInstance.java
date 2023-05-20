@@ -332,14 +332,14 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         var ppNaborChain = new PostProcessingNaborChain(
                 device,
+                commandPool,
+                graphicsQueue,
                 depthImageFormat,
                 depthImageWidth,
                 depthImageHeight,
                 depthImageAspect,
                 swapchain.getSwapchainImageFormat(),
                 swapchain.getSwapchainExtent(),
-                commandPool,
-                graphicsQueue,
                 naborNames
         );
         ppNaborChains.put(chainName, ppNaborChain);

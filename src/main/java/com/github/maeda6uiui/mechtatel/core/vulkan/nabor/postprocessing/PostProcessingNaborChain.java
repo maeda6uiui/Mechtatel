@@ -64,14 +64,14 @@ public class PostProcessingNaborChain {
 
     public PostProcessingNaborChain(
             VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue,
             int depthImageFormat,
             int depthImageWidth,
             int depthImageHeight,
             int depthImageAspect,
-            int swapchainImageFormat,
-            VkExtent2D swapchainExtent,
-            long commandPool,
-            VkQueue graphicsQueue,
+            int imageFormat,
+            VkExtent2D extent,
             List<String> naborNames) {
         this.device = device;
         this.commandPool = commandPool;
@@ -110,8 +110,8 @@ public class PostProcessingNaborChain {
             }
 
             ppNabor.compile(
-                    swapchainImageFormat,
-                    swapchainExtent,
+                    imageFormat,
+                    extent,
                     commandPool,
                     graphicsQueue,
                     1);

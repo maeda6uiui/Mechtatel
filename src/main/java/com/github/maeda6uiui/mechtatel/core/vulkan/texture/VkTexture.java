@@ -53,6 +53,8 @@ public class VkTexture {
 
     private int textureIndex;
 
+    private boolean externalImage;
+
     private long textureImage;
     private long textureImageMemory;
     private long textureImageView;
@@ -365,6 +367,8 @@ public class VkTexture {
         this.createTextureImageView();
 
         this.updateDescriptorSets(descriptorSets, setCount);
+
+        externalImage = false;
     }
 
     public VkTexture(
@@ -392,12 +396,29 @@ public class VkTexture {
         this.createTextureImageView();
 
         this.updateDescriptorSets(descriptorSets, setCount);
+
+        externalImage = false;
+    }
+
+    public VkTexture(VkDevice device, long imageView) {
+        textureIndex = allocateTextureIndex();
+        if (textureIndex < 0) {
+            String msg = String.format("Cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
+            throw new RuntimeException(msg);
+        }
+
+        this.device = device;
+        this.textureImageView = imageView;
+
+        externalImage = true;
     }
 
     public void cleanup() {
-        vkDestroyImage(device, textureImage, null);
-        vkFreeMemory(device, textureImageMemory, null);
-        vkDestroyImageView(device, textureImageView, null);
+        if (!externalImage) {
+            vkDestroyImage(device, textureImage, null);
+            vkFreeMemory(device, textureImageMemory, null);
+            vkDestroyImageView(device, textureImageView, null);
+        }
 
         allocationStatus.put(textureIndex, false);
     }

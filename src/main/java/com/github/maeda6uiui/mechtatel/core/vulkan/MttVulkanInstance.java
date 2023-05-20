@@ -16,7 +16,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PrimitiveNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.scene.VkScene;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
@@ -78,7 +78,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private MergeScenesNabor mergeScenesNabor;
     private MergeScenesNabor mergeScenesFillNabor;
 
-    private Map<String, VkScene> scenes;
+    private Map<String, VkScreen> scenes;
 
     private long commandPool;
 
@@ -330,11 +330,11 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             scenes.get(sceneName).cleanup();
         }
 
-        VkScene scene;
+        VkScreen scene;
         if (ppNaborNames == null) {
-            scene = new VkScene();
+            scene = new VkScreen();
         } else {
-            scene = new VkScene(
+            scene = new VkScreen(
                     device,
                     commandPool,
                     graphicsQueue,
@@ -737,7 +737,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
             renderPassInfo.pClearValues(clearValues);
 
-            VkScene scene = scenes.get(sceneName);
+            VkScreen scene = scenes.get(sceneName);
 
             long colorImageView;
             if (scene.isPassThroughScene()) {
@@ -1060,7 +1060,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     }
 
     public void saveScreenshot(String sceneName, String srcImageFormat, String outputFilepath) throws IOException {
-        VkScene scene = scenes.get(sceneName);
+        VkScreen scene = scenes.get(sceneName);
 
         if (scene.isPassThroughScene()) {
             mergeScenesFillNabor.save(commandPool, graphicsQueue, 0, srcImageFormat, outputFilepath);

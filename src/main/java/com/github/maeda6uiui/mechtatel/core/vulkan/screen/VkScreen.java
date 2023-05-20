@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan.scene;
+package com.github.maeda6uiui.mechtatel.core.vulkan.screen;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
@@ -22,10 +22,10 @@ import java.util.List;
  *
  * @author maeda6uiui
  */
-public class VkScene {
+public class VkScreen {
     private PostProcessingNaborChain ppNaborChain;
 
-    public VkScene(
+    public VkScreen(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -50,7 +50,7 @@ public class VkScene {
         );
     }
 
-    public VkScene() {
+    public VkScreen() {
 
     }
 

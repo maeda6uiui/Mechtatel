@@ -15,6 +15,7 @@ public class TexturedQuad3D extends Component3D {
 
     public TexturedQuad3D(
             MttVulkanInstance vulkanInstance,
+            String screenName,
             String textureFilepath,
             boolean generateMipmaps,
             Vertex3DUV v1,
@@ -29,12 +30,13 @@ public class TexturedQuad3D extends Component3D {
         vertices.add(v3);
         vertices.add(v4);
 
-        vkTexturedQuad = vulkanInstance.createTexturedQuad3D(textureFilepath, generateMipmaps, vertices);
+        vkTexturedQuad = vulkanInstance.createTexturedQuad3D(screenName, textureFilepath, generateMipmaps, vertices);
         this.associateVulkanComponent(vkTexturedQuad);
     }
 
     public TexturedQuad3D(
             MttVulkanInstance vulkanInstance,
+            String screenName,
             TexturedQuad3D srcQuad,
             Vertex3DUV v1,
             Vertex3DUV v2,
@@ -48,7 +50,7 @@ public class TexturedQuad3D extends Component3D {
         vertices.add(v3);
         vertices.add(v4);
 
-        vkTexturedQuad = vulkanInstance.duplicateTexturedQuad3D(srcQuad.vkTexturedQuad, vertices);
+        vkTexturedQuad = vulkanInstance.duplicateTexturedQuad3D(screenName, srcQuad.vkTexturedQuad, vertices);
         this.associateVulkanComponent(vkTexturedQuad);
     }
 }

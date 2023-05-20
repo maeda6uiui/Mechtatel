@@ -18,13 +18,14 @@ public class MttFont extends Component {
 
     public MttFont(
             MttVulkanInstance vulkanInstance,
+            String screenName,
             Font font,
             boolean antiAlias,
             Color fontColor,
             String requiredChars) {
         super(vulkanInstance);
 
-        vkMttFont = vulkanInstance.createMttFont(font, antiAlias, fontColor, requiredChars);
+        vkMttFont = vulkanInstance.createMttFont(screenName, font, antiAlias, fontColor, requiredChars);
         this.associateVulkanComponent(vkMttFont);
     }
 

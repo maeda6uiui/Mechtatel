@@ -59,15 +59,17 @@ public class Swapchain {
             return capabilities.currentExtent();
         }
 
-        VkExtent2D actualExtent = VkExtent2D.mallocStack().set(width, height);
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkExtent2D actualExtent = VkExtent2D.malloc(stack).set(width, height);
 
-        VkExtent2D minExtent = capabilities.minImageExtent();
-        VkExtent2D maxExtent = capabilities.maxImageExtent();
+            VkExtent2D minExtent = capabilities.minImageExtent();
+            VkExtent2D maxExtent = capabilities.maxImageExtent();
 
-        actualExtent.width(this.clamp(minExtent.width(), maxExtent.width(), actualExtent.width()));
-        actualExtent.height(this.clamp(minExtent.height(), maxExtent.height(), actualExtent.height()));
+            actualExtent.width(this.clamp(minExtent.width(), maxExtent.width(), actualExtent.width()));
+            actualExtent.height(this.clamp(minExtent.height(), maxExtent.height(), actualExtent.height()));
 
-        return actualExtent;
+            return actualExtent;
+        }
     }
 
     private void createSwapchain(

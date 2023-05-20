@@ -79,16 +79,31 @@ public class Mechtatel implements IMechtatel {
         return instance.getWindowHeight();
     }
 
-    public void addScene(String sceneName, List<String> ppNaborNames) {
-        instance.addScene(sceneName, ppNaborNames);
+    public void createScreen(
+            String screenName,
+            int depthImageWidth,
+            int depthImageHeight,
+            int screenWidth,
+            int screenHeight,
+            boolean shouldChangeExtentOnRecreate,
+            List<String> ppNaborNames) {
+        instance.createScreen(
+                screenName,
+                depthImageWidth,
+                depthImageHeight,
+                screenWidth,
+                screenHeight,
+                shouldChangeExtentOnRecreate,
+                ppNaborNames
+        );
     }
 
-    public boolean removeScene(String sceneName) {
-        return instance.removeScene(sceneName);
+    public boolean removeScreen(String screenName) {
+        return instance.removeScreen(screenName);
     }
 
-    public void removeAllScenes() {
-        instance.removeAllScenes();
+    public void removeAllScreens() {
+        instance.removeAllScreens();
     }
 
     public int getKeyboardPressingCount(String key) {
@@ -232,8 +247,8 @@ public class Mechtatel implements IMechtatel {
         instance.sortComponents();
     }
 
-    public Model3D createModel3D(String modelFilepath) throws IOException {
-        return instance.createModel3D(modelFilepath);
+    public Model3D createModel3D(String screenName, String modelFilepath) throws IOException {
+        return instance.createModel3D(screenName, modelFilepath);
     }
 
     public Model3D duplicateModel3D(Model3D srcModel) {
@@ -324,50 +339,56 @@ public class Mechtatel implements IMechtatel {
     }
 
     public TexturedQuad3D createTexturedQuad3D(
+            String screenName,
             String textureFilepath,
             boolean generateMipmaps,
             Vertex3DUV v1,
             Vertex3DUV v2,
             Vertex3DUV v3,
             Vertex3DUV v4) {
-        return instance.createTexturedQuad3D(textureFilepath, generateMipmaps, v1, v2, v3, v4);
+        return instance.createTexturedQuad3D(screenName, textureFilepath, generateMipmaps, v1, v2, v3, v4);
     }
 
     public TexturedQuad3D duplicateTexturedQuad3D(
+            String screenName,
             TexturedQuad3D srcQuad,
             Vertex3DUV v1,
             Vertex3DUV v2,
             Vertex3DUV v3,
             Vertex3DUV v4) {
-        return instance.duplicateTexturedQuad3D(srcQuad, v1, v2, v3, v4);
+        return instance.duplicateTexturedQuad3D(screenName, srcQuad, v1, v2, v3, v4);
     }
 
-    public TexturedQuad2D createTexturedQuad2D(String textureFilepath, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
-        return instance.createTexturedQuad2D(textureFilepath, p1, p2, p3, p4, z);
+    public TexturedQuad2D createTexturedQuad2D(
+            String screenName, String textureFilepath, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
+        return instance.createTexturedQuad2D(screenName, textureFilepath, p1, p2, p3, p4, z);
     }
 
-    public TexturedQuad2D createTexturedQuad2D(String textureFilepath, Vector2fc topLeft, Vector2fc bottomRight, float z) {
+    public TexturedQuad2D createTexturedQuad2D(
+            String screenName, String textureFilepath, Vector2fc topLeft, Vector2fc bottomRight, float z) {
         var p1 = new Vertex2DUV(topLeft, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
         var p2 = new Vertex2DUV(new Vector2f(topLeft.x(), bottomRight.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 1.0f));
         var p3 = new Vertex2DUV(bottomRight, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
         var p4 = new Vertex2DUV(new Vector2f(bottomRight.x(), topLeft.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 0.0f));
-        return instance.createTexturedQuad2D(textureFilepath, p1, p2, p3, p4, z);
+        return instance.createTexturedQuad2D(screenName, textureFilepath, p1, p2, p3, p4, z);
     }
 
-    public TexturedQuad2D duplicateTexturedQuad2D(TexturedQuad2D srcQuad, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
-        return instance.duplicateTexturedQuad2D(srcQuad, p1, p2, p3, p4, z);
+    public TexturedQuad2D duplicateTexturedQuad2D(
+            String screenName, TexturedQuad2D srcQuad, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
+        return instance.duplicateTexturedQuad2D(screenName, srcQuad, p1, p2, p3, p4, z);
     }
 
-    public TexturedQuad2D duplicateTexturedQuad2D(TexturedQuad2D srcQuad, Vector2fc topLeft, Vector2fc bottomRight, float z) {
+    public TexturedQuad2D duplicateTexturedQuad2D(
+            String screenName, TexturedQuad2D srcQuad, Vector2fc topLeft, Vector2fc bottomRight, float z) {
         var p1 = new Vertex2DUV(topLeft, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
         var p2 = new Vertex2DUV(new Vector2f(topLeft.x(), bottomRight.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 1.0f));
         var p3 = new Vertex2DUV(bottomRight, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
         var p4 = new Vertex2DUV(new Vector2f(bottomRight.x(), topLeft.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 0.0f));
-        return instance.duplicateTexturedQuad2D(srcQuad, p1, p2, p3, p4, z);
+        return instance.duplicateTexturedQuad2D(screenName, srcQuad, p1, p2, p3, p4, z);
     }
 
-    public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String textureFilepath) {
-        return instance.createTexturedQuad2DSingleTextureSet(textureFilepath);
+    public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, String textureFilepath) {
+        return instance.createTexturedQuad2DSingleTextureSet(screenName, textureFilepath);
     }
 
     public Quad2D createQuad2D(Vertex2D v1, Vertex2D v2, Vertex2D v3, Vertex2D v4, float z) {
@@ -398,8 +419,8 @@ public class Mechtatel implements IMechtatel {
         return instance.createBox3D(halfExtent, color);
     }
 
-    public MttFont createMttFont(Font font, boolean antiAlias, Color fontColor, String requiredChars) {
-        return instance.createMttFont(font, antiAlias, fontColor, requiredChars);
+    public MttFont createMttFont(String screenName, Font font, boolean antiAlias, Color fontColor, String requiredChars) {
+        return instance.createMttFont(screenName, font, antiAlias, fontColor, requiredChars);
     }
 
     public MttButton createMttButton(
@@ -570,7 +591,7 @@ public class Mechtatel implements IMechtatel {
         return instance.removeSound3D(sound);
     }
 
-    public void saveScreenshot(String sceneName, String srcImageFormat, String outputFilepath) throws IOException {
-        instance.saveScreenshot(sceneName, srcImageFormat, outputFilepath);
+    public void saveScreenshot(String screenName, String srcImageFormat, String outputFilepath) throws IOException {
+        instance.saveScreenshot(screenName, srcImageFormat, outputFilepath);
     }
 }

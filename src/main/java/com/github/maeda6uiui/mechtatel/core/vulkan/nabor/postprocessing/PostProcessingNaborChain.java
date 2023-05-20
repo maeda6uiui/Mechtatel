@@ -312,7 +312,7 @@ public class PostProcessingNaborChain {
         }
     }
 
-    public void transitionLastPPNaborColorImageLayout() {
+    public void transitionLastPPNaborColorImage() {
         lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
     }
 

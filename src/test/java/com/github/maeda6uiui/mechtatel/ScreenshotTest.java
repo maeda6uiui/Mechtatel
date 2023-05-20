@@ -41,9 +41,25 @@ public class ScreenshotTest extends Mechtatel {
     public void init() {
         camera = new FreeCamera(this.getCamera());
 
+        this.removeScreen("default");
+
+        var ppNaborNames = new ArrayList<String>();
+        ppNaborNames.add("parallel_light");
+        ppNaborNames.add("fog");
+        ppNaborNames.add("shadow_mapping");
+        this.createScreen(
+                "main",
+                2048,
+                2048,
+                -1,
+                -1,
+                true,
+                ppNaborNames
+        );
+
         try {
-            plane = this.createModel3D("./Mechtatel/Model/Plane/plane.obj");
-            cube = this.createModel3D("./Mechtatel/Model/Cube/cube.obj");
+            plane = this.createModel3D("main", "./Mechtatel/Model/Plane/plane.obj");
+            cube = this.createModel3D("main", "./Mechtatel/Model/Cube/cube.obj");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -54,12 +70,6 @@ public class ScreenshotTest extends Mechtatel {
                 new Vector3f(5.0f, 2.0f, 0.0f),
                 2.0f, 32, 32, new Vector4f(1.0f, 0.0f, 1.0f, 1.0f)
         );
-
-        var naborNames = new ArrayList<String>();
-        naborNames.add("parallel_light");
-        naborNames.add("fog");
-        naborNames.add("shadow_mapping");
-        this.addPostProcessingNaborChain("main", naborNames);
 
         this.createParallelLight();
 
@@ -81,7 +91,7 @@ public class ScreenshotTest extends Mechtatel {
     public void update() {
         if (this.getKeyboardPressingCount("ENTER") == 1) {
             try {
-                this.saveScreenshot("bgra", "screenshot.png");
+                this.saveScreenshot("main", "bgra", "screenshot.png");
             } catch (IOException e) {
                 e.printStackTrace();
             }

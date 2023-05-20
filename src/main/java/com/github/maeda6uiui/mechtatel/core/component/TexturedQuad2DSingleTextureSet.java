@@ -15,10 +15,11 @@ import org.joml.Vector4f;
 public class TexturedQuad2DSingleTextureSet extends Component {
     private VkTexturedQuad2DSingleTextureSet vkTexturedQuadSet;
 
-    public TexturedQuad2DSingleTextureSet(MttVulkanInstance vulkanInstance, String textureFilepath) {
+    public TexturedQuad2DSingleTextureSet(
+            MttVulkanInstance vulkanInstance, String screenName, String textureFilepath) {
         super(vulkanInstance);
 
-        vkTexturedQuadSet = vulkanInstance.createTexturedQuad2DSingleTextureSet(textureFilepath);
+        vkTexturedQuadSet = vulkanInstance.createTexturedQuad2DSingleTextureSet(screenName, textureFilepath);
         this.associateVulkanComponent(vkTexturedQuadSet);
     }
 

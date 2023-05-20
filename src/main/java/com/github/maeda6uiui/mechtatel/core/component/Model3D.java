@@ -15,11 +15,11 @@ public class Model3D extends Component3D {
     private String modelFilepath;
     private VkModel3D vkModel;
 
-    public Model3D(MttVulkanInstance vulkanInstance, String modelFilepath) throws IOException {
+    public Model3D(MttVulkanInstance vulkanInstance, String screenName, String modelFilepath) throws IOException {
         super(vulkanInstance);
 
         this.modelFilepath = modelFilepath;
-        vkModel = vulkanInstance.createModel3D(modelFilepath);
+        vkModel = vulkanInstance.createModel3D(screenName, modelFilepath);
         this.associateVulkanComponent(vkModel);
     }
 

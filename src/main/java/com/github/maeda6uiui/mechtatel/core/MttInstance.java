@@ -142,7 +142,15 @@ class MttInstance {
                 true,
                 window,
                 VK_SAMPLE_COUNT_2_BIT);
-        vulkanInstance.addScene("default", null);
+        vulkanInstance.createScreen(
+                "default",
+                2048,
+                2048,
+                -1,
+                -1,
+                true,
+                null
+        );
 
         this.fps = settings.systemSettings.fps;
 
@@ -230,6 +238,7 @@ class MttInstance {
                 });
                 PhysicalObject3D.updatePhysicsSpace((float) elapsedTime, physicsSimulationTimeScale);
                 vulkanInstance.draw(
+                        "default",
                         backgroundColor,
                         camera,
                         fog,
@@ -274,16 +283,31 @@ class MttInstance {
         return windowHeight;
     }
 
-    public void addScene(String sceneName, List<String> ppNaborNames) {
-        vulkanInstance.addScene(sceneName, ppNaborNames);
+    public void createScreen(
+            String screenName,
+            int depthImageWidth,
+            int depthImageHeight,
+            int screenWidth,
+            int screenHeight,
+            boolean shouldChangeExtentOnRecreate,
+            List<String> ppNaborNames) {
+        vulkanInstance.createScreen(
+                screenName,
+                depthImageWidth,
+                depthImageHeight,
+                screenWidth,
+                screenHeight,
+                shouldChangeExtentOnRecreate,
+                ppNaborNames
+        );
     }
 
-    public boolean removeScene(String sceneName) {
-        return vulkanInstance.removeScene(sceneName);
+    public boolean removeScreen(String screenName) {
+        return vulkanInstance.removeScreen(screenName);
     }
 
-    public void removeAllScenes() {
-        vulkanInstance.removeAllScenes();
+    public void removeAllScreens() {
+        vulkanInstance.removeAllScreens();
     }
 
     public int getKeyboardPressingCount(String key) {
@@ -464,8 +488,8 @@ class MttInstance {
         vulkanInstance.sortComponents();
     }
 
-    public Model3D createModel3D(String modelFilepath) throws IOException {
-        var model = new Model3D(vulkanInstance, modelFilepath);
+    public Model3D createModel3D(String screenName, String modelFilepath) throws IOException {
+        var model = new Model3D(vulkanInstance, screenName, modelFilepath);
         return model;
     }
 
@@ -525,6 +549,7 @@ class MttInstance {
     }
 
     public TexturedQuad3D createTexturedQuad3D(
+            String screenName,
             String textureFilepath,
             boolean generateMipmaps,
             Vertex3DUV v1,
@@ -533,6 +558,7 @@ class MttInstance {
             Vertex3DUV v4) {
         var texturedQuad = new TexturedQuad3D(
                 vulkanInstance,
+                screenName,
                 textureFilepath,
                 generateMipmaps,
                 v1,
@@ -543,6 +569,7 @@ class MttInstance {
     }
 
     public TexturedQuad3D duplicateTexturedQuad3D(
+            String screenName,
             TexturedQuad3D srcQuad,
             Vertex3DUV v1,
             Vertex3DUV v2,
@@ -550,6 +577,7 @@ class MttInstance {
             Vertex3DUV v4) {
         var texturedQuad = new TexturedQuad3D(
                 vulkanInstance,
+                screenName,
                 srcQuad,
                 v1,
                 v2,
@@ -558,18 +586,20 @@ class MttInstance {
         return texturedQuad;
     }
 
-    public TexturedQuad2D createTexturedQuad2D(String textureFilepath, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
-        var texturedQuad = new TexturedQuad2D(vulkanInstance, textureFilepath, p1, p2, p3, p4, z);
+    public TexturedQuad2D createTexturedQuad2D(
+            String screenName, String textureFilepath, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
+        var texturedQuad = new TexturedQuad2D(vulkanInstance, screenName, textureFilepath, p1, p2, p3, p4, z);
         return texturedQuad;
     }
 
-    public TexturedQuad2D duplicateTexturedQuad2D(TexturedQuad2D srcQuad, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
-        var texturedQuad = new TexturedQuad2D(vulkanInstance, srcQuad, p1, p2, p3, p4, z);
+    public TexturedQuad2D duplicateTexturedQuad2D(
+            String screenName, TexturedQuad2D srcQuad, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
+        var texturedQuad = new TexturedQuad2D(vulkanInstance, screenName, srcQuad, p1, p2, p3, p4, z);
         return texturedQuad;
     }
 
-    public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String textureFilepath) {
-        var texturedQuadSet = new TexturedQuad2DSingleTextureSet(vulkanInstance, textureFilepath);
+    public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, String textureFilepath) {
+        var texturedQuadSet = new TexturedQuad2DSingleTextureSet(vulkanInstance, screenName, textureFilepath);
         return texturedQuadSet;
     }
 
@@ -608,8 +638,8 @@ class MttInstance {
     }
 
     public MttFont createMttFont(
-            Font font, boolean antiAlias, Color fontColor, String requiredChars) {
-        var mttFont = new MttFont(vulkanInstance, font, antiAlias, fontColor, requiredChars);
+            String screenName, Font font, boolean antiAlias, Color fontColor, String requiredChars) {
+        var mttFont = new MttFont(vulkanInstance, screenName, font, antiAlias, fontColor, requiredChars);
         return mttFont;
     }
 
@@ -873,7 +903,7 @@ class MttInstance {
     }
 
     //=== Other methods ===
-    public void saveScreenshot(String sceneName, String srcImageFormat, String outputFilepath) throws IOException {
-        vulkanInstance.saveScreenshot(sceneName, srcImageFormat, outputFilepath);
+    public void saveScreenshot(String screenName, String srcImageFormat, String outputFilepath) throws IOException {
+        vulkanInstance.saveScreenshot(screenName, srcImageFormat, outputFilepath);
     }
 }

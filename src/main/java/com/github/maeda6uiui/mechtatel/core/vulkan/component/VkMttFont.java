@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 import com.github.maeda6uiui.mechtatel.core.component.Vertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
 import com.github.maeda6uiui.mechtatel.core.text.TextUtil;
-import com.github.maeda6uiui.mechtatel.core.vulkan.texture.Texture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 import org.joml.Vector4f;
@@ -25,7 +25,7 @@ public class VkMttFont extends VkComponent {
     private VkDevice device;
 
     private Map<Character, Glyph> glyphs;
-    private Texture texture;
+    private VkTexture texture;
     private VkTexturedQuad2DSingleTextureSet vkQuadSet;
     private int imageWidth;
     private int imageHeight;
@@ -62,7 +62,7 @@ public class VkMttFont extends VkComponent {
         this.setComponentType("gbuffer");
     }
 
-    private Texture createFontTexture(
+    private VkTexture createFontTexture(
             long commandPool,
             VkQueue graphicsQueue,
             List<Long> descriptorSets,
@@ -77,7 +77,7 @@ public class VkMttFont extends VkComponent {
         this.imageWidth = fontImageInfo.imageWidth;
         this.imageHeight = fontImageInfo.imageHeight;
 
-        texture = new Texture(
+        texture = new VkTexture(
                 device,
                 commandPool,
                 graphicsQueue,

@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
 import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.texture.Texture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
@@ -30,7 +30,7 @@ public class VkModel3D extends VkComponent3D {
 
     private ModelLoader.Model model;
 
-    private Map<Integer, Texture> textures;
+    private Map<Integer, VkTexture> textures;
     private Map<Integer, Long> vertexBuffers;
     private Map<Integer, Long> vertexBufferMemories;
     private Map<Integer, Long> indexBuffers;
@@ -60,7 +60,7 @@ public class VkModel3D extends VkComponent3D {
             String diffuseTexFilepath = material.diffuseTexFilepath;
             diffuseTexFilepath = Paths.get(modelDir, diffuseTexFilepath).toString();
 
-            var texture = new Texture(
+            var texture = new VkTexture(
                     device,
                     commandPool,
                     graphicsQueue,
@@ -161,7 +161,7 @@ public class VkModel3D extends VkComponent3D {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             int numMeshes = model.meshes.size();
             for (int i = 0; i < numMeshes; i++) {
-                Texture texture = textures.get(model.meshes.get(i).materialIndex);
+                VkTexture texture = textures.get(model.meshes.get(i).materialIndex);
                 if (texture == null) {
                     continue;
                 }

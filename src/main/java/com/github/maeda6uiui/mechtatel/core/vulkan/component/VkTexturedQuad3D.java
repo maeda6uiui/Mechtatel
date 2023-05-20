@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
 import com.github.maeda6uiui.mechtatel.core.component.Vertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.texture.Texture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
@@ -25,7 +25,7 @@ public class VkTexturedQuad3D extends VkComponent3D {
 
     private boolean isExternalTexture;
 
-    private Texture texture;
+    private VkTexture texture;
     private long vertexBuffer;
     private long vertexBufferMemory;
     private long indexBuffer;
@@ -70,7 +70,7 @@ public class VkTexturedQuad3D extends VkComponent3D {
 
         isExternalTexture = false;
 
-        texture = new Texture(
+        texture = new VkTexture(
                 device,
                 commandPool,
                 graphicsQueue,

@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 import com.github.maeda6uiui.mechtatel.core.component.Vertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.component.Vertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.texture.Texture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
@@ -29,7 +29,7 @@ public class VkTexturedQuad2DSingleTextureSet extends VkComponent {
     private VkQueue graphicsQueue;
 
     private List<Vertex3DUV> vertices;
-    private Texture texture;
+    private VkTexture texture;
 
     private long vertexBuffer;
     private long vertexBufferMemory;
@@ -51,7 +51,7 @@ public class VkTexturedQuad2DSingleTextureSet extends VkComponent {
 
         vertices = new ArrayList<>();
 
-        texture = new Texture(
+        texture = new VkTexture(
                 device,
                 commandPool,
                 graphicsQueue,
@@ -69,7 +69,7 @@ public class VkTexturedQuad2DSingleTextureSet extends VkComponent {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            Texture texture) {
+            VkTexture texture) {
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;

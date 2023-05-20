@@ -24,7 +24,7 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class Texture {
+public class VkTexture {
     private static Map<Integer, Boolean> allocationStatus;
 
     static {
@@ -341,7 +341,7 @@ public class Texture {
         }
     }
 
-    public Texture(
+    public VkTexture(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -367,7 +367,7 @@ public class Texture {
         this.updateDescriptorSets(descriptorSets, setCount);
     }
 
-    public Texture(
+    public VkTexture(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,

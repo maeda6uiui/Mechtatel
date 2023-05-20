@@ -18,7 +18,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PrimitiveNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNaborChain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
-import com.github.maeda6uiui.mechtatel.core.vulkan.texture.Texture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
@@ -1023,7 +1023,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         return texturedQuad;
     }
 
-    public VkTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(Texture texture) {
+    public VkTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(VkTexture texture) {
         var texturedQuadSet = new VkTexturedQuad2DSingleTextureSet(device, commandPool, graphicsQueue, texture);
         components.add(texturedQuadSet);
 

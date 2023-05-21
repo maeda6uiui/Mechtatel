@@ -29,13 +29,7 @@ public class MttScreenContext {
     private Vector3f spotlightAmbientColor;
     private ShadowMappingSettings shadowMappingSettings;
 
-    public MttScreenContext(
-            String screenName,
-            int depthImageWidth,
-            int depthImageHeight,
-            int screenWidth,
-            int screenHeight,
-            boolean shouldChangeExtentOnRecreate) {
+    public MttScreenContext() {
         backgroundColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
         parallelLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
         pointLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);

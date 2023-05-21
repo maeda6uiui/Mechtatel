@@ -256,8 +256,8 @@ public class Nabor {
         return vertShaderModules.get(index);
     }
 
-    public long getVertShaderModule(int naborIndex, int arrayIndex) {
-        throw new RuntimeException("Unsupported operation");
+    protected void addVertShaderModule(long vertShaderModule) {
+        vertShaderModules.add(vertShaderModule);
     }
 
     public List<Long> getFragShaderModules() {
@@ -268,8 +268,8 @@ public class Nabor {
         return fragShaderModules.get(index);
     }
 
-    public long getFragShaderModule(int naborIndex, int arrayIndex) {
-        throw new RuntimeException("Unsupported operation");
+    protected void addFragShaderModule(long fragShaderModule) {
+        fragShaderModules.add(fragShaderModule);
     }
 
     protected List<Long> getPipelineLayouts() {

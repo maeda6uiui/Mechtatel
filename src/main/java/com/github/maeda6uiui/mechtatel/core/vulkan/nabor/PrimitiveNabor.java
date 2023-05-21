@@ -419,8 +419,8 @@ public class PrimitiveNabor extends Nabor {
             vertShaderModule = this.createShaderModule(device, vertShaderSPIRV.bytecode());
             fragShaderModule = this.createShaderModule(device, fragShaderSPIRV.bytecode());
 
-            this.getVertShaderModules().add(vertShaderModule);
-            this.getFragShaderModules().add(fragShaderModule);
+            this.addVertShaderModule(vertShaderModule);
+            this.addFragShaderModule(fragShaderModule);
         }
 
         try (MemoryStack stack = MemoryStack.stackPush()) {

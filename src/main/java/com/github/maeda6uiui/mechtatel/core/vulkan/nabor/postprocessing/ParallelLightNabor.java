@@ -367,8 +367,8 @@ public class ParallelLightNabor extends PostProcessingNabor {
             vertShaderModule = this.createShaderModule(device, vertShaderSPIRV.bytecode());
             fragShaderModule = this.createShaderModule(device, fragShaderSPIRV.bytecode());
 
-            this.getVertShaderModules().add(vertShaderModule);
-            this.getFragShaderModules().add(fragShaderModule);
+            this.addVertShaderModule(vertShaderModule);
+            this.addFragShaderModule(fragShaderModule);
         }
 
         this.createGraphicsPipelines(vertShaderModule, fragShaderModule);

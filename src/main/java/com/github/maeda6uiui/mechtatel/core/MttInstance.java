@@ -595,6 +595,22 @@ class MttInstance {
         return texturedQuad;
     }
 
+    public TexturedQuad3D createTexturedQuad3D(
+            MttTexture texture,
+            Vertex3DUV v1,
+            Vertex3DUV v2,
+            Vertex3DUV v3,
+            Vertex3DUV v4) {
+        var texturedQuad = new TexturedQuad3D(
+                vulkanInstance,
+                texture,
+                v1,
+                v2,
+                v3,
+                v4);
+        return texturedQuad;
+    }
+
     public TexturedQuad3D duplicateTexturedQuad3D(
             String screenName,
             TexturedQuad3D srcQuad,
@@ -619,6 +635,12 @@ class MttInstance {
         return texturedQuad;
     }
 
+    public TexturedQuad2D createTexturedQuad2D(
+            MttTexture texture, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
+        var texturedQuad = new TexturedQuad2D(vulkanInstance, texture, p1, p2, p3, p4, z);
+        return texturedQuad;
+    }
+
     public TexturedQuad2D duplicateTexturedQuad2D(
             String screenName, TexturedQuad2D srcQuad, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
         var texturedQuad = new TexturedQuad2D(vulkanInstance, screenName, srcQuad, p1, p2, p3, p4, z);
@@ -627,6 +649,11 @@ class MttInstance {
 
     public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, String textureFilepath) {
         var texturedQuadSet = new TexturedQuad2DSingleTextureSet(vulkanInstance, screenName, textureFilepath);
+        return texturedQuadSet;
+    }
+
+    public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(MttTexture texture) {
+        var texturedQuadSet = new TexturedQuad2DSingleTextureSet(vulkanInstance, texture);
         return texturedQuadSet;
     }
 

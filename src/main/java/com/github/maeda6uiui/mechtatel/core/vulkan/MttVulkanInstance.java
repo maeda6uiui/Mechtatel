@@ -498,6 +498,18 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
         return texturedQuad;
     }
 
+    public VkTexturedQuad3D createTexturedQuad3D(VkTexture texture, List<Vertex3DUV> vertices) {
+        var texturedQuad = new VkTexturedQuad3D(
+                device,
+                commandPool,
+                graphicsQueue,
+                texture,
+                vertices);
+        components.add(texturedQuad);
+
+        return texturedQuad;
+    }
+
     public VkTexturedQuad3D duplicateTexturedQuad3D(
             String screenName, VkTexturedQuad3D srcQuad, List<Vertex3DUV> vertices) {
         GBufferNabor gBufferNabor = screens.get(screenName).getgBufferNabor();
@@ -536,6 +548,18 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
                 gBufferNabor.getSetCount(0),
                 textureFilepath,
                 false,
+                vertices);
+        components.add(texturedQuad);
+
+        return texturedQuad;
+    }
+
+    public VkTexturedQuad2D createTexturedQuad2D(VkTexture texture, List<Vertex3DUV> vertices) {
+        var texturedQuad = new VkTexturedQuad2D(
+                device,
+                commandPool,
+                graphicsQueue,
+                texture,
                 vertices);
         components.add(texturedQuad);
 

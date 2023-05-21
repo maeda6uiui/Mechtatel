@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
+import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkTexturedQuad2DSingleTextureSet;
 import org.joml.Vector2f;
@@ -20,6 +21,13 @@ public class TexturedQuad2DSingleTextureSet extends Component {
         super(vulkanInstance);
 
         vkTexturedQuadSet = vulkanInstance.createTexturedQuad2DSingleTextureSet(screenName, textureFilepath);
+        this.associateVulkanComponent(vkTexturedQuadSet);
+    }
+
+    public TexturedQuad2DSingleTextureSet(MttVulkanInstance vulkanInstance, MttTexture texture) {
+        super(vulkanInstance);
+
+        vkTexturedQuadSet = vulkanInstance.createTexturedQuad2DSingleTextureSet(texture.getVulkanTexture());
         this.associateVulkanComponent(vkTexturedQuadSet);
     }
 

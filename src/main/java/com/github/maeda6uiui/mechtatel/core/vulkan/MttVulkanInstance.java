@@ -10,10 +10,10 @@ import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
@@ -165,7 +165,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
 
         this.createSwapchainObjects();
 
-        screens = new LinkedHashMap<>();
+        screens = new HashMap<>();
 
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
         imagesInFlight = new HashMap<>(swapchain.getNumSwapchainImages());
@@ -292,6 +292,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
             renderPassInfo.pClearValues(clearValues);
 
             VkScreen screen = screens.get(screenName);
+            screen.transitionColorImageLayout();
             long colorImageView = screen.getColorImageView();
 
             var commandBuffers

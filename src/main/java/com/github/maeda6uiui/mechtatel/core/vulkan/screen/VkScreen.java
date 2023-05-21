@@ -164,6 +164,8 @@ public class VkScreen {
     }
 
     public void cleanup() {
+        quadDrawer.cleanup();
+
         gBufferNabor.cleanup(false);
         primitiveNabor.cleanup(false);
         primitiveFillNabor.cleanup(false);

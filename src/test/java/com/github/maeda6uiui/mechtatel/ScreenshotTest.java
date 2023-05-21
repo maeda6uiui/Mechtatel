@@ -58,8 +58,8 @@ public class ScreenshotTest extends Mechtatel {
         );
 
         try {
-            plane = this.createModel3D("main", "./Mechtatel/Model/Plane/plane.obj");
-            cube = this.createModel3D("main", "./Mechtatel/Model/Cube/cube.obj");
+            plane = this.createModel3D("default", "./Mechtatel/Model/Plane/plane.obj");
+            cube = this.createModel3D("default", "./Mechtatel/Model/Cube/cube.obj");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -91,7 +91,7 @@ public class ScreenshotTest extends Mechtatel {
     public void update() {
         if (this.getKeyboardPressingCount("ENTER") == 1) {
             try {
-                this.saveScreenshot("main", "bgra", "screenshot.png");
+                this.saveScreenshot("default", "bgra", "screenshot.png");
             } catch (IOException e) {
                 e.printStackTrace();
             }

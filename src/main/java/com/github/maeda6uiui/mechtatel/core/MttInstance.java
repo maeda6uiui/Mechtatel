@@ -70,6 +70,7 @@ class MttInstance {
     private float physicsSimulationTimeScale;
 
     private List<String> screenDrawOrder;
+    private String screenToPresent;
 
     private List<Sound3D> sounds3D;
 
@@ -144,15 +145,6 @@ class MttInstance {
                 true,
                 window,
                 VK_SAMPLE_COUNT_2_BIT);
-        vulkanInstance.createScreen(
-                "default",
-                2048,
-                2048,
-                -1,
-                -1,
-                true,
-                null
-        );
 
         this.fps = settings.systemSettings.fps;
 
@@ -190,7 +182,18 @@ class MttInstance {
                 settings.bulletSettings.buildType,
                 settings.bulletSettings.flavor);
 
+        vulkanInstance.createScreen(
+                "default",
+                2048,
+                2048,
+                -1,
+                -1,
+                true,
+                null
+        );
         screenDrawOrder = new ArrayList<>();
+        screenDrawOrder.add("default");
+        screenToPresent = "default";
 
         //Set up OpenAL
         long alcDevice = alcOpenDevice((ByteBuffer) null);
@@ -257,6 +260,7 @@ class MttInstance {
                             shadowMappingSettings);
                     mtt.draw(screenName);
                 }
+                vulkanInstance.present(screenToPresent);
 
                 lastTime = glfwGetTime();
             }

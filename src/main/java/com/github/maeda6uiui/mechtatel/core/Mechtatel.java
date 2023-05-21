@@ -67,6 +67,11 @@ public class Mechtatel implements IMechtatel {
 
     }
 
+    @Override
+    public void draw(String screenName) {
+
+    }
+
     public void closeWindow() {
         instance.closeWindow();
     }
@@ -100,10 +105,6 @@ public class Mechtatel implements IMechtatel {
 
     public boolean removeScreen(String screenName) {
         return instance.removeScreen(screenName);
-    }
-
-    public void removeAllScreens() {
-        instance.removeAllScreens();
     }
 
     public int getKeyboardPressingCount(String key) {

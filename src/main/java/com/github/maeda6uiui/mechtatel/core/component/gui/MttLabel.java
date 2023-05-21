@@ -39,7 +39,7 @@ public class MttLabel extends MttGuiComponent {
                 ClassConversionUtils.convertJavaColorToJOMLVector4f(frameColor)
         );
 
-        font = new MttFont(vulkanInstance,
+        font = new MttFont(vulkanInstance, "default",
                 new Font(fontName, fontStyle, fontSize), true, fontColor, requiredChars);
     }
 

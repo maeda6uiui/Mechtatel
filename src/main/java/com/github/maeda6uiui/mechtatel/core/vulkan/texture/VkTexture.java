@@ -400,7 +400,11 @@ public class VkTexture {
         externalImage = false;
     }
 
-    public VkTexture(VkDevice device, long imageView) {
+    public VkTexture(
+            VkDevice device,
+            List<Long> descriptorSets,
+            int setCount,
+            long imageView) {
         textureIndex = allocateTextureIndex();
         if (textureIndex < 0) {
             String msg = String.format("Cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
@@ -409,6 +413,8 @@ public class VkTexture {
 
         this.device = device;
         this.textureImageView = imageView;
+
+        this.updateDescriptorSets(descriptorSets, setCount);
 
         externalImage = true;
     }

@@ -40,7 +40,7 @@ public class MttListbox extends MttGuiComponent {
             super(vulkanInstance, x, y, width, height);
 
             nonSelectedFont = new MttFont(
-                    vulkanInstance,
+                    vulkanInstance, "default",
                     new Font(nonSelectedFontName, nonSelectedFontStyle, nonSelectedFontSize),
                     true,
                     nonSelectedFontColor,
@@ -50,7 +50,7 @@ public class MttListbox extends MttGuiComponent {
             nonSelectedFont.createBuffers();
 
             selectedFont = new MttFont(
-                    vulkanInstance,
+                    vulkanInstance, "default",
                     new Font(selectedFontName, selectedFontStyle, selectedFontSize),
                     true,
                     selectedFontColor,

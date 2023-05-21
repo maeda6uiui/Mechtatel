@@ -67,7 +67,7 @@ public class MttCheckbox extends MttGuiComponent {
         );
         checkboxCross.createBuffer();
 
-        font = new MttFont(vulkanInstance, new Font(
+        font = new MttFont(vulkanInstance, "default", new Font(
                 fontName, fontStyle, fontSize), true, fontColor, text);
         font.prepare(text, new Vector2f(x, y));
         font.createBuffers();

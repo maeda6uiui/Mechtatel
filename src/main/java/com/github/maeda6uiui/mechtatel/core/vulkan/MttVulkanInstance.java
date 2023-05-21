@@ -10,10 +10,10 @@ import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
-import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
-import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
+import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
@@ -42,7 +42,7 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
+public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVulkanInstanceForTexture {
     private static final int MAX_FRAMES_IN_FLIGHT = 2;
 
     private VkInstance instance;
@@ -76,6 +76,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
     private int currentFrame;
 
     private List<VkComponent> components;
+    private List<VkTexture> textures;
 
     private QuadDrawer quadDrawer;
 
@@ -164,12 +165,13 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
 
         this.createSwapchainObjects();
 
-        screens = new HashMap<>();
+        screens = new LinkedHashMap<>();
 
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
         imagesInFlight = new HashMap<>(swapchain.getNumSwapchainImages());
 
         components = new ArrayList<>();
+        textures = new ArrayList<>();
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
     }
@@ -178,6 +180,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         quadDrawer.cleanup();
 
         components.forEach(component -> component.cleanup());
+        textures.forEach(texture -> texture.cleanup());
 
         inFlightFrames.forEach(frame -> {
             vkDestroySemaphore(device, frame.renderFinishedSemaphore(), null);
@@ -272,11 +275,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         return false;
     }
 
-    public void removeAllScreens() {
-        screens.forEach((k, screen) -> screen.cleanup());
-        screens.clear();
-    }
-
     private void presentToFrontScreen(String screenName) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.calloc(stack);
@@ -340,7 +338,6 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         }
     }
 
-    //ここを修正する
     public void draw(
             String screenName,
             Vector4f backgroundColor,
@@ -619,6 +616,55 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent {
         components.add(mttFont);
 
         return mttFont;
+    }
+
+    //=== Methods relating to textures and screens ===
+    @Override
+    public VkTexture createTexture(String screenName, String textureFilepath, boolean generateMipmaps) {
+        GBufferNabor gBufferNabor = screens.get(screenName).getgBufferNabor();
+
+        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
+        var descriptorSets = new ArrayList<Long>();
+        for (int i = 0; i < numDescriptorSets; i++) {
+            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
+        }
+
+        var texture = new VkTexture(
+                device,
+                commandPool,
+                graphicsQueue,
+                descriptorSets,
+                gBufferNabor.getSetCount(0),
+                textureFilepath,
+                generateMipmaps
+        );
+        textures.add(texture);
+
+        return texture;
+    }
+
+    @Override
+    public VkTexture texturizeScreen(String srcScreenName, String dstScreenName) {
+        VkScreen srcScreen = screens.get(srcScreenName);
+        long imageView = srcScreen.getColorImageView();
+
+        GBufferNabor gBufferNabor = screens.get(dstScreenName).getgBufferNabor();
+
+        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
+        var descriptorSets = new ArrayList<Long>();
+        for (int i = 0; i < numDescriptorSets; i++) {
+            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
+        }
+
+        var texture = new VkTexture(
+                device,
+                descriptorSets,
+                gBufferNabor.getSetCount(0),
+                imageView
+        );
+        textures.add(texture);
+
+        return texture;
     }
 
     public void saveScreenshot(String screenName, String srcImageFormat, String outputFilepath) throws IOException {

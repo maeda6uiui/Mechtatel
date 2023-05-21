@@ -69,6 +69,8 @@ class MttInstance {
     private List<PhysicalObject3D> physicalObjects;
     private float physicsSimulationTimeScale;
 
+    private List<String> screenDrawOrder;
+
     private List<Sound3D> sounds3D;
 
     private void framebufferResizeCallback(long window, int width, int height) {
@@ -188,6 +190,8 @@ class MttInstance {
                 settings.bulletSettings.buildType,
                 settings.bulletSettings.flavor);
 
+        screenDrawOrder = new ArrayList<>();
+
         //Set up OpenAL
         long alcDevice = alcOpenDevice((ByteBuffer) null);
         if (alcDevice == 0) {
@@ -237,18 +241,22 @@ class MttInstance {
                     physicalObject.updateObject();
                 });
                 PhysicalObject3D.updatePhysicsSpace((float) elapsedTime, physicsSimulationTimeScale);
-                vulkanInstance.draw(
-                        "default",
-                        backgroundColor,
-                        camera,
-                        fog,
-                        parallelLights,
-                        parallelLightAmbientColor,
-                        pointLights,
-                        pointLightAmbientColor,
-                        spotlights,
-                        spotlightAmbientColor,
-                        shadowMappingSettings);
+
+                for (var screenName : screenDrawOrder) {
+                    vulkanInstance.draw(
+                            screenName,
+                            backgroundColor,
+                            camera,
+                            fog,
+                            parallelLights,
+                            parallelLightAmbientColor,
+                            pointLights,
+                            pointLightAmbientColor,
+                            spotlights,
+                            spotlightAmbientColor,
+                            shadowMappingSettings);
+                    mtt.draw(screenName);
+                }
 
                 lastTime = glfwGetTime();
             }
@@ -291,6 +299,10 @@ class MttInstance {
             int screenHeight,
             boolean shouldChangeExtentOnRecreate,
             List<String> ppNaborNames) {
+        if (screenName.equals("default")) {
+            throw new RuntimeException("Cannot overwrite default screen");
+        }
+
         vulkanInstance.createScreen(
                 screenName,
                 depthImageWidth,
@@ -300,14 +312,20 @@ class MttInstance {
                 shouldChangeExtentOnRecreate,
                 ppNaborNames
         );
+        screenDrawOrder.add(screenName);
     }
 
     public boolean removeScreen(String screenName) {
+        if (screenName.equals("default")) {
+            throw new RuntimeException("Cannot remove default screen");
+        }
+
+        screenDrawOrder.remove(screenName);
         return vulkanInstance.removeScreen(screenName);
     }
 
-    public void removeAllScreens() {
-        vulkanInstance.removeAllScreens();
+    public void setScreenDrawOrder(List<String> screenDrawOrder) {
+        this.screenDrawOrder = screenDrawOrder;
     }
 
     public int getKeyboardPressingCount(String key) {
@@ -902,7 +920,7 @@ class MttInstance {
         }
     }
 
-    //=== Other methods ===
+    //=== Methods relating to textures and screens ===
     public void saveScreenshot(String screenName, String srcImageFormat, String outputFilepath) throws IOException {
         vulkanInstance.saveScreenshot(screenName, srcImageFormat, outputFilepath);
     }

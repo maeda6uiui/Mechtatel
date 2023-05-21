@@ -15,13 +15,15 @@ public class VkComponent implements Comparable<VkComponent> {
     private String componentType;
     private boolean twoDComponent;
     private int drawOrder;
+    private String screenName;
 
     public VkComponent() {
         mat = new Matrix4f().identity();
         visible = true;
-        componentType = "unknown";
+        componentType = "n/a";
         twoDComponent = true;
         drawOrder = 0;
+        screenName = "n/a";
     }
 
     @Override
@@ -77,6 +79,14 @@ public class VkComponent implements Comparable<VkComponent> {
 
     protected void setTwoDComponent(boolean twoDComponent) {
         this.twoDComponent = twoDComponent;
+    }
+
+    public void setScreenName(String screenName) {
+        this.screenName = screenName;
+    }
+
+    public String getScreenName() {
+        return screenName;
     }
 
     public void applyMat(Matrix4fc right) {

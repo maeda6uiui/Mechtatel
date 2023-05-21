@@ -257,7 +257,8 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
                 albedoMsaaSamples,
                 extent,
                 shouldChangeExtentOnRecreate,
-                ppNaborNames
+                ppNaborNames,
+                screenName
         );
         screens.put(screenName, screen);
     }
@@ -395,6 +396,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
                 descriptorSets,
                 gBufferNabor.getSetCount(0),
                 modelFilepath);
+        model.setScreenName(screenName);
         components.add(model);
 
         return model;
@@ -402,6 +404,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
 
     public VkModel3D duplicateModel3D(VkModel3D srcModel) {
         var model = new VkModel3D(device, commandPool, graphicsQueue, srcModel);
+        model.setScreenName(srcModel.getScreenName());
         components.add(model);
 
         return model;
@@ -493,6 +496,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
                 textureFilepath,
                 generateMipmaps,
                 vertices);
+        texturedQuad.setScreenName(screenName);
         components.add(texturedQuad);
 
         return texturedQuad;
@@ -505,6 +509,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
                 graphicsQueue,
                 texture,
                 vertices);
+        texturedQuad.setScreenName(texture.getScreenName());
         components.add(texturedQuad);
 
         return texturedQuad;
@@ -526,6 +531,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
                 graphicsQueue,
                 srcQuad,
                 vertices);
+        texturedQuad.setScreenName(srcQuad.getScreenName());
         components.add(texturedQuad);
 
         return texturedQuad;
@@ -549,6 +555,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
                 textureFilepath,
                 false,
                 vertices);
+        texturedQuad.setScreenName(screenName);
         components.add(texturedQuad);
 
         return texturedQuad;
@@ -561,6 +568,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
                 graphicsQueue,
                 texture,
                 vertices);
+        texturedQuad.setScreenName(texture.getScreenName());
         components.add(texturedQuad);
 
         return texturedQuad;
@@ -582,6 +590,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
                 graphicsQueue,
                 srcQuad,
                 vertices);
+        texturedQuad.setScreenName(srcQuad.getScreenName());
         components.add(texturedQuad);
 
         return texturedQuad;
@@ -589,6 +598,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
 
     public VkTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(VkTexture texture) {
         var texturedQuadSet = new VkTexturedQuad2DSingleTextureSet(device, commandPool, graphicsQueue, texture);
+        texturedQuadSet.setScreenName(texture.getScreenName());
         components.add(texturedQuadSet);
 
         return texturedQuadSet;
@@ -611,6 +621,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
                 descriptorSets,
                 gBufferNabor.getSetCount(0),
                 textureFilepath);
+        texturedQuadSet.setScreenName(screenName);
         components.add(texturedQuadSet);
 
         return texturedQuadSet;
@@ -636,6 +647,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
                 antiAlias,
                 fontColor,
                 requiredChars);
+        mttFont.setScreenName(screenName);
         components.add(mttFont);
 
         return mttFont;
@@ -661,6 +673,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
                 textureFilepath,
                 generateMipmaps
         );
+        texture.setScreenName(screenName);
         textures.add(texture);
 
         return texture;
@@ -685,6 +698,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
                 gBufferNabor.getSetCount(0),
                 imageView
         );
+        texture.setScreenName(dstScreenName);
         textures.add(texture);
 
         return texture;

@@ -66,6 +66,8 @@ public class VkTexture {
     private String textureFilepath;
     private boolean generateMipmaps;
 
+    private String screenName;
+
     private void memcpy(ByteBuffer dst, ByteBuffer src, long size) {
         src.limit((int) size);
         dst.put(src);
@@ -369,6 +371,8 @@ public class VkTexture {
         this.updateDescriptorSets(descriptorSets, setCount);
 
         externalImage = false;
+
+        screenName = "n/a";
     }
 
     public VkTexture(
@@ -398,6 +402,8 @@ public class VkTexture {
         this.updateDescriptorSets(descriptorSets, setCount);
 
         externalImage = false;
+
+        screenName = "n/a";
     }
 
     public VkTexture(
@@ -417,6 +423,8 @@ public class VkTexture {
         this.updateDescriptorSets(descriptorSets, setCount);
 
         externalImage = true;
+
+        screenName = "n/a";
     }
 
     public void cleanup() {
@@ -431,5 +439,13 @@ public class VkTexture {
 
     public int getTextureIndex() {
         return textureIndex;
+    }
+
+    public void setScreenName(String screenName) {
+        this.screenName = screenName;
+    }
+
+    public String getScreenName() {
+        return screenName;
     }
 }

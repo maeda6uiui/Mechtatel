@@ -37,6 +37,8 @@ public class VkScreen {
     private long commandPool;
     private VkQueue graphicsQueue;
 
+    private String screenName;
+
     private GBufferNabor gBufferNabor;
     private PrimitiveNabor primitiveNabor;
     private PrimitiveNabor primitiveFillNabor;
@@ -66,10 +68,13 @@ public class VkScreen {
             int albedoMsaaSamples,
             VkExtent2D extent,
             boolean shouldChangeExtentOnRecreate,
-            List<String> ppNaborNames) {
+            List<String> ppNaborNames,
+            String screenName) {
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
+
+        this.screenName = screenName;
 
         //GBuffer nabor
         gBufferNabor = new GBufferNabor(
@@ -360,24 +365,29 @@ public class VkScreen {
                         null);
 
                 for (var component : components) {
-                    if (component.getComponentType() == "gbuffer") {
-                        ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * Integer.BYTES);
-                        component.getMat().get(pcBuffer);
-                        if (component.isTwoDComponent()) {
-                            pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
-                        } else {
-                            pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
-                        }
-
-                        vkCmdPushConstants(
-                                commandBuffer,
-                                gBufferNabor.getPipelineLayout(0, 0),
-                                VK_SHADER_STAGE_VERTEX_BIT,
-                                0,
-                                pcBuffer);
-
-                        component.draw(commandBuffer, gBufferNabor.getPipelineLayout(0, 0));
+                    if (component.getScreenName().equals(screenName) == false) {
+                        continue;
                     }
+                    if (component.getComponentType().equals("gbuffer") == false) {
+                        continue;
+                    }
+
+                    ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * Integer.BYTES);
+                    component.getMat().get(pcBuffer);
+                    if (component.isTwoDComponent()) {
+                        pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
+                    } else {
+                        pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
+                    }
+
+                    vkCmdPushConstants(
+                            commandBuffer,
+                            gBufferNabor.getPipelineLayout(0, 0),
+                            VK_SHADER_STAGE_VERTEX_BIT,
+                            0,
+                            pcBuffer);
+
+                    component.draw(commandBuffer, gBufferNabor.getPipelineLayout(0, 0));
                 }
             }
             vkCmdEndRenderPass(commandBuffer);
@@ -420,24 +430,29 @@ public class VkScreen {
                         null);
 
                 for (var component : components) {
-                    if (component.getComponentType() == "gbuffer") {
-                        ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * Integer.BYTES);
-                        component.getMat().get(pcBuffer);
-                        if (component.isTwoDComponent()) {
-                            pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
-                        } else {
-                            pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
-                        }
-
-                        vkCmdPushConstants(
-                                commandBuffer,
-                                gBufferNabor.getPipelineLayout(1, 0),
-                                VK_SHADER_STAGE_VERTEX_BIT,
-                                0,
-                                pcBuffer);
-
-                        component.transfer(commandBuffer);
+                    if (component.getScreenName().equals(screenName) == false) {
+                        continue;
                     }
+                    if (component.getComponentType().equals("gbuffer") == false) {
+                        continue;
+                    }
+
+                    ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * Integer.BYTES);
+                    component.getMat().get(pcBuffer);
+                    if (component.isTwoDComponent()) {
+                        pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
+                    } else {
+                        pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
+                    }
+
+                    vkCmdPushConstants(
+                            commandBuffer,
+                            gBufferNabor.getPipelineLayout(1, 0),
+                            VK_SHADER_STAGE_VERTEX_BIT,
+                            0,
+                            pcBuffer);
+
+                    component.transfer(commandBuffer);
                 }
             }
             vkCmdEndRenderPass(commandBuffer);

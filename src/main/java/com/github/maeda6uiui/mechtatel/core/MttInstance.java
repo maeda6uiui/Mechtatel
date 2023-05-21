@@ -10,6 +10,7 @@ import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.physics.*;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreenContext;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
@@ -30,7 +31,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.openal.ALC10.*;
@@ -72,6 +75,7 @@ class MttInstance {
 
     private List<String> screenDrawOrder;
     private String screenToPresent;
+    private Map<String, MttScreenContext> screenContexts;
 
     private List<Sound3D> sounds3D;
 
@@ -195,6 +199,7 @@ class MttInstance {
         screenDrawOrder = new ArrayList<>();
         screenDrawOrder.add("default");
         screenToPresent = "default";
+        screenContexts = new HashMap<>();
 
         //Set up OpenAL
         long alcDevice = alcOpenDevice((ByteBuffer) null);
@@ -247,19 +252,37 @@ class MttInstance {
                 PhysicalObject3D.updatePhysicsSpace((float) elapsedTime, physicsSimulationTimeScale);
 
                 for (var screenName : screenDrawOrder) {
-                    vulkanInstance.draw(
-                            screenName,
-                            backgroundColor,
-                            camera,
-                            fog,
-                            parallelLights,
-                            parallelLightAmbientColor,
-                            pointLights,
-                            pointLightAmbientColor,
-                            spotlights,
-                            spotlightAmbientColor,
-                            shadowMappingSettings);
-                    mtt.draw(screenName);
+                    mtt.preDraw(screenName);
+                    if (screenContexts.containsKey(screenName)) {
+                        MttScreenContext screenContext = screenContexts.get(screenName);
+
+                        vulkanInstance.draw(
+                                screenName,
+                                screenContext.getBackgroundColor(),
+                                screenContext.getCamera(),
+                                screenContext.getFog(),
+                                screenContext.getParallelLights(),
+                                screenContext.getParallelLightAmbientColor(),
+                                screenContext.getPointLights(),
+                                screenContext.getPointLightAmbientColor(),
+                                screenContext.getSpotlights(),
+                                screenContext.getSpotlightAmbientColor(),
+                                screenContext.getShadowMappingSettings());
+                    } else {
+                        vulkanInstance.draw(
+                                screenName,
+                                backgroundColor,
+                                camera,
+                                fog,
+                                parallelLights,
+                                parallelLightAmbientColor,
+                                pointLights,
+                                pointLightAmbientColor,
+                                spotlights,
+                                spotlightAmbientColor,
+                                shadowMappingSettings);
+                    }
+                    mtt.postDraw(screenName);
                 }
                 vulkanInstance.present(screenToPresent);
 
@@ -335,6 +358,19 @@ class MttInstance {
 
     public void setScreenToPresent(String screenName) {
         screenToPresent = screenName;
+    }
+
+    public void updateScreenContext(String screenName, MttScreenContext screenContext) {
+        screenContexts.put(screenName, screenContext);
+    }
+
+    public boolean removeScreenContext(String screenName) {
+        if (screenContexts.containsKey(screenName)) {
+            screenContexts.remove(screenName);
+            return true;
+        }
+
+        return false;
     }
 
     public int getKeyboardPressingCount(String key) {

@@ -14,5 +14,7 @@ interface IMechtatel {
 
     void update();
 
-    void draw(String screenName);
+    void preDraw(String screenName);
+
+    void postDraw(String screenName);
 }

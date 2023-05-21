@@ -8,6 +8,7 @@ import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.physics.*;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreenContext;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
@@ -69,7 +70,12 @@ public class Mechtatel implements IMechtatel {
     }
 
     @Override
-    public void draw(String screenName) {
+    public void preDraw(String screenName) {
+
+    }
+
+    @Override
+    public void postDraw(String screenName) {
 
     }
 
@@ -114,6 +120,14 @@ public class Mechtatel implements IMechtatel {
 
     public void setScreenToPresent(String screenName) {
         instance.setScreenToPresent(screenName);
+    }
+
+    public void updateScreenContext(String screenName, MttScreenContext screenContext) {
+        instance.updateScreenContext(screenName, screenContext);
+    }
+
+    public boolean removeScreenContext(String screenName) {
+        return instance.removeScreenContext(screenName);
     }
 
     public int getKeyboardPressingCount(String key) {

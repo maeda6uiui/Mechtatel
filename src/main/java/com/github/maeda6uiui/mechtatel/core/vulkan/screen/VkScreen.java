@@ -513,7 +513,7 @@ public class VkScreen {
                         null);
 
                 for (var component : components) {
-                    if (component.getComponentType() == "primitive") {
+                    if (component.getComponentType().equals("primitive")) {
                         ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
                         component.getMat().get(pcBuffer);
                         if (component.isTwoDComponent()) {
@@ -583,7 +583,7 @@ public class VkScreen {
                         null);
 
                 for (var component : components) {
-                    if (component.getComponentType() == "primitive_fill") {
+                    if (component.getComponentType().equals("primitive_fill")) {
                         ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
                         component.getMat().get(pcBuffer);
                         if (component.isTwoDComponent()) {

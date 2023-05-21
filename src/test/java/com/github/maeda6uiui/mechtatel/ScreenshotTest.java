@@ -41,8 +41,6 @@ public class ScreenshotTest extends Mechtatel {
     public void init() {
         camera = new FreeCamera(this.getCamera());
 
-        this.removeScreen("default");
-
         var ppNaborNames = new ArrayList<String>();
         ppNaborNames.add("parallel_light");
         ppNaborNames.add("fog");
@@ -57,9 +55,15 @@ public class ScreenshotTest extends Mechtatel {
                 ppNaborNames
         );
 
+        var screenDrawOrder = new ArrayList<String>();
+        screenDrawOrder.add("main");
+        this.setScreenDrawOrder(screenDrawOrder);
+
+        this.setScreenToPresent("main");
+
         try {
-            plane = this.createModel3D("default", "./Mechtatel/Model/Plane/plane.obj");
-            cube = this.createModel3D("default", "./Mechtatel/Model/Cube/cube.obj");
+            plane = this.createModel3D("main", "./Mechtatel/Model/Plane/plane.obj");
+            cube = this.createModel3D("main", "./Mechtatel/Model/Cube/cube.obj");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -91,7 +95,7 @@ public class ScreenshotTest extends Mechtatel {
     public void update() {
         if (this.getKeyboardPressingCount("ENTER") == 1) {
             try {
-                this.saveScreenshot("default", "bgra", "screenshot.png");
+                this.saveScreenshot("main", "bgra", "screenshot.png");
             } catch (IOException e) {
                 e.printStackTrace();
             }

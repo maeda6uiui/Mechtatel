@@ -107,6 +107,14 @@ public class Mechtatel implements IMechtatel {
         return instance.removeScreen(screenName);
     }
 
+    public void setScreenDrawOrder(List<String> screenDrawOrder) {
+        instance.setScreenDrawOrder(screenDrawOrder);
+    }
+
+    public void setScreenToPresent(String screenName) {
+        instance.setScreenToPresent(screenName);
+    }
+
     public int getKeyboardPressingCount(String key) {
         return instance.getKeyboardPressingCount(key);
     }

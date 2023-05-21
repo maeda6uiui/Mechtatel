@@ -332,6 +332,10 @@ class MttInstance {
         this.screenDrawOrder = screenDrawOrder;
     }
 
+    public void setScreenToPresent(String screenName) {
+        screenToPresent = screenName;
+    }
+
     public int getKeyboardPressingCount(String key) {
         return keyboard.getPressingCount(key);
     }

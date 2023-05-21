@@ -48,19 +48,33 @@ public class ShadowMappingTest extends Mechtatel {
         ppNaborNames.add("parallel_light");
         ppNaborNames.add("fog");
         ppNaborNames.add("shadow_mapping");
+        this.createScreen(
+                "main",
+                2048,
+                2048,
+                -1,
+                -1,
+                true,
+                ppNaborNames
+        );
 
+        var screenDrawOrder = new ArrayList<String>();
+        screenDrawOrder.add("main");
+        this.setScreenDrawOrder(screenDrawOrder);
+
+        this.setScreenToPresent("main");
 
         cubes = new ArrayList<>();
         cubePositions = new ArrayList<>();
         cubeRotations = new ArrayList<>();
         try {
-            plane = this.createModel3D("default", "./Mechtatel/Model/Plane/plane.obj");
+            plane = this.createModel3D("main", "./Mechtatel/Model/Plane/plane.obj");
             plane.rescale(new Vector3f(2.0f, 1.0f, 2.0f));
 
-            teapot = this.createModel3D("default", "./Mechtatel/Model/Teapot/teapot.obj");
+            teapot = this.createModel3D("main", "./Mechtatel/Model/Teapot/teapot.obj");
             teapot.rescale(new Vector3f(2.0f, 2.0f, 2.0f));
 
-            var cube = this.createModel3D("default", "./Mechtatel/Model/Cube/cube.obj");
+            var cube = this.createModel3D("main", "./Mechtatel/Model/Cube/cube.obj");
             cube.translate(new Vector3f(6.0f, 2.0f, 0.0f));
             cubes.add(cube);
             cubePositions.add(new Vector3f(6.0f, 2.0f, 0.0f));

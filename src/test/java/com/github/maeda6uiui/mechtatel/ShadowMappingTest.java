@@ -20,12 +20,9 @@ public class ShadowMappingTest extends Mechtatel {
 
     public static void main(String[] args) {
         MttSettings settings;
-        //Load settings from a JSON file
         try {
             settings = new MttSettings("./Mechtatel/Setting/settings.json");
-        }
-        //If the program fails to load the JSON file, then use the default settings
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("Failed to load setting file. Use default settings");
             settings = new MttSettings();
         }

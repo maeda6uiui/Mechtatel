@@ -4,6 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreenContext;
+import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -79,15 +80,7 @@ public class TexturedScreenTest extends Mechtatel {
 
         this.updateScreenContext("primary", primaryContext);
         this.updateScreenContext("secondary", secondaryContext);
-    }
 
-    @Override
-    public void preDraw(String screenName) {
-
-    }
-
-    @Override
-    public void postDraw(String sceneName) {
-
+        MttTexture secondaryDrawResult = this.texturizeScreen("secondary", "primary");
     }
 }

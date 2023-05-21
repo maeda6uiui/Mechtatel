@@ -8,6 +8,7 @@ import org.lwjgl.vulkan.VkQueue;
 
 import java.io.IOException;
 import java.nio.LongBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_1_BIT;
@@ -257,6 +258,26 @@ public class ShadowMappingNabor extends PostProcessingNabor {
         }
 
         return framebuffer;
+    }
+
+    @Override
+    public List<Long> getVertShaderModules() {
+        var vertShaderModules = new ArrayList<Long>();
+
+        vertShaderModules.add(pass1.getVertShaderModule(0));
+        vertShaderModules.add(pass2.getVertShaderModule(0));
+
+        return vertShaderModules;
+    }
+
+    @Override
+    public List<Long> getFragShaderModules() {
+        var fragShaderModules = new ArrayList<Long>();
+
+        fragShaderModules.add(pass1.getFragShaderModule(0));
+        fragShaderModules.add(pass2.getFragShaderModule(0));
+
+        return fragShaderModules;
     }
 
     @Override

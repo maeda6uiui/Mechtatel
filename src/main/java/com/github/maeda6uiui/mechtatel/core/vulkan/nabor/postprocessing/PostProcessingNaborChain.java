@@ -8,10 +8,10 @@ import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
+import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow.ShadowMappingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow.ShadowMappingNaborRunner;
-import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
@@ -20,6 +20,7 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +73,9 @@ public class PostProcessingNaborChain {
             int depthImageAspect,
             int colorImageFormat,
             VkExtent2D extent,
-            List<String> naborNames) {
+            List<String> naborNames,
+            Map<String, List<Long>> vertShaderModulesStorage,
+            Map<String, List<Long>> fragShaderModulesStorage) {
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
@@ -109,12 +112,28 @@ public class PostProcessingNaborChain {
                     throw new IllegalArgumentException(msg);
             }
 
-            ppNabor.compile(
-                    colorImageFormat,
-                    extent,
-                    commandPool,
-                    graphicsQueue,
-                    1);
+            if (vertShaderModulesStorage.containsKey(naborName)) {
+                var vertShaderModules = vertShaderModulesStorage.get(naborName);
+                var fragShaderModules = fragShaderModulesStorage.get(naborName);
+
+                ppNabor.compile(
+                        colorImageFormat,
+                        extent,
+                        commandPool,
+                        graphicsQueue,
+                        1,
+                        vertShaderModules,
+                        fragShaderModules
+                );
+            } else {
+                ppNabor.compile(
+                        colorImageFormat,
+                        extent,
+                        commandPool,
+                        graphicsQueue,
+                        1);
+            }
+
             ppNabors.put(naborName, ppNabor);
         }
 
@@ -310,6 +329,32 @@ public class PostProcessingNaborChain {
 
             lastPPNabor = ppNabor;
         }
+    }
+
+    public Map<String, List<Long>> getVertShaderModules() {
+        var vertShaderModules = new HashMap<String, List<Long>>();
+
+        for (var entry : ppNabors.entrySet()) {
+            String naborName = entry.getKey();
+            PostProcessingNabor ppNabor = entry.getValue();
+
+            vertShaderModules.put(naborName, ppNabor.getVertShaderModules());
+        }
+
+        return vertShaderModules;
+    }
+
+    public Map<String, List<Long>> getFragShaderModules() {
+        var fragShaderModules = new HashMap<String, List<Long>>();
+
+        for (var entry : ppNabors.entrySet()) {
+            String naborName = entry.getKey();
+            PostProcessingNabor ppNabor = entry.getValue();
+
+            fragShaderModules.put(naborName, ppNabor.getFragShaderModules());
+        }
+
+        return fragShaderModules;
     }
 
     public void transitionLastPPNaborColorImage() {

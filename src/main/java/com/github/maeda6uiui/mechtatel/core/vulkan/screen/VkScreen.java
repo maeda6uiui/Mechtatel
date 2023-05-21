@@ -21,7 +21,9 @@ import org.lwjgl.vulkan.*;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -40,6 +42,9 @@ public class VkScreen {
     private PrimitiveNabor primitiveFillNabor;
     private MergeScenesNabor mergeScenesNabor;
     private MergeScenesNabor mergeScenesFillNabor;
+
+    private static Map<String, List<Long>> vertShaderModulesStorage = new HashMap<>();
+    private static Map<String, List<Long>> fragShaderModulesStorage = new HashMap<>();
 
     private PostProcessingNaborChain ppNaborChain;
 
@@ -66,66 +71,173 @@ public class VkScreen {
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
 
+        //GBuffer nabor
         gBufferNabor = new GBufferNabor(
                 device,
                 albedoMsaaSamples,
                 depthImageFormat,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT);
-        gBufferNabor.compile(
-                colorImageFormat,
-                extent,
-                commandPool,
-                graphicsQueue,
-                1);
+        if (vertShaderModulesStorage.containsKey("gbuffer")) {
+            var vertShaderModules = vertShaderModulesStorage.get("gbuffer");
+            var fragShaderModules = fragShaderModulesStorage.get("gbuffer");
 
+            gBufferNabor.compile(
+                    colorImageFormat,
+                    extent,
+                    commandPool,
+                    graphicsQueue,
+                    1,
+                    vertShaderModules,
+                    fragShaderModules
+            );
+        } else {
+            gBufferNabor.compile(
+                    colorImageFormat,
+                    extent,
+                    commandPool,
+                    graphicsQueue,
+                    1);
+
+            var vertShaderModules = gBufferNabor.getVertShaderModules();
+            var fragShaderModules = gBufferNabor.getFragShaderModules();
+            vertShaderModulesStorage.put("gbuffer", vertShaderModules);
+            fragShaderModulesStorage.put("gbuffer", fragShaderModules);
+        }
+
+        //Primitive nabor
         primitiveNabor = new PrimitiveNabor(
                 device,
                 depthImageFormat,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 false);
-        primitiveNabor.compile(
-                colorImageFormat,
-                extent,
-                commandPool,
-                graphicsQueue,
-                1);
+        if (vertShaderModulesStorage.containsKey("primitive")) {
+            var vertShaderModules = vertShaderModulesStorage.get("primitive");
+            var fragShaderModules = fragShaderModulesStorage.get("primitive");
+
+            primitiveNabor.compile(
+                    colorImageFormat,
+                    extent,
+                    commandPool,
+                    graphicsQueue,
+                    1,
+                    vertShaderModules,
+                    fragShaderModules
+            );
+        } else {
+            primitiveNabor.compile(
+                    colorImageFormat,
+                    extent,
+                    commandPool,
+                    graphicsQueue,
+                    1);
+
+            var vertShaderModules = primitiveNabor.getVertShaderModules();
+            var fragShaderModules = primitiveNabor.getFragShaderModules();
+            vertShaderModulesStorage.put("primitive", vertShaderModules);
+            fragShaderModulesStorage.put("primitive", fragShaderModules);
+        }
+
+        //Primitive-Fill nabor
         primitiveFillNabor = new PrimitiveNabor(
                 device,
                 depthImageFormat,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 true);
-        primitiveFillNabor.compile(
-                colorImageFormat,
-                extent,
-                commandPool,
-                graphicsQueue,
-                1);
+        if (vertShaderModulesStorage.containsKey("primitive_fill")) {
+            var vertShaderModules = vertShaderModulesStorage.get("primitive_fill");
+            var fragShaderModules = fragShaderModulesStorage.get("primitive_fill");
 
+            primitiveFillNabor.compile(
+                    colorImageFormat,
+                    extent,
+                    commandPool,
+                    graphicsQueue,
+                    1,
+                    vertShaderModules,
+                    fragShaderModules
+            );
+        } else {
+            primitiveFillNabor.compile(
+                    colorImageFormat,
+                    extent,
+                    commandPool,
+                    graphicsQueue,
+                    1);
+
+            var vertShaderModules = primitiveFillNabor.getVertShaderModules();
+            var fragShaderModules = primitiveFillNabor.getFragShaderModules();
+            vertShaderModulesStorage.put("primitive_fill", vertShaderModules);
+            fragShaderModulesStorage.put("primitive_fill", fragShaderModules);
+        }
+
+        //Merge-Scenes nabor
         mergeScenesNabor = new MergeScenesNabor(
                 device,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT);
-        mergeScenesNabor.compile(
-                colorImageFormat,
-                extent,
-                commandPool,
-                graphicsQueue,
-                1);
+        if (vertShaderModulesStorage.containsKey("merge_scenes")) {
+            var vertShaderModules = vertShaderModulesStorage.get("merge_scenes");
+            var fragShaderModules = fragShaderModulesStorage.get("merge_scenes");
+
+            mergeScenesNabor.compile(
+                    colorImageFormat,
+                    extent,
+                    commandPool,
+                    graphicsQueue,
+                    1,
+                    vertShaderModules,
+                    fragShaderModules
+            );
+        } else {
+            mergeScenesNabor.compile(
+                    colorImageFormat,
+                    extent,
+                    commandPool,
+                    graphicsQueue,
+                    1);
+
+            var vertShaderModules = mergeScenesNabor.getVertShaderModules();
+            var fragShaderModules = mergeScenesNabor.getFragShaderModules();
+            vertShaderModulesStorage.put("merge_scenes", vertShaderModules);
+            fragShaderModulesStorage.put("merge_scenes", fragShaderModules);
+        }
+
+        //Merge-Scenes-Fill nabor
         mergeScenesFillNabor = new MergeScenesNabor(
                 device,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT);
-        mergeScenesFillNabor.compile(
-                colorImageFormat,
-                extent,
-                commandPool,
-                graphicsQueue,
-                1);
+        if (vertShaderModulesStorage.containsKey("merge_scenes_fill")) {
+            var vertShaderModules = vertShaderModulesStorage.get("merge_scenes_fill");
+            var fragShaderModules = fragShaderModulesStorage.get("merge_scenes_fill");
+
+            mergeScenesFillNabor.compile(
+                    colorImageFormat,
+                    extent,
+                    commandPool,
+                    graphicsQueue,
+                    1,
+                    vertShaderModules,
+                    fragShaderModules
+            );
+        } else {
+            mergeScenesFillNabor.compile(
+                    colorImageFormat,
+                    extent,
+                    commandPool,
+                    graphicsQueue,
+                    1);
+
+            var vertShaderModules = mergeScenesFillNabor.getVertShaderModules();
+            var fragShaderModules = mergeScenesFillNabor.getFragShaderModules();
+            vertShaderModulesStorage.put("merge_scenes_fill", vertShaderModules);
+            fragShaderModulesStorage.put("merge_scenes_fill", fragShaderModules);
+        }
 
         if (ppNaborNames != null) {
             ppNaborChain = new PostProcessingNaborChain(
@@ -138,7 +250,19 @@ public class VkScreen {
                     depthImageAspect,
                     colorImageFormat,
                     extent,
-                    ppNaborNames
+                    ppNaborNames,
+                    new HashMap<>(vertShaderModulesStorage),
+                    new HashMap<>(fragShaderModulesStorage)
+            );
+
+            var ppNaborChainVertShaderModules = ppNaborChain.getVertShaderModules();
+            ppNaborChainVertShaderModules.forEach(
+                    (naborName, vertShaderModules) -> vertShaderModulesStorage.put(naborName, vertShaderModules)
+            );
+
+            var ppNaborChainFragShaderModules = ppNaborChain.getFragShaderModules();
+            ppNaborChainFragShaderModules.forEach(
+                    (naborName, fragShaderModules) -> fragShaderModulesStorage.put(naborName, fragShaderModules)
             );
         }
 

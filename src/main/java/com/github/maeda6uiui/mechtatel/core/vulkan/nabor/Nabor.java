@@ -30,7 +30,9 @@ public class Nabor {
 
     private int msaaSamples;
     private VkExtent2D extent;
+
     private boolean isContainer;
+    private boolean isSharedShaderModules;
 
     private long dummyImage;
     private long dummyImageMemory;
@@ -66,6 +68,7 @@ public class Nabor {
 
         this.msaaSamples = msaaSamples;
         this.isContainer = isContainer;
+        isSharedShaderModules = false;
 
         textureSamplers = new ArrayList<>();
 
@@ -245,8 +248,8 @@ public class Nabor {
         throw new RuntimeException("Unsupported operation");
     }
 
-    protected List<Long> getVertShaderModules() {
-        return vertShaderModules;
+    public List<Long> getVertShaderModules() {
+        return new ArrayList<>(vertShaderModules);
     }
 
     public long getVertShaderModule(int index) {
@@ -257,8 +260,8 @@ public class Nabor {
         throw new RuntimeException("Unsupported operation");
     }
 
-    protected List<Long> getFragShaderModules() {
-        return fragShaderModules;
+    public List<Long> getFragShaderModules() {
+        return new ArrayList<>(fragShaderModules);
     }
 
     public long getFragShaderModule(int index) {
@@ -542,8 +545,8 @@ public class Nabor {
             this.getFramebuffers().add(pFramebuffer.get(0));
         }
     }
-    //==========
 
+    //==========
     public void compile(
             int colorImageFormat,
             VkExtent2D extent,
@@ -567,9 +570,22 @@ public class Nabor {
         this.createFramebuffers();
     }
 
-    public void recreate(
+    public void compile(
             int colorImageFormat,
-            VkExtent2D extent) {
+            VkExtent2D extent,
+            long commandPool,
+            VkQueue graphicsQueue,
+            int descriptorCount,
+            List<Long> vertShaderModules,
+            List<Long> fragShaderModules) {
+        this.vertShaderModules = vertShaderModules;
+        this.fragShaderModules = fragShaderModules;
+        isSharedShaderModules = true;
+
+        this.compile(colorImageFormat, extent, commandPool, graphicsQueue, descriptorCount);
+    }
+
+    public void recreate(int colorImageFormat, VkExtent2D extent) {
         this.extent = extent;
 
         if (isContainer) {
@@ -614,8 +630,10 @@ public class Nabor {
 
             this.cleanupUserDefImages();
 
-            vertShaderModules.forEach(vertShaderModule -> vkDestroyShaderModule(device, vertShaderModule, null));
-            fragShaderModules.forEach(fragShaderModule -> vkDestroyShaderModule(device, fragShaderModule, null));
+            if (!isSharedShaderModules) {
+                vertShaderModules.forEach(vertShaderModule -> vkDestroyShaderModule(device, vertShaderModule, null));
+                fragShaderModules.forEach(fragShaderModule -> vkDestroyShaderModule(device, fragShaderModule, null));
+            }
             vertShaderModules.clear();
             fragShaderModules.clear();
 

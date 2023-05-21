@@ -6,6 +6,8 @@ import org.lwjgl.vulkan.VkExtent2D;
 import org.lwjgl.vulkan.VkQueue;
 
 import java.nio.LongBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_1_BIT;
 
@@ -43,6 +45,47 @@ public class GBufferNabor extends Nabor {
 
         albedoNabor.compile(colorImageFormat, extent, commandPool, graphicsQueue, descriptorCount);
         propertiesNabor.compile(colorImageFormat, extent, commandPool, graphicsQueue, descriptorCount);
+    }
+
+    @Override
+    public void compile(
+            int colorImageFormat,
+            VkExtent2D extent,
+            long commandPool,
+            VkQueue graphicsQueue,
+            int descriptorCount,
+            List<Long> vertShaderModules,
+            List<Long> fragShaderModules) {
+        super.compile(colorImageFormat, extent, commandPool, graphicsQueue, descriptorCount);
+
+        var albedoVertShaderModules = new ArrayList<Long>();
+        var albedoFragShaderModules = new ArrayList<Long>();
+        var propertiesVertShaderModules = new ArrayList<Long>();
+        var propertiesFragShaderModules = new ArrayList<Long>();
+
+        albedoVertShaderModules.add(vertShaderModules.get(0));
+        albedoFragShaderModules.add(fragShaderModules.get(0));
+        propertiesVertShaderModules.add(vertShaderModules.get(1));
+        propertiesFragShaderModules.add(fragShaderModules.get(1));
+
+        albedoNabor.compile(
+                colorImageFormat,
+                extent,
+                commandPool,
+                graphicsQueue,
+                descriptorCount,
+                albedoVertShaderModules,
+                albedoFragShaderModules
+        );
+        propertiesNabor.compile(
+                colorImageFormat,
+                extent,
+                commandPool,
+                graphicsQueue,
+                descriptorCount,
+                propertiesVertShaderModules,
+                propertiesFragShaderModules
+        );
     }
 
     @Override
@@ -327,5 +370,25 @@ public class GBufferNabor extends Nabor {
         }
 
         return setCount;
+    }
+
+    @Override
+    public List<Long> getVertShaderModules() {
+        var vertShaderModules = new ArrayList<Long>();
+
+        vertShaderModules.add(albedoNabor.getVertShaderModule(0));
+        vertShaderModules.add(propertiesNabor.getVertShaderModule(0));
+
+        return vertShaderModules;
+    }
+
+    @Override
+    public List<Long> getFragShaderModules() {
+        var fragShaderModules = new ArrayList<Long>();
+
+        fragShaderModules.add(albedoNabor.getFragShaderModule(0));
+        fragShaderModules.add(propertiesNabor.getFragShaderModule(0));
+
+        return fragShaderModules;
     }
 }

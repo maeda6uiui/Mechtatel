@@ -1,10 +1,12 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
+import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkModel3D;
 
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * 3D model
@@ -37,5 +39,13 @@ public class Model3D extends Component3D {
 
     public ModelLoader.Model getModel() {
         return vkModel.getModel();
+    }
+
+    public Set<Integer> getTextureIndices() {
+        return vkModel.getTextureIndices();
+    }
+
+    public void replaceTexture(int index, MttTexture newTexture) {
+        vkModel.replaceTexture(index, newTexture.getVulkanTexture());
     }
 }

@@ -10,6 +10,7 @@ import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.physics.*;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
+import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import org.joml.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -598,6 +599,14 @@ public class Mechtatel implements IMechtatel {
 
     public boolean removeSound3D(Sound3D sound) {
         return instance.removeSound3D(sound);
+    }
+
+    public MttTexture createMttTexture(String screenName, String textureFilepath, boolean generateMipmaps) {
+        return instance.createMttTexture(screenName, textureFilepath, generateMipmaps);
+    }
+
+    public MttTexture texturizeScreen(String srcScreenName, String dstScreenName) {
+        return instance.texturizeScreen(srcScreenName, dstScreenName);
     }
 
     public void saveScreenshot(String screenName, String srcImageFormat, String outputFilepath) throws IOException {

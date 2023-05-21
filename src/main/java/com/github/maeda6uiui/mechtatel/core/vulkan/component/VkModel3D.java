@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -31,6 +32,7 @@ public class VkModel3D extends VkComponent3D {
     private ModelLoader.Model model;
 
     private Map<Integer, VkTexture> textures;
+    private Map<Integer, Boolean> externalTextureFlags;
     private Map<Integer, Long> vertexBuffers;
     private Map<Integer, Long> vertexBufferMemories;
     private Map<Integer, Long> indexBuffers;
@@ -51,6 +53,7 @@ public class VkModel3D extends VkComponent3D {
         Map<Integer, ModelLoader.Material> materials = model.materials;
 
         textures = new HashMap<>();
+        externalTextureFlags = new HashMap<>();
 
         for (var materialEntry : materials.entrySet()) {
             int index = materialEntry.getKey();
@@ -69,6 +72,7 @@ public class VkModel3D extends VkComponent3D {
                     diffuseTexFilepath,
                     true);
             textures.put(index, texture);
+            externalTextureFlags.put(index, false);
         }
     }
 
@@ -132,6 +136,7 @@ public class VkModel3D extends VkComponent3D {
         this.createBuffers(commandPool, graphicsQueue);
 
         textures = srcModel.textures;
+        externalTextureFlags = srcModel.externalTextureFlags;
 
         this.setComponentType("gbuffer");
     }
@@ -140,7 +145,11 @@ public class VkModel3D extends VkComponent3D {
     public void cleanup() {
         //Texture
         if (!isDuplicatedModel) {
-            textures.forEach((idx, texture) -> texture.cleanup());
+            textures.forEach((idx, texture) -> {
+                if (externalTextureFlags.get(idx) == false) {
+                    texture.cleanup();
+                }
+            });
         }
 
         //Buffers
@@ -150,6 +159,18 @@ public class VkModel3D extends VkComponent3D {
         //Buffer memories
         vertexBufferMemories.forEach((idx, vertexBufferMemory) -> vkFreeMemory(device, vertexBufferMemory, null));
         indexBufferMemories.forEach((idx, indexBufferMemory) -> vkFreeMemory(device, indexBufferMemory, null));
+    }
+
+    public Set<Integer> getTextureIndices() {
+        return textures.keySet();
+    }
+
+    public void replaceTexture(int index, VkTexture newTexture) {
+        VkTexture curTexture = textures.get(index);
+        curTexture.cleanup();
+
+        textures.put(index, newTexture);
+        externalTextureFlags.put(index, true);
     }
 
     @Override

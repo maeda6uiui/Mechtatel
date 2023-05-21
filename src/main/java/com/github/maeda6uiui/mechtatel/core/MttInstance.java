@@ -12,6 +12,7 @@ import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.physics.*;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
+import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.ParallelLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLightNabor;
@@ -929,6 +930,16 @@ class MttInstance {
     }
 
     //=== Methods relating to textures and screens ===
+    public MttTexture createMttTexture(String screenName, String textureFilepath, boolean generateMipmaps) {
+        var texture = new MttTexture(vulkanInstance, screenName, textureFilepath, generateMipmaps);
+        return texture;
+    }
+
+    public MttTexture texturizeScreen(String srcScreenName, String dstScreenName) {
+        var texture = new MttTexture(vulkanInstance, srcScreenName, dstScreenName);
+        return texture;
+    }
+
     public void saveScreenshot(String screenName, String srcImageFormat, String outputFilepath) throws IOException {
         vulkanInstance.saveScreenshot(screenName, srcImageFormat, outputFilepath);
     }

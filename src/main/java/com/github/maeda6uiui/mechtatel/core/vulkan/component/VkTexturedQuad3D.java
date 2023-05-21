@@ -99,6 +99,22 @@ public class VkTexturedQuad3D extends VkComponent3D {
         this.setComponentType("gbuffer");
     }
 
+    public VkTexturedQuad3D(
+            VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue,
+            VkTexture texture,
+            List<Vertex3DUV> vertices) {
+        this.device = device;
+
+        isExternalTexture = true;
+
+        this.texture = texture;
+        this.createBuffers(commandPool, graphicsQueue, vertices);
+
+        this.setComponentType("gbuffer");
+    }
+
     @Override
     public void cleanup() {
         if (!isExternalTexture) {

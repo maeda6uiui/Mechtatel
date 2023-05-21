@@ -43,7 +43,8 @@ public class VkScreen {
 
     private PostProcessingNaborChain ppNaborChain;
 
-    private VkExtent2D initialExtent;
+    private int initialWidth;
+    private int initialHeight;
     private boolean shouldChangeExtentOnRecreate;
 
     private QuadDrawer quadDrawer;
@@ -141,25 +142,38 @@ public class VkScreen {
             );
         }
 
-        initialExtent = extent;
+        initialWidth = extent.width();
+        initialHeight = extent.height();
         this.shouldChangeExtentOnRecreate = shouldChangeExtentOnRecreate;
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
     }
 
     public void recreate(int colorImageFormat, VkExtent2D extent) {
-        if (!shouldChangeExtentOnRecreate) {
-            extent = initialExtent;
-        }
+        if (shouldChangeExtentOnRecreate) {
+            gBufferNabor.recreate(colorImageFormat, extent);
+            primitiveNabor.recreate(colorImageFormat, extent);
+            primitiveFillNabor.recreate(colorImageFormat, extent);
+            mergeScenesNabor.recreate(colorImageFormat, extent);
+            mergeScenesFillNabor.recreate(colorImageFormat, extent);
 
-        gBufferNabor.recreate(colorImageFormat, extent);
-        primitiveNabor.recreate(colorImageFormat, extent);
-        primitiveFillNabor.recreate(colorImageFormat, extent);
-        mergeScenesNabor.recreate(colorImageFormat, extent);
-        mergeScenesFillNabor.recreate(colorImageFormat, extent);
+            if (ppNaborChain != null) {
+                ppNaborChain.recreate(colorImageFormat, extent);
+            }
+        } else {
+            VkExtent2D initialExtent = VkExtent2D.create();
+            initialExtent.width(initialWidth);
+            initialExtent.height(initialHeight);
 
-        if (ppNaborChain != null) {
-            ppNaborChain.recreate(colorImageFormat, extent);
+            gBufferNabor.recreate(colorImageFormat, initialExtent);
+            primitiveNabor.recreate(colorImageFormat, initialExtent);
+            primitiveFillNabor.recreate(colorImageFormat, initialExtent);
+            mergeScenesNabor.recreate(colorImageFormat, initialExtent);
+            mergeScenesFillNabor.recreate(colorImageFormat, initialExtent);
+
+            if (ppNaborChain != null) {
+                ppNaborChain.recreate(colorImageFormat, initialExtent);
+            }
         }
     }
 

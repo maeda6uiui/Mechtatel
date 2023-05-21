@@ -111,7 +111,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
         swapchain.createFramebuffers(presentNabor.getRenderPass());
     }
 
-    private void recreateNabors() {
+    private void recreateScreens() {
         for (var screen : screens.values()) {
             screen.recreate(swapchain.getSwapchainImageFormat(), swapchain.getSwapchainExtent());
         }
@@ -222,7 +222,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
         swapchain.cleanup();
         this.createSwapchainObjects();
 
-        this.recreateNabors();
+        this.recreateScreens();
     }
 
     public void createScreen(
@@ -233,35 +233,33 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
             int screenHeight,
             boolean shouldChangeExtentOnRecreate,
             List<String> ppNaborNames) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkExtent2D extent = VkExtent2D.calloc(stack);
-            if (screenWidth < 0) {
-                extent.width(swapchain.getSwapchainExtent().width());
-            } else {
-                extent.width(screenWidth);
-            }
-            if (screenHeight < 0) {
-                extent.height(swapchain.getSwapchainExtent().height());
-            } else {
-                extent.height(screenHeight);
-            }
-
-            var screen = new VkScreen(
-                    device,
-                    commandPool,
-                    graphicsQueue,
-                    depthImageFormat,
-                    depthImageWidth,
-                    depthImageHeight,
-                    depthImageAspect,
-                    swapchain.getSwapchainImageFormat(),
-                    albedoMsaaSamples,
-                    extent,
-                    shouldChangeExtentOnRecreate,
-                    ppNaborNames
-            );
-            screens.put(screenName, screen);
+        VkExtent2D extent = VkExtent2D.create();
+        if (screenWidth < 0) {
+            extent.width(swapchain.getSwapchainExtent().width());
+        } else {
+            extent.width(screenWidth);
         }
+        if (screenHeight < 0) {
+            extent.height(swapchain.getSwapchainExtent().height());
+        } else {
+            extent.height(screenHeight);
+        }
+
+        var screen = new VkScreen(
+                device,
+                commandPool,
+                graphicsQueue,
+                depthImageFormat,
+                depthImageWidth,
+                depthImageHeight,
+                depthImageAspect,
+                swapchain.getSwapchainImageFormat(),
+                albedoMsaaSamples,
+                extent,
+                shouldChangeExtentOnRecreate,
+                ppNaborNames
+        );
+        screens.put(screenName, screen);
     }
 
     public boolean removeScreen(String screenName) {

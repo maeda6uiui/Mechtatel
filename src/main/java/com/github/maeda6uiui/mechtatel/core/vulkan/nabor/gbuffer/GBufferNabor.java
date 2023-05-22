@@ -139,6 +139,11 @@ public class GBufferNabor extends Nabor {
     }
 
     @Override
+    public long getDummyImageView(){
+        return albedoNabor.getDummyImageView();
+    }
+
+    @Override
     public VkExtent2D getExtent(int naborIndex) {
         VkExtent2D extent;
 

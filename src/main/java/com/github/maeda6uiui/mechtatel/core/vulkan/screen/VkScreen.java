@@ -12,6 +12,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PrimitiveNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNaborChain;
+import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import org.joml.Vector3f;
@@ -21,6 +22,7 @@ import org.lwjgl.vulkan.*;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -340,6 +342,30 @@ public class VkScreen {
 
     public GBufferNabor getgBufferNabor() {
         return gBufferNabor;
+    }
+
+    private void updateTextureAllocations(){
+        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
+        var descriptorSets = new ArrayList<Long>();
+        for (int i = 0; i < numDescriptorSets; i++) {
+            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
+        }
+        long dummyImageView= gBufferNabor.getDummyImageView();
+
+        var invalidAllocations= VkTexture.getInvalidAllocations();
+        for(var entry:invalidAllocations.entrySet()){
+            if(entry.getValue().equals(screenName)){
+                VkTexture.updateDescriptorSets(
+                        device,
+                        descriptorSets,
+                        gBufferNabor.getSetCount(0),
+                        entry.getKey(),
+                        dummyImageView
+                );
+            }
+        }
+
+        VkTexture.clearInvalidAllocations(screenName);
     }
 
     private void runAlbedoNabor(
@@ -731,6 +757,7 @@ public class VkScreen {
             Vector3f spotlightAmbientColor,
             ShadowMappingSettings shadowMappingSettings,
             List<VkComponent> components) {
+        this.updateTextureAllocations();
         this.runGBufferNabor(backgroundColor, camera, components);
         this.runPrimitiveNabor(backgroundColor, camera, components);
         this.runPrimitiveFillNabor(backgroundColor, camera, components);

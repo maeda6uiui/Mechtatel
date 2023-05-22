@@ -130,7 +130,7 @@ public class Nabor {
         return dummyImageMemory;
     }
 
-    protected long getDummyImageView() {
+    public long getDummyImageView() {
         return dummyImageView;
     }
 

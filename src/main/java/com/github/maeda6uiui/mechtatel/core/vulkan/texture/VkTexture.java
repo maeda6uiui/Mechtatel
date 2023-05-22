@@ -26,12 +26,15 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class VkTexture {
     private static Map<Integer, Boolean> allocationStatus;
+    private static Map<Integer,String> invalidAllocations;
 
     static {
         allocationStatus = new HashMap<>();
         for (int i = 0; i < GBufferNabor.MAX_NUM_TEXTURES; i++) {
             allocationStatus.put(i, false);
         }
+
+        invalidAllocations=new HashMap<>();
     }
 
     private static int allocateTextureIndex() {
@@ -47,6 +50,47 @@ public class VkTexture {
         }
 
         return index;
+    }
+
+    public static Map<Integer,String> getInvalidAllocations(){
+        return new HashMap<>(invalidAllocations);
+    }
+
+    public static void clearInvalidAllocations(String screenName){
+        for(var entry:invalidAllocations.entrySet()){
+            if(entry.getValue().equals(screenName)){
+                invalidAllocations.remove(entry.getKey());
+            }
+        }
+    }
+
+    public static void updateDescriptorSets(
+            VkDevice device,
+            List<Long> descriptorSets,
+            int setCount,
+            int allocationIndex,
+            long textureImageView) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDescriptorImageInfo.Buffer textureInfo = VkDescriptorImageInfo.calloc(1, stack);
+            textureInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            textureInfo.imageView(textureImageView);
+
+            VkWriteDescriptorSet.Buffer textureDescriptorWrite = VkWriteDescriptorSet.calloc(1, stack);
+            textureDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            textureDescriptorWrite.dstBinding(0);
+            textureDescriptorWrite.dstArrayElement(allocationIndex);
+            textureDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            textureDescriptorWrite.descriptorCount(1);
+            textureDescriptorWrite.pImageInfo(textureInfo);
+
+            for (int i = 0; i < descriptorSets.size(); i++) {
+                //Update set 1
+                if (i % setCount == 1) {
+                    textureDescriptorWrite.dstSet(descriptorSets.get(i));
+                    vkUpdateDescriptorSets(device, textureDescriptorWrite, null);
+                }
+            }
+        }
     }
 
     private VkDevice device;
@@ -319,30 +363,6 @@ public class VkTexture {
                 generateMipmaps ? mipLevels : 1);
     }
 
-    private void updateDescriptorSets(List<Long> descriptorSets, int setCount) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkDescriptorImageInfo.Buffer textureInfo = VkDescriptorImageInfo.calloc(1, stack);
-            textureInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            textureInfo.imageView(textureImageView);
-
-            VkWriteDescriptorSet.Buffer textureDescriptorWrite = VkWriteDescriptorSet.calloc(1, stack);
-            textureDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            textureDescriptorWrite.dstBinding(0);
-            textureDescriptorWrite.dstArrayElement(allocationIndex);
-            textureDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            textureDescriptorWrite.descriptorCount(1);
-            textureDescriptorWrite.pImageInfo(textureInfo);
-
-            for (int i = 0; i < descriptorSets.size(); i++) {
-                //Update set 1
-                if (i % setCount == 1) {
-                    textureDescriptorWrite.dstSet(descriptorSets.get(i));
-                    vkUpdateDescriptorSets(device, textureDescriptorWrite, null);
-                }
-            }
-        }
-    }
-
     public VkTexture(
             VkDevice device,
             long commandPool,
@@ -366,7 +386,7 @@ public class VkTexture {
         this.createTextureImage(commandPool, graphicsQueue);
         this.createTextureImageView();
 
-        this.updateDescriptorSets(descriptorSets, setCount);
+        updateDescriptorSets(device,descriptorSets,setCount,allocationIndex,textureImageView);
 
         externalImage = false;
 
@@ -397,7 +417,7 @@ public class VkTexture {
         this.createTextureImageFromByteBuffer(commandPool, graphicsQueue, pixels, width, height);
         this.createTextureImageView();
 
-        this.updateDescriptorSets(descriptorSets, setCount);
+        updateDescriptorSets(device,descriptorSets,setCount,allocationIndex,textureImageView);
 
         externalImage = false;
 
@@ -418,7 +438,7 @@ public class VkTexture {
         this.device = device;
         this.textureImageView = imageView;
 
-        this.updateDescriptorSets(descriptorSets, setCount);
+        updateDescriptorSets(device,descriptorSets,setCount,allocationIndex,textureImageView);
 
         externalImage = true;
 
@@ -433,6 +453,7 @@ public class VkTexture {
         }
 
         allocationStatus.put(allocationIndex, false);
+        invalidAllocations.put(allocationIndex,screenName);
     }
 
     public int getAllocationIndex() {

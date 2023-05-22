@@ -33,7 +33,7 @@ public class TexturedScreenTest extends Mechtatel {
 
     @Override
     public void init() {
-        MttScreen primaryScreen=this.createScreen(
+        MttScreen primaryScreen = this.createScreen(
                 "primary",
                 2048,
                 2048,
@@ -42,7 +42,7 @@ public class TexturedScreenTest extends Mechtatel {
                 true,
                 null
         );
-        MttScreen secondaryScreen=this.createScreen(
+        MttScreen secondaryScreen = this.createScreen(
                 "secondary",
                 1024,
                 1024,
@@ -66,13 +66,19 @@ public class TexturedScreenTest extends Mechtatel {
             e.printStackTrace();
         }
 
-        primaryScreen.setBackgroundColor(new Vector4f(0.0f,0.0f,0.0f,1.0f));
-        secondaryScreen.setBackgroundColor(new Vector4f(0.0f,1.0f,0.0f,1.0f));
+        primaryScreen.setBackgroundColor(new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
+        secondaryScreen.setBackgroundColor(new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
 
         primaryScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
         secondaryScreen.getCamera().setEye(new Vector3f(1.2f, 1.2f, 1.2f));
 
         MttTexture secondaryDrawResult = this.texturizeScreen("secondary", "primary");
-        primaryCube.replaceTexture(0,secondaryDrawResult);
+        primaryCube.replaceTexture(0, secondaryDrawResult);
+    }
+
+    @Override
+    public void update() {
+        MttTexture secondaryDrawResult = this.texturizeScreen("secondary", "primary");
+        primaryCube.replaceTexture(0, secondaryDrawResult);
     }
 }

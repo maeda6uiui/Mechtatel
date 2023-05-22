@@ -58,11 +58,7 @@ public class VkTexture {
     }
 
     public static void clearInvalidAllocations(String screenName) {
-        for (var entry : invalidAllocations.entrySet()) {
-            if (entry.getValue().equals(screenName)) {
-                invalidAllocations.remove(entry.getKey());
-            }
-        }
+        invalidAllocations.values().removeIf(v -> v.equals(screenName));
     }
 
     public static void updateDescriptorSets(

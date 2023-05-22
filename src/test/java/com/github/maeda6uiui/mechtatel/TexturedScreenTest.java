@@ -31,19 +31,17 @@ public class TexturedScreenTest extends Mechtatel {
     }
 
     private MttScreen primaryScreen;
-    private MttScreen secondaryScreen;
-
     private Model3D primaryCube;
+    private FreeCamera camera;
+
+    private MttScreen secondaryScreen;
     private Model3D secondaryCube;
 
-    private FreeCamera camera;
     private Vector3f secondaryCameraPosition;
 
     @Override
     public void init() {
-        var ppNaborNames = new ArrayList<String>();
-        ppNaborNames.add("parallel_light");
-
+        //Set up primary screen
         primaryScreen = this.createScreen(
                 "primary",
                 2048,
@@ -53,6 +51,15 @@ public class TexturedScreenTest extends Mechtatel {
                 true,
                 null
         );
+        primaryScreen.setShouldPresent(true);
+        primaryScreen.setBackgroundColor(new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
+        primaryScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
+
+        camera = new FreeCamera(primaryScreen.getCamera());
+
+        //Set up secondary screen
+        var ppNaborNames = new ArrayList<String>();
+        ppNaborNames.add("parallel_light");
         secondaryScreen = this.createScreen(
                 "secondary",
                 1024,
@@ -62,15 +69,16 @@ public class TexturedScreenTest extends Mechtatel {
                 false,
                 ppNaborNames
         );
-
+        secondaryScreen.setBackgroundColor(new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
         secondaryScreen.createParallelLight();
+
+        secondaryCameraPosition = new Vector3f(1.2f, 1.2f, 1.2f);
+        secondaryScreen.getCamera().setEye(secondaryCameraPosition);
 
         var screenDrawOrder = new ArrayList<String>();
         screenDrawOrder.add("secondary");
         screenDrawOrder.add("primary");
         this.setScreenDrawOrder(screenDrawOrder);
-
-        primaryScreen.setShouldPresent(true);
 
         try {
             primaryCube = this.createModel3D("primary", "./Mechtatel/Model/Cube/cube.obj");
@@ -78,16 +86,6 @@ public class TexturedScreenTest extends Mechtatel {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        primaryScreen.setBackgroundColor(new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
-        secondaryScreen.setBackgroundColor(new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
-
-        primaryScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
-
-        camera = new FreeCamera(primaryScreen.getCamera());
-
-        secondaryCameraPosition = new Vector3f(1.2f, 1.2f, 1.2f);
-        secondaryScreen.getCamera().setEye(secondaryCameraPosition);
     }
 
     @Override

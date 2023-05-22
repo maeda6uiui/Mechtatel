@@ -161,7 +161,7 @@ public class ShadowMappingNaborRunner {
             long commandPool,
             VkQueue graphicsQueue,
             MergeScenesNabor lastMergeNabor,
-            PostProcessingNabor lastPPNabor,
+            PostProcessingNabor previousPPNabor,
             PostProcessingNabor shadowMappingNabor,
             List<ParallelLight> shadowParallelLights,
             List<Spotlight> shadowSpotlights,
@@ -213,7 +213,7 @@ public class ShadowMappingNaborRunner {
                         shadowMappingNabor.getGraphicsPipeline(1, 0));
 
                 //First post-processing
-                if (lastPPNabor == null) {
+                if (previousPPNabor == null) {
                     lastMergeNabor.transitionAlbedoImage(commandPool, graphicsQueue);
                     lastMergeNabor.transitionDepthImage(commandPool, graphicsQueue);
                     lastMergeNabor.transitionPositionImage(commandPool, graphicsQueue);
@@ -228,13 +228,13 @@ public class ShadowMappingNaborRunner {
                             lastMergeNabor.getPositionImageView(),
                             lastMergeNabor.getNormalImageView());
                 } else {
-                    lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
+                    previousPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
 
                     shadowMappingNabor.bindImages(
                             commandBuffer,
                             1,
                             0,
-                            lastPPNabor.getColorImageView(),
+                            previousPPNabor.getColorImageView(),
                             lastMergeNabor.getDepthImageView(),
                             lastMergeNabor.getPositionImageView(),
                             lastMergeNabor.getNormalImageView());
@@ -267,7 +267,7 @@ public class ShadowMappingNaborRunner {
             long commandPool,
             VkQueue graphicsQueue,
             MergeScenesNabor lastMergeNabor,
-            PostProcessingNabor lastPPNabor,
+            PostProcessingNabor previousPPNabor,
             PostProcessingNabor shadowMappingNabor,
             List<ParallelLight> parallelLights,
             List<Spotlight> spotlights,
@@ -328,7 +328,7 @@ public class ShadowMappingNaborRunner {
                 commandPool,
                 graphicsQueue,
                 lastMergeNabor,
-                lastPPNabor,
+                previousPPNabor,
                 shadowMappingNabor,
                 shadowParallelLights,
                 shadowSpotlights,

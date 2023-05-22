@@ -171,7 +171,7 @@ public class PostProcessingNaborChain {
             ShadowMappingSettings shadowMappingSettings,
             MergeScenesNabor lastMergeNabor,
             List<VkComponent> components) {
-        boolean isFirstPP=true;
+        PostProcessingNabor previousPPNabor=null;
         for (var entry : ppNabors.entrySet()) {
             String naborName = entry.getKey();
             PostProcessingNabor ppNabor = entry.getValue();
@@ -182,7 +182,7 @@ public class PostProcessingNaborChain {
                         commandPool,
                         graphicsQueue,
                         lastMergeNabor,
-                        lastPPNabor,
+                        previousPPNabor,
                         ppNabor,
                         parallelLights,
                         spotlights,
@@ -190,6 +190,8 @@ public class PostProcessingNaborChain {
                         depthImageAspect,
                         shadowMappingSettings,
                         quadDrawer);
+
+                previousPPNabor=ppNabor;
 
                 continue;
             }
@@ -293,7 +295,7 @@ public class PostProcessingNaborChain {
                     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, ppNabor.getGraphicsPipeline(0));
 
                     //First post-processing
-                    if (isFirstPP) {
+                    if (previousPPNabor==null) {
                         lastMergeNabor.transitionAlbedoImage(commandPool, graphicsQueue);
                         lastMergeNabor.transitionDepthImage(commandPool, graphicsQueue);
                         lastMergeNabor.transitionPositionImage(commandPool, graphicsQueue);
@@ -307,12 +309,12 @@ public class PostProcessingNaborChain {
                                 lastMergeNabor.getPositionImageView(),
                                 lastMergeNabor.getNormalImageView());
                     } else {
-                        lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
+                        previousPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
 
                         ppNabor.bindImages(
                                 commandBuffer,
                                 0,
-                                lastPPNabor.getColorImageView(),
+                                previousPPNabor.getColorImageView(),
                                 lastMergeNabor.getDepthImageView(),
                                 lastMergeNabor.getPositionImageView(),
                                 lastMergeNabor.getNormalImageView());
@@ -325,7 +327,7 @@ public class PostProcessingNaborChain {
                 CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
             }
 
-            isFirstPP=false;
+            previousPPNabor=ppNabor;
         }
     }
 

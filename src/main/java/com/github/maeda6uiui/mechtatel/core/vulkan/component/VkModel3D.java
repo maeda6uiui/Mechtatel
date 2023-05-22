@@ -140,7 +140,7 @@ public class VkModel3D extends VkComponent3D {
 
     @Override
     public void cleanup() {
-        //Texture
+        //Textures
         if (!isDuplicatedModel) {
             textures.forEach((idx, texture) -> {
                 if (externalTextureFlags.get(idx) == false) {

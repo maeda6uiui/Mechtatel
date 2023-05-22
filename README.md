@@ -14,11 +14,15 @@ This project aims to create a Vulkan-based game engine in Java with help of [LWJ
 It's still far from what you call a game engine, but I'll keep on developing little by little in my free time.
 Leave a star in this repo if you like it!
 
+**This project is currently under active development and is subject to frequent change. Latest code in the develop branch may not work.**
+
 ---
 
 Javaでゲームエンジンを作ることを目標としているプロジェクトです。
 [LWJGL](https://www.lwjgl.org/)でVulkanを使用して開発を進めています。
 現状はまだゲームエンジンと呼べるような代物ではありませんが、気力と時間があるときに少しずつ開発を進めていきたいと思っています。
+
+**このプロジェクトは現在開発中のため、developブランチの最新版のコードが動作しないこともあります。**
 
 ## 開発者からのメッセージ(Message from developer)
 
@@ -70,6 +74,18 @@ Place following binaries under ./Mechtatel/Bin.
 - [ ] 3Dモデルのアニメーション機能の実装
 
 ## 進捗報告
+
+### 2023-05-22
+
+レンダリング結果をテクスチャとして別のレンダリングで使用できる機能を実装しました。
+
+![Textured screen](./Image/textured_screen.png)
+
+バグったり実装の方針が決まらず右往左往したりでとても苦労しました...。
+この機能があると、画面の分割表示をしたり、監視カメラやテレビを表現したり、あるいは鏡面反射を表現したりすることが可能になるはずです！
+
+次は、二つのテクスチャの加算や乗算、深度による合成などの機能を実装していきます。
+まだ実装のイメージがついていないので、コミットを乱打することになると思います...。
 
 ### 2023-05-07
 

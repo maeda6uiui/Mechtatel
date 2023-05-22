@@ -2,9 +2,11 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -28,12 +30,21 @@ public class TexturedScreenTest extends Mechtatel {
         new TexturedScreenTest(settings);
     }
 
+    private MttScreen primaryScreen;
+    private MttScreen secondaryScreen;
+
     private Model3D primaryCube;
     private Model3D secondaryCube;
 
+    private FreeCamera camera;
+    private Vector3f secondaryCameraPosition;
+
     @Override
     public void init() {
-        MttScreen primaryScreen = this.createScreen(
+        var ppNaborNames = new ArrayList<String>();
+        ppNaborNames.add("parallel_light");
+
+        primaryScreen = this.createScreen(
                 "primary",
                 2048,
                 2048,
@@ -42,15 +53,17 @@ public class TexturedScreenTest extends Mechtatel {
                 true,
                 null
         );
-        MttScreen secondaryScreen = this.createScreen(
+        secondaryScreen = this.createScreen(
                 "secondary",
                 1024,
                 1024,
                 512,
                 512,
                 false,
-                null
+                ppNaborNames
         );
+
+        secondaryScreen.createParallelLight();
 
         var screenDrawOrder = new ArrayList<String>();
         screenDrawOrder.add("secondary");
@@ -70,14 +83,31 @@ public class TexturedScreenTest extends Mechtatel {
         secondaryScreen.setBackgroundColor(new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
 
         primaryScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
-        secondaryScreen.getCamera().setEye(new Vector3f(1.2f, 1.2f, 1.2f));
 
-        MttTexture secondaryDrawResult = this.texturizeScreen("secondary", "primary");
-        primaryCube.replaceTexture(0, secondaryDrawResult);
+        camera = new FreeCamera(primaryScreen.getCamera());
+
+        secondaryCameraPosition = new Vector3f(1.2f, 1.2f, 1.2f);
+        secondaryScreen.getCamera().setEye(secondaryCameraPosition);
     }
 
     @Override
     public void update() {
+        camera.translate(
+                this.getKeyboardPressingCount("W"),
+                this.getKeyboardPressingCount("S"),
+                this.getKeyboardPressingCount("A"),
+                this.getKeyboardPressingCount("D")
+        );
+        camera.rotate(
+                this.getKeyboardPressingCount("UP"),
+                this.getKeyboardPressingCount("DOWN"),
+                this.getKeyboardPressingCount("LEFT"),
+                this.getKeyboardPressingCount("RIGHT")
+        );
+
+        secondaryCameraPosition = new Matrix4f().rotateY(0.01f).transformPosition(secondaryCameraPosition);
+        secondaryScreen.getCamera().setEye(secondaryCameraPosition);
+
         MttTexture secondaryDrawResult = this.texturizeScreen("secondary", "primary");
         primaryCube.replaceTexture(0, secondaryDrawResult);
     }

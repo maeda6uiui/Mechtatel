@@ -14,15 +14,11 @@ This project aims to create a Vulkan-based game engine in Java with help of [LWJ
 It's still far from what you call a game engine, but I'll keep on developing little by little in my free time.
 Leave a star in this repo if you like it!
 
-**This project is currently under active development and is subject to frequent change. Latest code in the develop branch may not work.**
-
 ---
 
 Javaでゲームエンジンを作ることを目標としているプロジェクトです。
 [LWJGL](https://www.lwjgl.org/)でVulkanを使用して開発を進めています。
 現状はまだゲームエンジンと呼べるような代物ではありませんが、気力と時間があるときに少しずつ開発を進めていきたいと思っています。
-
-**このプロジェクトは現在鋭意開発中のため、developブランチの最新版のコードが動作しないこともあります。**
 
 ## 開発者からのメッセージ(Message from developer)
 

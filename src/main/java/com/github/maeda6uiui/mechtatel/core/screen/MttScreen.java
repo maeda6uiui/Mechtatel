@@ -82,7 +82,9 @@ public class MttScreen{
     }
 
     public void draw(){
-        screen.revertTransitionColorImageLayout();
+        if(!screen.isJustCreated()){
+            screen.revertTransitionColorImageLayout();
+        }
         vulkanInstance.draw(
                 screen,
                 backgroundColor,

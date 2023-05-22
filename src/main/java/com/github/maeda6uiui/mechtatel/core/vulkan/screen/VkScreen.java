@@ -57,6 +57,8 @@ public class VkScreen {
 
     private QuadDrawer quadDrawer;
 
+    private boolean justCreated;
+
     public VkScreen(
             VkDevice device,
             long commandPool,
@@ -277,6 +279,8 @@ public class VkScreen {
         this.shouldChangeExtentOnRecreate = shouldChangeExtentOnRecreate;
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
+
+        justCreated=true;
     }
 
     public void recreate(int colorImageFormat, VkExtent2D extent) {
@@ -305,6 +309,8 @@ public class VkScreen {
                 ppNaborChain.recreate(colorImageFormat, initialExtent);
             }
         }
+
+        justCreated=true;
     }
 
     public void cleanup() {
@@ -319,6 +325,13 @@ public class VkScreen {
         if (ppNaborChain != null) {
             ppNaborChain.cleanup();
         }
+    }
+
+    public boolean isJustCreated(){
+        boolean ret=justCreated;
+        justCreated=false;
+
+        return ret;
     }
 
     public String getScreenName(){

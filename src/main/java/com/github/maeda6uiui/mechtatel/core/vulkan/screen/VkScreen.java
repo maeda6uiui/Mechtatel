@@ -14,6 +14,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNaborChain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
@@ -55,8 +56,6 @@ public class VkScreen {
     private boolean shouldChangeExtentOnRecreate;
 
     private QuadDrawer quadDrawer;
-
-    private boolean justCreated;
 
     public VkScreen(
             VkDevice device,
@@ -278,8 +277,6 @@ public class VkScreen {
         this.shouldChangeExtentOnRecreate = shouldChangeExtentOnRecreate;
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
-
-        justCreated =true;
     }
 
     public void recreate(int colorImageFormat, VkExtent2D extent) {
@@ -308,15 +305,6 @@ public class VkScreen {
                 ppNaborChain.recreate(colorImageFormat, initialExtent);
             }
         }
-
-        justCreated =true;
-    }
-
-    public boolean isJustCreated(){
-        boolean ret= justCreated;
-        justCreated =false;
-
-        return ret;
     }
 
     public void cleanup() {

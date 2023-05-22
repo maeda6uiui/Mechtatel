@@ -64,7 +64,6 @@ public class TexturedQuad2D extends Component {
 
     public TexturedQuad2D(
             MttVulkanInstance vulkanInstance,
-            String screenName,
             TexturedQuad2D srcQuad,
             Vertex2DUV p1,
             Vertex2DUV p2,
@@ -74,7 +73,7 @@ public class TexturedQuad2D extends Component {
         super(vulkanInstance);
 
         var vertices = this.createVertices(p1, p2, p3, p4, z);
-        vkTexturedQuad = vulkanInstance.duplicateTexturedQuad2D(screenName, srcQuad.vkTexturedQuad, vertices);
+        vkTexturedQuad = vulkanInstance.duplicateTexturedQuad2D(srcQuad.vkTexturedQuad, vertices);
         this.associateVulkanComponent(vkTexturedQuad);
     }
 }

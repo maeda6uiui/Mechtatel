@@ -1,26 +1,19 @@
 package com.github.maeda6uiui.mechtatel.core;
 
-import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.*;
 import com.github.maeda6uiui.mechtatel.core.component.gui.*;
-import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
-import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
-import com.github.maeda6uiui.mechtatel.core.light.PointLight;
-import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.physics.*;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
-import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.ParallelLightNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLightNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.SpotlightNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkScreen;
 import com.jme3.system.NativeLibraryLoader;
-import org.joml.*;
+import org.joml.Vector2fc;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
+import org.joml.Vector4fc;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
@@ -63,7 +56,7 @@ class MttInstance {
     private List<PhysicalObject3D> physicalObjects;
     private float physicsSimulationTimeScale;
 
-    private Map<String,MttScreen> screens;
+    private Map<String, MttScreen> screens;
     private List<String> screenDrawOrder;
 
     private List<Sound3D> sounds3D;
@@ -75,9 +68,9 @@ class MttInstance {
             vulkanInstance.recreateSwapchain();
         }
 
-        for(var screen:screens.values()){
-            if(screen.shouldAutoUpdateCameraAspect()){
-                screen.getCamera().setAspect((float)width/(float)height);
+        for (var screen : screens.values()) {
+            if (screen.shouldAutoUpdateCameraAspect()) {
+                screen.getCamera().setAspect((float) width / (float) height);
             }
         }
 
@@ -159,8 +152,8 @@ class MttInstance {
                 settings.bulletSettings.buildType,
                 settings.bulletSettings.flavor);
 
-        screens=new HashMap<>();
-        MttScreen defaultScreen=this.createScreen(
+        screens = new HashMap<>();
+        MttScreen defaultScreen = this.createScreen(
                 "default",
                 2048,
                 2048,
@@ -170,7 +163,7 @@ class MttInstance {
                 null
         );
         defaultScreen.setShouldPresent(true);
-        screens.put("default",defaultScreen);
+        screens.put("default", defaultScreen);
 
         screenDrawOrder = new ArrayList<>();
         screenDrawOrder.add("default");
@@ -226,9 +219,9 @@ class MttInstance {
                 PhysicalObject3D.updatePhysicsSpace((float) elapsedTime, physicsSimulationTimeScale);
 
                 for (var screenName : screenDrawOrder) {
-                    MttScreen screen=screens.get(screenName);
+                    MttScreen screen = screens.get(screenName);
                     screen.draw();
-                    if(screen.shouldPresent()){
+                    if (screen.shouldPresent()) {
                         vulkanInstance.present(screenName);
                     }
                 }
@@ -421,7 +414,6 @@ class MttInstance {
     }
 
     public TexturedQuad3D duplicateTexturedQuad3D(
-            String screenName,
             TexturedQuad3D srcQuad,
             Vertex3DUV v1,
             Vertex3DUV v2,
@@ -429,7 +421,6 @@ class MttInstance {
             Vertex3DUV v4) {
         var texturedQuad = new TexturedQuad3D(
                 vulkanInstance,
-                screenName,
                 srcQuad,
                 v1,
                 v2,
@@ -451,8 +442,8 @@ class MttInstance {
     }
 
     public TexturedQuad2D duplicateTexturedQuad2D(
-            String screenName, TexturedQuad2D srcQuad, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
-        var texturedQuad = new TexturedQuad2D(vulkanInstance, screenName, srcQuad, p1, p2, p3, p4, z);
+            TexturedQuad2D srcQuad, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
+        var texturedQuad = new TexturedQuad2D(vulkanInstance, srcQuad, p1, p2, p3, p4, z);
         return texturedQuad;
     }
 
@@ -788,12 +779,12 @@ class MttInstance {
             int screenHeight,
             boolean shouldChangeExtentOnRecreate,
             List<String> ppNaborNames) {
-        if(screens.containsKey(screenName)){
+        if (screens.containsKey(screenName)) {
             screens.get(screenName).cleanup();
             screens.remove(screenName);
         }
 
-        var screen=new MttScreen(
+        var screen = new MttScreen(
                 vulkanInstance,
                 screenName,
                 depthImageWidth,
@@ -810,10 +801,10 @@ class MttInstance {
             IntBuffer height = stack.ints(0);
             glfwGetFramebufferSize(window, width, height);
 
-            screen.getCamera().setAspect((float)width.get(0)/(float)height.get(0));
+            screen.getCamera().setAspect((float) width.get(0) / (float) height.get(0));
         }
 
-        screens.put(screenName,screen);
+        screens.put(screenName, screen);
 
         return screen;
     }
@@ -825,11 +816,11 @@ class MttInstance {
         return vulkanInstance.removeScreen(screenName);
     }
 
-    public MttScreen getScreen(String screenName){
+    public MttScreen getScreen(String screenName) {
         return screens.get(screenName);
     }
 
-    public Map<String,MttScreen> getScreens(){
+    public Map<String, MttScreen> getScreens() {
         return new HashMap<>(screens);
     }
 

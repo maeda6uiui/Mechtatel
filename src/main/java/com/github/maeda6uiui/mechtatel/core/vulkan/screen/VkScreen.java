@@ -281,7 +281,7 @@ public class VkScreen {
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
 
-        alreadyRunAfterCreation =false;
+        alreadyRunAfterCreation = false;
     }
 
     public void recreate(int colorImageFormat, VkExtent2D extent) {
@@ -311,7 +311,7 @@ public class VkScreen {
             }
         }
 
-        alreadyRunAfterCreation =false;
+        alreadyRunAfterCreation = false;
     }
 
     public void cleanup() {
@@ -328,15 +328,15 @@ public class VkScreen {
         }
     }
 
-    public boolean isAlreadyRunAfterCreation(){
+    public boolean isAlreadyRunAfterCreation() {
         return alreadyRunAfterCreation;
     }
 
-    public void flagAlreadyRunAfterCreation(){
-        alreadyRunAfterCreation=true;
+    public void flagAlreadyRunAfterCreation() {
+        alreadyRunAfterCreation = true;
     }
 
-    public String getScreenName(){
+    public String getScreenName() {
         return screenName;
     }
 
@@ -344,17 +344,17 @@ public class VkScreen {
         return gBufferNabor;
     }
 
-    private void updateTextureAllocations(){
+    private void updateTextureAllocations() {
         int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
         var descriptorSets = new ArrayList<Long>();
         for (int i = 0; i < numDescriptorSets; i++) {
             descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
         }
-        long dummyImageView= gBufferNabor.getDummyImageView();
+        long dummyImageView = gBufferNabor.getDummyImageView();
 
-        var invalidAllocations= VkTexture.getInvalidAllocations();
-        for(var entry:invalidAllocations.entrySet()){
-            if(entry.getValue().equals(screenName)){
+        var invalidAllocations = VkTexture.getInvalidAllocations();
+        for (var entry : invalidAllocations.entrySet()) {
+            if (entry.getValue().equals(screenName)) {
                 VkTexture.updateDescriptorSets(
                         device,
                         descriptorSets,
@@ -789,7 +789,7 @@ public class VkScreen {
         }
     }
 
-    public void revertTransitionColorImageLayout(){
+    public void revertTransitionColorImageLayout() {
         if (ppNaborChain == null) {
             mergeScenesFillNabor.revertTransitionAlbedoImage(commandPool, graphicsQueue);
         } else {
@@ -803,6 +803,20 @@ public class VkScreen {
         } else {
             return ppNaborChain.getLastPPNaborColorImageView();
         }
+    }
+
+    public List<Long> getDescriptorSets() {
+        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
+        var descriptorSets = new ArrayList<Long>();
+        for (int i = 0; i < numDescriptorSets; i++) {
+            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
+        }
+
+        return descriptorSets;
+    }
+
+    public int getSetCount() {
+        return gBufferNabor.getSetCount(0);
     }
 
     public void save(String srcImageFormat, String outputFilepath) throws IOException {

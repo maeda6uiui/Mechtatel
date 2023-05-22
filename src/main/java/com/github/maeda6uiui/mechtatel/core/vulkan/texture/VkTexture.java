@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.texture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.ImageViewCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.PointerBuffer;
@@ -26,7 +27,7 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class VkTexture {
     private static Map<Integer, Boolean> allocationStatus;
-    private static Map<Integer,String> invalidAllocations;
+    private static Map<Integer, String> invalidAllocations;
 
     static {
         allocationStatus = new HashMap<>();
@@ -34,7 +35,7 @@ public class VkTexture {
             allocationStatus.put(i, false);
         }
 
-        invalidAllocations=new HashMap<>();
+        invalidAllocations = new HashMap<>();
     }
 
     private static int allocateTextureIndex() {
@@ -52,13 +53,13 @@ public class VkTexture {
         return index;
     }
 
-    public static Map<Integer,String> getInvalidAllocations(){
+    public static Map<Integer, String> getInvalidAllocations() {
         return new HashMap<>(invalidAllocations);
     }
 
-    public static void clearInvalidAllocations(String screenName){
-        for(var entry:invalidAllocations.entrySet()){
-            if(entry.getValue().equals(screenName)){
+    public static void clearInvalidAllocations(String screenName) {
+        for (var entry : invalidAllocations.entrySet()) {
+            if (entry.getValue().equals(screenName)) {
                 invalidAllocations.remove(entry.getKey());
             }
         }
@@ -367,8 +368,7 @@ public class VkTexture {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<Long> descriptorSets,
-            int setCount,
+            VkScreen screen,
             String textureFilepath,
             boolean generateMipmaps) {
         allocationIndex = allocateTextureIndex();
@@ -386,19 +386,18 @@ public class VkTexture {
         this.createTextureImage(commandPool, graphicsQueue);
         this.createTextureImageView();
 
-        updateDescriptorSets(device,descriptorSets,setCount,allocationIndex,textureImageView);
+        updateDescriptorSets(device, screen.getDescriptorSets(), screen.getSetCount(), allocationIndex, textureImageView);
 
         externalImage = false;
 
-        screenName = "n/a";
+        screenName = screen.getScreenName();
     }
 
     public VkTexture(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<Long> descriptorSets,
-            int setCount,
+            VkScreen screen,
             ByteBuffer pixels,
             int width,
             int height,
@@ -417,18 +416,14 @@ public class VkTexture {
         this.createTextureImageFromByteBuffer(commandPool, graphicsQueue, pixels, width, height);
         this.createTextureImageView();
 
-        updateDescriptorSets(device,descriptorSets,setCount,allocationIndex,textureImageView);
+        updateDescriptorSets(device, screen.getDescriptorSets(), screen.getSetCount(), allocationIndex, textureImageView);
 
         externalImage = false;
 
-        screenName = "n/a";
+        screenName = screen.getScreenName();
     }
 
-    public VkTexture(
-            VkDevice device,
-            List<Long> descriptorSets,
-            int setCount,
-            long imageView) {
+    public VkTexture(VkDevice device, VkScreen screen, long imageView) {
         allocationIndex = allocateTextureIndex();
         if (allocationIndex < 0) {
             String msg = String.format("Cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
@@ -438,11 +433,11 @@ public class VkTexture {
         this.device = device;
         this.textureImageView = imageView;
 
-        updateDescriptorSets(device,descriptorSets,setCount,allocationIndex,textureImageView);
+        updateDescriptorSets(device, screen.getDescriptorSets(), screen.getSetCount(), allocationIndex, textureImageView);
 
         externalImage = true;
 
-        screenName = "n/a";
+        screenName = screen.getScreenName();
     }
 
     public void cleanup() {
@@ -453,15 +448,11 @@ public class VkTexture {
         }
 
         allocationStatus.put(allocationIndex, false);
-        invalidAllocations.put(allocationIndex,screenName);
+        invalidAllocations.put(allocationIndex, screenName);
     }
 
     public int getAllocationIndex() {
         return allocationIndex;
-    }
-
-    public void setScreenName(String screenName) {
-        this.screenName = screenName;
     }
 
     public String getScreenName() {

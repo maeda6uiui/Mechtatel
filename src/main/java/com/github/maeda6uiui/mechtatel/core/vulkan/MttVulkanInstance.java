@@ -13,7 +13,6 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
@@ -291,7 +290,7 @@ public class MttVulkanInstance
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
             renderPassInfo.pClearValues(clearValues);
 
-            VkScreen screen=screens.get(screenName);
+            VkScreen screen = screens.get(screenName);
             long colorImageView = screen.getColorImageView();
 
             var commandBuffers
@@ -340,17 +339,17 @@ public class MttVulkanInstance
 
     @Override
     public void draw(
-             VkScreen screen,
-             Vector4f backgroundColor,
-             Camera camera,
-             Fog fog,
-             List<ParallelLight> parallelLights,
-             Vector3f parallelLightAmbientColor,
-             List<PointLight> pointLights,
-             Vector3f pointLightAmbientColor,
-             List<Spotlight> spotlights,
-             Vector3f spotlightAmbientColor,
-             ShadowMappingSettings shadowMappingSettings) {
+            VkScreen screen,
+            Vector4f backgroundColor,
+            Camera camera,
+            Fog fog,
+            List<ParallelLight> parallelLights,
+            Vector3f parallelLightAmbientColor,
+            List<PointLight> pointLights,
+            Vector3f pointLightAmbientColor,
+            List<Spotlight> spotlights,
+            Vector3f spotlightAmbientColor,
+            ShadowMappingSettings shadowMappingSettings) {
         screen.run(
                 backgroundColor,
                 camera,
@@ -381,20 +380,13 @@ public class MttVulkanInstance
     }
 
     public VkModel3D createModel3D(String screenName, String modelFilepath) throws IOException {
-        GBufferNabor gBufferNabor = screens.get(screenName).getgBufferNabor();
-
-        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
-        var descriptorSets = new ArrayList<Long>();
-        for (int i = 0; i < numDescriptorSets; i++) {
-            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
-        }
+        VkScreen screen = screens.get(screenName);
 
         var model = new VkModel3D(
                 device,
                 commandPool,
                 graphicsQueue,
-                descriptorSets,
-                gBufferNabor.getSetCount(0),
+                screen,
                 modelFilepath);
         model.setScreenName(screenName);
         components.add(model);
@@ -479,20 +471,13 @@ public class MttVulkanInstance
 
     public VkTexturedQuad3D createTexturedQuad3D(
             String screenName, String textureFilepath, boolean generateMipmaps, List<Vertex3DUV> vertices) {
-        GBufferNabor gBufferNabor = screens.get(screenName).getgBufferNabor();
-
-        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
-        var descriptorSets = new ArrayList<Long>();
-        for (int i = 0; i < numDescriptorSets; i++) {
-            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
-        }
+        VkScreen screen = screens.get(screenName);
 
         var texturedQuad = new VkTexturedQuad3D(
                 device,
                 commandPool,
                 graphicsQueue,
-                descriptorSets,
-                gBufferNabor.getSetCount(0),
+                screen,
                 textureFilepath,
                 generateMipmaps,
                 vertices);
@@ -515,16 +500,7 @@ public class MttVulkanInstance
         return texturedQuad;
     }
 
-    public VkTexturedQuad3D duplicateTexturedQuad3D(
-            String screenName, VkTexturedQuad3D srcQuad, List<Vertex3DUV> vertices) {
-        GBufferNabor gBufferNabor = screens.get(screenName).getgBufferNabor();
-
-        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
-        var descriptorSets = new ArrayList<Long>();
-        for (int i = 0; i < numDescriptorSets; i++) {
-            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
-        }
-
+    public VkTexturedQuad3D duplicateTexturedQuad3D(VkTexturedQuad3D srcQuad, List<Vertex3DUV> vertices) {
         var texturedQuad = new VkTexturedQuad3D(
                 device,
                 commandPool,
@@ -538,20 +514,13 @@ public class MttVulkanInstance
     }
 
     public VkTexturedQuad2D createTexturedQuad2D(String screenName, String textureFilepath, List<Vertex3DUV> vertices) {
-        GBufferNabor gBufferNabor = screens.get(screenName).getgBufferNabor();
-
-        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
-        var descriptorSets = new ArrayList<Long>();
-        for (int i = 0; i < numDescriptorSets; i++) {
-            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
-        }
+        VkScreen screen = screens.get(screenName);
 
         var texturedQuad = new VkTexturedQuad2D(
                 device,
                 commandPool,
                 graphicsQueue,
-                descriptorSets,
-                gBufferNabor.getSetCount(0),
+                screen,
                 textureFilepath,
                 false,
                 vertices);
@@ -574,16 +543,7 @@ public class MttVulkanInstance
         return texturedQuad;
     }
 
-    public VkTexturedQuad2D duplicateTexturedQuad2D(
-            String screenName, VkTexturedQuad2D srcQuad, List<Vertex3DUV> vertices) {
-        GBufferNabor gBufferNabor = screens.get(screenName).getgBufferNabor();
-
-        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
-        var descriptorSets = new ArrayList<Long>();
-        for (int i = 0; i < numDescriptorSets; i++) {
-            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
-        }
-
+    public VkTexturedQuad2D duplicateTexturedQuad2D(VkTexturedQuad2D srcQuad, List<Vertex3DUV> vertices) {
         var texturedQuad = new VkTexturedQuad2D(
                 device,
                 commandPool,
@@ -604,22 +564,14 @@ public class MttVulkanInstance
         return texturedQuadSet;
     }
 
-    public VkTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(
-            String screenName, String textureFilepath) {
-        GBufferNabor gBufferNabor = screens.get(screenName).getgBufferNabor();
-
-        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
-        var descriptorSets = new ArrayList<Long>();
-        for (int i = 0; i < numDescriptorSets; i++) {
-            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
-        }
+    public VkTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, String textureFilepath) {
+        VkScreen screen = screens.get(screenName);
 
         var texturedQuadSet = new VkTexturedQuad2DSingleTextureSet(
                 device,
                 commandPool,
                 graphicsQueue,
-                descriptorSets,
-                gBufferNabor.getSetCount(0),
+                screen,
                 textureFilepath);
         texturedQuadSet.setScreenName(screenName);
         components.add(texturedQuadSet);
@@ -629,20 +581,13 @@ public class MttVulkanInstance
 
     public VkMttFont createMttFont(
             String screenName, Font font, boolean antiAlias, Color fontColor, String requiredChars) {
-        GBufferNabor gBufferNabor = screens.get(screenName).getgBufferNabor();
-
-        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
-        var descriptorSets = new ArrayList<Long>();
-        for (int i = 0; i < numDescriptorSets; i++) {
-            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
-        }
+        VkScreen screen = screens.get(screenName);
 
         var mttFont = new VkMttFont(
                 device,
                 commandPool,
                 graphicsQueue,
-                descriptorSets,
-                gBufferNabor.getSetCount(0),
+                screen,
                 font,
                 antiAlias,
                 fontColor,
@@ -656,24 +601,16 @@ public class MttVulkanInstance
     //=== Methods relating to textures and screens ===
     @Override
     public VkTexture createTexture(String screenName, String textureFilepath, boolean generateMipmaps) {
-        GBufferNabor gBufferNabor = screens.get(screenName).getgBufferNabor();
-
-        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
-        var descriptorSets = new ArrayList<Long>();
-        for (int i = 0; i < numDescriptorSets; i++) {
-            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
-        }
+        VkScreen screen = screens.get(screenName);
 
         var texture = new VkTexture(
                 device,
                 commandPool,
                 graphicsQueue,
-                descriptorSets,
-                gBufferNabor.getSetCount(0),
+                screen,
                 textureFilepath,
                 generateMipmaps
         );
-        texture.setScreenName(screenName);
         textures.add(texture);
 
         return texture;
@@ -684,21 +621,8 @@ public class MttVulkanInstance
         VkScreen srcScreen = screens.get(srcScreenName);
         long imageView = srcScreen.getColorImageView();
 
-        GBufferNabor gBufferNabor = screens.get(dstScreenName).getgBufferNabor();
-
-        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
-        var descriptorSets = new ArrayList<Long>();
-        for (int i = 0; i < numDescriptorSets; i++) {
-            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
-        }
-
-        var texture = new VkTexture(
-                device,
-                descriptorSets,
-                gBufferNabor.getSetCount(0),
-                imageView
-        );
-        texture.setScreenName(dstScreenName);
+        VkScreen dstScreen = screens.get(dstScreenName);
+        var texture = new VkTexture(device, dstScreen, imageView);
         textures.add(texture);
 
         return texture;

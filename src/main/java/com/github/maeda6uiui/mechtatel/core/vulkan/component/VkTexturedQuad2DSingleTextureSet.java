@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 import com.github.maeda6uiui.mechtatel.core.component.Vertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.component.Vertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -42,8 +43,7 @@ public class VkTexturedQuad2DSingleTextureSet extends VkComponent {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<Long> descriptorSets,
-            int setCount,
+            VkScreen screen,
             String textureFilepath) {
         this.device = device;
         this.commandPool = commandPool;
@@ -55,8 +55,7 @@ public class VkTexturedQuad2DSingleTextureSet extends VkComponent {
                 device,
                 commandPool,
                 graphicsQueue,
-                descriptorSets,
-                setCount,
+                screen,
                 textureFilepath,
                 false);
         bufferCreated = false;

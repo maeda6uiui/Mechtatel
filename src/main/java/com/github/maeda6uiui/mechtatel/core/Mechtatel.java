@@ -1,15 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core;
 
-import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.*;
 import com.github.maeda6uiui.mechtatel.core.component.gui.*;
-import com.github.maeda6uiui.mechtatel.core.fog.Fog;
-import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
-import com.github.maeda6uiui.mechtatel.core.light.PointLight;
-import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.physics.*;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
-import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import org.joml.*;
@@ -239,13 +233,12 @@ public class Mechtatel implements IMechtatel {
     }
 
     public TexturedQuad3D duplicateTexturedQuad3D(
-            String screenName,
             TexturedQuad3D srcQuad,
             Vertex3DUV v1,
             Vertex3DUV v2,
             Vertex3DUV v3,
             Vertex3DUV v4) {
-        return instance.duplicateTexturedQuad3D(screenName, srcQuad, v1, v2, v3, v4);
+        return instance.duplicateTexturedQuad3D(srcQuad, v1, v2, v3, v4);
     }
 
     public TexturedQuad2D createTexturedQuad2D(
@@ -278,17 +271,17 @@ public class Mechtatel implements IMechtatel {
     }
 
     public TexturedQuad2D duplicateTexturedQuad2D(
-            String screenName, TexturedQuad2D srcQuad, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
-        return instance.duplicateTexturedQuad2D(screenName, srcQuad, p1, p2, p3, p4, z);
+            TexturedQuad2D srcQuad, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
+        return instance.duplicateTexturedQuad2D(srcQuad, p1, p2, p3, p4, z);
     }
 
     public TexturedQuad2D duplicateTexturedQuad2D(
-            String screenName, TexturedQuad2D srcQuad, Vector2fc topLeft, Vector2fc bottomRight, float z) {
+            TexturedQuad2D srcQuad, Vector2fc topLeft, Vector2fc bottomRight, float z) {
         var p1 = new Vertex2DUV(topLeft, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
         var p2 = new Vertex2DUV(new Vector2f(topLeft.x(), bottomRight.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 1.0f));
         var p3 = new Vertex2DUV(bottomRight, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
         var p4 = new Vertex2DUV(new Vector2f(bottomRight.x(), topLeft.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 0.0f));
-        return instance.duplicateTexturedQuad2D(screenName, srcQuad, p1, p2, p3, p4, z);
+        return instance.duplicateTexturedQuad2D(srcQuad, p1, p2, p3, p4, z);
     }
 
     public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, String textureFilepath) {
@@ -538,11 +531,11 @@ public class Mechtatel implements IMechtatel {
         instance.setScreenDrawOrder(screenDrawOrder);
     }
 
-    public MttScreen getScreen(String screenName){
+    public MttScreen getScreen(String screenName) {
         return instance.getScreen(screenName);
     }
 
-    public Map<String,MttScreen> getScreens(){
+    public Map<String, MttScreen> getScreens() {
         return instance.getScreens();
     }
 }

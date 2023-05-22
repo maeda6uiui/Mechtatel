@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
 import com.github.maeda6uiui.mechtatel.core.component.Vertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
@@ -61,8 +62,7 @@ public class VkTexturedQuad2D extends VkComponent {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<Long> descriptorSets,
-            int setCount,
+            VkScreen screen,
             String textureFilepath,
             boolean generateMipmaps,
             List<Vertex3DUV> vertices) {
@@ -74,8 +74,7 @@ public class VkTexturedQuad2D extends VkComponent {
                 device,
                 commandPool,
                 graphicsQueue,
-                descriptorSets,
-                setCount,
+                screen,
                 textureFilepath,
                 generateMipmaps);
         this.createBuffers(commandPool, graphicsQueue, vertices);

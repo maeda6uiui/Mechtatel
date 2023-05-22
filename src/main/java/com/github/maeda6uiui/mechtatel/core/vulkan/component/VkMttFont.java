@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 import com.github.maeda6uiui.mechtatel.core.component.Vertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
 import com.github.maeda6uiui.mechtatel.core.text.TextUtil;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
@@ -34,8 +35,7 @@ public class VkMttFont extends VkComponent {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<Long> descriptorSets,
-            int setCount,
+            VkScreen screen,
             Font font,
             boolean antiAlias,
             Color fontColor,
@@ -45,8 +45,7 @@ public class VkMttFont extends VkComponent {
         texture = this.createFontTexture(
                 commandPool,
                 graphicsQueue,
-                descriptorSets,
-                setCount,
+                screen,
                 font,
                 antiAlias,
                 fontColor,
@@ -58,6 +57,7 @@ public class VkMttFont extends VkComponent {
                 graphicsQueue,
                 texture
         );
+        vkQuadSet.setScreenName(screen.getScreenName());
 
         this.setComponentType("gbuffer");
     }
@@ -65,8 +65,7 @@ public class VkMttFont extends VkComponent {
     private VkTexture createFontTexture(
             long commandPool,
             VkQueue graphicsQueue,
-            List<Long> descriptorSets,
-            int setCount,
+            VkScreen screen,
             Font font,
             boolean antiAlias,
             Color fontColor,
@@ -81,8 +80,7 @@ public class VkMttFont extends VkComponent {
                 device,
                 commandPool,
                 graphicsQueue,
-                descriptorSets,
-                setCount,
+                screen,
                 fontImageInfo.buffer,
                 fontImageInfo.imageWidth,
                 fontImageInfo.imageHeight,

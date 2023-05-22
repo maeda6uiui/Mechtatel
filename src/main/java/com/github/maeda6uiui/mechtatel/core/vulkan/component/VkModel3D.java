@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
 import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
@@ -12,7 +13,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -42,8 +45,7 @@ public class VkModel3D extends VkComponent3D {
     private void loadTextures(
             long commandPool,
             VkQueue graphicsQueue,
-            List<Long> descriptorSets,
-            int setCount,
+            VkScreen screen,
             String modelFilepath) {
         String modelDir = Paths.get(modelFilepath).getParent().toString();
 
@@ -63,10 +65,10 @@ public class VkModel3D extends VkComponent3D {
                     device,
                     commandPool,
                     graphicsQueue,
-                    descriptorSets,
-                    setCount,
+                    screen,
                     diffuseTexFilepath,
                     true);
+
             textures.put(index, texture);
             externalTextureFlags.put(index, false);
         }
@@ -100,8 +102,7 @@ public class VkModel3D extends VkComponent3D {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<Long> descriptorSets,
-            int setCount,
+            VkScreen screen,
             String modelFilepath) throws IOException {
         this.device = device;
 
@@ -111,8 +112,7 @@ public class VkModel3D extends VkComponent3D {
         this.loadTextures(
                 commandPool,
                 graphicsQueue,
-                descriptorSets,
-                setCount,
+                screen,
                 modelFilepath);
         this.createBuffers(commandPool, graphicsQueue);
 

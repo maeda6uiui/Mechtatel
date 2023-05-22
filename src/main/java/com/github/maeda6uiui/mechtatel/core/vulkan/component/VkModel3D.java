@@ -36,8 +36,6 @@ public class VkModel3D extends VkComponent3D {
     private Map<Integer, Long> indexBuffers;
     private Map<Integer, Long> indexBufferMemories;
 
-    private List<VkTexture> oldTextures;
-
     public ModelLoader.Model getModel() {
         return model;
     }
@@ -149,9 +147,6 @@ public class VkModel3D extends VkComponent3D {
                     texture.cleanup();
                 }
             });
-            if(oldTextures!=null){
-                oldTextures.forEach(texture->texture.cleanup());
-            }
         }
 
         //Buffers
@@ -168,12 +163,8 @@ public class VkModel3D extends VkComponent3D {
     }
 
     public void replaceTexture(int index, VkTexture newTexture) {
-        if(oldTextures==null){
-            oldTextures=new ArrayList<>();
-        }
-
         VkTexture curTexture = textures.get(index);
-        oldTextures.add(curTexture);
+        curTexture.cleanup();
 
         textures.put(index, newTexture);
         externalTextureFlags.put(index, true);

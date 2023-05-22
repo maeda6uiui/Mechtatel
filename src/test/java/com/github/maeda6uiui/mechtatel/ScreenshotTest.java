@@ -5,6 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
 import com.github.maeda6uiui.mechtatel.core.component.Sphere3D;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -36,13 +37,11 @@ public class ScreenshotTest extends Mechtatel {
 
     @Override
     public void init() {
-        camera = new FreeCamera(this.getCamera());
-
         var ppNaborNames = new ArrayList<String>();
         ppNaborNames.add("parallel_light");
         ppNaborNames.add("fog");
         ppNaborNames.add("shadow_mapping");
-        this.createScreen(
+        MttScreen mainScreen=this.createScreen(
                 "main",
                 2048,
                 2048,
@@ -51,12 +50,13 @@ public class ScreenshotTest extends Mechtatel {
                 true,
                 ppNaborNames
         );
+        mainScreen.setShouldPresent(true);
 
         var screenDrawOrder = new ArrayList<String>();
         screenDrawOrder.add("main");
         this.setScreenDrawOrder(screenDrawOrder);
 
-        this.setScreenToPresent("main");
+        camera=new FreeCamera(mainScreen.getCamera());
 
         try {
             plane = this.createModel3D("main", "./Mechtatel/Model/Plane/plane.obj");
@@ -72,10 +72,10 @@ public class ScreenshotTest extends Mechtatel {
                 2.0f, 32, 32, new Vector4f(1.0f, 0.0f, 1.0f, 1.0f)
         );
 
-        this.createParallelLight();
+        mainScreen.createParallelLight();
 
-        this.getFog().setStart(10.0f);
-        this.getFog().setEnd(20.0f);
+        mainScreen.getFog().setStart(10.0f);
+        mainScreen.getFog().setEnd(20.0f);
     }
 
     @Override

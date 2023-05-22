@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreenContext;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -31,12 +31,9 @@ public class TexturedScreenTest extends Mechtatel {
     private Model3D primaryCube;
     private Model3D secondaryCube;
 
-    private MttScreenContext primaryContext;
-    private MttScreenContext secondaryContext;
-
     @Override
     public void init() {
-        this.createScreen(
+        MttScreen primaryScreen=this.createScreen(
                 "primary",
                 2048,
                 2048,
@@ -45,7 +42,7 @@ public class TexturedScreenTest extends Mechtatel {
                 true,
                 null
         );
-        this.createScreen(
+        MttScreen secondaryScreen=this.createScreen(
                 "secondary",
                 1024,
                 1024,
@@ -60,7 +57,7 @@ public class TexturedScreenTest extends Mechtatel {
         screenDrawOrder.add("primary");
         this.setScreenDrawOrder(screenDrawOrder);
 
-        this.setScreenToPresent("primary");
+        primaryScreen.setShouldPresent(true);
 
         try {
             primaryCube = this.createModel3D("primary", "./Mechtatel/Model/Cube/cube.obj");
@@ -69,17 +66,11 @@ public class TexturedScreenTest extends Mechtatel {
             e.printStackTrace();
         }
 
-        primaryContext = new MttScreenContext();
-        secondaryContext = new MttScreenContext();
+        primaryScreen.setBackgroundColor(new Vector4f(0.0f,0.0f,0.0f,1.0f));
+        secondaryScreen.setBackgroundColor(new Vector4f(0.0f,1.0f,0.0f,1.0f));
 
-        primaryContext.setBackgroundColor(new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
-        secondaryContext.setBackgroundColor(new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
-
-        primaryContext.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
-        secondaryContext.getCamera().setEye(new Vector3f(1.5f, 1.5f, 1.5f));
-
-        this.updateScreenContext("primary", primaryContext);
-        this.updateScreenContext("secondary", secondaryContext);
+        primaryScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
+        secondaryScreen.getCamera().setEye(new Vector3f(1.5f, 1.5f, 1.5f));
 
         MttTexture secondaryDrawResult = this.texturizeScreen("secondary", "primary");
     }

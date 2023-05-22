@@ -42,7 +42,8 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVulkanInstanceForTexture {
+public class MttVulkanInstance
+        implements IMttVulkanInstanceForComponent, IMttVulkanInstanceForTexture, IMttVulkanInstanceForScreen {
     private static final int MAX_FRAMES_IN_FLIGHT = 2;
 
     private VkInstance instance;
@@ -225,7 +226,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
         this.recreateScreens();
     }
 
-    public void createScreen(
+    public VkScreen createScreen(
             String screenName,
             int depthImageWidth,
             int depthImageHeight,
@@ -261,13 +262,13 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
                 screenName
         );
         screens.put(screenName, screen);
+
+        return screen;
     }
 
     public boolean removeScreen(String screenName) {
         if (screens.containsKey(screenName)) {
-            screens.get(screenName).cleanup();
             screens.remove(screenName);
-
             return true;
         }
 
@@ -290,8 +291,7 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
             renderPassInfo.pClearValues(clearValues);
 
-            VkScreen screen = screens.get(screenName);
-            screen.transitionColorImageLayout();
+            VkScreen screen=screens.get(screenName);
             long colorImageView = screen.getColorImageView();
 
             var commandBuffers
@@ -338,19 +338,19 @@ public class MttVulkanInstance implements IMttVulkanInstanceForComponent, IMttVu
         }
     }
 
+    @Override
     public void draw(
-            String screenName,
-            Vector4f backgroundColor,
-            Camera camera,
-            Fog fog,
-            List<ParallelLight> parallelLights,
-            Vector3f parallelLightAmbientColor,
-            List<PointLight> pointLights,
-            Vector3f pointLightAmbientColor,
-            List<Spotlight> spotlights,
-            Vector3f spotlightAmbientColor,
-            ShadowMappingSettings shadowMappingSettings) {
-        VkScreen screen = screens.get(screenName);
+             VkScreen screen,
+             Vector4f backgroundColor,
+             Camera camera,
+             Fog fog,
+             List<ParallelLight> parallelLights,
+             Vector3f parallelLightAmbientColor,
+             List<PointLight> pointLights,
+             Vector3f pointLightAmbientColor,
+             List<Spotlight> spotlights,
+             Vector3f spotlightAmbientColor,
+             ShadowMappingSettings shadowMappingSettings) {
         screen.run(
                 backgroundColor,
                 camera,

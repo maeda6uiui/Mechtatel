@@ -10,7 +10,7 @@ import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.physics.*;
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreenContext;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
@@ -18,6 +18,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.ParallelLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.SpotlightNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkScreen;
 import com.jme3.system.NativeLibraryLoader;
 import org.joml.*;
 import org.lwjgl.openal.AL;
@@ -56,26 +57,14 @@ class MttInstance {
     private MttVulkanInstance vulkanInstance;
 
     private int fps;
-    private Vector4f backgroundColor;
-    private Vector3f parallelLightAmbientColor;
-    private Vector3f pointLightAmbientColor;
-    private Vector3f spotlightAmbientColor;
-    private ShadowMappingSettings shadowMappingSettings;
-
-    private Camera camera;
-    private Fog fog;
-    private List<ParallelLight> parallelLights;
-    private List<PointLight> pointLights;
-    private List<Spotlight> spotlights;
 
     private List<MttGuiComponent> guiComponents;
 
     private List<PhysicalObject3D> physicalObjects;
     private float physicsSimulationTimeScale;
 
+    private Map<String,MttScreen> screens;
     private List<String> screenDrawOrder;
-    private String screenToPresent;
-    private Map<String, MttScreenContext> screenContexts;
 
     private List<Sound3D> sounds3D;
 
@@ -86,7 +75,11 @@ class MttInstance {
             vulkanInstance.recreateSwapchain();
         }
 
-        camera.setAspect((float) width / (float) height);
+        for(var screen:screens.values()){
+            if(screen.shouldAutoUpdateCameraAspect()){
+                screen.getCamera().setAspect((float)width/(float)height);
+            }
+        }
 
         windowWidth = width;
         windowHeight = height;
@@ -155,27 +148,6 @@ class MttInstance {
 
         this.mtt = mtt;
 
-        backgroundColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
-        parallelLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
-        pointLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
-        spotlightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
-        shadowMappingSettings = new ShadowMappingSettings();
-
-        camera = new Camera();
-        fog = new Fog();
-        parallelLights = new ArrayList<>();
-        pointLights = new ArrayList<>();
-        spotlights = new ArrayList<>();
-
-        //Set initial aspect according to the framebuffer size
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer width = stack.ints(0);
-            IntBuffer height = stack.ints(0);
-            glfwGetFramebufferSize(window, width, height);
-
-            camera.setAspect((float) width.get(0) / (float) height.get(0));
-        }
-
         guiComponents = new ArrayList<>();
 
         physicalObjects = new ArrayList<>();
@@ -187,7 +159,8 @@ class MttInstance {
                 settings.bulletSettings.buildType,
                 settings.bulletSettings.flavor);
 
-        vulkanInstance.createScreen(
+        screens=new HashMap<>();
+        MttScreen defaultScreen=this.createScreen(
                 "default",
                 2048,
                 2048,
@@ -196,10 +169,11 @@ class MttInstance {
                 true,
                 null
         );
+        defaultScreen.setShouldPresent(true);
+        screens.put("default",defaultScreen);
+
         screenDrawOrder = new ArrayList<>();
         screenDrawOrder.add("default");
-        screenToPresent = "default";
-        screenContexts = new HashMap<>();
 
         //Set up OpenAL
         long alcDevice = alcOpenDevice((ByteBuffer) null);
@@ -252,39 +226,12 @@ class MttInstance {
                 PhysicalObject3D.updatePhysicsSpace((float) elapsedTime, physicsSimulationTimeScale);
 
                 for (var screenName : screenDrawOrder) {
-                    mtt.preDraw(screenName);
-                    if (screenContexts.containsKey(screenName)) {
-                        MttScreenContext screenContext = screenContexts.get(screenName);
-
-                        vulkanInstance.draw(
-                                screenName,
-                                screenContext.getBackgroundColor(),
-                                screenContext.getCamera(),
-                                screenContext.getFog(),
-                                screenContext.getParallelLights(),
-                                screenContext.getParallelLightAmbientColor(),
-                                screenContext.getPointLights(),
-                                screenContext.getPointLightAmbientColor(),
-                                screenContext.getSpotlights(),
-                                screenContext.getSpotlightAmbientColor(),
-                                screenContext.getShadowMappingSettings());
-                    } else {
-                        vulkanInstance.draw(
-                                screenName,
-                                backgroundColor,
-                                camera,
-                                fog,
-                                parallelLights,
-                                parallelLightAmbientColor,
-                                pointLights,
-                                pointLightAmbientColor,
-                                spotlights,
-                                spotlightAmbientColor,
-                                shadowMappingSettings);
+                    MttScreen screen=screens.get(screenName);
+                    screen.draw();
+                    if(screen.shouldPresent()){
+                        vulkanInstance.present(screenName);
                     }
-                    mtt.postDraw(screenName);
                 }
-                vulkanInstance.present(screenToPresent);
 
                 lastTime = glfwGetTime();
             }
@@ -317,60 +264,6 @@ class MttInstance {
 
     public int getWindowHeight() {
         return windowHeight;
-    }
-
-    public void createScreen(
-            String screenName,
-            int depthImageWidth,
-            int depthImageHeight,
-            int screenWidth,
-            int screenHeight,
-            boolean shouldChangeExtentOnRecreate,
-            List<String> ppNaborNames) {
-        if (screenName.equals("default")) {
-            throw new RuntimeException("Cannot overwrite default screen");
-        }
-
-        vulkanInstance.createScreen(
-                screenName,
-                depthImageWidth,
-                depthImageHeight,
-                screenWidth,
-                screenHeight,
-                shouldChangeExtentOnRecreate,
-                ppNaborNames
-        );
-        screenDrawOrder.add(screenName);
-    }
-
-    public boolean removeScreen(String screenName) {
-        if (screenName.equals("default")) {
-            throw new RuntimeException("Cannot remove default screen");
-        }
-
-        screenDrawOrder.remove(screenName);
-        return vulkanInstance.removeScreen(screenName);
-    }
-
-    public void setScreenDrawOrder(List<String> screenDrawOrder) {
-        this.screenDrawOrder = screenDrawOrder;
-    }
-
-    public void setScreenToPresent(String screenName) {
-        screenToPresent = screenName;
-    }
-
-    public void updateScreenContext(String screenName, MttScreenContext screenContext) {
-        screenContexts.put(screenName, screenContext);
-    }
-
-    public boolean removeScreenContext(String screenName) {
-        if (screenContexts.containsKey(screenName)) {
-            screenContexts.remove(screenName);
-            return true;
-        }
-
-        return false;
     }
 
     public int getKeyboardPressingCount(String key) {
@@ -424,126 +317,6 @@ class MttInstance {
         }
 
         return ret;
-    }
-
-    public Vector4f getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    public void setBackgroundColor(Vector4f backgroundColor) {
-        this.backgroundColor = backgroundColor;
-    }
-
-    public Vector3f getParallelLightAmbientColor() {
-        return parallelLightAmbientColor;
-    }
-
-    public void setParallelLightAmbientColor(Vector3f parallelLightAmbientColor) {
-        this.parallelLightAmbientColor = parallelLightAmbientColor;
-    }
-
-    public Vector3f getPointLightAmbientColor() {
-        return pointLightAmbientColor;
-    }
-
-    public void setPointLightAmbientColor(Vector3f pointLightAmbientColor) {
-        this.pointLightAmbientColor = pointLightAmbientColor;
-    }
-
-    public Vector3f getSpotlightAmbientColor() {
-        return spotlightAmbientColor;
-    }
-
-    public void setSpotlightAmbientColor(Vector3f spotlightAmbientColor) {
-        this.spotlightAmbientColor = spotlightAmbientColor;
-    }
-
-    public ShadowMappingSettings getShadowMappingSettings() {
-        return shadowMappingSettings;
-    }
-
-    public void setShadowMappingSettings(ShadowMappingSettings shadowMappingSettings) {
-        this.shadowMappingSettings = shadowMappingSettings;
-    }
-
-    public Camera getCamera() {
-        return camera;
-    }
-
-    public Fog getFog() {
-        return fog;
-    }
-
-    public int getNumParallelLights() {
-        return parallelLights.size();
-    }
-
-    public ParallelLight getParallelLight(int index) {
-        return parallelLights.get(index);
-    }
-
-    public ParallelLight createParallelLight() {
-        if (parallelLights.size() >= ParallelLightNabor.MAX_NUM_LIGHTS) {
-            String msg = String.format("Cannot create more than %d lights", ParallelLightNabor.MAX_NUM_LIGHTS);
-            throw new RuntimeException(msg);
-        }
-
-        var parallelLight = new ParallelLight();
-        parallelLights.add(parallelLight);
-
-        return parallelLight;
-    }
-
-    public boolean removeParallelLight(ParallelLight parallelLight) {
-        return parallelLights.remove(parallelLight);
-    }
-
-    public int getNumPointLights() {
-        return pointLights.size();
-    }
-
-    public PointLight getPointLight(int index) {
-        return pointLights.get(index);
-    }
-
-    public PointLight createPointLight() {
-        if (pointLights.size() >= PointLightNabor.MAX_NUM_LIGHTS) {
-            String msg = String.format("Cannot create more than %d lights", PointLightNabor.MAX_NUM_LIGHTS);
-            throw new RuntimeException(msg);
-        }
-
-        var pointLight = new PointLight();
-        pointLights.add(pointLight);
-
-        return pointLight;
-    }
-
-    public boolean removePointLight(PointLight pointLight) {
-        return pointLights.remove(pointLight);
-    }
-
-    public int getNumSpotlights() {
-        return spotlights.size();
-    }
-
-    public Spotlight getSpotlight(int index) {
-        return spotlights.get(index);
-    }
-
-    public Spotlight createSpotlight() {
-        if (spotlights.size() >= SpotlightNabor.MAX_NUM_LIGHTS) {
-            String msg = String.format("Cannot create more than %d lights", SpotlightNabor.MAX_NUM_LIGHTS);
-            throw new RuntimeException(msg);
-        }
-
-        var spotlight = new Spotlight();
-        spotlights.add(spotlight);
-
-        return spotlight;
-    }
-
-    public boolean removeSpotlight(Spotlight spotlight) {
-        return spotlights.remove(spotlight);
     }
 
     //=== Methods relating to components ===
@@ -1005,5 +778,61 @@ class MttInstance {
 
     public void saveScreenshot(String screenName, String srcImageFormat, String outputFilepath) throws IOException {
         vulkanInstance.saveScreenshot(screenName, srcImageFormat, outputFilepath);
+    }
+
+    public MttScreen createScreen(
+            String screenName,
+            int depthImageWidth,
+            int depthImageHeight,
+            int screenWidth,
+            int screenHeight,
+            boolean shouldChangeExtentOnRecreate,
+            List<String> ppNaborNames) {
+        if(screenName.equals("default")){
+            throw new RuntimeException("Cannot overwrite default screen");
+        }
+
+        var screen=new MttScreen(
+                vulkanInstance,
+                screenName,
+                depthImageWidth,
+                depthImageHeight,
+                screenWidth,
+                screenHeight,
+                shouldChangeExtentOnRecreate,
+                ppNaborNames
+        );
+
+        //Set initial aspect according to the framebuffer size
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer width = stack.ints(0);
+            IntBuffer height = stack.ints(0);
+            glfwGetFramebufferSize(window, width, height);
+
+            screen.getCamera().setAspect((float)width.get(0)/(float)height.get(0));
+        }
+
+        return screen;
+    }
+
+    public boolean removeScreen(String screenName) {
+        if(screenName.equals("default")){
+            throw new RuntimeException("Cannot remove default screen");
+        }
+
+        screenDrawOrder.remove(screenName);
+        return vulkanInstance.removeScreen(screenName);
+    }
+
+    public MttScreen getDefaultScreen(){
+        return screens.get("default");
+    }
+
+    public Map<String,MttScreen> getScreens(){
+        return new HashMap<>(screens);
+    }
+
+    public void setScreenDrawOrder(List<String> screenDrawOrder) {
+        this.screenDrawOrder = screenDrawOrder;
     }
 }

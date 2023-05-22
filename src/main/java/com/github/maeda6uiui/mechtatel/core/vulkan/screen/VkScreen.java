@@ -320,6 +320,10 @@ public class VkScreen {
         }
     }
 
+    public String getScreenName(){
+        return screenName;
+    }
+
     public GBufferNabor getgBufferNabor() {
         return gBufferNabor;
     }
@@ -741,6 +745,14 @@ public class VkScreen {
             mergeScenesFillNabor.transitionAlbedoImage(commandPool, graphicsQueue);
         } else {
             ppNaborChain.transitionLastPPNaborColorImage();
+        }
+    }
+
+    public void revertTransitionColorImageLayout(){
+        if (ppNaborChain == null) {
+            mergeScenesFillNabor.revertTransitionAlbedoImage(commandPool, graphicsQueue);
+        } else {
+            ppNaborChain.revertTransitionLastPPNaborColorImage();
         }
     }
 

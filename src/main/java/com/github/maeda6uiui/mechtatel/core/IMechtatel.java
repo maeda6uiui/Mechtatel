@@ -13,8 +13,4 @@ interface IMechtatel {
     void reshape(int width, int height);
 
     void update();
-
-    void preDraw(String screenName);
-
-    void postDraw(String screenName);
 }

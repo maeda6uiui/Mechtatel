@@ -8,7 +8,7 @@ import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.physics.*;
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreenContext;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Base class of the Mechtatel engine
@@ -69,16 +70,6 @@ public class Mechtatel implements IMechtatel {
 
     }
 
-    @Override
-    public void preDraw(String screenName) {
-
-    }
-
-    @Override
-    public void postDraw(String screenName) {
-
-    }
-
     public void closeWindow() {
         instance.closeWindow();
     }
@@ -89,45 +80,6 @@ public class Mechtatel implements IMechtatel {
 
     public int getWindowHeight() {
         return instance.getWindowHeight();
-    }
-
-    public void createScreen(
-            String screenName,
-            int depthImageWidth,
-            int depthImageHeight,
-            int screenWidth,
-            int screenHeight,
-            boolean shouldChangeExtentOnRecreate,
-            List<String> ppNaborNames) {
-        instance.createScreen(
-                screenName,
-                depthImageWidth,
-                depthImageHeight,
-                screenWidth,
-                screenHeight,
-                shouldChangeExtentOnRecreate,
-                ppNaborNames
-        );
-    }
-
-    public boolean removeScreen(String screenName) {
-        return instance.removeScreen(screenName);
-    }
-
-    public void setScreenDrawOrder(List<String> screenDrawOrder) {
-        instance.setScreenDrawOrder(screenDrawOrder);
-    }
-
-    public void setScreenToPresent(String screenName) {
-        instance.setScreenToPresent(screenName);
-    }
-
-    public void updateScreenContext(String screenName, MttScreenContext screenContext) {
-        instance.updateScreenContext(screenName, screenContext);
-    }
-
-    public boolean removeScreenContext(String screenName) {
-        return instance.removeScreenContext(screenName);
     }
 
     public int getKeyboardPressingCount(String key) {
@@ -168,102 +120,6 @@ public class Mechtatel implements IMechtatel {
 
     public int setCursorMode(String cursorMode) {
         return instance.setCursorMode(cursorMode);
-    }
-
-    public Vector4f getBackgroundColor() {
-        return instance.getBackgroundColor();
-    }
-
-    public void setBackgroundColor(Vector4f backgroundColor) {
-        instance.setBackgroundColor(backgroundColor);
-    }
-
-    public Vector3f getParallelLightAmbientColor() {
-        return instance.getParallelLightAmbientColor();
-    }
-
-    public void setParallelLightAmbientColor(Vector3f parallelLightAmbientColor) {
-        instance.setParallelLightAmbientColor(parallelLightAmbientColor);
-    }
-
-    public Vector3f getPointLightAmbientColor() {
-        return instance.getPointLightAmbientColor();
-    }
-
-    public void setPointLightAmbientColor(Vector3f pointLightAmbientColor) {
-        instance.setPointLightAmbientColor(pointLightAmbientColor);
-    }
-
-    public Vector3f getSpotlightAmbientColor() {
-        return instance.getSpotlightAmbientColor();
-    }
-
-    public void setSpotlightAmbientColor(Vector3f spotlightAmbientColor) {
-        instance.setSpotlightAmbientColor(spotlightAmbientColor);
-    }
-
-    public ShadowMappingSettings getShadowMappingSettings() {
-        return instance.getShadowMappingSettings();
-    }
-
-    public void setShadowMappingSettings(ShadowMappingSettings shadowMappingSettings) {
-        instance.setShadowMappingSettings(shadowMappingSettings);
-    }
-
-    public Camera getCamera() {
-        return instance.getCamera();
-    }
-
-    public Fog getFog() {
-        return instance.getFog();
-    }
-
-    public int getNumParallelLights() {
-        return instance.getNumParallelLights();
-    }
-
-    public ParallelLight getParallelLight(int index) {
-        return instance.getParallelLight(index);
-    }
-
-    public ParallelLight createParallelLight() {
-        return instance.createParallelLight();
-    }
-
-    public boolean removeParallelLight(ParallelLight parallelLight) {
-        return instance.removeParallelLight(parallelLight);
-    }
-
-    public int getNumPointLights() {
-        return instance.getNumPointLights();
-    }
-
-    public PointLight getPointLight(int index) {
-        return instance.getPointLight(index);
-    }
-
-    public PointLight createPointLight() {
-        return instance.createPointLight();
-    }
-
-    public boolean removePointLight(PointLight pointLight) {
-        return instance.removePointLight(pointLight);
-    }
-
-    public int getNumSpotlights() {
-        return instance.getNumSpotlights();
-    }
-
-    public Spotlight getSpotlight(int index) {
-        return instance.getSpotlight(index);
-    }
-
-    public Spotlight createSpotlight() {
-        return instance.createSpotlight();
-    }
-
-    public boolean removeSpotlight(Spotlight spotlight) {
-        return instance.removeSpotlight(spotlight);
     }
 
     //=== Methods relating to components ===
@@ -653,5 +509,40 @@ public class Mechtatel implements IMechtatel {
 
     public void saveScreenshot(String screenName, String srcImageFormat, String outputFilepath) throws IOException {
         instance.saveScreenshot(screenName, srcImageFormat, outputFilepath);
+    }
+
+    public MttScreen createScreen(
+            String screenName,
+            int depthImageWidth,
+            int depthImageHeight,
+            int screenWidth,
+            int screenHeight,
+            boolean shouldChangeExtentOnRecreate,
+            List<String> ppNaborNames) {
+        return instance.createScreen(
+                screenName,
+                depthImageWidth,
+                depthImageHeight,
+                screenWidth,
+                screenHeight,
+                shouldChangeExtentOnRecreate,
+                ppNaborNames
+        );
+    }
+
+    public boolean removeScreen(String screenName) {
+        return instance.removeScreen(screenName);
+    }
+
+    public void setScreenDrawOrder(List<String> screenDrawOrder) {
+        instance.setScreenDrawOrder(screenDrawOrder);
+    }
+
+    public MttScreen getDefaultScreen(){
+        return instance.getDefaultScreen();
+    }
+
+    public Map<String,MttScreen> getScreens(){
+        return instance.getScreens();
     }
 }

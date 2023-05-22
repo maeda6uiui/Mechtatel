@@ -37,6 +37,21 @@ public class PostProcessingNabor extends Nabor {
                 1);
     }
 
+    public void revertTransitionColorImageLayout(long commandPool,VkQueue graphicsQueue){
+        VkDevice device = this.getDevice();
+        long colorImage = this.getImage(0);
+
+        ImageUtils.transitionImageLayout(
+                device,
+                commandPool,
+                graphicsQueue,
+                colorImage,
+                VK_IMAGE_ASPECT_COLOR_BIT,
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                1);
+    }
+
     public long getColorImageView() {
         return this.getImageView(0);
     }

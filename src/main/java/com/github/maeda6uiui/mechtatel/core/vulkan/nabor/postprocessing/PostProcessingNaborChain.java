@@ -135,6 +135,7 @@ public class PostProcessingNaborChain {
             }
 
             ppNabors.put(naborName, ppNabor);
+            lastPPNabor=ppNabor;
         }
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
@@ -170,8 +171,7 @@ public class PostProcessingNaborChain {
             ShadowMappingSettings shadowMappingSettings,
             MergeScenesNabor lastMergeNabor,
             List<VkComponent> components) {
-        lastPPNabor = null;
-
+        boolean isFirstPP=true;
         for (var entry : ppNabors.entrySet()) {
             String naborName = entry.getKey();
             PostProcessingNabor ppNabor = entry.getValue();
@@ -190,8 +190,6 @@ public class PostProcessingNaborChain {
                         depthImageAspect,
                         shadowMappingSettings,
                         quadDrawer);
-
-                lastPPNabor = ppNabor;
 
                 continue;
             }
@@ -295,7 +293,7 @@ public class PostProcessingNaborChain {
                     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, ppNabor.getGraphicsPipeline(0));
 
                     //First post-processing
-                    if (lastPPNabor == null) {
+                    if (isFirstPP) {
                         lastMergeNabor.transitionAlbedoImage(commandPool, graphicsQueue);
                         lastMergeNabor.transitionDepthImage(commandPool, graphicsQueue);
                         lastMergeNabor.transitionPositionImage(commandPool, graphicsQueue);
@@ -327,7 +325,7 @@ public class PostProcessingNaborChain {
                 CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
             }
 
-            lastPPNabor = ppNabor;
+            isFirstPP=false;
         }
     }
 
@@ -359,6 +357,10 @@ public class PostProcessingNaborChain {
 
     public void transitionLastPPNaborColorImage() {
         lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
+    }
+
+    public void revertTransitionLastPPNaborColorImage(){
+        lastPPNabor.revertTransitionColorImageLayout(commandPool,graphicsQueue);
     }
 
     public long getLastPPNaborColorImageView() {

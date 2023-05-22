@@ -4,6 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -39,13 +40,11 @@ public class ShadowMappingTest extends Mechtatel {
 
     @Override
     public void init() {
-        camera = new FreeCamera(this.getCamera());
-
         var ppNaborNames = new ArrayList<String>();
         ppNaborNames.add("parallel_light");
         ppNaborNames.add("fog");
         ppNaborNames.add("shadow_mapping");
-        this.createScreen(
+        MttScreen mainScreen=this.createScreen(
                 "main",
                 2048,
                 2048,
@@ -54,12 +53,13 @@ public class ShadowMappingTest extends Mechtatel {
                 true,
                 ppNaborNames
         );
+        mainScreen.setShouldPresent(true);
 
         var screenDrawOrder = new ArrayList<String>();
         screenDrawOrder.add("main");
         this.setScreenDrawOrder(screenDrawOrder);
 
-        this.setScreenToPresent("main");
+        camera = new FreeCamera(mainScreen.getCamera());
 
         cubes = new ArrayList<>();
         cubePositions = new ArrayList<>();
@@ -80,14 +80,14 @@ public class ShadowMappingTest extends Mechtatel {
             e.printStackTrace();
         }
 
-        var parallelLight = this.createParallelLight();
+        mainScreen.createParallelLight();
 
-        this.getFog().setStart(10.0f);
-        this.getFog().setEnd(20.0f);
+        mainScreen.getFog().setStart(10.0f);
+        mainScreen.getFog().setEnd(20.0f);
 
         var shadowMappingSettings = new ShadowMappingSettings();
         shadowMappingSettings.setBiasCoefficient(0.002f);
-        this.setShadowMappingSettings(shadowMappingSettings);
+        mainScreen.setShadowMappingSettings(shadowMappingSettings);
     }
 
     @Override

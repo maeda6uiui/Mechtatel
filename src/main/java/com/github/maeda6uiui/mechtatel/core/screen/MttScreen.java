@@ -22,10 +22,9 @@ import java.util.List;
  * Screen
  * @author maeda6uiui
  */
-public class MttScreen {
+public class MttScreen{
     private VkScreen screen;
 
-    private boolean initialRun;
     private boolean shouldPresent;
     private boolean shouldAutoUpdateCameraAspect;
 
@@ -60,7 +59,6 @@ public class MttScreen {
                 shouldChangeExtentOnRecreate,
                 ppNaborNames
         );
-        initialRun=true;
         shouldPresent=false;
         shouldAutoUpdateCameraAspect=true;
 
@@ -84,7 +82,7 @@ public class MttScreen {
     }
 
     public void draw(){
-        if(!initialRun){
+        if(!screen.isJustCreated()){
             screen.revertTransitionColorImageLayout();
         }
 
@@ -102,8 +100,6 @@ public class MttScreen {
                 shadowMappingSettings
         );
         screen.transitionColorImageLayout();
-
-        initialRun=false;
     }
 
     public void setShouldPresent(boolean shouldPresent){

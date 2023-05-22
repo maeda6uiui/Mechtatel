@@ -70,8 +70,9 @@ public class TexturedScreenTest extends Mechtatel {
         secondaryScreen.setBackgroundColor(new Vector4f(0.0f,1.0f,0.0f,1.0f));
 
         primaryScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
-        secondaryScreen.getCamera().setEye(new Vector3f(1.5f, 1.5f, 1.5f));
+        secondaryScreen.getCamera().setEye(new Vector3f(1.2f, 1.2f, 1.2f));
 
         MttTexture secondaryDrawResult = this.texturizeScreen("secondary", "primary");
+        primaryCube.replaceTexture(0,secondaryDrawResult);
     }
 }

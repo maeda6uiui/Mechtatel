@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
@@ -12,10 +13,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -38,6 +36,8 @@ public class VkModel3D extends VkComponent3D {
     private Map<Integer, Long> indexBuffers;
     private Map<Integer, Long> indexBufferMemories;
 
+    private List<VkTexture> oldTextures;
+
     public ModelLoader.Model getModel() {
         return model;
     }
@@ -54,7 +54,6 @@ public class VkModel3D extends VkComponent3D {
 
         textures = new HashMap<>();
         externalTextureFlags = new HashMap<>();
-
         for (var materialEntry : materials.entrySet()) {
             int index = materialEntry.getKey();
             ModelLoader.Material material = materialEntry.getValue();
@@ -150,6 +149,9 @@ public class VkModel3D extends VkComponent3D {
                     texture.cleanup();
                 }
             });
+            if(oldTextures!=null){
+                oldTextures.forEach(texture->texture.cleanup());
+            }
         }
 
         //Buffers
@@ -166,8 +168,12 @@ public class VkModel3D extends VkComponent3D {
     }
 
     public void replaceTexture(int index, VkTexture newTexture) {
+        if(oldTextures==null){
+            oldTextures=new ArrayList<>();
+        }
+
         VkTexture curTexture = textures.get(index);
-        curTexture.cleanup();
+        oldTextures.add(curTexture);
 
         textures.put(index, newTexture);
         externalTextureFlags.put(index, true);

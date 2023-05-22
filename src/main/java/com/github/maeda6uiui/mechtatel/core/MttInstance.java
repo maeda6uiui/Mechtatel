@@ -788,8 +788,9 @@ class MttInstance {
             int screenHeight,
             boolean shouldChangeExtentOnRecreate,
             List<String> ppNaborNames) {
-        if(screenName.equals("default")){
-            throw new RuntimeException("Cannot overwrite default screen");
+        if(screens.containsKey(screenName)){
+            screens.get(screenName).cleanup();
+            screens.remove(screenName);
         }
 
         var screen=new MttScreen(
@@ -812,20 +813,20 @@ class MttInstance {
             screen.getCamera().setAspect((float)width.get(0)/(float)height.get(0));
         }
 
+        screens.put(screenName,screen);
+
         return screen;
     }
 
     public boolean removeScreen(String screenName) {
-        if(screenName.equals("default")){
-            throw new RuntimeException("Cannot remove default screen");
-        }
-
         screenDrawOrder.remove(screenName);
+        screens.remove(screenName);
+
         return vulkanInstance.removeScreen(screenName);
     }
 
-    public MttScreen getDefaultScreen(){
-        return screens.get("default");
+    public MttScreen getScreen(String screenName){
+        return screens.get(screenName);
     }
 
     public Map<String,MttScreen> getScreens(){

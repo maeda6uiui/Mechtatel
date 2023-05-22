@@ -538,8 +538,8 @@ public class Mechtatel implements IMechtatel {
         instance.setScreenDrawOrder(screenDrawOrder);
     }
 
-    public MttScreen getDefaultScreen(){
-        return instance.getDefaultScreen();
+    public MttScreen getScreen(String screenName){
+        return instance.getScreen(screenName);
     }
 
     public Map<String,MttScreen> getScreens(){

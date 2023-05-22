@@ -51,7 +51,7 @@ public class VkTexture {
 
     private VkDevice device;
 
-    private int textureIndex;
+    private int allocationIndex;
 
     private boolean externalImage;
 
@@ -328,7 +328,7 @@ public class VkTexture {
             VkWriteDescriptorSet.Buffer textureDescriptorWrite = VkWriteDescriptorSet.calloc(1, stack);
             textureDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
             textureDescriptorWrite.dstBinding(0);
-            textureDescriptorWrite.dstArrayElement(textureIndex);
+            textureDescriptorWrite.dstArrayElement(allocationIndex);
             textureDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             textureDescriptorWrite.descriptorCount(1);
             textureDescriptorWrite.pImageInfo(textureInfo);
@@ -351,8 +351,8 @@ public class VkTexture {
             int setCount,
             String textureFilepath,
             boolean generateMipmaps) {
-        textureIndex = allocateTextureIndex();
-        if (textureIndex < 0) {
+        allocationIndex = allocateTextureIndex();
+        if (allocationIndex < 0) {
             String msg = String.format("Cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
             throw new RuntimeException(msg);
         }
@@ -383,8 +383,8 @@ public class VkTexture {
             int width,
             int height,
             boolean generateMipmaps) {
-        textureIndex = allocateTextureIndex();
-        if (textureIndex < 0) {
+        allocationIndex = allocateTextureIndex();
+        if (allocationIndex < 0) {
             String msg = String.format("Cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
             throw new RuntimeException(msg);
         }
@@ -409,8 +409,8 @@ public class VkTexture {
             List<Long> descriptorSets,
             int setCount,
             long imageView) {
-        textureIndex = allocateTextureIndex();
-        if (textureIndex < 0) {
+        allocationIndex = allocateTextureIndex();
+        if (allocationIndex < 0) {
             String msg = String.format("Cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
             throw new RuntimeException(msg);
         }
@@ -432,11 +432,11 @@ public class VkTexture {
             vkDestroyImageView(device, textureImageView, null);
         }
 
-        allocationStatus.put(textureIndex, false);
+        allocationStatus.put(allocationIndex, false);
     }
 
-    public int getTextureIndex() {
-        return textureIndex;
+    public int getAllocationIndex() {
+        return allocationIndex;
     }
 
     public void setScreenName(String screenName) {

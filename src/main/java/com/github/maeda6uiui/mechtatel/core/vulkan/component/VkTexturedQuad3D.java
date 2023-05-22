@@ -138,16 +138,16 @@ public class VkTexturedQuad3D extends VkComponent3D {
         }
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            ByteBuffer textureIndexBuffer = stack.calloc(1 * Integer.BYTES);
-            textureIndexBuffer.putInt(texture.getTextureIndex());
-            textureIndexBuffer.rewind();
+            ByteBuffer textureAllocationIndexBuffer = stack.calloc(1 * Integer.BYTES);
+            textureAllocationIndexBuffer.putInt(texture.getAllocationIndex());
+            textureAllocationIndexBuffer.rewind();
 
             vkCmdPushConstants(
                     commandBuffer,
                     pipelineLayout,
                     VK_SHADER_STAGE_FRAGMENT_BIT,
                     1 * 16 * Float.BYTES + 1 * Integer.BYTES,
-                    textureIndexBuffer);
+                    textureAllocationIndexBuffer);
 
             LongBuffer lVertexBuffers = stack.longs(vertexBuffer);
             LongBuffer offsets = stack.longs(0);

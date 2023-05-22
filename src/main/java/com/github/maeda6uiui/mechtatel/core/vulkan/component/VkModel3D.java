@@ -3,7 +3,6 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
@@ -184,16 +183,16 @@ public class VkModel3D extends VkComponent3D {
                     continue;
                 }
 
-                ByteBuffer textureIndexBuffer = stack.calloc(1 * Integer.BYTES);
-                textureIndexBuffer.putInt(texture.getTextureIndex());
-                textureIndexBuffer.rewind();
+                ByteBuffer textureAllocationIndexBuffer = stack.calloc(1 * Integer.BYTES);
+                textureAllocationIndexBuffer.putInt(texture.getAllocationIndex());
+                textureAllocationIndexBuffer.rewind();
 
                 vkCmdPushConstants(
                         commandBuffer,
                         pipelineLayout,
                         VK_SHADER_STAGE_FRAGMENT_BIT,
                         1 * 16 * Float.BYTES + 1 * Integer.BYTES,
-                        textureIndexBuffer);
+                        textureAllocationIndexBuffer);
 
                 LongBuffer lVertexBuffers = stack.longs(vertexBuffers.get(i));
                 LongBuffer offsets = stack.longs(0);

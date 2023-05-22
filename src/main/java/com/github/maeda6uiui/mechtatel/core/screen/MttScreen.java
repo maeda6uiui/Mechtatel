@@ -82,7 +82,7 @@ public class MttScreen{
     }
 
     public void draw(){
-        if(!screen.isJustCreated()){
+        if(screen.isAlreadyRunAfterCreation()){
             screen.revertTransitionColorImageLayout();
         }
         vulkanInstance.draw(
@@ -99,6 +99,10 @@ public class MttScreen{
                 shadowMappingSettings
         );
         screen.transitionColorImageLayout();
+
+        if(!screen.isAlreadyRunAfterCreation()){
+            screen.flagAlreadyRunAfterCreation();
+        }
     }
 
     public void setShouldPresent(boolean shouldPresent){

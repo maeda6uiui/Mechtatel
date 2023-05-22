@@ -14,7 +14,6 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNaborChain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
@@ -57,7 +56,7 @@ public class VkScreen {
 
     private QuadDrawer quadDrawer;
 
-    private boolean justCreated;
+    private boolean alreadyRunAfterCreation;
 
     public VkScreen(
             VkDevice device,
@@ -280,7 +279,7 @@ public class VkScreen {
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
 
-        justCreated=true;
+        alreadyRunAfterCreation =false;
     }
 
     public void recreate(int colorImageFormat, VkExtent2D extent) {
@@ -310,7 +309,7 @@ public class VkScreen {
             }
         }
 
-        justCreated=true;
+        alreadyRunAfterCreation =false;
     }
 
     public void cleanup() {
@@ -327,11 +326,12 @@ public class VkScreen {
         }
     }
 
-    public boolean isJustCreated(){
-        boolean ret=justCreated;
-        justCreated=false;
+    public boolean isAlreadyRunAfterCreation(){
+        return alreadyRunAfterCreation;
+    }
 
-        return ret;
+    public void flagAlreadyRunAfterCreation(){
+        alreadyRunAfterCreation=true;
     }
 
     public String getScreenName(){

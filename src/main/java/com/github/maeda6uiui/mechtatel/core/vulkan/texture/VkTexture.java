@@ -319,7 +319,7 @@ public class VkTexture {
                 generateMipmaps ? mipLevels : 1);
     }
 
-    private void updateTextureDescriptorSets(List<Long> descriptorSets, int setCount) {
+    private void updateDescriptorSets(List<Long> descriptorSets, int setCount) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDescriptorImageInfo.Buffer textureInfo = VkDescriptorImageInfo.calloc(1, stack);
             textureInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -366,7 +366,7 @@ public class VkTexture {
         this.createTextureImage(commandPool, graphicsQueue);
         this.createTextureImageView();
 
-        this.updateTextureDescriptorSets(descriptorSets, setCount);
+        this.updateDescriptorSets(descriptorSets, setCount);
 
         externalImage = false;
 
@@ -397,7 +397,7 @@ public class VkTexture {
         this.createTextureImageFromByteBuffer(commandPool, graphicsQueue, pixels, width, height);
         this.createTextureImageView();
 
-        this.updateTextureDescriptorSets(descriptorSets, setCount);
+        this.updateDescriptorSets(descriptorSets, setCount);
 
         externalImage = false;
 
@@ -418,7 +418,7 @@ public class VkTexture {
         this.device = device;
         this.textureImageView = imageView;
 
-        this.updateTextureDescriptorSets(descriptorSets, setCount);
+        this.updateDescriptorSets(descriptorSets, setCount);
 
         externalImage = true;
 

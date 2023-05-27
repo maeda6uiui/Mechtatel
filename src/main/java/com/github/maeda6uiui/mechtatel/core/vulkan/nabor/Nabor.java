@@ -723,7 +723,7 @@ public class Nabor {
         }
     }
 
-    public boolean deleteUserDefImage(long userDefImage) {
+    public boolean removeUserDefImage(long userDefImage) {
         int imageIndex = -1;
         for (int i = 0; i < userDefImages.size(); i++) {
             if (userDefImages.get(i) == userDefImage) {
@@ -746,6 +746,20 @@ public class Nabor {
         userDefImageViews.remove(imageIndex);
 
         return true;
+    }
+
+    public long lookUpUserDefImageView(long userDefImage) {
+        int imageIndex = -1;
+        for (int i = 0; i < userDefImages.size(); i++) {
+            if (userDefImages.get(i) == userDefImage) {
+                imageIndex = i;
+            }
+        }
+        if (imageIndex < 0) {
+            throw new RuntimeException("User-defined image not found");
+        }
+
+        return userDefImageViews.get(imageIndex);
     }
 
     public void cleanupUserDefImages() {

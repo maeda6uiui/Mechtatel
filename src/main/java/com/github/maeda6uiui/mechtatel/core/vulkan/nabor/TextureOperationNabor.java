@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
+import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.TextureOperationParametersUBO;
@@ -24,6 +25,27 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class TextureOperationNabor extends Nabor {
+    public static class TextureOperationInfo {
+        public long srcImageViewA;
+        public long srcImageViewB;
+        public long dstImage;
+        public long dstImageView;
+        public TextureOperationParameters parameters;
+
+        public TextureOperationInfo(
+                long srcImageViewA,
+                long srcImageViewB,
+                long dstImage,
+                long dstImageView,
+                TextureOperationParameters parameters) {
+            this.srcImageViewA = srcImageViewA;
+            this.srcImageViewB = srcImageViewB;
+            this.dstImage = dstImage;
+            this.dstImageView = dstImageView;
+            this.parameters = parameters;
+        }
+    }
+
     public TextureOperationNabor(VkDevice device) {
         super(device, VK_SAMPLE_COUNT_1_BIT, false);
     }

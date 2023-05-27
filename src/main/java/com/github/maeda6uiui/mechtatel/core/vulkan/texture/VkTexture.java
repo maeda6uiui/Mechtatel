@@ -454,4 +454,8 @@ public class VkTexture {
     public String getScreenName() {
         return screenName;
     }
+
+    public long getTextureImageView() {
+        return textureImageView;
+    }
 }

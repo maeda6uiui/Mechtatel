@@ -8,6 +8,7 @@ import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
+import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
@@ -67,6 +68,7 @@ public class MttVulkanInstance
     private Swapchain swapchain;
 
     private TextureOperationNabor textureOperationNabor;
+    private Map<String, TextureOperationNabor.TextureOperationInfo> textureOperationInfos;
 
     private PresentNabor presentNabor;
 
@@ -169,6 +171,7 @@ public class MttVulkanInstance
         this.createSwapchainObjects();
 
         textureOperationNabor = new TextureOperationNabor(device);
+        textureOperationInfos = new HashMap<>();
 
         screens = new HashMap<>();
 
@@ -344,6 +347,12 @@ public class MttVulkanInstance
             vkDeviceWaitIdle(device);
 
             vkFreeCommandBuffers(device, commandPool, PointerBufferUtils.asPointerBuffer(commandBuffers));
+        }
+    }
+
+    private void runTextureOperations() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+
         }
     }
 
@@ -644,5 +653,36 @@ public class MttVulkanInstance
     public void saveScreenshot(String screenName, String srcImageFormat, String outputFilepath) throws IOException {
         VkScreen screen = screens.get(screenName);
         screen.save(srcImageFormat, outputFilepath);
+    }
+
+    public void createTextureOperation(
+            String operationName,
+            VkTexture firstTexture,
+            VkTexture secondTexture,
+            TextureOperationParameters parameters) {
+        if (textureOperationInfos.containsKey(operationName)) {
+            TextureOperationNabor.TextureOperationInfo textureOperationInfo = textureOperationInfos.get(operationName);
+            textureOperationNabor.removeUserDefImage(textureOperationInfo.dstImage);
+            textureOperationInfos.remove(operationName);
+        }
+
+        VkExtent2D extent = textureOperationNabor.getExtent();
+        long dstImage = textureOperationNabor.createUserDefImage(
+                extent.width(),
+                extent.height(),
+                1,
+                VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                swapchain.getSwapchainImageFormat(),
+                VK_IMAGE_ASPECT_COLOR_BIT);
+        long dstImageView = textureOperationNabor.lookUpUserDefImageView(dstImage);
+
+        var textureOperationInfo = new TextureOperationNabor.TextureOperationInfo(
+                firstTexture.getTextureImageView(),
+                secondTexture.getTextureImageView(),
+                dstImage,
+                dstImageView,
+                parameters);
+        textureOperationInfos.put(operationName, textureOperationInfo);
     }
 }

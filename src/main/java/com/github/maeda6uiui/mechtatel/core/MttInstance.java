@@ -312,7 +312,6 @@ class MttInstance {
         return ret;
     }
 
-    //=== Methods relating to components ===
     public void sortComponents() {
         vulkanInstance.sortComponents();
     }
@@ -497,7 +496,6 @@ class MttInstance {
         return mttFont;
     }
 
-    //=== Methods relating to GUI components ===
     public MttButton createMttButton(
             float x,
             float y,
@@ -617,7 +615,6 @@ class MttInstance {
         return guiComponents.remove(guiComponent);
     }
 
-    //=== Methods relating to physical objects ===
     public PhysicalPlane3D createPhysicalPlane3D(Vector3fc normal, float constant) {
         var physicalPlane = new PhysicalPlane3D(normal, constant);
         physicalObjects.add(physicalPlane);
@@ -731,7 +728,6 @@ class MttInstance {
         this.physicsSimulationTimeScale = physicsSimulationTimeScale;
     }
 
-    //=== Methods relating to sound ===
     public Sound3D createSound3D(String filepath, boolean loop, boolean relative) throws IOException {
         var sound = new Sound3D(filepath, loop, relative);
         sounds3D.add(sound);
@@ -756,7 +752,6 @@ class MttInstance {
         }
     }
 
-    //=== Methods relating to textures and screens ===
     public MttTexture createMttTexture(String screenName, String textureFilepath, boolean generateMipmaps) {
         var texture = new MttTexture(vulkanInstance, screenName, textureFilepath, generateMipmaps);
         return texture;

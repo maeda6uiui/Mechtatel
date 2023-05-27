@@ -10,6 +10,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
  */
 public class MttTexture {
     private VkTexture texture;
+    private IMttVulkanInstanceForTexture vulkanInstance;
 
     public MttTexture(
             IMttVulkanInstanceForTexture vulkanInstance,
@@ -17,6 +18,7 @@ public class MttTexture {
             String textureFilepath,
             boolean generateMipmaps) {
         texture = vulkanInstance.createTexture(screenName, textureFilepath, generateMipmaps);
+        this.vulkanInstance = vulkanInstance;
     }
 
     public MttTexture(
@@ -24,10 +26,12 @@ public class MttTexture {
             String srcScreenName,
             String dstScreenName) {
         texture = vulkanInstance.texturizeScreen(srcScreenName, dstScreenName);
+        this.vulkanInstance = vulkanInstance;
     }
 
     public void cleanup() {
         texture.cleanup();
+        vulkanInstance.removeTexture(texture);
     }
 
     public VkTexture getVulkanTexture() {

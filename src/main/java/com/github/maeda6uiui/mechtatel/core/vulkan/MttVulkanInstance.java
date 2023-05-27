@@ -67,6 +67,7 @@ public class MttVulkanInstance
     private Swapchain swapchain;
 
     private TextureOperationNabor textureOperationNabor;
+
     private PresentNabor presentNabor;
 
     private Map<String, VkScreen> screens;
@@ -166,6 +167,7 @@ public class MttVulkanInstance
         commandPool = CommandPoolCreator.createCommandPool(device, surface);
 
         this.createSwapchainObjects();
+
         textureOperationNabor = new TextureOperationNabor(device);
 
         screens = new HashMap<>();
@@ -377,7 +379,6 @@ public class MttVulkanInstance
         this.presentToFrontScreen(screenName);
     }
 
-    //=== Methods relating to components ===
     @Override
     public boolean removeComponent(VkComponent component) {
         return components.remove(component);
@@ -606,7 +607,6 @@ public class MttVulkanInstance
         return mttFont;
     }
 
-    //=== Methods relating to textures and screens ===
     @Override
     public VkTexture createTexture(String screenName, String textureFilepath, boolean generateMipmaps) {
         VkScreen screen = screens.get(screenName);
@@ -634,6 +634,11 @@ public class MttVulkanInstance
         textures.add(texture);
 
         return texture;
+    }
+
+    @Override
+    public boolean removeTexture(VkTexture texture) {
+        return textures.remove(texture);
     }
 
     public void saveScreenshot(String screenName, String srcImageFormat, String outputFilepath) throws IOException {

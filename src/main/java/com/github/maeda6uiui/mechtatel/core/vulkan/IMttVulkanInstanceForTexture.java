@@ -11,4 +11,6 @@ public interface IMttVulkanInstanceForTexture {
     VkTexture createTexture(String screenName, String textureFilepath, boolean generateMipmaps);
 
     VkTexture texturizeScreen(String srcScreenName, String dstScreenName);
+
+    boolean removeTexture(VkTexture texture);
 }

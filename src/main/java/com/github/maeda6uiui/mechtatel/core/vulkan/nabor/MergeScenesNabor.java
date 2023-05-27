@@ -44,28 +44,28 @@ public class MergeScenesNabor extends Nabor {
 
     public void transitionAlbedoImage(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long colorImage = this.getImage(albedoAttachmentIndex);
+        long albedoImage = this.getImage(albedoAttachmentIndex);
 
         ImageUtils.transitionImageLayout(
                 device,
                 commandPool,
                 graphicsQueue,
-                colorImage,
+                albedoImage,
                 VK_IMAGE_ASPECT_COLOR_BIT,
                 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 1);
     }
 
-    public void revertTransitionAlbedoImage(long commandPool,VkQueue graphicsQueue){
+    public void revertTransitionAlbedoImage(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long colorImage = this.getImage(albedoAttachmentIndex);
+        long albedoImage = this.getImage(albedoAttachmentIndex);
 
         ImageUtils.transitionImageLayout(
                 device,
                 commandPool,
                 graphicsQueue,
-                colorImage,
+                albedoImage,
                 VK_IMAGE_ASPECT_COLOR_BIT,
                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,

@@ -31,13 +31,13 @@ public class SwapchainUtils {
             VkPhysicalDevice device, long surface, MemoryStack stack) {
         var details = new SwapchainSupportDetails();
 
-        details.capabilities = VkSurfaceCapabilitiesKHR.mallocStack(stack);
+        details.capabilities = VkSurfaceCapabilitiesKHR.malloc(stack);
         vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, details.capabilities);
 
         IntBuffer count = stack.ints(0);
         vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, count, null);
         if (count.get(0) != 0) {
-            details.formats = VkSurfaceFormatKHR.mallocStack(count.get(0), stack);
+            details.formats = VkSurfaceFormatKHR.malloc(count.get(0), stack);
             vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, count, details.formats);
         }
 

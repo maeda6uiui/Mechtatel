@@ -76,11 +76,6 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     }
 
     @Override
-    public void revertTransitionColorImageLayout(long commandPool,VkQueue graphicsQueue){
-        pass2.revertTransitionColorImageLayout(commandPool,graphicsQueue);
-    }
-
-    @Override
     public long getColorImageView() {
         return pass2.getColorImageView();
     }

@@ -1,12 +1,12 @@
 package com.github.maeda6uiui.mechtatel.core.screen;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanInstanceForScreen;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
+import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanInstanceForScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.ParallelLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLightNabor;
@@ -20,9 +20,10 @@ import java.util.List;
 
 /**
  * Screen
+ *
  * @author maeda6uiui
  */
-public class MttScreen{
+public class MttScreen {
     private VkScreen screen;
 
     private boolean shouldPresent;
@@ -49,8 +50,8 @@ public class MttScreen{
             int screenWidth,
             int screenHeight,
             boolean shouldChangeExtentOnRecreate,
-            List<String> ppNaborNames){
-        screen=vulkanInstance.createScreen(
+            List<String> ppNaborNames) {
+        screen = vulkanInstance.createScreen(
                 screenName,
                 depthImageWidth,
                 depthImageHeight,
@@ -59,10 +60,10 @@ public class MttScreen{
                 shouldChangeExtentOnRecreate,
                 ppNaborNames
         );
-        shouldPresent=false;
-        shouldAutoUpdateCameraAspect=true;
+        shouldPresent = false;
+        shouldAutoUpdateCameraAspect = true;
 
-        this.vulkanInstance=vulkanInstance;
+        this.vulkanInstance = vulkanInstance;
 
         backgroundColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
         parallelLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
@@ -77,14 +78,11 @@ public class MttScreen{
         spotlights = new ArrayList<>();
     }
 
-    public void cleanup(){
+    public void cleanup() {
         screen.cleanup();
     }
 
-    public void draw(){
-        if(screen.isAlreadyRunAfterCreation()){
-            screen.revertTransitionColorImageLayout();
-        }
+    public void draw() {
         vulkanInstance.draw(
                 screen,
                 backgroundColor,
@@ -99,25 +97,21 @@ public class MttScreen{
                 shadowMappingSettings
         );
         screen.transitionColorImageLayout();
-
-        if(!screen.isAlreadyRunAfterCreation()){
-            screen.flagAlreadyRunAfterCreation();
-        }
     }
 
-    public void setShouldPresent(boolean shouldPresent){
-        this.shouldPresent=shouldPresent;
+    public void setShouldPresent(boolean shouldPresent) {
+        this.shouldPresent = shouldPresent;
     }
 
-    public boolean shouldPresent(){
+    public boolean shouldPresent() {
         return shouldPresent;
     }
 
-    public void setShouldAutoUpdateCameraAspect(boolean shouldAutoUpdateCameraAspect){
-        this.shouldAutoUpdateCameraAspect=shouldAutoUpdateCameraAspect;
+    public void setShouldAutoUpdateCameraAspect(boolean shouldAutoUpdateCameraAspect) {
+        this.shouldAutoUpdateCameraAspect = shouldAutoUpdateCameraAspect;
     }
 
-    public boolean shouldAutoUpdateCameraAspect(){
+    public boolean shouldAutoUpdateCameraAspect() {
         return shouldAutoUpdateCameraAspect;
     }
 

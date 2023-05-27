@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.TextureOperationParametersUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
 import org.lwjgl.system.MemoryStack;
@@ -586,5 +587,41 @@ public class TextureOperationNabor extends Nabor {
         var imageViews = Arrays.asList(arrImageViews);
 
         this.bindImages(commandBuffer, 0, 0, imageViews);
+    }
+
+    public void copyColorImage(long commandPool, VkQueue graphicsQueue, long colorDstImage) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDevice device = this.getDevice();
+            VkExtent2D extent = this.getExtent();
+
+            VkImageCopy.Buffer imageCopyRegion = VkImageCopy.calloc(1, stack);
+            imageCopyRegion.srcSubresource().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+            imageCopyRegion.srcSubresource().layerCount(1);
+            imageCopyRegion.dstSubresource().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+            imageCopyRegion.dstSubresource().layerCount(1);
+            imageCopyRegion.extent(VkExtent3D.calloc(stack).set(extent.width(), extent.height(), 1));
+
+            long colorSrcImage = this.getImage(0);
+
+            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
+
+            ImageUtils.transitionImageLayout(
+                    commandBuffer,
+                    colorSrcImage,
+                    VK_IMAGE_ASPECT_COLOR_BIT,
+                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                    VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                    1);
+            ImageUtils.transitionImageLayout(
+                    commandBuffer,
+                    colorDstImage,
+                    VK_IMAGE_ASPECT_COLOR_BIT,
+                    VK_IMAGE_LAYOUT_UNDEFINED,
+                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                    1
+            );
+
+            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
+        }
     }
 }

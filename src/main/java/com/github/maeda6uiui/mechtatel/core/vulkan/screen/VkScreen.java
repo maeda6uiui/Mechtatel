@@ -58,8 +58,6 @@ public class VkScreen {
 
     private QuadDrawer quadDrawer;
 
-    private boolean alreadyRunAfterCreation;
-
     public VkScreen(
             VkDevice device,
             long commandPool,
@@ -280,8 +278,6 @@ public class VkScreen {
         this.shouldChangeExtentOnRecreate = shouldChangeExtentOnRecreate;
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
-
-        alreadyRunAfterCreation = false;
     }
 
     public void recreate(int colorImageFormat, VkExtent2D extent) {
@@ -310,8 +306,6 @@ public class VkScreen {
                 ppNaborChain.recreate(colorImageFormat, initialExtent);
             }
         }
-
-        alreadyRunAfterCreation = false;
     }
 
     public void cleanup() {
@@ -326,14 +320,6 @@ public class VkScreen {
         if (ppNaborChain != null) {
             ppNaborChain.cleanup();
         }
-    }
-
-    public boolean isAlreadyRunAfterCreation() {
-        return alreadyRunAfterCreation;
-    }
-
-    public void flagAlreadyRunAfterCreation() {
-        alreadyRunAfterCreation = true;
     }
 
     public String getScreenName() {
@@ -786,14 +772,6 @@ public class VkScreen {
             mergeScenesFillNabor.transitionAlbedoImage(commandPool, graphicsQueue);
         } else {
             ppNaborChain.transitionLastPPNaborColorImage();
-        }
-    }
-
-    public void revertTransitionColorImageLayout() {
-        if (ppNaborChain == null) {
-            mergeScenesFillNabor.revertTransitionAlbedoImage(commandPool, graphicsQueue);
-        } else {
-            ppNaborChain.revertTransitionLastPPNaborColorImage();
         }
     }
 

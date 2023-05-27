@@ -13,6 +13,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
@@ -65,6 +66,7 @@ public class MttVulkanInstance
 
     private Swapchain swapchain;
 
+    private TextureOperationNabor textureOperationNabor;
     private PresentNabor presentNabor;
 
     private Map<String, VkScreen> screens;
@@ -164,6 +166,7 @@ public class MttVulkanInstance
         commandPool = CommandPoolCreator.createCommandPool(device, surface);
 
         this.createSwapchainObjects();
+        textureOperationNabor = new TextureOperationNabor(device);
 
         screens = new HashMap<>();
 
@@ -190,6 +193,7 @@ public class MttVulkanInstance
         imagesInFlight.clear();
 
         swapchain.cleanup();
+        textureOperationNabor.cleanup(false);
         presentNabor.cleanup(false);
         screens.forEach((k, screen) -> screen.cleanup());
 
@@ -221,6 +225,10 @@ public class MttVulkanInstance
 
         swapchain.cleanup();
         this.createSwapchainObjects();
+
+        textureOperationNabor.recreate(
+                swapchain.getSwapchainImageFormat(),
+                swapchain.getSwapchainExtent());
 
         this.recreateScreens();
     }

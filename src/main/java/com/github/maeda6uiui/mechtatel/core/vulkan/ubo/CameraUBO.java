@@ -23,11 +23,11 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 public class CameraUBO {
     public static final int SIZEOF = 2 * SIZEOF_MAT4 + 2 * SIZEOF_VEC4;
 
-    public Matrix4f view;
-    public Matrix4f proj;
+    private Matrix4f view;
+    private Matrix4f proj;
 
-    public Vector3f eye;
-    public Vector3f center;
+    private Vector3f eye;
+    private Vector3f center;
 
     public CameraUBO(Camera camera) {
         Vector3fc eye = camera.getEye();

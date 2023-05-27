@@ -21,14 +21,14 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 public class TextureOperationParametersUBO {
     public static final int SIZEOF = 2 * SIZEOF_VEC4 + SIZEOF_INT;
 
-    public Vector4f firstTextureFactor;
-    public Vector4f secondTextureFactor;
-    public int operationType;
+    private Vector4f firstTextureFactor;
+    private Vector4f secondTextureFactor;
+    private int operationType;
 
     public TextureOperationParametersUBO(TextureOperationParameters parameters) {
-        firstTextureFactor = parameters.firstTextureFactor;
-        secondTextureFactor = parameters.secondTextureFactor;
-        operationType = parameters.operationType;
+        firstTextureFactor = parameters.getFirstTextureFactor();
+        secondTextureFactor = parameters.getSecondTextureFactor();
+        operationType = parameters.getOperationType();
     }
 
     private void memcpy(ByteBuffer buffer) {

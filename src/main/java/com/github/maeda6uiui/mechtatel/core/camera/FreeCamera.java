@@ -30,8 +30,8 @@ public class FreeCamera {
     }
 
     private float calcRotateH() {
-        Vector3f eye = this.camera.eye;
-        Vector3f center = this.camera.center;
+        Vector3f eye = this.camera.getEye();
+        Vector3f center = this.camera.getCenter();
         var front = new Vector3f(center).sub(eye).normalize();
 
         float th = new Vector3f(front.x, 0.0f, front.z).angle(new Vector3f(1.0f, 0.0f, 0.0f));
@@ -43,8 +43,8 @@ public class FreeCamera {
     }
 
     private float calcRotateV() {
-        Vector3f eye = this.camera.eye;
-        Vector3f center = this.camera.center;
+        Vector3f eye = this.camera.getEye();
+        Vector3f center = this.camera.getCenter();
         var front = new Vector3f(center).sub(eye).normalize();
 
         float sinTh = front.y / front.length();
@@ -70,8 +70,8 @@ public class FreeCamera {
     }
 
     public void translate(int keyFront, int keyBack, int keyLeft, int keyRight) {
-        Vector3f eye = this.camera.eye;
-        Vector3f center = this.camera.center;
+        Vector3f eye = this.camera.getEye();
+        Vector3f center = this.camera.getCenter();
 
         var front = new Vector3f(center).sub(eye).normalize();
         var left = new Vector3f(0.0f, 1.0f, 0.0f).cross(front);
@@ -122,7 +122,7 @@ public class FreeCamera {
         lookAt.z = (float) Math.sin(rotateH);
         lookAt.normalize();
 
-        var newCenter = new Vector3f(this.camera.eye).add(lookAt);
+        var newCenter = new Vector3f(this.camera.getEye()).add(lookAt);
         this.camera.setCenter(newCenter);
     }
 }

@@ -621,6 +621,22 @@ public class TextureOperationNabor extends Nabor {
                     1
             );
 
+            vkCmdCopyImage(
+                    commandBuffer,
+                    colorSrcImage,
+                    VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                    colorDstImage,
+                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                    imageCopyRegion);
+
+            ImageUtils.transitionImageLayout(
+                    commandBuffer,
+                    colorDstImage,
+                    VK_IMAGE_ASPECT_COLOR_BIT,
+                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                    1);
+
             CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
         }
     }

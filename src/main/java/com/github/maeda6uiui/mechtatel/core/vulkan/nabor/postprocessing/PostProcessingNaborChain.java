@@ -296,11 +296,6 @@ public class PostProcessingNaborChain {
 
                     //First post-processing
                     if (previousPPNabor == null) {
-                        lastMergeNabor.transitionAlbedoImage(commandPool, graphicsQueue);
-                        lastMergeNabor.transitionDepthImage(commandPool, graphicsQueue);
-                        lastMergeNabor.transitionPositionImage(commandPool, graphicsQueue);
-                        lastMergeNabor.transitionNormalImage(commandPool, graphicsQueue);
-
                         ppNabor.bindImages(
                                 commandBuffer,
                                 0,

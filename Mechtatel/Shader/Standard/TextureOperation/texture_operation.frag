@@ -33,8 +33,8 @@ void main(){
     }else if(parameters.operationType==TEXTURE_OPERATION_DIV){
         outColor=(color_1*parameters.firstTextureFactor)/(color_2*parameters.secondTextureFactor);
     }else if(parameters.operationType==TEXTURE_OPERATION_MERGE_BY_DEPTH){
-        float depth_1=texture(sampler2D(depthTextures[0].textureSampler),fragTexCoords).r;
-        float depth_2=texture(sampler2D(depthTextures[1].textureSampler),fragTexCoords).r;
+        float depth_1=texture(sampler2D(depthTextures[0],textureSampler),fragTexCoords).r;
+        float depth_2=texture(sampler2D(depthTextures[1],textureSampler),fragTexCoords).r;
 
         if(depth_1<depth_2){
             outColor=color_1*parameters.firstTextureFactor;

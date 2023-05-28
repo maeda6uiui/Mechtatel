@@ -497,7 +497,7 @@ public class Mechtatel implements IMechtatel {
     }
 
     public MttTexture texturizeScreen(String srcScreenName, String dstScreenName) {
-        return instance.texturizeScreen(srcScreenName, dstScreenName);
+        return instance.texturizeColorOfScreen(srcScreenName, dstScreenName);
     }
 
     public void saveScreenshot(String screenName, String srcImageFormat, String outputFilepath) throws IOException {

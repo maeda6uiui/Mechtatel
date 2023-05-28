@@ -24,8 +24,21 @@ public class MttTexture {
     public MttTexture(
             IMttVulkanInstanceForTexture vulkanInstance,
             String srcScreenName,
-            String dstScreenName) {
-        texture = vulkanInstance.texturizeScreen(srcScreenName, dstScreenName);
+            String dstScreenName,
+            String textureType) {
+        if (textureType.equals("color")) {
+            texture = vulkanInstance.texturizeColorOfScreen(srcScreenName, dstScreenName);
+        } else if (textureType.equals("depth")) {
+            texture = vulkanInstance.texturizeDepthOfScreen(srcScreenName, dstScreenName);
+        } else {
+            throw new RuntimeException("Unsupported texture type");
+        }
+
+        this.vulkanInstance = vulkanInstance;
+    }
+
+    public MttTexture(IMttVulkanInstanceForTexture vulkanInstance, VkTexture texture) {
+        this.texture = texture;
         this.vulkanInstance = vulkanInstance;
     }
 

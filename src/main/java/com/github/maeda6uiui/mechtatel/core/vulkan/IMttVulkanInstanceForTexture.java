@@ -10,7 +10,9 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
 public interface IMttVulkanInstanceForTexture {
     VkTexture createTexture(String screenName, String textureFilepath, boolean generateMipmaps);
 
-    VkTexture texturizeScreen(String srcScreenName, String dstScreenName);
+    VkTexture texturizeColorOfScreen(String srcScreenName, String dstScreenName);
+
+    VkTexture texturizeDepthOfScreen(String srcScreenName, String dstScreenName);
 
     boolean removeTexture(VkTexture texture);
 }

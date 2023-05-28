@@ -8,7 +8,9 @@ import com.github.maeda6uiui.mechtatel.core.physics.*;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
+import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
 import com.jme3.system.NativeLibraryLoader;
 import org.joml.Vector2fc;
 import org.joml.Vector3f;
@@ -58,6 +60,8 @@ class MttInstance {
 
     private Map<String, MttScreen> screens;
     private List<String> screenDrawOrder;
+
+    private List<String> textureOperationOrder;
 
     private List<Sound3D> sounds3D;
 
@@ -168,6 +172,8 @@ class MttInstance {
         screenDrawOrder = new ArrayList<>();
         screenDrawOrder.add("default");
 
+        textureOperationOrder = new ArrayList<>();
+
         //Set up OpenAL
         long alcDevice = alcOpenDevice((ByteBuffer) null);
         if (alcDevice == 0) {
@@ -221,8 +227,14 @@ class MttInstance {
                 for (var screenName : screenDrawOrder) {
                     MttScreen screen = screens.get(screenName);
                     screen.draw();
+                }
+                for (var textureOperationName : textureOperationOrder) {
+                    vulkanInstance.runTextureOperations(textureOperationName);
+                }
+                for (var screenName : screenDrawOrder) {
+                    MttScreen screen = screens.get(screenName);
                     if (screen.shouldPresent()) {
-                        vulkanInstance.present(screenName);
+                        vulkanInstance.presentToFrontScreen(screenName);
                     }
                 }
 
@@ -757,8 +769,13 @@ class MttInstance {
         return texture;
     }
 
-    public MttTexture texturizeScreen(String srcScreenName, String dstScreenName) {
-        var texture = new MttTexture(vulkanInstance, srcScreenName, dstScreenName);
+    public MttTexture texturizeColorOfScreen(String srcScreenName, String dstScreenName) {
+        var texture = new MttTexture(vulkanInstance, srcScreenName, dstScreenName, "color");
+        return texture;
+    }
+
+    public MttTexture texturizeDepthOfScreen(String srcScreenName, String dstScreenName) {
+        var texture = new MttTexture(vulkanInstance, srcScreenName, dstScreenName, "depth");
         return texture;
     }
 
@@ -821,5 +838,30 @@ class MttInstance {
 
     public void setScreenDrawOrder(List<String> screenDrawOrder) {
         this.screenDrawOrder = screenDrawOrder;
+    }
+
+    public MttTexture createTextureOperation(
+            String operationName,
+            MttTexture firstColorTexture,
+            MttTexture secondColorTexture,
+            MttTexture firstDepthTexture,
+            MttTexture secondDepthTexture,
+            String dstScreenName,
+            TextureOperationParameters parameters) {
+        VkTexture vulkanTexture = vulkanInstance.createTextureOperation(
+                operationName,
+                firstColorTexture.getVulkanTexture(),
+                secondColorTexture.getVulkanTexture(),
+                firstDepthTexture.getVulkanTexture(),
+                secondDepthTexture.getVulkanTexture(),
+                dstScreenName,
+                parameters);
+        var texture = new MttTexture(vulkanInstance, vulkanTexture);
+
+        return texture;
+    }
+
+    public void setTextureOperationOrder(List<String> textureOperationOrder) {
+        this.textureOperationOrder = textureOperationOrder;
     }
 }

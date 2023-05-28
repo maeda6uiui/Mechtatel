@@ -26,20 +26,26 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class TextureOperationNabor extends Nabor {
     public static class TextureOperationInfo {
-        public long srcImageViewA;
-        public long srcImageViewB;
+        public long srcColorImageViewA;
+        public long srcColorImageViewB;
+        public long srcDepthImageViewA;
+        public long srcDepthImageViewB;
         public long dstImage;
         public long dstImageView;
         public TextureOperationParameters parameters;
 
         public TextureOperationInfo(
-                long srcImageViewA,
-                long srcImageViewB,
+                long srcColorImageViewA,
+                long srcColorImageViewB,
+                long srcDepthImageViewA,
+                long srcDepthImageViewB,
                 long dstImage,
                 long dstImageView,
                 TextureOperationParameters parameters) {
-            this.srcImageViewA = srcImageViewA;
-            this.srcImageViewB = srcImageViewB;
+            this.srcColorImageViewA = srcColorImageViewA;
+            this.srcColorImageViewB = srcColorImageViewB;
+            this.srcDepthImageViewA = srcDepthImageViewA;
+            this.srcDepthImageViewB = srcDepthImageViewB;
             this.dstImage = dstImage;
             this.dstImageView = dstImageView;
             this.parameters = parameters;
@@ -62,21 +68,6 @@ public class TextureOperationNabor extends Nabor {
                 VK_IMAGE_ASPECT_COLOR_BIT,
                 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                1);
-    }
-
-    public void revertTransitionColorImage(long commandPool, VkQueue graphicsQueue) {
-        VkDevice device = this.getDevice();
-        long colorImage = this.getImage(0);
-
-        ImageUtils.transitionImageLayout(
-                device,
-                commandPool,
-                graphicsQueue,
-                colorImage,
-                VK_IMAGE_ASPECT_COLOR_BIT,
-                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
                 1);
     }
 
@@ -609,6 +600,13 @@ public class TextureOperationNabor extends Nabor {
         var imageViews = Arrays.asList(arrImageViews);
 
         this.bindImages(commandBuffer, 0, 0, imageViews);
+    }
+
+    public void bindDepthImages(VkCommandBuffer commandBuffer, long depthImageViewA, long depthImageViewB) {
+        var arrImageViews = new Long[]{depthImageViewA, depthImageViewB};
+        var imageViews = Arrays.asList(arrImageViews);
+
+        this.bindImages(commandBuffer, 0, 1, imageViews);
     }
 
     public void copyColorImage(long commandPool, VkQueue graphicsQueue, long colorDstImage) {

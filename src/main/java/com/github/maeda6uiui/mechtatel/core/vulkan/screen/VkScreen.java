@@ -750,6 +750,11 @@ public class VkScreen {
         this.runMergeScenesNabor();
         this.runMergeScenesFillNabor();
 
+        mergeScenesFillNabor.transitionAlbedoImage(commandPool, graphicsQueue);
+        mergeScenesFillNabor.transitionDepthImage(commandPool, graphicsQueue);
+        mergeScenesFillNabor.transitionPositionImage(commandPool, graphicsQueue);
+        mergeScenesFillNabor.transitionNormalImage(commandPool, graphicsQueue);
+
         if (ppNaborChain != null) {
             ppNaborChain.run(
                     camera,
@@ -781,6 +786,10 @@ public class VkScreen {
         } else {
             return ppNaborChain.getLastPPNaborColorImageView();
         }
+    }
+
+    public long getDepthImageView() {
+        return mergeScenesFillNabor.getDepthImageView();
     }
 
     public List<Long> getDescriptorSets() {

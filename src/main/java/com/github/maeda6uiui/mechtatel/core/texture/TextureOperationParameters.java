@@ -17,11 +17,15 @@ public class TextureOperationParameters {
     private Vector4f firstTextureFactor;
     private Vector4f secondTextureFactor;
     private int operationType;
+    private float firstTextureFixedDepth;
+    private float secondTextureFixedDepth;
 
     public TextureOperationParameters() {
         firstTextureFactor = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
         secondTextureFactor = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
         operationType = TEXTURE_OPERATION_ADD;
+        firstTextureFixedDepth = -1.0f;
+        secondTextureFixedDepth = -1.0f;
     }
 
     public Vector4f getFirstTextureFactor() {
@@ -46,5 +50,21 @@ public class TextureOperationParameters {
 
     public void setOperationType(int operationType) {
         this.operationType = operationType;
+    }
+
+    public float getFirstTextureFixedDepth() {
+        return firstTextureFixedDepth;
+    }
+
+    public void setFirstTextureFixedDepth(float firstTextureFixedDepth) {
+        this.firstTextureFixedDepth = firstTextureFixedDepth;
+    }
+
+    public float getSecondTextureFixedDepth() {
+        return secondTextureFixedDepth;
+    }
+
+    public void setSecondTextureFixedDepth(float secondTextureFixedDepth) {
+        this.secondTextureFixedDepth = secondTextureFixedDepth;
     }
 }

@@ -8,8 +8,7 @@ import org.lwjgl.vulkan.VkDevice;
 
 import java.nio.ByteBuffer;
 
-import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_INT;
-import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_VEC4;
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.*;
 import static org.lwjgl.vulkan.VK10.vkMapMemory;
 import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
 
@@ -19,22 +18,28 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda6uiui
  */
 public class TextureOperationParametersUBO {
-    public static final int SIZEOF = 2 * SIZEOF_VEC4 + SIZEOF_INT;
+    public static final int SIZEOF = 2 * SIZEOF_VEC4 + SIZEOF_INT + 2 * SIZEOF_FLOAT;
 
     private Vector4f firstTextureFactor;
     private Vector4f secondTextureFactor;
     private int operationType;
+    private float firstTextureFixedDepth;
+    private float secondTextureFixedDepth;
 
     public TextureOperationParametersUBO(TextureOperationParameters parameters) {
         firstTextureFactor = parameters.getFirstTextureFactor();
         secondTextureFactor = parameters.getSecondTextureFactor();
         operationType = parameters.getOperationType();
+        firstTextureFixedDepth = parameters.getFirstTextureFixedDepth();
+        secondTextureFixedDepth = parameters.getSecondTextureFixedDepth();
     }
 
     private void memcpy(ByteBuffer buffer) {
         firstTextureFactor.get(0, buffer);
         secondTextureFactor.get(SIZEOF_VEC4, buffer);
         buffer.putInt(SIZEOF_VEC4 * 2, operationType);
+        buffer.putFloat(SIZEOF_VEC4 * 2 + SIZEOF_INT, firstTextureFixedDepth);
+        buffer.putFloat(SIZEOF_VEC4 * 2 + SIZEOF_INT + SIZEOF_FLOAT, secondTextureFixedDepth);
 
         buffer.rewind();
     }

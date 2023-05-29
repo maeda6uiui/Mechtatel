@@ -11,6 +11,8 @@ layout(set=0,binding=0) uniform TextureOperationParametersUBO{
     vec4 firstTextureFactor;
     vec4 secondTextureFactor;
     int operationType;
+    float firstTextureFixedDepth;
+    float secondTextureFixedDepth;
 }parameters;
 layout(set=1,binding=0) uniform texture2D colorTextures[2];
 layout(set=1,binding=1) uniform texture2D depthTextures[2];
@@ -35,6 +37,13 @@ void main(){
     }else if(parameters.operationType==TEXTURE_OPERATION_MERGE_BY_DEPTH){
         float depth_1=texture(sampler2D(depthTextures[0],textureSampler),fragTexCoords).r;
         float depth_2=texture(sampler2D(depthTextures[1],textureSampler),fragTexCoords).r;
+
+        if(parameters.firstTextureFixedDepth>=0.0&&parameters.firstTextureFixedDepth<=1.0){
+            depth_1=parameters.firstTextureFixedDepth;
+        }
+        if(parameters.secondTextureFixedDepth>=0.0&&parameters.secondTextureFixedDepth<=1.0){
+            depth_2=parameters.secondTextureFixedDepth;
+        }
 
         if(depth_1<depth_2){
             outColor=color_1*parameters.firstTextureFactor;

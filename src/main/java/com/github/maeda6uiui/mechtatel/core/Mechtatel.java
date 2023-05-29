@@ -80,6 +80,11 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
 
     }
 
+    @Override
+    public void postPresent() {
+
+    }
+
     public void closeWindow() {
         instance.closeWindow();
     }

@@ -246,6 +246,9 @@ class MttInstance {
                 }
 
                 vulkanInstance.presentToFrontScreen(presentScreenName);
+                mtt.postPresent();
+
+                vulkanInstance.updateTextureAllocations();
 
                 lastTime = glfwGetTime();
             }

@@ -330,7 +330,7 @@ public class VkScreen {
         return gBufferNabor;
     }
 
-    private void updateTextureAllocations() {
+    public void updateTextureAllocations() {
         int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
         var descriptorSets = new ArrayList<Long>();
         for (int i = 0; i < numDescriptorSets; i++) {
@@ -743,7 +743,6 @@ public class VkScreen {
             Vector3f spotlightAmbientColor,
             ShadowMappingSettings shadowMappingSettings,
             List<VkComponent> components) {
-        this.updateTextureAllocations();
         this.runGBufferNabor(backgroundColor, camera, components);
         this.runPrimitiveNabor(backgroundColor, camera, components);
         this.runPrimitiveFillNabor(backgroundColor, camera, components);

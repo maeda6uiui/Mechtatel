@@ -122,14 +122,6 @@ public class TextureOperationTest extends Mechtatel {
                 this.getKeyboardPressingCount("RIGHT")
         );
 
-        if (firstColorTexture != null) {
-            firstColorTexture.cleanup();
-            firstDepthTexture.cleanup();
-            secondColorTexture.cleanup();
-            secondDepthTexture.cleanup();
-            finalTexture.cleanup();
-        }
-
         firstColorTexture = this.texturizeColorOfScreen("first", "final");
         firstDepthTexture = this.texturizeDepthOfScreen("first", "final");
         secondColorTexture = this.texturizeColorOfScreen("second", "final");
@@ -148,5 +140,14 @@ public class TextureOperationTest extends Mechtatel {
                 textureOperationParameters
         );
         texturedQuad.replaceTexture(finalTexture);
+    }
+
+    @Override
+    public void postPresent() {
+        firstColorTexture.cleanup();
+        firstDepthTexture.cleanup();
+        secondColorTexture.cleanup();
+        secondDepthTexture.cleanup();
+        finalTexture.cleanup();
     }
 }

@@ -707,6 +707,12 @@ public class MttVulkanInstance
         return textures.remove(texture);
     }
 
+    public void updateTextureAllocations() {
+        for (var screen : screens.values()) {
+            screen.updateTextureAllocations();
+        }
+    }
+
     public void saveScreenshot(String screenName, String srcImageFormat, String outputFilepath) throws IOException {
         VkScreen screen = screens.get(screenName);
         screen.save(srcImageFormat, outputFilepath);
@@ -720,22 +726,24 @@ public class MttVulkanInstance
             VkTexture secondDepthTexture,
             String dstScreenName,
             TextureOperationParameters parameters) {
+        long dstImage;
+        long dstImageView;
         if (textureOperationInfos.containsKey(operationName)) {
             TextureOperationNabor.TextureOperationInfo textureOperationInfo = textureOperationInfos.get(operationName);
-            textureOperationNabor.removeUserDefImage(textureOperationInfo.dstImage);
-            textureOperationInfos.remove(operationName);
+            dstImage = textureOperationInfo.dstImage;
+            dstImageView = textureOperationInfo.dstImageView;
+        } else {
+            VkExtent2D extent = textureOperationNabor.getExtent();
+            dstImage = textureOperationNabor.createUserDefImage(
+                    extent.width(),
+                    extent.height(),
+                    1,
+                    VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                    swapchain.getSwapchainImageFormat(),
+                    VK_IMAGE_ASPECT_COLOR_BIT);
+            dstImageView = textureOperationNabor.lookUpUserDefImageView(dstImage);
         }
-
-        VkExtent2D extent = textureOperationNabor.getExtent();
-        long dstImage = textureOperationNabor.createUserDefImage(
-                extent.width(),
-                extent.height(),
-                1,
-                VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                swapchain.getSwapchainImageFormat(),
-                VK_IMAGE_ASPECT_COLOR_BIT);
-        long dstImageView = textureOperationNabor.lookUpUserDefImageView(dstImage);
 
         var textureOperationInfo = new TextureOperationNabor.TextureOperationInfo(
                 firstColorTexture.getTextureImageView(),

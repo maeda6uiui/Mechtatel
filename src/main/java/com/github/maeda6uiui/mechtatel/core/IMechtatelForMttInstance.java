@@ -19,4 +19,6 @@ interface IMechtatelForMttInstance {
     void postTextureOperation(String operationName);
 
     void postDeferredDraw(String screenName);
+
+    void postPresent();
 }

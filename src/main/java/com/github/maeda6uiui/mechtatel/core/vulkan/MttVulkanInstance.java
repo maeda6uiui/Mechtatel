@@ -374,7 +374,7 @@ public class MttVulkanInstance
             var textureOperationInfo = textureOperationInfos.get(operationName);
 
             long parametersUBOMemory = textureOperationNabor.getUniformBufferMemory(0);
-            var parametersUBO = new TextureOperationParametersUBO(textureOperationInfo.parameters);
+            var parametersUBO = new TextureOperationParametersUBO(textureOperationInfo.getParameters());
             parametersUBO.update(device, parametersUBOMemory);
 
             VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
@@ -385,13 +385,13 @@ public class MttVulkanInstance
 
                 textureOperationNabor.bindColorImages(
                         commandBuffer,
-                        textureOperationInfo.srcColorImageViewA,
-                        textureOperationInfo.srcColorImageViewB
+                        textureOperationInfo.getSrcColorImageViewA(),
+                        textureOperationInfo.getSrcColorImageViewB()
                 );
                 textureOperationNabor.bindDepthImages(
                         commandBuffer,
-                        textureOperationInfo.srcDepthImageViewA,
-                        textureOperationInfo.srcDepthImageViewB
+                        textureOperationInfo.getSrcDepthImageViewA(),
+                        textureOperationInfo.getSrcDepthImageViewB()
                 );
 
                 quadDrawer.draw(commandBuffer);
@@ -400,7 +400,7 @@ public class MttVulkanInstance
 
             CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
 
-            textureOperationNabor.copyColorImage(commandPool, graphicsQueue, textureOperationInfo.dstImage);
+            textureOperationNabor.copyColorImage(commandPool, graphicsQueue, textureOperationInfo.getDstImage());
         }
     }
 
@@ -721,7 +721,7 @@ public class MttVulkanInstance
             TextureOperationParameters parameters) {
         if (textureOperationInfos.containsKey(operationName)) {
             TextureOperationNabor.TextureOperationInfo textureOperationInfo = textureOperationInfos.get(operationName);
-            textureOperationNabor.removeUserDefImage(textureOperationInfo.dstImage);
+            textureOperationNabor.removeUserDefImage(textureOperationInfo.getDstImage());
             textureOperationInfos.remove(operationName);
         }
 
@@ -749,5 +749,17 @@ public class MttVulkanInstance
         VkScreen dstScreen = screens.get(dstScreenName);
         var dstTexture = new VkTexture(device, dstScreen, dstImageView);
         return dstTexture;
+    }
+
+    public boolean updateTextureOperationParameters(String operationName, TextureOperationParameters parameters) {
+        if (textureOperationInfos.containsKey(operationName) == false) {
+            return false;
+        }
+
+        var textureOperationInfo = textureOperationInfos.get(operationName);
+        textureOperationInfo.setParameters(parameters);
+        textureOperationInfos.put(operationName, textureOperationInfo);
+
+        return true;
     }
 }

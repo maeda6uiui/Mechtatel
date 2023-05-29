@@ -51,7 +51,6 @@ public class TexturedScreenTest extends Mechtatel {
                 true,
                 null
         );
-        primaryScreen.setShouldPresent(true);
         primaryScreen.setBackgroundColor(new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
         primaryScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
 
@@ -79,6 +78,8 @@ public class TexturedScreenTest extends Mechtatel {
         screenDrawOrder.add("secondary");
         screenDrawOrder.add("primary");
         this.setScreenDrawOrder(screenDrawOrder);
+
+        this.setPresentScreenName("primary");
 
         try {
             primaryCube = this.createModel3D("primary", "./Mechtatel/Model/Cube/cube.obj");

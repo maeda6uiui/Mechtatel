@@ -60,8 +60,9 @@ class MttInstance {
 
     private Map<String, MttScreen> screens;
     private List<String> screenDrawOrder;
-
     private List<String> textureOperationOrder;
+    private List<String> deferredScreenDrawOrder;
+    private String presentScreenName;
 
     private List<Sound3D> sounds3D;
 
@@ -166,13 +167,16 @@ class MttInstance {
                 true,
                 null
         );
-        defaultScreen.setShouldPresent(true);
         screens.put("default", defaultScreen);
 
         screenDrawOrder = new ArrayList<>();
         screenDrawOrder.add("default");
 
         textureOperationOrder = new ArrayList<>();
+
+        deferredScreenDrawOrder = new ArrayList<>();
+
+        presentScreenName = "default";
 
         //Set up OpenAL
         long alcDevice = alcOpenDevice((ByteBuffer) null);
@@ -227,16 +231,21 @@ class MttInstance {
                 for (var screenName : screenDrawOrder) {
                     MttScreen screen = screens.get(screenName);
                     screen.draw();
+
+                    mtt.postDraw(screenName);
                 }
                 for (var textureOperationName : textureOperationOrder) {
                     vulkanInstance.runTextureOperations(textureOperationName);
+                    mtt.postTextureOperation(textureOperationName);
                 }
-                for (var screenName : screenDrawOrder) {
+                for (var screenName : deferredScreenDrawOrder) {
                     MttScreen screen = screens.get(screenName);
-                    if (screen.shouldPresent()) {
-                        vulkanInstance.presentToFrontScreen(screenName);
-                    }
+                    screen.draw();
+
+                    mtt.postDeferredDraw(screenName);
                 }
+
+                vulkanInstance.presentToFrontScreen(presentScreenName);
 
                 lastTime = glfwGetTime();
             }
@@ -861,7 +870,19 @@ class MttInstance {
         return texture;
     }
 
+    public boolean updateTextureOperationParameters(String operationName, TextureOperationParameters parameters) {
+        return vulkanInstance.updateTextureOperationParameters(operationName, parameters);
+    }
+
     public void setTextureOperationOrder(List<String> textureOperationOrder) {
         this.textureOperationOrder = textureOperationOrder;
+    }
+
+    public void setDeferredScreenDrawOrder(List<String> deferredScreenDrawOrder) {
+        this.deferredScreenDrawOrder = deferredScreenDrawOrder;
+    }
+
+    public void setPresentScreenName(String presentScreenName) {
+        this.presentScreenName = presentScreenName;
     }
 }

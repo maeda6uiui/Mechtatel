@@ -6,6 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.physics.*;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
+import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import org.joml.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +62,21 @@ public class Mechtatel implements IMechtatel {
 
     @Override
     public void update() {
+
+    }
+
+    @Override
+    public void postDraw(String screenName) {
+
+    }
+
+    @Override
+    public void postTextureOperation(String operationName) {
+
+    }
+
+    @Override
+    public void postDeferredDraw(String screenName) {
 
     }
 
@@ -537,5 +553,32 @@ public class Mechtatel implements IMechtatel {
 
     public Map<String, MttScreen> getScreens() {
         return instance.getScreens();
+    }
+
+    public MttTexture createTextureOperation(
+            String operationName,
+            MttTexture firstColorTexture,
+            MttTexture secondColorTexture,
+            MttTexture firstDepthTexture,
+            MttTexture secondDepthTexture,
+            String dstScreenName,
+            TextureOperationParameters parameters) {
+        return instance.createTextureOperation(
+                operationName,
+                firstColorTexture,
+                secondColorTexture,
+                firstDepthTexture,
+                secondDepthTexture,
+                dstScreenName,
+                parameters
+        );
+    }
+
+    public void setDeferredScreenDrawOrder(List<String> deferredScreenDrawOrder) {
+        instance.setDeferredScreenDrawOrder(deferredScreenDrawOrder);
+    }
+
+    public void setPresentScreenName(String presentScreenName) {
+        instance.setPresentScreenName(presentScreenName);
     }
 }

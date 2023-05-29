@@ -44,7 +44,7 @@ public class ShadowMappingTest extends Mechtatel {
         ppNaborNames.add("parallel_light");
         ppNaborNames.add("fog");
         ppNaborNames.add("shadow_mapping");
-        MttScreen mainScreen=this.createScreen(
+        MttScreen mainScreen = this.createScreen(
                 "main",
                 2048,
                 2048,
@@ -53,11 +53,12 @@ public class ShadowMappingTest extends Mechtatel {
                 true,
                 ppNaborNames
         );
-        mainScreen.setShouldPresent(true);
 
         var screenDrawOrder = new ArrayList<String>();
         screenDrawOrder.add("main");
         this.setScreenDrawOrder(screenDrawOrder);
+
+        this.setPresentScreenName("main");
 
         camera = new FreeCamera(mainScreen.getCamera());
 

@@ -13,4 +13,10 @@ interface IMechtatel {
     void reshape(int width, int height);
 
     void update();
+
+    void postDraw(String screenName);
+
+    void postTextureOperation(String operationName);
+
+    void postDeferredDraw(String screenName);
 }

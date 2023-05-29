@@ -26,7 +26,6 @@ import java.util.List;
 public class MttScreen {
     private VkScreen screen;
 
-    private boolean shouldPresent;
     private boolean shouldAutoUpdateCameraAspect;
 
     private IMttVulkanInstanceForScreen vulkanInstance;
@@ -60,7 +59,6 @@ public class MttScreen {
                 shouldChangeExtentOnRecreate,
                 ppNaborNames
         );
-        shouldPresent = false;
         shouldAutoUpdateCameraAspect = true;
 
         this.vulkanInstance = vulkanInstance;
@@ -97,14 +95,6 @@ public class MttScreen {
                 shadowMappingSettings
         );
         screen.transitionColorImageLayout();
-    }
-
-    public void setShouldPresent(boolean shouldPresent) {
-        this.shouldPresent = shouldPresent;
-    }
-
-    public boolean shouldPresent() {
-        return shouldPresent;
     }
 
     public void setShouldAutoUpdateCameraAspect(boolean shouldAutoUpdateCameraAspect) {

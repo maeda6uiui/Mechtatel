@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel;
 
+import com.github.maeda6uiui.mechtatel.core.DrawPath;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
@@ -9,7 +10,6 @@ import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class TextureOperationTest extends Mechtatel {
     public TextureOperationTest(MttSettings settings) {
@@ -73,20 +73,13 @@ public class TextureOperationTest extends Mechtatel {
                 null
         );
 
-        var screenDrawOrder = new ArrayList<String>();
-        screenDrawOrder.add("first");
-        screenDrawOrder.add("second");
-        this.setScreenDrawOrder(screenDrawOrder);
-
-        var deferredScreenDrawOrder = new ArrayList<String>();
-        deferredScreenDrawOrder.add("final");
-        this.setDeferredScreenDrawOrder(deferredScreenDrawOrder);
-
-        this.setPresentScreenName("final");
-
-        var textureOperationOrder = new ArrayList<String>();
-        textureOperationOrder.add("test");
-        this.setTextureOperationOrder(textureOperationOrder);
+        var drawPath = new DrawPath(this);
+        drawPath.addToScreenDrawOrder("first");
+        drawPath.addToScreenDrawOrder("second");
+        drawPath.addToTextureOperationOrder("test");
+        drawPath.addToDeferredScreenDrawOrder("final");
+        drawPath.setPresentScreenName("final");
+        drawPath.apply();
 
         try {
             firstModel = this.createModel3D("first", "./Mechtatel/Model/Cube/cube.obj");

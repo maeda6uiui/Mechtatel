@@ -66,7 +66,17 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
     }
 
     @Override
+    public void preDraw(String screenName) {
+
+    }
+
+    @Override
     public void postDraw(String screenName) {
+
+    }
+
+    @Override
+    public void preTextureOperation(String operationName) {
 
     }
 
@@ -76,7 +86,17 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
     }
 
     @Override
+    public void preDeferredDraw(String screenName) {
+
+    }
+
+    @Override
     public void postDeferredDraw(String screenName) {
+
+    }
+
+    @Override
+    public void prePresent() {
 
     }
 

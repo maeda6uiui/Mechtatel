@@ -229,22 +229,28 @@ class MttInstance {
                 PhysicalObject3D.updatePhysicsSpace((float) elapsedTime, physicsSimulationTimeScale);
 
                 for (var screenName : screenDrawOrder) {
+                    mtt.preDraw(screenName);
+
                     MttScreen screen = screens.get(screenName);
                     screen.draw();
 
                     mtt.postDraw(screenName);
                 }
                 for (var textureOperationName : textureOperationOrder) {
+                    mtt.preTextureOperation(textureOperationName);
                     vulkanInstance.runTextureOperations(textureOperationName);
                     mtt.postTextureOperation(textureOperationName);
                 }
                 for (var screenName : deferredScreenDrawOrder) {
+                    mtt.preDeferredDraw(screenName);
+
                     MttScreen screen = screens.get(screenName);
                     screen.draw();
 
                     mtt.postDeferredDraw(screenName);
                 }
 
+                mtt.prePresent();
                 vulkanInstance.presentToFrontScreen(presentScreenName);
                 mtt.postPresent();
 

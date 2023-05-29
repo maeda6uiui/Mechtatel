@@ -14,11 +14,19 @@ interface IMechtatelForMttInstance {
 
     void update();
 
+    void preDraw(String screenName);
+
     void postDraw(String screenName);
+
+    void preTextureOperation(String operationName);
 
     void postTextureOperation(String operationName);
 
+    void preDeferredDraw(String screenName);
+
     void postDeferredDraw(String screenName);
+
+    void prePresent();
 
     void postPresent();
 }

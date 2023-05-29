@@ -1,0 +1,22 @@
+package com.github.maeda6uiui.mechtatel.core;
+
+/**
+ * Provides an interface of Mechtatel to the subordinate classes
+ *
+ * @author maeda6uiui
+ */
+interface IMechtatelForMttInstance {
+    void init();
+
+    void dispose();
+
+    void reshape(int width, int height);
+
+    void update();
+
+    void postDraw(String screenName);
+
+    void postTextureOperation(String operationName);
+
+    void postDeferredDraw(String screenName);
+}

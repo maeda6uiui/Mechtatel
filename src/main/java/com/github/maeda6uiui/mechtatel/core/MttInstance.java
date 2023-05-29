@@ -42,7 +42,7 @@ import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_2_BIT;
  * @author maeda6uiui
  */
 class MttInstance {
-    private IMechtatel mtt;
+    private IMechtatelForMttInstance mtt;
     private long window;
     private int windowWidth;
     private int windowHeight;
@@ -102,7 +102,7 @@ class MttInstance {
     }
 
     public MttInstance(
-            IMechtatel mtt,
+            IMechtatelForMttInstance mtt,
             MttSettings settings) {
         if (!glfwInit()) {
             throw new RuntimeException("Failed to initialize GLFW");

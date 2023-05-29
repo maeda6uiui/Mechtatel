@@ -21,7 +21,7 @@ import java.util.Map;
  *
  * @author maeda6uiui
  */
-public class Mechtatel implements IMechtatel, IMechtatelForDrawPath {
+public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPath {
     private final Logger logger = LoggerFactory.getLogger(Mechtatel.class);
 
     private MttInstance instance;

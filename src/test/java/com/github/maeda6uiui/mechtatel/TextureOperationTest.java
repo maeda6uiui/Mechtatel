@@ -10,6 +10,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 import java.io.IOException;
 
@@ -76,6 +77,9 @@ public class TextureOperationTest extends Mechtatel {
                 true,
                 null
         );
+
+        firstScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
+        secondScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
 
         var drawPath = new DrawPath(this);
         drawPath.addToScreenDrawOrder("first");

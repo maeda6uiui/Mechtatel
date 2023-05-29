@@ -21,7 +21,7 @@ import java.util.Map;
  *
  * @author maeda6uiui
  */
-public class Mechtatel implements IMechtatel {
+public class Mechtatel implements IMechtatel, IMechtatelForDrawPath {
     private final Logger logger = LoggerFactory.getLogger(Mechtatel.class);
 
     private MttInstance instance;
@@ -547,6 +547,7 @@ public class Mechtatel implements IMechtatel {
         return instance.removeScreen(screenName);
     }
 
+    @Override
     public void setScreenDrawOrder(List<String> screenDrawOrder) {
         instance.setScreenDrawOrder(screenDrawOrder);
     }
@@ -578,14 +579,17 @@ public class Mechtatel implements IMechtatel {
         );
     }
 
+    @Override
     public void setTextureOperationOrder(List<String> textureOperationOrder) {
         instance.setTextureOperationOrder(textureOperationOrder);
     }
 
+    @Override
     public void setDeferredScreenDrawOrder(List<String> deferredScreenDrawOrder) {
         instance.setDeferredScreenDrawOrder(deferredScreenDrawOrder);
     }
 
+    @Override
     public void setPresentScreenName(String presentScreenName) {
         instance.setPresentScreenName(presentScreenName);
     }

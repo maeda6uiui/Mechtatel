@@ -79,7 +79,7 @@ public class TextureOperationTest extends Mechtatel {
         );
 
         firstScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
-        secondScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
+        secondScreen.getCamera().setEye(new Vector3f(1.0f, 2.0f, 1.0f));
 
         var drawPath = new DrawPath(this);
         drawPath.addToScreenDrawOrder("first");
@@ -98,7 +98,7 @@ public class TextureOperationTest extends Mechtatel {
         );
 
         try {
-            firstModel = this.createModel3D("first", "./Mechtatel/Model/Cube/cube.obj");
+            firstModel = this.createModel3D("first", "./Mechtatel/Model/Plane/plane.obj");
             secondModel = this.createModel3D("second", "./Mechtatel/Model/Teapot/teapot.obj");
         } catch (IOException e) {
             e.printStackTrace();
@@ -128,7 +128,7 @@ public class TextureOperationTest extends Mechtatel {
         secondDepthTexture = this.texturizeDepthOfScreen("second", "final");
 
         var textureOperationParameters = new TextureOperationParameters();
-        textureOperationParameters.setOperationType(TextureOperationParameters.TEXTURE_OPERATION_ADD);
+        textureOperationParameters.setOperationType(TextureOperationParameters.TEXTURE_OPERATION_SUB);
 
         finalTexture = this.createTextureOperation(
                 "test",

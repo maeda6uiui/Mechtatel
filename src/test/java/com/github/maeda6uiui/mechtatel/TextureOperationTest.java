@@ -118,6 +118,7 @@ public class TextureOperationTest extends Mechtatel {
             firstDepthTexture.cleanup();
             secondColorTexture.cleanup();
             secondDepthTexture.cleanup();
+            finalTexture.cleanup();
         }
 
         firstColorTexture = this.texturizeColorOfScreen("first", "final");

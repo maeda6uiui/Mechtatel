@@ -512,8 +512,12 @@ public class Mechtatel implements IMechtatel {
         return instance.createMttTexture(screenName, textureFilepath, generateMipmaps);
     }
 
-    public MttTexture texturizeScreen(String srcScreenName, String dstScreenName) {
+    public MttTexture texturizeColorOfScreen(String srcScreenName, String dstScreenName) {
         return instance.texturizeColorOfScreen(srcScreenName, dstScreenName);
+    }
+
+    public MttTexture texturizeDepthOfScreen(String srcScreenName, String dstScreenName) {
+        return instance.texturizeDepthOfScreen(srcScreenName, dstScreenName);
     }
 
     public void saveScreenshot(String screenName, String srcImageFormat, String outputFilepath) throws IOException {
@@ -572,6 +576,10 @@ public class Mechtatel implements IMechtatel {
                 dstScreenName,
                 parameters
         );
+    }
+
+    public void setTextureOperationOrder(List<String> textureOperationOrder) {
+        instance.setTextureOperationOrder(textureOperationOrder);
     }
 
     public void setDeferredScreenDrawOrder(List<String> deferredScreenDrawOrder) {

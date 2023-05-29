@@ -128,7 +128,7 @@ public class TextureOperationTest extends Mechtatel {
         secondDepthTexture = this.texturizeDepthOfScreen("second", "final");
 
         var textureOperationParameters = new TextureOperationParameters();
-        textureOperationParameters.setOperationType(TextureOperationParameters.TEXTURE_OPERATION_SUB);
+        textureOperationParameters.setOperationType(TextureOperationParameters.TEXTURE_OPERATION_ADD);
 
         finalTexture = this.createTextureOperation(
                 "test",

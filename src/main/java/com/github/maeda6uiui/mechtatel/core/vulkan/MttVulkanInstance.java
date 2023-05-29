@@ -242,6 +242,8 @@ public class MttVulkanInstance
         textureOperationNabor.recreate(
                 swapchain.getSwapchainImageFormat(),
                 swapchain.getSwapchainExtent());
+        textureOperationNabor.cleanupUserDefImages();
+        textureOperationInfos.clear();
 
         this.recreateScreens();
     }

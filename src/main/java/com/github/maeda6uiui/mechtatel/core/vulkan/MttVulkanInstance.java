@@ -374,7 +374,7 @@ public class MttVulkanInstance
             var textureOperationInfo = textureOperationInfos.get(operationName);
 
             long parametersUBOMemory = textureOperationNabor.getUniformBufferMemory(0);
-            var parametersUBO = new TextureOperationParametersUBO(textureOperationInfo.getParameters());
+            var parametersUBO = new TextureOperationParametersUBO(textureOperationInfo.parameters);
             parametersUBO.update(device, parametersUBOMemory);
 
             VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
@@ -385,13 +385,13 @@ public class MttVulkanInstance
 
                 textureOperationNabor.bindColorImages(
                         commandBuffer,
-                        textureOperationInfo.getSrcColorImageViewA(),
-                        textureOperationInfo.getSrcColorImageViewB()
+                        textureOperationInfo.srcColorImageViewA,
+                        textureOperationInfo.srcColorImageViewB
                 );
                 textureOperationNabor.bindDepthImages(
                         commandBuffer,
-                        textureOperationInfo.getSrcDepthImageViewA(),
-                        textureOperationInfo.getSrcDepthImageViewB()
+                        textureOperationInfo.srcDepthImageViewA,
+                        textureOperationInfo.srcDepthImageViewB
                 );
 
                 quadDrawer.draw(commandBuffer);
@@ -400,7 +400,7 @@ public class MttVulkanInstance
 
             CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
 
-            textureOperationNabor.copyColorImage(commandPool, graphicsQueue, textureOperationInfo.getDstImage());
+            textureOperationNabor.copyColorImage(commandPool, graphicsQueue, textureOperationInfo.dstImage);
         }
     }
 
@@ -721,7 +721,7 @@ public class MttVulkanInstance
             TextureOperationParameters parameters) {
         if (textureOperationInfos.containsKey(operationName)) {
             TextureOperationNabor.TextureOperationInfo textureOperationInfo = textureOperationInfos.get(operationName);
-            textureOperationNabor.removeUserDefImage(textureOperationInfo.getDstImage());
+            textureOperationNabor.removeUserDefImage(textureOperationInfo.dstImage);
             textureOperationInfos.remove(operationName);
         }
 
@@ -757,7 +757,7 @@ public class MttVulkanInstance
         }
 
         var textureOperationInfo = textureOperationInfos.get(operationName);
-        textureOperationInfo.setParameters(parameters);
+        textureOperationInfo.parameters = parameters;
         textureOperationInfos.put(operationName, textureOperationInfo);
 
         return true;

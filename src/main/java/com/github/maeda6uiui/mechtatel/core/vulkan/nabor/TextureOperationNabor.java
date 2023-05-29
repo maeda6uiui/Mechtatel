@@ -26,13 +26,13 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class TextureOperationNabor extends Nabor {
     public static class TextureOperationInfo {
-        private long srcColorImageViewA;
-        private long srcColorImageViewB;
-        private long srcDepthImageViewA;
-        private long srcDepthImageViewB;
-        private long dstImage;
-        private long dstImageView;
-        private TextureOperationParameters parameters;
+        public long srcColorImageViewA;
+        public long srcColorImageViewB;
+        public long srcDepthImageViewA;
+        public long srcDepthImageViewB;
+        public long dstImage;
+        public long dstImageView;
+        public TextureOperationParameters parameters;
 
         public TextureOperationInfo(
                 long srcColorImageViewA,
@@ -48,62 +48,6 @@ public class TextureOperationNabor extends Nabor {
             this.srcDepthImageViewB = srcDepthImageViewB;
             this.dstImage = dstImage;
             this.dstImageView = dstImageView;
-            this.parameters = parameters;
-        }
-
-        public long getSrcColorImageViewA() {
-            return srcColorImageViewA;
-        }
-
-        public void setSrcColorImageViewA(long srcColorImageViewA) {
-            this.srcColorImageViewA = srcColorImageViewA;
-        }
-
-        public long getSrcColorImageViewB() {
-            return srcColorImageViewB;
-        }
-
-        public void setSrcColorImageViewB(long srcColorImageViewB) {
-            this.srcColorImageViewB = srcColorImageViewB;
-        }
-
-        public long getSrcDepthImageViewA() {
-            return srcDepthImageViewA;
-        }
-
-        public void setSrcDepthImageViewA(long srcDepthImageViewA) {
-            this.srcDepthImageViewA = srcDepthImageViewA;
-        }
-
-        public long getSrcDepthImageViewB() {
-            return srcDepthImageViewB;
-        }
-
-        public void setSrcDepthImageViewB(long srcDepthImageViewB) {
-            this.srcDepthImageViewB = srcDepthImageViewB;
-        }
-
-        public long getDstImage() {
-            return dstImage;
-        }
-
-        public void setDstImage(long dstImage) {
-            this.dstImage = dstImage;
-        }
-
-        public long getDstImageView() {
-            return dstImageView;
-        }
-
-        public void setDstImageView(long dstImageView) {
-            this.dstImageView = dstImageView;
-        }
-
-        public TextureOperationParameters getParameters() {
-            return parameters;
-        }
-
-        public void setParameters(TextureOperationParameters parameters) {
             this.parameters = parameters;
         }
     }

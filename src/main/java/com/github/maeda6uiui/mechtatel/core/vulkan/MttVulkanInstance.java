@@ -295,6 +295,53 @@ public class MttVulkanInstance
         return false;
     }
 
+    public void runTextureOperations(String operationName) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
+            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
+            renderPassInfo.renderPass(textureOperationNabor.getRenderPass());
+            renderPassInfo.framebuffer(textureOperationNabor.getFramebuffer(0));
+            VkRect2D renderArea = VkRect2D.calloc(stack);
+            renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
+            renderArea.extent(textureOperationNabor.getExtent());
+            renderPassInfo.renderArea(renderArea);
+            VkClearValue.Buffer clearValues = VkClearValue.calloc(1, stack);
+            clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
+            renderPassInfo.pClearValues(clearValues);
+
+            var textureOperationInfo = textureOperationInfos.get(operationName);
+
+            long parametersUBOMemory = textureOperationNabor.getUniformBufferMemory(0);
+            var parametersUBO = new TextureOperationParametersUBO(textureOperationInfo.parameters);
+            parametersUBO.update(device, parametersUBOMemory);
+
+            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
+
+            vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+            {
+                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, textureOperationNabor.getGraphicsPipeline(0));
+
+                textureOperationNabor.bindColorImages(
+                        commandBuffer,
+                        textureOperationInfo.srcColorImageViewA,
+                        textureOperationInfo.srcColorImageViewB
+                );
+                textureOperationNabor.bindDepthImages(
+                        commandBuffer,
+                        textureOperationInfo.srcDepthImageViewA,
+                        textureOperationInfo.srcDepthImageViewB
+                );
+
+                quadDrawer.draw(commandBuffer);
+            }
+            vkCmdEndRenderPass(commandBuffer);
+
+            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
+
+            textureOperationNabor.copyColorImage(commandPool, graphicsQueue, textureOperationInfo.dstImage);
+        }
+    }
+
     public void presentToFrontScreen(String screenName) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.calloc(stack);
@@ -355,52 +402,6 @@ public class MttVulkanInstance
             vkDeviceWaitIdle(device);
 
             vkFreeCommandBuffers(device, commandPool, PointerBufferUtils.asPointerBuffer(commandBuffers));
-        }
-    }
-
-    public void runTextureOperations(String operationName) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
-            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
-            renderPassInfo.renderPass(textureOperationNabor.getRenderPass());
-            VkRect2D renderArea = VkRect2D.calloc(stack);
-            renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
-            renderArea.extent(textureOperationNabor.getExtent());
-            renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.calloc(1, stack);
-            clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
-            renderPassInfo.pClearValues(clearValues);
-
-            var textureOperationInfo = textureOperationInfos.get(operationName);
-
-            long parametersUBOMemory = textureOperationNabor.getUniformBufferMemory(0);
-            var parametersUBO = new TextureOperationParametersUBO(textureOperationInfo.parameters);
-            parametersUBO.update(device, parametersUBOMemory);
-
-            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
-
-            vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-            {
-                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, textureOperationNabor.getGraphicsPipeline(0));
-
-                textureOperationNabor.bindColorImages(
-                        commandBuffer,
-                        textureOperationInfo.srcColorImageViewA,
-                        textureOperationInfo.srcColorImageViewB
-                );
-                textureOperationNabor.bindDepthImages(
-                        commandBuffer,
-                        textureOperationInfo.srcDepthImageViewA,
-                        textureOperationInfo.srcDepthImageViewB
-                );
-
-                quadDrawer.draw(commandBuffer);
-            }
-            vkCmdEndRenderPass(commandBuffer);
-
-            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
-
-            textureOperationNabor.copyColorImage(commandPool, graphicsQueue, textureOperationInfo.dstImage);
         }
     }
 

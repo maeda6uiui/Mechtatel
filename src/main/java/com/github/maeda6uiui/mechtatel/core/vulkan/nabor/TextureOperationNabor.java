@@ -599,14 +599,14 @@ public class TextureOperationNabor extends Nabor {
         var arrImageViews = new Long[]{colorImageViewA, colorImageViewB};
         var imageViews = Arrays.asList(arrImageViews);
 
-        this.bindImages(commandBuffer, 0, 0, imageViews);
+        this.bindImages(commandBuffer, 1, 0, imageViews);
     }
 
     public void bindDepthImages(VkCommandBuffer commandBuffer, long depthImageViewA, long depthImageViewB) {
         var arrImageViews = new Long[]{depthImageViewA, depthImageViewB};
         var imageViews = Arrays.asList(arrImageViews);
 
-        this.bindImages(commandBuffer, 0, 1, imageViews);
+        this.bindImages(commandBuffer, 1, 1, imageViews);
     }
 
     public void copyColorImage(long commandPool, VkQueue graphicsQueue, long colorDstImage) {

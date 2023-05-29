@@ -114,6 +114,15 @@ public class VkTexturedQuad2D extends VkComponent {
         this.setComponentType("gbuffer");
     }
 
+    public void replaceTexture(VkTexture newTexture) {
+        if (!isExternalTexture) {
+            texture.cleanup();
+        }
+
+        texture = newTexture;
+        isExternalTexture = true;
+    }
+
     @Override
     public void cleanup() {
         if (!isExternalTexture) {

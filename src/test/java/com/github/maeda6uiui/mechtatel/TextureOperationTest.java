@@ -5,9 +5,11 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.Model3D;
+import com.github.maeda6uiui.mechtatel.core.component.TexturedQuad2D;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
+import org.joml.Vector2f;
 
 import java.io.IOException;
 
@@ -37,6 +39,8 @@ public class TextureOperationTest extends Mechtatel {
     private MttTexture secondColorTexture;
     private MttTexture secondDepthTexture;
     private MttTexture finalTexture;
+
+    private TexturedQuad2D texturedQuad;
 
     private Model3D firstModel;
     private Model3D secondModel;
@@ -80,6 +84,14 @@ public class TextureOperationTest extends Mechtatel {
         drawPath.addToDeferredScreenDrawOrder("final");
         drawPath.setPresentScreenName("final");
         drawPath.apply();
+
+        var dummyTexture = this.createMttTexture("final", "./Mechtatel/Texture/lenna.jpg", false);
+        texturedQuad = this.createTexturedQuad2D(
+                dummyTexture,
+                new Vector2f(-1.0f, -1.0f),
+                new Vector2f(1.0f, 1.0f),
+                0.0f
+        );
 
         try {
             firstModel = this.createModel3D("first", "./Mechtatel/Model/Cube/cube.obj");
@@ -131,5 +143,6 @@ public class TextureOperationTest extends Mechtatel {
                 "final",
                 textureOperationParameters
         );
+        texturedQuad.replaceTexture(finalTexture);
     }
 }

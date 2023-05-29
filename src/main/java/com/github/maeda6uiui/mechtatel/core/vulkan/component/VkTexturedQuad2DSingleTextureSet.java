@@ -141,6 +141,15 @@ public class VkTexturedQuad2DSingleTextureSet extends VkComponent {
         bufferCreated = true;
     }
 
+    public void replaceTexture(VkTexture newTexture) {
+        if (!isExternalTexture) {
+            texture.cleanup();
+        }
+
+        texture = newTexture;
+        isExternalTexture = true;
+    }
+
     @Override
     public void cleanup() {
         if (bufferCreated) {

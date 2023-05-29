@@ -71,4 +71,8 @@ public class TexturedQuad2DSingleTextureSet extends Component {
     public void createBuffers() {
         vkTexturedQuadSet.createBuffers();
     }
+
+    public void replaceTexture(MttTexture newTexture) {
+        vkTexturedQuadSet.replaceTexture(newTexture.getVulkanTexture());
+    }
 }

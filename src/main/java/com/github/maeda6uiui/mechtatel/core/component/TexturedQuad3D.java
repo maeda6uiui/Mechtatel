@@ -72,4 +72,8 @@ public class TexturedQuad3D extends Component3D {
         vkTexturedQuad = vulkanInstance.duplicateTexturedQuad3D(srcQuad.vkTexturedQuad, vertices);
         this.associateVulkanComponent(vkTexturedQuad);
     }
+
+    public void replaceTexture(MttTexture newTexture) {
+        vkTexturedQuad.replaceTexture(newTexture.getVulkanTexture());
+    }
 }

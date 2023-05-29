@@ -772,14 +772,6 @@ public class VkScreen {
         }
     }
 
-    public void transitionColorImageLayout() {
-        if (ppNaborChain == null) {
-            mergeScenesFillNabor.transitionAlbedoImage(commandPool, graphicsQueue);
-        } else {
-            ppNaborChain.transitionLastPPNaborColorImage();
-        }
-    }
-
     public long getColorImageView() {
         if (ppNaborChain == null) {
             return mergeScenesFillNabor.getAlbedoImageView();

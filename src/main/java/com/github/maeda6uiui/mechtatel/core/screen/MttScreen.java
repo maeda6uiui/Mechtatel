@@ -94,7 +94,6 @@ public class MttScreen {
                 spotlightAmbientColor,
                 shadowMappingSettings
         );
-        screen.transitionColorImageLayout();
     }
 
     public void setShouldAutoUpdateCameraAspect(boolean shouldAutoUpdateCameraAspect) {

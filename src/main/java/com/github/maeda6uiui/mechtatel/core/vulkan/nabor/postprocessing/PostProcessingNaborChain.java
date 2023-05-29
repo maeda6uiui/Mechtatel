@@ -324,6 +324,8 @@ public class PostProcessingNaborChain {
 
             previousPPNabor = ppNabor;
         }
+
+        lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
     }
 
     public Map<String, List<Long>> getVertShaderModules() {
@@ -350,10 +352,6 @@ public class PostProcessingNaborChain {
         }
 
         return fragShaderModules;
-    }
-
-    public void transitionLastPPNaborColorImage() {
-        lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
     }
 
     public long getLastPPNaborColorImageView() {

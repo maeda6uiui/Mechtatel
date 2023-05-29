@@ -214,11 +214,6 @@ public class ShadowMappingNaborRunner {
 
                 //First post-processing
                 if (previousPPNabor == null) {
-                    lastMergeNabor.transitionAlbedoImage(commandPool, graphicsQueue);
-                    lastMergeNabor.transitionDepthImage(commandPool, graphicsQueue);
-                    lastMergeNabor.transitionPositionImage(commandPool, graphicsQueue);
-                    lastMergeNabor.transitionNormalImage(commandPool, graphicsQueue);
-
                     shadowMappingNabor.bindImages(
                             commandBuffer,
                             1,

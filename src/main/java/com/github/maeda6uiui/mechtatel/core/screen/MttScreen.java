@@ -57,7 +57,7 @@ public class MttScreen {
                 screenWidth,
                 screenHeight,
                 shouldChangeExtentOnRecreate,
-                ppNaborNames
+                (ppNaborNames != null && ppNaborNames.size() != 0) ? ppNaborNames : null
         );
         shouldAutoUpdateCameraAspect = true;
 

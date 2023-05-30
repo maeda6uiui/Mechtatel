@@ -120,6 +120,12 @@ public class MttScreen {
         this.camera = camera;
     }
 
+    public void syncCamera(Camera camera) {
+        this.camera.setEye(new Vector3f(camera.getEye()));
+        this.camera.setCenter(new Vector3f(camera.getCenter()));
+        this.camera.setUp(new Vector3f(camera.getUp()));
+    }
+
     public Fog getFog() {
         return fog;
     }

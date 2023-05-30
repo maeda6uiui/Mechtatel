@@ -21,7 +21,7 @@ import java.util.Map;
  *
  * @author maeda6uiui
  */
-public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPath {
+public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPath, IMechtatelForScreenCreator {
     private final Logger logger = LoggerFactory.getLogger(Mechtatel.class);
 
     private MttInstance instance;
@@ -551,6 +551,7 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
         instance.saveScreenshot(screenName, srcImageFormat, outputFilepath);
     }
 
+    @Override
     public MttScreen createScreen(
             String screenName,
             int depthImageWidth,

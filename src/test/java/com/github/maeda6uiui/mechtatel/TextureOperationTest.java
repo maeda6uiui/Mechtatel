@@ -111,6 +111,8 @@ public class TextureOperationTest extends Mechtatel {
         //You cannot use reshape() to this end because reshape() is invoked from a higher layer
         //and is not in sync with Vulkan's procedure of rendering. (maybe...)
         //
+        //The overhead of creating textures from screens in every frame is ignorable at least on my computers.
+        //
         //You should run cleanup() of textures created here after you are done with them,
         //otherwise unused texture allocations are accumulated.
         firstColorTexture = this.texturizeColorOfScreen("first", "final");

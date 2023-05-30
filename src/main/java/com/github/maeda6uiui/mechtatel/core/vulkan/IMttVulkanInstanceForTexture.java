@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 
 /**
  * Interface to MttVulkanInstance providing access to required methods for textures
@@ -8,11 +8,11 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
  * @author maeda6uiui
  */
 public interface IMttVulkanInstanceForTexture {
-    VkTexture createTexture(String screenName, String textureFilepath, boolean generateMipmaps);
+    VkMttTexture createTexture(String screenName, String textureFilepath, boolean generateMipmaps);
 
-    VkTexture texturizeColorOfScreen(String srcScreenName, String dstScreenName);
+    VkMttTexture texturizeColorOfScreen(String srcScreenName, String dstScreenName);
 
-    VkTexture texturizeDepthOfScreen(String srcScreenName, String dstScreenName);
+    VkMttTexture texturizeDepthOfScreen(String srcScreenName, String dstScreenName);
 
-    boolean removeTexture(VkTexture texture);
+    boolean removeTexture(VkMttTexture texture);
 }

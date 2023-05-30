@@ -11,7 +11,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.ParallelLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.SpotlightNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkScreen;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -24,7 +24,7 @@ import java.util.List;
  * @author maeda6uiui
  */
 public class MttScreen {
-    private VkScreen screen;
+    private VkMttScreen screen;
 
     private boolean shouldAutoUpdateCameraAspect;
 

@@ -3,8 +3,8 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.Model3D;
-import com.github.maeda6uiui.mechtatel.core.component.Sphere3D;
+import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
+import com.github.maeda6uiui.mechtatel.core.component.MttSphere3D;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -31,9 +31,9 @@ public class ScreenshotTest extends Mechtatel {
 
     private FreeCamera camera;
 
-    private Model3D plane;
-    private Model3D cube;
-    private Sphere3D sphere;
+    private MttModel3D plane;
+    private MttModel3D cube;
+    private MttSphere3D sphere;
 
     @Override
     public void init() {

@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.texture;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanInstanceForTexture;
-import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 
 /**
  * Texture
@@ -9,7 +9,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
  * @author maeda6uiui
  */
 public class MttTexture {
-    private VkTexture texture;
+    private VkMttTexture texture;
     private IMttVulkanInstanceForTexture vulkanInstance;
 
     public MttTexture(
@@ -37,7 +37,7 @@ public class MttTexture {
         this.vulkanInstance = vulkanInstance;
     }
 
-    public MttTexture(IMttVulkanInstanceForTexture vulkanInstance, VkTexture texture) {
+    public MttTexture(IMttVulkanInstanceForTexture vulkanInstance, VkMttTexture texture) {
         this.texture = texture;
         this.vulkanInstance = vulkanInstance;
     }
@@ -47,7 +47,7 @@ public class MttTexture {
         vulkanInstance.removeTexture(texture);
     }
 
-    public VkTexture getVulkanTexture() {
+    public VkMttTexture getVulkanTexture() {
         return texture;
     }
 }

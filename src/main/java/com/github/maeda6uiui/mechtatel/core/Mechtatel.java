@@ -162,36 +162,36 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
         instance.sortComponents();
     }
 
-    public Model3D createModel3D(String screenName, String modelFilepath) throws IOException {
+    public MttModel3D createModel3D(String screenName, String modelFilepath) throws IOException {
         return instance.createModel3D(screenName, modelFilepath);
     }
 
-    public Model3D duplicateModel3D(Model3D srcModel) {
+    public MttModel3D duplicateModel3D(MttModel3D srcModel) {
         return instance.duplicateModel3D(srcModel);
     }
 
-    public Line3D createLine3D(Vertex3D v1, Vertex3D v2) {
+    public MttLine3D createLine3D(MttVertex3D v1, MttVertex3D v2) {
         return instance.createLine3D(v1, v2);
     }
 
-    public Line3D createLine3D(Vector3fc p1, Vector4fc color1, Vector3fc p2, Vector4fc color2) {
-        var v1 = new Vertex3D(p1, color1);
-        var v2 = new Vertex3D(p2, color2);
+    public MttLine3D createLine3D(Vector3fc p1, Vector4fc color1, Vector3fc p2, Vector4fc color2) {
+        var v1 = new MttVertex3D(p1, color1);
+        var v2 = new MttVertex3D(p2, color2);
         return instance.createLine3D(v1, v2);
     }
 
-    public Line3D createLine3D(Vector3fc p1, Vector3fc p2, Vector4fc color) {
-        var v1 = new Vertex3D(p1, color);
-        var v2 = new Vertex3D(p2, color);
+    public MttLine3D createLine3D(Vector3fc p1, Vector3fc p2, Vector4fc color) {
+        var v1 = new MttVertex3D(p1, color);
+        var v2 = new MttVertex3D(p2, color);
         return instance.createLine3D(v1, v2);
     }
 
-    public Line3DSet createLine3DSet() {
+    public MttLine3DSet createLine3DSet() {
         return instance.createLine3DSet();
     }
 
-    public Line3DSet createAxesLine3DSet(float length) {
-        Line3DSet axes = instance.createLine3DSet();
+    public MttLine3DSet createAxesLine3DSet(float length) {
+        MttLine3DSet axes = instance.createLine3DSet();
 
         axes.add(new Vector3f(-length, 0.0f, 0.0f), new Vector3f(length, 0.0f, 0.0f), new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
         axes.add(new Vector3f(0.0f, -length, 0.0f), new Vector3f(0.0f, length, 0.0f), new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
@@ -201,8 +201,8 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
         return axes;
     }
 
-    public Line3DSet createPositiveAxesLine3DSet(float length) {
-        Line3DSet axes = instance.createLine3DSet();
+    public MttLine3DSet createPositiveAxesLine3DSet(float length) {
+        MttLine3DSet axes = instance.createLine3DSet();
 
         axes.add(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(length, 0.0f, 0.0f), new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
         axes.add(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, length, 0.0f), new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
@@ -212,162 +212,162 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
         return axes;
     }
 
-    public Sphere3D createSphere3D(Vector3fc center, float radius, int numVDivs, int numHDivs, Vector4fc color) {
+    public MttSphere3D createSphere3D(Vector3fc center, float radius, int numVDivs, int numHDivs, Vector4fc color) {
         return instance.createSphere3D(center, radius, numVDivs, numHDivs, color);
     }
 
-    public Capsule3D createCapsule3D(Vector3fc center, float length, float radius, int numVDivs, int numHDivs, Vector4fc color) {
+    public MttCapsule3D createCapsule3D(Vector3fc center, float length, float radius, int numVDivs, int numHDivs, Vector4fc color) {
         return instance.createCapsule3D(center, length, radius, numVDivs, numHDivs, color);
     }
 
-    public Line2D createLine2D(Vertex2D p1, Vertex2D p2, float z) {
+    public MttLine2D createLine2D(MttVertex2D p1, MttVertex2D p2, float z) {
         return instance.createLine2D(p1, p2, z);
     }
 
-    public Line2DSet createLine2DSet() {
+    public MttLine2DSet createLine2DSet() {
         return instance.createLine2DSet();
     }
 
-    public FilledQuad3D createFilledQuad3D(Vertex3D v1, Vertex3D v2, Vertex3D v3, Vertex3D v4) {
+    public MttFilledQuad3D createFilledQuad3D(MttVertex3D v1, MttVertex3D v2, MttVertex3D v3, MttVertex3D v4) {
         return instance.createFilledQuad3D(v1, v2, v3, v4);
     }
 
-    public FilledQuad3D createFilledQuad3D(Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, Vector4fc color) {
-        var v1 = new Vertex3D(p1, color);
-        var v2 = new Vertex3D(p2, color);
-        var v3 = new Vertex3D(p3, color);
-        var v4 = new Vertex3D(p4, color);
+    public MttFilledQuad3D createFilledQuad3D(Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, Vector4fc color) {
+        var v1 = new MttVertex3D(p1, color);
+        var v2 = new MttVertex3D(p2, color);
+        var v3 = new MttVertex3D(p3, color);
+        var v4 = new MttVertex3D(p4, color);
 
         return instance.createFilledQuad3D(v1, v2, v3, v4);
     }
 
-    public FilledQuad2D createFilledQuad2D(Vertex2D p1, Vertex2D p2, Vertex2D p3, Vertex2D p4, float z) {
+    public MttFilledQuad2D createFilledQuad2D(MttVertex2D p1, MttVertex2D p2, MttVertex2D p3, MttVertex2D p4, float z) {
         return instance.createFilledQuad2D(p1, p2, p3, p4, z);
     }
 
-    public FilledQuad2D createFilledQuad2D(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4, float z, Vector4fc color) {
+    public MttFilledQuad2D createFilledQuad2D(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4, float z, Vector4fc color) {
         return instance.createFilledQuad2D(p1, p2, p3, p4, z, color);
     }
 
-    public FilledQuad2D createFilledQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, Vector4fc color) {
+    public MttFilledQuad2D createFilledQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, Vector4fc color) {
         return instance.createFilledQuad2D(topLeft, bottomRight, z, color);
     }
 
-    public TexturedQuad3D createTexturedQuad3D(
+    public MttTexturedQuad3D createTexturedQuad3D(
             String screenName,
             String textureFilepath,
             boolean generateMipmaps,
-            Vertex3DUV v1,
-            Vertex3DUV v2,
-            Vertex3DUV v3,
-            Vertex3DUV v4) {
+            MttVertex3DUV v1,
+            MttVertex3DUV v2,
+            MttVertex3DUV v3,
+            MttVertex3DUV v4) {
         return instance.createTexturedQuad3D(screenName, textureFilepath, generateMipmaps, v1, v2, v3, v4);
     }
 
-    public TexturedQuad3D createTexturedQuad3D(
+    public MttTexturedQuad3D createTexturedQuad3D(
             String screenName,
             MttTexture texture,
-            Vertex3DUV v1,
-            Vertex3DUV v2,
-            Vertex3DUV v3,
-            Vertex3DUV v4) {
+            MttVertex3DUV v1,
+            MttVertex3DUV v2,
+            MttVertex3DUV v3,
+            MttVertex3DUV v4) {
         return instance.createTexturedQuad3D(screenName, texture, v1, v2, v3, v4);
     }
 
-    public TexturedQuad3D duplicateTexturedQuad3D(
-            TexturedQuad3D srcQuad,
-            Vertex3DUV v1,
-            Vertex3DUV v2,
-            Vertex3DUV v3,
-            Vertex3DUV v4) {
+    public MttTexturedQuad3D duplicateTexturedQuad3D(
+            MttTexturedQuad3D srcQuad,
+            MttVertex3DUV v1,
+            MttVertex3DUV v2,
+            MttVertex3DUV v3,
+            MttVertex3DUV v4) {
         return instance.duplicateTexturedQuad3D(srcQuad, v1, v2, v3, v4);
     }
 
-    public TexturedQuad2D createTexturedQuad2D(
-            String screenName, String textureFilepath, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
+    public MttTexturedQuad2D createTexturedQuad2D(
+            String screenName, String textureFilepath, MttVertex2DUV p1, MttVertex2DUV p2, MttVertex2DUV p3, MttVertex2DUV p4, float z) {
         return instance.createTexturedQuad2D(screenName, textureFilepath, p1, p2, p3, p4, z);
     }
 
-    public TexturedQuad2D createTexturedQuad2D(
-            String screenName, MttTexture texture, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
+    public MttTexturedQuad2D createTexturedQuad2D(
+            String screenName, MttTexture texture, MttVertex2DUV p1, MttVertex2DUV p2, MttVertex2DUV p3, MttVertex2DUV p4, float z) {
         return instance.createTexturedQuad2D(screenName, texture, p1, p2, p3, p4, z);
     }
 
-    public TexturedQuad2D createTexturedQuad2D(
+    public MttTexturedQuad2D createTexturedQuad2D(
             String screenName, String textureFilepath, Vector2fc topLeft, Vector2fc bottomRight, float z) {
-        var p1 = new Vertex2DUV(topLeft, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
-        var p2 = new Vertex2DUV(new Vector2f(topLeft.x(), bottomRight.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 1.0f));
-        var p3 = new Vertex2DUV(bottomRight, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
-        var p4 = new Vertex2DUV(new Vector2f(bottomRight.x(), topLeft.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 0.0f));
+        var p1 = new MttVertex2DUV(topLeft, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
+        var p2 = new MttVertex2DUV(new Vector2f(topLeft.x(), bottomRight.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 1.0f));
+        var p3 = new MttVertex2DUV(bottomRight, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
+        var p4 = new MttVertex2DUV(new Vector2f(bottomRight.x(), topLeft.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 0.0f));
 
         return instance.createTexturedQuad2D(screenName, textureFilepath, p1, p2, p3, p4, z);
     }
 
-    public TexturedQuad2D createTexturedQuad2D(
+    public MttTexturedQuad2D createTexturedQuad2D(
             String screenName, MttTexture texture, Vector2fc topLeft, Vector2fc bottomRight, float z) {
-        var p1 = new Vertex2DUV(topLeft, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
-        var p2 = new Vertex2DUV(new Vector2f(topLeft.x(), bottomRight.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 1.0f));
-        var p3 = new Vertex2DUV(bottomRight, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
-        var p4 = new Vertex2DUV(new Vector2f(bottomRight.x(), topLeft.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 0.0f));
+        var p1 = new MttVertex2DUV(topLeft, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
+        var p2 = new MttVertex2DUV(new Vector2f(topLeft.x(), bottomRight.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 1.0f));
+        var p3 = new MttVertex2DUV(bottomRight, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
+        var p4 = new MttVertex2DUV(new Vector2f(bottomRight.x(), topLeft.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 0.0f));
 
         return instance.createTexturedQuad2D(screenName, texture, p1, p2, p3, p4, z);
     }
 
-    public TexturedQuad2D duplicateTexturedQuad2D(
-            TexturedQuad2D srcQuad, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
+    public MttTexturedQuad2D duplicateTexturedQuad2D(
+            MttTexturedQuad2D srcQuad, MttVertex2DUV p1, MttVertex2DUV p2, MttVertex2DUV p3, MttVertex2DUV p4, float z) {
         return instance.duplicateTexturedQuad2D(srcQuad, p1, p2, p3, p4, z);
     }
 
-    public TexturedQuad2D duplicateTexturedQuad2D(
-            TexturedQuad2D srcQuad, Vector2fc topLeft, Vector2fc bottomRight, float z) {
-        var p1 = new Vertex2DUV(topLeft, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
-        var p2 = new Vertex2DUV(new Vector2f(topLeft.x(), bottomRight.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 1.0f));
-        var p3 = new Vertex2DUV(bottomRight, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
-        var p4 = new Vertex2DUV(new Vector2f(bottomRight.x(), topLeft.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 0.0f));
+    public MttTexturedQuad2D duplicateTexturedQuad2D(
+            MttTexturedQuad2D srcQuad, Vector2fc topLeft, Vector2fc bottomRight, float z) {
+        var p1 = new MttVertex2DUV(topLeft, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
+        var p2 = new MttVertex2DUV(new Vector2f(topLeft.x(), bottomRight.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 1.0f));
+        var p3 = new MttVertex2DUV(bottomRight, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
+        var p4 = new MttVertex2DUV(new Vector2f(bottomRight.x(), topLeft.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 0.0f));
         return instance.duplicateTexturedQuad2D(srcQuad, p1, p2, p3, p4, z);
     }
 
-    public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, String textureFilepath) {
+    public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, String textureFilepath) {
         return instance.createTexturedQuad2DSingleTextureSet(screenName, textureFilepath);
     }
 
-    public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, MttTexture texture) {
+    public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, MttTexture texture) {
         return instance.createTexturedQuad2DSingleTextureSet(screenName, texture);
     }
 
-    public Quad2D createQuad2D(Vertex2D v1, Vertex2D v2, Vertex2D v3, Vertex2D v4, float z) {
+    public MttQuad2D createQuad2D(MttVertex2D v1, MttVertex2D v2, MttVertex2D v3, MttVertex2D v4, float z) {
         return instance.createQuad2D(v1, v2, v3, v4, z);
     }
 
-    public Quad2D createQuad2D(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4, float z, Vector4fc color) {
+    public MttQuad2D createQuad2D(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4, float z, Vector4fc color) {
         return instance.createQuad2D(p1, p2, p3, p4, z, color);
     }
 
-    public Quad2D createQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, Vector4fc color) {
+    public MttQuad2D createQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, Vector4fc color) {
         return instance.createQuad2D(topLeft, bottomRight, z, color);
     }
 
-    public Quad3D createQuad3D(Vertex3D v1, Vertex3D v2, Vertex3D v3, Vertex3D v4) {
+    public MttQuad3D createQuad3D(MttVertex3D v1, MttVertex3D v2, MttVertex3D v3, MttVertex3D v4) {
         return instance.createQuad3D(v1, v2, v3, v4);
     }
 
-    public Quad3D createQuad3D(Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, Vector4fc color) {
+    public MttQuad3D createQuad3D(Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, Vector4fc color) {
         return instance.createQuad3D(p1, p2, p3, p4, color);
     }
 
-    public Box3D createBox3D(float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
+    public MttBox3D createBox3D(float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
         return instance.createBox3D(xHalfExtent, yHalfExtent, zHalfExtent, color);
     }
 
-    public Box3D createBox3D(float halfExtent, Vector4fc color) {
+    public MttBox3D createBox3D(float halfExtent, Vector4fc color) {
         return instance.createBox3D(halfExtent, color);
     }
 
-    public MttFont createMttFont(String screenName, Font font, boolean antiAlias, Color fontColor, String requiredChars) {
-        return instance.createMttFont(screenName, font, antiAlias, fontColor, requiredChars);
+    public MttFont createFont(String screenName, Font font, boolean antiAlias, Color fontColor, String requiredChars) {
+        return instance.createFont(screenName, font, antiAlias, fontColor, requiredChars);
     }
 
-    public MttButton createMttButton(
+    public MttButton createButton(
             float x,
             float y,
             float width,
@@ -378,10 +378,10 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
             int fontSize,
             Color fontColor,
             Color frameColor) {
-        return instance.createMttButton(x, y, width, height, text, fontName, fontStyle, fontSize, fontColor, frameColor);
+        return instance.createButton(x, y, width, height, text, fontName, fontStyle, fontSize, fontColor, frameColor);
     }
 
-    public MttCheckbox createMttCheckbox(
+    public MttCheckbox createCheckbox(
             float x,
             float y,
             float width,
@@ -392,11 +392,11 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
             int fontSize,
             Color fontColor,
             Color checkboxColor) {
-        return instance.createMttCheckbox(
+        return instance.createCheckbox(
                 x, y, width, height, text, fontName, fontStyle, fontSize, fontColor, checkboxColor);
     }
 
-    public MttVerticalScrollbar createMttVerticalScrollbar(
+    public MttVerticalScrollbar createVerticalScrollbar(
             float x,
             float y,
             float width,
@@ -404,10 +404,10 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
             float grabHeight,
             Color frameColor,
             Color grabFrameColor) {
-        return instance.createMttVerticalScrollbar(x, y, width, height, grabHeight, frameColor, grabFrameColor);
+        return instance.createVerticalScrollbar(x, y, width, height, grabHeight, frameColor, grabFrameColor);
     }
 
-    public MttHorizontalScrollbar createMttHorizontalScrollbar(
+    public MttHorizontalScrollbar createHorizontalScrollbar(
             float x,
             float y,
             float width,
@@ -415,10 +415,10 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
             float grabWidth,
             Color frameColor,
             Color grabFrameColor) {
-        return instance.createMttHorizontalScrollbar(x, y, width, height, grabWidth, frameColor, grabFrameColor);
+        return instance.createHorizontalScrollbar(x, y, width, height, grabWidth, frameColor, grabFrameColor);
     }
 
-    public MttListbox createMttListbox(
+    public MttListbox createListbox(
             float x,
             float y,
             float width,
@@ -438,7 +438,7 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
             int selectedFontStyle,
             int selectedFontSize,
             Color selectedFontColor) {
-        return instance.createMttListbox(
+        return instance.createListbox(
                 x, y, width, height,
                 scrollbarWidth, scrollbarGrabHeight, scrollbarFrameColor, scrollbarGrabColor,
                 nonSelectedFontName, nonSelectedFontStyle, nonSelectedFontSize, nonSelectedFontColor,
@@ -446,7 +446,7 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
                 selectedFontName, selectedFontStyle, selectedFontSize, selectedFontColor);
     }
 
-    public MttLabel createMttLabel(
+    public MttLabel createLabel(
             float x,
             float y,
             float width,
@@ -457,7 +457,7 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
             int fontSize,
             Color fontColor,
             Color frameColor) {
-        return instance.createMttLabel(
+        return instance.createLabel(
                 x, y, width, height, requiredChars, fontName, fontStyle, fontSize, fontColor, frameColor);
     }
 
@@ -503,7 +503,7 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
         return instance.createPhysicalBox3DWithComponent(halfExtent, mass, color);
     }
 
-    public PhysicalMesh3D createPhysicalMesh3D(Model3D model, float mass) {
+    public PhysicalMesh3D createPhysicalMesh3D(MttModel3D model, float mass) {
         return instance.createPhysicalMesh3D(model, mass);
     }
 
@@ -535,8 +535,8 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
         return instance.removeSound3D(sound);
     }
 
-    public MttTexture createMttTexture(String screenName, String textureFilepath, boolean generateMipmaps) {
-        return instance.createMttTexture(screenName, textureFilepath, generateMipmaps);
+    public MttTexture createTexture(String screenName, String textureFilepath, boolean generateMipmaps) {
+        return instance.createTexture(screenName, textureFilepath, generateMipmaps);
     }
 
     public MttTexture texturizeColorOfScreen(String srcScreenName, String dstScreenName) {

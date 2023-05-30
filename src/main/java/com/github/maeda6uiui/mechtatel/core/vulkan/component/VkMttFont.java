@@ -1,10 +1,10 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
-import com.github.maeda6uiui.mechtatel.core.component.Vertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.component.MttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
 import com.github.maeda6uiui.mechtatel.core.text.TextUtil;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkScreen;
-import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
+import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 import org.joml.Vector4f;
@@ -22,12 +22,12 @@ import java.util.Map;
  *
  * @author maeda6uiui
  */
-public class VkMttFont extends VkComponent {
+public class VkMttFont extends VkMttComponent {
     private VkDevice device;
 
     private Map<Character, Glyph> glyphs;
-    private VkTexture texture;
-    private VkTexturedQuad2DSingleTextureSet vkQuadSet;
+    private VkMttTexture texture;
+    private VkMttTexturedQuad2DSingleTextureSet vkQuadSet;
     private int imageWidth;
     private int imageHeight;
 
@@ -35,7 +35,7 @@ public class VkMttFont extends VkComponent {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            VkScreen screen,
+            VkMttScreen screen,
             Font font,
             boolean antiAlias,
             Color fontColor,
@@ -51,7 +51,7 @@ public class VkMttFont extends VkComponent {
                 fontColor,
                 requiredChars
         );
-        vkQuadSet = new VkTexturedQuad2DSingleTextureSet(
+        vkQuadSet = new VkMttTexturedQuad2DSingleTextureSet(
                 device,
                 commandPool,
                 graphicsQueue,
@@ -64,10 +64,10 @@ public class VkMttFont extends VkComponent {
         this.setScreenName(screen.getScreenName());
     }
 
-    private VkTexture createFontTexture(
+    private VkMttTexture createFontTexture(
             long commandPool,
             VkQueue graphicsQueue,
-            VkScreen screen,
+            VkMttScreen screen,
             Font font,
             boolean antiAlias,
             Color fontColor,
@@ -78,7 +78,7 @@ public class VkMttFont extends VkComponent {
         this.imageWidth = fontImageInfo.imageWidth;
         this.imageHeight = fontImageInfo.imageHeight;
 
-        texture = new VkTexture(
+        texture = new VkMttTexture(
                 device,
                 commandPool,
                 graphicsQueue,
@@ -133,11 +133,11 @@ public class VkMttFont extends VkComponent {
                 float vBottom = (glyph.y + glyph.height) / (float) imageHeight;
                 float scaledGlyphWidth = glyph.width * glyphWidthScale;
 
-                var topLeft = new Vertex2DUV(
+                var topLeft = new MttVertex2DUV(
                         new Vector2f(drawX, drawY),
                         new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
                         new Vector2f(uLeft, vTop + vOffset));
-                var bottomRight = new Vertex2DUV(
+                var bottomRight = new MttVertex2DUV(
                         new Vector2f(
                                 drawX + scaledGlyphWidth,
                                 drawY + scaledLineHeight),

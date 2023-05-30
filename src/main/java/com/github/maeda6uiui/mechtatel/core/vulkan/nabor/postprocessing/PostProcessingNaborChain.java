@@ -7,7 +7,7 @@ import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow.ShadowMappingNabor;
@@ -170,7 +170,7 @@ public class PostProcessingNaborChain {
             Vector3f spotlightAmbientColor,
             ShadowMappingSettings shadowMappingSettings,
             MergeScenesNabor lastMergeNabor,
-            List<VkComponent> components) {
+            List<VkMttComponent> components) {
         PostProcessingNabor previousPPNabor = null;
         for (var entry : ppNabors.entrySet()) {
             String naborName = entry.getKey();

@@ -5,9 +5,8 @@ import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkScreen;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -20,7 +19,7 @@ import java.util.List;
  */
 public interface IMttVulkanInstanceForScreen {
     void draw(
-            VkScreen screen,
+            VkMttScreen screen,
             Vector4f backgroundColor,
             Camera camera,
             Fog fog,

@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author maeda6uiui
  */
-public class MttFont extends Component {
+public class MttFont extends MttComponent {
     private VkMttFont vkMttFont;
 
     public MttFont(
@@ -25,7 +25,7 @@ public class MttFont extends Component {
             String requiredChars) {
         super(vulkanInstance);
 
-        vkMttFont = vulkanInstance.createMttFont(screenName, font, antiAlias, fontColor, requiredChars);
+        vkMttFont = vulkanInstance.createFont(screenName, font, antiAlias, fontColor, requiredChars);
         this.associateVulkanComponent(vkMttFont);
     }
 

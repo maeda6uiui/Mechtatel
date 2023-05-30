@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent;
 
 /**
  * Interface to MttVulkanInstance providing access to deleteComponent()
@@ -8,5 +8,5 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkComponent;
  * @author maeda6uiui
  */
 public interface IMttVulkanInstanceForComponent {
-    boolean removeComponent(VkComponent component);
+    boolean removeComponent(VkMttComponent component);
 }

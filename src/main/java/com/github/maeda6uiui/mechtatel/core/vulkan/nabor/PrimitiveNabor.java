@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkVertex3D;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttVertex3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
@@ -443,8 +443,8 @@ public class PrimitiveNabor extends Nabor {
             //Vertex stage
             VkPipelineVertexInputStateCreateInfo vertexInputInfo = VkPipelineVertexInputStateCreateInfo.calloc(stack);
             vertexInputInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO);
-            vertexInputInfo.pVertexBindingDescriptions(VkVertex3D.getBindingDescription());
-            vertexInputInfo.pVertexAttributeDescriptions(VkVertex3D.getAttributeDescriptions());
+            vertexInputInfo.pVertexBindingDescriptions(VkMttVertex3D.getBindingDescription());
+            vertexInputInfo.pVertexAttributeDescriptions(VkMttVertex3D.getAttributeDescriptions());
 
             //Assembly stage
             VkPipelineInputAssemblyStateCreateInfo inputAssembly = VkPipelineInputAssemblyStateCreateInfo.calloc(stack);

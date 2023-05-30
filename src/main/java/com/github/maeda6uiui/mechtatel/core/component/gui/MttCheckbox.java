@@ -1,8 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.component.gui;
 
-import com.github.maeda6uiui.mechtatel.core.component.Line2DSet;
 import com.github.maeda6uiui.mechtatel.core.component.MttFont;
-import com.github.maeda6uiui.mechtatel.core.component.Quad2D;
+import com.github.maeda6uiui.mechtatel.core.component.MttLine2DSet;
+import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import org.joml.Vector2f;
 
@@ -19,8 +19,8 @@ public class MttCheckbox extends MttGuiComponent {
     private static final float CHECKBOX_MARGIN_X_HEIGHT_RATIO = 0.3f;
     private static final float CHECKBOX_MARGIN_Y_HEIGHT_RATIO = 0.25f;
 
-    private Quad2D checkboxFrame;
-    private Line2DSet checkboxCross;
+    private MttQuad2D checkboxFrame;
+    private MttLine2DSet checkboxCross;
     private MttFont font;
 
     private Vector2f checkboxTopLeft;
@@ -45,14 +45,14 @@ public class MttCheckbox extends MttGuiComponent {
         checkboxTopLeft = new Vector2f(x + height * CHECKBOX_MARGIN_X_HEIGHT_RATIO, y + height * CHECKBOX_MARGIN_Y_HEIGHT_RATIO);
         checkboxBottomRight = new Vector2f(x + height * (1.0f - CHECKBOX_MARGIN_X_HEIGHT_RATIO), y + height * (1.0f - CHECKBOX_MARGIN_Y_HEIGHT_RATIO));
 
-        checkboxFrame = new Quad2D(
+        checkboxFrame = new MttQuad2D(
                 vulkanInstance,
                 checkboxTopLeft,
                 checkboxBottomRight,
                 0.0f,
                 convertJavaColorToJOMLVector4f(checkboxColor)
         );
-        checkboxCross = new Line2DSet(vulkanInstance);
+        checkboxCross = new MttLine2DSet(vulkanInstance);
         checkboxCross.add(
                 checkboxTopLeft,
                 checkboxBottomRight,

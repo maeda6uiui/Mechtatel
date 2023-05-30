@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component.gui;
 
-import com.github.maeda6uiui.mechtatel.core.component.Component;
+import com.github.maeda6uiui.mechtatel.core.component.MttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 
 /**
@@ -8,7 +8,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
  *
  * @author maeda6uiui
  */
-public class MttGuiComponent extends Component {
+public class MttGuiComponent extends MttComponent {
     private float x;
     private float y;
     private float width;

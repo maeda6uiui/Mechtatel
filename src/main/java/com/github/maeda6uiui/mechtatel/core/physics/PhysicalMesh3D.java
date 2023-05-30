@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.physics;
 
-import com.github.maeda6uiui.mechtatel.core.component.Model3D;
+import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
 import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
 import com.jme3.bullet.collision.shapes.MeshCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.IndexedMesh;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * @author maeda6uiui
  */
 public class PhysicalMesh3D extends PhysicalObject3D {
-    public PhysicalMesh3D(Model3D model, float mass) {
+    public PhysicalMesh3D(MttModel3D model, float mass) {
         var indexedMeshes = new ArrayList<IndexedMesh>();
 
         ModelLoader.Model innerModel = model.getModel();

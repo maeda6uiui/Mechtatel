@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttFont;
-import com.github.maeda6uiui.mechtatel.core.component.Quad2D;
+import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -94,7 +94,7 @@ public class MttListbox extends MttGuiComponent {
         }
     }
 
-    private Quad2D frame;
+    private MttQuad2D frame;
     private MttVerticalScrollbar scrollbar;
     private List<MttListboxItem> items;
     private float itemHeight;
@@ -124,7 +124,7 @@ public class MttListbox extends MttGuiComponent {
             Color selectedFontColor) {
         super(vulkanInstance, x, y, width, height);
 
-        frame = new Quad2D(
+        frame = new MttQuad2D(
                 vulkanInstance,
                 new Vector2f(x, y),
                 new Vector2f(x + width, y + height),

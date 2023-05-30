@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.drawer;
 
-import com.github.maeda6uiui.mechtatel.core.component.Vertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.component.MttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -28,7 +28,7 @@ public class QuadDrawer {
     private long indexBuffer;
     private long indexBufferMemory;
 
-    private void createBuffersAndMemories(long commandPool, VkQueue graphicsQueue, Vertex2DUV[] vertices) {
+    private void createBuffersAndMemories(long commandPool, VkQueue graphicsQueue, MttVertex2DUV[] vertices) {
         if (vertices.length != 4) {
             throw new IllegalArgumentException("Number of the vertices must be 4");
         }
@@ -51,7 +51,7 @@ public class QuadDrawer {
         indexBufferMemory = bufferInfo.bufferMemory;
     }
 
-    public QuadDrawer(VkDevice device, long commandPool, VkQueue graphicsQueue, Vertex2DUV[] vertices) {
+    public QuadDrawer(VkDevice device, long commandPool, VkQueue graphicsQueue, MttVertex2DUV[] vertices) {
         this.device = device;
 
         this.createBuffersAndMemories(commandPool, graphicsQueue, vertices);
@@ -60,21 +60,21 @@ public class QuadDrawer {
     public QuadDrawer(VkDevice device, long commandPool, VkQueue graphicsQueue) {
         this.device = device;
 
-        var vertices = new Vertex2DUV[4];
+        var vertices = new MttVertex2DUV[4];
 
-        vertices[0] = new Vertex2DUV(
+        vertices[0] = new MttVertex2DUV(
                 new Vector2f(-1.0f, -1.0f),
                 new Vector4f(0.0f, 0.0f, 0.0f, 0.0f),
                 new Vector2f(0.0f, 0.0f));
-        vertices[1] = new Vertex2DUV(
+        vertices[1] = new MttVertex2DUV(
                 new Vector2f(-1.0f, 1.0f),
                 new Vector4f(0.0f, 0.0f, 0.0f, 0.0f),
                 new Vector2f(0.0f, 1.0f));
-        vertices[2] = new Vertex2DUV(
+        vertices[2] = new MttVertex2DUV(
                 new Vector2f(1.0f, 1.0f),
                 new Vector4f(0.0f, 0.0f, 0.0f, 0.0f),
                 new Vector2f(1.0f, 1.0f));
-        vertices[3] = new Vertex2DUV(
+        vertices[3] = new MttVertex2DUV(
                 new Vector2f(1.0f, -1.0f),
                 new Vector4f(0.0f, 0.0f, 0.0f, 0.0f),
                 new Vector2f(1.0f, 0.0f));

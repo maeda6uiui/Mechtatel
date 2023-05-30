@@ -321,6 +321,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
         }
     }
 
+    @Override
     public String getScreenName() {
         return screenName;
     }

@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.IVkMttScreenForVkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
@@ -62,7 +62,7 @@ public class VkMttTexturedQuad3D extends VkMttComponent3D {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            VkMttScreen screen,
+            IVkMttScreenForVkMttTexture screen,
             String textureFilepath,
             boolean generateMipmaps,
             List<MttVertex3DUV> vertices) {

@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
 import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.IVkMttScreenForVkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
@@ -45,7 +45,7 @@ public class VkMttModel3D extends VkMttComponent3D {
     private void loadTextures(
             long commandPool,
             VkQueue graphicsQueue,
-            VkMttScreen screen,
+            IVkMttScreenForVkMttTexture screen,
             String modelFilepath) {
         String modelDir = Paths.get(modelFilepath).getParent().toString();
 
@@ -102,7 +102,7 @@ public class VkMttModel3D extends VkMttComponent3D {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            VkMttScreen screen,
+            IVkMttScreenForVkMttTexture screen,
             String modelFilepath) throws IOException {
         this.device = device;
 

@@ -81,14 +81,6 @@ public class ScreenshotTest extends Mechtatel {
 
     @Override
     public void update() {
-        if (this.getKeyboardPressingCount("ENTER") == 1) {
-            try {
-                this.saveScreenshot("main", "bgra", "screenshot.png");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         camera.translate(
                 this.getKeyboardPressingCount("W"),
                 this.getKeyboardPressingCount("S"),
@@ -101,5 +93,16 @@ public class ScreenshotTest extends Mechtatel {
                 this.getKeyboardPressingCount("LEFT"),
                 this.getKeyboardPressingCount("RIGHT")
         );
+    }
+
+    @Override
+    public void postPresent() {
+        if (this.getKeyboardPressingCount("ENTER") == 1) {
+            try {
+                this.saveScreenshot("main", "bgra", "screenshot.png");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

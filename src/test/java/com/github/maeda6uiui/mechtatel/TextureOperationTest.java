@@ -135,6 +135,14 @@ public class TextureOperationTest extends Mechtatel {
 
     @Override
     public void postPresent() {
+        if (this.getKeyboardPressingCount("ENTER") == 1) {
+            try {
+                this.saveScreenshot("final", "bgra", "screenshot.jpg");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         firstColorTexture.cleanup();
         firstDepthTexture.cleanup();
         secondColorTexture.cleanup();

@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.DrawPath;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
 import com.github.maeda6uiui.mechtatel.core.component.MttTexturedQuad2D;
@@ -50,36 +51,16 @@ public class TextureOperationTest extends Mechtatel {
 
     @Override
     public void init() {
-        firstScreen = this.createScreen(
-                "first",
-                2048,
-                2048,
-                -1,
-                -1,
-                true,
-                null
-        );
-        secondScreen = this.createScreen(
-                "second",
-                2048,
-                2048,
-                -1,
-                -1,
-                true,
-                null
-        );
-        finalScreen = this.createScreen(
-                "final",
-                2048,
-                2048,
-                -1,
-                -1,
-                true,
-                null
-        );
-
+        var firstScreenCreator = new ScreenCreator(this, "first");
+        firstScreen = firstScreenCreator.create();
         firstScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
+
+        var secondScreenCreator = new ScreenCreator(this, "second");
+        secondScreen = secondScreenCreator.create();
         secondScreen.getCamera().setEye(new Vector3f(1.0f, 2.0f, 1.0f));
+
+        var finalScreenCreator = new ScreenCreator(this, "final");
+        finalScreen = finalScreenCreator.create();
 
         var drawPath = new DrawPath(this);
         drawPath.addToScreenDrawOrder("first");
@@ -123,6 +104,17 @@ public class TextureOperationTest extends Mechtatel {
                 this.getKeyboardPressingCount("RIGHT")
         );
 
+        //You need to create textures from screens in every frame if you enable resizing of the window.
+        //This is because resizing of the window causes many resources of the screens to be recreated,
+        //and previously created images that belong to screens are no longer valid.
+        //
+        //You cannot use reshape() to this end because reshape() is invoked from a higher layer
+        //and is not in sync with Vulkan's procedure of rendering. (maybe...)
+        //
+        //The overhead of creating textures from screens in every frame is ignorable at least on my computers.
+        //
+        //You should run cleanup() of textures created here after you are done with them,
+        //otherwise unused texture allocations are accumulated.
         firstColorTexture = this.texturizeColorOfScreen("first", "final");
         firstDepthTexture = this.texturizeDepthOfScreen("first", "final");
         secondColorTexture = this.texturizeColorOfScreen("second", "final");

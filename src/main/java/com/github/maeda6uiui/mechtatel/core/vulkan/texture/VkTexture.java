@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.texture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.ImageViewCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkScreen;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.IVkScreenForVkTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.PointerBuffer;
@@ -14,7 +14,6 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.lwjgl.stb.STBImage.*;
@@ -27,15 +26,12 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class VkTexture {
     private static Map<Integer, Boolean> allocationStatus;
-    private static Map<Integer, String> invalidAllocations;
 
     static {
         allocationStatus = new HashMap<>();
         for (int i = 0; i < GBufferNabor.MAX_NUM_TEXTURES; i++) {
             allocationStatus.put(i, false);
         }
-
-        invalidAllocations = new HashMap<>();
     }
 
     private static int allocateTextureIndex() {
@@ -53,47 +49,10 @@ public class VkTexture {
         return index;
     }
 
-    public static Map<Integer, String> getInvalidAllocations() {
-        return new HashMap<>(invalidAllocations);
-    }
-
-    public static void clearInvalidAllocations(String screenName) {
-        invalidAllocations.values().removeIf(v -> v.equals(screenName));
-    }
-
-    public static void updateDescriptorSets(
-            VkDevice device,
-            List<Long> descriptorSets,
-            int setCount,
-            int allocationIndex,
-            long textureImageView) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkDescriptorImageInfo.Buffer textureInfo = VkDescriptorImageInfo.calloc(1, stack);
-            textureInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            textureInfo.imageView(textureImageView);
-
-            VkWriteDescriptorSet.Buffer textureDescriptorWrite = VkWriteDescriptorSet.calloc(1, stack);
-            textureDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
-            textureDescriptorWrite.dstBinding(0);
-            textureDescriptorWrite.dstArrayElement(allocationIndex);
-            textureDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            textureDescriptorWrite.descriptorCount(1);
-            textureDescriptorWrite.pImageInfo(textureInfo);
-
-            for (int i = 0; i < descriptorSets.size(); i++) {
-                //Update set 1
-                if (i % setCount == 1) {
-                    textureDescriptorWrite.dstSet(descriptorSets.get(i));
-                    vkUpdateDescriptorSets(device, textureDescriptorWrite, null);
-                }
-            }
-        }
-    }
-
     private VkDevice device;
 
+    private IVkScreenForVkTexture screen;
     private int allocationIndex;
-
     private boolean externalImage;
 
     private long textureImage;
@@ -106,8 +65,6 @@ public class VkTexture {
 
     private String textureFilepath;
     private boolean generateMipmaps;
-
-    private String screenName;
 
     private void memcpy(ByteBuffer dst, ByteBuffer src, long size) {
         src.limit((int) size);
@@ -364,7 +321,7 @@ public class VkTexture {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            VkScreen screen,
+            IVkScreenForVkTexture screen,
             String textureFilepath,
             boolean generateMipmaps) {
         allocationIndex = allocateTextureIndex();
@@ -382,18 +339,17 @@ public class VkTexture {
         this.createTextureImage(commandPool, graphicsQueue);
         this.createTextureImageView();
 
-        updateDescriptorSets(device, screen.getDescriptorSets(), screen.getSetCount(), allocationIndex, textureImageView);
+        screen.updateTextureDescriptorSets(allocationIndex, textureImageView);
+        this.screen = screen;
 
         externalImage = false;
-
-        screenName = screen.getScreenName();
     }
 
     public VkTexture(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            VkScreen screen,
+            IVkScreenForVkTexture screen,
             ByteBuffer pixels,
             int width,
             int height,
@@ -412,14 +368,13 @@ public class VkTexture {
         this.createTextureImageFromByteBuffer(commandPool, graphicsQueue, pixels, width, height);
         this.createTextureImageView();
 
-        updateDescriptorSets(device, screen.getDescriptorSets(), screen.getSetCount(), allocationIndex, textureImageView);
+        screen.updateTextureDescriptorSets(allocationIndex, textureImageView);
+        this.screen = screen;
 
         externalImage = false;
-
-        screenName = screen.getScreenName();
     }
 
-    public VkTexture(VkDevice device, VkScreen screen, long imageView) {
+    public VkTexture(VkDevice device, IVkScreenForVkTexture screen, long imageView) {
         allocationIndex = allocateTextureIndex();
         if (allocationIndex < 0) {
             String msg = String.format("Cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
@@ -429,11 +384,10 @@ public class VkTexture {
         this.device = device;
         this.textureImageView = imageView;
 
-        updateDescriptorSets(device, screen.getDescriptorSets(), screen.getSetCount(), allocationIndex, textureImageView);
+        screen.updateTextureDescriptorSets(allocationIndex, textureImageView);
+        this.screen = screen;
 
         externalImage = true;
-
-        screenName = screen.getScreenName();
     }
 
     public void cleanup() {
@@ -444,15 +398,11 @@ public class VkTexture {
         }
 
         allocationStatus.put(allocationIndex, false);
-        invalidAllocations.put(allocationIndex, screenName);
+        screen.resetTextureDescriptorSets(allocationIndex);
     }
 
     public int getAllocationIndex() {
         return allocationIndex;
-    }
-
-    public String getScreenName() {
-        return screenName;
     }
 
     public long getTextureImageView() {

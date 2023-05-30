@@ -453,7 +453,6 @@ public class MttVulkanInstance
                 graphicsQueue,
                 screen,
                 modelFilepath);
-        model.setScreenName(screenName);
         components.add(model);
 
         return model;
@@ -461,7 +460,6 @@ public class MttVulkanInstance
 
     public VkModel3D duplicateModel3D(VkModel3D srcModel) {
         var model = new VkModel3D(device, commandPool, graphicsQueue, srcModel);
-        model.setScreenName(srcModel.getScreenName());
         components.add(model);
 
         return model;
@@ -546,20 +544,19 @@ public class MttVulkanInstance
                 textureFilepath,
                 generateMipmaps,
                 vertices);
-        texturedQuad.setScreenName(screenName);
         components.add(texturedQuad);
 
         return texturedQuad;
     }
 
-    public VkTexturedQuad3D createTexturedQuad3D(VkTexture texture, List<Vertex3DUV> vertices) {
+    public VkTexturedQuad3D createTexturedQuad3D(String screenName, VkTexture texture, List<Vertex3DUV> vertices) {
         var texturedQuad = new VkTexturedQuad3D(
                 device,
                 commandPool,
                 graphicsQueue,
+                screenName,
                 texture,
                 vertices);
-        texturedQuad.setScreenName(texture.getScreenName());
         components.add(texturedQuad);
 
         return texturedQuad;
@@ -572,7 +569,6 @@ public class MttVulkanInstance
                 graphicsQueue,
                 srcQuad,
                 vertices);
-        texturedQuad.setScreenName(srcQuad.getScreenName());
         components.add(texturedQuad);
 
         return texturedQuad;
@@ -589,20 +585,19 @@ public class MttVulkanInstance
                 textureFilepath,
                 false,
                 vertices);
-        texturedQuad.setScreenName(screenName);
         components.add(texturedQuad);
 
         return texturedQuad;
     }
 
-    public VkTexturedQuad2D createTexturedQuad2D(VkTexture texture, List<Vertex3DUV> vertices) {
+    public VkTexturedQuad2D createTexturedQuad2D(String screenName, VkTexture texture, List<Vertex3DUV> vertices) {
         var texturedQuad = new VkTexturedQuad2D(
                 device,
                 commandPool,
                 graphicsQueue,
+                screenName,
                 texture,
                 vertices);
-        texturedQuad.setScreenName(texture.getScreenName());
         components.add(texturedQuad);
 
         return texturedQuad;
@@ -615,15 +610,14 @@ public class MttVulkanInstance
                 graphicsQueue,
                 srcQuad,
                 vertices);
-        texturedQuad.setScreenName(srcQuad.getScreenName());
         components.add(texturedQuad);
 
         return texturedQuad;
     }
 
-    public VkTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(VkTexture texture) {
-        var texturedQuadSet = new VkTexturedQuad2DSingleTextureSet(device, commandPool, graphicsQueue, texture);
-        texturedQuadSet.setScreenName(texture.getScreenName());
+    public VkTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, VkTexture texture) {
+        var texturedQuadSet = new VkTexturedQuad2DSingleTextureSet(
+                device, commandPool, graphicsQueue, screenName, texture);
         components.add(texturedQuadSet);
 
         return texturedQuadSet;
@@ -638,7 +632,6 @@ public class MttVulkanInstance
                 graphicsQueue,
                 screen,
                 textureFilepath);
-        texturedQuadSet.setScreenName(screenName);
         components.add(texturedQuadSet);
 
         return texturedQuadSet;
@@ -657,7 +650,6 @@ public class MttVulkanInstance
                 antiAlias,
                 fontColor,
                 requiredChars);
-        mttFont.setScreenName(screenName);
         components.add(mttFont);
 
         return mttFont;
@@ -707,12 +699,6 @@ public class MttVulkanInstance
     @Override
     public boolean removeTexture(VkTexture texture) {
         return textures.remove(texture);
-    }
-
-    public void updateTextureAllocations() {
-        for (var screen : screens.values()) {
-            screen.updateTextureAllocations();
-        }
     }
 
     public void saveScreenshot(String screenName, String srcImageFormat, String outputFilepath) throws IOException {

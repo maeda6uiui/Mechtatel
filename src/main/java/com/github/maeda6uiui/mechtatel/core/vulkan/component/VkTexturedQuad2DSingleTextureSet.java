@@ -62,12 +62,14 @@ public class VkTexturedQuad2DSingleTextureSet extends VkComponent {
         isExternalTexture = false;
 
         this.setComponentType("gbuffer");
+        this.setScreenName(screen.getScreenName());
     }
 
     public VkTexturedQuad2DSingleTextureSet(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
+            String screenName,
             VkTexture texture) {
         this.device = device;
         this.commandPool = commandPool;
@@ -81,6 +83,7 @@ public class VkTexturedQuad2DSingleTextureSet extends VkComponent {
         isExternalTexture = true;
 
         this.setComponentType("gbuffer");
+        this.setScreenName(screenName);
     }
 
     public void add(Vertex3DUV v1, Vertex3DUV v2, Vertex3DUV v3, Vertex3DUV v4) {

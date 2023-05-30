@@ -81,7 +81,7 @@ public class VkComponent implements Comparable<VkComponent> {
         this.twoDComponent = twoDComponent;
     }
 
-    public void setScreenName(String screenName) {
+    protected void setScreenName(String screenName) {
         this.screenName = screenName;
     }
 

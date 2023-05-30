@@ -55,11 +55,13 @@ public class VkMttFont extends VkComponent {
                 device,
                 commandPool,
                 graphicsQueue,
+                screen.getScreenName(),
                 texture
         );
         vkQuadSet.setScreenName(screen.getScreenName());
 
         this.setComponentType("gbuffer");
+        this.setScreenName(screen.getScreenName());
     }
 
     private VkTexture createFontTexture(

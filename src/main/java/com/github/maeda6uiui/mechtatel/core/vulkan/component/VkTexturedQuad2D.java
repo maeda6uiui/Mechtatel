@@ -80,6 +80,7 @@ public class VkTexturedQuad2D extends VkComponent {
         this.createBuffers(commandPool, graphicsQueue, vertices);
 
         this.setComponentType("gbuffer");
+        this.setScreenName(getScreenName());
     }
 
     public VkTexturedQuad2D(
@@ -96,12 +97,14 @@ public class VkTexturedQuad2D extends VkComponent {
         this.createBuffers(commandPool, graphicsQueue, vertices);
 
         this.setComponentType("gbuffer");
+        this.setScreenName(srcQuad.getScreenName());
     }
 
     public VkTexturedQuad2D(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
+            String screenName,
             VkTexture texture,
             List<Vertex3DUV> vertices) {
         this.device = device;
@@ -112,6 +115,7 @@ public class VkTexturedQuad2D extends VkComponent {
         this.createBuffers(commandPool, graphicsQueue, vertices);
 
         this.setComponentType("gbuffer");
+        this.setScreenName(screenName);
     }
 
     public void replaceTexture(VkTexture newTexture) {

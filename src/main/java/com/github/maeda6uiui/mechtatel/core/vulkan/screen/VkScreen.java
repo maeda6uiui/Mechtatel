@@ -12,7 +12,6 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PrimitiveNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNaborChain;
-import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import org.joml.Vector3f;
@@ -34,7 +33,7 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class VkScreen {
+public class VkScreen implements IVkScreenForVkTexture {
     private VkDevice device;
     private long commandPool;
     private VkQueue graphicsQueue;
@@ -328,30 +327,6 @@ public class VkScreen {
 
     public GBufferNabor getgBufferNabor() {
         return gBufferNabor;
-    }
-
-    public void updateTextureAllocations() {
-        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
-        var descriptorSets = new ArrayList<Long>();
-        for (int i = 0; i < numDescriptorSets; i++) {
-            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
-        }
-        long dummyImageView = gBufferNabor.getDummyImageView();
-
-        var invalidAllocations = VkTexture.getInvalidAllocations();
-        for (var entry : invalidAllocations.entrySet()) {
-            if (entry.getValue().equals(screenName)) {
-                VkTexture.updateDescriptorSets(
-                        device,
-                        descriptorSets,
-                        gBufferNabor.getSetCount(0),
-                        entry.getKey(),
-                        dummyImageView
-                );
-            }
-        }
-
-        VkTexture.clearInvalidAllocations(screenName);
     }
 
     private void runAlbedoNabor(
@@ -783,25 +758,50 @@ public class VkScreen {
         return mergeScenesFillNabor.getDepthImageView();
     }
 
-    public List<Long> getDescriptorSets() {
-        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
-        var descriptorSets = new ArrayList<Long>();
-        for (int i = 0; i < numDescriptorSets; i++) {
-            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
-        }
-
-        return descriptorSets;
-    }
-
-    public int getSetCount() {
-        return gBufferNabor.getSetCount(0);
-    }
-
     public void save(String srcImageFormat, String outputFilepath) throws IOException {
         if (ppNaborChain == null) {
             mergeScenesFillNabor.save(commandPool, graphicsQueue, 0, srcImageFormat, outputFilepath);
         } else {
             ppNaborChain.save(srcImageFormat, outputFilepath);
         }
+    }
+
+    @Override
+    public void updateTextureDescriptorSets(int allocationIndex, long textureImageView) {
+        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
+        var descriptorSets = new ArrayList<Long>();
+        for (int i = 0; i < numDescriptorSets; i++) {
+            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
+        }
+
+        int setCount = gBufferNabor.getSetCount(0);
+
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDescriptorImageInfo.Buffer textureInfo = VkDescriptorImageInfo.calloc(1, stack);
+            textureInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            textureInfo.imageView(textureImageView);
+
+            VkWriteDescriptorSet.Buffer textureDescriptorWrite = VkWriteDescriptorSet.calloc(1, stack);
+            textureDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            textureDescriptorWrite.dstBinding(0);
+            textureDescriptorWrite.dstArrayElement(allocationIndex);
+            textureDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            textureDescriptorWrite.descriptorCount(1);
+            textureDescriptorWrite.pImageInfo(textureInfo);
+
+            for (int i = 0; i < descriptorSets.size(); i++) {
+                //Update set 1
+                if (i % setCount == 1) {
+                    textureDescriptorWrite.dstSet(descriptorSets.get(i));
+                    vkUpdateDescriptorSets(device, textureDescriptorWrite, null);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void resetTextureDescriptorSets(int allocationIndex) {
+        long dummyImageView = gBufferNabor.getDummyImageView();
+        this.updateTextureDescriptorSets(allocationIndex, dummyImageView);
     }
 }

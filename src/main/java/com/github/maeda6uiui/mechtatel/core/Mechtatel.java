@@ -265,12 +265,13 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
     }
 
     public TexturedQuad3D createTexturedQuad3D(
+            String screenName,
             MttTexture texture,
             Vertex3DUV v1,
             Vertex3DUV v2,
             Vertex3DUV v3,
             Vertex3DUV v4) {
-        return instance.createTexturedQuad3D(texture, v1, v2, v3, v4);
+        return instance.createTexturedQuad3D(screenName, texture, v1, v2, v3, v4);
     }
 
     public TexturedQuad3D duplicateTexturedQuad3D(
@@ -288,8 +289,8 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
     }
 
     public TexturedQuad2D createTexturedQuad2D(
-            MttTexture texture, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
-        return instance.createTexturedQuad2D(texture, p1, p2, p3, p4, z);
+            String screenName, MttTexture texture, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
+        return instance.createTexturedQuad2D(screenName, texture, p1, p2, p3, p4, z);
     }
 
     public TexturedQuad2D createTexturedQuad2D(
@@ -302,13 +303,14 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
         return instance.createTexturedQuad2D(screenName, textureFilepath, p1, p2, p3, p4, z);
     }
 
-    public TexturedQuad2D createTexturedQuad2D(MttTexture texture, Vector2fc topLeft, Vector2fc bottomRight, float z) {
+    public TexturedQuad2D createTexturedQuad2D(
+            String screenName, MttTexture texture, Vector2fc topLeft, Vector2fc bottomRight, float z) {
         var p1 = new Vertex2DUV(topLeft, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
         var p2 = new Vertex2DUV(new Vector2f(topLeft.x(), bottomRight.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 1.0f));
         var p3 = new Vertex2DUV(bottomRight, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
         var p4 = new Vertex2DUV(new Vector2f(bottomRight.x(), topLeft.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 0.0f));
 
-        return instance.createTexturedQuad2D(texture, p1, p2, p3, p4, z);
+        return instance.createTexturedQuad2D(screenName, texture, p1, p2, p3, p4, z);
     }
 
     public TexturedQuad2D duplicateTexturedQuad2D(
@@ -329,8 +331,8 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
         return instance.createTexturedQuad2DSingleTextureSet(screenName, textureFilepath);
     }
 
-    public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(MttTexture texture) {
-        return instance.createTexturedQuad2DSingleTextureSet(texture);
+    public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, MttTexture texture) {
+        return instance.createTexturedQuad2DSingleTextureSet(screenName, texture);
     }
 
     public Quad2D createQuad2D(Vertex2D v1, Vertex2D v2, Vertex2D v3, Vertex2D v4, float z) {

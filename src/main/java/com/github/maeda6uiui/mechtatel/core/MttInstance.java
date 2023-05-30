@@ -254,8 +254,6 @@ class MttInstance {
                 vulkanInstance.presentToFrontScreen(presentScreenName);
                 mtt.postPresent();
 
-                vulkanInstance.updateTextureAllocations();
-
                 lastTime = glfwGetTime();
             }
 
@@ -427,6 +425,7 @@ class MttInstance {
     }
 
     public TexturedQuad3D createTexturedQuad3D(
+            String screenName,
             MttTexture texture,
             Vertex3DUV v1,
             Vertex3DUV v2,
@@ -434,6 +433,7 @@ class MttInstance {
             Vertex3DUV v4) {
         var texturedQuad = new TexturedQuad3D(
                 vulkanInstance,
+                screenName,
                 texture,
                 v1,
                 v2,
@@ -465,8 +465,8 @@ class MttInstance {
     }
 
     public TexturedQuad2D createTexturedQuad2D(
-            MttTexture texture, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
-        var texturedQuad = new TexturedQuad2D(vulkanInstance, texture, p1, p2, p3, p4, z);
+            String screenName, MttTexture texture, Vertex2DUV p1, Vertex2DUV p2, Vertex2DUV p3, Vertex2DUV p4, float z) {
+        var texturedQuad = new TexturedQuad2D(vulkanInstance, screenName, texture, p1, p2, p3, p4, z);
         return texturedQuad;
     }
 
@@ -481,8 +481,8 @@ class MttInstance {
         return texturedQuadSet;
     }
 
-    public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(MttTexture texture) {
-        var texturedQuadSet = new TexturedQuad2DSingleTextureSet(vulkanInstance, texture);
+    public TexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, MttTexture texture) {
+        var texturedQuadSet = new TexturedQuad2DSingleTextureSet(vulkanInstance, screenName, texture);
         return texturedQuadSet;
     }
 

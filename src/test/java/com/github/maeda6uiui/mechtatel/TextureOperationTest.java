@@ -91,6 +91,7 @@ public class TextureOperationTest extends Mechtatel {
 
         var dummyTexture = this.createMttTexture("final", "./Mechtatel/Texture/lenna.jpg", false);
         texturedQuad = this.createTexturedQuad2D(
+                "final",
                 dummyTexture,
                 new Vector2f(-1.0f, -1.0f),
                 new Vector2f(1.0f, 1.0f),

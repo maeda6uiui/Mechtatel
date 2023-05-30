@@ -117,6 +117,7 @@ public class VkModel3D extends VkComponent3D {
         this.createBuffers(commandPool, graphicsQueue);
 
         this.setComponentType("gbuffer");
+        this.setScreenName(screen.getScreenName());
     }
 
     public VkModel3D(
@@ -135,6 +136,7 @@ public class VkModel3D extends VkComponent3D {
         externalTextureFlags = srcModel.externalTextureFlags;
 
         this.setComponentType("gbuffer");
+        this.setScreenName(srcModel.getScreenName());
     }
 
     @Override

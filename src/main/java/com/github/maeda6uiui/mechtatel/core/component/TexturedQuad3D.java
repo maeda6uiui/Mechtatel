@@ -37,6 +37,7 @@ public class TexturedQuad3D extends Component3D {
 
     public TexturedQuad3D(
             MttVulkanInstance vulkanInstance,
+            String screenName,
             MttTexture texture,
             Vertex3DUV v1,
             Vertex3DUV v2,
@@ -50,7 +51,7 @@ public class TexturedQuad3D extends Component3D {
         vertices.add(v3);
         vertices.add(v4);
 
-        vkTexturedQuad = vulkanInstance.createTexturedQuad3D(texture.getVulkanTexture(), vertices);
+        vkTexturedQuad = vulkanInstance.createTexturedQuad3D(screenName, texture.getVulkanTexture(), vertices);
         this.associateVulkanComponent(vkTexturedQuad);
     }
 

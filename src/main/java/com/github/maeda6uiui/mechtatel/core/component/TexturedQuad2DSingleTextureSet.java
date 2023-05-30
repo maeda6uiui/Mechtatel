@@ -24,10 +24,13 @@ public class TexturedQuad2DSingleTextureSet extends Component {
         this.associateVulkanComponent(vkTexturedQuadSet);
     }
 
-    public TexturedQuad2DSingleTextureSet(MttVulkanInstance vulkanInstance, MttTexture texture) {
+    public TexturedQuad2DSingleTextureSet(
+            MttVulkanInstance vulkanInstance,
+            String screenName,
+            MttTexture texture) {
         super(vulkanInstance);
 
-        vkTexturedQuadSet = vulkanInstance.createTexturedQuad2DSingleTextureSet(texture.getVulkanTexture());
+        vkTexturedQuadSet = vulkanInstance.createTexturedQuad2DSingleTextureSet(screenName, texture.getVulkanTexture());
         this.associateVulkanComponent(vkTexturedQuadSet);
     }
 

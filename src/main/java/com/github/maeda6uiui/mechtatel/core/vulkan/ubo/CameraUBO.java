@@ -42,7 +42,7 @@ public class CameraUBO {
                 eye.x(), eye.y(), eye.z(),
                 center.x(), center.y(), center.z(),
                 up.x(), up.y(), up.z());
-        proj = new Matrix4f().perspective(fovY, aspect, zNear, zFar);
+        proj = new Matrix4f().perspective(fovY, aspect, zNear, zFar, true);
         proj.m11(proj.m11() * (-1.0f));
 
         this.eye = new Vector3f(eye);

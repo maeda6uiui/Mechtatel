@@ -1,7 +1,9 @@
 package com.github.maeda6uiui.mechtatel;
 
+import com.github.maeda6uiui.mechtatel.core.DrawPath;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
@@ -11,7 +13,6 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class TexturedScreenTest extends Mechtatel {
     public TexturedScreenTest(MttSettings settings) {
@@ -36,50 +37,34 @@ public class TexturedScreenTest extends Mechtatel {
 
     private MttScreen secondaryScreen;
     private MttModel3D secondaryCube;
-
     private Vector3f secondaryCameraPosition;
 
     @Override
     public void init() {
-        //Set up primary screen
-        primaryScreen = this.createScreen(
-                "primary",
-                2048,
-                2048,
-                -1,
-                -1,
-                true,
-                null
-        );
+        var primaryScreenCreator = new ScreenCreator(this, "primary");
+        primaryScreen = primaryScreenCreator.create();
         primaryScreen.setBackgroundColor(new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
         primaryScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
 
         camera = new FreeCamera(primaryScreen.getCamera());
 
-        //Set up secondary screen
-        var ppNaborNames = new ArrayList<String>();
-        ppNaborNames.add("parallel_light");
-        secondaryScreen = this.createScreen(
-                "secondary",
-                1024,
-                1024,
-                512,
-                512,
-                false,
-                ppNaborNames
-        );
+        var secondaryScreenCreator = new ScreenCreator(this, "secondary");
+        secondaryScreenCreator.addPostProcessingNabor("parallel_light");
+        secondaryScreenCreator.setDepthImageSize(1024, 1024);
+        secondaryScreenCreator.setScreenSize(512, 512);
+        secondaryScreenCreator.setShouldChangeExtentOnRecreate(false);
+        secondaryScreen = secondaryScreenCreator.create();
         secondaryScreen.setBackgroundColor(new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
         secondaryScreen.createParallelLight();
 
         secondaryCameraPosition = new Vector3f(1.2f, 1.2f, 1.2f);
         secondaryScreen.getCamera().setEye(secondaryCameraPosition);
 
-        var screenDrawOrder = new ArrayList<String>();
-        screenDrawOrder.add("secondary");
-        screenDrawOrder.add("primary");
-        this.setScreenDrawOrder(screenDrawOrder);
-
-        this.setPresentScreenName("primary");
+        var drawPath = new DrawPath(this);
+        drawPath.addToScreenDrawOrder("secondary");
+        drawPath.addToScreenDrawOrder("primary");
+        drawPath.setPresentScreenName("primary");
+        drawPath.apply();
 
         try {
             primaryCube = this.createModel3D("primary", "./Mechtatel/Model/Cube/cube.obj");

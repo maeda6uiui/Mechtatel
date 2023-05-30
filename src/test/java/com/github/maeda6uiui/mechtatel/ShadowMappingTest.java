@@ -1,10 +1,11 @@
 package com.github.maeda6uiui.mechtatel;
 
+import com.github.maeda6uiui.mechtatel.core.DrawPath;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -40,27 +41,26 @@ public class ShadowMappingTest extends Mechtatel {
 
     @Override
     public void init() {
-        var ppNaborNames = new ArrayList<String>();
-        ppNaborNames.add("parallel_light");
-        ppNaborNames.add("fog");
-        ppNaborNames.add("shadow_mapping");
-        MttScreen mainScreen = this.createScreen(
-                "main",
-                2048,
-                2048,
-                -1,
-                -1,
-                true,
-                ppNaborNames
-        );
+        var screenCreator = new ScreenCreator(this, "main");
+        screenCreator.addPostProcessingNabor("parallel_light");
+        screenCreator.addPostProcessingNabor("fog");
+        screenCreator.addPostProcessingNabor("shadow_mapping");
+        var mainScreen = screenCreator.create();
 
-        var screenDrawOrder = new ArrayList<String>();
-        screenDrawOrder.add("main");
-        this.setScreenDrawOrder(screenDrawOrder);
+        mainScreen.createParallelLight();
+        mainScreen.getFog().setStart(10.0f);
+        mainScreen.getFog().setEnd(20.0f);
 
-        this.setPresentScreenName("main");
+        var shadowMappingSettings = new ShadowMappingSettings();
+        shadowMappingSettings.setBiasCoefficient(0.002f);
+        mainScreen.setShadowMappingSettings(shadowMappingSettings);
 
         camera = new FreeCamera(mainScreen.getCamera());
+
+        var drawPath = new DrawPath(this);
+        drawPath.addToScreenDrawOrder("main");
+        drawPath.setPresentScreenName("main");
+        drawPath.apply();
 
         cubes = new ArrayList<>();
         cubePositions = new ArrayList<>();
@@ -80,15 +80,6 @@ public class ShadowMappingTest extends Mechtatel {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        mainScreen.createParallelLight();
-
-        mainScreen.getFog().setStart(10.0f);
-        mainScreen.getFog().setEnd(20.0f);
-
-        var shadowMappingSettings = new ShadowMappingSettings();
-        shadowMappingSettings.setBiasCoefficient(0.002f);
-        mainScreen.setShadowMappingSettings(shadowMappingSettings);
     }
 
     @Override

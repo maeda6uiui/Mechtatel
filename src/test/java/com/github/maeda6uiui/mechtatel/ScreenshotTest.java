@@ -1,16 +1,16 @@
 package com.github.maeda6uiui.mechtatel;
 
+import com.github.maeda6uiui.mechtatel.core.DrawPath;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
 import com.github.maeda6uiui.mechtatel.core.component.MttSphere3D;
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class ScreenshotTest extends Mechtatel {
     public ScreenshotTest(MttSettings settings) {
@@ -37,27 +37,22 @@ public class ScreenshotTest extends Mechtatel {
 
     @Override
     public void init() {
-        var ppNaborNames = new ArrayList<String>();
-        ppNaborNames.add("parallel_light");
-        ppNaborNames.add("fog");
-        ppNaborNames.add("shadow_mapping");
-        MttScreen mainScreen = this.createScreen(
-                "main",
-                2048,
-                2048,
-                -1,
-                -1,
-                true,
-                ppNaborNames
-        );
+        var screenCreator = new ScreenCreator(this, "main");
+        screenCreator.addPostProcessingNabor("parallel_light");
+        screenCreator.addPostProcessingNabor("fog");
+        screenCreator.addPostProcessingNabor("shadow_mapping");
+        var mainScreen = screenCreator.create();
 
-        var screenDrawOrder = new ArrayList<String>();
-        screenDrawOrder.add("main");
-        this.setScreenDrawOrder(screenDrawOrder);
-
-        this.setPresentScreenName("main");
+        mainScreen.createParallelLight();
+        mainScreen.getFog().setStart(10.0f);
+        mainScreen.getFog().setEnd(20.0f);
 
         camera = new FreeCamera(mainScreen.getCamera());
+
+        var drawPath = new DrawPath(this);
+        drawPath.addToScreenDrawOrder("main");
+        drawPath.setPresentScreenName("main");
+        drawPath.apply();
 
         try {
             plane = this.createModel3D("main", "./Mechtatel/Model/Plane/plane.obj");
@@ -72,11 +67,6 @@ public class ScreenshotTest extends Mechtatel {
                 new Vector3f(5.0f, 2.0f, 0.0f),
                 2.0f, 32, 32, new Vector4f(1.0f, 0.0f, 1.0f, 1.0f)
         );
-
-        mainScreen.createParallelLight();
-
-        mainScreen.getFog().setStart(10.0f);
-        mainScreen.getFog().setEnd(20.0f);
     }
 
     @Override

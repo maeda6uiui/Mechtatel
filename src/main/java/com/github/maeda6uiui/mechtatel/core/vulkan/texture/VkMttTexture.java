@@ -26,12 +26,15 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class VkMttTexture {
     private static Map<Integer, Boolean> allocationStatus;
+    private static int imageFormat;
 
     static {
         allocationStatus = new HashMap<>();
         for (int i = 0; i < GBufferNabor.MAX_NUM_TEXTURES; i++) {
             allocationStatus.put(i, false);
         }
+
+        imageFormat = VK_FORMAT_R8G8B8A8_SRGB;
     }
 
     private static int allocateTextureIndex() {
@@ -47,6 +50,14 @@ public class VkMttTexture {
         }
 
         return index;
+    }
+
+    public static void setImageFormatToSRGB() {
+        imageFormat = VK_FORMAT_R8G8B8A8_SRGB;
+    }
+
+    public static void setImageFormatToUNORM() {
+        imageFormat = VK_FORMAT_R8G8B8A8_UNORM;
     }
 
     private VkDevice device;
@@ -245,7 +256,7 @@ public class VkMttTexture {
                     height,
                     mipLevels,
                     VK_SAMPLE_COUNT_1_BIT,
-                    VK_FORMAT_R8G8B8A8_UNORM,
+                    imageFormat,
                     VK_IMAGE_TILING_OPTIMAL,
                     VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -312,7 +323,7 @@ public class VkMttTexture {
         textureImageView = ImageViewCreator.createImageView(
                 device,
                 textureImage,
-                VK_FORMAT_R8G8B8A8_UNORM,
+                imageFormat,
                 VK_IMAGE_ASPECT_COLOR_BIT,
                 generateMipmaps ? mipLevels : 1);
     }

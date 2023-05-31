@@ -12,6 +12,16 @@ public class MttTexture {
     private VkMttTexture texture;
     private IMttVulkanInstanceForTexture vulkanInstance;
 
+    public static void setImageFormat(String imageFormat) {
+        if (imageFormat.equals("srgb")) {
+            VkMttTexture.setImageFormatToSRGB();
+        } else if (imageFormat.equals("unorm")) {
+            VkMttTexture.setImageFormatToUNORM();
+        } else {
+            throw new RuntimeException("Unsupported image format specified");
+        }
+    }
+
     public MttTexture(
             IMttVulkanInstanceForTexture vulkanInstance,
             String screenName,

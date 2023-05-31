@@ -1,17 +1,20 @@
 {
-    "window":{
-        "title":"Mechtatel",
-        "width":1280,
-        "height":720,
-        "resizable":true
+    "window": {
+        "title": "Mechtatel",
+        "width": 1280,
+        "height": 720,
+        "resizable": true
     },
-    "system":{
-        "fps":60
+    "system": {
+        "fps": 60
     },
-    "bullet":{
-        "dist":true,
-        "dirname":"./Mechtatel/Bin",
-        "buildType":"Debug",
-        "flavor":"Sp"
+    "rendering": {
+        "imageFormat": "unorm"
+    },
+    "bullet": {
+        "dist": true,
+        "dirname": "./Mechtatel/Bin",
+        "buildType": "Debug",
+        "flavor": "Sp"
     }
 }

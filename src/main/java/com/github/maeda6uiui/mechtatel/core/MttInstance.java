@@ -101,9 +101,7 @@ class MttInstance {
         }
     }
 
-    public MttInstance(
-            IMechtatelForMttInstance mtt,
-            MttSettings settings) {
+    public MttInstance(IMechtatelForMttInstance mtt, MttSettings settings) {
         if (!glfwInit()) {
             throw new RuntimeException("Failed to initialize GLFW");
         }
@@ -143,6 +141,8 @@ class MttInstance {
                 VK_SAMPLE_COUNT_2_BIT);
 
         this.fps = settings.systemSettings.fps;
+
+        MttTexture.setImageFormat(settings.renderingSettings.imageFormat);
 
         this.mtt = mtt;
 

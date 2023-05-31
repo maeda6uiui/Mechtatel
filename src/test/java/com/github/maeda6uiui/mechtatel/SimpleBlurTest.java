@@ -36,10 +36,7 @@ public class SimpleBlurTest extends Mechtatel {
     public void init() {
         var mainScreenCreator = new ScreenCreator(this, "main");
         mainScreenCreator.addPostProcessingNabor("simple_blur");
-        mainScreenCreator.setSamplerAddressMode("clamp_to_edge");
         mainScreen = mainScreenCreator.create();
-        mainScreen.getCamera().setZNear(200.0f);
-        mainScreen.getCamera().setZFar(2000.0f);
 
         var drawPath = new DrawPath(this);
         drawPath.addToScreenDrawOrder("main");
@@ -47,7 +44,7 @@ public class SimpleBlurTest extends Mechtatel {
         drawPath.apply();
 
         try {
-            mainModel = this.createModel3D("main", "./Mechtatel/Standard/Model/Skybox/skybox.obj");
+            mainModel = this.createModel3D("main", "./Mechtatel/Standard/Model/Cube/cube.obj");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -60,6 +57,8 @@ public class SimpleBlurTest extends Mechtatel {
         var simpleBlurInfo = new SimpleBlurInfo();
         simpleBlurInfo.setTextureWidth(mainScreen.getScreenWidth());
         simpleBlurInfo.setTextureHeight(mainScreen.getScreenHeight());
+        simpleBlurInfo.setBlurSize(10);
+        simpleBlurInfo.setStride(1);
         mainScreen.setSimpleBlurInfo(simpleBlurInfo);
 
         camera.translate(

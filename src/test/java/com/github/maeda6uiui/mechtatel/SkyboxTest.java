@@ -70,10 +70,9 @@ public class SkyboxTest extends Mechtatel {
         drawPath.setPresentScreenName("final");
         drawPath.apply();
 
-        var dummyTexture = this.createTexture("final", "./Mechtatel/Texture/lenna.jpg", false);
         texturedQuad = this.createTexturedQuad2D(
                 "final",
-                dummyTexture,
+                "./Mechtatel/Texture/lenna.jpg",
                 new Vector2f(-1.0f, -1.0f),
                 new Vector2f(1.0f, 1.0f),
                 0.0f

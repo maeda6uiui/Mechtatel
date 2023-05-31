@@ -18,7 +18,7 @@ public class MttTexture {
         } else if (imageFormat.equals("unorm")) {
             VkMttTexture.setImageFormatToUNORM();
         } else {
-            throw new RuntimeException("Unsupported image format specified");
+            throw new IllegalArgumentException("Unsupported image format specified");
         }
     }
 

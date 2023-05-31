@@ -235,8 +235,8 @@ class Pass1Nabor extends Nabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/ShadowMapping/pass_1.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/ShadowMapping/pass_1.frag";
+            final String vertShaderFilepath = "./Mechtatel/Standard/Shader/PostProcessing/ShadowMapping/pass_1.vert";
+            final String fragShaderFilepath = "./Mechtatel/Standard/Shader/PostProcessing/ShadowMapping/pass_1.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

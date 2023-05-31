@@ -352,8 +352,8 @@ public class PointLightNabor extends PostProcessingNabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/post_processing.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/PostProcessing/point_light.frag";
+            final String vertShaderFilepath = "./Mechtatel/Standard/Shader/PostProcessing/post_processing.vert";
+            final String fragShaderFilepath = "./Mechtatel/Standard/Shader/PostProcessing/point_light.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

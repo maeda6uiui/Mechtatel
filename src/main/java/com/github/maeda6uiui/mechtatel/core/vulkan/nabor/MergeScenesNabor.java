@@ -462,8 +462,8 @@ public class MergeScenesNabor extends Nabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/MergeScenes/merge_scenes.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/MergeScenes/merge_scenes.frag";
+            final String vertShaderFilepath = "./Mechtatel/Standard/Shader/MergeScenes/merge_scenes.vert";
+            final String fragShaderFilepath = "./Mechtatel/Standard/Shader/MergeScenes/merge_scenes.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

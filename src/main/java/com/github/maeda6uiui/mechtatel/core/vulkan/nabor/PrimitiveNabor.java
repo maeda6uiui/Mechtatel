@@ -404,8 +404,8 @@ public class PrimitiveNabor extends Nabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/Primitive/primitive.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/Primitive/primitive.frag";
+            final String vertShaderFilepath = "./Mechtatel/Standard/Shader/Primitive/primitive.vert";
+            final String fragShaderFilepath = "./Mechtatel/Standard/Shader/Primitive/primitive.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

@@ -421,8 +421,8 @@ class AlbedoNabor extends Nabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/GBuffer/albedo.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/GBuffer/albedo.frag";
+            final String vertShaderFilepath = "./Mechtatel/Standard/Shader/GBuffer/albedo.vert";
+            final String fragShaderFilepath = "./Mechtatel/Standard/Shader/GBuffer/albedo.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

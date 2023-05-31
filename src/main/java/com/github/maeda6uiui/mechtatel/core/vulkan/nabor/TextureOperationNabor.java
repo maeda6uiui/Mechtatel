@@ -393,8 +393,8 @@ public class TextureOperationNabor extends Nabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/TextureOperation/texture_operation.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/TextureOperation/texture_operation.frag";
+            final String vertShaderFilepath = "./Mechtatel/Standard/Shader/TextureOperation/texture_operation.vert";
+            final String fragShaderFilepath = "./Mechtatel/Standard/Shader/TextureOperation/texture_operation.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

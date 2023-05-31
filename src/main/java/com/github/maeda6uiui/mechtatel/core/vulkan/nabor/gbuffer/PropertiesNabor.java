@@ -369,8 +369,8 @@ class PropertiesNabor extends Nabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Shader/Standard/GBuffer/properties.vert";
-            final String fragShaderFilepath = "./Mechtatel/Shader/Standard/GBuffer/properties.frag";
+            final String vertShaderFilepath = "./Mechtatel/Standard/Shader/GBuffer/properties.vert";
+            final String fragShaderFilepath = "./Mechtatel/Standard/Shader/GBuffer/properties.frag";
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

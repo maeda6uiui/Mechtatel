@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.screen;
 
+import com.github.maeda6uiui.mechtatel.core.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
@@ -40,6 +41,7 @@ public class MttScreen {
     private List<Spotlight> spotlights;
     private Vector3f spotlightAmbientColor;
     private ShadowMappingSettings shadowMappingSettings;
+    private SimpleBlurInfo simpleBlurInfo;
 
     public MttScreen(
             MttVulkanInstance vulkanInstance,
@@ -68,6 +70,7 @@ public class MttScreen {
         pointLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
         spotlightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
         shadowMappingSettings = new ShadowMappingSettings();
+        simpleBlurInfo = new SimpleBlurInfo();
 
         camera = new Camera();
         fog = new Fog();
@@ -92,8 +95,17 @@ public class MttScreen {
                 pointLightAmbientColor,
                 spotlights,
                 spotlightAmbientColor,
-                shadowMappingSettings
+                shadowMappingSettings,
+                simpleBlurInfo
         );
+    }
+
+    public int getScreenWidth() {
+        return screen.getScreenWidth();
+    }
+
+    public int getScreenHeight() {
+        return screen.getScreenHeight();
     }
 
     public void setShouldAutoUpdateCameraAspect(boolean shouldAutoUpdateCameraAspect) {
@@ -160,6 +172,14 @@ public class MttScreen {
 
     public void setShadowMappingSettings(ShadowMappingSettings shadowMappingSettings) {
         this.shadowMappingSettings = shadowMappingSettings;
+    }
+
+    public SimpleBlurInfo getSimpleBlurInfo() {
+        return simpleBlurInfo;
+    }
+
+    public void setSimpleBlurInfo(SimpleBlurInfo simpleBlurInfo) {
+        this.simpleBlurInfo = simpleBlurInfo;
     }
 
     public int getNumParallelLights() {

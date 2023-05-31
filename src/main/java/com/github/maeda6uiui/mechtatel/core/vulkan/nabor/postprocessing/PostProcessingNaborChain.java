@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 
+import com.github.maeda6uiui.mechtatel.core.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.LightingInfo;
@@ -13,6 +14,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow.ShadowMappingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow.ShadowMappingNaborRunner;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SimpleBlurInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import org.joml.Vector3f;
@@ -107,6 +109,9 @@ public class PostProcessingNaborChain {
                 case "spotlight":
                     ppNabor = new SpotlightNabor(device);
                     break;
+                case "simple_blur":
+                    ppNabor = new SimpleBlurNabor(device);
+                    break;
                 default:
                     String msg = String.format("Unsupported nabor specified: %s", naborName);
                     throw new IllegalArgumentException(msg);
@@ -169,6 +174,7 @@ public class PostProcessingNaborChain {
             List<Spotlight> spotlights,
             Vector3f spotlightAmbientColor,
             ShadowMappingSettings shadowMappingSettings,
+            SimpleBlurInfo simpleBlurInfo,
             MergeScenesNabor lastMergeNabor,
             List<VkMttComponent> components) {
         PostProcessingNabor previousPPNabor = null;
@@ -268,6 +274,13 @@ public class PostProcessingNaborChain {
                         var lightUBO = new SpotlightUBO(spotlights.get(i));
                         lightUBO.update(device, lightUBOMemory, i);
                     }
+                }
+                break;
+
+                case "simple_blur": {
+                    long blurInfoUBOMemory = ppNabor.getUniformBufferMemory(0);
+                    var blurInfoUBO = new SimpleBlurInfoUBO(simpleBlurInfo);
+                    blurInfoUBO.update(device, blurInfoUBOMemory);
                 }
                 break;
 

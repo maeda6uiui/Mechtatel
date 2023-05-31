@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
+import com.github.maeda6uiui.mechtatel.core.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex3D;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex3DUV;
@@ -420,7 +421,8 @@ public class MttVulkanInstance
             Vector3f pointLightAmbientColor,
             List<Spotlight> spotlights,
             Vector3f spotlightAmbientColor,
-            ShadowMappingSettings shadowMappingSettings) {
+            ShadowMappingSettings shadowMappingSettings,
+            SimpleBlurInfo simpleBlurInfo) {
         screen.run(
                 backgroundColor,
                 camera,
@@ -432,6 +434,7 @@ public class MttVulkanInstance
                 spotlights,
                 spotlightAmbientColor,
                 shadowMappingSettings,
+                simpleBlurInfo,
                 components
         );
     }

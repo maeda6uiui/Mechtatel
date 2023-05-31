@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.screen;
 
+import com.github.maeda6uiui.mechtatel.core.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
@@ -319,6 +320,14 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
         if (ppNaborChain != null) {
             ppNaborChain.cleanup();
         }
+    }
+
+    public int getScreenWidth() {
+        return gBufferNabor.getExtent(0).width();
+    }
+
+    public int getScreenHeight() {
+        return gBufferNabor.getExtent(0).height();
     }
 
     @Override
@@ -718,6 +727,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
             List<Spotlight> spotlights,
             Vector3f spotlightAmbientColor,
             ShadowMappingSettings shadowMappingSettings,
+            SimpleBlurInfo simpleBlurInfo,
             List<VkMttComponent> components) {
         this.runGBufferNabor(backgroundColor, camera, components);
         this.runPrimitiveNabor(backgroundColor, camera, components);
@@ -741,6 +751,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
                     spotlights,
                     spotlightAmbientColor,
                     shadowMappingSettings,
+                    simpleBlurInfo,
                     mergeScenesFillNabor,
                     components
             );

@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
+import com.github.maeda6uiui.mechtatel.core.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
@@ -29,5 +30,6 @@ public interface IMttVulkanInstanceForScreen {
             Vector3f pointLightAmbientColor,
             List<Spotlight> spotlights,
             Vector3f spotlightAmbientColor,
-            ShadowMappingSettings shadowMappingSettings);
+            ShadowMappingSettings shadowMappingSettings,
+            SimpleBlurInfo simpleBlurInfo);
 }

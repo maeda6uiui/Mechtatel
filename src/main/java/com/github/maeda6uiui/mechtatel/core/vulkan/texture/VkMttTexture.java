@@ -106,7 +106,7 @@ public class VkMttTexture {
     private void generateMipmaps(long commandPool, VkQueue graphicsQueue) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkFormatProperties formatProperties = VkFormatProperties.malloc(stack);
-            vkGetPhysicalDeviceFormatProperties(device.getPhysicalDevice(), VK_FORMAT_R8G8B8A8_SRGB, formatProperties);
+            vkGetPhysicalDeviceFormatProperties(device.getPhysicalDevice(), VK_FORMAT_R8G8B8A8_UNORM, formatProperties);
 
             if ((formatProperties.optimalTilingFeatures() & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT) == 0) {
                 throw new RuntimeException("Texture image format does not support linear blitting");
@@ -245,7 +245,7 @@ public class VkMttTexture {
                     height,
                     mipLevels,
                     VK_SAMPLE_COUNT_1_BIT,
-                    VK_FORMAT_R8G8B8A8_SRGB,
+                    VK_FORMAT_R8G8B8A8_UNORM,
                     VK_IMAGE_TILING_OPTIMAL,
                     VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,

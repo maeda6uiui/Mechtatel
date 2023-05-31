@@ -74,6 +74,9 @@ public class PostProcessingNaborChain {
             int depthImageHeight,
             int depthImageAspect,
             int colorImageFormat,
+            int samplerFilter,
+            int samplerMipmapMode,
+            int samplerAddressMode,
             VkExtent2D extent,
             List<String> naborNames,
             Map<String, List<Long>> vertShaderModulesStorage,
@@ -123,6 +126,9 @@ public class PostProcessingNaborChain {
 
                 ppNabor.compile(
                         colorImageFormat,
+                        samplerFilter,
+                        samplerMipmapMode,
+                        samplerAddressMode,
                         extent,
                         commandPool,
                         graphicsQueue,
@@ -133,6 +139,9 @@ public class PostProcessingNaborChain {
             } else {
                 ppNabor.compile(
                         colorImageFormat,
+                        samplerFilter,
+                        samplerMipmapMode,
+                        samplerAddressMode,
                         extent,
                         commandPool,
                         graphicsQueue,

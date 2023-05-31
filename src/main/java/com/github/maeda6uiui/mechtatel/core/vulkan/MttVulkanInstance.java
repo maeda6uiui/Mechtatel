@@ -106,6 +106,9 @@ public class MttVulkanInstance
             presentNabor = new PresentNabor(device);
             presentNabor.compile(
                     swapchain.getSwapchainImageFormat(),
+                    VK_FILTER_NEAREST,
+                    VK_SAMPLER_MIPMAP_MODE_NEAREST,
+                    VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
                     swapchain.getSwapchainExtent(),
                     commandPool,
                     graphicsQueue,
@@ -175,6 +178,9 @@ public class MttVulkanInstance
         textureOperationNabor = new TextureOperationNabor(device);
         textureOperationNabor.compile(
                 swapchain.getSwapchainImageFormat(),
+                VK_FILTER_NEAREST,
+                VK_SAMPLER_MIPMAP_MODE_NEAREST,
+                VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
                 swapchain.getSwapchainExtent(),
                 commandPool,
                 graphicsQueue,
@@ -256,6 +262,9 @@ public class MttVulkanInstance
             int screenWidth,
             int screenHeight,
             boolean shouldChangeExtentOnRecreate,
+            String samplerFilter,
+            String samplerMipmapMode,
+            String samplerAddressMode,
             List<String> ppNaborNames) {
         VkExtent2D extent = VkExtent2D.create();
         if (screenWidth < 0) {
@@ -269,6 +278,37 @@ public class MttVulkanInstance
             extent.height(screenHeight);
         }
 
+        int iSamplerFilter;
+        if (samplerFilter.equals("nearest")) {
+            iSamplerFilter = VK_FILTER_NEAREST;
+        } else if (samplerFilter.equals("linear")) {
+            iSamplerFilter = VK_FILTER_LINEAR;
+        } else {
+            throw new IllegalArgumentException("Unsupported sampler filter specified: " + samplerFilter);
+        }
+
+        int iSamplerMipmapMode;
+        if (samplerMipmapMode.equals("nearest")) {
+            iSamplerMipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
+        } else if (samplerMipmapMode.equals("linear")) {
+            iSamplerMipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+        } else {
+            throw new IllegalArgumentException("Unsupported sampler mipmap mode specified: " + samplerMipmapMode);
+        }
+
+        int iSamplerAddressMode;
+        if (samplerAddressMode.equals("repeat")) {
+            iSamplerAddressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        } else if (samplerAddressMode.equals("mirrored_repeat")) {
+            iSamplerAddressMode = VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
+        } else if (samplerAddressMode.equals("clamp_to_edge")) {
+            iSamplerAddressMode = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+        } else if (samplerAddressMode.equals("clamp_to_border")) {
+            iSamplerAddressMode = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+        } else {
+            throw new IllegalArgumentException("Unsupported sampler address mode specified: " + samplerAddressMode);
+        }
+
         var screen = new VkMttScreen(
                 device,
                 commandPool,
@@ -279,6 +319,9 @@ public class MttVulkanInstance
                 depthImageAspect,
                 swapchain.getSwapchainImageFormat(),
                 albedoMsaaSamples,
+                iSamplerFilter,
+                iSamplerMipmapMode,
+                iSamplerAddressMode,
                 extent,
                 shouldChangeExtentOnRecreate,
                 ppNaborNames,

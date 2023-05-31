@@ -17,5 +17,8 @@ public interface IMechtatelForScreenCreator {
             int screenWidth,
             int screenHeight,
             boolean shouldChangeExtentOnRecreate,
+            String samplerFilter,
+            String samplerMipmapMode,
+            String samplerAddressMode,
             List<String> ppNaborNames);
 }

@@ -559,6 +559,9 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
             int screenWidth,
             int screenHeight,
             boolean shouldChangeExtentOnRecreate,
+            String samplerFilter,
+            String samplerMipmapMode,
+            String samplerAddressMode,
             List<String> ppNaborNames) {
         return instance.createScreen(
                 screenName,
@@ -567,6 +570,9 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
                 screenWidth,
                 screenHeight,
                 shouldChangeExtentOnRecreate,
+                samplerFilter,
+                samplerMipmapMode,
+                samplerAddressMode,
                 ppNaborNames
         );
     }

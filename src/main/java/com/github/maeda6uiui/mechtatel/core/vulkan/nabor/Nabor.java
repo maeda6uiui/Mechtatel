@@ -401,22 +401,22 @@ public class Nabor {
     }
 
     //===== Methods executed in compile() and recreate() =====
-    protected void createTextureSamplers() {
+    protected void createTextureSamplers(int filter, int mipmapMode, int addressMode) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkSamplerCreateInfo samplerInfo = VkSamplerCreateInfo.calloc(stack);
             samplerInfo.sType(VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO);
-            samplerInfo.magFilter(VK_FILTER_LINEAR);
-            samplerInfo.minFilter(VK_FILTER_LINEAR);
-            samplerInfo.addressModeU(VK_SAMPLER_ADDRESS_MODE_REPEAT);
-            samplerInfo.addressModeV(VK_SAMPLER_ADDRESS_MODE_REPEAT);
-            samplerInfo.addressModeW(VK_SAMPLER_ADDRESS_MODE_REPEAT);
+            samplerInfo.magFilter(filter);
+            samplerInfo.minFilter(filter);
+            samplerInfo.addressModeU(addressMode);
+            samplerInfo.addressModeV(addressMode);
+            samplerInfo.addressModeW(addressMode);
             samplerInfo.anisotropyEnable(true);
             samplerInfo.maxAnisotropy(16.0f);
             samplerInfo.borderColor(VK_BORDER_COLOR_INT_OPAQUE_BLACK);
             samplerInfo.unnormalizedCoordinates(false);
             samplerInfo.compareEnable(false);
             samplerInfo.compareOp(VK_COMPARE_OP_ALWAYS);
-            samplerInfo.mipmapMode(VK_SAMPLER_MIPMAP_MODE_LINEAR);
+            samplerInfo.mipmapMode(mipmapMode);
             samplerInfo.minLod(0.0f);
             samplerInfo.maxLod(10.0f);
             samplerInfo.mipLodBias(0.0f);
@@ -549,6 +549,9 @@ public class Nabor {
     //==========
     public void compile(
             int colorImageFormat,
+            int samplerFilter,
+            int samplerMipmapMode,
+            int samplerAddressMode,
             VkExtent2D extent,
             long commandPool,
             VkQueue graphicsQueue,
@@ -559,7 +562,7 @@ public class Nabor {
             return;
         }
 
-        this.createTextureSamplers();
+        this.createTextureSamplers(samplerFilter, samplerMipmapMode, samplerAddressMode);
         this.createUniformBuffers(descriptorCount);
         this.createRenderPass(colorImageFormat);
         this.createDescriptorSetLayouts();
@@ -572,6 +575,9 @@ public class Nabor {
 
     public void compile(
             int colorImageFormat,
+            int samplerFilter,
+            int samplerMipmapMode,
+            int samplerAddressMode,
             VkExtent2D extent,
             long commandPool,
             VkQueue graphicsQueue,
@@ -582,7 +588,15 @@ public class Nabor {
         this.fragShaderModules = fragShaderModules;
         isSharedShaderModules = true;
 
-        this.compile(colorImageFormat, extent, commandPool, graphicsQueue, descriptorCount);
+        this.compile(
+                colorImageFormat,
+                samplerFilter,
+                samplerMipmapMode,
+                samplerAddressMode,
+                extent,
+                commandPool,
+                graphicsQueue,
+                descriptorCount);
     }
 
     public void recreate(int colorImageFormat, VkExtent2D extent) {

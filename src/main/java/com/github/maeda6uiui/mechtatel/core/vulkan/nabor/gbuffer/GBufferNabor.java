@@ -37,26 +37,64 @@ public class GBufferNabor extends Nabor {
     @Override
     public void compile(
             int colorImageFormat,
+            int samplerFilter,
+            int samplerMipmapMode,
+            int samplerAddressMode,
             VkExtent2D extent,
             long commandPool,
             VkQueue graphicsQueue,
             int descriptorCount) {
-        super.compile(colorImageFormat, extent, commandPool, graphicsQueue, descriptorCount);
+        super.compile(
+                colorImageFormat,
+                samplerFilter,
+                samplerMipmapMode,
+                samplerAddressMode,
+                extent,
+                commandPool,
+                graphicsQueue,
+                descriptorCount);
 
-        albedoNabor.compile(colorImageFormat, extent, commandPool, graphicsQueue, descriptorCount);
-        propertiesNabor.compile(colorImageFormat, extent, commandPool, graphicsQueue, descriptorCount);
+        albedoNabor.compile(
+                colorImageFormat,
+                samplerFilter,
+                samplerMipmapMode,
+                samplerAddressMode,
+                extent,
+                commandPool,
+                graphicsQueue,
+                descriptorCount);
+        propertiesNabor.compile(
+                colorImageFormat,
+                samplerFilter,
+                samplerMipmapMode,
+                samplerAddressMode,
+                extent,
+                commandPool,
+                graphicsQueue,
+                descriptorCount);
     }
 
     @Override
     public void compile(
             int colorImageFormat,
+            int samplerFilter,
+            int samplerMipmapMode,
+            int samplerAddressMode,
             VkExtent2D extent,
             long commandPool,
             VkQueue graphicsQueue,
             int descriptorCount,
             List<Long> vertShaderModules,
             List<Long> fragShaderModules) {
-        super.compile(colorImageFormat, extent, commandPool, graphicsQueue, descriptorCount);
+        super.compile(
+                colorImageFormat,
+                samplerFilter,
+                samplerMipmapMode,
+                samplerAddressMode,
+                extent,
+                commandPool,
+                graphicsQueue,
+                descriptorCount);
 
         var albedoVertShaderModules = new ArrayList<Long>();
         var albedoFragShaderModules = new ArrayList<Long>();
@@ -70,6 +108,9 @@ public class GBufferNabor extends Nabor {
 
         albedoNabor.compile(
                 colorImageFormat,
+                samplerFilter,
+                samplerMipmapMode,
+                samplerAddressMode,
                 extent,
                 commandPool,
                 graphicsQueue,
@@ -79,6 +120,9 @@ public class GBufferNabor extends Nabor {
         );
         propertiesNabor.compile(
                 colorImageFormat,
+                samplerFilter,
+                samplerMipmapMode,
+                samplerAddressMode,
                 extent,
                 commandPool,
                 graphicsQueue,
@@ -139,7 +183,7 @@ public class GBufferNabor extends Nabor {
     }
 
     @Override
-    public long getDummyImageView(){
+    public long getDummyImageView() {
         return albedoNabor.getDummyImageView();
     }
 

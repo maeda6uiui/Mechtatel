@@ -11,6 +11,7 @@ import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.lwjgl.vulkan.VK10.VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
 import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_1_BIT;
 
 /**
@@ -40,16 +41,43 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     @Override
     public void compile(
             int colorImageFormat,
+            int samplerFilter,
+            int samplerMipmapMode,
+            int samplerAddressMode,
             VkExtent2D extent,
             long commandPool,
             VkQueue graphicsQueue,
             int descriptorCount) {
-        super.compile(colorImageFormat, extent, commandPool, graphicsQueue, descriptorCount);
+        super.compile(
+                colorImageFormat,
+                samplerFilter,
+                samplerMipmapMode,
+                samplerAddressMode,
+                extent,
+                commandPool,
+                graphicsQueue,
+                descriptorCount);
 
         VkExtent2D depthExtent = VkExtent2D.create().set(depthImageWidth, depthImageHeight);
-        pass1.compile(colorImageFormat, depthExtent, commandPool, graphicsQueue, descriptorCount);
+        pass1.compile(
+                colorImageFormat,
+                samplerFilter,
+                samplerMipmapMode,
+                VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
+                depthExtent,
+                commandPool,
+                graphicsQueue,
+                descriptorCount);
 
-        pass2.compile(colorImageFormat, extent, commandPool, graphicsQueue, descriptorCount);
+        pass2.compile(
+                colorImageFormat,
+                samplerFilter,
+                samplerMipmapMode,
+                VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
+                extent,
+                commandPool,
+                graphicsQueue,
+                descriptorCount);
     }
 
     @Override

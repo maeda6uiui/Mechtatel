@@ -165,6 +165,9 @@ class MttInstance {
                 -1,
                 -1,
                 true,
+                "nearest",
+                "nearest",
+                "repeat",
                 null
         );
         screens.put("default", defaultScreen);
@@ -808,6 +811,9 @@ class MttInstance {
             int screenWidth,
             int screenHeight,
             boolean shouldChangeExtentOnRecreate,
+            String samplerFilter,
+            String samplerMipmapMode,
+            String samplerAddressMode,
             List<String> ppNaborNames) {
         if (screens.containsKey(screenName)) {
             screens.get(screenName).cleanup();
@@ -822,6 +828,9 @@ class MttInstance {
                 screenWidth,
                 screenHeight,
                 shouldChangeExtentOnRecreate,
+                samplerFilter,
+                samplerMipmapMode,
+                samplerAddressMode,
                 ppNaborNames
         );
 

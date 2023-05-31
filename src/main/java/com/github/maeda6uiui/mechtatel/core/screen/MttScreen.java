@@ -51,6 +51,9 @@ public class MttScreen {
             int screenWidth,
             int screenHeight,
             boolean shouldChangeExtentOnRecreate,
+            String samplerFilter,
+            String samplerMipmapMode,
+            String samplerAddressMode,
             List<String> ppNaborNames) {
         screen = vulkanInstance.createScreen(
                 screenName,
@@ -59,6 +62,9 @@ public class MttScreen {
                 screenWidth,
                 screenHeight,
                 shouldChangeExtentOnRecreate,
+                samplerFilter,
+                samplerMipmapMode,
+                samplerAddressMode,
                 (ppNaborNames != null && ppNaborNames.size() != 0) ? ppNaborNames : null
         );
         shouldAutoUpdateCameraAspect = true;

@@ -28,14 +28,14 @@ class Pass2Nabor extends PostProcessingNabor {
     }
 
     @Override
-    protected void createTextureSamplers() {
+    protected void createTextureSamplers(int filter, int mipmapMode, int addressMode) {
         VkDevice device = this.getDevice();
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkSamplerCreateInfo samplerInfo = VkSamplerCreateInfo.calloc(stack);
             samplerInfo.sType(VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO);
-            samplerInfo.magFilter(VK_FILTER_LINEAR);
-            samplerInfo.minFilter(VK_FILTER_LINEAR);
+            samplerInfo.magFilter(filter);
+            samplerInfo.minFilter(filter);
             samplerInfo.addressModeU(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
             samplerInfo.addressModeV(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
             samplerInfo.addressModeW(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER);
@@ -45,7 +45,7 @@ class Pass2Nabor extends PostProcessingNabor {
             samplerInfo.unnormalizedCoordinates(false);
             samplerInfo.compareEnable(false);
             samplerInfo.compareOp(VK_COMPARE_OP_ALWAYS);
-            samplerInfo.mipmapMode(VK_SAMPLER_MIPMAP_MODE_LINEAR);
+            samplerInfo.mipmapMode(mipmapMode);
             samplerInfo.minLod(0.0f);
             samplerInfo.maxLod(10.0f);
             samplerInfo.mipLodBias(0.0f);

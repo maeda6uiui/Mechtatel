@@ -19,6 +19,9 @@ public class ScreenCreator {
     private int screenWidth;
     private int screenHeight;
     private boolean shouldChangeExtentOnRecreate;
+    private String samplerFilter;
+    private String samplerMipmapMode;
+    private String samplerAddressMode;
     private List<String> ppNaborNames;
 
     public ScreenCreator(IMechtatelForScreenCreator mtt, String screenName) {
@@ -30,6 +33,9 @@ public class ScreenCreator {
         screenWidth = -1;
         screenHeight = -1;
         shouldChangeExtentOnRecreate = true;
+        samplerFilter = "nearest";
+        samplerMipmapMode = "nearest";
+        samplerAddressMode = "repeat";
         ppNaborNames = new ArrayList<>();
     }
 
@@ -39,6 +45,9 @@ public class ScreenCreator {
         screenWidth = -1;
         screenHeight = -1;
         shouldChangeExtentOnRecreate = true;
+        samplerFilter = "nearest";
+        samplerMipmapMode = "nearest";
+        samplerAddressMode = "repeat";
         ppNaborNames.clear();
     }
 
@@ -54,6 +63,18 @@ public class ScreenCreator {
 
     public void setShouldChangeExtentOnRecreate(boolean shouldChangeExtentOnRecreate) {
         this.shouldChangeExtentOnRecreate = shouldChangeExtentOnRecreate;
+    }
+
+    public void setSamplerFilter(String samplerFilter) {
+        this.samplerFilter = samplerFilter;
+    }
+
+    public void setSamplerMipmapMode(String samplerMipmapMode) {
+        this.samplerMipmapMode = samplerMipmapMode;
+    }
+
+    public void setSamplerAddressMode(String samplerAddressMode) {
+        this.samplerAddressMode = samplerAddressMode;
     }
 
     public void clearPostProcessingNabors() {
@@ -72,6 +93,9 @@ public class ScreenCreator {
                 screenWidth,
                 screenHeight,
                 shouldChangeExtentOnRecreate,
+                samplerFilter,
+                samplerMipmapMode,
+                samplerAddressMode,
                 ppNaborNames
         );
         return screen;

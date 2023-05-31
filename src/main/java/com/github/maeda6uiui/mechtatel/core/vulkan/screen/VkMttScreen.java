@@ -68,6 +68,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
             int depthImageAspect,
             int colorImageFormat,
             int albedoMsaaSamples,
+            int samplerFilter,
+            int samplerMipmapMode,
+            int samplerAddressMode,
             VkExtent2D extent,
             boolean shouldChangeExtentOnRecreate,
             List<String> ppNaborNames,
@@ -91,6 +94,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
 
             gBufferNabor.compile(
                     colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
                     extent,
                     commandPool,
                     graphicsQueue,
@@ -101,6 +107,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
         } else {
             gBufferNabor.compile(
                     colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
                     extent,
                     commandPool,
                     graphicsQueue,
@@ -125,6 +134,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
 
             primitiveNabor.compile(
                     colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
                     extent,
                     commandPool,
                     graphicsQueue,
@@ -135,6 +147,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
         } else {
             primitiveNabor.compile(
                     colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
                     extent,
                     commandPool,
                     graphicsQueue,
@@ -159,6 +174,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
 
             primitiveFillNabor.compile(
                     colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
                     extent,
                     commandPool,
                     graphicsQueue,
@@ -169,6 +187,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
         } else {
             primitiveFillNabor.compile(
                     colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
                     extent,
                     commandPool,
                     graphicsQueue,
@@ -192,6 +213,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
 
             mergeScenesNabor.compile(
                     colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
                     extent,
                     commandPool,
                     graphicsQueue,
@@ -202,6 +226,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
         } else {
             mergeScenesNabor.compile(
                     colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
                     extent,
                     commandPool,
                     graphicsQueue,
@@ -225,6 +252,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
 
             mergeScenesFillNabor.compile(
                     colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
                     extent,
                     commandPool,
                     graphicsQueue,
@@ -235,6 +265,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
         } else {
             mergeScenesFillNabor.compile(
                     colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
                     extent,
                     commandPool,
                     graphicsQueue,
@@ -256,6 +289,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
                     depthImageHeight,
                     depthImageAspect,
                     colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
                     extent,
                     ppNaborNames,
                     new HashMap<>(vertShaderModulesStorage),

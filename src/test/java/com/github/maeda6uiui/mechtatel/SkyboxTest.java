@@ -85,6 +85,28 @@ public class SkyboxTest extends Mechtatel {
             e.printStackTrace();
         }
 
+        var texNx = this.createTexture(
+                "skybox", "./Mechtatel/Standard/Model/Skybox/Hill/nx.png", false);
+        var texNy = this.createTexture(
+                "skybox", "./Mechtatel/Standard/Model/Skybox/Hill/ny.png", false);
+        var texNz = this.createTexture(
+                "skybox", "./Mechtatel/Standard/Model/Skybox/Hill/nz.png", false);
+        var texPx = this.createTexture(
+                "skybox", "./Mechtatel/Standard/Model/Skybox/Hill/px.png", false);
+        var texPy = this.createTexture(
+                "skybox", "./Mechtatel/Standard/Model/Skybox/Hill/py.png", false);
+        var texPz = this.createTexture(
+                "skybox", "./Mechtatel/Standard/Model/Skybox/Hill/pz.png", false);
+
+        skyboxModel.replaceTexture(0, texPx);
+        skyboxModel.replaceTexture(1, texNz);
+        skyboxModel.replaceTexture(2, texNx);
+        skyboxModel.replaceTexture(3, texPz);
+        skyboxModel.replaceTexture(4, texPy);
+        skyboxModel.replaceTexture(5, texNy);
+
+        this.createPositiveAxesLine3DSet(10.0f);
+
         camera = new FreeCamera(mainScreen.getCamera());
     }
 

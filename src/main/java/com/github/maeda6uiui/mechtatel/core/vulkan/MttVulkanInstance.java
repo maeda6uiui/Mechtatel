@@ -99,7 +99,6 @@ public class MttVulkanInstance
                     surface,
                     width.get(0),
                     height.get(0));
-            System.out.println(swapchain.getSwapchainImageFormat());
         }
 
         //Create a present nabor

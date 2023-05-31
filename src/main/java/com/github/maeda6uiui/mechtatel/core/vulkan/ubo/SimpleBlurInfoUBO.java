@@ -17,22 +17,25 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda6uiui
  */
 public class SimpleBlurInfoUBO {
-    public static final int SIZEOF = 3 * SIZEOF_INT;
+    public static final int SIZEOF = 4 * SIZEOF_INT;
 
     private int textureWidth;
     private int textureHeight;
+    private int blurSize;
     private int stride;
 
     public SimpleBlurInfoUBO(SimpleBlurInfo blurInfo) {
         textureWidth = blurInfo.getTextureWidth();
         textureHeight = blurInfo.getTextureHeight();
+        blurSize = blurInfo.getBlurSize();
         stride = blurInfo.getStride();
     }
 
     private void memcpy(ByteBuffer buffer) {
         buffer.putInt(0, textureWidth);
         buffer.putInt(SIZEOF_INT, textureHeight);
-        buffer.putInt(SIZEOF_INT * 2, stride);
+        buffer.putInt(SIZEOF_INT * 2, blurSize);
+        buffer.putInt(SIZEOF_INT * 3, stride);
 
         buffer.rewind();
     }

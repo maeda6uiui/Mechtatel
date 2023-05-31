@@ -4,6 +4,7 @@
 layout(set=0,binding=0) uniform BlurInfoUBO{
     int textureWidth;
     int textureHeight;
+    int blurSize;
     int stride;
 }blurInfo;
 layout(set=1,binding=0) uniform texture2D albedoTexture;
@@ -21,12 +22,13 @@ void main(){
     float texelSizeV=1.0/blurInfo.textureHeight;
 
     vec4 sum=vec4(0.0);
-    for(int i=0;i<blurInfo.stride;i++){
-        sum+=texture(sampler2D(albedoTexture,textureSampler),fragTexCoords+vec2(texelSizeH*i,0.0));
-    }
-    for(int i=0;i<blurInfo.stride;i++){
-        sum+=texture(sampler2D(albedoTexture,textureSampler),fragTexCoords+vec2(0.0,texelSizeV*i));
+    int count=0;
+    for(int x=0;x<blurInfo.blurSize;x+=blurInfo.stride){
+        for(int y=0;y<blurInfo.blurSize;y+=blurInfo.stride){
+            sum+=texture(sampler2D(albedoTexture,textureSampler),fragTexCoords+vec2(texelSizeH*x,texelSizeV*y));
+            count+=1;
+        }
     }
 
-    outColor=sum/pow(blurInfo.stride,2.0);
+    outColor=sum/count;
 }

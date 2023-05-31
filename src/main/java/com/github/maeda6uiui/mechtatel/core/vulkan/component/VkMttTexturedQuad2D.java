@@ -80,7 +80,7 @@ public class VkMttTexturedQuad2D extends VkMttComponent {
         this.createBuffers(commandPool, graphicsQueue, vertices);
 
         this.setComponentType("gbuffer");
-        this.setScreenName(getScreenName());
+        this.setScreenName(screen.getScreenName());
     }
 
     public VkMttTexturedQuad2D(

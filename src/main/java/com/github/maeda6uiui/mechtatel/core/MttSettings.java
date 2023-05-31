@@ -19,14 +19,38 @@ public class MttSettings {
         public int width = 1280;
         public int height = 720;
         public boolean resizable = true;
+
+        @Override
+        public String toString() {
+            return "WindowSettings{" +
+                    "title='" + title + '\'' +
+                    ", width=" + width +
+                    ", height=" + height +
+                    ", resizable=" + resizable +
+                    '}';
+        }
     }
 
     public class SystemSettings {
         public int fps = 60;
+
+        @Override
+        public String toString() {
+            return "SystemSettings{" +
+                    "fps=" + fps +
+                    '}';
+        }
     }
 
     public class RenderingSettings {
         public String imageFormat = "srgb";
+
+        @Override
+        public String toString() {
+            return "RenderingSettings{" +
+                    "imageFormat='" + imageFormat + '\'' +
+                    '}';
+        }
     }
 
     public class BulletSettings {
@@ -34,6 +58,16 @@ public class MttSettings {
         public String dirname;
         public String buildType;
         public String flavor;
+
+        @Override
+        public String toString() {
+            return "BulletSettings{" +
+                    "dist=" + dist +
+                    ", dirname='" + dirname + '\'' +
+                    ", buildType='" + buildType + '\'' +
+                    ", flavor='" + flavor + '\'' +
+                    '}';
+        }
     }
 
     public WindowSettings windowSettings;
@@ -83,5 +117,15 @@ public class MttSettings {
         bulletSettings.dirname = bulletNode.get("dirname").asText();
         bulletSettings.buildType = bulletNode.get("buildType").asText();
         bulletSettings.flavor = bulletNode.get("flavor").asText();
+    }
+
+    @Override
+    public String toString() {
+        return "MttSettings{" +
+                "windowSettings=" + windowSettings +
+                ", systemSettings=" + systemSettings +
+                ", renderingSettings=" + renderingSettings +
+                ", bulletSettings=" + bulletSettings +
+                '}';
     }
 }

@@ -27,6 +27,8 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
     private MttInstance instance;
 
     public Mechtatel(MttSettings settings) {
+        logger.info(settings.toString());
+
         try {
             instance = new MttInstance(this, settings);
             logger.info("MttInstance successfully created");

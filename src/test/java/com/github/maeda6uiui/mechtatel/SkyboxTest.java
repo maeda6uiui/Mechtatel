@@ -52,6 +52,7 @@ public class SkyboxTest extends Mechtatel {
     public void init() {
         var skyboxScreenCreator = new ScreenCreator(this, "skybox");
         skyboxScreenCreator.setDepthImageSize(1024, 1024);
+        skyboxScreenCreator.setSamplerAddressMode("clamp_to_edge");
         skyboxScreen = skyboxScreenCreator.create();
         skyboxScreen.getCamera().setZNear(200.0f);
         skyboxScreen.getCamera().setZFar(2000.0f);

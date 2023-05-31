@@ -36,6 +36,7 @@ public class SimpleBlurTest extends Mechtatel {
     public void init() {
         var mainScreenCreator = new ScreenCreator(this, "main");
         mainScreenCreator.addPostProcessingNabor("simple_blur");
+        mainScreenCreator.setSamplerAddressMode("clamp_to_edge");
         mainScreen = mainScreenCreator.create();
         mainScreen.getCamera().setZNear(200.0f);
         mainScreen.getCamera().setZFar(2000.0f);

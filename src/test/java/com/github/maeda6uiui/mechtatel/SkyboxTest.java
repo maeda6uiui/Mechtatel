@@ -1,9 +1,6 @@
 package com.github.maeda6uiui.mechtatel;
 
-import com.github.maeda6uiui.mechtatel.core.DrawPath;
-import com.github.maeda6uiui.mechtatel.core.Mechtatel;
-import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
+import com.github.maeda6uiui.mechtatel.core.*;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
 import com.github.maeda6uiui.mechtatel.core.component.MttTexturedQuad2D;
@@ -86,25 +83,13 @@ public class SkyboxTest extends Mechtatel {
             e.printStackTrace();
         }
 
-        var texNx = this.createTexture(
-                "skybox", "./Mechtatel/Standard/Model/Skybox/Hill/nx.png", false);
-        var texNy = this.createTexture(
-                "skybox", "./Mechtatel/Standard/Model/Skybox/Hill/ny.png", false);
-        var texNz = this.createTexture(
-                "skybox", "./Mechtatel/Standard/Model/Skybox/Hill/nz.png", false);
-        var texPx = this.createTexture(
-                "skybox", "./Mechtatel/Standard/Model/Skybox/Hill/px.png", false);
-        var texPy = this.createTexture(
-                "skybox", "./Mechtatel/Standard/Model/Skybox/Hill/py.png", false);
-        var texPz = this.createTexture(
-                "skybox", "./Mechtatel/Standard/Model/Skybox/Hill/pz.png", false);
-
-        skyboxModel.replaceTexture(0, texPx);
-        skyboxModel.replaceTexture(1, texNz);
-        skyboxModel.replaceTexture(2, texNx);
-        skyboxModel.replaceTexture(3, texPz);
-        skyboxModel.replaceTexture(4, texPy);
-        skyboxModel.replaceTexture(5, texNy);
+        var skyboxTextureCreator = new SkyboxTextureCreator(
+                this,
+                "skybox",
+                "./Mechtatel/Standard/Model/Skybox/Hill",
+                "png",
+                false);
+        skyboxTextureCreator.apply(skyboxModel);
 
         this.createPositiveAxesLine3DSet(10.0f);
 

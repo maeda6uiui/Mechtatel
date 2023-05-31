@@ -21,7 +21,12 @@ import java.util.Map;
  *
  * @author maeda6uiui
  */
-public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPath, IMechtatelForScreenCreator {
+public class Mechtatel
+        implements
+        IMechtatelForMttInstance,
+        IMechtatelForDrawPath,
+        IMechtatelForScreenCreator,
+        IMechtatelForSkyboxTextureCreator {
     private final Logger logger = LoggerFactory.getLogger(Mechtatel.class);
 
     private MttInstance instance;
@@ -535,6 +540,7 @@ public class Mechtatel implements IMechtatelForMttInstance, IMechtatelForDrawPat
         return instance.removeSound3D(sound);
     }
 
+    @Override
     public MttTexture createTexture(String screenName, String textureFilepath, boolean generateMipmaps) {
         return instance.createTexture(screenName, textureFilepath, generateMipmaps);
     }

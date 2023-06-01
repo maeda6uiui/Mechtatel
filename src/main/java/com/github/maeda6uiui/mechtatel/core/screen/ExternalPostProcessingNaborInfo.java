@@ -8,12 +8,12 @@ import java.util.List;
  *
  * @author maeda6uiui
  */
-public class ExtraPostProcessingNaborInfo {
+public class ExternalPostProcessingNaborInfo {
     private String vertShaderFilepath;
     private String fragShaderFilepath;
     private List<String> uniformResources;
 
-    public ExtraPostProcessingNaborInfo(String vertShaderFilepath, String fragShaderFilepath) {
+    public ExternalPostProcessingNaborInfo(String vertShaderFilepath, String fragShaderFilepath) {
         this.vertShaderFilepath = vertShaderFilepath;
         this.fragShaderFilepath = fragShaderFilepath;
         uniformResources = new ArrayList<>();

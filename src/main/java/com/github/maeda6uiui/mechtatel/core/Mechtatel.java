@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core;
 import com.github.maeda6uiui.mechtatel.core.component.*;
 import com.github.maeda6uiui.mechtatel.core.component.gui.*;
 import com.github.maeda6uiui.mechtatel.core.physics.*;
-import com.github.maeda6uiui.mechtatel.core.screen.ExtraPostProcessingNaborInfo;
+import com.github.maeda6uiui.mechtatel.core.screen.ExternalPostProcessingNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
@@ -569,7 +569,7 @@ public class Mechtatel
             String samplerFilter,
             String samplerMipmapMode,
             String samplerAddressMode,
-            Map<String, ExtraPostProcessingNaborInfo> extraPPNaborInfos,
+            Map<String, ExternalPostProcessingNaborInfo> externalPPNaborInfos,
             List<String> ppNaborNames) {
         return instance.createScreen(
                 screenName,
@@ -581,7 +581,7 @@ public class Mechtatel
                 samplerFilter,
                 samplerMipmapMode,
                 samplerAddressMode,
-                extraPPNaborInfos,
+                externalPPNaborInfos,
                 ppNaborNames
         );
     }

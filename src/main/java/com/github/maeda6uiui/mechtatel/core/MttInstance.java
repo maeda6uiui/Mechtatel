@@ -5,7 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.component.gui.*;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
 import com.github.maeda6uiui.mechtatel.core.physics.*;
-import com.github.maeda6uiui.mechtatel.core.screen.ExtraPostProcessingNaborInfo;
+import com.github.maeda6uiui.mechtatel.core.screen.ExternalPostProcessingNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
@@ -816,7 +816,7 @@ class MttInstance {
             String samplerFilter,
             String samplerMipmapMode,
             String samplerAddressMode,
-            Map<String, ExtraPostProcessingNaborInfo> extraPPNaborInfos,
+            Map<String, ExternalPostProcessingNaborInfo> externalPPNaborInfos,
             List<String> ppNaborNames) {
         if (screens.containsKey(screenName)) {
             screens.get(screenName).cleanup();
@@ -834,7 +834,7 @@ class MttInstance {
                 samplerFilter,
                 samplerMipmapMode,
                 samplerAddressMode,
-                extraPPNaborInfos,
+                externalPPNaborInfos,
                 ppNaborNames
         );
 

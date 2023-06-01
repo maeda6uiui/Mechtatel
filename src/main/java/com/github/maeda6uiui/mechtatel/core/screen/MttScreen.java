@@ -57,13 +57,13 @@ public class MttScreen {
             String samplerFilter,
             String samplerMipmapMode,
             String samplerAddressMode,
-            Map<String, ExtraPostProcessingNaborInfo> extraPostProcessingNaborInfos,
+            Map<String, ExternalPostProcessingNaborInfo> externalPostProcessingNaborInfos,
             List<String> ppNaborNames) {
         var versatileNaborInfos = new HashMap<String, VersatileNaborInfo>();
 
-        for (var entry : extraPostProcessingNaborInfos.entrySet()) {
+        for (var entry : externalPostProcessingNaborInfos.entrySet()) {
             String naborName = entry.getKey();
-            ExtraPostProcessingNaborInfo naborInfo = entry.getValue();
+            ExternalPostProcessingNaborInfo naborInfo = entry.getValue();
 
             var versatileNaborInfo = new VersatileNaborInfo(
                     naborInfo.getVertShaderFilepath(), naborInfo.getFragShaderFilepath());

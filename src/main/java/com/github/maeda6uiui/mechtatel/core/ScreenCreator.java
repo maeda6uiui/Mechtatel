@@ -1,9 +1,12 @@
 package com.github.maeda6uiui.mechtatel.core;
 
+import com.github.maeda6uiui.mechtatel.core.screen.ExtraPostProcessingNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Utility class to create a screen
@@ -22,6 +25,7 @@ public class ScreenCreator {
     private String samplerFilter;
     private String samplerMipmapMode;
     private String samplerAddressMode;
+    private Map<String, ExtraPostProcessingNaborInfo> extraPPNaborInfos;
     private List<String> ppNaborNames;
 
     public ScreenCreator(IMechtatelForScreenCreator mtt, String screenName) {
@@ -36,6 +40,7 @@ public class ScreenCreator {
         samplerFilter = "nearest";
         samplerMipmapMode = "nearest";
         samplerAddressMode = "repeat";
+        extraPPNaborInfos = new HashMap<>();
         ppNaborNames = new ArrayList<>();
     }
 
@@ -48,6 +53,7 @@ public class ScreenCreator {
         samplerFilter = "nearest";
         samplerMipmapMode = "nearest";
         samplerAddressMode = "repeat";
+        extraPPNaborInfos.clear();
         ppNaborNames.clear();
     }
 
@@ -77,6 +83,20 @@ public class ScreenCreator {
         this.samplerAddressMode = samplerAddressMode;
     }
 
+    public void clearExtraPostProcessingNaborInfos() {
+        extraPPNaborInfos.clear();
+    }
+
+    public ExtraPostProcessingNaborInfo addExtraPostProcessingNaborInfo(
+            String naborName,
+            String vertShaderFilepath,
+            String fragShaderFilepath) {
+        var extraPPNaborInfo = new ExtraPostProcessingNaborInfo(vertShaderFilepath, fragShaderFilepath);
+        extraPPNaborInfos.put(naborName, extraPPNaborInfo);
+
+        return extraPPNaborInfo;
+    }
+
     public void clearPostProcessingNabors() {
         ppNaborNames.clear();
     }
@@ -96,6 +116,7 @@ public class ScreenCreator {
                 samplerFilter,
                 samplerMipmapMode,
                 samplerAddressMode,
+                extraPPNaborInfos,
                 ppNaborNames
         );
         return screen;

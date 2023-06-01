@@ -1,8 +1,10 @@
 package com.github.maeda6uiui.mechtatel.core;
 
+import com.github.maeda6uiui.mechtatel.core.screen.ExtraPostProcessingNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface to Mechtatel providing access to methods relating to screen creation
@@ -20,5 +22,6 @@ public interface IMechtatelForScreenCreator {
             String samplerFilter,
             String samplerMipmapMode,
             String samplerAddressMode,
+            Map<String, ExtraPostProcessingNaborInfo> extraPPNaborInfos,
             List<String> ppNaborNames);
 }

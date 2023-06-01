@@ -1,22 +1,30 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
+package com.github.maeda6uiui.mechtatel.core.screen;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Info for versatile nabor
+ * Info for extra post-processing nabor
  *
  * @author maeda6uiui
  */
-public class VersatileNaborInfo {
+public class ExtraPostProcessingNaborInfo {
     private String vertShaderFilepath;
     private String fragShaderFilepath;
     private List<String> uniformResources;
 
-    public VersatileNaborInfo(String vertShaderFilepath, String fragShaderFilepath) {
+    public ExtraPostProcessingNaborInfo(String vertShaderFilepath, String fragShaderFilepath) {
         this.vertShaderFilepath = vertShaderFilepath;
         this.fragShaderFilepath = fragShaderFilepath;
         uniformResources = new ArrayList<>();
+    }
+
+    public void clearUniformResources() {
+        uniformResources.clear();
+    }
+
+    public void addUniformResource(String uniformResource) {
+        uniformResources.add(uniformResource);
     }
 
     public String getVertShaderFilepath() {
@@ -28,10 +36,6 @@ public class VersatileNaborInfo {
     }
 
     public List<String> getUniformResources() {
-        return uniformResources;
-    }
-
-    public void setUniformResources(List<String> uniformResources) {
-        this.uniformResources = uniformResources;
+        return new ArrayList<>(uniformResources);
     }
 }

@@ -78,6 +78,7 @@ public class PostProcessingNaborChain {
             int samplerAddressMode,
             VkExtent2D extent,
             List<String> naborNames,
+            Map<String, VersatileNaborInfo> versatileNaborInfos,
             Map<String, List<Long>> vertShaderModulesStorage,
             Map<String, List<Long>> fragShaderModulesStorage) {
         this.device = device;
@@ -92,8 +93,7 @@ public class PostProcessingNaborChain {
         ppNabors = new LinkedHashMap<>();
 
         for (var naborName : naborNames) {
-            PostProcessingNabor ppNabor;
-
+            PostProcessingNabor ppNabor = null;
             switch (naborName) {
                 case "fog":
                     ppNabor = new FogNabor(device);
@@ -114,9 +114,24 @@ public class PostProcessingNaborChain {
                 case "simple_blur":
                     ppNabor = new SimpleBlurNabor(device);
                     break;
-                default:
-                    String msg = String.format("Unsupported nabor specified: %s", naborName);
-                    throw new IllegalArgumentException(msg);
+            }
+
+            for (var entry : versatileNaborInfos.entrySet()) {
+                String versatileNaborName = entry.getKey();
+                if (versatileNaborName.equals(naborName)) {
+                    VersatileNaborInfo versatileNaborInfo = versatileNaborInfos.get(versatileNaborName);
+
+                    ppNabor = new VersatileNabor(
+                            device,
+                            versatileNaborInfo.getVertShaderFilepath(),
+                            versatileNaborInfo.getFragShaderFilepath(),
+                            versatileNaborInfo.getUniformResources()
+                    );
+                }
+            }
+
+            if (ppNabor == null) {
+                throw new IllegalArgumentException("Unsupported nabor specified: " + naborName);
             }
 
             if (vertShaderModulesStorage.containsKey(naborName)) {

@@ -12,12 +12,15 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.ParallelLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.SpotlightNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.VersatileNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Screen
@@ -54,7 +57,20 @@ public class MttScreen {
             String samplerFilter,
             String samplerMipmapMode,
             String samplerAddressMode,
+            Map<String, ExtraPostProcessingNaborInfo> extraPostProcessingNaborInfos,
             List<String> ppNaborNames) {
+        var versatileNaborInfos = new HashMap<String, VersatileNaborInfo>();
+
+        for (var entry : extraPostProcessingNaborInfos.entrySet()) {
+            String naborName = entry.getKey();
+            ExtraPostProcessingNaborInfo naborInfo = entry.getValue();
+
+            var versatileNaborInfo = new VersatileNaborInfo(
+                    naborInfo.getVertShaderFilepath(), naborInfo.getFragShaderFilepath());
+            versatileNaborInfo.setUniformResources(naborInfo.getUniformResources());
+            versatileNaborInfos.put(naborName, versatileNaborInfo);
+        }
+
         screen = vulkanInstance.createScreen(
                 screenName,
                 depthImageWidth,
@@ -65,6 +81,7 @@ public class MttScreen {
                 samplerFilter,
                 samplerMipmapMode,
                 samplerAddressMode,
+                versatileNaborInfos,
                 (ppNaborNames != null && ppNaborNames.size() != 0) ? ppNaborNames : null
         );
         shouldAutoUpdateCameraAspect = true;

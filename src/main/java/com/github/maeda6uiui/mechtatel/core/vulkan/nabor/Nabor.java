@@ -500,7 +500,7 @@ public class Nabor {
     }
 
     protected void createDescriptorSets(int descriptorCount, long commandPool, VkQueue graphicsQueue) {
-        this.createDummyImage(commandPool, graphicsQueue);
+
     }
 
     protected void createGraphicsPipelines() {
@@ -567,6 +567,7 @@ public class Nabor {
         this.createRenderPass(colorImageFormat);
         this.createDescriptorSetLayouts();
         this.createDescriptorPools(descriptorCount);
+        this.createDummyImage(commandPool, graphicsQueue);
         this.createDescriptorSets(descriptorCount, commandPool, graphicsQueue);
         this.createGraphicsPipelines();
         this.createImages(colorImageFormat);

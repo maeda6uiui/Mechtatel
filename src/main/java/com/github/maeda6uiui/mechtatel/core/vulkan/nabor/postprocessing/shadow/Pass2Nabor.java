@@ -260,8 +260,6 @@ class Pass2Nabor extends PostProcessingNabor {
 
     @Override
     protected void createDescriptorSets(int descriptorCount, long commandPool, VkQueue graphicsQueue) {
-        super.createDescriptorSets(descriptorCount, commandPool, graphicsQueue);
-
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 

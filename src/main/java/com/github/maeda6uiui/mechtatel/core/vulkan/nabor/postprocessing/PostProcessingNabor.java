@@ -8,7 +8,9 @@ import org.lwjgl.vulkan.*;
 
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -44,6 +46,252 @@ public class PostProcessingNabor extends Nabor {
     @Override
     public void cleanup(boolean reserveForRecreation) {
         super.cleanup(reserveForRecreation);
+    }
+
+    protected void createDescriptorSetLayoutSet0() {
+
+    }
+
+    protected void createDescriptorSetLayoutsSet1And2() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDevice device = this.getDevice();
+
+            //=== set 1 ===
+            VkDescriptorSetLayoutBinding.Buffer imageBindings = VkDescriptorSetLayoutBinding.calloc(4, stack);
+
+            VkDescriptorSetLayoutBinding albedoImageLayoutBinding = imageBindings.get(0);
+            albedoImageLayoutBinding.binding(0);
+            albedoImageLayoutBinding.descriptorCount(1);
+            albedoImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            albedoImageLayoutBinding.pImmutableSamplers(null);
+            albedoImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+
+            VkDescriptorSetLayoutBinding depthImageLayoutBinding = imageBindings.get(1);
+            depthImageLayoutBinding.binding(1);
+            depthImageLayoutBinding.descriptorCount(1);
+            depthImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            depthImageLayoutBinding.pImmutableSamplers(null);
+            depthImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+
+            VkDescriptorSetLayoutBinding positionImageLayoutBinding = imageBindings.get(2);
+            positionImageLayoutBinding.binding(2);
+            positionImageLayoutBinding.descriptorCount(1);
+            positionImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            positionImageLayoutBinding.pImmutableSamplers(null);
+            positionImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+
+            VkDescriptorSetLayoutBinding normalImageLayoutBinding = imageBindings.get(3);
+            normalImageLayoutBinding.binding(3);
+            normalImageLayoutBinding.descriptorCount(1);
+            normalImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            normalImageLayoutBinding.pImmutableSamplers(null);
+            normalImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+
+            //=== set 2 ===
+            VkDescriptorSetLayoutBinding.Buffer samplerBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
+
+            VkDescriptorSetLayoutBinding samplerLayoutBinding = samplerBindings.get(0);
+            samplerLayoutBinding.binding(0);
+            samplerLayoutBinding.descriptorCount(1);
+            samplerLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLER);
+            samplerLayoutBinding.pImmutableSamplers(null);
+            samplerLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+
+            //Create descriptor set layouts
+            VkDescriptorSetLayoutCreateInfo.Buffer layoutInfos = VkDescriptorSetLayoutCreateInfo.calloc(2, stack);
+
+            //=== set 1 ===
+            VkDescriptorSetLayoutCreateInfo imageLayoutInfo = layoutInfos.get(0);
+            imageLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            imageLayoutInfo.pBindings(imageBindings);
+
+            //=== set 2 ===
+            VkDescriptorSetLayoutCreateInfo samplerLayoutInfo = layoutInfos.get(1);
+            samplerLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            samplerLayoutInfo.pBindings(samplerBindings);
+
+            for (int i = 0; i < 2; i++) {
+                LongBuffer pDescriptorSetLayout = stack.mallocLong(1);
+                if (vkCreateDescriptorSetLayout(device, layoutInfos.get(i), null, pDescriptorSetLayout) != VK_SUCCESS) {
+                    throw new RuntimeException("Failed to create a descriptor set layout");
+                }
+
+                long descriptorSetLayout = pDescriptorSetLayout.get(0);
+                this.getDescriptorSetLayouts().add(descriptorSetLayout);
+            }
+        }
+    }
+
+    @Override
+    protected void createDescriptorSetLayouts() {
+        this.createDescriptorSetLayoutSet0();
+        this.createDescriptorSetLayoutsSet1And2();
+    }
+
+    protected void createDescriptorPoolSet0(int descriptorCount) {
+
+    }
+
+    protected void createDescriptorPoolsSet1And2(int descriptorCount) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDevice device = this.getDevice();
+
+            //=== set 1 ===
+            VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.calloc(4, stack);
+
+            VkDescriptorPoolSize albedoImagePoolSize = imagePoolSizes.get(0);
+            albedoImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            albedoImagePoolSize.descriptorCount(descriptorCount);
+
+            VkDescriptorPoolSize depthImagePoolSize = imagePoolSizes.get(1);
+            depthImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            depthImagePoolSize.descriptorCount(descriptorCount);
+
+            VkDescriptorPoolSize positionImagePoolSize = imagePoolSizes.get(2);
+            positionImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            positionImagePoolSize.descriptorCount(descriptorCount);
+
+            VkDescriptorPoolSize normalImagePoolSize = imagePoolSizes.get(3);
+            normalImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            normalImagePoolSize.descriptorCount(descriptorCount);
+
+            //=== set 2 ===
+            VkDescriptorPoolSize.Buffer samplerPoolSizes = VkDescriptorPoolSize.calloc(1, stack);
+
+            VkDescriptorPoolSize samplerPoolSize = samplerPoolSizes.get(0);
+            samplerPoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLER);
+            samplerPoolSize.descriptorCount(descriptorCount);
+
+            //Create descriptor pools
+            VkDescriptorPoolCreateInfo.Buffer poolInfos = VkDescriptorPoolCreateInfo.calloc(2, stack);
+
+            //=== set 1 ===
+            VkDescriptorPoolCreateInfo imagePoolInfo = poolInfos.get(0);
+            imagePoolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
+            imagePoolInfo.pPoolSizes(imagePoolSizes);
+            imagePoolInfo.maxSets(descriptorCount);
+
+            //=== set 2 ===
+            VkDescriptorPoolCreateInfo samplerPoolInfo = poolInfos.get(1);
+            samplerPoolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
+            samplerPoolInfo.pPoolSizes(samplerPoolSizes);
+            samplerPoolInfo.maxSets(descriptorCount);
+
+            for (int i = 0; i < 2; i++) {
+                LongBuffer pDescriptorPool = stack.mallocLong(1);
+                if (vkCreateDescriptorPool(device, poolInfos.get(i), null, pDescriptorPool) != VK_SUCCESS) {
+                    throw new RuntimeException("Failed to create a descriptor pool");
+                }
+
+                long descriptorPool = pDescriptorPool.get(0);
+                this.getDescriptorPools().add(descriptorPool);
+            }
+        }
+    }
+
+    @Override
+    protected void createDescriptorPools(int descriptorCount) {
+        this.createDescriptorPoolSet0(descriptorCount);
+        this.createDescriptorPoolsSet1And2(descriptorCount);
+    }
+
+    protected void allocateDescriptorSets(int descriptorCount) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDevice device = this.getDevice();
+
+            List<Long> descriptorSetLayouts = this.getDescriptorSetLayouts();
+            List<Long> descriptorPools = this.getDescriptorPools();
+            List<Long> descriptorSets = new ArrayList<>();
+
+            int setCount = descriptorSetLayouts.size();
+            this.setSetCount(setCount);
+
+            VkDescriptorSetAllocateInfo.Buffer allocInfos = VkDescriptorSetAllocateInfo.calloc(setCount, stack);
+
+            for (int i = 0; i < setCount; i++) {
+                LongBuffer layouts = stack.mallocLong(descriptorCount);
+
+                for (int j = 0; j < descriptorCount; j++) {
+                    layouts.put(j, descriptorSetLayouts.get(i));
+                }
+
+                VkDescriptorSetAllocateInfo allocInfo = allocInfos.get(i);
+                allocInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO);
+                allocInfo.descriptorPool(descriptorPools.get(i));
+                allocInfo.pSetLayouts(layouts);
+
+                LongBuffer pDescriptorSets = stack.mallocLong(descriptorCount);
+                if (vkAllocateDescriptorSets(device, allocInfo, pDescriptorSets) != VK_SUCCESS) {
+                    throw new RuntimeException("Failed to allocate descriptor sets");
+                }
+
+                for (int j = 0; j < descriptorCount; j++) {
+                    descriptorSets.add(pDescriptorSets.get(j));
+                }
+            }
+
+            for (int i = 0; i < descriptorSets.size(); i++) {
+                this.getDescriptorSets().add(descriptorSets.get(i));
+            }
+        }
+    }
+
+    protected void updateDescriptorSet0(int descriptorCount, long commandPool, VkQueue graphicsQueue) {
+
+    }
+
+    protected void updateDescriptorSets1And2(int descriptorCount, long commandPool, VkQueue graphicsQueue) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDevice device = this.getDevice();
+
+            VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.calloc(2, stack);
+
+            //=== set 1 ===
+            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.calloc(4, stack);
+            for (int i = 0; i < 4; i++) {
+                VkDescriptorImageInfo imageInfo = imageInfos.get(i);
+                imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+                imageInfo.imageView(this.getDummyImageView());
+            }
+
+            VkWriteDescriptorSet imageDescriptorWrite = descriptorWrites.get(0);
+            imageDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            imageDescriptorWrite.dstBinding(0);
+            imageDescriptorWrite.dstArrayElement(0);
+            imageDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            imageDescriptorWrite.descriptorCount(4);
+            imageDescriptorWrite.pImageInfo(imageInfos);
+
+            //=== set 2 ===
+            VkDescriptorImageInfo.Buffer samplerInfos = VkDescriptorImageInfo.calloc(1, stack);
+
+            VkDescriptorImageInfo samplerInfo = samplerInfos.get(0);
+            samplerInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            samplerInfo.sampler(this.getTextureSampler(0));
+
+            VkWriteDescriptorSet samplerDescriptorWrite = descriptorWrites.get(1);
+            samplerDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            samplerDescriptorWrite.dstBinding(0);
+            samplerDescriptorWrite.dstArrayElement(0);
+            samplerDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLER);
+            samplerDescriptorWrite.descriptorCount(1);
+            samplerDescriptorWrite.pImageInfo(samplerInfos);
+
+            List<Long> descriptorSets = this.getDescriptorSets();
+            for (int i = 0; i < descriptorCount; i++) {
+                imageDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount));
+                samplerDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount * 2));
+
+                vkUpdateDescriptorSets(device, descriptorWrites, null);
+            }
+        }
+    }
+
+    @Override
+    protected void createDescriptorSets(int descriptorCount, long commandPool, VkQueue graphicsQueue) {
+        this.allocateDescriptorSets(descriptorCount);
+        this.updateDescriptorSet0(descriptorCount, commandPool, graphicsQueue);
+        this.updateDescriptorSets1And2(descriptorCount, commandPool, graphicsQueue);
     }
 
     @Override

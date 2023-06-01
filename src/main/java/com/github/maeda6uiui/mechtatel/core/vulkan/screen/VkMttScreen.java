@@ -683,10 +683,10 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
             {
                 vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mergeScenesNabor.getGraphicsPipeline(0));
 
-                gBufferNabor.transitionAlbedoImage(commandPool, graphicsQueue);
-                gBufferNabor.transitionDepthImage(commandPool, graphicsQueue);
-                gBufferNabor.transitionPositionImage(commandPool, graphicsQueue);
-                gBufferNabor.transitionNormalImage(commandPool, graphicsQueue);
+                gBufferNabor.transitionAlbedoImageLayout(commandPool, graphicsQueue);
+                gBufferNabor.transitionDepthImageLayout(commandPool, graphicsQueue);
+                gBufferNabor.transitionPositionImageLayout(commandPool, graphicsQueue);
+                gBufferNabor.transitionNormalImageLayout(commandPool, graphicsQueue);
 
                 primitiveNabor.transitionAlbedoImage(commandPool, graphicsQueue);
                 primitiveNabor.transitionDepthImage(commandPool, graphicsQueue);

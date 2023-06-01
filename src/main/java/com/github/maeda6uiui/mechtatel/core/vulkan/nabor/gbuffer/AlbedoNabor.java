@@ -38,7 +38,7 @@ class AlbedoNabor extends Nabor {
         }
     }
 
-    public void transitionDepthImage(long commandPool, VkQueue graphicsQueue) {
+    public void transitionDepthImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long depthImage = this.getImage(depthAttachmentIndex);
 
@@ -57,7 +57,7 @@ class AlbedoNabor extends Nabor {
         return this.getImageView(depthAttachmentIndex);
     }
 
-    public void transitionAlbedoResolveImage(long commandPool, VkQueue graphicsQueue) {
+    public void transitionAlbedoResolveImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long albedoResolveImage = this.getImage(albedoResolveAttachmentIndex);
 

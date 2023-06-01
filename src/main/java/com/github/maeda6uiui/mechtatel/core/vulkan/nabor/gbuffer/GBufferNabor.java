@@ -150,32 +150,32 @@ public class GBufferNabor extends Nabor {
         propertiesNabor.cleanup(reserveForRecreation);
     }
 
-    public void transitionAlbedoImage(long commandPool, VkQueue graphicsQueue) {
-        albedoNabor.transitionAlbedoResolveImage(commandPool, graphicsQueue);
+    public void transitionAlbedoImageLayout(long commandPool, VkQueue graphicsQueue) {
+        albedoNabor.transitionAlbedoResolveImageLayout(commandPool, graphicsQueue);
     }
 
     public long getAlbedoImageView() {
         return albedoNabor.getAlbedoResolveImageView();
     }
 
-    public void transitionDepthImage(long commandPool, VkQueue graphicsQueue) {
-        propertiesNabor.transitionDepthImage(commandPool, graphicsQueue);
+    public void transitionDepthImageLayout(long commandPool, VkQueue graphicsQueue) {
+        propertiesNabor.transitionDepthImageLayout(commandPool, graphicsQueue);
     }
 
     public long getDepthImageView() {
         return propertiesNabor.getDepthImageView();
     }
 
-    public void transitionPositionImage(long commandPool, VkQueue graphicsQueue) {
-        propertiesNabor.transitionPositionImage(commandPool, graphicsQueue);
+    public void transitionPositionImageLayout(long commandPool, VkQueue graphicsQueue) {
+        propertiesNabor.transitionPositionImageLayout(commandPool, graphicsQueue);
     }
 
     public long getPositionImageView() {
         return propertiesNabor.getPositionImageView();
     }
 
-    public void transitionNormalImage(long commandPool, VkQueue graphicsQueue) {
-        propertiesNabor.transitionNormalImage(commandPool, graphicsQueue);
+    public void transitionNormalImageLayout(long commandPool, VkQueue graphicsQueue) {
+        propertiesNabor.transitionNormalImageLayout(commandPool, graphicsQueue);
     }
 
     public long getNormalImageView() {

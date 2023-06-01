@@ -58,7 +58,7 @@ class PropertiesNabor extends Nabor {
         return normalImageFormat;
     }
 
-    public void transitionDepthImage(long commandPool, VkQueue graphicsQueue) {
+    public void transitionDepthImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long depthImage = this.getImage(depthAttachmentIndex);
 
@@ -77,7 +77,7 @@ class PropertiesNabor extends Nabor {
         return this.getImageView(depthAttachmentIndex);
     }
 
-    public void transitionPositionImage(long commandPool, VkQueue graphicsQueue) {
+    public void transitionPositionImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long positionImage = this.getImage(positionAttachmentIndex);
 
@@ -96,7 +96,7 @@ class PropertiesNabor extends Nabor {
         return this.getImageView(positionAttachmentIndex);
     }
 
-    public void transitionNormalImage(long commandPool, VkQueue graphicsQueue) {
+    public void transitionNormalImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long normalImage = this.getImage(normalAttachmentIndex);
 

@@ -12,11 +12,13 @@ public class ExternalPostProcessingNaborInfo {
     private String vertShaderFilepath;
     private String fragShaderFilepath;
     private List<String> uniformResources;
+    private String lightingType;
 
     public ExternalPostProcessingNaborInfo(String vertShaderFilepath, String fragShaderFilepath) {
         this.vertShaderFilepath = vertShaderFilepath;
         this.fragShaderFilepath = fragShaderFilepath;
         uniformResources = new ArrayList<>();
+        lightingType = "parallel_light";
     }
 
     public void clearUniformResources() {
@@ -37,5 +39,13 @@ public class ExternalPostProcessingNaborInfo {
 
     public List<String> getUniformResources() {
         return new ArrayList<>(uniformResources);
+    }
+
+    public String getLightingType() {
+        return lightingType;
+    }
+
+    public void setLightingType(String lightingType) {
+        this.lightingType = lightingType;
     }
 }

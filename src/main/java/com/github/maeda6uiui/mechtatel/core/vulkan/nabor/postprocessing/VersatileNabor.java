@@ -15,7 +15,12 @@ import java.util.List;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Versatile nabor
+ * Versatile nabor<br>
+ * This nabor can be used with user-defined external shaders
+ * if the post processing is achieved with a single pair of vertex and fragment shaders.
+ * You have to create your own nabor if the post processing
+ * requires more than one pair of shaders (e.g. shadow mapping).
+ * Plus, you can't use more than one lighting types at the same time.
  *
  * @author maeda6uiui
  */
@@ -59,15 +64,6 @@ public class VersatileNabor extends PostProcessingNabor {
                     break;
                 case "spotlight":
                     size = SpotlightUBO.SIZEOF;
-                    break;
-                case "shadow_pass_1":
-                    size = Pass1InfoUBO.SIZEOF;
-                    break;
-                case "shadow_pass_2":
-                    size = Pass2InfoUBO.SIZEOF;
-                    break;
-                case "shadow_info":
-                    size = ShadowInfoUBO.SIZEOF;
                     break;
                 default:
                     throw new IllegalArgumentException("Unsupported uniform resource specified: " + uniformResource);

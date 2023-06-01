@@ -44,6 +44,7 @@ public class PostProcessingNaborChain {
     private int depthImageAspect;
 
     private Map<String, PostProcessingNabor> ppNabors;
+    private Map<String, VersatileNaborInfo> versatileNaborInfos;
     private PostProcessingNabor lastPPNabor;
 
     private QuadDrawer quadDrawer;
@@ -91,6 +92,7 @@ public class PostProcessingNaborChain {
         this.depthImageAspect = depthImageAspect;
 
         ppNabors = new LinkedHashMap<>();
+        this.versatileNaborInfos = versatileNaborInfos;
 
         for (var naborName : naborNames) {
             PostProcessingNabor ppNabor = null;
@@ -187,6 +189,209 @@ public class PostProcessingNaborChain {
         quadDrawer.cleanup();
     }
 
+    private void updateStandardNaborUBOs(
+            String naborName,
+            PostProcessingNabor ppNabor,
+            PostProcessingNabor previousPPNabor,
+            Camera camera,
+            Fog fog,
+            List<ParallelLight> parallelLights,
+            Vector3f parallelLightAmbientColor,
+            List<PointLight> pointLights,
+            Vector3f pointLightAmbientColor,
+            List<Spotlight> spotlights,
+            Vector3f spotlightAmbientColor,
+            ShadowMappingSettings shadowMappingSettings,
+            SimpleBlurInfo simpleBlurInfo,
+            MergeScenesNabor lastMergeNabor,
+            List<VkMttComponent> components) {
+        if (naborName.equals("shadow_mapping")) {
+            ShadowMappingNaborRunner.runShadowMappingNabor(
+                    device,
+                    commandPool,
+                    graphicsQueue,
+                    lastMergeNabor,
+                    previousPPNabor,
+                    ppNabor,
+                    parallelLights,
+                    spotlights,
+                    components,
+                    depthImageAspect,
+                    shadowMappingSettings,
+                    quadDrawer);
+
+            return;
+        }
+
+        switch (naborName) {
+            case "fog": {
+                long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
+                var cameraUBO = new CameraUBO(camera);
+                cameraUBO.update(device, cameraUBOMemory);
+
+                long fogUBOMemory = ppNabor.getUniformBufferMemory(1);
+                var fogUBO = new FogUBO(fog);
+                fogUBO.update(device, fogUBOMemory);
+            }
+            break;
+
+            case "parallel_light": {
+                long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
+                var cameraUBO = new CameraUBO(camera);
+                cameraUBO.update(device, cameraUBOMemory);
+
+                var lightingInfo = new LightingInfo();
+                lightingInfo.setNumLights(parallelLights.size());
+                lightingInfo.setAmbientColor(parallelLightAmbientColor);
+
+                long lightingInfoUBOMemory = ppNabor.getUniformBufferMemory(1);
+                var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
+                lightingInfoUBO.update(device, lightingInfoUBOMemory);
+
+                long lightUBOMemory = ppNabor.getUniformBufferMemory(2);
+                for (int i = 0; i < parallelLights.size(); i++) {
+                    var lightUBO = new ParallelLightUBO(parallelLights.get(i));
+                    lightUBO.update(device, lightUBOMemory, i);
+                }
+            }
+            break;
+
+            case "point_light": {
+                long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
+                var cameraUBO = new CameraUBO(camera);
+                cameraUBO.update(device, cameraUBOMemory);
+
+                var lightingInfo = new LightingInfo();
+                lightingInfo.setNumLights(pointLights.size());
+                lightingInfo.setAmbientColor(pointLightAmbientColor);
+
+                long lightingInfoUBOMemory = ppNabor.getUniformBufferMemory(1);
+                var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
+                lightingInfoUBO.update(device, lightingInfoUBOMemory);
+
+                long lightUBOMemory = ppNabor.getUniformBufferMemory(2);
+                for (int i = 0; i < pointLights.size(); i++) {
+                    var lightUBO = new PointLightUBO(pointLights.get(i));
+                    lightUBO.update(device, lightUBOMemory, i);
+                }
+            }
+            break;
+
+            case "spotlight": {
+                long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
+                var cameraUBO = new CameraUBO(camera);
+                cameraUBO.update(device, cameraUBOMemory);
+
+                var lightingInfo = new LightingInfo();
+                lightingInfo.setNumLights(spotlights.size());
+                lightingInfo.setAmbientColor(spotlightAmbientColor);
+
+                long lightingInfoUBOMemory = ppNabor.getUniformBufferMemory(1);
+                var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
+                lightingInfoUBO.update(device, lightingInfoUBOMemory);
+
+                long lightUBOMemory = ppNabor.getUniformBufferMemory(2);
+                for (int i = 0; i < spotlights.size(); i++) {
+                    var lightUBO = new SpotlightUBO(spotlights.get(i));
+                    lightUBO.update(device, lightUBOMemory, i);
+                }
+            }
+            break;
+
+            case "simple_blur": {
+                long blurInfoUBOMemory = ppNabor.getUniformBufferMemory(0);
+                var blurInfoUBO = new SimpleBlurInfoUBO(simpleBlurInfo);
+                blurInfoUBO.update(device, blurInfoUBOMemory);
+            }
+            break;
+
+            default:
+                throw new IllegalArgumentException("Unsupported nabor specified: " + naborName);
+        }
+    }
+
+    private void updateVersatileNaborUBOs(
+            PostProcessingNabor ppNabor,
+            VersatileNaborInfo versatileNaborInfo,
+            Camera camera,
+            Fog fog,
+            List<ParallelLight> parallelLights,
+            Vector3f parallelLightAmbientColor,
+            List<PointLight> pointLights,
+            Vector3f pointLightAmbientColor,
+            List<Spotlight> spotlights,
+            Vector3f spotlightAmbientColor,
+            SimpleBlurInfo simpleBlurInfo) {
+        List<String> uniformResources = versatileNaborInfo.getUniformResources();
+        int numUniformResources = uniformResources.size();
+
+        for (int i = 0; i < numUniformResources; i++) {
+            String uniformResource = uniformResources.get(i);
+            long uboMemory = ppNabor.getUniformBufferMemory(i);
+
+            switch (uniformResource) {
+                case "camera": {
+                    var cameraUBO = new CameraUBO(camera);
+                    cameraUBO.update(device, uboMemory);
+                }
+                break;
+                case "fog": {
+                    var fogUBO = new FogUBO(fog);
+                    fogUBO.update(device, uboMemory);
+                }
+                break;
+                case "lighting_info": {
+                    String lightingType = versatileNaborInfo.getLightingType();
+                    var lightingInfo = new LightingInfo();
+                    if (lightingType.equals("parallel_light")) {
+                        lightingInfo.setNumLights(parallelLights.size());
+                        lightingInfo.setAmbientColor(parallelLightAmbientColor);
+                    } else if (lightingType.equals("point_light")) {
+                        lightingInfo.setNumLights(pointLights.size());
+                        lightingInfo.setAmbientColor(pointLightAmbientColor);
+                    } else if (lightingType.equals("spotlight")) {
+                        lightingInfo.setNumLights(spotlights.size());
+                        lightingInfo.setAmbientColor(spotlightAmbientColor);
+                    } else {
+                        throw new RuntimeException("Unsupported lighting type specified: " + lightingType);
+                    }
+
+                    var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
+                    lightingInfoUBO.update(device, uboMemory);
+                }
+                break;
+                case "parallel_light": {
+                    for (int j = 0; j < parallelLights.size(); j++) {
+                        var lightUBO = new ParallelLightUBO(parallelLights.get(j));
+                        lightUBO.update(device, uboMemory, j);
+                    }
+                }
+                break;
+                case "point_light": {
+                    for (int j = 0; j < pointLights.size(); j++) {
+                        var lightUBO = new PointLightUBO(pointLights.get(j));
+                        lightUBO.update(device, uboMemory, j);
+                    }
+                }
+                break;
+                case "simple_blur": {
+                    var blurInfoUBO = new SimpleBlurInfoUBO(simpleBlurInfo);
+                    blurInfoUBO.update(device, uboMemory);
+                }
+                break;
+                case "spotlight": {
+                    for (int j = 0; j < spotlights.size(); j++) {
+                        var lightUBO = new SpotlightUBO(spotlights.get(j));
+                        lightUBO.update(device, uboMemory, j);
+                    }
+                }
+                break;
+                default:
+                    throw new RuntimeException("Unsupported uniform resource specified: " + uniformResource);
+            }
+        }
+    }
+
     public void run(
             Camera camera,
             Fog fog,
@@ -205,111 +410,41 @@ public class PostProcessingNaborChain {
             String naborName = entry.getKey();
             PostProcessingNabor ppNabor = entry.getValue();
 
-            if (naborName.equals("shadow_mapping")) {
-                ShadowMappingNaborRunner.runShadowMappingNabor(
-                        device,
-                        commandPool,
-                        graphicsQueue,
-                        lastMergeNabor,
-                        previousPPNabor,
+            if (versatileNaborInfos.containsKey(naborName)) {
+                VersatileNaborInfo versatileNaborInfo = versatileNaborInfos.get(naborName);
+                this.updateVersatileNaborUBOs(
                         ppNabor,
+                        versatileNaborInfo,
+                        camera,
+                        fog,
                         parallelLights,
+                        parallelLightAmbientColor,
+                        pointLights,
+                        pointLightAmbientColor,
                         spotlights,
-                        components,
-                        depthImageAspect,
+                        spotlightAmbientColor,
+                        simpleBlurInfo
+                );
+            } else {
+                this.updateStandardNaborUBOs(
+                        naborName,
+                        ppNabor,
+                        previousPPNabor,
+                        camera,
+                        fog,
+                        parallelLights,
+                        parallelLightAmbientColor,
+                        pointLights,
+                        pointLightAmbientColor,
+                        spotlights,
+                        spotlightAmbientColor,
                         shadowMappingSettings,
-                        quadDrawer);
-
-                previousPPNabor = ppNabor;
-
-                continue;
+                        simpleBlurInfo,
+                        lastMergeNabor,
+                        components
+                );
             }
-
-            switch (naborName) {
-                case "fog": {
-                    long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
-                    var cameraUBO = new CameraUBO(camera);
-                    cameraUBO.update(device, cameraUBOMemory);
-
-                    long fogUBOMemory = ppNabor.getUniformBufferMemory(1);
-                    var fogUBO = new FogUBO(fog);
-                    fogUBO.update(device, fogUBOMemory);
-                }
-                break;
-
-                case "parallel_light": {
-                    long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
-                    var cameraUBO = new CameraUBO(camera);
-                    cameraUBO.update(device, cameraUBOMemory);
-
-                    var lightingInfo = new LightingInfo();
-                    lightingInfo.setNumLights(parallelLights.size());
-                    lightingInfo.setAmbientColor(parallelLightAmbientColor);
-
-                    long lightingInfoUBOMemory = ppNabor.getUniformBufferMemory(1);
-                    var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
-                    lightingInfoUBO.update(device, lightingInfoUBOMemory);
-
-                    long lightUBOMemory = ppNabor.getUniformBufferMemory(2);
-                    for (int i = 0; i < parallelLights.size(); i++) {
-                        var lightUBO = new ParallelLightUBO(parallelLights.get(i));
-                        lightUBO.update(device, lightUBOMemory, i);
-                    }
-                }
-                break;
-
-                case "point_light": {
-                    long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
-                    var cameraUBO = new CameraUBO(camera);
-                    cameraUBO.update(device, cameraUBOMemory);
-
-                    var lightingInfo = new LightingInfo();
-                    lightingInfo.setNumLights(pointLights.size());
-                    lightingInfo.setAmbientColor(pointLightAmbientColor);
-
-                    long lightingInfoUBOMemory = ppNabor.getUniformBufferMemory(1);
-                    var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
-                    lightingInfoUBO.update(device, lightingInfoUBOMemory);
-
-                    long lightUBOMemory = ppNabor.getUniformBufferMemory(2);
-                    for (int i = 0; i < pointLights.size(); i++) {
-                        var lightUBO = new PointLightUBO(pointLights.get(i));
-                        lightUBO.update(device, lightUBOMemory, i);
-                    }
-                }
-                break;
-
-                case "spotlight": {
-                    long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
-                    var cameraUBO = new CameraUBO(camera);
-                    cameraUBO.update(device, cameraUBOMemory);
-
-                    var lightingInfo = new LightingInfo();
-                    lightingInfo.setNumLights(spotlights.size());
-                    lightingInfo.setAmbientColor(spotlightAmbientColor);
-
-                    long lightingInfoUBOMemory = ppNabor.getUniformBufferMemory(1);
-                    var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
-                    lightingInfoUBO.update(device, lightingInfoUBOMemory);
-
-                    long lightUBOMemory = ppNabor.getUniformBufferMemory(2);
-                    for (int i = 0; i < spotlights.size(); i++) {
-                        var lightUBO = new SpotlightUBO(spotlights.get(i));
-                        lightUBO.update(device, lightUBOMemory, i);
-                    }
-                }
-                break;
-
-                case "simple_blur": {
-                    long blurInfoUBOMemory = ppNabor.getUniformBufferMemory(0);
-                    var blurInfoUBO = new SimpleBlurInfoUBO(simpleBlurInfo);
-                    blurInfoUBO.update(device, blurInfoUBOMemory);
-                }
-                break;
-
-                default:
-                    throw new RuntimeException("Unsupported nabor specified");
-            }
+            previousPPNabor = ppNabor;
 
             try (MemoryStack stack = MemoryStack.stackPush()) {
                 VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);

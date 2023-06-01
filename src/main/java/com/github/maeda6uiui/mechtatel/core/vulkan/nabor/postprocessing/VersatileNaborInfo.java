@@ -12,11 +12,13 @@ public class VersatileNaborInfo {
     private String vertShaderFilepath;
     private String fragShaderFilepath;
     private List<String> uniformResources;
+    private String lightingType;
 
     public VersatileNaborInfo(String vertShaderFilepath, String fragShaderFilepath) {
         this.vertShaderFilepath = vertShaderFilepath;
         this.fragShaderFilepath = fragShaderFilepath;
         uniformResources = new ArrayList<>();
+        lightingType = "parallel_light";
     }
 
     public String getVertShaderFilepath() {
@@ -33,5 +35,13 @@ public class VersatileNaborInfo {
 
     public void setUniformResources(List<String> uniformResources) {
         this.uniformResources = uniformResources;
+    }
+
+    public String getLightingType() {
+        return lightingType;
+    }
+
+    public void setLightingType(String lightingType) {
+        this.lightingType = lightingType;
     }
 }

@@ -3,9 +3,11 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
@@ -353,6 +355,42 @@ public class PostProcessingNabor extends Nabor {
             long renderPass = pRenderPass.get(0);
             this.setRenderPass(renderPass);
         }
+    }
+
+    @Override
+    protected void createGraphicsPipelines() {
+        if (this.isContainer()) {
+            return;
+        }
+
+        VkDevice device = this.getDevice();
+
+        long vertShaderModule;
+        long fragShaderModule;
+        if (this.getVertShaderModules().size() != 0) {
+            vertShaderModule = this.getVertShaderModule(0);
+            fragShaderModule = this.getFragShaderModule(0);
+        } else {
+            String vertShaderFilepath = this.getVertShaderFilepath();
+            String fragShaderFilepath = this.getFragShaderFilepath();
+
+            ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
+            ShaderSPIRVUtils.SPIRV fragShaderSPIRV;
+            try {
+                vertShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(vertShaderFilepath, ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER);
+                fragShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(fragShaderFilepath, ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            vertShaderModule = this.createShaderModule(device, vertShaderSPIRV.bytecode());
+            fragShaderModule = this.createShaderModule(device, fragShaderSPIRV.bytecode());
+
+            this.addVertShaderModule(vertShaderModule);
+            this.addFragShaderModule(fragShaderModule);
+        }
+
+        this.createGraphicsPipelines(vertShaderModule, fragShaderModule);
     }
 
     protected void createGraphicsPipelines(long vertShaderModule, long fragShaderModule) {

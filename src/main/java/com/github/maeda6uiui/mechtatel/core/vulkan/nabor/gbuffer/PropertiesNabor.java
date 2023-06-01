@@ -34,7 +34,13 @@ class PropertiesNabor extends Nabor {
             int depthImageFormat,
             int positionImageFormat,
             int normalImageFormat) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false);
+        super(
+                device,
+                VK_SAMPLE_COUNT_1_BIT,
+                false,
+                "./Mechtatel/Standard/Shader/GBuffer/properties.vert",
+                "./Mechtatel/Standard/Shader/GBuffer/properties.frag"
+        );
 
         this.depthImageFormat = depthImageFormat;
         this.positionImageFormat = positionImageFormat;
@@ -369,8 +375,8 @@ class PropertiesNabor extends Nabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Standard/Shader/GBuffer/properties.vert";
-            final String fragShaderFilepath = "./Mechtatel/Standard/Shader/GBuffer/properties.frag";
+            String vertShaderFilepath = this.getVertShaderFilepath();
+            String fragShaderFilepath = this.getFragShaderFilepath();
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

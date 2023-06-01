@@ -31,6 +31,9 @@ public class Nabor {
     private int msaaSamples;
     private VkExtent2D extent;
 
+    private String vertShaderFilepath;
+    private String fragShaderFilepath;
+
     private boolean isContainer;
     private boolean isSharedShaderModules;
 
@@ -63,12 +66,20 @@ public class Nabor {
 
     private int setCount;
 
-    public Nabor(VkDevice device, int msaaSamples, boolean isContainer) {
+    public Nabor(
+            VkDevice device,
+            int msaaSamples,
+            boolean isContainer,
+            String vertShaderFilepath,
+            String fragShaderFilepath) {
         this.device = device;
 
         this.msaaSamples = msaaSamples;
         this.isContainer = isContainer;
         isSharedShaderModules = false;
+
+        this.vertShaderFilepath = vertShaderFilepath;
+        this.fragShaderFilepath = fragShaderFilepath;
 
         textureSamplers = new ArrayList<>();
 
@@ -112,6 +123,14 @@ public class Nabor {
 
     public VkExtent2D getExtent(int naborIndex) {
         throw new RuntimeException("Unsupported operation");
+    }
+
+    public String getVertShaderFilepath() {
+        return vertShaderFilepath;
+    }
+
+    public String getFragShaderFilepath() {
+        return fragShaderFilepath;
     }
 
     public boolean isContainer() {

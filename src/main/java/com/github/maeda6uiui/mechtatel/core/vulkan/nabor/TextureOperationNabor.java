@@ -53,7 +53,13 @@ public class TextureOperationNabor extends Nabor {
     }
 
     public TextureOperationNabor(VkDevice device) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false);
+        super(
+                device,
+                VK_SAMPLE_COUNT_1_BIT,
+                false,
+                "./Mechtatel/Standard/Shader/TextureOperation/texture_operation.vert",
+                "./Mechtatel/Standard/Shader/TextureOperation/texture_operation.frag"
+        );
     }
 
     public void transitionColorImage(long commandPool, VkQueue graphicsQueue) {
@@ -393,8 +399,8 @@ public class TextureOperationNabor extends Nabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Standard/Shader/TextureOperation/texture_operation.vert";
-            final String fragShaderFilepath = "./Mechtatel/Standard/Shader/TextureOperation/texture_operation.frag";
+            String vertShaderFilepath = this.getVertShaderFilepath();
+            String fragShaderFilepath = this.getFragShaderFilepath();
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

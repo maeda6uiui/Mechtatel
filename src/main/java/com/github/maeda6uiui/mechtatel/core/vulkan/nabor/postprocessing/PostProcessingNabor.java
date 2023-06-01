@@ -20,8 +20,13 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class PostProcessingNabor extends Nabor {
-    public PostProcessingNabor(VkDevice device, int msaaSamples, boolean isContainer) {
-        super(device, msaaSamples, isContainer);
+    public PostProcessingNabor(
+            VkDevice device,
+            int msaaSamples,
+            boolean isContainer,
+            String vertShaderFilepath,
+            String fragShaderFilepath) {
+        super(device, msaaSamples, isContainer, vertShaderFilepath, fragShaderFilepath);
     }
 
     public void transitionColorImageLayout(long commandPool, VkQueue graphicsQueue) {

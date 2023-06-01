@@ -29,7 +29,13 @@ class AlbedoNabor extends Nabor {
     private int albedoResolveAttachmentIndex;
 
     public AlbedoNabor(VkDevice device, int msaaSamples, int depthImageFormat) {
-        super(device, msaaSamples, false);
+        super(
+                device,
+                msaaSamples,
+                false,
+                "./Mechtatel/Standard/Shader/GBuffer/albedo.vert",
+                "./Mechtatel/Standard/Shader/GBuffer/albedo.frag"
+        );
 
         this.depthImageFormat = depthImageFormat;
         depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
@@ -421,8 +427,8 @@ class AlbedoNabor extends Nabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Standard/Shader/GBuffer/albedo.vert";
-            final String fragShaderFilepath = "./Mechtatel/Standard/Shader/GBuffer/albedo.frag";
+            String vertShaderFilepath = this.getVertShaderFilepath();
+            String fragShaderFilepath = this.getFragShaderFilepath();
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

@@ -19,7 +19,13 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class PresentNabor extends Nabor {
     public PresentNabor(VkDevice device) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false);
+        super(
+                device,
+                VK_SAMPLE_COUNT_1_BIT,
+                false,
+                "./Mechtatel/Standard/Shader/Present/present.vert",
+                "./Mechtatel/Standard/Shader/Present/present.frag"
+        );
     }
 
     @Override
@@ -172,8 +178,8 @@ public class PresentNabor extends Nabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Standard/Shader/Present/present.vert";
-            final String fragShaderFilepath = "./Mechtatel/Standard/Shader/Present/present.frag";
+            String vertShaderFilepath = this.getVertShaderFilepath();
+            String fragShaderFilepath = this.getFragShaderFilepath();
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

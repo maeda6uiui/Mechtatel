@@ -24,7 +24,13 @@ class Pass2Nabor extends PostProcessingNabor {
     public static final int MAX_NUM_SHADOW_MAPS = 16;
 
     public Pass2Nabor(VkDevice device) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false);
+        super(
+                device,
+                VK_SAMPLE_COUNT_1_BIT,
+                false,
+                "./Mechtatel/Standard/Shader/PostProcessing/ShadowMapping/pass_2.vert",
+                "./Mechtatel/Standard/Shader/PostProcessing/ShadowMapping/pass_2.frag"
+        );
     }
 
     @Override
@@ -389,8 +395,8 @@ class Pass2Nabor extends PostProcessingNabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Standard/Shader/PostProcessing/ShadowMapping/pass_2.vert";
-            final String fragShaderFilepath = "./Mechtatel/Standard/Shader/PostProcessing/ShadowMapping/pass_2.frag";
+            final String vertShaderFilepath = this.getVertShaderFilepath();
+            final String fragShaderFilepath = this.getFragShaderFilepath();
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

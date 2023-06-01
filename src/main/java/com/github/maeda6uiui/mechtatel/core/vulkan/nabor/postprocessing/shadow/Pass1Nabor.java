@@ -24,7 +24,13 @@ class Pass1Nabor extends Nabor {
     private int depthImageFormat;
 
     public Pass1Nabor(VkDevice device, int depthImageFormat) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false);
+        super(
+                device,
+                VK_SAMPLE_COUNT_1_BIT,
+                false,
+                "./Mechtatel/Standard/Shader/PostProcessing/ShadowMapping/pass_1.vert",
+                "./Mechtatel/Standard/Shader/PostProcessing/ShadowMapping/pass_1.frag"
+        );
 
         this.depthImageFormat = depthImageFormat;
     }
@@ -235,8 +241,8 @@ class Pass1Nabor extends Nabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Standard/Shader/PostProcessing/ShadowMapping/pass_1.vert";
-            final String fragShaderFilepath = "./Mechtatel/Standard/Shader/PostProcessing/ShadowMapping/pass_1.frag";
+            String vertShaderFilepath = this.getVertShaderFilepath();
+            String fragShaderFilepath = this.getFragShaderFilepath();
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

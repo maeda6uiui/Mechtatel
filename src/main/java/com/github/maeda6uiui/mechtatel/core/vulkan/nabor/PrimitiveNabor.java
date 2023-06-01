@@ -42,7 +42,13 @@ public class PrimitiveNabor extends Nabor {
             int positionImageFormat,
             int normalImageFormat,
             boolean fill) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false);
+        super(
+                device,
+                VK_SAMPLE_COUNT_1_BIT,
+                false,
+                "./Mechtatel/Standard/Shader/Primitive/primitive.vert",
+                "./Mechtatel/Standard/Shader/Primitive/primitive.frag"
+        );
 
         this.depthImageFormat = depthImageFormat;
         this.positionImageFormat = positionImageFormat;
@@ -404,8 +410,8 @@ public class PrimitiveNabor extends Nabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Standard/Shader/Primitive/primitive.vert";
-            final String fragShaderFilepath = "./Mechtatel/Standard/Shader/Primitive/primitive.frag";
+            String vertShaderFilepath = this.getVertShaderFilepath();
+            String fragShaderFilepath = this.getFragShaderFilepath();
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

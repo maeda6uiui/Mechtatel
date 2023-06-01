@@ -19,7 +19,13 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class SimpleBlurNabor extends PostProcessingNabor {
     public SimpleBlurNabor(VkDevice device) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false);
+        super(
+                device,
+                VK_SAMPLE_COUNT_1_BIT,
+                false,
+                "./Mechtatel/Standard/Shader/PostProcessing/post_processing.vert",
+                "./Mechtatel/Standard/Shader/PostProcessing/simple_blur.frag"
+        );
     }
 
     @Override
@@ -132,8 +138,8 @@ public class SimpleBlurNabor extends PostProcessingNabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Standard/Shader/PostProcessing/post_processing.vert";
-            final String fragShaderFilepath = "./Mechtatel/Standard/Shader/PostProcessing/simple_blur.frag";
+            String vertShaderFilepath = this.getVertShaderFilepath();
+            String fragShaderFilepath = this.getFragShaderFilepath();
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

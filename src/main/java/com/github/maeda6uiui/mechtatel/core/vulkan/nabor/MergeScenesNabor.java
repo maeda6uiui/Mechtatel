@@ -35,7 +35,13 @@ public class MergeScenesNabor extends Nabor {
             int depthImageFormat,
             int positionImageFormat,
             int normalImageFormat) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false);
+        super(
+                device,
+                VK_SAMPLE_COUNT_1_BIT,
+                false,
+                "./Mechtatel/Standard/Shader/MergeScenes/merge_scenes.vert",
+                "./Mechtatel/Standard/Shader/MergeScenes/merge_scenes.frag"
+        );
 
         this.depthImageFormat = depthImageFormat;
         this.positionImageFormat = positionImageFormat;
@@ -462,8 +468,8 @@ public class MergeScenesNabor extends Nabor {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            final String vertShaderFilepath = "./Mechtatel/Standard/Shader/MergeScenes/merge_scenes.vert";
-            final String fragShaderFilepath = "./Mechtatel/Standard/Shader/MergeScenes/merge_scenes.frag";
+            String vertShaderFilepath = this.getVertShaderFilepath();
+            String fragShaderFilepath = this.getFragShaderFilepath();
 
             ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
             ShaderSPIRVUtils.SPIRV fragShaderSPIRV;

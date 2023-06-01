@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda6uiui
  */
 public class PointLightUBO {
-    public static final int SIZEOF = 5 * SIZEOF_VEC4;
+    public static final int SIZEOF = SIZEOF_VEC4 * 5;
 
     private Vector3f position;
     private Vector3f diffuseColor;

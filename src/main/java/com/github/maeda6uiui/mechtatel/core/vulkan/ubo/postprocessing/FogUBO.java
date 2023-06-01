@@ -19,7 +19,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda6uiui
  */
 public class FogUBO {
-    public static final int SIZEOF = 1 * SIZEOF_VEC3 + 2 * SIZEOF_FLOAT;
+    public static final int SIZEOF = SIZEOF_VEC3 + SIZEOF_FLOAT * 2;
 
     private Vector3f color;
     private float start;

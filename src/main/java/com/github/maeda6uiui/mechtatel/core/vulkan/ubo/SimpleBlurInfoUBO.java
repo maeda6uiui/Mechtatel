@@ -17,7 +17,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda6uiui
  */
 public class SimpleBlurInfoUBO {
-    public static final int SIZEOF = 4 * SIZEOF_INT;
+    public static final int SIZEOF = SIZEOF_INT * 4;
 
     private int textureWidth;
     private int textureHeight;

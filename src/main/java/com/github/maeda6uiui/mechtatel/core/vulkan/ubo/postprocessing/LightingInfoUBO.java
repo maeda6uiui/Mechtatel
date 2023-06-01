@@ -19,7 +19,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda6uiui
  */
 public class LightingInfoUBO {
-    public static final int SIZEOF = 3 * SIZEOF_VEC4;
+    public static final int SIZEOF = SIZEOF_VEC4 * 3;
 
     private Vector3f ambientColor;
     private Vector3f lightingClampMin;

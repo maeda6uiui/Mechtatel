@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda6uiui
  */
 public class TextureOperationParametersUBO {
-    public static final int SIZEOF = 2 * SIZEOF_VEC4 + SIZEOF_INT + 2 * SIZEOF_FLOAT;
+    public static final int SIZEOF = SIZEOF_VEC4 * 2 + SIZEOF_INT + SIZEOF_FLOAT * 2;
 
     private Vector4f firstTextureFactor;
     private Vector4f secondTextureFactor;

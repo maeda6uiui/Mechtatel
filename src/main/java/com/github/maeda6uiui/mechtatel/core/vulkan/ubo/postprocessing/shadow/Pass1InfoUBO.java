@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda6uiui
  */
 public class Pass1InfoUBO {
-    public static final int SIZEOF = 2 * SIZEOF_MAT4;
+    public static final int SIZEOF = SIZEOF_MAT4 * 2;
 
     private Matrix4f lightView;
     private Matrix4f lightProj;

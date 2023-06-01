@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda6uiui
  */
 public class SpotlightUBO {
-    public static final int SIZEOF = 10 * SIZEOF_VEC4;
+    public static final int SIZEOF = SIZEOF_VEC4 * 10;
 
     private Vector3f position;
     private Vector3f direction;

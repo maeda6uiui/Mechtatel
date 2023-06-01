@@ -19,7 +19,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda6uiui
  */
 public class ParallelLightUBO {
-    public static final int SIZEOF = 7 * SIZEOF_VEC4;
+    public static final int SIZEOF = SIZEOF_VEC4 * 7;
 
     private Vector3f direction;
     private Vector3f diffuseColor;

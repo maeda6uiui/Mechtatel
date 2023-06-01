@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.vkUnmapMemory;
  * @author maeda6uiui
  */
 public class Pass2InfoUBO {
-    public static final int SIZEOF = 2 * SIZEOF_VEC4;
+    public static final int SIZEOF = SIZEOF_VEC4 * 2;
 
     private int numShadowMaps;
     private float biasCoefficient;

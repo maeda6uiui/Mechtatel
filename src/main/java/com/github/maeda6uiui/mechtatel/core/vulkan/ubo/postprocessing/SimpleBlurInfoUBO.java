@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan.ubo;
+package com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing;
 
 import com.github.maeda6uiui.mechtatel.core.blur.SimpleBlurInfo;
 import org.lwjgl.PointerBuffer;

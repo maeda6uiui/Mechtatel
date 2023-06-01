@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SimpleBlurInfoUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.SimpleBlurInfoUBO;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 

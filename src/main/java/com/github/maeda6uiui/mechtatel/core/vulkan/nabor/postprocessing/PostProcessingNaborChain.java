@@ -14,7 +14,6 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow.ShadowMappingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow.ShadowMappingNaborRunner;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SimpleBlurInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import org.joml.Vector3f;

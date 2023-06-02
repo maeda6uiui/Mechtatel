@@ -15,7 +15,7 @@ import java.util.List;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Versatile nabor<br>
+ * Flexible nabor<br>
  * This nabor can be used with user-defined external shaders
  * if the post processing is achieved with a single pair of vertex and fragment shaders.
  * You have to create your own nabor if the post processing
@@ -24,10 +24,10 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class VersatileNabor extends PostProcessingNabor {
+public class FlexibleNabor extends PostProcessingNabor {
     private List<String> uniformResources;
 
-    public VersatileNabor(
+    public FlexibleNabor(
             VkDevice device,
             String vertShaderFilepath,
             String fragShaderFilepath,

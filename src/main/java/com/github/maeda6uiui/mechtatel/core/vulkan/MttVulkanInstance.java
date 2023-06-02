@@ -16,7 +16,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.VersatileNaborInfo;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
@@ -266,7 +266,7 @@ public class MttVulkanInstance
             String samplerFilter,
             String samplerMipmapMode,
             String samplerAddressMode,
-            Map<String, VersatileNaborInfo> versatileNaborInfos,
+            Map<String, FlexibleNaborInfo> flexibleNaborInfos,
             List<String> ppNaborNames) {
         VkExtent2D extent = VkExtent2D.create();
         if (screenWidth < 0) {
@@ -326,7 +326,7 @@ public class MttVulkanInstance
                 iSamplerAddressMode,
                 extent,
                 shouldChangeExtentOnRecreate,
-                versatileNaborInfos,
+                flexibleNaborInfos,
                 ppNaborNames,
                 screenName
         );

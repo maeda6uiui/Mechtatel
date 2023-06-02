@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Info for versatile nabor
+ * Info for flexible nabor
  *
  * @author maeda6uiui
  */
-public class VersatileNaborInfo {
+public class FlexibleNaborInfo {
     private String vertShaderFilepath;
     private String fragShaderFilepath;
     private List<String> uniformResources;
     private String lightingType;
 
-    public VersatileNaborInfo(String vertShaderFilepath, String fragShaderFilepath) {
+    public FlexibleNaborInfo(String vertShaderFilepath, String fragShaderFilepath) {
         this.vertShaderFilepath = vertShaderFilepath;
         this.fragShaderFilepath = fragShaderFilepath;
         uniformResources = new ArrayList<>();

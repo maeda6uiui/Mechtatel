@@ -44,7 +44,7 @@ public class PostProcessingNaborChain {
     private int depthImageAspect;
 
     private Map<String, PostProcessingNabor> ppNabors;
-    private Map<String, VersatileNaborInfo> versatileNaborInfos;
+    private Map<String, FlexibleNaborInfo> flexibleNaborInfos;
     private PostProcessingNabor lastPPNabor;
 
     private QuadDrawer quadDrawer;
@@ -79,7 +79,7 @@ public class PostProcessingNaborChain {
             int samplerAddressMode,
             VkExtent2D extent,
             List<String> naborNames,
-            Map<String, VersatileNaborInfo> versatileNaborInfos,
+            Map<String, FlexibleNaborInfo> flexibleNaborInfos,
             Map<String, List<Long>> vertShaderModulesStorage,
             Map<String, List<Long>> fragShaderModulesStorage) {
         this.device = device;
@@ -92,7 +92,7 @@ public class PostProcessingNaborChain {
         this.depthImageAspect = depthImageAspect;
 
         ppNabors = new LinkedHashMap<>();
-        this.versatileNaborInfos = versatileNaborInfos;
+        this.flexibleNaborInfos = flexibleNaborInfos;
 
         for (var naborName : naborNames) {
             PostProcessingNabor ppNabor = null;
@@ -118,16 +118,16 @@ public class PostProcessingNaborChain {
                     break;
             }
 
-            for (var entry : versatileNaborInfos.entrySet()) {
-                String versatileNaborName = entry.getKey();
-                if (versatileNaborName.equals(naborName)) {
-                    VersatileNaborInfo versatileNaborInfo = versatileNaborInfos.get(versatileNaborName);
+            for (var entry : flexibleNaborInfos.entrySet()) {
+                String flexibleNaborName = entry.getKey();
+                if (flexibleNaborName.equals(naborName)) {
+                    FlexibleNaborInfo flexibleNaborInfo = flexibleNaborInfos.get(flexibleNaborName);
 
-                    ppNabor = new VersatileNabor(
+                    ppNabor = new FlexibleNabor(
                             device,
-                            versatileNaborInfo.getVertShaderFilepath(),
-                            versatileNaborInfo.getFragShaderFilepath(),
-                            versatileNaborInfo.getUniformResources()
+                            flexibleNaborInfo.getVertShaderFilepath(),
+                            flexibleNaborInfo.getFragShaderFilepath(),
+                            flexibleNaborInfo.getUniformResources()
                     );
                 }
             }
@@ -310,9 +310,9 @@ public class PostProcessingNaborChain {
         }
     }
 
-    private void updateVersatileNaborUBOs(
+    private void updateFlexibleNaborUBOs(
             PostProcessingNabor ppNabor,
-            VersatileNaborInfo versatileNaborInfo,
+            FlexibleNaborInfo flexibleNaborInfo,
             Camera camera,
             Fog fog,
             List<ParallelLight> parallelLights,
@@ -322,7 +322,7 @@ public class PostProcessingNaborChain {
             List<Spotlight> spotlights,
             Vector3f spotlightAmbientColor,
             SimpleBlurInfo simpleBlurInfo) {
-        List<String> uniformResources = versatileNaborInfo.getUniformResources();
+        List<String> uniformResources = flexibleNaborInfo.getUniformResources();
         int numUniformResources = uniformResources.size();
 
         for (int i = 0; i < numUniformResources; i++) {
@@ -341,7 +341,7 @@ public class PostProcessingNaborChain {
                 }
                 break;
                 case "lighting_info": {
-                    String lightingType = versatileNaborInfo.getLightingType();
+                    String lightingType = flexibleNaborInfo.getLightingType();
                     var lightingInfo = new LightingInfo();
                     if (lightingType.equals("parallel_light")) {
                         lightingInfo.setNumLights(parallelLights.size());
@@ -410,11 +410,11 @@ public class PostProcessingNaborChain {
             String naborName = entry.getKey();
             PostProcessingNabor ppNabor = entry.getValue();
 
-            if (versatileNaborInfos.containsKey(naborName)) {
-                VersatileNaborInfo versatileNaborInfo = versatileNaborInfos.get(naborName);
-                this.updateVersatileNaborUBOs(
+            if (flexibleNaborInfos.containsKey(naborName)) {
+                FlexibleNaborInfo flexibleNaborInfo = flexibleNaborInfos.get(naborName);
+                this.updateFlexibleNaborUBOs(
                         ppNabor,
-                        versatileNaborInfo,
+                        flexibleNaborInfo,
                         camera,
                         fog,
                         parallelLights,

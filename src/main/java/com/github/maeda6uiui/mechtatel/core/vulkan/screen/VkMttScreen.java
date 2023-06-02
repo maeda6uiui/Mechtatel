@@ -12,8 +12,8 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PrimitiveNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNaborChain;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.VersatileNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import org.joml.Vector3f;
@@ -74,7 +74,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
             int samplerAddressMode,
             VkExtent2D extent,
             boolean shouldChangeExtentOnRecreate,
-            Map<String, VersatileNaborInfo> versatileNaborInfos,
+            Map<String, FlexibleNaborInfo> flexibleNaborInfos,
             List<String> ppNaborNames,
             String screenName) {
         this.device = device;
@@ -296,7 +296,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
                     samplerAddressMode,
                     extent,
                     ppNaborNames,
-                    versatileNaborInfos,
+                    flexibleNaborInfos,
                     new HashMap<>(vertShaderModulesStorage),
                     new HashMap<>(fragShaderModulesStorage)
             );

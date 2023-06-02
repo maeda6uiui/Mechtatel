@@ -9,10 +9,10 @@ import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanInstanceForScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.ParallelLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.SpotlightNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.VersatileNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -59,16 +59,16 @@ public class MttScreen {
             String samplerAddressMode,
             Map<String, ExternalPostProcessingNaborInfo> externalPostProcessingNaborInfos,
             List<String> ppNaborNames) {
-        var versatileNaborInfos = new HashMap<String, VersatileNaborInfo>();
+        var flexibleNaborInfos = new HashMap<String, FlexibleNaborInfo>();
 
         for (var entry : externalPostProcessingNaborInfos.entrySet()) {
             String naborName = entry.getKey();
             ExternalPostProcessingNaborInfo naborInfo = entry.getValue();
 
-            var versatileNaborInfo = new VersatileNaborInfo(
+            var flexibleNaborInfo = new FlexibleNaborInfo(
                     naborInfo.getVertShaderFilepath(), naborInfo.getFragShaderFilepath());
-            versatileNaborInfo.setUniformResources(naborInfo.getUniformResources());
-            versatileNaborInfos.put(naborName, versatileNaborInfo);
+            flexibleNaborInfo.setUniformResources(naborInfo.getUniformResources());
+            flexibleNaborInfos.put(naborName, flexibleNaborInfo);
         }
 
         screen = vulkanInstance.createScreen(
@@ -81,7 +81,7 @@ public class MttScreen {
                 samplerFilter,
                 samplerMipmapMode,
                 samplerAddressMode,
-                versatileNaborInfos,
+                flexibleNaborInfos,
                 (ppNaborNames != null && ppNaborNames.size() != 0) ? ppNaborNames : null
         );
         shouldAutoUpdateCameraAspect = true;

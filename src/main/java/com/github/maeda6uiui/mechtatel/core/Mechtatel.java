@@ -396,6 +396,8 @@ public class Mechtatel
             float boxY,
             float boxWidth,
             float boxHeight,
+            float textX,
+            float textY,
             String text,
             String fontName,
             int fontStyle,
@@ -404,7 +406,7 @@ public class Mechtatel
             Color checkboxColor) {
         return instance.createCheckbox(
                 x, y, width, height,
-                boxX, boxY, boxWidth, boxHeight,
+                boxX, boxY, boxWidth, boxHeight, textX, textY,
                 text, fontName, fontStyle, fontSize, fontColor, checkboxColor);
     }
 

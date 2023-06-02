@@ -36,6 +36,8 @@ public class MttCheckbox extends MttGuiComponent {
             float boxY,
             float boxWidth,
             float boxHeight,
+            float textX,
+            float textY,
             String text,
             String fontName,
             int fontStyle,
@@ -71,7 +73,7 @@ public class MttCheckbox extends MttGuiComponent {
 
         font = new MttFont(vulkanInstance, "default", new Font(
                 fontName, fontStyle, fontSize), true, fontColor, text);
-        font.prepare(text, new Vector2f(x, y));
+        font.prepare(text, new Vector2f(textX, textY));
         font.createBuffers();
 
         selected = false;

@@ -44,7 +44,6 @@ public class ShadowMappingTest extends Mechtatel {
         var screenCreator = new ScreenCreator(this, "main");
         screenCreator.addPostProcessingNabor("parallel_light");
         screenCreator.addPostProcessingNabor("fog");
-        screenCreator.addPostProcessingNabor("shadow_mapping");
         var mainScreen = screenCreator.create();
 
         mainScreen.createParallelLight();

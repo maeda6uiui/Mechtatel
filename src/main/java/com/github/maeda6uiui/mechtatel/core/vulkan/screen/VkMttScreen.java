@@ -14,6 +14,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PrimitiveNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNaborChain;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow.ShadowMappingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import org.joml.Vector3f;
@@ -53,11 +54,33 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
 
     private PostProcessingNaborChain ppNaborChain;
 
+    private ShadowMappingNabor shadowMappingNabor;
+    private int depthImageFormat;
+    private int depthImageWidth;
+    private int depthImageHeight;
+    private int depthImageAspect;
+
     private int initialWidth;
     private int initialHeight;
     private boolean shouldChangeExtentOnRecreate;
 
     private QuadDrawer quadDrawer;
+
+    private void createShadowMappingNaborUserDefImages(ShadowMappingNabor shadowMappingNabor) {
+        shadowMappingNabor.cleanupUserDefImages();
+
+        //Shadow depth
+        for (int i = 0; i < ShadowMappingNabor.MAX_NUM_SHADOW_MAPS; i++) {
+            shadowMappingNabor.createUserDefImage(
+                    depthImageWidth,
+                    depthImageHeight,
+                    1,
+                    VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                    depthImageFormat,
+                    VK_IMAGE_ASPECT_DEPTH_BIT);
+        }
+    }
 
     public VkMttScreen(
             VkDevice device,
@@ -82,6 +105,11 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
         this.graphicsQueue = graphicsQueue;
 
         this.screenName = screenName;
+
+        this.depthImageFormat = depthImageFormat;
+        this.depthImageWidth = depthImageWidth;
+        this.depthImageHeight = depthImageHeight;
+        this.depthImageAspect = depthImageAspect;
 
         initialWidth = extent.width();
         initialHeight = extent.height();
@@ -317,6 +345,43 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
                     (naborName, fragShaderModules) -> fragShaderModulesStorage.put(naborName, fragShaderModules)
             );
         }
+
+        if (depthImageWidth > 0 && depthImageHeight > 0) {
+            shadowMappingNabor = new ShadowMappingNabor(device, depthImageFormat, depthImageWidth, depthImageHeight);
+            if (vertShaderModulesStorage.containsKey("shadow_mapping")) {
+                var vertShaderModules = vertShaderModulesStorage.get("shadow_mapping");
+                var fragShaderModules = fragShaderModulesStorage.get("shadow_mapping");
+
+                shadowMappingNabor.compile(
+                        colorImageFormat,
+                        samplerFilter,
+                        samplerMipmapMode,
+                        samplerAddressMode,
+                        extent,
+                        commandPool,
+                        graphicsQueue,
+                        1,
+                        vertShaderModules,
+                        fragShaderModules);
+            } else {
+                shadowMappingNabor.compile(
+                        colorImageFormat,
+                        samplerFilter,
+                        samplerMipmapMode,
+                        samplerAddressMode,
+                        extent,
+                        commandPool,
+                        graphicsQueue,
+                        1);
+
+                var vertShaderModules = shadowMappingNabor.getVertShaderModules();
+                var fragShaderModules = shadowMappingNabor.getFragShaderModules();
+                vertShaderModulesStorage.put("shadow_mapping", vertShaderModules);
+                fragShaderModulesStorage.put("shadow_mapping", fragShaderModules);
+            }
+
+            this.createShadowMappingNaborUserDefImages(shadowMappingNabor);
+        }
     }
 
     public void recreate(int colorImageFormat, VkExtent2D extent) {
@@ -329,6 +394,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
 
             if (ppNaborChain != null) {
                 ppNaborChain.recreate(colorImageFormat, extent);
+            }
+            if (shadowMappingNabor != null) {
+                shadowMappingNabor.recreate(colorImageFormat, extent);
             }
         } else {
             VkExtent2D initialExtent = VkExtent2D.create();
@@ -344,6 +412,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
             if (ppNaborChain != null) {
                 ppNaborChain.recreate(colorImageFormat, initialExtent);
             }
+            if (shadowMappingNabor != null) {
+                shadowMappingNabor.recreate(colorImageFormat, initialExtent);
+            }
         }
     }
 
@@ -358,6 +429,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
 
         if (ppNaborChain != null) {
             ppNaborChain.cleanup();
+        }
+        if (shadowMappingNabor != null) {
+            shadowMappingNabor.cleanup(false);
         }
     }
 
@@ -779,6 +853,23 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
         mergeScenesFillNabor.transitionPositionImage(commandPool, graphicsQueue);
         mergeScenesFillNabor.transitionNormalImage(commandPool, graphicsQueue);
 
+        if (shadowMappingNabor != null) {
+            ShadowMappingNaborRunner.runShadowMappingNabor(
+                    device,
+                    commandPool,
+                    graphicsQueue,
+                    mergeScenesFillNabor,
+                    null,
+                    shadowMappingNabor,
+                    parallelLights,
+                    spotlights,
+                    components,
+                    depthImageAspect,
+                    shadowMappingSettings,
+                    quadDrawer
+            );
+        }
+
         if (ppNaborChain != null) {
             ppNaborChain.run(
                     camera,
@@ -789,19 +880,20 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
                     pointLightAmbientColor,
                     spotlights,
                     spotlightAmbientColor,
-                    shadowMappingSettings,
                     simpleBlurInfo,
                     mergeScenesFillNabor,
-                    components
+                    shadowMappingNabor
             );
         }
     }
 
     public long getColorImageView() {
-        if (ppNaborChain == null) {
-            return mergeScenesFillNabor.getAlbedoImageView();
-        } else {
+        if (ppNaborChain != null) {
             return ppNaborChain.getLastPPNaborColorImageView();
+        } else if (shadowMappingNabor != null) {
+            return shadowMappingNabor.getColorImageView();
+        } else {
+            return mergeScenesFillNabor.getAlbedoImageView();
         }
     }
 
@@ -810,10 +902,12 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
     }
 
     public void save(String srcImageFormat, String outputFilepath) throws IOException {
-        if (ppNaborChain == null) {
-            mergeScenesFillNabor.save(commandPool, graphicsQueue, 0, srcImageFormat, outputFilepath);
-        } else {
+        if (ppNaborChain != null) {
             ppNaborChain.save(srcImageFormat, outputFilepath);
+        } else if (shadowMappingNabor != null) {
+            shadowMappingNabor.save(commandPool, graphicsQueue, 0, srcImageFormat, outputFilepath);
+        } else {
+            mergeScenesFillNabor.save(commandPool, graphicsQueue, 0, srcImageFormat, outputFilepath);
         }
     }
 

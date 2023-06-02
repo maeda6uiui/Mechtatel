@@ -8,12 +8,9 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.light.LightingInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.shadow.ShadowMappingSettings;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow.ShadowMappingNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.ShadowMappingNaborRunner;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
@@ -49,22 +46,6 @@ public class PostProcessingNaborChain {
     private PostProcessingNabor lastPPNabor;
 
     private QuadDrawer quadDrawer;
-
-    private void createShadowMappingNaborUserDefImages(PostProcessingNabor shadowMappingNabor) {
-        shadowMappingNabor.cleanupUserDefImages();
-
-        //Shadow depth
-        for (int i = 0; i < ShadowMappingNabor.MAX_NUM_SHADOW_MAPS; i++) {
-            shadowMappingNabor.createUserDefImage(
-                    depthImageWidth,
-                    depthImageHeight,
-                    1,
-                    VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    depthImageFormat,
-                    VK_IMAGE_ASPECT_DEPTH_BIT);
-        }
-    }
 
     public PostProcessingNaborChain(
             VkDevice device,
@@ -106,10 +87,6 @@ public class PostProcessingNaborChain {
                     break;
                 case "point_light":
                     ppNabor = new PointLightNabor(device);
-                    break;
-                case "shadow_mapping":
-                    ppNabor = new ShadowMappingNabor(device, depthImageFormat, depthImageWidth, depthImageHeight);
-                    this.createShadowMappingNaborUserDefImages(ppNabor);
                     break;
                 case "spotlight":
                     ppNabor = new SpotlightNabor(device);
@@ -173,15 +150,8 @@ public class PostProcessingNaborChain {
     }
 
     public void recreate(int imageFormat, VkExtent2D extent) {
-        for (var entry : ppNabors.entrySet()) {
-            String naborName = entry.getKey();
-            PostProcessingNabor ppNabor = entry.getValue();
-
+        for (var ppNabor : ppNabors.values()) {
             ppNabor.recreate(imageFormat, extent);
-
-            if (naborName.equals("shadow_mapping")) {
-                this.createShadowMappingNaborUserDefImages(ppNabor);
-            }
         }
     }
 
@@ -380,10 +350,9 @@ public class PostProcessingNaborChain {
             Vector3f pointLightAmbientColor,
             List<Spotlight> spotlights,
             Vector3f spotlightAmbientColor,
-            ShadowMappingSettings shadowMappingSettings,
             SimpleBlurInfo simpleBlurInfo,
             MergeScenesNabor lastMergeNabor,
-            List<VkMttComponent> components) {
+            ShadowMappingNabor shadowMappingNabor) {
         PostProcessingNabor previousPPNabor = null;
         for (var entry : ppNabors.entrySet()) {
             String naborName = entry.getKey();
@@ -405,25 +374,6 @@ public class PostProcessingNaborChain {
                         simpleBlurInfo
                 );
             } else {
-                if (naborName.equals("shadow_mapping")) {
-                    ShadowMappingNaborRunner.runShadowMappingNabor(
-                            device,
-                            commandPool,
-                            graphicsQueue,
-                            lastMergeNabor,
-                            previousPPNabor,
-                            ppNabor,
-                            parallelLights,
-                            spotlights,
-                            components,
-                            depthImageAspect,
-                            shadowMappingSettings,
-                            quadDrawer);
-
-                    previousPPNabor = ppNabor;
-                    continue;
-                }
-
                 this.updateStandardNaborUBOs(
                         naborName,
                         ppNabor,
@@ -460,16 +410,24 @@ public class PostProcessingNaborChain {
 
                     //First post-processing
                     if (previousPPNabor == null) {
-                        ppNabor.bindImages(
-                                commandBuffer,
-                                0,
-                                lastMergeNabor.getAlbedoImageView(),
-                                lastMergeNabor.getDepthImageView(),
-                                lastMergeNabor.getPositionImageView(),
-                                lastMergeNabor.getNormalImageView());
+                        if (shadowMappingNabor != null) {
+                            ppNabor.bindImages(
+                                    commandBuffer,
+                                    0,
+                                    shadowMappingNabor.getColorImageView(),
+                                    lastMergeNabor.getDepthImageView(),
+                                    lastMergeNabor.getPositionImageView(),
+                                    lastMergeNabor.getNormalImageView());
+                        } else {
+                            ppNabor.bindImages(
+                                    commandBuffer,
+                                    0,
+                                    lastMergeNabor.getAlbedoImageView(),
+                                    lastMergeNabor.getDepthImageView(),
+                                    lastMergeNabor.getPositionImageView(),
+                                    lastMergeNabor.getNormalImageView());
+                        }
                     } else {
-                        previousPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
-
                         ppNabor.bindImages(
                                 commandBuffer,
                                 0,
@@ -486,10 +444,9 @@ public class PostProcessingNaborChain {
                 CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
             }
 
+            ppNabor.transitionColorImageLayout(commandPool, graphicsQueue);
             previousPPNabor = ppNabor;
         }
-
-        lastPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
     }
 
     public Map<String, List<Long>> getVertShaderModules() {

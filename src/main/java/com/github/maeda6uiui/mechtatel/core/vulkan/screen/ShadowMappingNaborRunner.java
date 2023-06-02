@@ -330,5 +330,7 @@ public class ShadowMappingNaborRunner {
                 shadowSpotlights,
                 settings,
                 quadDrawer);
+
+        shadowMappingNabor.transitionColorImageLayout(commandPool, graphicsQueue);
     }
 }

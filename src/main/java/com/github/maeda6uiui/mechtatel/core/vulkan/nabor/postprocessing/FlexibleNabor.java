@@ -17,10 +17,11 @@ import static org.lwjgl.vulkan.VK10.*;
 /**
  * Flexible nabor<br>
  * This nabor can be used with user-defined external shaders
- * if the post processing is achieved with a single pair of vertex and fragment shaders.
- * You have to create your own nabor if the post processing
+ * if the post processing is achieved with a single fragment shader.
+ * You have to create your own nabor if the processing
  * requires more than one pair of shaders (e.g. shadow mapping).
- * Plus, you can't use more than one lighting types at the same time.
+ * Plus, you can't use more than one lighting types at the same time
+ * in the fragment shader consumed by this nabor.
  *
  * @author maeda6uiui
  */

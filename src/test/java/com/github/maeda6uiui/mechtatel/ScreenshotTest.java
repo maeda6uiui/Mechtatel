@@ -40,6 +40,7 @@ public class ScreenshotTest extends Mechtatel {
         var screenCreator = new ScreenCreator(this, "main");
         screenCreator.addPostProcessingNabor("parallel_light");
         screenCreator.addPostProcessingNabor("fog");
+        screenCreator.setUseShadowMapping(true);
         var mainScreen = screenCreator.create();
 
         mainScreen.createParallelLight();

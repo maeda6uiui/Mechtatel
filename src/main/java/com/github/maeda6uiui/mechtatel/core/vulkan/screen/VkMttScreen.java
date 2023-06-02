@@ -97,6 +97,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
             int samplerAddressMode,
             VkExtent2D extent,
             boolean shouldChangeExtentOnRecreate,
+            boolean useShadowMapping,
             Map<String, FlexibleNaborInfo> flexibleNaborInfos,
             List<String> ppNaborNames,
             String screenName) {
@@ -342,7 +343,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
             );
         }
 
-        if (depthImageWidth > 0 && depthImageHeight > 0) {
+        if (useShadowMapping) {
             shadowMappingNabor = new ShadowMappingNabor(device, depthImageFormat, depthImageWidth, depthImageHeight);
             if (vertShaderModulesStorage.containsKey("shadow_mapping")) {
                 var vertShaderModules = vertShaderModulesStorage.get("shadow_mapping");

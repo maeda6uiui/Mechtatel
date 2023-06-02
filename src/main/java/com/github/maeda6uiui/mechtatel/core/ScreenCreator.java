@@ -21,10 +21,11 @@ public class ScreenCreator {
     private int depthImageHeight;
     private int screenWidth;
     private int screenHeight;
-    private boolean shouldChangeExtentOnRecreate;
     private String samplerFilter;
     private String samplerMipmapMode;
     private String samplerAddressMode;
+    private boolean shouldChangeExtentOnRecreate;
+    private boolean useShadowMapping;
     private Map<String, FlexibleNaborInfo> flexibleNaborInfos;
     private List<String> ppNaborNames;
 
@@ -36,10 +37,11 @@ public class ScreenCreator {
         depthImageHeight = 2048;
         screenWidth = -1;
         screenHeight = -1;
-        shouldChangeExtentOnRecreate = true;
         samplerFilter = "nearest";
         samplerMipmapMode = "nearest";
         samplerAddressMode = "repeat";
+        shouldChangeExtentOnRecreate = true;
+        useShadowMapping = false;
         flexibleNaborInfos = new HashMap<>();
         ppNaborNames = new ArrayList<>();
     }
@@ -49,10 +51,11 @@ public class ScreenCreator {
         depthImageHeight = 2048;
         screenWidth = -1;
         screenHeight = -1;
-        shouldChangeExtentOnRecreate = true;
         samplerFilter = "nearest";
         samplerMipmapMode = "nearest";
         samplerAddressMode = "repeat";
+        shouldChangeExtentOnRecreate = true;
+        useShadowMapping = false;
         flexibleNaborInfos.clear();
         ppNaborNames.clear();
     }
@@ -67,10 +70,6 @@ public class ScreenCreator {
         screenHeight = height;
     }
 
-    public void setShouldChangeExtentOnRecreate(boolean shouldChangeExtentOnRecreate) {
-        this.shouldChangeExtentOnRecreate = shouldChangeExtentOnRecreate;
-    }
-
     public void setSamplerFilter(String samplerFilter) {
         this.samplerFilter = samplerFilter;
     }
@@ -81,6 +80,14 @@ public class ScreenCreator {
 
     public void setSamplerAddressMode(String samplerAddressMode) {
         this.samplerAddressMode = samplerAddressMode;
+    }
+
+    public void setShouldChangeExtentOnRecreate(boolean shouldChangeExtentOnRecreate) {
+        this.shouldChangeExtentOnRecreate = shouldChangeExtentOnRecreate;
+    }
+
+    public void setUseShadowMapping(boolean useShadowMapping) {
+        this.useShadowMapping = useShadowMapping;
     }
 
     public void clearFlexibleNaborInfos() {
@@ -106,10 +113,11 @@ public class ScreenCreator {
                 depthImageHeight,
                 screenWidth,
                 screenHeight,
-                shouldChangeExtentOnRecreate,
                 samplerFilter,
                 samplerMipmapMode,
                 samplerAddressMode,
+                shouldChangeExtentOnRecreate,
+                useShadowMapping,
                 flexibleNaborInfos,
                 ppNaborNames
         );

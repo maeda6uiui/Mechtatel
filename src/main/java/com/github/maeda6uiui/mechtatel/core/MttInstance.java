@@ -165,10 +165,11 @@ class MttInstance {
                 2048,
                 -1,
                 -1,
-                true,
                 "nearest",
                 "nearest",
                 "repeat",
+                true,
+                false,
                 null,
                 null
         );
@@ -812,10 +813,11 @@ class MttInstance {
             int depthImageHeight,
             int screenWidth,
             int screenHeight,
-            boolean shouldChangeExtentOnRecreate,
             String samplerFilter,
             String samplerMipmapMode,
             String samplerAddressMode,
+            boolean shouldChangeExtentOnRecreate,
+            boolean useShadowMapping,
             Map<String, FlexibleNaborInfo> flexibleNaborInfos,
             List<String> ppNaborNames) {
         if (screens.containsKey(screenName)) {
@@ -830,10 +832,11 @@ class MttInstance {
                 depthImageHeight,
                 screenWidth,
                 screenHeight,
-                shouldChangeExtentOnRecreate,
                 samplerFilter,
                 samplerMipmapMode,
                 samplerAddressMode,
+                shouldChangeExtentOnRecreate,
+                useShadowMapping,
                 flexibleNaborInfos,
                 ppNaborNames
         );

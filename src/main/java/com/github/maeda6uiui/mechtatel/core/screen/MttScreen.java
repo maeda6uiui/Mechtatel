@@ -52,10 +52,11 @@ public class MttScreen {
             int depthImageHeight,
             int screenWidth,
             int screenHeight,
-            boolean shouldChangeExtentOnRecreate,
             String samplerFilter,
             String samplerMipmapMode,
             String samplerAddressMode,
+            boolean shouldChangeExtentOnRecreate,
+            boolean useShadowMapping,
             Map<String, FlexibleNaborInfo> flexibleNaborInfos,
             List<String> ppNaborNames) {
         screen = vulkanInstance.createScreen(
@@ -64,10 +65,11 @@ public class MttScreen {
                 depthImageHeight,
                 screenWidth,
                 screenHeight,
-                shouldChangeExtentOnRecreate,
                 samplerFilter,
                 samplerMipmapMode,
                 samplerAddressMode,
+                shouldChangeExtentOnRecreate,
+                useShadowMapping,
                 flexibleNaborInfos,
                 (ppNaborNames != null && ppNaborNames.size() != 0) ? ppNaborNames : null
         );

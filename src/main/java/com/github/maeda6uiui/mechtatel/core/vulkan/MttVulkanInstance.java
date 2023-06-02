@@ -262,10 +262,11 @@ public class MttVulkanInstance
             int depthImageHeight,
             int screenWidth,
             int screenHeight,
-            boolean shouldChangeExtentOnRecreate,
             String samplerFilter,
             String samplerMipmapMode,
             String samplerAddressMode,
+            boolean shouldChangeExtentOnRecreate,
+            boolean useShadowMapping,
             Map<String, FlexibleNaborInfo> flexibleNaborInfos,
             List<String> ppNaborNames) {
         VkExtent2D extent = VkExtent2D.create();
@@ -326,6 +327,7 @@ public class MttVulkanInstance
                 iSamplerAddressMode,
                 extent,
                 shouldChangeExtentOnRecreate,
+                useShadowMapping,
                 flexibleNaborInfos,
                 ppNaborNames,
                 screenName

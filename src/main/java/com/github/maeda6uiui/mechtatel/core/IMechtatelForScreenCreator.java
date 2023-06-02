@@ -18,10 +18,11 @@ public interface IMechtatelForScreenCreator {
             int depthImageHeight,
             int screenWidth,
             int screenHeight,
-            boolean shouldChangeExtentOnRecreate,
             String samplerFilter,
             String samplerMipmapMode,
             String samplerAddressMode,
+            boolean shouldChangeExtentOnRecreate,
+            boolean useShadowMapping,
             Map<String, FlexibleNaborInfo> flexibleNaborInfos,
             List<String> ppNaborNames);
 }

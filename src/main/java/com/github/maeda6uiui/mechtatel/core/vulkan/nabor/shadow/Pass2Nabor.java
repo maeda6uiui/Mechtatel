@@ -32,8 +32,8 @@ class Pass2Nabor extends Nabor {
                 device,
                 VK_SAMPLE_COUNT_1_BIT,
                 false,
-                "./Mechtatel/Standard/Shader/PostProcessing/ShadowMapping/pass_2.vert",
-                "./Mechtatel/Standard/Shader/PostProcessing/ShadowMapping/pass_2.frag"
+                "./Mechtatel/Standard/Shader/ShadowMapping/pass_2.vert",
+                "./Mechtatel/Standard/Shader/ShadowMapping/pass_2.frag"
         );
     }
 

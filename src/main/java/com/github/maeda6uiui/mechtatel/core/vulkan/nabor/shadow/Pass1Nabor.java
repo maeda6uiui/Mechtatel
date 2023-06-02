@@ -28,8 +28,8 @@ class Pass1Nabor extends Nabor {
                 device,
                 VK_SAMPLE_COUNT_1_BIT,
                 false,
-                "./Mechtatel/Standard/Shader/PostProcessing/ShadowMapping/pass_1.vert",
-                "./Mechtatel/Standard/Shader/PostProcessing/ShadowMapping/pass_1.frag"
+                "./Mechtatel/Standard/Shader/ShadowMapping/pass_1.vert",
+                "./Mechtatel/Standard/Shader/ShadowMapping/pass_1.frag"
         );
 
         this.depthImageFormat = depthImageFormat;

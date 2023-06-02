@@ -82,17 +82,19 @@ public class PostProcessingNaborChain {
                     break;
             }
 
-            for (var entry : flexibleNaborInfos.entrySet()) {
-                String flexibleNaborName = entry.getKey();
-                if (flexibleNaborName.equals(naborName)) {
-                    FlexibleNaborInfo flexibleNaborInfo = flexibleNaborInfos.get(flexibleNaborName);
+            if (flexibleNaborInfos != null) {
+                for (var entry : flexibleNaborInfos.entrySet()) {
+                    String flexibleNaborName = entry.getKey();
+                    if (flexibleNaborName.equals(naborName)) {
+                        FlexibleNaborInfo flexibleNaborInfo = flexibleNaborInfos.get(flexibleNaborName);
 
-                    ppNabor = new FlexibleNabor(
-                            device,
-                            flexibleNaborInfo.getVertShaderFilepath(),
-                            flexibleNaborInfo.getFragShaderFilepath(),
-                            flexibleNaborInfo.getUniformResources()
-                    );
+                        ppNabor = new FlexibleNabor(
+                                device,
+                                flexibleNaborInfo.getVertShaderFilepath(),
+                                flexibleNaborInfo.getFragShaderFilepath(),
+                                flexibleNaborInfo.getUniformResources()
+                        );
+                    }
                 }
             }
 

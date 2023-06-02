@@ -1,14 +1,14 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 
-import com.github.maeda6uiui.mechtatel.core.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
-import com.github.maeda6uiui.mechtatel.core.fog.Fog;
-import com.github.maeda6uiui.mechtatel.core.light.LightingInfo;
-import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
-import com.github.maeda6uiui.mechtatel.core.light.PointLight;
-import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
-import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.light.LightingInfo;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.light.PointLight;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
@@ -193,7 +193,6 @@ public class PostProcessingNaborChain {
     private void updateStandardNaborUBOs(
             String naborName,
             PostProcessingNabor ppNabor,
-            PostProcessingNabor previousPPNabor,
             Camera camera,
             Fog fog,
             List<ParallelLight> parallelLights,
@@ -202,28 +201,7 @@ public class PostProcessingNaborChain {
             Vector3f pointLightAmbientColor,
             List<Spotlight> spotlights,
             Vector3f spotlightAmbientColor,
-            ShadowMappingSettings shadowMappingSettings,
-            SimpleBlurInfo simpleBlurInfo,
-            MergeScenesNabor lastMergeNabor,
-            List<VkMttComponent> components) {
-        if (naborName.equals("shadow_mapping")) {
-            ShadowMappingNaborRunner.runShadowMappingNabor(
-                    device,
-                    commandPool,
-                    graphicsQueue,
-                    lastMergeNabor,
-                    previousPPNabor,
-                    ppNabor,
-                    parallelLights,
-                    spotlights,
-                    components,
-                    depthImageAspect,
-                    shadowMappingSettings,
-                    quadDrawer);
-
-            return;
-        }
-
+            SimpleBlurInfo simpleBlurInfo) {
         switch (naborName) {
             case "fog": {
                 long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
@@ -427,10 +405,28 @@ public class PostProcessingNaborChain {
                         simpleBlurInfo
                 );
             } else {
+                if (naborName.equals("shadow_mapping")) {
+                    ShadowMappingNaborRunner.runShadowMappingNabor(
+                            device,
+                            commandPool,
+                            graphicsQueue,
+                            lastMergeNabor,
+                            previousPPNabor,
+                            ppNabor,
+                            parallelLights,
+                            spotlights,
+                            components,
+                            depthImageAspect,
+                            shadowMappingSettings,
+                            quadDrawer);
+
+                    previousPPNabor = ppNabor;
+                    continue;
+                }
+
                 this.updateStandardNaborUBOs(
                         naborName,
                         ppNabor,
-                        previousPPNabor,
                         camera,
                         fog,
                         parallelLights,
@@ -439,13 +435,9 @@ public class PostProcessingNaborChain {
                         pointLightAmbientColor,
                         spotlights,
                         spotlightAmbientColor,
-                        shadowMappingSettings,
-                        simpleBlurInfo,
-                        lastMergeNabor,
-                        components
+                        simpleBlurInfo
                 );
             }
-            previousPPNabor = ppNabor;
 
             try (MemoryStack stack = MemoryStack.stackPush()) {
                 VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);

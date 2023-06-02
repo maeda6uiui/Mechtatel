@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing;
 
-import com.github.maeda6uiui.mechtatel.core.fog.Fog;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.UBO;
 import org.joml.Vector3f;
 

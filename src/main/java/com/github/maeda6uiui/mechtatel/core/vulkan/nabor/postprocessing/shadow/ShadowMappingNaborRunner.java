@@ -1,11 +1,11 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow;
 
-import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
-import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
-import com.github.maeda6uiui.mechtatel.core.shadow.Pass1Info;
-import com.github.maeda6uiui.mechtatel.core.shadow.Pass2Info;
-import com.github.maeda6uiui.mechtatel.core.shadow.ShadowInfo;
-import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.shadow.Pass1Info;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.shadow.Pass2Info;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.shadow.ShadowInfo;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent3D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;

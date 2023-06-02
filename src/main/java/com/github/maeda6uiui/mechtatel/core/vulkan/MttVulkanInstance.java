@@ -1,15 +1,15 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
-import com.github.maeda6uiui.mechtatel.core.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex3D;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex3DUV;
-import com.github.maeda6uiui.mechtatel.core.fog.Fog;
-import com.github.maeda6uiui.mechtatel.core.light.ParallelLight;
-import com.github.maeda6uiui.mechtatel.core.light.PointLight;
-import com.github.maeda6uiui.mechtatel.core.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
-import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.light.PointLight;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;

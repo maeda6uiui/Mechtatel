@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing;
 
-import com.github.maeda6uiui.mechtatel.core.blur.SimpleBlurInfo;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.UBO;
 
 import java.nio.ByteBuffer;

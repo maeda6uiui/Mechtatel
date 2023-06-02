@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow;
 
-import com.github.maeda6uiui.mechtatel.core.shadow.Pass1Info;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.shadow.Pass1Info;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.UBO;
 import org.joml.Matrix4f;
 

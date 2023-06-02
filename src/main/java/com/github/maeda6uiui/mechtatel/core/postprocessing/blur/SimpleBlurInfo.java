@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.blur;
+package com.github.maeda6uiui.mechtatel.core.postprocessing.blur;
 
 /**
  * Info for simple blur

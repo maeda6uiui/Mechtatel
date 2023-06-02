@@ -36,11 +36,6 @@ public class PostProcessingNaborChain {
     private long commandPool;
     private VkQueue graphicsQueue;
 
-    private int depthImageFormat;
-    private int depthImageWidth;
-    private int depthImageHeight;
-    private int depthImageAspect;
-
     private Map<String, PostProcessingNabor> ppNabors;
     private Map<String, FlexibleNaborInfo> flexibleNaborInfos;
     private PostProcessingNabor lastPPNabor;
@@ -51,10 +46,6 @@ public class PostProcessingNaborChain {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            int depthImageFormat,
-            int depthImageWidth,
-            int depthImageHeight,
-            int depthImageAspect,
             int colorImageFormat,
             int samplerFilter,
             int samplerMipmapMode,
@@ -67,11 +58,6 @@ public class PostProcessingNaborChain {
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
-
-        this.depthImageFormat = depthImageFormat;
-        this.depthImageWidth = depthImageWidth;
-        this.depthImageHeight = depthImageHeight;
-        this.depthImageAspect = depthImageAspect;
 
         ppNabors = new LinkedHashMap<>();
         this.flexibleNaborInfos = flexibleNaborInfos;

@@ -392,6 +392,10 @@ public class Mechtatel
             float y,
             float width,
             float height,
+            float boxX,
+            float boxY,
+            float boxWidth,
+            float boxHeight,
             String text,
             String fontName,
             int fontStyle,
@@ -399,7 +403,9 @@ public class Mechtatel
             Color fontColor,
             Color checkboxColor) {
         return instance.createCheckbox(
-                x, y, width, height, text, fontName, fontStyle, fontSize, fontColor, checkboxColor);
+                x, y, width, height,
+                boxX, boxY, boxWidth, boxHeight,
+                text, fontName, fontStyle, fontSize, fontColor, checkboxColor);
     }
 
     public MttVerticalScrollbar createVerticalScrollbar(

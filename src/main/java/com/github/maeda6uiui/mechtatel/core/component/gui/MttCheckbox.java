@@ -17,9 +17,6 @@ import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.con
  * @author maeda6uiui
  */
 public class MttCheckbox extends MttGuiComponent {
-    private static final float CHECKBOX_MARGIN_X_HEIGHT_RATIO = 0.3f;
-    private static final float CHECKBOX_MARGIN_Y_HEIGHT_RATIO = 0.25f;
-
     private MttQuad2D checkboxFrame;
     private MttLine2DSet checkboxCross;
     private MttFont font;
@@ -35,16 +32,20 @@ public class MttCheckbox extends MttGuiComponent {
             float y,
             float width,
             float height,
+            float boxX,
+            float boxY,
+            float boxWidth,
+            float boxHeight,
             String text,
             String fontName,
             int fontStyle,
             int fontSize,
             Color fontColor,
             Color checkboxColor) {
-        super(vulkanInstance, x + height, y, width - height, height);
+        super(vulkanInstance, x, y, width, height);
 
-        checkboxTopLeft = new Vector2f(x + height * CHECKBOX_MARGIN_X_HEIGHT_RATIO, y + height * CHECKBOX_MARGIN_Y_HEIGHT_RATIO);
-        checkboxBottomRight = new Vector2f(x + height * (1.0f - CHECKBOX_MARGIN_X_HEIGHT_RATIO), y + height * (1.0f - CHECKBOX_MARGIN_Y_HEIGHT_RATIO));
+        checkboxTopLeft = new Vector2f(boxX, boxY);
+        checkboxBottomRight = new Vector2f(boxX + boxWidth, boxY + boxHeight);
 
         checkboxFrame = new MttQuad2D(
                 vulkanInstance,

@@ -558,6 +558,10 @@ class MttInstance {
             float y,
             float width,
             float height,
+            float boxX,
+            float boxY,
+            float boxWidth,
+            float boxHeight,
             String text,
             String fontName,
             int fontStyle,
@@ -565,7 +569,10 @@ class MttInstance {
             Color fontColor,
             Color checkboxColor) {
         var mttCheckbox = new MttCheckbox(
-                vulkanInstance, x, y, width, height, text, fontName, fontStyle, fontSize, fontColor, checkboxColor);
+                vulkanInstance,
+                x, y, width, height,
+                boxX, boxY, boxWidth, boxHeight,
+                text, fontName, fontStyle, fontSize, fontColor, checkboxColor);
         guiComponents.add(mttCheckbox);
 
         return mttCheckbox;

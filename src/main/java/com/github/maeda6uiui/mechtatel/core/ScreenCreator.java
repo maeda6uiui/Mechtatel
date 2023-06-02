@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core;
 
-import com.github.maeda6uiui.mechtatel.core.screen.ExternalPostProcessingNaborInfo;
+import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class ScreenCreator {
     private String samplerFilter;
     private String samplerMipmapMode;
     private String samplerAddressMode;
-    private Map<String, ExternalPostProcessingNaborInfo> externalPPNaborInfos;
+    private Map<String, FlexibleNaborInfo> flexibleNaborInfos;
     private List<String> ppNaborNames;
 
     public ScreenCreator(IMechtatelForScreenCreator mtt, String screenName) {
@@ -40,7 +40,7 @@ public class ScreenCreator {
         samplerFilter = "nearest";
         samplerMipmapMode = "nearest";
         samplerAddressMode = "repeat";
-        externalPPNaborInfos = new HashMap<>();
+        flexibleNaborInfos = new HashMap<>();
         ppNaborNames = new ArrayList<>();
     }
 
@@ -53,7 +53,7 @@ public class ScreenCreator {
         samplerFilter = "nearest";
         samplerMipmapMode = "nearest";
         samplerAddressMode = "repeat";
-        externalPPNaborInfos.clear();
+        flexibleNaborInfos.clear();
         ppNaborNames.clear();
     }
 
@@ -83,18 +83,12 @@ public class ScreenCreator {
         this.samplerAddressMode = samplerAddressMode;
     }
 
-    public void clearExternalPostProcessingNaborInfos() {
-        externalPPNaborInfos.clear();
+    public void clearFlexibleNaborInfos() {
+        flexibleNaborInfos.clear();
     }
 
-    public ExternalPostProcessingNaborInfo addExternalPostProcessingNaborInfo(
-            String naborName,
-            String vertShaderFilepath,
-            String fragShaderFilepath) {
-        var externalPPNaborInfo = new ExternalPostProcessingNaborInfo(vertShaderFilepath, fragShaderFilepath);
-        externalPPNaborInfos.put(naborName, externalPPNaborInfo);
-
-        return externalPPNaborInfo;
+    public void addFlexibleNaborInfo(String naborName, FlexibleNaborInfo flexibleNaborInfo) {
+        flexibleNaborInfos.put(naborName, flexibleNaborInfo);
     }
 
     public void clearPostProcessingNabors() {
@@ -116,7 +110,7 @@ public class ScreenCreator {
                 samplerFilter,
                 samplerMipmapMode,
                 samplerAddressMode,
-                externalPPNaborInfos,
+                flexibleNaborInfos,
                 ppNaborNames
         );
         return screen;

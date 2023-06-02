@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core;
 
-import com.github.maeda6uiui.mechtatel.core.screen.ExternalPostProcessingNaborInfo;
+import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 
 import java.util.List;
@@ -22,6 +22,6 @@ public interface IMechtatelForScreenCreator {
             String samplerFilter,
             String samplerMipmapMode,
             String samplerAddressMode,
-            Map<String, ExternalPostProcessingNaborInfo> externalPPNaborInfos,
+            Map<String, FlexibleNaborInfo> flexibleNaborInfos,
             List<String> ppNaborNames);
 }

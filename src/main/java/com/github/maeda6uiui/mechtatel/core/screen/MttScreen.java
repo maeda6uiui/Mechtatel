@@ -18,7 +18,6 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,20 +56,8 @@ public class MttScreen {
             String samplerFilter,
             String samplerMipmapMode,
             String samplerAddressMode,
-            Map<String, ExternalPostProcessingNaborInfo> externalPostProcessingNaborInfos,
+            Map<String, FlexibleNaborInfo> flexibleNaborInfos,
             List<String> ppNaborNames) {
-        var flexibleNaborInfos = new HashMap<String, FlexibleNaborInfo>();
-
-        for (var entry : externalPostProcessingNaborInfos.entrySet()) {
-            String naborName = entry.getKey();
-            ExternalPostProcessingNaborInfo naborInfo = entry.getValue();
-
-            var flexibleNaborInfo = new FlexibleNaborInfo(
-                    naborInfo.getVertShaderFilepath(), naborInfo.getFragShaderFilepath());
-            flexibleNaborInfo.setUniformResources(naborInfo.getUniformResources());
-            flexibleNaborInfos.put(naborName, flexibleNaborInfo);
-        }
-
         screen = vulkanInstance.createScreen(
                 screenName,
                 depthImageWidth,

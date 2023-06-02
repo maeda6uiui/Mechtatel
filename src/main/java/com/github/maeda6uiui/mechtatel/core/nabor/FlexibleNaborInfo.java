@@ -22,6 +22,7 @@ public class FlexibleNaborInfo {
         this.vertShaderFilepath = vertShaderFilepath;
         this.fragShaderFilepath = fragShaderFilepath;
         uniformResources = new ArrayList<>();
+        uniformResources.add("camera");
         lightingType = "parallel_light";
         lightingClampMin = new Vector3f(0.0f, 0.0f, 0.0f);
         lightingClampMax = new Vector3f(1.0f, 1.0f, 1.0f);

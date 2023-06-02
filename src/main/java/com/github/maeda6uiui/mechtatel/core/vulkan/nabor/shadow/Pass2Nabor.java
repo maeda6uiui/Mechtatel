@@ -1,14 +1,20 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow;
+package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow;
 
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass2InfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.ShadowInfoUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
@@ -18,7 +24,7 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-class Pass2Nabor extends PostProcessingNabor {
+class Pass2Nabor extends Nabor {
     public static final int MAX_NUM_SHADOW_MAPS = 16;
 
     public Pass2Nabor(VkDevice device) {
@@ -29,6 +35,25 @@ class Pass2Nabor extends PostProcessingNabor {
                 "./Mechtatel/Standard/Shader/PostProcessing/ShadowMapping/pass_2.vert",
                 "./Mechtatel/Standard/Shader/PostProcessing/ShadowMapping/pass_2.frag"
         );
+    }
+
+    public void transitionColorImageLayout(long commandPool, VkQueue graphicsQueue) {
+        VkDevice device = this.getDevice();
+        long colorImage = this.getImage(0);
+
+        ImageUtils.transitionImageLayout(
+                device,
+                commandPool,
+                graphicsQueue,
+                colorImage,
+                VK_IMAGE_ASPECT_COLOR_BIT,
+                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                1);
+    }
+
+    public long getColorImageView() {
+        return this.getImageView(0);
     }
 
     @Override
@@ -381,5 +406,237 @@ class Pass2Nabor extends PostProcessingNabor {
                 this.getDescriptorSets().add(descriptorSets.get(i));
             }
         }
+    }
+
+    @Override
+    protected void createGraphicsPipelines() {
+        if (this.isContainer()) {
+            return;
+        }
+
+        VkDevice device = this.getDevice();
+
+        long vertShaderModule;
+        long fragShaderModule;
+        if (this.getVertShaderModules().size() != 0) {
+            vertShaderModule = this.getVertShaderModule(0);
+            fragShaderModule = this.getFragShaderModule(0);
+        } else {
+            String vertShaderFilepath = this.getVertShaderFilepath();
+            String fragShaderFilepath = this.getFragShaderFilepath();
+
+            ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
+            ShaderSPIRVUtils.SPIRV fragShaderSPIRV;
+            try {
+                vertShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(vertShaderFilepath, ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER);
+                fragShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(fragShaderFilepath, ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            vertShaderModule = this.createShaderModule(device, vertShaderSPIRV.bytecode());
+            fragShaderModule = this.createShaderModule(device, fragShaderSPIRV.bytecode());
+
+            this.addVertShaderModule(vertShaderModule);
+            this.addFragShaderModule(fragShaderModule);
+        }
+
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkExtent2D extent = this.getExtent();
+            int msaaSamples = this.getMsaaSamples();
+
+            ByteBuffer entryPoint = stack.UTF8("main");
+
+            VkPipelineShaderStageCreateInfo.Buffer shaderStages = VkPipelineShaderStageCreateInfo.calloc(2, stack);
+
+            VkPipelineShaderStageCreateInfo vertShaderStageInfo = shaderStages.get(0);
+            vertShaderStageInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO);
+            vertShaderStageInfo.stage(VK_SHADER_STAGE_VERTEX_BIT);
+            vertShaderStageInfo.module(vertShaderModule);
+            vertShaderStageInfo.pName(entryPoint);
+
+            VkPipelineShaderStageCreateInfo fragShaderStageInfo = shaderStages.get(1);
+            fragShaderStageInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO);
+            fragShaderStageInfo.stage(VK_SHADER_STAGE_FRAGMENT_BIT);
+            fragShaderStageInfo.module(fragShaderModule);
+            fragShaderStageInfo.pName(entryPoint);
+
+            //Vertex stage
+            VkPipelineVertexInputStateCreateInfo vertexInputInfo = VkPipelineVertexInputStateCreateInfo.calloc(stack);
+            vertexInputInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO);
+            vertexInputInfo.pVertexBindingDescriptions(VkMttVertex2DUV.getBindingDescription());
+            vertexInputInfo.pVertexAttributeDescriptions(VkMttVertex2DUV.getAttributeDescriptions());
+
+            //Assembly stage
+            VkPipelineInputAssemblyStateCreateInfo inputAssembly = VkPipelineInputAssemblyStateCreateInfo.calloc(stack);
+            inputAssembly.sType(VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO);
+            inputAssembly.topology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+            inputAssembly.primitiveRestartEnable(false);
+
+            //Viewport and scissor
+            VkViewport.Buffer viewport = VkViewport.calloc(1, stack);
+            viewport.x(0.0f);
+            viewport.y(0.0f);
+            viewport.width(extent.width());
+            viewport.height(extent.height());
+            viewport.minDepth(0.0f);
+            viewport.maxDepth(1.0f);
+
+            VkRect2D.Buffer scissor = VkRect2D.calloc(1, stack);
+            scissor.offset(VkOffset2D.calloc(stack).set(0, 0));
+            scissor.extent(extent);
+
+            VkPipelineViewportStateCreateInfo viewportState = VkPipelineViewportStateCreateInfo.calloc(stack);
+            viewportState.sType(VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO);
+            viewportState.pViewports(viewport);
+            viewportState.pScissors(scissor);
+
+            //Rasterization stage
+            VkPipelineRasterizationStateCreateInfo rasterizer = VkPipelineRasterizationStateCreateInfo.calloc(stack);
+            rasterizer.sType(VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO);
+            rasterizer.depthClampEnable(false);
+            rasterizer.rasterizerDiscardEnable(false);
+            rasterizer.polygonMode(VK_POLYGON_MODE_FILL);
+            rasterizer.lineWidth(1.0f);
+            rasterizer.cullMode(VK_CULL_MODE_BACK_BIT);
+            rasterizer.frontFace(VK_FRONT_FACE_COUNTER_CLOCKWISE);
+            rasterizer.depthBiasEnable(false);
+
+            //Multisampling
+            VkPipelineMultisampleStateCreateInfo multisampling = VkPipelineMultisampleStateCreateInfo.calloc(stack);
+            multisampling.sType(VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO);
+            multisampling.sampleShadingEnable(true);
+            multisampling.minSampleShading(0.2f);
+            multisampling.rasterizationSamples(msaaSamples);
+
+            //Depth-stencil
+            VkPipelineDepthStencilStateCreateInfo depthStencil = VkPipelineDepthStencilStateCreateInfo.calloc(stack);
+            depthStencil.sType(VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO);
+            depthStencil.depthTestEnable(true);
+            depthStencil.depthWriteEnable(true);
+            depthStencil.depthCompareOp(VK_COMPARE_OP_LESS);
+            depthStencil.depthBoundsTestEnable(false);
+            depthStencil.minDepthBounds(0.0f);
+            depthStencil.maxDepthBounds(1.0f);
+            depthStencil.stencilTestEnable(false);
+
+            //Color blending
+            VkPipelineColorBlendAttachmentState.Buffer colorBlendAttachments = VkPipelineColorBlendAttachmentState.calloc(1, stack);
+
+            VkPipelineColorBlendAttachmentState colorBlendAttachment = colorBlendAttachments.get(0);
+            colorBlendAttachment.colorWriteMask(
+                    VK_COLOR_COMPONENT_R_BIT |
+                            VK_COLOR_COMPONENT_G_BIT |
+                            VK_COLOR_COMPONENT_B_BIT |
+                            VK_COLOR_COMPONENT_A_BIT);
+            colorBlendAttachment.blendEnable(false);
+
+            VkPipelineColorBlendStateCreateInfo colorBlending = VkPipelineColorBlendStateCreateInfo.calloc(stack);
+            colorBlending.sType(VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO);
+            colorBlending.logicOpEnable(false);
+            colorBlending.logicOp(VK_LOGIC_OP_COPY);
+            colorBlending.pAttachments(colorBlendAttachments);
+            colorBlending.blendConstants(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+
+            //Pipeline layout creation
+            VkPipelineLayoutCreateInfo pipelineLayoutInfo = VkPipelineLayoutCreateInfo.calloc(stack);
+            pipelineLayoutInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO);
+            pipelineLayoutInfo.pSetLayouts(this.pDescriptorSetLayouts());
+
+            LongBuffer pPipelineLayout = stack.longs(VK_NULL_HANDLE);
+            if (vkCreatePipelineLayout(device, pipelineLayoutInfo, null, pPipelineLayout) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create a pipeline layout");
+            }
+
+            long pipelineLayout = pPipelineLayout.get(0);
+            this.getPipelineLayouts().add(pipelineLayout);
+
+            //Graphics pipeline creation
+            VkGraphicsPipelineCreateInfo.Buffer pipelineInfo = VkGraphicsPipelineCreateInfo.calloc(1, stack);
+            pipelineInfo.sType(VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO);
+            pipelineInfo.pStages(shaderStages);
+            pipelineInfo.pVertexInputState(vertexInputInfo);
+            pipelineInfo.pInputAssemblyState(inputAssembly);
+            pipelineInfo.pViewportState(viewportState);
+            pipelineInfo.pRasterizationState(rasterizer);
+            pipelineInfo.pMultisampleState(multisampling);
+            pipelineInfo.pDepthStencilState(depthStencil);
+            pipelineInfo.pColorBlendState(colorBlending);
+            pipelineInfo.layout(pipelineLayout);
+            pipelineInfo.renderPass(this.getRenderPass());
+            pipelineInfo.subpass(0);
+            pipelineInfo.basePipelineHandle(VK_NULL_HANDLE);
+            pipelineInfo.basePipelineIndex(-1);
+
+            LongBuffer pGraphicsPipeline = stack.mallocLong(1);
+            if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, pipelineInfo, null, pGraphicsPipeline) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create a graphics pipeline");
+            }
+
+            long graphicsPipeline = pGraphicsPipeline.get(0);
+            this.getGraphicsPipelines().add(graphicsPipeline);
+        }
+    }
+
+    @Override
+    protected void createImages(int colorImageFormat) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDevice device = this.getDevice();
+            int msaaSamples = this.getMsaaSamples();
+            VkExtent2D extent = this.getExtent();
+
+            LongBuffer pImage = stack.mallocLong(1);
+            LongBuffer pImageMemory = stack.mallocLong(1);
+            LongBuffer pImageView = stack.mallocLong(1);
+
+            //Color image
+            ImageUtils.createImage(
+                    device,
+                    extent.width(),
+                    extent.height(),
+                    1,
+                    msaaSamples,
+                    colorImageFormat,
+                    VK_IMAGE_TILING_OPTIMAL,
+                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
+                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                    pImage,
+                    pImageMemory);
+            long colorImage = pImage.get(0);
+            long colorImageMemory = pImageMemory.get(0);
+
+            VkImageViewCreateInfo viewInfo = VkImageViewCreateInfo.calloc(stack);
+            viewInfo.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO);
+            viewInfo.viewType(VK_IMAGE_VIEW_TYPE_2D);
+            viewInfo.image(colorImage);
+            viewInfo.format(colorImageFormat);
+            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+            viewInfo.subresourceRange().baseMipLevel(0);
+            viewInfo.subresourceRange().levelCount(1);
+            viewInfo.subresourceRange().baseArrayLayer(0);
+            viewInfo.subresourceRange().layerCount(1);
+
+            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create an image view");
+            }
+            long colorImageView = pImageView.get(0);
+
+            this.getImages().add(colorImage);
+            this.getImageMemories().add(colorImageMemory);
+            this.getImageViews().add(colorImageView);
+        }
+    }
+
+    public void bindImages(
+            VkCommandBuffer commandBuffer,
+            int dstBinding,
+            long albedoImageView,
+            long depthImageView,
+            long positionImageView,
+            long normalImageView) {
+        var arrImageViews = new Long[]{albedoImageView, depthImageView, positionImageView, normalImageView};
+        var imageViews = Arrays.asList(arrImageViews);
+
+        this.bindImages(commandBuffer, 1, dstBinding, imageViews);
     }
 }

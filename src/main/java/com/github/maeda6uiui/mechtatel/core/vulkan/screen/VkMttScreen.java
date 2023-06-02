@@ -83,6 +83,12 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
 
         this.screenName = screenName;
 
+        initialWidth = extent.width();
+        initialHeight = extent.height();
+        this.shouldChangeExtentOnRecreate = shouldChangeExtentOnRecreate;
+
+        quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
+
         //GBuffer nabor
         gBufferNabor = new GBufferNabor(
                 device,
@@ -311,12 +317,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
                     (naborName, fragShaderModules) -> fragShaderModulesStorage.put(naborName, fragShaderModules)
             );
         }
-
-        initialWidth = extent.width();
-        initialHeight = extent.height();
-        this.shouldChangeExtentOnRecreate = shouldChangeExtentOnRecreate;
-
-        quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
     }
 
     public void recreate(int colorImageFormat, VkExtent2D extent) {

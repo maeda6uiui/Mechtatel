@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.shadow;
+package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttVertex3DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;

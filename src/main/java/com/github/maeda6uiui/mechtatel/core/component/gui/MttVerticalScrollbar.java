@@ -126,6 +126,12 @@ public class MttVerticalScrollbar extends MttGuiComponent {
     }
 
     public void setScrollAmount(float scrollAmount) {
+        if (scrollAmount < 0.0f) {
+            scrollAmount = 0.0f;
+        } else if (scrollAmount > 1.0f) {
+            scrollAmount = 1.0f;
+        }
+
         float grabHeight = grabBottomRight.y - grabTopLeft.y;
         float grabWholeAmount = this.getHeight() - grabHeight;
         float grabMoveAmount = scrollAmount * grabWholeAmount;

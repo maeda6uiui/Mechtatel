@@ -126,6 +126,12 @@ public class MttHorizontalScrollbar extends MttGuiComponent {
     }
 
     public void setScrollAmount(float scrollAmount) {
+        if (scrollAmount < 0.0f) {
+            scrollAmount = 0.0f;
+        } else if (scrollAmount > 1.0f) {
+            scrollAmount = 1.0f;
+        }
+
         float grabWidth = grabBottomRight.x - grabTopLeft.x;
         float grabWholeAmount = this.getWidth() - grabWidth;
         float grabMoveAmount = scrollAmount * grabWholeAmount;

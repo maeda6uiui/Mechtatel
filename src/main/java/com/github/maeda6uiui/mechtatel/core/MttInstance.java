@@ -294,6 +294,14 @@ class MttInstance {
         return windowHeight;
     }
 
+    public int getFPS() {
+        return fps;
+    }
+
+    public float getSecondsPerFrame() {
+        return 1.0f / fps;
+    }
+
     public int getKeyboardPressingCount(String key) {
         return keyboard.getPressingCount(key);
     }

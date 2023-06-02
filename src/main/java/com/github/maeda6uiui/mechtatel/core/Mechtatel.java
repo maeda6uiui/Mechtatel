@@ -123,6 +123,14 @@ public class Mechtatel
         return instance.getWindowHeight();
     }
 
+    public int getFPS() {
+        return instance.getFPS();
+    }
+
+    public float getSecondsPerFrame() {
+        return instance.getSecondsPerFrame();
+    }
+
     public int getKeyboardPressingCount(String key) {
         return instance.getKeyboardPressingCount(key);
     }

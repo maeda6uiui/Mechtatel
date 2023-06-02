@@ -14,6 +14,16 @@ public class InputCounter {
     private Map<String, Integer> pressingCounts;
     private Map<String, Integer> releasingCounts;
 
+    public static Map<String, Float> convertCountsToSeconds(Map<String, Integer> counts, float secondsPerFrame) {
+        var ret = new HashMap<String, Float>();
+
+        for (var entry : counts.entrySet()) {
+            ret.put(entry.getKey(), entry.getValue() * secondsPerFrame);
+        }
+
+        return ret;
+    }
+
     public InputCounter(List<String> keys) {
         pressingFlags = new HashMap<>();
         pressingCounts = new HashMap<>();

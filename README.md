@@ -60,12 +60,23 @@ Place following binaries under ./Mechtatel/Bin.
 
 ## Todoリスト
 
-- ユーザー定義のPost ProcessingおよびTexture Operationシェーダーの実行機能
 - テキストボックス
   - とりあえずはASCII文字のみ対応
 - 3Dモデルのアニメーション機能
 
 ## 進捗報告
+
+### 2023-06-02
+
+ユーザー定義のFragmentシェーダーをPost Processingで使用できる機能を実装しました。
+この機能を使って、Mechtatelの標準シェーダーでは用意されていない、セピア化処理を実装してみました。
+
+![ユーザー定義のFragmentシェーダーを用いたセピア化](./Image/user_defined_shader_sepia.png)
+
+この機能によって、描画結果のカスタマイズ性が大幅に向上します！
+
+制限としては、単一のFragmentシェーダー(とVertexシェーダー)で完結する処理を想定しているため、Shadow Mappingのように複数組のシェーダーが必要な処理はこの機能では実現できません。
+また、UBOについてもなんでも使えるわけではなく、あらかじめMechtatel側で用意してあるものの中から必要なものを選んで使っていただく形になります。
 
 ### 2023-05-31
 

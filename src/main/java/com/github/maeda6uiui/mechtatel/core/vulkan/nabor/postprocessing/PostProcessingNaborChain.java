@@ -278,6 +278,7 @@ public class PostProcessingNaborChain {
                 case "lighting_info": {
                     String lightingType = flexibleNaborInfo.getLightingType();
                     var lightingInfo = new LightingInfo();
+
                     if (lightingType.equals("none")) {
                         lightingInfo.setNumLights(0);
                         lightingInfo.setAmbientColor(new Vector3f(0.0f, 0.0f, 0.0f));
@@ -293,6 +294,9 @@ public class PostProcessingNaborChain {
                     } else {
                         throw new RuntimeException("Unsupported lighting type specified: " + lightingType);
                     }
+
+                    lightingInfo.setLightingClampMin(flexibleNaborInfo.getLightingClampMin());
+                    lightingInfo.setLightingClampMax(flexibleNaborInfo.getLightingClampMax());
 
                     var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
                     lightingInfoUBO.update(device, uboMemory);

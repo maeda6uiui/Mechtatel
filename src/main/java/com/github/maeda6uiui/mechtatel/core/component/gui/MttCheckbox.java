@@ -7,6 +7,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import org.joml.Vector2f;
 
 import java.awt.*;
+import java.util.Map;
 
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJavaColorToJOMLVector4f;
 
@@ -84,7 +85,8 @@ public class MttCheckbox extends MttGuiComponent {
             int windowHeight,
             int lButtonPressingCount,
             int mButtonPressingCount,
-            int rButtonPressingCount) {
+            int rButtonPressingCount,
+            Map<String, Integer> keyboardPressingCounts) {
         super.update(
                 cursorX,
                 cursorY,
@@ -92,7 +94,8 @@ public class MttCheckbox extends MttGuiComponent {
                 windowHeight,
                 lButtonPressingCount,
                 mButtonPressingCount,
-                rButtonPressingCount);
+                rButtonPressingCount,
+                keyboardPressingCounts);
 
         float fCursorX = (float) cursorX / (float) windowWidth * 2.0f - 1.0f;
         float fCursorY = (float) cursorY / (float) windowHeight * 2.0f - 1.0f;

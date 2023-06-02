@@ -7,6 +7,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 import java.awt.*;
+import java.util.Map;
 
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJavaColorToJOMLVector4f;
 
@@ -68,10 +69,11 @@ public class MttVerticalScrollbar extends MttGuiComponent {
             int windowHeight,
             int lButtonPressingCount,
             int mButtonPressingCount,
-            int rButtonPressingCount) {
+            int rButtonPressingCount,
+            Map<String, Integer> keyboardPressingCounts) {
         super.update(
                 cursorX, cursorY, windowWidth, windowHeight,
-                lButtonPressingCount, mButtonPressingCount, rButtonPressingCount);
+                lButtonPressingCount, mButtonPressingCount, rButtonPressingCount, keyboardPressingCounts);
 
         float fCursorX = (float) cursorX / (float) windowWidth * 2.0f - 1.0f;
         float fCursorY = (float) cursorY / (float) windowHeight * 2.0f - 1.0f;

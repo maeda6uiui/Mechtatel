@@ -9,6 +9,7 @@ import org.joml.Vector2f;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJavaColorToJOMLVector4f;
 
@@ -172,14 +173,15 @@ public class MttListbox extends MttGuiComponent {
             int windowHeight,
             int lButtonPressingCount,
             int mButtonPressingCount,
-            int rButtonPressingCount) {
+            int rButtonPressingCount,
+            Map<String, Integer> keyboardPressingCounts) {
         super.update(
                 cursorX, cursorY, windowWidth, windowHeight,
-                lButtonPressingCount, mButtonPressingCount, rButtonPressingCount);
+                lButtonPressingCount, mButtonPressingCount, rButtonPressingCount, keyboardPressingCounts);
 
         scrollbar.update(
                 cursorX, cursorY, windowWidth, windowHeight,
-                lButtonPressingCount, mButtonPressingCount, rButtonPressingCount);
+                lButtonPressingCount, mButtonPressingCount, rButtonPressingCount, keyboardPressingCounts);
 
         float scrollAmount = scrollbar.getScrollAmount();
         if (scrollAmountPerItem > 0.0f) {
@@ -203,7 +205,7 @@ public class MttListbox extends MttGuiComponent {
         items.forEach(item -> {
             item.update(
                     cursorX, cursorY, windowWidth, windowHeight,
-                    lButtonPressingCount, mButtonPressingCount, rButtonPressingCount);
+                    lButtonPressingCount, mButtonPressingCount, rButtonPressingCount, keyboardPressingCounts);
             if (item.isVisible()) {
                 if (item.isCursorOn()) {
                     item.changeToSelectedFont();

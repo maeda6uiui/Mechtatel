@@ -3,6 +3,8 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 import com.github.maeda6uiui.mechtatel.core.component.MttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 
+import java.util.Map;
+
 /**
  * Base class for GUI components
  *
@@ -65,7 +67,8 @@ public class MttGuiComponent extends MttComponent {
             int windowHeight,
             int lButtonPressingCount,
             int mButtonPressingCount,
-            int rButtonPressingCount) {
+            int rButtonPressingCount,
+            Map<String, Integer> keyboardPressingCounts) {
         float fCursorX = (float) cursorX / (float) windowWidth * 2.0f - 1.0f;
         float fCursorY = (float) cursorY / (float) windowHeight * 2.0f - 1.0f;
 

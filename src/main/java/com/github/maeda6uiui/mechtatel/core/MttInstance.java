@@ -218,6 +218,8 @@ class MttInstance {
                 keyboard.update();
                 mouse.update();
                 mtt.update();
+
+                Map<String, Integer> keyboardPressingCounts = keyboard.getPressingCounts();
                 guiComponents.forEach(guiComponent -> {
                     guiComponent.update(
                             this.getCursorPosX(),
@@ -226,7 +228,8 @@ class MttInstance {
                             this.getWindowHeight(),
                             this.getMousePressingCount("BUTTON_LEFT"),
                             this.getMousePressingCount("BUTTON_MIDDLE"),
-                            this.getMousePressingCount("BUTTON_RIGHT")
+                            this.getMousePressingCount("BUTTON_RIGHT"),
+                            keyboardPressingCounts
                     );
                 });
                 physicalObjects.forEach(physicalObject -> {

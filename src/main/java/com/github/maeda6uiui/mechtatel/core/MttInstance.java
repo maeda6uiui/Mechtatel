@@ -205,14 +205,12 @@ class MttInstance {
     public void run() {
         mtt.init();
 
-        double currentTime = 0.0;
         double lastTime = 0.0;
-        double elapsedTime = 0.0;
         glfwSetTime(0.0);
 
         while (!glfwWindowShouldClose(window)) {
-            currentTime = glfwGetTime();
-            elapsedTime = currentTime - lastTime;
+            double currentTime = glfwGetTime();
+            double elapsedTime = currentTime - lastTime;
 
             if (elapsedTime >= 1.0 / fps) {
                 keyboard.update();

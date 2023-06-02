@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
+package com.github.maeda6uiui.mechtatel.core.nabor;
 
 import java.util.ArrayList;
 import java.util.List;

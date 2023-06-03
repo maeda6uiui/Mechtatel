@@ -4,8 +4,8 @@ import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.component.MttLine2D;
 import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex2D;
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyToLetterConverter;
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
-import com.github.maeda6uiui.mechtatel.core.util.KeyboardInputUtils;
 import com.github.maeda6uiui.mechtatel.core.util.UniversalCounter;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import org.joml.Matrix4f;
@@ -171,7 +171,7 @@ public class MttTextbox extends MttGuiComponent {
             caretSucceedingText = text.substring(caretColumn, text.length());
         }
 
-        String inputKey = KeyboardInputUtils.getInputLetter(keyboardPressingCounts, repeatDelayFrames);
+        String inputKey = KeyToLetterConverter.getInputLetter(keyboardPressingCounts, repeatDelayFrames);
         if (inputKey.equals("")) {
             return;
         }
@@ -193,7 +193,7 @@ public class MttTextbox extends MttGuiComponent {
             if (caretColumn > 0) {
                 caretColumn--;
             }
-        } else if (!KeyboardInputUtils.isSpecialKey(inputKey)) {
+        } else if (!KeyToLetterConverter.isSpecialKey(inputKey)) {
             caretPrecedingText += inputKey;
             caretColumn++;
         }

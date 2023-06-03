@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.util;
+package com.github.maeda6uiui.mechtatel.core.input.keyboard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @author maeda6uiui
  */
-public class KeyboardInputUtils {
+public class KeyToLetterConverter {
     private static final List<String> SPECIAL_KEYS;
 
     static {

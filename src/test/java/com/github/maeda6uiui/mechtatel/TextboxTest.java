@@ -38,6 +38,8 @@ public class TextboxTest extends Mechtatel {
 
     @Override
     public void update() {
-        System.out.println(textbox.getText());
+        if (this.getKeyboardPressingCount("ENTER") == 1) {
+            System.out.println(textbox.getText());
+        }
     }
 }

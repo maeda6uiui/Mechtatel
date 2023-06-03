@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class JISKeyInterpreter extends KeyInterpreter {
     public JISKeyInterpreter() {
-        
+
     }
 
     @Override
@@ -18,23 +18,12 @@ public class JISKeyInterpreter extends KeyInterpreter {
             Map<String, Integer> keyboardPressingCounts,
             List<String> specialKeys,
             int repeatDelayFrames) {
-        //The key that has been pressed most recently is the one that should be interpreted
-        int minPressingCount = Integer.MAX_VALUE;
-        String minPressingKey = "";
-        for (var entry : keyboardPressingCounts.entrySet()) {
-            String key = entry.getKey();
-            int pressingCount = entry.getValue();
-
-            if (pressingCount > 0 && pressingCount < minPressingCount) {
-                minPressingKey = key;
-                minPressingCount = pressingCount;
-            }
-        }
-
+        String minPressingKey = this.getMinPressingKey(keyboardPressingCounts);
         if (minPressingKey.equals("")) {
             return "";
         }
 
+        int minPressingCount = keyboardPressingCounts.get(minPressingKey);
         if (!(minPressingCount == 1 || minPressingCount > repeatDelayFrames)) {
             return "";
         }
@@ -50,50 +39,47 @@ public class JISKeyInterpreter extends KeyInterpreter {
         }
 
         String outputLetter = "";
-        switch (minPressingKey) {
-            case "SPACE":
-                outputLetter = " ";
-                break;
-            case "APOSTROPHE":
-                outputLetter = "'";
-                break;
-            case "COMMA":
-                outputLetter = ",";
-                break;
-            case "MINUS":
-                outputLetter = "-";
-                break;
-            case "PERIOD":
-                outputLetter = ".";
-                break;
-            case "SLASH":
-                outputLetter = "/";
-                break;
-            case "SEMICOLON":
-                outputLetter = ";";
-                break;
-            case "EQUAL":
-                outputLetter = "=";
-                break;
-            case "LEFT_BRACKET":
-                outputLetter = "(";
-                break;
-            case "BACKSLASH":
-                outputLetter = "\\";
-                break;
-            case "RIGHT_BRACKET":
-                outputLetter = ")";
-                break;
-            case "GRAVE_ACCENT":
-                outputLetter = "`";
-                break;
-        }
-        if (!outputLetter.equals("")) {
-            return outputLetter;
-        }
-
         if (shiftPressed) {
             switch (minPressingKey) {
+                case "UNKNOWN":
+                    outputLetter = "_";
+                    break;
+                case "SPACE":
+                    outputLetter = " ";
+                    break;
+                case "APOSTROPHE":
+                    outputLetter = "*";
+                    break;
+                case "COMMA":
+                    outputLetter = "<";
+                    break;
+                case "MINUS":
+                    outputLetter = "=";
+                    break;
+                case "PERIOD":
+                    outputLetter = ">";
+                    break;
+                case "SLASH":
+                    outputLetter = "?";
+                    break;
+                case "SEMICOLON":
+                    outputLetter = "+";
+                    break;
+                case "EQUAL":
+                    outputLetter = "~";
+                    break;
+                case "LEFT_BRACKET":
+                    outputLetter = "`";
+                    break;
+                case "BACKSLASH":
+                    outputLetter = "}";
+                    break;
+                case "RIGHT_BRACKET":
+                    outputLetter = "{";
+                    break;
+                case "GRAVE_ACCENT":
+                    outputLetter = "`";
+                    break;
                 case "0":
                     outputLetter = "";
                     break;
@@ -205,6 +191,42 @@ public class JISKeyInterpreter extends KeyInterpreter {
             }
         } else {
             switch (minPressingKey) {
+                case "SPACE":
+                    outputLetter = " ";
+                    break;
+                case "APOSTROPHE":
+                    outputLetter = ":";
+                    break;
+                case "COMMA":
+                    outputLetter = ",";
+                    break;
+                case "MINUS":
+                    outputLetter = "-";
+                    break;
+                case "PERIOD":
+                    outputLetter = ".";
+                    break;
+                case "SLASH":
+                    outputLetter = "/";
+                    break;
+                case "SEMICOLON":
+                    outputLetter = ";";
+                    break;
+                case "EQUAL":
+                    outputLetter = "^";
+                    break;
+                case "LEFT_BRACKET":
+                    outputLetter = "@";
+                    break;
+                case "BACKSLASH":
+                    outputLetter = "]";
+                    break;
+                case "RIGHT_BRACKET":
+                    outputLetter = "[";
+                    break;
+                case "GRAVE_ACCENT":
+                    outputLetter = "@";
+                    break;
                 case "0":
                     outputLetter = "0";
                     break;

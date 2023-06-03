@@ -8,8 +8,13 @@ import java.util.Map;
  *
  * @author maeda6uiui
  */
-public class JISKeyInterpreter {
-    public static String getInputLetter(
+public class JISKeyInterpreter extends KeyInterpreter {
+    public JISKeyInterpreter() {
+        
+    }
+
+    @Override
+    public String getInputLetter(
             Map<String, Integer> keyboardPressingCounts,
             List<String> specialKeys,
             int repeatDelayFrames) {

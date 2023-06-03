@@ -4,7 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.component.MttLine2D;
 import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex2D;
-import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.JISKeyInterpreter;
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.KeyInterpreter;
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
 import com.github.maeda6uiui.mechtatel.core.util.UniversalCounter;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
@@ -51,9 +51,10 @@ public class MttTextbox extends MttGuiComponent {
     private String prevText;
     private int caretColumn;
 
+    private KeyInterpreter keyInterpreter;
+
     private float caretBlinkInterval;
     private float lastTime;
-
     private int repeatDelayFrames;
 
     private boolean visible;
@@ -74,7 +75,8 @@ public class MttTextbox extends MttGuiComponent {
             Color caretColor,
             float caretBlinkInterval,
             float secondsPerFrame,
-            float repeatDelay) {
+            float repeatDelay,
+            KeyInterpreter keyInterpreter) {
         super(vulkanInstance, x, y, width, height);
 
         textboxID = UniversalCounter.get();
@@ -112,6 +114,8 @@ public class MttTextbox extends MttGuiComponent {
         text = "";
         prevText = "";
         caretColumn = 0;
+
+        this.keyInterpreter = keyInterpreter;
 
         this.caretBlinkInterval = caretBlinkInterval;
         this.lastTime = (float) glfwGetTime();
@@ -182,7 +186,7 @@ public class MttTextbox extends MttGuiComponent {
             caretSucceedingText = text.substring(caretColumn, text.length());
         }
 
-        String inputKey = JISKeyInterpreter.getInputLetter(keyboardPressingCounts, SPECIAL_KEYS, repeatDelayFrames);
+        String inputKey = keyInterpreter.getInputLetter(keyboardPressingCounts, SPECIAL_KEYS, repeatDelayFrames);
         if (inputKey.equals("")) {
             return;
         }

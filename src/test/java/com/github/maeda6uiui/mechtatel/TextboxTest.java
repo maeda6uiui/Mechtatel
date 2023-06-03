@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttTextbox;
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.JISKeyInterpreter;
 
 import java.awt.*;
 import java.io.IOException;
@@ -28,10 +29,11 @@ public class TextboxTest extends Mechtatel {
 
     @Override
     public void init() {
+        var keyInterpreter = new JISKeyInterpreter();
         textbox = this.createTextbox(
                 -0.9f, -0.9f, 0.9f, 0.1f,
                 0.001f, 0.01f, Font.SANS_SERIF, Font.PLAIN, 32,
-                Color.GREEN, Color.WHITE, Color.LIGHT_GRAY, 0.5f, 0.5f);
+                Color.GREEN, Color.WHITE, Color.LIGHT_GRAY, 0.5f, 0.5f, keyInterpreter);
     }
 
     @Override

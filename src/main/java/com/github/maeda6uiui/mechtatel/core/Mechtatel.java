@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.component.*;
 import com.github.maeda6uiui.mechtatel.core.component.gui.*;
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.KeyInterpreter;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.physics.*;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
@@ -497,11 +498,12 @@ public class Mechtatel
             Color frameColor,
             Color caretColor,
             float caretBlinkInterval,
-            float repeatDelay) {
+            float repeatDelay,
+            KeyInterpreter keyInterpreter) {
         return instance.createTextbox(
                 x, y, width, height, caretMarginX, caretMarginY,
                 fontName, fontStyle, fontSize, fontColor, frameColor, caretColor,
-                caretBlinkInterval, repeatDelay);
+                caretBlinkInterval, repeatDelay, keyInterpreter);
     }
 
     public PhysicalPlane3D createPhysicalPlane3D(Vector3fc normal, float constant) {

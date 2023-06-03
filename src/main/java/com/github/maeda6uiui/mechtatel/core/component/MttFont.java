@@ -1,5 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
+import com.github.maeda6uiui.mechtatel.core.text.Glyph;
+import com.github.maeda6uiui.mechtatel.core.text.NormalizedGlyph;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttFont;
 import org.joml.Vector2fc;
@@ -7,6 +9,7 @@ import org.joml.Vector2fc;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Font
@@ -14,6 +17,10 @@ import java.util.List;
  * @author maeda6uiui
  */
 public class MttFont extends MttComponent {
+    public static final float DEFAULT_GLYPH_WIDTH_SCALE = 0.001f;
+    public static final float DEFAULT_LINE_HEIGHT_SCALE = 0.002f;
+    public static final float DEFAULT_V_OFFSET = 0.01f;
+
     private VkMttFont vkMttFont;
 
     public MttFont(
@@ -31,6 +38,14 @@ public class MttFont extends MttComponent {
 
     public void clear() {
         vkMttFont.clear();
+    }
+
+    public Map<Character, Glyph> getGlyphs() {
+        return vkMttFont.getGlyphs();
+    }
+
+    public Map<Character, NormalizedGlyph> getNormalizedGlyphs() {
+        return vkMttFont.getNormalizedGlyphs();
     }
 
     public void prepare(
@@ -64,7 +79,13 @@ public class MttFont extends MttComponent {
     }
 
     public void prepare(String text, Vector2fc pTopLeft) {
-        this.prepare(text, pTopLeft, 0.0f, 0.001f, 0.002f, 0.01f);
+        this.prepare(
+                text,
+                pTopLeft,
+                0.0f,
+                DEFAULT_GLYPH_WIDTH_SCALE,
+                DEFAULT_LINE_HEIGHT_SCALE,
+                DEFAULT_V_OFFSET);
     }
 
     public void createBuffers() {

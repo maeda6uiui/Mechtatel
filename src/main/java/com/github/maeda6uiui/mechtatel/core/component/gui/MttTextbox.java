@@ -4,6 +4,9 @@ import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.component.MttLine2D;
 import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex2D;
+import com.github.maeda6uiui.mechtatel.core.text.NormalizedGlyph;
+import com.github.maeda6uiui.mechtatel.core.util.KeyboardInputUtils;
+import com.github.maeda6uiui.mechtatel.core.util.UniversalCounter;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import org.joml.Vector2f;
 
@@ -22,17 +25,26 @@ public class MttTextbox extends MttGuiComponent {
     public static final String SUPPORTED_CHARACTERS
             = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~ ";
 
+    private static int focusedTextboxID = -1;
+
+    private int textboxID;
+
     private MttQuad2D frame;
     private MttLine2D caret;
     private MttFont font;
 
-    private boolean allowLines;
+    private Map<Character, NormalizedGlyph> glyphs;
+
+    private String text;
+
+    private float caretMarginX;
+    private float caretMarginY;
+    private int caretColumn;
 
     private float caretBlinkInterval;
     private float lastTime;
 
-    private float secondsPerFrame;
-    private float repeatDelay;
+    private int repeatDelayFrames;
 
     private boolean visible;
 
@@ -44,18 +56,18 @@ public class MttTextbox extends MttGuiComponent {
             float height,
             float caretMarginX,
             float caretMarginY,
-            float lineHeight,
             String fontName,
             int fontStyle,
             int fontSize,
             Color fontColor,
             Color frameColor,
             Color caretColor,
-            boolean allowLines,
             float caretBlinkInterval,
             float secondsPerFrame,
             float repeatDelay) {
         super(vulkanInstance, x, y, width, height);
+
+        textboxID = UniversalCounter.get();
 
         frame = new MttQuad2D(
                 vulkanInstance,
@@ -71,7 +83,7 @@ public class MttTextbox extends MttGuiComponent {
                         new Vector2f(x + caretMarginX, y + caretMarginY), convertJavaColorToJOMLVector4f(caretColor)
                 ),
                 new MttVertex2D(
-                        new Vector2f(x + caretMarginX, y + lineHeight - caretMarginY), convertJavaColorToJOMLVector4f(caretColor)
+                        new Vector2f(x + caretMarginX, y + height - caretMarginY), convertJavaColorToJOMLVector4f(caretColor)
                 ),
                 0.0f
         );
@@ -84,13 +96,18 @@ public class MttTextbox extends MttGuiComponent {
                 fontColor,
                 SUPPORTED_CHARACTERS);
 
-        this.allowLines = allowLines;
+        glyphs = font.getNormalizedGlyphs();
+
+        text = "";
+
+        this.caretMarginX = caretMarginX;
+        this.caretMarginY = caretMarginY;
+        caretColumn = 0;
 
         this.caretBlinkInterval = caretBlinkInterval;
         this.lastTime = (float) glfwGetTime();
 
-        this.secondsPerFrame = secondsPerFrame;
-        this.repeatDelay = repeatDelay;
+        repeatDelayFrames = Math.round(repeatDelay / secondsPerFrame);
 
         visible = true;
     }
@@ -115,18 +132,64 @@ public class MttTextbox extends MttGuiComponent {
                 rButtonPressingCount,
                 keyboardPressingCounts);
 
+        if (this.isCursorOn()) {
+            if (lButtonPressingCount == 1) {
+                focusedTextboxID = textboxID;
+            }
+        }
+
         float currentTime = (float) glfwGetTime();
         float elapsedTime = currentTime - lastTime;
         if (elapsedTime >= caretBlinkInterval) {
-            if (this.visible) {
+            if (this.visible && focusedTextboxID == textboxID) {
                 boolean caretVisible = caret.isVisible();
                 caret.setVisible(!caretVisible);
+            }
+
+            if (focusedTextboxID != textboxID) {
+                caret.setVisible(false);
             }
 
             lastTime = currentTime;
         }
 
+        if (focusedTextboxID == textboxID) {
+            if (keyboardPressingCounts.get("ESCAPE") == 1) {
+                focusedTextboxID = -1;
+            }
+        }
+        if (focusedTextboxID != textboxID) {
+            return;
+        }
 
+        String caretBeforeText = "";
+        String caretAfterText = "";
+        if (!text.equals("")) {
+            caretBeforeText = text.substring(0, caretColumn);
+            caretAfterText = text.substring(caretColumn, text.length());
+        }
+
+        String inputKey = KeyboardInputUtils.getInputLetter(keyboardPressingCounts, repeatDelayFrames);
+        if (inputKey.equals("BACKSPACE")) {
+            if (!caretBeforeText.equals("")) {
+                caretBeforeText = caretBeforeText.substring(0, caretBeforeText.length() - 1);
+                caretColumn--;
+            }
+        } else if (inputKey.equals("DELETE")) {
+            if (!caretAfterText.equals("")) {
+                caretAfterText = caretAfterText.substring(1, caretAfterText.length());
+            }
+        } else if (inputKey.equals("RIGHT")) {
+            if (caretColumn < text.length()) {
+                caretColumn++;
+            }
+        } else if (inputKey.equals("LEFT")) {
+            if (caretColumn > 0) {
+                caretColumn--;
+            }
+        } else {
+            
+        }
     }
 
     @Override

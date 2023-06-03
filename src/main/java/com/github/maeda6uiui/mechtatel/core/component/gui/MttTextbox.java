@@ -12,6 +12,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJavaColorToJOMLVector4f;
@@ -25,6 +27,15 @@ import static org.lwjgl.glfw.GLFW.glfwGetTime;
 public class MttTextbox extends MttGuiComponent {
     public static final String SUPPORTED_CHARACTERS
             = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~ ";
+    private static final List<String> SPECIAL_KEYS;
+
+    static {
+        SPECIAL_KEYS = new ArrayList<>();
+        SPECIAL_KEYS.add("BACKSPACE");
+        SPECIAL_KEYS.add("DELETE");
+        SPECIAL_KEYS.add("RIGHT");
+        SPECIAL_KEYS.add("LEFT");
+    }
 
     private static int focusedTextboxID = -1;
 
@@ -171,7 +182,7 @@ public class MttTextbox extends MttGuiComponent {
             caretSucceedingText = text.substring(caretColumn, text.length());
         }
 
-        String inputKey = JISKeyInterpreter.getInputLetter(keyboardPressingCounts, repeatDelayFrames);
+        String inputKey = JISKeyInterpreter.getInputLetter(keyboardPressingCounts, SPECIAL_KEYS, repeatDelayFrames);
         if (inputKey.equals("")) {
             return;
         }
@@ -193,7 +204,7 @@ public class MttTextbox extends MttGuiComponent {
             if (caretColumn > 0) {
                 caretColumn--;
             }
-        } else if (!JISKeyInterpreter.isSpecialKey(inputKey)) {
+        } else {
             caretPrecedingText += inputKey;
             caretColumn++;
         }

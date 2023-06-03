@@ -1,6 +1,5 @@
 package com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,25 +9,10 @@ import java.util.Map;
  * @author maeda6uiui
  */
 public class JISKeyInterpreter {
-    private static final List<String> SPECIAL_KEYS;
-
-    static {
-        SPECIAL_KEYS = new ArrayList<>();
-
-        SPECIAL_KEYS.add("ENTER");
-        SPECIAL_KEYS.add("BACKSPACE");
-        SPECIAL_KEYS.add("DELETE");
-        SPECIAL_KEYS.add("RIGHT");
-        SPECIAL_KEYS.add("LEFT");
-        SPECIAL_KEYS.add("DOWN");
-        SPECIAL_KEYS.add("UP");
-    }
-
-    public static boolean isSpecialKey(String key) {
-        return SPECIAL_KEYS.contains(key);
-    }
-
-    public static String getInputLetter(Map<String, Integer> keyboardPressingCounts, int repeatDelayFrames) {
+    public static String getInputLetter(
+            Map<String, Integer> keyboardPressingCounts,
+            List<String> specialKeys,
+            int repeatDelayFrames) {
         //The key that has been pressed most recently is the one that should be interpreted
         int minPressingCount = Integer.MAX_VALUE;
         String minPressingKey = "";
@@ -50,8 +34,7 @@ public class JISKeyInterpreter {
             return "";
         }
 
-        //Special keys
-        if (SPECIAL_KEYS.contains(minPressingKey)) {
+        if (specialKeys.contains(minPressingKey)) {
             return minPressingKey;
         }
 

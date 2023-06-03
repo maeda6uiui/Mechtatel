@@ -203,10 +203,10 @@ class MttInstance {
     }
 
     public void run() {
-        mtt.init();
-
         double lastTime = 0.0;
         glfwSetTime(0.0);
+
+        mtt.init();
 
         while (!glfwWindowShouldClose(window)) {
             double currentTime = glfwGetTime();
@@ -663,6 +663,31 @@ class MttInstance {
         guiComponents.add(mttLabel);
 
         return mttLabel;
+    }
+
+    public MttTextbox createTextbox(
+            float x,
+            float y,
+            float width,
+            float height,
+            float caretMarginX,
+            float caretMarginY,
+            String fontName,
+            int fontStyle,
+            int fontSize,
+            Color fontColor,
+            Color frameColor,
+            Color caretColor,
+            float caretBlinkInterval,
+            float repeatDelay) {
+        float secondsPerFrame = this.getSecondsPerFrame();
+        var mttTextbox = new MttTextbox(
+                vulkanInstance, x, y, width, height, caretMarginX, caretMarginY,
+                fontName, fontStyle, fontSize, fontColor, frameColor, caretColor,
+                caretBlinkInterval, secondsPerFrame, repeatDelay);
+        guiComponents.add(mttTextbox);
+
+        return mttTextbox;
     }
 
     public boolean removeGuiComponent(MttGuiComponent guiComponent) {

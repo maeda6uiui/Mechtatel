@@ -215,6 +215,9 @@ public class VkMttTexturedQuad2DSingleTextureSet extends VkMttComponent {
         if (!this.isVisible()) {
             return;
         }
+        if (!bufferCreated) {
+            return;
+        }
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
             LongBuffer lVertexBuffers = stack.longs(vertexBuffer);

@@ -483,6 +483,27 @@ public class Mechtatel
                 x, y, width, height, requiredChars, fontName, fontStyle, fontSize, fontColor, frameColor);
     }
 
+    public MttTextbox createTextbox(
+            float x,
+            float y,
+            float width,
+            float height,
+            float caretMarginX,
+            float caretMarginY,
+            String fontName,
+            int fontStyle,
+            int fontSize,
+            Color fontColor,
+            Color frameColor,
+            Color caretColor,
+            float caretBlinkInterval,
+            float repeatDelay) {
+        return instance.createTextbox(
+                x, y, width, height, caretMarginX, caretMarginY,
+                fontName, fontStyle, fontSize, fontColor, frameColor, caretColor,
+                caretBlinkInterval, repeatDelay);
+    }
+
     public PhysicalPlane3D createPhysicalPlane3D(Vector3fc normal, float constant) {
         return instance.createPhysicalPlane3D(normal, constant);
     }

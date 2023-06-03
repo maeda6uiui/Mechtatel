@@ -2,7 +2,6 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
-import com.github.maeda6uiui.mechtatel.core.text.NormalizedGlyph;
 import com.github.maeda6uiui.mechtatel.core.text.TextUtil;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
@@ -108,24 +107,6 @@ public class VkMttFont extends VkMttComponent {
 
     public Map<Character, Glyph> getGlyphs() {
         return new HashMap<>(glyphs);
-    }
-
-    public Map<Character, NormalizedGlyph> getNormalizedGlyphs() {
-        var normalizedGlyphs = new HashMap<Character, NormalizedGlyph>();
-        for (var entry : glyphs.entrySet()) {
-            char c = entry.getKey();
-            Glyph glyph = entry.getValue();
-            var normalizedGlyph = new NormalizedGlyph(
-                    (float) glyph.width / imageWidth,
-                    (float) glyph.height / imageHeight,
-                    (float) glyph.x / imageWidth,
-                    (float) glyph.y / imageHeight,
-                    glyph.advance
-            );
-            normalizedGlyphs.put(c, normalizedGlyph);
-        }
-
-        return normalizedGlyphs;
     }
 
     public void prepare(

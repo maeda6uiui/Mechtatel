@@ -4,10 +4,11 @@ import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.component.MttLine2D;
 import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex2D;
-import com.github.maeda6uiui.mechtatel.core.text.NormalizedGlyph;
+import com.github.maeda6uiui.mechtatel.core.text.Glyph;
 import com.github.maeda6uiui.mechtatel.core.util.KeyboardInputUtils;
 import com.github.maeda6uiui.mechtatel.core.util.UniversalCounter;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 import java.awt.*;
@@ -33,12 +34,10 @@ public class MttTextbox extends MttGuiComponent {
     private MttLine2D caret;
     private MttFont font;
 
-    private Map<Character, NormalizedGlyph> glyphs;
+    private Map<Character, Glyph> glyphs;
 
     private String text;
-
-    private float caretMarginX;
-    private float caretMarginY;
+    private String prevText;
     private int caretColumn;
 
     private float caretBlinkInterval;
@@ -68,6 +67,7 @@ public class MttTextbox extends MttGuiComponent {
         super(vulkanInstance, x, y, width, height);
 
         textboxID = UniversalCounter.get();
+        focusedTextboxID = textboxID;
 
         frame = new MttQuad2D(
                 vulkanInstance,
@@ -96,12 +96,10 @@ public class MttTextbox extends MttGuiComponent {
                 fontColor,
                 SUPPORTED_CHARACTERS);
 
-        glyphs = font.getNormalizedGlyphs();
+        glyphs = font.getGlyphs();
 
         text = "";
-
-        this.caretMarginX = caretMarginX;
-        this.caretMarginY = caretMarginY;
+        prevText = "";
         caretColumn = 0;
 
         this.caretBlinkInterval = caretBlinkInterval;
@@ -110,6 +108,10 @@ public class MttTextbox extends MttGuiComponent {
         repeatDelayFrames = Math.round(repeatDelay / secondsPerFrame);
 
         visible = true;
+    }
+
+    public String getText() {
+        return text;
     }
 
     @Override
@@ -162,22 +164,26 @@ public class MttTextbox extends MttGuiComponent {
             return;
         }
 
-        String caretBeforeText = "";
-        String caretAfterText = "";
+        String caretPrecedingText = "";
+        String caretSucceedingText = "";
         if (!text.equals("")) {
-            caretBeforeText = text.substring(0, caretColumn);
-            caretAfterText = text.substring(caretColumn, text.length());
+            caretPrecedingText = text.substring(0, caretColumn);
+            caretSucceedingText = text.substring(caretColumn, text.length());
         }
 
         String inputKey = KeyboardInputUtils.getInputLetter(keyboardPressingCounts, repeatDelayFrames);
+        if (inputKey.equals("")) {
+            return;
+        }
+
         if (inputKey.equals("BACKSPACE")) {
-            if (!caretBeforeText.equals("")) {
-                caretBeforeText = caretBeforeText.substring(0, caretBeforeText.length() - 1);
+            if (!caretPrecedingText.equals("")) {
+                caretPrecedingText = caretPrecedingText.substring(0, caretPrecedingText.length() - 1);
                 caretColumn--;
             }
         } else if (inputKey.equals("DELETE")) {
-            if (!caretAfterText.equals("")) {
-                caretAfterText = caretAfterText.substring(1, caretAfterText.length());
+            if (!caretSucceedingText.equals("")) {
+                caretSucceedingText = caretSucceedingText.substring(1, caretSucceedingText.length());
             }
         } else if (inputKey.equals("RIGHT")) {
             if (caretColumn < text.length()) {
@@ -187,8 +193,32 @@ public class MttTextbox extends MttGuiComponent {
             if (caretColumn > 0) {
                 caretColumn--;
             }
-        } else {
-            
+        } else if (!KeyboardInputUtils.isSpecialKey(inputKey)) {
+            caretPrecedingText += inputKey;
+            caretColumn++;
+        }
+
+        text = caretPrecedingText + caretSucceedingText;
+
+        float caretTranslateX = 0.0f;
+        for (int i = 0; i < caretColumn; i++) {
+            char c = text.charAt(i);
+            Glyph glyph = glyphs.get(c);
+
+            caretTranslateX += glyph.width * MttFont.DEFAULT_GLYPH_WIDTH_SCALE;
+        }
+
+        caret.setMat(new Matrix4f().translate(caretTranslateX, 0.0f, 0.0f));
+
+        if (!text.equals(prevText)) {
+            if (text.equals("")) {
+                font.clear();
+            } else {
+                font.prepare(text, new Vector2f(this.getX(), this.getY()));
+                font.createBuffers();
+            }
+
+            prevText = text;
         }
     }
 

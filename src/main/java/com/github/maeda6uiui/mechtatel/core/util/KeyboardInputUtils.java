@@ -24,9 +24,11 @@ public class KeyboardInputUtils {
         SPECIAL_KEYS.add("UP");
     }
 
-    public static String getInputLetter(
-            Map<String, Integer> keyboardPressingCounts,
-            int repeatDelayFrames) {
+    public static boolean isSpecialKey(String key) {
+        return SPECIAL_KEYS.contains(key);
+    }
+
+    public static String getInputLetter(Map<String, Integer> keyboardPressingCounts, int repeatDelayFrames) {
         //The key that has been pressed most recently is the one that should be interpreted
         int minPressingCount = Integer.MAX_VALUE;
         String minPressingKey = "";
@@ -98,7 +100,7 @@ public class KeyboardInputUtils {
                 outputLetter = "`";
                 break;
         }
-        if (outputLetter.equals("") == false) {
+        if (!outputLetter.equals("")) {
             return outputLetter;
         }
 

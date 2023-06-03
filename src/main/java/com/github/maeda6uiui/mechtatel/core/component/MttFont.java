@@ -1,7 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
-import com.github.maeda6uiui.mechtatel.core.text.NormalizedGlyph;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttFont;
 import org.joml.Vector2fc;
@@ -42,10 +41,6 @@ public class MttFont extends MttComponent {
 
     public Map<Character, Glyph> getGlyphs() {
         return vkMttFont.getGlyphs();
-    }
-
-    public Map<Character, NormalizedGlyph> getNormalizedGlyphs() {
-        return vkMttFont.getNormalizedGlyphs();
     }
 
     public void prepare(

@@ -1,15 +1,15 @@
-package com.github.maeda6uiui.mechtatel.core.input.keyboard;
+package com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Utility methods for keyboard input
+ * JIS key interpreter
  *
  * @author maeda6uiui
  */
-public class KeyToLetterConverter {
+public class JISKeyInterpreter {
     private static final List<String> SPECIAL_KEYS;
 
     static {

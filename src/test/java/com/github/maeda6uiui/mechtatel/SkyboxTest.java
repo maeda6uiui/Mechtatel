@@ -51,7 +51,7 @@ public class SkyboxTest extends Mechtatel {
         skyboxScreenCreator.setDepthImageSize(1024, 1024);
         skyboxScreenCreator.setSamplerAddressMode("clamp_to_edge");
         skyboxScreen = skyboxScreenCreator.create();
-        skyboxScreen.getCamera().setZNear(200.0f);
+        skyboxScreen.getCamera().setZNear(500.0f);
         skyboxScreen.getCamera().setZFar(2000.0f);
 
         var mainScreenCreator = new ScreenCreator(this, "main");
@@ -119,7 +119,7 @@ public class SkyboxTest extends Mechtatel {
 
         var textureOperationParameters = new TextureOperationParameters();
         textureOperationParameters.setOperationType(TextureOperationParameters.TEXTURE_OPERATION_MERGE_BY_DEPTH);
-        textureOperationParameters.setFirstTextureFixedDepth(0.99f);
+        textureOperationParameters.setFirstTextureFixedDepth(0.99999f);
 
         finalTexture = this.createTextureOperation(
                 "merge_by_depth",

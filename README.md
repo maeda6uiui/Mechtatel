@@ -49,14 +49,49 @@ Thank you!
 結局自分が死ぬまで何も成し遂げられないかもしれませんし、あるいは何か芸術的なゴミを生み出すことができるかもしれません。
 「この人を応援したい！」とか思うような頭のおかしい人は、Starでも付けていってください...。
 
-## 依存関係(Dependencies)
+## Mechtatelを試してみたい方へ(For those who want to try out Mechtatel)
 
-Place following binaries under ./Mechtatel/Bin.
+**Note that Mechtatel is currently under active development, and is subject to drastic change.**
 
-./Mechtatel/Binディレクトリ配下に以下のバイナリを配置します。
+Clone this repository.
+
+```
+git clone -b develop https://github.com/maeda6uiui/Mechtatel.git
+```
+
+Change `lwjgl.natives` in pom.xml according to your platform.
+You can find supported platforms on the [official page of LWJGL](https://www.lwjgl.org/customize). For example, if you are running Linux x64, then `lwjgl.natives` is `natives-linux`.
+
+```xml
+<properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <lwjgl.version>3.3.1</lwjgl.version>
+    <lwjgl.natives>natives-windows</lwjgl.natives>
+</properties>
+```
+
+You have to download following binaries and place them under ./Mechtatel/Bin.
 
 - [shaderc](https://github.com/google/shaderc)
 - [Libbulletjme](https://github.com/stephengold/Libbulletjme)
+
+Download a Shaderc artifact for your platform from their [GitHub repository](https://github.com/google/shaderc).
+
+![Shaderc downloads](./Image/shaderc_downloads.png)
+
+Extract the ZIP file and copy install/bin/shaderc_shared.dll (if you are using Windows) under ./Mechtatel/Bin.
+
+Download a Libbulletjme binary for your platform from the [release](https://github.com/stephengold/Libbulletjme/releases/tag/17.5.4) of their GitHub repository.
+Mechtatel currently uses v17.5.4 of Libbulletjme, but this version may change in the future.
+
+Mechtatel uses the DebugSp binary by default.
+You can change this setting in [settings.json](./Mechtatel/Setting/settings.json).
+
+Copy the downloaded binary under ./Mechtatel/Bin.
+
+I'm sorry that currently there is no elaborate document for this project.
+But you could check out the [test code](./src/test/java/com/github/maeda6uiui/mechtatel/) and hopefully get the gist of how Mechtatel works. 
 
 ## Todoリスト
 

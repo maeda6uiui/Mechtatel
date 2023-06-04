@@ -22,7 +22,7 @@ public class Camera {
         center = new Vector3f(0.0f, 0.0f, 0.0f);
         up = new Vector3f(0.0f, 1.0f, 0.0f);
 
-        fovY = (float) Math.toRadians(100.0);
+        fovY = (float) Math.toRadians(60.0);
         aspect = 1280.0f / 720.0f;
         zNear = 0.1f;
         zFar = 500.0f;

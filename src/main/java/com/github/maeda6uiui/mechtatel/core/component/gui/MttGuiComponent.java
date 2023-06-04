@@ -1,6 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttComponent;
+import com.github.maeda6uiui.mechtatel.core.util.UniversalCounter;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 
 import java.util.Map;
@@ -11,6 +12,10 @@ import java.util.Map;
  * @author maeda6uiui
  */
 public class MttGuiComponent extends MttComponent {
+    private static int focusedGUIComponentID = -1;
+
+    private int guiComponentID;
+
     private float x;
     private float y;
     private float width;
@@ -26,6 +31,9 @@ public class MttGuiComponent extends MttComponent {
             float width,
             float height) {
         super(vulkanInstance);
+
+        guiComponentID = UniversalCounter.get();
+        focusedGUIComponentID = guiComponentID;
 
         this.x = x;
         this.y = y;
@@ -60,6 +68,10 @@ public class MttGuiComponent extends MttComponent {
         return cursorOn;
     }
 
+    public boolean isFocused() {
+        return focusedGUIComponentID == guiComponentID;
+    }
+
     public void update(
             int cursorX,
             int cursorY,
@@ -87,6 +99,15 @@ public class MttGuiComponent extends MttComponent {
             }
         } else {
             cursorOn = false;
+        }
+
+        if (cursorOn && lButtonPressingCount == 1) {
+            focusedGUIComponentID = guiComponentID;
+        }
+        if (focusedGUIComponentID == guiComponentID) {
+            if (keyboardPressingCounts.get("ESCAPE") == 1) {
+                focusedGUIComponentID = -1;
+            }
         }
     }
 

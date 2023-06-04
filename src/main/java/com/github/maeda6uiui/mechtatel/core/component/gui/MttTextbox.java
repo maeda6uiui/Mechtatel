@@ -6,7 +6,6 @@ import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.KeyInterpreter;
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
-import com.github.maeda6uiui.mechtatel.core.util.UniversalCounter;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -36,10 +35,6 @@ public class MttTextbox extends MttGuiComponent {
         SPECIAL_KEYS.add("RIGHT");
         SPECIAL_KEYS.add("LEFT");
     }
-
-    private static int focusedTextboxID = -1;
-
-    private int textboxID;
 
     private MttQuad2D frame;
     private MttLine2D caret;
@@ -79,9 +74,6 @@ public class MttTextbox extends MttGuiComponent {
             KeyInterpreter keyInterpreter,
             String supportedCharacters) {
         super(vulkanInstance, x, y, width, height);
-
-        textboxID = UniversalCounter.get();
-        focusedTextboxID = textboxID;
 
         frame = new MttQuad2D(
                 vulkanInstance,
@@ -150,33 +142,24 @@ public class MttTextbox extends MttGuiComponent {
                 rButtonPressingCount,
                 keyboardPressingCounts);
 
-        if (this.isCursorOn()) {
-            if (lButtonPressingCount == 1) {
-                focusedTextboxID = textboxID;
-            }
-        }
+        boolean focused = this.isFocused();
 
         float currentTime = (float) glfwGetTime();
         float elapsedTime = currentTime - lastTime;
         if (elapsedTime >= caretBlinkInterval) {
-            if (this.visible && focusedTextboxID == textboxID) {
+            if (this.visible && focused) {
                 boolean caretVisible = caret.isVisible();
                 caret.setVisible(!caretVisible);
             }
 
-            if (focusedTextboxID != textboxID) {
+            if (!focused) {
                 caret.setVisible(false);
             }
 
             lastTime = currentTime;
         }
 
-        if (focusedTextboxID == textboxID) {
-            if (keyboardPressingCounts.get("ESCAPE") == 1) {
-                focusedTextboxID = -1;
-            }
-        }
-        if (focusedTextboxID != textboxID) {
+        if (!focused) {
             return;
         }
 

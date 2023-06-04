@@ -163,16 +163,16 @@ public class MttTextbox extends MttGuiComponent {
             return;
         }
 
+        String inputKey = keyInterpreter.getInputLetter(keyboardPressingCounts, SPECIAL_KEYS, repeatDelayFrames);
+        if (inputKey.equals("")) {
+            return;
+        }
+
         String caretPrecedingText = "";
         String caretSucceedingText = "";
         if (!text.equals("")) {
             caretPrecedingText = text.substring(0, caretColumn);
             caretSucceedingText = text.substring(caretColumn, text.length());
-        }
-
-        String inputKey = keyInterpreter.getInputLetter(keyboardPressingCounts, SPECIAL_KEYS, repeatDelayFrames);
-        if (inputKey.equals("")) {
-            return;
         }
 
         if (inputKey.equals("BACKSPACE")) {

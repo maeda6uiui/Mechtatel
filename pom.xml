@@ -174,7 +174,7 @@
             <artifactId>jxm-bd1</artifactId>
             <version>1.0.3</version>
         </dependency>
-        
+
         <dependency>
             <groupId>com.github.goxr3plus</groupId>
             <artifactId>java-stream-player</artifactId>

@@ -23,11 +23,16 @@ public class ClassConversionUtils {
 
     public static Matrix4f convertJMEMatrix3fToJOMLMatrix4f(Matrix3f src) {
         var ret = new Matrix4f().identity();
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                ret.set(i, j, src.get(i, j));
-            }
-        }
+
+        ret.m00(src.get(0, 0));
+        ret.m01(src.get(1, 0));
+        ret.m02(src.get(2, 0));
+        ret.m10(src.get(0, 1));
+        ret.m11(src.get(1, 1));
+        ret.m12(src.get(2, 1));
+        ret.m20(src.get(0, 2));
+        ret.m21(src.get(1, 2));
+        ret.m22(src.get(2, 2));
 
         return ret;
     }
@@ -36,7 +41,7 @@ public class ClassConversionUtils {
         var ret = new Matrix3f();
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                ret.set(i, j, src.get(i, j));
+                ret.set(i, j, src.get(j, i));
             }
         }
 

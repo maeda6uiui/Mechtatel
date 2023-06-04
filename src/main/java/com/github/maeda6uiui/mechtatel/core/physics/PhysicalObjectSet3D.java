@@ -34,4 +34,8 @@ public class PhysicalObjectSet3D {
 
         return objectExists;
     }
+
+    public List<PhysicalObject3D> getPhysicalObjects() {
+        return new ArrayList<>(physicalObjects);
+    }
 }

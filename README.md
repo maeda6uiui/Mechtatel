@@ -101,8 +101,10 @@ But you could check out the [test code](./src/test/java/com/github/maeda6uiui/me
 
 ## Todoリスト
 
-- 3Dモデルのアニメーション機能
+- 3Dモデルのアニメーション機能の実装
   - OBJ形式をベースにしたい
+- PythonからMechtatelを扱う機能の実装
+  - 実際のゲーム開発は基本的にPythonで行うようにしたい
 
 ## 進捗報告
 

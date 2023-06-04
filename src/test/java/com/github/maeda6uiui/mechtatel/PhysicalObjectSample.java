@@ -89,7 +89,8 @@ public class PhysicalObjectSample extends Mechtatel {
             e.printStackTrace();
         }
 
-        this.createPhysicalMesh3D(plane, 0.0f);
+        var physicalPlane = this.createPhysicalMesh3D(plane, 0.0f);
+        physicalPlane.getBody().setRestitution(0.7f);
 
         physicalCubes = new ArrayList<>();
 
@@ -116,8 +117,11 @@ public class PhysicalObjectSample extends Mechtatel {
 
         if (this.getKeyboardPressingCount("ENTER") == 1) {
             var dupCube = this.duplicateModel3D(srcCube);
-            var physicalCube = this.createPhysicalBox3D(1.0f, 1.0f);
+            dupCube.rescale(new Vector3f(0.5f, 0.5f, 0.5f));
+
+            var physicalCube = this.createPhysicalBox3D(0.5f, 1.0f);
             physicalCube.setComponent(dupCube);
+            physicalCube.getBody().setRestitution(0.7f);
 
             float x = random.nextFloat();
             float z = random.nextFloat();

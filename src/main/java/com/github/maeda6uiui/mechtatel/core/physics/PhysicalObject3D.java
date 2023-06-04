@@ -1,12 +1,14 @@
 package com.github.maeda6uiui.mechtatel.core.physics;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttComponent3D;
-import com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import org.joml.Matrix4f;
 import org.joml.Vector3fc;
+
+import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJMEMatrix3fToJOMLMatrix4f;
+import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJMEVector3fToJOMLVector3f;
 
 /**
  * Base class for physical objects
@@ -19,7 +21,7 @@ public class PhysicalObject3D {
     private PhysicsRigidBody body;
 
     private MttComponent3D component;
-    private Matrix4f mat;
+    private Matrix4f transRotMat;
 
     static {
         physicsSpace = new PhysicsSpace(PhysicsSpace.BroadphaseType.DBVT);
@@ -40,7 +42,7 @@ public class PhysicalObject3D {
     }
 
     public PhysicalObject3D() {
-        mat = new Matrix4f().identity();
+        transRotMat = new Matrix4f().identity();
     }
 
     public void cleanup() {
@@ -70,18 +72,18 @@ public class PhysicalObject3D {
 
     public void updateObject() {
         if (body != null) {
-            var bodyLocation = new com.jme3.math.Vector3f();
-            body.getPhysicsLocation(bodyLocation);
-            var translation = ClassConversionUtils.convertJMEVector3fToJOMLVector3f(bodyLocation);
+            var bodyLocation = body.getPhysicsLocation(null);
+            var translation = convertJMEVector3fToJOMLVector3f(bodyLocation);
+            var translationMat = new Matrix4f().translate(translation);
 
-            var bodyRotMat = new com.jme3.math.Matrix3f();
-            body.getPhysicsRotationMatrix(bodyRotMat);
-            var rotMat = ClassConversionUtils.convertJMEMatrix3fToJOMLMatrix4f(bodyRotMat);
+            var bodyRotMat = body.getPhysicsRotationMatrix(null);
+            var rotMat = convertJMEMatrix3fToJOMLMatrix4f(bodyRotMat);
 
-            mat = rotMat.translate(translation);
+            transRotMat = translationMat.mul(rotMat);
         }
         if (component != null) {
-            component.setMat(mat);
+            var transRotScaleMat = transRotMat.mul(new Matrix4f().scale(component.getScale()));
+            component.setMat(transRotScaleMat);
         }
     }
 }

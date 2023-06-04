@@ -47,6 +47,9 @@ public class PhysicalObject3D {
         if (body != null) {
             physicsSpace.removeCollisionObject(body);
         }
+        if (component != null) {
+            component.cleanup();
+        }
     }
 
     protected void setShape(CollisionShape shape) {

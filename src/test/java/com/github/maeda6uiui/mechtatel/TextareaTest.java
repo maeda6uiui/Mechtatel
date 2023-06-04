@@ -38,10 +38,12 @@ public class TextareaTest extends Mechtatel {
 
     @Override
     public void update() {
-        if (this.getKeyboardPressingCount("LEFT_CONTROL") == 1) {
+        if (this.getKeyboardPressingCount("F1") == 1) {
             System.out.println(textarea.getText());
-        } else if (this.getKeyboardPressingCount("RIGHT_CONTROL") == 1) {
+        } else if (this.getKeyboardPressingCount("F2") == 1) {
             System.out.println(textarea.getLines());
+        } else if (this.getKeyboardPressingCount("F3") == 1) {
+            textarea.clear();
         }
     }
 }

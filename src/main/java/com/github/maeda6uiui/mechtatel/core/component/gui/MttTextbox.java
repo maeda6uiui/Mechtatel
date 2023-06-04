@@ -122,6 +122,14 @@ public class MttTextbox extends MttGuiComponent {
         return text;
     }
 
+    public void clear() {
+        text = "";
+        caretColumn = 0;
+
+        font.clear();
+        caret.setMat(new Matrix4f().identity());
+    }
+
     @Override
     public void update(
             int cursorX,

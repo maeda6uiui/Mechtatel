@@ -143,6 +143,20 @@ public class MttTextarea extends MttGuiComponent {
         return sb.toString();
     }
 
+    public void clear() {
+        lines.clear();
+        lines.add("");
+
+        prevLines.clear();
+        prevLines.add("");
+
+        caretRow = 0;
+        caretColumn = 0;
+
+        font.clear();
+        caret.setMat(new Matrix4f().identity());
+    }
+
     @Override
     public void update(
             int cursorX,

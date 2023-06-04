@@ -681,12 +681,13 @@ class MttInstance {
             Color caretColor,
             float caretBlinkInterval,
             float repeatDelay,
-            KeyInterpreter keyInterpreter) {
+            KeyInterpreter keyInterpreter,
+            String supportedCharacters) {
         float secondsPerFrame = this.getSecondsPerFrame();
         var mttTextbox = new MttTextbox(
                 vulkanInstance, x, y, width, height, caretMarginX, caretMarginY,
                 fontName, fontStyle, fontSize, fontColor, frameColor, caretColor,
-                caretBlinkInterval, secondsPerFrame, repeatDelay, keyInterpreter);
+                caretBlinkInterval, secondsPerFrame, repeatDelay, keyInterpreter, supportedCharacters);
         guiComponents.add(mttTextbox);
 
         return mttTextbox;

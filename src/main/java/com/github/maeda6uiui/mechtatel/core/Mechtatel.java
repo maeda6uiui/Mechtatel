@@ -499,11 +499,12 @@ public class Mechtatel
             Color caretColor,
             float caretBlinkInterval,
             float repeatDelay,
-            KeyInterpreter keyInterpreter) {
+            KeyInterpreter keyInterpreter,
+            String supportedCharacters) {
         return instance.createTextbox(
                 x, y, width, height, caretMarginX, caretMarginY,
                 fontName, fontStyle, fontSize, fontColor, frameColor, caretColor,
-                caretBlinkInterval, repeatDelay, keyInterpreter);
+                caretBlinkInterval, repeatDelay, keyInterpreter, supportedCharacters);
     }
 
     public PhysicalPlane3D createPhysicalPlane3D(Vector3fc normal, float constant) {

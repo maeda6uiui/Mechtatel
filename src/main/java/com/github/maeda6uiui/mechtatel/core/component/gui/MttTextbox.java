@@ -25,7 +25,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetTime;
  * @author maeda6uiui
  */
 public class MttTextbox extends MttGuiComponent {
-    public static final String SUPPORTED_CHARACTERS
+    public static final String DEFAULT_SUPPORTED_CHARACTERS
             = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~ ";
     private static final List<String> SPECIAL_KEYS;
 
@@ -76,7 +76,8 @@ public class MttTextbox extends MttGuiComponent {
             float caretBlinkInterval,
             float secondsPerFrame,
             float repeatDelay,
-            KeyInterpreter keyInterpreter) {
+            KeyInterpreter keyInterpreter,
+            String supportedCharacters) {
         super(vulkanInstance, x, y, width, height);
 
         textboxID = UniversalCounter.get();
@@ -107,7 +108,7 @@ public class MttTextbox extends MttGuiComponent {
                 new Font(fontName, fontStyle, fontSize),
                 true,
                 fontColor,
-                SUPPORTED_CHARACTERS);
+                supportedCharacters);
 
         glyphs = font.getGlyphs();
 

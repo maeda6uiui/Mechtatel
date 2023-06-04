@@ -33,7 +33,8 @@ public class TextboxTest extends Mechtatel {
         textbox = this.createTextbox(
                 -0.9f, -0.9f, 0.9f, 0.1f,
                 0.001f, 0.01f, Font.SANS_SERIF, Font.PLAIN, 32,
-                Color.GREEN, Color.WHITE, Color.LIGHT_GRAY, 0.5f, 0.5f, keyInterpreter);
+                Color.GREEN, Color.WHITE, Color.LIGHT_GRAY, 0.5f, 0.5f,
+                keyInterpreter, MttTextbox.DEFAULT_SUPPORTED_CHARACTERS);
     }
 
     @Override

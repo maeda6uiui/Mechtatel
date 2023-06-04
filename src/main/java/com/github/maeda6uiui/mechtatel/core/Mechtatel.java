@@ -507,6 +507,30 @@ public class Mechtatel
                 caretBlinkInterval, repeatDelay, keyInterpreter, supportedCharacters);
     }
 
+    public MttTextarea createTextarea(
+            float x,
+            float y,
+            float width,
+            float height,
+            float caretLength,
+            float caretMarginX,
+            float caretMarginY,
+            String fontName,
+            int fontStyle,
+            int fontSize,
+            Color fontColor,
+            Color frameColor,
+            Color caretColor,
+            float caretBlinkInterval,
+            float repeatDelay,
+            KeyInterpreter keyInterpreter,
+            String supportedCharacters) {
+        return instance.createTextarea(
+                x, y, width, height, caretLength, caretMarginX, caretMarginY,
+                fontName, fontStyle, fontSize, fontColor, frameColor, caretColor,
+                caretBlinkInterval, repeatDelay, keyInterpreter, supportedCharacters);
+    }
+
     public PhysicalPlane3D createPhysicalPlane3D(Vector3fc normal, float constant) {
         return instance.createPhysicalPlane3D(normal, constant);
     }

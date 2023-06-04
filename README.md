@@ -76,11 +76,15 @@ You have to download following binaries and place them under ./Mechtatel/Bin.
 - [shaderc](https://github.com/google/shaderc)
 - [Libbulletjme](https://github.com/stephengold/Libbulletjme)
 
+**Shaderc**
+
 Download a Shaderc artifact for your platform from their [GitHub repository](https://github.com/google/shaderc).
 
 ![Shaderc downloads](./Image/shaderc_downloads.png)
 
 Extract the ZIP file and copy install/bin/shaderc_shared.dll (if you are using Windows) under ./Mechtatel/Bin.
+
+**Libbulletjme**
 
 Download a Libbulletjme binary for your platform from the [release](https://github.com/stephengold/Libbulletjme/releases/tag/17.5.4) of their GitHub repository.
 Mechtatel currently uses v17.5.4 of Libbulletjme, but this version may change in the future.
@@ -89,6 +93,8 @@ Mechtatel uses the DebugSp binary by default.
 You can change this setting in [settings.json](./Mechtatel/Setting/settings.json).
 
 Copy the downloaded binary under ./Mechtatel/Bin.
+
+---
 
 I'm sorry that currently there is no elaborate document for this project.
 But you could check out the [test code](./src/test/java/com/github/maeda6uiui/mechtatel/) and hopefully get the gist of how Mechtatel works. 

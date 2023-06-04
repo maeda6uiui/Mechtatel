@@ -9,7 +9,6 @@ import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObjectSet3D;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import java.io.IOException;
 import java.util.Random;
@@ -90,6 +89,7 @@ public class PhysicalObjectSample extends Mechtatel {
 
         var physicalPlane = this.createPhysicalMesh3D(plane, 0.0f);
         physicalPlane.getBody().setRestitution(0.7f);
+        physicalPlane.getBody().setFriction(0.5f);
 
         physicalObjects = new PhysicalObjectSet3D();
 
@@ -128,18 +128,12 @@ public class PhysicalObjectSample extends Mechtatel {
             var physicalCube = this.createPhysicalBox3D(0.5f, 1.0f);
             physicalCube.setComponent(dupCube);
             physicalCube.getBody().setRestitution(0.7f);
+            physicalCube.getBody().setFriction(0.5f);
 
             physicalCube.getBody().setPhysicsLocation(
                     convertJOMLVector3fToJMEVector3f(new Vector3f(x, 10.0f, z)));
 
             physicalObjects.add(physicalCube);
-        } else if (this.getKeyboardPressingCount("2") == 1) {
-            var physicalSphere = this.createPhysicalSphere3DWithComponent(
-                    0.5f, 1.0f, 16, 16, new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
-            physicalSphere.getBody().setRestitution(0.7f);
-            physicalSphere.getBody().setPhysicsLocation(
-                    convertJOMLVector3fToJMEVector3f(new Vector3f(x, 10.0f, z)));
-            physicalObjects.add(physicalSphere);
         }
 
         if (this.getKeyboardPressingCount("C") == 1) {

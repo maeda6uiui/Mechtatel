@@ -35,7 +35,7 @@ public class MttComponent3D extends MttComponent {
         VkMttComponent3D vkComponent = (VkMttComponent3D) this.getVulkanComponent();
         vkComponent.translate(v);
 
-        position = position.add(v);
+        position.add(v);
     }
 
     public void rotX(float ang) {
@@ -62,7 +62,7 @@ public class MttComponent3D extends MttComponent {
         VkMttComponent3D vkComponent = (VkMttComponent3D) this.getVulkanComponent();
         vkComponent.rescale(scale);
 
-        this.scale = this.scale.mul(scale);
+        this.scale.mul(scale);
     }
 
     /**

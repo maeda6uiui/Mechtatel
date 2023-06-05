@@ -146,7 +146,7 @@ public class PhysicalObjectSample extends Mechtatel {
         if (this.getKeyboardPressingCount("F1") == 1) {
             try {
                 this.saveScreenshot(
-                        "final",
+                        "main",
                         "bgra",
                         String.format("screenshot_%d.jpg", screenshotCount));
                 screenshotCount++;

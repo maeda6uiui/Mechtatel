@@ -24,26 +24,26 @@ public class VkMttComponent3D extends VkMttComponent {
     }
 
     public void translate(Vector3fc v) {
-        this.getMatRef().translate(v);
+        this.getMat().translate(v);
     }
 
     public void rotX(float ang) {
-        this.getMatRef().rotate(ang, 1.0f, 0.0f, 0.0f);
+        this.getMat().rotate(ang, 1.0f, 0.0f, 0.0f);
     }
 
     public void rotY(float ang) {
-        this.getMatRef().rotate(ang, 0.0f, 1.0f, 0.0f);
+        this.getMat().rotate(ang, 0.0f, 1.0f, 0.0f);
     }
 
     public void rotZ(float ang) {
-        this.getMatRef().rotate(ang, 0.0f, 0.0f, 1.0f);
+        this.getMat().rotate(ang, 0.0f, 0.0f, 1.0f);
     }
 
     public void rot(float ang, Vector3fc axis) {
-        this.getMatRef().rotate(ang, axis);
+        this.getMat().rotate(ang, axis);
     }
 
     public void rescale(Vector3fc scale) {
-        this.getMatRef().scale(scale);
+        this.getMat().scale(scale);
     }
 }

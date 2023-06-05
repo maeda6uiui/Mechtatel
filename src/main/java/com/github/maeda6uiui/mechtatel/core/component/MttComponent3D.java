@@ -62,7 +62,7 @@ public class MttComponent3D extends MttComponent {
         VkMttComponent3D vkComponent = (VkMttComponent3D) this.getVulkanComponent();
         vkComponent.rescale(scale);
 
-        this.scale = new Vector3f(scale);
+        this.scale = this.scale.mul(scale);
     }
 
     /**

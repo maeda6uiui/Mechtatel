@@ -67,7 +67,7 @@
             ],
             "keyFrames": [
                 {
-                    "index": 0,
+                    "frameIndex": 0,
                     "time": 0.0,
                     "nextFrameIndex": 1,
                     "displacement": {
@@ -96,7 +96,7 @@
                     }
                 },
                 {
-                    "index": 1,
+                    "frameIndex": 1,
                     "time": 3.0,
                     "nextFrameIndex": 0,
                     "displacement": {
@@ -115,7 +115,7 @@
             ],
             "keyFrames": [
                 {
-                    "index": 0,
+                    "frameIndex": 0,
                     "time": 0.0,
                     "nextFrameIndex": 1,
                     "displacement": {
@@ -144,7 +144,7 @@
                     }
                 },
                 {
-                    "index": 1,
+                    "frameIndex": 1,
                     "time": 3.0,
                     "nextFrameIndex": 0,
                     "displacement": {

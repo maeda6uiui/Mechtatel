@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -54,10 +54,10 @@ public class MttSettings {
     }
 
     public class BulletSettings {
-        public boolean dist;
-        public String dirname;
-        public String buildType;
-        public String flavor;
+        public boolean dist = true;
+        public String dirname = "./Mechtatel/Bin";
+        public String buildType = "Debug";
+        public String flavor = "Sp";
 
         @Override
         public String toString() {
@@ -70,9 +70,13 @@ public class MttSettings {
         }
     }
 
+    @JsonProperty("window")
     public WindowSettings windowSettings;
+    @JsonProperty("system")
     public SystemSettings systemSettings;
+    @JsonProperty("rendering")
     public RenderingSettings renderingSettings;
+    @JsonProperty("bullet")
     public BulletSettings bulletSettings;
 
     public MttSettings() {
@@ -82,12 +86,7 @@ public class MttSettings {
         bulletSettings = new BulletSettings();
     }
 
-    public MttSettings(String jsonFilepath) throws IOException {
-        windowSettings = new WindowSettings();
-        systemSettings = new SystemSettings();
-        renderingSettings = new RenderingSettings();
-        bulletSettings = new BulletSettings();
-
+    public static MttSettings load(String jsonFilepath) throws IOException {
         List<String> lines = Files.readAllLines(Paths.get(jsonFilepath));
 
         var sb = new StringBuilder();
@@ -98,25 +97,9 @@ public class MttSettings {
         String json = sb.toString();
 
         var mapper = new ObjectMapper();
-        JsonNode node = mapper.readTree(json);
+        MttSettings settings = mapper.readValue(json, MttSettings.class);
 
-        JsonNode windowNode = node.get("window");
-        windowSettings.title = windowNode.get("title").asText();
-        windowSettings.width = windowNode.get("width").asInt();
-        windowSettings.height = windowNode.get("height").asInt();
-        windowSettings.resizable = windowNode.get("resizable").asBoolean();
-
-        JsonNode systemNode = node.get("system");
-        systemSettings.fps = systemNode.get("fps").asInt();
-
-        JsonNode renderingNode = node.get("rendering");
-        renderingSettings.imageFormat = renderingNode.get("imageFormat").asText();
-
-        JsonNode bulletNode = node.get("bullet");
-        bulletSettings.dist = bulletNode.get("dist").asBoolean();
-        bulletSettings.dirname = bulletNode.get("dirname").asText();
-        bulletSettings.buildType = bulletNode.get("buildType").asText();
-        bulletSettings.flavor = bulletNode.get("flavor").asText();
+        return settings;
     }
 
     @Override

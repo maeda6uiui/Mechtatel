@@ -7,7 +7,8 @@ import java.io.IOException;
 public class LoadAnimationInfoTest {
     public static void main(String[] args) {
         try {
-            RawAnimationInfo animInfo = RawAnimationInfo.load("./Mechtatel/Standard/Model/Cube/anim_sample.json");
+            RawAnimationInfo animInfo = RawAnimationInfo.load(
+                    "./Mechtatel/Standard/Model/Cube/sample_animations.json");
 
             System.out.printf("name=%s\n", animInfo.name);
             System.out.println("models=");

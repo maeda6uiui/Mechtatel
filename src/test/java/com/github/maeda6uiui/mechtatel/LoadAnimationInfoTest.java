@@ -9,7 +9,7 @@ public class LoadAnimationInfoTest {
         try {
             var animInfo = new AnimationInfo("./Mechtatel/Standard/Model/Cube/sample_animations.json");
 
-            System.out.println("animation_name=");
+            System.out.println("asset_name=");
             System.out.println(animInfo.getName());
 
             System.out.println("models=");

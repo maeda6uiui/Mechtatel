@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author maeda6uiui
  */
-public class RawAnimationInfo {
+class RawAnimationInfo {
     public static class Position {
         public float x;
         public float y;

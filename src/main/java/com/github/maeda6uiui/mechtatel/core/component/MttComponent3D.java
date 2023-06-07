@@ -31,38 +31,50 @@ public class MttComponent3D extends MttComponent {
         vkComponent.setCastShadow(castShadow);
     }
 
-    public void translate(Vector3fc v) {
+    public MttComponent3D translate(Vector3fc v) {
         VkMttComponent3D vkComponent = (VkMttComponent3D) this.getVulkanComponent();
         vkComponent.translate(v);
 
         position.add(v);
+
+        return this;
     }
 
-    public void rotX(float ang) {
+    public MttComponent3D rotX(float ang) {
         VkMttComponent3D vkComponent = (VkMttComponent3D) this.getVulkanComponent();
         vkComponent.rotX(ang);
+
+        return this;
     }
 
-    public void rotY(float ang) {
+    public MttComponent3D rotY(float ang) {
         VkMttComponent3D vkComponent = (VkMttComponent3D) this.getVulkanComponent();
         vkComponent.rotY(ang);
+
+        return this;
     }
 
-    public void rotZ(float ang) {
+    public MttComponent3D rotZ(float ang) {
         VkMttComponent3D vkComponent = (VkMttComponent3D) this.getVulkanComponent();
         vkComponent.rotZ(ang);
+
+        return this;
     }
 
-    public void rot(float ang, Vector3fc axis) {
+    public MttComponent3D rot(float ang, Vector3fc axis) {
         VkMttComponent3D vkComponent = (VkMttComponent3D) this.getVulkanComponent();
         vkComponent.rot(ang, axis);
+
+        return this;
     }
 
-    public void rescale(Vector3fc scale) {
+    public MttComponent3D rescale(Vector3fc scale) {
         VkMttComponent3D vkComponent = (VkMttComponent3D) this.getVulkanComponent();
         vkComponent.rescale(scale);
 
         this.scale.mul(scale);
+
+        return this;
     }
 
     /**

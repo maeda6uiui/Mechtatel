@@ -14,7 +14,7 @@ import java.util.List;
  * @author maeda6uiui
  */
 public class MttSettings {
-    public class WindowSettings {
+    public static class WindowSettings {
         public String title = "Mechtatel";
         public int width = 1280;
         public int height = 720;
@@ -31,7 +31,7 @@ public class MttSettings {
         }
     }
 
-    public class SystemSettings {
+    public static class SystemSettings {
         public int fps = 60;
 
         @Override
@@ -42,7 +42,7 @@ public class MttSettings {
         }
     }
 
-    public class RenderingSettings {
+    public static class RenderingSettings {
         public String imageFormat = "srgb";
 
         @Override
@@ -53,7 +53,7 @@ public class MttSettings {
         }
     }
 
-    public class BulletSettings {
+    public static class BulletSettings {
         public boolean dist = true;
         public String dirname = "./Mechtatel/Bin";
         public String buildType = "Debug";

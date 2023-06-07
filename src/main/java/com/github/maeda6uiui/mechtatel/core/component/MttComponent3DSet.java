@@ -17,6 +17,15 @@ public class MttComponent3DSet extends MttComponentSet {
         scale = new Vector3f(1.0f, 1.0f, 1.0f);
     }
 
+    @Override
+    public void add(MttComponent component) {
+        if (!(component instanceof MttComponent3D)) {
+            throw new IllegalArgumentException("Cannot add 2D component");
+        }
+
+        super.add(component);
+    }
+
     public MttComponent3DSet translate(Vector3fc v) {
         this.getComponents().forEach(c -> {
             ((MttComponent3D) c).translate(v);

@@ -99,10 +99,8 @@
                     "frameIndex": 1,
                     "time": 3.0,
                     "nextFrameIndex": 0,
-                    "displacement": {
-                        "invert": {
-                            "frameIndex": 0
-                        }
+                    "revertDisplacement": {
+                        "frameIndex": 0
                     }
                 }
             ]
@@ -147,10 +145,8 @@
                     "frameIndex": 1,
                     "time": 3.0,
                     "nextFrameIndex": 0,
-                    "displacement": {
-                        "invert": {
-                            "frameIndex": 0
-                        }
+                    "revertDisplacement": {
+                        "frameIndex": 0
                     }
                 }
             ]

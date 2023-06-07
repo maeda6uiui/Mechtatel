@@ -1,13 +1,13 @@
 package com.github.maeda6uiui.mechtatel;
 
-import com.github.maeda6uiui.mechtatel.core.animation.AnimationInfo;
+import com.github.maeda6uiui.mechtatel.core.animation.RawAnimationInfo;
 
 import java.io.IOException;
 
 public class LoadAnimationInfoTest {
     public static void main(String[] args) {
         try {
-            AnimationInfo animInfo = AnimationInfo.load("./Mechtatel/Standard/Model/Cube/anim_sample.json");
+            RawAnimationInfo animInfo = RawAnimationInfo.load("./Mechtatel/Standard/Model/Cube/anim_sample.json");
 
             System.out.printf("name=%s\n", animInfo.name);
             System.out.println("models=");

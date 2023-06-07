@@ -8,11 +8,11 @@ import java.nio.file.Paths;
 import java.util.List;
 
 /**
- * Info for model animation
+ * Raw info for model animation
  *
  * @author maeda6uiui
  */
-public class AnimationInfo {
+public class RawAnimationInfo {
     public static class Position {
         public float x;
         public float y;
@@ -82,7 +82,7 @@ public class AnimationInfo {
     public List<Model> models;
     public List<Animation> animations;
 
-    public static AnimationInfo load(String jsonFilepath) throws IOException {
+    public static RawAnimationInfo load(String jsonFilepath) throws IOException {
         List<String> lines = Files.readAllLines(Paths.get(jsonFilepath));
 
         var sb = new StringBuilder();
@@ -93,7 +93,7 @@ public class AnimationInfo {
         String json = sb.toString();
 
         var mapper = new ObjectMapper();
-        AnimationInfo animInfo = mapper.readValue(json, AnimationInfo.class);
+        RawAnimationInfo animInfo = mapper.readValue(json, RawAnimationInfo.class);
 
         return animInfo;
     }

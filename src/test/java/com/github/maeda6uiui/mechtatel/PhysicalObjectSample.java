@@ -23,7 +23,7 @@ public class PhysicalObjectSample extends Mechtatel {
     public static void main(String[] args) {
         MttSettings settings;
         try {
-            settings = new MttSettings("./Mechtatel/Setting/settings.json");
+            settings = MttSettings.load("./Mechtatel/Setting/settings.json");
         } catch (IOException e) {
             System.out.println("Failed to load setting file. Use default settings");
             settings = new MttSettings();
@@ -36,7 +36,7 @@ public class PhysicalObjectSample extends Mechtatel {
 
     private MttModel3D plane;
     private MttModel3D srcCube;
-    private PhysicalObjectSet3D physicalObjects;
+    private PhysicalObjectSet3D physicalObjectSet;
 
     private FreeCamera camera;
 
@@ -91,7 +91,7 @@ public class PhysicalObjectSample extends Mechtatel {
         physicalPlane.getBody().setRestitution(0.7f);
         physicalPlane.getBody().setFriction(0.5f);
 
-        physicalObjects = new PhysicalObjectSet3D();
+        physicalObjectSet = new PhysicalObjectSet3D();
 
         camera = new FreeCamera(mainScreen.getCamera());
 
@@ -133,11 +133,11 @@ public class PhysicalObjectSample extends Mechtatel {
             physicalCube.getBody().setPhysicsLocation(
                     convertJOMLVector3fToJMEVector3f(new Vector3f(x, 10.0f, z)));
 
-            physicalObjects.add(physicalCube);
+            physicalObjectSet.add(physicalCube);
         }
 
         if (this.getKeyboardPressingCount("C") == 1) {
-            physicalObjects.cleanup();
+            physicalObjectSet.cleanup();
         }
     }
 
@@ -146,7 +146,7 @@ public class PhysicalObjectSample extends Mechtatel {
         if (this.getKeyboardPressingCount("F1") == 1) {
             try {
                 this.saveScreenshot(
-                        "final",
+                        "main",
                         "bgra",
                         String.format("screenshot_%d.jpg", screenshotCount));
                 screenshotCount++;

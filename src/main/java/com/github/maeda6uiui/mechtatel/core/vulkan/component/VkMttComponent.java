@@ -37,11 +37,7 @@ public class VkMttComponent implements Comparable<VkMttComponent> {
         }
     }
 
-    public Matrix4fc getMat() {
-        return mat;
-    }
-
-    protected Matrix4f getMatRef() {
+    public Matrix4f getMat() {
         return mat;
     }
 

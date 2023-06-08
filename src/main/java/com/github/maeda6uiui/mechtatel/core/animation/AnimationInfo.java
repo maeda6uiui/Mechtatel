@@ -21,7 +21,6 @@ public class AnimationInfo {
         public String rotationApplyOrder;
         public Vector3f scale;
         public String referenceTo;
-        public List<String> applyOrder;
 
         public InitialProperties() {
             position = new Vector3f(0.0f, 0.0f, 0.0f);
@@ -29,7 +28,6 @@ public class AnimationInfo {
             rotationApplyOrder = "xyz";
             scale = new Vector3f(1.0f, 1.0f, 1.0f);
             referenceTo = "self";
-            applyOrder = new ArrayList<>();
         }
     }
 
@@ -49,7 +47,6 @@ public class AnimationInfo {
         public Vector3f translation;
         public Vector3f rotation;
         public String rotationApplyOrder;
-        public Vector3f rescale;
         public String referenceTo;
         public List<String> applyOrder;
 
@@ -57,7 +54,6 @@ public class AnimationInfo {
             translation = new Vector3f(0.0f, 0.0f, 0.0f);
             rotation = new Vector3f(0.0f, 0.0f, 0.0f);
             rotationApplyOrder = "xyz";
-            rescale = new Vector3f(1.0f, 1.0f, 1.0f);
             referenceTo = "self";
             applyOrder = new ArrayList<>();
         }
@@ -134,7 +130,6 @@ public class AnimationInfo {
                     rawModel.initialProperties.scale.z
             );
             model.initialProperties.referenceTo = rawModel.initialProperties.referenceTo;
-            model.initialProperties.applyOrder = rawModel.initialProperties.applyOrder;
 
             models.put(rawModel.name, model);
         }
@@ -165,13 +160,7 @@ public class AnimationInfo {
                             rawKeyFrame.displacement.rotation.z
                     );
                     keyFrame.displacement.rotationApplyOrder = rawKeyFrame.displacement.rotation.applyOrder;
-                    keyFrame.displacement.rescale = new Vector3f(
-                            rawKeyFrame.displacement.rescale.x,
-                            rawKeyFrame.displacement.rescale.y,
-                            rawKeyFrame.displacement.rescale.z
-                    );
                     keyFrame.displacement.referenceTo = rawKeyFrame.displacement.referenceTo;
-                    keyFrame.displacement.applyOrder = rawKeyFrame.displacement.applyOrder;
 
                     keyFrame.revertDisplacement = null;
                 } else if (rawKeyFrame.revertDisplacement != null) {

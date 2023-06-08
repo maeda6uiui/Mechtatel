@@ -37,7 +37,6 @@ class RawAnimationInfo {
         public Rotation rotation;
         public Scale scale;
         public String referenceTo;
-        public List<String> applyOrder;
     }
 
     public static class Model {
@@ -55,9 +54,7 @@ class RawAnimationInfo {
     public static class Displacement {
         public Translation translation;
         public Rotation rotation;
-        public Scale rescale;
         public String referenceTo;
-        public List<String> applyOrder;
     }
 
     public static class RevertDisplacement {

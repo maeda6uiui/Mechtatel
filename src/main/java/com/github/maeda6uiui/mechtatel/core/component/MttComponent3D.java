@@ -44,12 +44,16 @@ public class MttComponent3D extends MttComponent {
         VkMttComponent3D vkComponent = (VkMttComponent3D) this.getVulkanComponent();
         vkComponent.rotX(ang);
 
+        position.rotateX(ang);
+
         return this;
     }
 
     public MttComponent3D rotY(float ang) {
         VkMttComponent3D vkComponent = (VkMttComponent3D) this.getVulkanComponent();
         vkComponent.rotY(ang);
+
+        position.rotateY(ang);
 
         return this;
     }
@@ -58,12 +62,16 @@ public class MttComponent3D extends MttComponent {
         VkMttComponent3D vkComponent = (VkMttComponent3D) this.getVulkanComponent();
         vkComponent.rotZ(ang);
 
+        position.rotateZ(ang);
+
         return this;
     }
 
     public MttComponent3D rot(float ang, Vector3fc axis) {
         VkMttComponent3D vkComponent = (VkMttComponent3D) this.getVulkanComponent();
         vkComponent.rot(ang, axis);
+
+        position.rotateAxis(ang, axis.x(), axis.y(), axis.z());
 
         return this;
     }
@@ -73,6 +81,7 @@ public class MttComponent3D extends MttComponent {
         vkComponent.rescale(scale);
 
         this.scale.mul(scale);
+        position.mul(scale);
 
         return this;
     }

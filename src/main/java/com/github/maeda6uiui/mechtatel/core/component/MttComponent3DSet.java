@@ -41,6 +41,8 @@ public class MttComponent3DSet extends MttComponentSet {
             ((MttComponent3D) c).rotX(ang);
         });
 
+        position.rotateX(ang);
+
         return this;
     }
 
@@ -48,6 +50,8 @@ public class MttComponent3DSet extends MttComponentSet {
         this.getComponents().forEach(c -> {
             ((MttComponent3D) c).rotY(ang);
         });
+
+        position.rotateY(ang);
 
         return this;
     }
@@ -57,6 +61,8 @@ public class MttComponent3DSet extends MttComponentSet {
             ((MttComponent3D) c).rotZ(ang);
         });
 
+        position.rotateZ(ang);
+
         return this;
     }
 
@@ -64,6 +70,8 @@ public class MttComponent3DSet extends MttComponentSet {
         this.getComponents().forEach(c -> {
             ((MttComponent3D) c).rot(ang, axis);
         });
+
+        position.rotateAxis(ang, axis.x(), axis.y(), axis.z());
 
         return this;
     }
@@ -74,6 +82,7 @@ public class MttComponent3DSet extends MttComponentSet {
         });
 
         this.scale.mul(scale);
+        position.mul(scale);
 
         return this;
     }

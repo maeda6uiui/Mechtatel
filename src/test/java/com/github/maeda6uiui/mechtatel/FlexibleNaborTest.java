@@ -20,7 +20,7 @@ public class FlexibleNaborTest extends Mechtatel {
     public static void main(String[] args) {
         MttSettings settings;
         try {
-            settings = new MttSettings("./Mechtatel/Setting/settings.json");
+            settings = MttSettings.load("./Mechtatel/Setting/settings.json");
         } catch (IOException e) {
             System.out.println("Failed to load setting file. Use default settings");
             settings = new MttSettings();

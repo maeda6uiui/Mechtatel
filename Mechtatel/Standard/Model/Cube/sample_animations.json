@@ -1,0 +1,125 @@
+{
+    "name": "sample_animations",
+    "models": [
+        {
+            "name": "cube",
+            "filename": "cube.obj",
+            "initialProperties": {
+                "position": {
+                    "x": 0.0,
+                    "y": 1.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "applyOrder": "xyz"
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "referenceTo": "self"
+            }
+        },
+        {
+            "name": "cube_2",
+            "filename": "cube.obj",
+            "initialProperties": {
+                "position": {
+                    "x": 0.0,
+                    "y": 4.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "applyOrder": "xyz"
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "referenceTo": "self"
+            }
+        }
+    ],
+    "animations": [
+        {
+            "name": "up_and_down_with_rescale",
+            "models": [
+                "cube",
+                "cube_2"
+            ],
+            "keyFrames": [
+                {
+                    "frameIndex": 0,
+                    "time": 0.0,
+                    "nextFrameIndex": 1,
+                    "displacement": {
+                        "translation": {
+                            "x": 0.0,
+                            "y": 3.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "applyOrder": "xyz"
+                        },
+                        "referenceTo": "self"
+                    }
+                },
+                {
+                    "frameIndex": 1,
+                    "time": 3.0,
+                    "nextFrameIndex": 0,
+                    "revertDisplacement": {
+                        "frameIndex": 0
+                    }
+                }
+            ]
+        },
+        {
+            "name": "right_and_left_with_rotation",
+            "models": [
+                "cube",
+                "cube_2"
+            ],
+            "keyFrames": [
+                {
+                    "frameIndex": 0,
+                    "time": 0.0,
+                    "nextFrameIndex": 1,
+                    "displacement": {
+                        "translation": {
+                            "x": 3.0,
+                            "y": 0.0,
+                            "z": 3.0
+                        },
+                        "rotation": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0,
+                            "applyOrder": "xyz"
+                        },
+                        "referenceTo": "self"
+                    }
+                },
+                {
+                    "frameIndex": 1,
+                    "time": 3.0,
+                    "nextFrameIndex": 0,
+                    "revertDisplacement": {
+                        "frameIndex": 0
+                    }
+                }
+            ]
+        }
+    ]
+}

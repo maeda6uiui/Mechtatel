@@ -24,12 +24,11 @@ public class MttAnimation {
     public static class AnimationPlayInfo {
         public boolean playing;
         public float lastTime;
-        public float accumulateTime;
 
         public int currentFrameIndex;
         public float currentFrameStartTime;
+        public float currentFrameDuration;
         public int nextFrameIndex;
-        public float nextFrameStartTime;
     }
 
     private AnimationInfo animationInfo;
@@ -168,34 +167,41 @@ public class MttAnimation {
     public void startAnimation(String animationName) {
         var animationPlayInfo = new AnimationPlayInfo();
 
+        float curTime = (float) glfwGetTime();
+
         animationPlayInfo.playing = true;
-        animationPlayInfo.lastTime = (float) glfwGetTime();
-        animationPlayInfo.accumulateTime = 0.0f;
+        animationPlayInfo.lastTime = curTime;
 
         AnimationInfo.Animation animation = animationInfo.getAnimations().get(animationName);
         AnimationInfo.KeyFrame startKeyFrame = animation.keyFrames.get(0);
-        AnimationInfo.KeyFrame nextKeyFrame = animation.keyFrames.get(startKeyFrame.nextFrameIndex);
 
         animationPlayInfo.currentFrameIndex = 0;
-        animationPlayInfo.currentFrameStartTime = startKeyFrame.time;
+        animationPlayInfo.currentFrameStartTime = curTime;
+        animationPlayInfo.currentFrameDuration = startKeyFrame.duration;
         animationPlayInfo.nextFrameIndex = startKeyFrame.nextFrameIndex;
-        animationPlayInfo.nextFrameStartTime = nextKeyFrame.time;
 
         animationPlayInfos.put(animationName, animationPlayInfo);
     }
 
-    public boolean restartAnimation(String animationName, boolean resetModelsToInitialState) {
+    public boolean restartAnimation(String animationName) {
         if (!animationPlayInfos.containsKey(animationName)) {
             return false;
         }
 
+        boolean resetModelsToInitialState = animationInfo.getAnimations().get(animationName).resetModelsOnRestart;
         if (resetModelsToInitialState) {
+            var modelSet = new MttModel3DSet();
+
             List<String> modelNames = animationInfo.getAnimations().get(animationName).models;
             modelNames.forEach(modelName -> {
                 AnimationInfo.InitialProperties initialProperties = animationInfo.getModels().get(modelName).initialProperties;
                 MttModel3D model = models.get(modelName);
                 this.applyInitialProperties(model, initialProperties);
+
+                modelSet.add(model);
             });
+
+            modelSets.put(animationName, modelSet);
         }
 
         this.startAnimation(animationName);
@@ -276,15 +282,15 @@ public class MttAnimation {
     private void applyDisplacement(
             MttModel3DSet modelSet,
             AnimationInfo.Displacement displacement,
-            float frameInterval,
+            float frameDuration,
             float timeElapsed) {
         if (!(displacement.referenceTo.equals("origin") || displacement.referenceTo.equals("self"))) {
             throw new RuntimeException("Unsupported reference type specified: " + displacement.referenceTo);
         }
 
         //Get displacement per time elapsed
-        var translationPerSecond = new Vector3f(displacement.translation).div(frameInterval);
-        var rotationPerSecond = new Vector3f(displacement.rotation).div(frameInterval);
+        var translationPerSecond = new Vector3f(displacement.translation).div(frameDuration);
+        var rotationPerSecond = new Vector3f(displacement.rotation).div(frameDuration);
 
         var translationPerTimeElapsed = new Vector3f(translationPerSecond).mul(timeElapsed);
         var rotationPerTimeElapsed = new Vector3f(rotationPerSecond).mul(timeElapsed);
@@ -295,14 +301,14 @@ public class MttAnimation {
             this.applyRotationToModelSet(modelSet, rotationPerTimeElapsed, displacement.rotationApplyOrder);
         } else if (displacement.referenceTo.equals("self")) {
             //First move the models to the origin
-            //Vector3f originalPosition = modelSet.getPosition();
-            //modelSet.translate(new Vector3f(originalPosition).mul(-1.0f));
+            Vector3f originalPosition = modelSet.getPosition();
+            modelSet.translate(new Vector3f(originalPosition).mul(-1.0f));
 
             //Then apply rotation
             this.applyRotationToModelSet(modelSet, rotationPerTimeElapsed, displacement.rotationApplyOrder);
 
             //Move the models back to the original position
-            // modelSet.translate(originalPosition);
+            modelSet.translate(originalPosition);
 
             //Apply translation
             modelSet.translate(translationPerTimeElapsed);
@@ -316,42 +322,20 @@ public class MttAnimation {
             float curTime = (float) glfwGetTime();
             if (animationPlayInfo.playing) {
                 float timeElapsed = curTime - animationPlayInfo.lastTime;
-                animationPlayInfo.accumulateTime += timeElapsed;
-
                 AnimationInfo.KeyFrame currentKeyFrame = animation.keyFrames.get(animationPlayInfo.currentFrameIndex);
-                AnimationInfo.Displacement displacement;
-                float frameInterval = animationPlayInfo.nextFrameStartTime - animationPlayInfo.currentFrameStartTime;
-                //Displacement
-                if (currentKeyFrame.displacement != null) {
-                    displacement = currentKeyFrame.displacement;
-                }
-                //Revert displacement
-                else {
-                    displacement = new AnimationInfo.Displacement();
-
-                    int revertFrameIndex = currentKeyFrame.revertDisplacement.frameIndex;
-                    AnimationInfo.KeyFrame revertKeyFrame = animation.keyFrames.get(revertFrameIndex);
-
-                    displacement.translation = new Vector3f(revertKeyFrame.displacement.translation).mul(-1.0f);
-                    displacement.rotation = new Vector3f(revertKeyFrame.displacement.rotation).mul(-1.0f);
-                    displacement.referenceTo = revertKeyFrame.displacement.referenceTo;
-
-                    var sb = new StringBuilder();
-                    sb.append(revertKeyFrame.displacement.rotationApplyOrder);
-                    sb.reverse();
-                    displacement.rotationApplyOrder = sb.toString();
-
-                    frameInterval *= (-1.0f);
-                }
 
                 MttModel3DSet modelSet = modelSets.get(animationName);
-                this.applyDisplacement(modelSet, displacement, frameInterval, timeElapsed);
+                this.applyDisplacement(
+                        modelSet,
+                        currentKeyFrame.displacement,
+                        animationPlayInfo.currentFrameDuration,
+                        timeElapsed);
             }
 
             animationPlayInfo.lastTime = curTime;
 
             //Switch to next frame
-            if (animationPlayInfo.accumulateTime > animationPlayInfo.nextFrameStartTime) {
+            if (curTime > animationPlayInfo.currentFrameStartTime + animationPlayInfo.currentFrameDuration) {
                 if (animationPlayInfo.nextFrameIndex < 0) {
                     this.stopAnimation(animationName);
                 } else {
@@ -359,9 +343,13 @@ public class MttAnimation {
                     AnimationInfo.KeyFrame nextKeyFrame = animation.keyFrames.get(currentKeyFrame.nextFrameIndex);
 
                     animationPlayInfo.currentFrameIndex = animationPlayInfo.nextFrameIndex;
-                    animationPlayInfo.currentFrameStartTime = animationPlayInfo.nextFrameStartTime;
+                    animationPlayInfo.currentFrameStartTime = curTime;
+                    animationPlayInfo.currentFrameDuration = nextKeyFrame.duration;
                     animationPlayInfo.nextFrameIndex = currentKeyFrame.nextFrameIndex;
-                    animationPlayInfo.nextFrameStartTime = nextKeyFrame.time;
+                }
+
+                if (animationPlayInfo.currentFrameIndex == 0) {
+                    this.restartAnimation(animationName);
                 }
             }
         });

@@ -66,6 +66,7 @@ class RawAnimationInfo {
 
     public static class Animation {
         public String name;
+        public boolean resetModelsOnRestart;
         public List<String> models;
         public List<KeyFrame> keyFrames;
     }

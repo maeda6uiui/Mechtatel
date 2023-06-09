@@ -4,6 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.animation.AnimationInfo;
 import com.github.maeda6uiui.mechtatel.core.animation.MttAnimation;
+import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector3f;
 
@@ -27,6 +28,7 @@ public class AnimationTest extends Mechtatel {
     }
 
     private MttAnimation animation;
+    private FreeCamera camera;
 
     @Override
     public void init() {
@@ -45,10 +47,27 @@ public class AnimationTest extends Mechtatel {
 
         MttScreen defaultScreen = this.getScreen("default");
         defaultScreen.getCamera().setEye(new Vector3f(10.0f, 10.0f, 10.0f));
+
+        this.createAxesLine3DSet(10.0f);
+
+        camera = new FreeCamera(defaultScreen.getCamera());
     }
 
     @Override
     public void update() {
+        camera.translate(
+                this.getKeyboardPressingCount("W"),
+                this.getKeyboardPressingCount("S"),
+                this.getKeyboardPressingCount("A"),
+                this.getKeyboardPressingCount("D")
+        );
+        camera.rotate(
+                this.getKeyboardPressingCount("UP"),
+                this.getKeyboardPressingCount("DOWN"),
+                this.getKeyboardPressingCount("LEFT"),
+                this.getKeyboardPressingCount("RIGHT")
+        );
+
         if (this.getKeyboardPressingCount("1") == 1) {
             animation.startAnimation("up_and_down_with_rotation");
         } else if (this.getKeyboardPressingCount("2") == 1) {

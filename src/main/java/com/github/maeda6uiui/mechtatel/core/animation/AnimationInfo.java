@@ -73,11 +73,13 @@ public class AnimationInfo {
 
     public static class Animation {
         public String name;
+        public boolean resetModelsOnRestart;
         public List<String> models;
         public Map<Integer, KeyFrame> keyFrames;
 
         public Animation() {
             name = "";
+            resetModelsOnRestart = false;
             models = new ArrayList<>();
             keyFrames = new HashMap<>();
         }
@@ -127,6 +129,7 @@ public class AnimationInfo {
             var animation = new Animation();
 
             animation.name = rawAnimation.name;
+            animation.resetModelsOnRestart = rawAnimation.resetModelsOnRestart;
             animation.models = rawAnimation.models;
 
             for (var rawKeyFrame : rawAnimation.keyFrames) {

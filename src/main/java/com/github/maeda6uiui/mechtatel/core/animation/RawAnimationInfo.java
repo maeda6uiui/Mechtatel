@@ -57,16 +57,11 @@ class RawAnimationInfo {
         public String referenceTo;
     }
 
-    public static class RevertDisplacement {
-        public int frameIndex;
-    }
-
     public static class KeyFrame {
         public int frameIndex;
-        public float time;
+        public float duration;
         public int nextFrameIndex;
         public Displacement displacement;
-        public RevertDisplacement revertDisplacement;
     }
 
     public static class Animation {

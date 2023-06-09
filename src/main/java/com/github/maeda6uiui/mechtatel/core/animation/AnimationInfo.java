@@ -57,27 +57,17 @@ public class AnimationInfo {
         }
     }
 
-    public static class RevertDisplacement {
-        public int frameIndex;
-
-        public RevertDisplacement() {
-            frameIndex = -1;
-        }
-    }
-
     public static class KeyFrame {
         public int frameIndex;
-        public float time;
+        public float duration;
         public int nextFrameIndex;
         public Displacement displacement;
-        public RevertDisplacement revertDisplacement;
 
         public KeyFrame() {
             frameIndex = 0;
-            time = 0.0f;
+            duration = 0.0f;
             nextFrameIndex = 1;
             displacement = new Displacement();
-            revertDisplacement = new RevertDisplacement();
         }
     }
 
@@ -143,30 +133,21 @@ public class AnimationInfo {
                 var keyFrame = new KeyFrame();
 
                 keyFrame.frameIndex = rawKeyFrame.frameIndex;
-                keyFrame.time = rawKeyFrame.time;
+                keyFrame.duration = rawKeyFrame.duration;
                 keyFrame.nextFrameIndex = rawKeyFrame.nextFrameIndex;
 
-                if (rawKeyFrame.displacement != null) {
-                    keyFrame.displacement.translation = new Vector3f(
-                            rawKeyFrame.displacement.translation.x,
-                            rawKeyFrame.displacement.translation.y,
-                            rawKeyFrame.displacement.translation.z
-                    );
-                    keyFrame.displacement.rotation = new Vector3f(
-                            rawKeyFrame.displacement.rotation.x,
-                            rawKeyFrame.displacement.rotation.y,
-                            rawKeyFrame.displacement.rotation.z
-                    );
-                    keyFrame.displacement.rotationApplyOrder = rawKeyFrame.displacement.rotation.applyOrder;
-                    keyFrame.displacement.referenceTo = rawKeyFrame.displacement.referenceTo;
-
-                    keyFrame.revertDisplacement = null;
-                } else if (rawKeyFrame.revertDisplacement != null) {
-                    keyFrame.revertDisplacement.frameIndex = rawKeyFrame.revertDisplacement.frameIndex;
-                    keyFrame.displacement = null;
-                } else {
-                    throw new RuntimeException("Either displacement or revertDisplacement must be specified");
-                }
+                keyFrame.displacement.translation = new Vector3f(
+                        rawKeyFrame.displacement.translation.x,
+                        rawKeyFrame.displacement.translation.y,
+                        rawKeyFrame.displacement.translation.z
+                );
+                keyFrame.displacement.rotation = new Vector3f(
+                        rawKeyFrame.displacement.rotation.x,
+                        rawKeyFrame.displacement.rotation.y,
+                        rawKeyFrame.displacement.rotation.z
+                );
+                keyFrame.displacement.rotationApplyOrder = rawKeyFrame.displacement.rotation.applyOrder;
+                keyFrame.displacement.referenceTo = rawKeyFrame.displacement.referenceTo;
 
                 animation.keyFrames.put(rawKeyFrame.frameIndex, keyFrame);
             }

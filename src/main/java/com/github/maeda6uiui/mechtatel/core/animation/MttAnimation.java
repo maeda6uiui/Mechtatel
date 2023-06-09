@@ -32,7 +32,7 @@ public class MttAnimation {
         public float nextFrameStartTime;
     }
 
-    private AnimationInfo animInfo;
+    private AnimationInfo animationInfo;
     private Map<String, MttModel3D> models; //(model name, model)
     private Map<String, MttModel3DSet> modelSets;   //(animation name, models per animation)
     private Map<String, AnimationPlayInfo> animationPlayInfos;
@@ -86,14 +86,15 @@ public class MttAnimation {
         }
     }
 
-    public MttAnimation(MttVulkanInstance vulkanInstance, String screenName, AnimationInfo animInfo) throws IOException {
-        this.animInfo = animInfo;
+    public MttAnimation(
+            MttVulkanInstance vulkanInstance, String screenName, AnimationInfo animationInfo) throws IOException {
+        this.animationInfo = animationInfo;
 
         //Load models
-        String animationDirname = animInfo.getAnimationDirname();
+        String animationDirname = animationInfo.getAnimationDirname();
 
         models = new HashMap<>();
-        for (var entry : animInfo.getModels().entrySet()) {
+        for (var entry : animationInfo.getModels().entrySet()) {
             String modelName = entry.getKey();
             AnimationInfo.Model animModel = entry.getValue();
 
@@ -106,7 +107,7 @@ public class MttAnimation {
 
         //Create a model set per animation
         modelSets = new HashMap<>();
-        for (var entry : animInfo.getAnimations().entrySet()) {
+        for (var entry : animationInfo.getAnimations().entrySet()) {
             String animationName = entry.getKey();
             AnimationInfo.Animation animation = entry.getValue();
 
@@ -122,8 +123,9 @@ public class MttAnimation {
         animationPlayInfos = new HashMap<>();
     }
 
-    public MttAnimation(MttVulkanInstance vulkanInstance, AnimationInfo animInfo, Map<String, MttModel3D> srcModels) {
-        this.animInfo = animInfo;
+    public MttAnimation(
+            MttVulkanInstance vulkanInstance, AnimationInfo animationInfo, Map<String, MttModel3D> srcModels) {
+        this.animationInfo = animationInfo;
 
         //Duplicate models
         models = new HashMap<>();
@@ -133,7 +135,7 @@ public class MttAnimation {
         });
 
         //Apply initial properties
-        for (var entry : animInfo.getModels().entrySet()) {
+        for (var entry : animationInfo.getModels().entrySet()) {
             String modelName = entry.getKey();
             AnimationInfo.Model animModel = entry.getValue();
 
@@ -143,7 +145,7 @@ public class MttAnimation {
 
         //Create a model set per animation
         modelSets = new HashMap<>();
-        for (var entry : animInfo.getAnimations().entrySet()) {
+        for (var entry : animationInfo.getAnimations().entrySet()) {
             String animationName = entry.getKey();
             AnimationInfo.Animation animation = entry.getValue();
 
@@ -170,7 +172,7 @@ public class MttAnimation {
         animationPlayInfo.lastTime = (float) glfwGetTime();
         animationPlayInfo.accumulateTime = 0.0f;
 
-        AnimationInfo.Animation animation = animInfo.getAnimations().get(animationName);
+        AnimationInfo.Animation animation = animationInfo.getAnimations().get(animationName);
         AnimationInfo.KeyFrame startKeyFrame = animation.keyFrames.get(0);
         AnimationInfo.KeyFrame nextKeyFrame = animation.keyFrames.get(startKeyFrame.nextFrameIndex);
 
@@ -182,14 +184,33 @@ public class MttAnimation {
         animationPlayInfos.put(animationName, animationPlayInfo);
     }
 
+    public boolean restartAnimation(String animationName, boolean resetModelsToInitialState) {
+        if (!animationPlayInfos.containsKey(animationName)) {
+            return false;
+        }
+
+        if (resetModelsToInitialState) {
+            List<String> modelNames = animationInfo.getAnimations().get(animationName).models;
+            modelNames.forEach(modelName -> {
+                AnimationInfo.InitialProperties initialProperties = animationInfo.getModels().get(modelName).initialProperties;
+                MttModel3D model = models.get(modelName);
+                this.applyInitialProperties(model, initialProperties);
+            });
+        }
+
+        this.startAnimation(animationName);
+
+        return true;
+    }
+
     public boolean stopAnimation(String animationName) {
         if (!animationPlayInfos.containsKey(animationName)) {
             return false;
         }
 
-        List<String> modelNames = animInfo.getAnimations().get(animationName).models;
+        List<String> modelNames = animationInfo.getAnimations().get(animationName).models;
         modelNames.forEach(modelName -> {
-            AnimationInfo.InitialProperties initialProperties = animInfo.getModels().get(modelName).initialProperties;
+            AnimationInfo.InitialProperties initialProperties = animationInfo.getModels().get(modelName).initialProperties;
             MttModel3D model = models.get(modelName);
             this.applyInitialProperties(model, initialProperties);
         });
@@ -219,6 +240,15 @@ public class MttAnimation {
         animationPlayInfo.playing = true;
 
         return true;
+    }
+
+    public boolean isAnimationPlaying(String animationName) {
+        if (!animationPlayInfos.containsKey(animationName)) {
+            return false;
+        }
+
+        AnimationPlayInfo animationPlayInfo = animationPlayInfos.get(animationName);
+        return animationPlayInfo.playing;
     }
 
     private void applyRotationToModelSet(MttModel3DSet modelSet, Vector3fc rotation, String rotationApplyOrder) {
@@ -272,7 +302,7 @@ public class MttAnimation {
 
     public void update() {
         animationPlayInfos.forEach((animationName, animationPlayInfo) -> {
-            AnimationInfo.Animation animation = animInfo.getAnimations().get(animationName);
+            AnimationInfo.Animation animation = animationInfo.getAnimations().get(animationName);
 
             float curTime = (float) glfwGetTime();
             if (animationPlayInfo.playing) {
@@ -282,19 +312,49 @@ public class MttAnimation {
                 float frameInterval = animationPlayInfo.nextFrameStartTime - animationPlayInfo.currentFrameStartTime;
                 AnimationInfo.KeyFrame currentKeyFrame = animation.keyFrames.get(animationPlayInfo.currentFrameIndex);
 
+                AnimationInfo.Displacement displacement;
+                //Displacement
+                if (currentKeyFrame.displacement != null) {
+                    displacement = currentKeyFrame.displacement;
+                }
+                //Revert displacement
+                else {
+                    displacement = new AnimationInfo.Displacement();
+
+                    int revertFrameIndex = currentKeyFrame.revertDisplacement.frameIndex;
+                    AnimationInfo.KeyFrame revertKeyFrame = animation.keyFrames.get(revertFrameIndex);
+
+                    displacement.translation = new Vector3f(revertKeyFrame.displacement.translation).mul(-1.0f);
+                    displacement.rotation = new Vector3f(revertKeyFrame.displacement.rotation).mul(-1.0f);
+                    displacement.referenceTo = revertKeyFrame.displacement.referenceTo;
+
+                    var sb = new StringBuilder();
+                    sb.append(revertKeyFrame.displacement.rotationApplyOrder);
+                    sb.reverse();
+                    displacement.rotationApplyOrder = sb.toString();
+                }
+
                 MttModel3DSet modelSet = modelSets.get(animationName);
                 this.applyDisplacement(modelSet, currentKeyFrame.displacement, frameInterval, timeElapsed);
             }
-            if (animationPlayInfo.accumulateTime > animationPlayInfo.nextFrameStartTime) {
-                AnimationInfo.KeyFrame currentKeyFrame = animation.keyFrames.get(animationPlayInfo.nextFrameIndex);
-                AnimationInfo.KeyFrame nextKeyFrame = animation.keyFrames.get(currentKeyFrame.nextFrameIndex);
-
-                animationPlayInfo.currentFrameIndex = animationPlayInfo.nextFrameIndex;
-                animationPlayInfo.nextFrameIndex = currentKeyFrame.nextFrameIndex;
-                animationPlayInfo.nextFrameStartTime = nextKeyFrame.time;
-            }
 
             animationPlayInfo.lastTime = curTime;
+
+            //Switch to next frame
+            if (animationPlayInfo.accumulateTime > animationPlayInfo.nextFrameStartTime) {
+                if (animationPlayInfo.nextFrameIndex < 0) {
+                    this.stopAnimation(animationName);
+                } else if (animationPlayInfo.nextFrameIndex == 0) {
+                    this.restartAnimation(animationName, true);
+                } else {
+                    AnimationInfo.KeyFrame currentKeyFrame = animation.keyFrames.get(animationPlayInfo.nextFrameIndex);
+                    AnimationInfo.KeyFrame nextKeyFrame = animation.keyFrames.get(currentKeyFrame.nextFrameIndex);
+
+                    animationPlayInfo.currentFrameIndex = animationPlayInfo.nextFrameIndex;
+                    animationPlayInfo.nextFrameIndex = currentKeyFrame.nextFrameIndex;
+                    animationPlayInfo.nextFrameStartTime = nextKeyFrame.time;
+                }
+            }
         });
     }
 

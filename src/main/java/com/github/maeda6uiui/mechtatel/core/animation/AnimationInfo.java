@@ -48,14 +48,12 @@ public class AnimationInfo {
         public Vector3f rotation;
         public String rotationApplyOrder;
         public String referenceTo;
-        public List<String> applyOrder;
 
         public Displacement() {
             translation = new Vector3f(0.0f, 0.0f, 0.0f);
             rotation = new Vector3f(0.0f, 0.0f, 0.0f);
             rotationApplyOrder = "xyz";
             referenceTo = "self";
-            applyOrder = new ArrayList<>();
         }
     }
 

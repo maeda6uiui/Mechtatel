@@ -15,31 +15,13 @@ import java.util.Map;
  * @author maeda6uiui
  */
 public class AnimationInfo {
-    public static class InitialProperties {
-        public Vector3f position;
-        public Vector3f rotation;
-        public String rotationApplyOrder;
-        public Vector3f scale;
-        public String referenceTo;
-
-        public InitialProperties() {
-            position = new Vector3f(0.0f, 0.0f, 0.0f);
-            rotation = new Vector3f(0.0f, 0.0f, 0.0f);
-            rotationApplyOrder = "xyz";
-            scale = new Vector3f(1.0f, 1.0f, 1.0f);
-            referenceTo = "self";
-        }
-    }
-
     public static class Model {
         public String name;
         public String filename;
-        public InitialProperties initialProperties;
 
         public Model() {
             name = "";
             filename = "";
-            initialProperties = new InitialProperties();
         }
     }
 
@@ -73,13 +55,11 @@ public class AnimationInfo {
 
     public static class Animation {
         public String name;
-        public boolean resetModelsOnRestart;
         public List<String> models;
         public Map<Integer, KeyFrame> keyFrames;
 
         public Animation() {
             name = "";
-            resetModelsOnRestart = false;
             models = new ArrayList<>();
             keyFrames = new HashMap<>();
         }
@@ -103,23 +83,6 @@ public class AnimationInfo {
 
             model.name = rawModel.name;
             model.filename = rawModel.filename;
-            model.initialProperties.position = new Vector3f(
-                    rawModel.initialProperties.position.x,
-                    rawModel.initialProperties.position.y,
-                    rawModel.initialProperties.position.z
-            );
-            model.initialProperties.rotation = new Vector3f(
-                    rawModel.initialProperties.rotation.x,
-                    rawModel.initialProperties.rotation.y,
-                    rawModel.initialProperties.rotation.z
-            );
-            model.initialProperties.rotationApplyOrder = rawModel.initialProperties.rotation.applyOrder;
-            model.initialProperties.scale = new Vector3f(
-                    rawModel.initialProperties.scale.x,
-                    rawModel.initialProperties.scale.y,
-                    rawModel.initialProperties.scale.z
-            );
-            model.initialProperties.referenceTo = rawModel.initialProperties.referenceTo;
 
             models.put(rawModel.name, model);
         }
@@ -129,7 +92,6 @@ public class AnimationInfo {
             var animation = new Animation();
 
             animation.name = rawAnimation.name;
-            animation.resetModelsOnRestart = rawAnimation.resetModelsOnRestart;
             animation.models = rawAnimation.models;
 
             for (var rawKeyFrame : rawAnimation.keyFrames) {

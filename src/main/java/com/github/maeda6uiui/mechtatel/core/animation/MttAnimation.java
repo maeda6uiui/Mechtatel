@@ -3,7 +3,6 @@ package com.github.maeda6uiui.mechtatel.core.animation;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel3DSet;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -36,55 +35,6 @@ public class MttAnimation {
     private Map<String, MttModel3DSet> modelSets;   //(animation name, models per animation)
     private Map<String, AnimationPlayInfo> animationPlayInfos;
 
-    private char[] getRotationApplyOrderCs(String rotationApplyOrder) {
-        if (rotationApplyOrder.length() != 3) {
-            throw new RuntimeException(
-                    "Rotation apply order must be 3-letter representation such as xyz");
-        }
-
-        var cs = new char[3];
-        for (int i = 0; i < 3; i++) {
-            cs[i] = rotationApplyOrder.charAt(i);
-            if (!(cs[i] == 'x' || cs[i] == 'y' || cs[i] == 'z')) {
-                throw new RuntimeException(
-                        "Element of rotation apply order must be one of x,y, and z");
-            }
-        }
-
-        return cs;
-    }
-
-    private void applyRotationToModel(MttModel3D model, Vector3fc rotation, String rotationApplyOrder) {
-        char[] cs = this.getRotationApplyOrderCs(rotationApplyOrder);
-        for (char c : cs) {
-            if (c == 'x') {
-                model.rotX(rotation.x());
-            } else if (c == 'y') {
-                model.rotY(rotation.y());
-            } else if (c == 'z') {
-                model.rotZ(rotation.z());
-            }
-        }
-    }
-
-    private void applyInitialProperties(MttModel3D model, AnimationInfo.InitialProperties initialProperties) {
-        if (!(initialProperties.referenceTo.equals("origin") || initialProperties.referenceTo.equals("self"))) {
-            throw new RuntimeException("Unsupported reference type specified: " + initialProperties.referenceTo);
-        }
-
-        model.setMat(new Matrix4f().identity());
-
-        if (initialProperties.referenceTo.equals("origin")) {
-            model.translate(initialProperties.position);
-            model.rescale(initialProperties.scale);
-            this.applyRotationToModel(model, initialProperties.rotation, initialProperties.rotationApplyOrder);
-        } else if (initialProperties.referenceTo.equals("self")) {
-            model.rescale(initialProperties.scale);
-            this.applyRotationToModel(model, initialProperties.rotation, initialProperties.rotationApplyOrder);
-            model.translate(initialProperties.position);
-        }
-    }
-
     public MttAnimation(
             MttVulkanInstance vulkanInstance, String screenName, AnimationInfo animationInfo) throws IOException {
         this.animationInfo = animationInfo;
@@ -99,8 +49,6 @@ public class MttAnimation {
 
             String modelFilepath = Paths.get(animationDirname, animModel.filename).toString();
             MttModel3D model = new MttModel3D(vulkanInstance, screenName, modelFilepath);
-            this.applyInitialProperties(model, animModel.initialProperties);
-
             models.put(modelName, model);
         }
 
@@ -132,15 +80,6 @@ public class MttAnimation {
             MttModel3D model = new MttModel3D(vulkanInstance, srcModel);
             models.put(modelName, model);
         });
-
-        //Apply initial properties
-        for (var entry : animationInfo.getModels().entrySet()) {
-            String modelName = entry.getKey();
-            AnimationInfo.Model animModel = entry.getValue();
-
-            MttModel3D model = models.get(modelName);
-            this.applyInitialProperties(model, animModel.initialProperties);
-        }
 
         //Create a model set per animation
         modelSets = new HashMap<>();
@@ -183,28 +122,20 @@ public class MttAnimation {
         animationPlayInfos.put(animationName, animationPlayInfo);
     }
 
+    private void resetAnimationModels(String animationName) {
+        List<String> modelNames = animationInfo.getAnimations().get(animationName).models;
+        modelNames.forEach(modelName -> {
+            MttModel3D model = models.get(modelName);
+            model.reset();
+        });
+    }
+
     public boolean restartAnimation(String animationName) {
         if (!animationPlayInfos.containsKey(animationName)) {
             return false;
         }
 
-        boolean resetModelsToInitialState = animationInfo.getAnimations().get(animationName).resetModelsOnRestart;
-        if (resetModelsToInitialState) {
-            var modelSet = new MttModel3DSet();
-
-            List<String> modelNames = animationInfo.getAnimations().get(animationName).models;
-            modelNames.forEach(modelName -> {
-                AnimationInfo.InitialProperties initialProperties = animationInfo.getModels().get(modelName).initialProperties;
-                MttModel3D model = models.get(modelName);
-                this.applyInitialProperties(model, initialProperties);
-
-                modelSet.add(model);
-            });
-
-            modelSets.put(animationName, modelSet);
-        }
-
-        this.startAnimation(animationName);
+        this.resetAnimationModels(animationName);
 
         return true;
     }
@@ -214,24 +145,14 @@ public class MttAnimation {
             return false;
         }
 
-        List<String> modelNames = animationInfo.getAnimations().get(animationName).models;
-        modelNames.forEach(modelName -> {
-            AnimationInfo.InitialProperties initialProperties = animationInfo.getModels().get(modelName).initialProperties;
-            MttModel3D model = models.get(modelName);
-            this.applyInitialProperties(model, initialProperties);
-        });
-
+        this.resetAnimationModels(animationName);
         animationPlayInfos.remove(animationName);
 
         return true;
     }
 
     public void stopAllAnimations() {
-        models.forEach((modelName, model) -> {
-            AnimationInfo.InitialProperties initialProperties = animationInfo.getModels().get(modelName).initialProperties;
-            this.applyInitialProperties(model, initialProperties);
-        });
-
+        models.forEach((modelName, model) -> model.reset());
         animationPlayInfos.clear();
     }
 
@@ -264,6 +185,24 @@ public class MttAnimation {
 
         AnimationPlayInfo animationPlayInfo = animationPlayInfos.get(animationName);
         return animationPlayInfo.playing;
+    }
+
+    private char[] getRotationApplyOrderCs(String rotationApplyOrder) {
+        if (rotationApplyOrder.length() != 3) {
+            throw new RuntimeException(
+                    "Rotation apply order must be 3-letter representation such as xyz");
+        }
+
+        var cs = new char[3];
+        for (int i = 0; i < 3; i++) {
+            cs[i] = rotationApplyOrder.charAt(i);
+            if (!(cs[i] == 'x' || cs[i] == 'y' || cs[i] == 'z')) {
+                throw new RuntimeException(
+                        "Element of rotation apply order must be one of x,y, and z");
+            }
+        }
+
+        return cs;
     }
 
     private void applyRotationToModelSet(MttModel3DSet modelSet, Vector3fc rotation, String rotationApplyOrder) {

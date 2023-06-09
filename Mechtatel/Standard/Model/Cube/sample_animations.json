@@ -3,58 +3,14 @@
     "models": [
         {
             "name": "cube",
-            "filename": "cube.obj",
-            "initialProperties": {
-                "position": {
-                    "x": 0.0,
-                    "y": 1.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0,
-                    "applyOrder": "xyz"
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "referenceTo": "self"
-            }
-        },
-        {
-            "name": "cube_2",
-            "filename": "cube.obj",
-            "initialProperties": {
-                "position": {
-                    "x": 0.0,
-                    "y": 4.0,
-                    "z": 0.0
-                },
-                "rotation": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0,
-                    "applyOrder": "xyz"
-                },
-                "scale": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
-                },
-                "referenceTo": "self"
-            }
+            "filename": "cube.obj"
         }
     ],
     "animations": [
         {
             "name": "up_and_down_with_rotation",
-            "resetModelsOnRestart": true,
             "models": [
-                "cube",
-                "cube_2"
+                "cube"
             ],
             "keyFrames": [
                 {
@@ -99,10 +55,8 @@
         },
         {
             "name": "right_and_left_with_rotation",
-            "resetModelsOnRestart": true,
             "models": [
-                "cube",
-                "cube_2"
+                "cube"
             ],
             "keyFrames": [
                 {

@@ -13,12 +13,6 @@ import java.util.List;
  * @author maeda6uiui
  */
 class RawAnimationInfo {
-    public static class Position {
-        public float x;
-        public float y;
-        public float z;
-    }
-
     public static class Rotation {
         public float x;
         public float y;
@@ -32,17 +26,9 @@ class RawAnimationInfo {
         public float z;
     }
 
-    public static class InitialProperties {
-        public Position position;
-        public Rotation rotation;
-        public Scale scale;
-        public String referenceTo;
-    }
-
     public static class Model {
         public String name;
         public String filename;
-        public InitialProperties initialProperties;
     }
 
     public static class Translation {
@@ -66,7 +52,6 @@ class RawAnimationInfo {
 
     public static class Animation {
         public String name;
-        public boolean resetModelsOnRestart;
         public List<String> models;
         public List<KeyFrame> keyFrames;
     }

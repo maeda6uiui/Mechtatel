@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 
 /**
  * Settings for Mechtatel
@@ -87,14 +86,7 @@ public class MttSettings {
     }
 
     public static MttSettings load(String jsonFilepath) throws IOException {
-        List<String> lines = Files.readAllLines(Paths.get(jsonFilepath));
-
-        var sb = new StringBuilder();
-        lines.forEach(line -> {
-            sb.append(line);
-            sb.append("\n");
-        });
-        String json = sb.toString();
+        String json = Files.readString(Paths.get(jsonFilepath));
 
         var mapper = new ObjectMapper();
         MttSettings settings = mapper.readValue(json, MttSettings.class);

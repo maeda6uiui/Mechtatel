@@ -60,14 +60,7 @@ class RawAnimationInfo {
     public List<Animation> animations;
 
     public static RawAnimationInfo load(String jsonFilepath) throws IOException {
-        List<String> lines = Files.readAllLines(Paths.get(jsonFilepath));
-
-        var sb = new StringBuilder();
-        lines.forEach(line -> {
-            sb.append(line);
-            sb.append("\n");
-        });
-        String json = sb.toString();
+        String json = Files.readString(Paths.get(jsonFilepath));
 
         var mapper = new ObjectMapper();
         RawAnimationInfo animInfo = mapper.readValue(json, RawAnimationInfo.class);

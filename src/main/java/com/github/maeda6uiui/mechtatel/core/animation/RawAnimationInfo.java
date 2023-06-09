@@ -40,7 +40,6 @@ class RawAnimationInfo {
     public static class Displacement {
         public Translation translation;
         public Rotation rotation;
-        public String referenceTo;
     }
 
     public static class KeyFrame {

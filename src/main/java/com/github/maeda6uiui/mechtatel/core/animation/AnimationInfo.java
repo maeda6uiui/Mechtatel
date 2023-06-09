@@ -29,13 +29,11 @@ public class AnimationInfo {
         public Vector3f translation;
         public Vector3f rotation;
         public String rotationApplyOrder;
-        public String referenceTo;
 
         public Displacement() {
             translation = new Vector3f(0.0f, 0.0f, 0.0f);
             rotation = new Vector3f(0.0f, 0.0f, 0.0f);
             rotationApplyOrder = "xyz";
-            referenceTo = "self";
         }
     }
 
@@ -112,7 +110,6 @@ public class AnimationInfo {
                         rawKeyFrame.displacement.rotation.z
                 );
                 keyFrame.displacement.rotationApplyOrder = rawKeyFrame.displacement.rotation.applyOrder;
-                keyFrame.displacement.referenceTo = rawKeyFrame.displacement.referenceTo;
 
                 animation.keyFrames.put(rawKeyFrame.frameIndex, keyFrame);
             }

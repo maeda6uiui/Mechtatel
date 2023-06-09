@@ -223,10 +223,6 @@ public class MttAnimation {
             AnimationInfo.Displacement displacement,
             float frameDuration,
             float timeElapsed) {
-        if (!(displacement.referenceTo.equals("origin") || displacement.referenceTo.equals("self"))) {
-            throw new RuntimeException("Unsupported reference type specified: " + displacement.referenceTo);
-        }
-
         //Get displacement per time elapsed
         var translationPerSecond = new Vector3f(displacement.translation).div(frameDuration);
         var rotationPerSecond = new Vector3f(displacement.rotation).div(frameDuration);
@@ -235,23 +231,8 @@ public class MttAnimation {
         var rotationPerTimeElapsed = new Vector3f(rotationPerSecond).mul(timeElapsed);
 
         //Apply displacement to models
-        if (displacement.referenceTo.equals("origin")) {
-            modelSet.translate(translationPerTimeElapsed);
-            this.applyRotationToModelSet(modelSet, rotationPerTimeElapsed, displacement.rotationApplyOrder);
-        } else if (displacement.referenceTo.equals("self")) {
-            //First move the models to the origin
-            Vector3f originalPosition = modelSet.getPosition();
-            modelSet.translate(new Vector3f(originalPosition).mul(-1.0f));
-
-            //Then apply rotation
-            this.applyRotationToModelSet(modelSet, rotationPerTimeElapsed, displacement.rotationApplyOrder);
-
-            //Move the models back to the original position
-            modelSet.translate(originalPosition);
-
-            //Apply translation
-            modelSet.translate(translationPerTimeElapsed);
-        }
+        modelSet.translate(translationPerTimeElapsed);
+        this.applyRotationToModelSet(modelSet, rotationPerTimeElapsed, displacement.rotationApplyOrder);
     }
 
     public void update() {

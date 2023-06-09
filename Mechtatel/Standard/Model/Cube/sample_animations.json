@@ -28,8 +28,7 @@
                             "y": 1.0,
                             "z": 0.0,
                             "applyOrder": "xyz"
-                        },
-                        "referenceTo": "self"
+                        }
                     }
                 },
                 {
@@ -47,8 +46,7 @@
                             "y": -1.0,
                             "z": 0.0,
                             "applyOrder": "zyx"
-                        },
-                        "referenceTo": "self"
+                        }
                     }
                 }
             ]
@@ -74,8 +72,7 @@
                             "y": 1.0,
                             "z": 0.0,
                             "applyOrder": "xyz"
-                        },
-                        "referenceTo": "self"
+                        }
                     }
                 },
                 {
@@ -93,8 +90,7 @@
                             "y": -1.0,
                             "z": 0.0,
                             "applyOrder": "zyx"
-                        },
-                        "referenceTo": "self"
+                        }
                     }
                 }
             ]

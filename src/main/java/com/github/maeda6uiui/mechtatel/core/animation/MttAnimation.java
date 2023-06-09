@@ -290,10 +290,10 @@ public class MttAnimation {
         var rotationPerTimeElapsed = new Vector3f(rotationPerSecond).mul(timeElapsed);
 
         //Apply displacement to models
-        if (displacement.equals("origin")) {
+        if (displacement.referenceTo.equals("origin")) {
             modelSet.translate(translationPerTimeElapsed);
             this.applyRotationToModelSet(modelSet, rotationPerTimeElapsed, displacement.rotationApplyOrder);
-        } else if (displacement.equals("self")) {
+        } else if (displacement.referenceTo.equals("self")) {
             //First move the models to the origin
             Vector3f originalPosition = modelSet.getPosition();
             modelSet.translate(new Vector3f(originalPosition).mul(-1.0f));

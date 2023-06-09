@@ -160,6 +160,7 @@ class MttInstance {
                 settings.bulletSettings.flavor);
 
         screens = new HashMap<>();
+
         MttScreen defaultScreen = this.createScreen(
                 "default",
                 2048,
@@ -180,9 +181,7 @@ class MttInstance {
         screenDrawOrder.add("default");
 
         textureOperationOrder = new ArrayList<>();
-
         deferredScreenDrawOrder = new ArrayList<>();
-
         presentScreenName = "default";
 
         //Set up OpenAL

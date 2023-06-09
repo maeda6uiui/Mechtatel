@@ -87,6 +87,14 @@ public class MttComponent3DSet extends MttComponentSet {
         return this;
     }
 
+    @Override
+    public void reset() {
+        this.getComponents().forEach(c -> c.reset());
+
+        position = new Vector3f(0.0f, 0.0f, 0.0f);
+        scale = new Vector3f(1.0f, 1.0f, 1.0f);
+    }
+
     /**
      * Returns the position of this set.
      * Returned position is only valid if all translation is done via {@link #translate(Vector3fc)}.

@@ -86,6 +86,14 @@ public class MttComponent3D extends MttComponent {
         return this;
     }
 
+    @Override
+    public void reset() {
+        super.reset();
+
+        position = new Vector3f(0.0f, 0.0f, 0.0f);
+        scale = new Vector3f(1.0f, 1.0f, 1.0f);
+    }
+
     /**
      * Returns the model position.
      * Returned position is only valid if all translation is done via {@link #translate(Vector3fc)}.

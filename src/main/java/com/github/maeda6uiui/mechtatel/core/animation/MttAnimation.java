@@ -295,14 +295,14 @@ public class MttAnimation {
             this.applyRotationToModelSet(modelSet, rotationPerTimeElapsed, displacement.rotationApplyOrder);
         } else if (displacement.referenceTo.equals("self")) {
             //First move the models to the origin
-            Vector3f originalPosition = modelSet.getPosition();
-            modelSet.translate(new Vector3f(originalPosition).mul(-1.0f));
+            //Vector3f originalPosition = modelSet.getPosition();
+            //modelSet.translate(new Vector3f(originalPosition).mul(-1.0f));
 
             //Then apply rotation
             this.applyRotationToModelSet(modelSet, rotationPerTimeElapsed, displacement.rotationApplyOrder);
 
             //Move the models back to the original position
-            modelSet.translate(originalPosition);
+            // modelSet.translate(originalPosition);
 
             //Apply translation
             modelSet.translate(translationPerTimeElapsed);
@@ -318,10 +318,9 @@ public class MttAnimation {
                 float timeElapsed = curTime - animationPlayInfo.lastTime;
                 animationPlayInfo.accumulateTime += timeElapsed;
 
-                float frameInterval = animationPlayInfo.nextFrameStartTime - animationPlayInfo.currentFrameStartTime;
                 AnimationInfo.KeyFrame currentKeyFrame = animation.keyFrames.get(animationPlayInfo.currentFrameIndex);
-
                 AnimationInfo.Displacement displacement;
+                float frameInterval = animationPlayInfo.nextFrameStartTime - animationPlayInfo.currentFrameStartTime;
                 //Displacement
                 if (currentKeyFrame.displacement != null) {
                     displacement = currentKeyFrame.displacement;
@@ -341,6 +340,8 @@ public class MttAnimation {
                     sb.append(revertKeyFrame.displacement.rotationApplyOrder);
                     sb.reverse();
                     displacement.rotationApplyOrder = sb.toString();
+
+                    frameInterval *= (-1.0f);
                 }
 
                 MttModel3DSet modelSet = modelSets.get(animationName);
@@ -353,8 +354,6 @@ public class MttAnimation {
             if (animationPlayInfo.accumulateTime > animationPlayInfo.nextFrameStartTime) {
                 if (animationPlayInfo.nextFrameIndex < 0) {
                     this.stopAnimation(animationName);
-                } else if (animationPlayInfo.nextFrameIndex == 0) {
-                    this.restartAnimation(animationName, true);
                 } else {
                     AnimationInfo.KeyFrame currentKeyFrame = animation.keyFrames.get(animationPlayInfo.nextFrameIndex);
                     AnimationInfo.KeyFrame nextKeyFrame = animation.keyFrames.get(currentKeyFrame.nextFrameIndex);

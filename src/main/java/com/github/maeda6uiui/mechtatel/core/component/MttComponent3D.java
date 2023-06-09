@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.component;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanInstanceForComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent3D;
+import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 /**
@@ -10,8 +11,12 @@ import org.joml.Vector3fc;
  * @author maeda6uiui
  */
 public class MttComponent3D extends MttComponent {
+    private Vector3f scale;
+
     public MttComponent3D(IMttVulkanInstanceForComponent vulkanInstance) {
         super(vulkanInstance);
+
+        scale = new Vector3f(1.0f, 1.0f, 1.0f);
     }
 
     public boolean isCastShadow() {
@@ -63,6 +68,18 @@ public class MttComponent3D extends MttComponent {
         VkMttComponent3D vkComponent = (VkMttComponent3D) this.getVulkanComponent();
         vkComponent.rescale(scale);
 
+        this.scale.mul(scale);
+
         return this;
+    }
+
+    /**
+     * Returns the model scale.
+     * Returned scale is only valid if all rescaling is done via {@link #rescale(Vector3fc)}.
+     *
+     * @return Scale of the model
+     */
+    public Vector3f getScale() {
+        return new Vector3f(scale);
     }
 }

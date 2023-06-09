@@ -55,7 +55,7 @@ public class MttAnimation {
         return cs;
     }
 
-    private void applyRotation(MttModel3D model, Vector3fc rotation, String rotationApplyOrder) {
+    private void applyRotationToModel(MttModel3D model, Vector3fc rotation, String rotationApplyOrder) {
         char[] cs = this.getRotationApplyOrderCs(rotationApplyOrder);
         for (char c : cs) {
             if (c == 'x') {
@@ -78,10 +78,10 @@ public class MttAnimation {
         if (initialProperties.referenceTo.equals("origin")) {
             model.translate(initialProperties.position);
             model.rescale(initialProperties.scale);
-            this.applyRotation(model, initialProperties.rotation, initialProperties.rotationApplyOrder);
+            this.applyRotationToModel(model, initialProperties.rotation, initialProperties.rotationApplyOrder);
         } else if (initialProperties.referenceTo.equals("self")) {
             model.rescale(initialProperties.scale);
-            this.applyRotation(model, initialProperties.rotation, initialProperties.rotationApplyOrder);
+            this.applyRotationToModel(model, initialProperties.rotation, initialProperties.rotationApplyOrder);
             model.translate(initialProperties.position);
         }
     }
@@ -221,6 +221,55 @@ public class MttAnimation {
         return true;
     }
 
+    private void applyRotationToModelSet(MttModel3DSet modelSet, Vector3fc rotation, String rotationApplyOrder) {
+        char[] cs = this.getRotationApplyOrderCs(rotationApplyOrder);
+        for (char c : cs) {
+            if (c == 'x') {
+                modelSet.rotX(rotation.x());
+            } else if (c == 'y') {
+                modelSet.rotY(rotation.y());
+            } else if (c == 'z') {
+                modelSet.rotZ(rotation.z());
+            }
+        }
+    }
+
+    private void applyDisplacement(
+            MttModel3DSet modelSet,
+            AnimationInfo.Displacement displacement,
+            float frameInterval,
+            float timeElapsed) {
+        if (!(displacement.referenceTo.equals("origin") || displacement.referenceTo.equals("self"))) {
+            throw new RuntimeException("Unsupported reference type specified: " + displacement.referenceTo);
+        }
+
+        //Get displacement per time elapsed
+        var translationPerSecond = new Vector3f(displacement.translation).div(frameInterval);
+        var rotationPerSecond = new Vector3f(displacement.rotation).div(frameInterval);
+
+        var translationPerTimeElapsed = new Vector3f(translationPerSecond).mul(timeElapsed);
+        var rotationPerTimeElapsed = new Vector3f(rotationPerSecond).mul(timeElapsed);
+
+        //Apply displacement to models
+        if (displacement.equals("origin")) {
+            modelSet.translate(translationPerTimeElapsed);
+            this.applyRotationToModelSet(modelSet, rotationPerTimeElapsed, displacement.rotationApplyOrder);
+        } else if (displacement.equals("self")) {
+            //First move the models to the origin
+            Vector3f originalPosition = modelSet.getPosition();
+            modelSet.translate(new Vector3f(originalPosition).mul(-1.0f));
+
+            //Then apply rotation
+            this.applyRotationToModelSet(modelSet, rotationPerTimeElapsed, displacement.rotationApplyOrder);
+
+            //Move the models back to the original position
+            modelSet.translate(originalPosition);
+
+            //Apply translation
+            modelSet.translate(translationPerTimeElapsed);
+        }
+    }
+
     public void update() {
         animationPlayInfos.forEach((animationName, animationPlayInfo) -> {
             AnimationInfo.Animation animation = animInfo.getAnimations().get(animationName);
@@ -230,14 +279,11 @@ public class MttAnimation {
                 float timeElapsed = curTime - animationPlayInfo.lastTime;
                 animationPlayInfo.accumulateTime += timeElapsed;
 
-                //Get displacement per second
                 float frameInterval = animationPlayInfo.nextFrameStartTime - animationPlayInfo.currentFrameStartTime;
-
                 AnimationInfo.KeyFrame currentKeyFrame = animation.keyFrames.get(animationPlayInfo.currentFrameIndex);
-                var translationPerSecond = new Vector3f(currentKeyFrame.displacement.translation).div(frameInterval);
-                var rotationPerSecond = new Vector3f(currentKeyFrame.displacement.rotation).div(frameInterval);
 
-
+                MttModel3DSet modelSet = modelSets.get(animationName);
+                this.applyDisplacement(modelSet, currentKeyFrame.displacement, frameInterval, timeElapsed);
             }
             if (animationPlayInfo.accumulateTime > animationPlayInfo.nextFrameStartTime) {
                 AnimationInfo.KeyFrame currentKeyFrame = animation.keyFrames.get(animationPlayInfo.nextFrameIndex);

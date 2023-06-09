@@ -1,6 +1,5 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
-import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 /**
@@ -9,14 +8,6 @@ import org.joml.Vector3fc;
  * @author maeda6uiui
  */
 public class MttComponent3DSet extends MttComponentSet {
-    private Vector3f position;
-    private Vector3f scale;
-
-    public MttComponent3DSet() {
-        position = new Vector3f(0.0f, 0.0f, 0.0f);
-        scale = new Vector3f(1.0f, 1.0f, 1.0f);
-    }
-
     @Override
     public void add(MttComponent component) {
         if (!(component instanceof MttComponent3D)) {
@@ -31,8 +22,6 @@ public class MttComponent3DSet extends MttComponentSet {
             ((MttComponent3D) c).translate(v);
         });
 
-        position.add(v);
-
         return this;
     }
 
@@ -40,8 +29,6 @@ public class MttComponent3DSet extends MttComponentSet {
         this.getComponents().forEach(c -> {
             ((MttComponent3D) c).rotX(ang);
         });
-
-        position.rotateX(ang);
 
         return this;
     }
@@ -51,8 +38,6 @@ public class MttComponent3DSet extends MttComponentSet {
             ((MttComponent3D) c).rotY(ang);
         });
 
-        position.rotateY(ang);
-
         return this;
     }
 
@@ -60,8 +45,6 @@ public class MttComponent3DSet extends MttComponentSet {
         this.getComponents().forEach(c -> {
             ((MttComponent3D) c).rotZ(ang);
         });
-
-        position.rotateZ(ang);
 
         return this;
     }
@@ -71,8 +54,6 @@ public class MttComponent3DSet extends MttComponentSet {
             ((MttComponent3D) c).rot(ang, axis);
         });
 
-        position.rotateAxis(ang, axis.x(), axis.y(), axis.z());
-
         return this;
     }
 
@@ -81,37 +62,6 @@ public class MttComponent3DSet extends MttComponentSet {
             ((MttComponent3D) c).rescale(scale);
         });
 
-        this.scale.mul(scale);
-        position.mul(scale);
-
         return this;
-    }
-
-    @Override
-    public void reset() {
-        this.getComponents().forEach(c -> c.reset());
-
-        position = new Vector3f(0.0f, 0.0f, 0.0f);
-        scale = new Vector3f(1.0f, 1.0f, 1.0f);
-    }
-
-    /**
-     * Returns the position of this set.
-     * Returned position is only valid if all translation is done via {@link #translate(Vector3fc)}.
-     *
-     * @return Position of this set
-     */
-    public Vector3f getPosition() {
-        return new Vector3f(position);
-    }
-
-    /**
-     * Returns the scale of this set.
-     * Returned scale is only valid if all rescaling is done via {@link #rescale(Vector3fc)}.
-     *
-     * @return Scale of this set
-     */
-    public Vector3f getScale() {
-        return new Vector3f(scale);
     }
 }

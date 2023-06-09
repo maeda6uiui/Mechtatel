@@ -23,11 +23,7 @@ public class LoadAnimationInfoTest {
             animations.forEach((k, v) -> {
                 System.out.printf("--- %s ---\n", k);
                 v.keyFrames.forEach((kk, vv) -> {
-                    if (vv.displacement != null) {
-                        System.out.printf("%d: %s\n", kk, vv.displacement.translation);
-                    } else if (vv.revertDisplacement != null) {
-                        System.out.printf("%d: %d\n", kk, vv.revertDisplacement.frameIndex);
-                    }
+                    System.out.printf("%d: %s\n", kk, vv.displacement.translation);
                 });
             });
         } catch (IOException e) {

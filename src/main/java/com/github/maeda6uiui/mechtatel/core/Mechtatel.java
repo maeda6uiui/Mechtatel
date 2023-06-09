@@ -1,5 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core;
 
+import com.github.maeda6uiui.mechtatel.core.animation.AnimationInfo;
+import com.github.maeda6uiui.mechtatel.core.animation.MttAnimation;
 import com.github.maeda6uiui.mechtatel.core.component.*;
 import com.github.maeda6uiui.mechtatel.core.component.gui.*;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.KeyInterpreter;
@@ -701,5 +703,13 @@ public class Mechtatel
     @Override
     public void setPresentScreenName(String presentScreenName) {
         instance.setPresentScreenName(presentScreenName);
+    }
+
+    public MttAnimation createAnimation(String tag, String screenName, AnimationInfo animationInfo) throws IOException {
+        return instance.createAnimation(tag, screenName, animationInfo);
+    }
+
+    public MttAnimation createAnimation(String tag, AnimationInfo animationInfo, Map<String, MttModel3D> srcModels) {
+        return instance.createAnimation(tag, animationInfo, srcModels);
     }
 }

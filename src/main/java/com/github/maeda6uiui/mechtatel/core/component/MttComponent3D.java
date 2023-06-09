@@ -11,13 +11,11 @@ import org.joml.Vector3fc;
  * @author maeda6uiui
  */
 public class MttComponent3D extends MttComponent {
-    private Vector3f position;
     private Vector3f scale;
 
     public MttComponent3D(IMttVulkanInstanceForComponent vulkanInstance) {
         super(vulkanInstance);
 
-        position = new Vector3f(0.0f, 0.0f, 0.0f);
         scale = new Vector3f(1.0f, 1.0f, 1.0f);
     }
 
@@ -34,8 +32,6 @@ public class MttComponent3D extends MttComponent {
     public MttComponent3D translate(Vector3fc v) {
         VkMttComponent3D vkComponent = (VkMttComponent3D) this.getVulkanComponent();
         vkComponent.translate(v);
-
-        position.add(v);
 
         return this;
     }
@@ -75,16 +71,6 @@ public class MttComponent3D extends MttComponent {
         this.scale.mul(scale);
 
         return this;
-    }
-
-    /**
-     * Returns the model position.
-     * Returned position is only valid if all translation is done via {@link #translate(Vector3fc)}.
-     *
-     * @return Position of the model
-     */
-    public Vector3f getPosition() {
-        return new Vector3f(position);
     }
 
     /**

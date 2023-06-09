@@ -13,9 +13,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -37,6 +35,8 @@ public class VkMttModel3D extends VkMttComponent3D {
     private Map<Integer, Long> vertexBufferMemories;
     private Map<Integer, Long> indexBuffers;
     private Map<Integer, Long> indexBufferMemories;
+
+    private List<Integer> drawMeshIndices;
 
     public ModelLoader.Model getModel() {
         return model;
@@ -116,6 +116,11 @@ public class VkMttModel3D extends VkMttComponent3D {
                 modelFilepath);
         this.createBuffers(commandPool, graphicsQueue);
 
+        drawMeshIndices = new ArrayList<>();
+        for (int i = 0; i < model.meshes.size(); i++) {
+            drawMeshIndices.add(i);
+        }
+
         this.setComponentType("gbuffer");
         this.setScreenName(screen.getScreenName());
     }
@@ -131,6 +136,11 @@ public class VkMttModel3D extends VkMttComponent3D {
 
         model = srcModel.model;
         this.createBuffers(commandPool, graphicsQueue);
+
+        drawMeshIndices = new ArrayList<>();
+        for (int i = 0; i < model.meshes.size(); i++) {
+            drawMeshIndices.add(i);
+        }
 
         textures = srcModel.textures;
         externalTextureFlags = srcModel.externalTextureFlags;
@@ -171,6 +181,14 @@ public class VkMttModel3D extends VkMttComponent3D {
         externalTextureFlags.put(index, true);
     }
 
+    public int getNumMeshes() {
+        return model.meshes.size();
+    }
+
+    public void setDrawMeshIndices(List<Integer> drawMeshIndices) {
+        this.drawMeshIndices = drawMeshIndices;
+    }
+
     @Override
     public void draw(VkCommandBuffer commandBuffer, long pipelineLayout) {
         if (!this.isVisible()) {
@@ -180,6 +198,10 @@ public class VkMttModel3D extends VkMttComponent3D {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             int numMeshes = model.meshes.size();
             for (int i = 0; i < numMeshes; i++) {
+                if (!drawMeshIndices.contains(i)) {
+                    continue;
+                }
+
                 VkMttTexture texture = textures.get(model.meshes.get(i).materialIndex);
                 if (texture == null) {
                     continue;
@@ -222,6 +244,10 @@ public class VkMttModel3D extends VkMttComponent3D {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             int numMeshes = model.meshes.size();
             for (int i = 0; i < numMeshes; i++) {
+                if (!drawMeshIndices.contains(i)) {
+                    continue;
+                }
+
                 LongBuffer lVertexBuffers = stack.longs(vertexBuffers.get(i));
                 LongBuffer offsets = stack.longs(0);
                 vkCmdBindVertexBuffers(commandBuffer, 0, lVertexBuffers, offsets);

@@ -90,7 +90,7 @@ public class VkMttComponent implements Comparable<VkMttComponent> {
     }
 
     public void reset() {
-        this.mat.invert();
+        this.mat.identity();
     }
 
     public void draw(VkCommandBuffer commandBuffer, long pipelineLayout) {

@@ -344,7 +344,7 @@ public class MttAnimation {
                 }
 
                 MttModel3DSet modelSet = modelSets.get(animationName);
-                this.applyDisplacement(modelSet, currentKeyFrame.displacement, frameInterval, timeElapsed);
+                this.applyDisplacement(modelSet, displacement, frameInterval, timeElapsed);
             }
 
             animationPlayInfo.lastTime = curTime;
@@ -360,6 +360,7 @@ public class MttAnimation {
                     AnimationInfo.KeyFrame nextKeyFrame = animation.keyFrames.get(currentKeyFrame.nextFrameIndex);
 
                     animationPlayInfo.currentFrameIndex = animationPlayInfo.nextFrameIndex;
+                    animationPlayInfo.currentFrameStartTime = animationPlayInfo.nextFrameStartTime;
                     animationPlayInfo.nextFrameIndex = currentKeyFrame.nextFrameIndex;
                     animationPlayInfo.nextFrameStartTime = nextKeyFrame.time;
                 }

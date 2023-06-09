@@ -6,6 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttModel3D;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -47,5 +48,9 @@ public class MttModel3D extends MttComponent3D {
 
     public void replaceTexture(int index, MttTexture newTexture) {
         vkModel.replaceTexture(index, newTexture.getVulkanTexture());
+    }
+
+    public void setDrawMeshIndices(List<Integer> drawMeshIndices) {
+        vkModel.setDrawMeshIndices(drawMeshIndices);
     }
 }

@@ -220,6 +220,15 @@ public class MttAnimation {
         return true;
     }
 
+    public void stopAllAnimations() {
+        models.forEach((modelName, model) -> {
+            AnimationInfo.InitialProperties initialProperties = animationInfo.getModels().get(modelName).initialProperties;
+            this.applyInitialProperties(model, initialProperties);
+        });
+
+        animationPlayInfos.clear();
+    }
+
     public boolean pauseAnimation(String animationName) {
         if (!animationPlayInfos.containsKey(animationName)) {
             return false;

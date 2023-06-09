@@ -1,5 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core;
 
+import com.github.maeda6uiui.mechtatel.core.animation.AnimationInfo;
+import com.github.maeda6uiui.mechtatel.core.animation.MttAnimation;
 import com.github.maeda6uiui.mechtatel.core.component.*;
 import com.github.maeda6uiui.mechtatel.core.component.gui.*;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
@@ -65,6 +67,8 @@ class MttInstance {
     private List<String> textureOperationOrder;
     private List<String> deferredScreenDrawOrder;
     private String presentScreenName;
+
+    private Map<String, MttAnimation> animations;
 
     private List<Sound3D> sounds3D;
 
@@ -184,6 +188,8 @@ class MttInstance {
         deferredScreenDrawOrder = new ArrayList<>();
         presentScreenName = "default";
 
+        animations = new HashMap<>();
+
         //Set up OpenAL
         long alcDevice = alcOpenDevice((ByteBuffer) null);
         if (alcDevice == 0) {
@@ -234,6 +240,8 @@ class MttInstance {
                     physicalObject.updateObject();
                 });
                 PhysicalObject3D.updatePhysicsSpace((float) elapsedTime, physicsSimulationTimeScale);
+
+                animations.forEach((k, v) -> v.update());
 
                 for (var screenName : screenDrawOrder) {
                     mtt.preDraw(screenName);
@@ -983,5 +991,19 @@ class MttInstance {
 
     public void setPresentScreenName(String presentScreenName) {
         this.presentScreenName = presentScreenName;
+    }
+
+    public MttAnimation createAnimation(String tag, String screenName, AnimationInfo animationInfo) throws IOException {
+        var animation = new MttAnimation(vulkanInstance, screenName, animationInfo);
+        animations.put(tag, animation);
+
+        return animation;
+    }
+
+    public MttAnimation createAnimation(String tag, AnimationInfo animationInfo, Map<String, MttModel3D> srcModels) {
+        var animation = new MttAnimation(vulkanInstance, animationInfo, srcModels);
+        animations.put(tag, animation);
+
+        return animation;
     }
 }

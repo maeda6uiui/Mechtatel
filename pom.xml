@@ -172,7 +172,7 @@
         <dependency>
             <groupId>com.github.dabasan</groupId>
             <artifactId>jxm-bd1</artifactId>
-            <version>1.0.3</version>
+            <version>2.0.0</version>
         </dependency>
 
         <dependency>

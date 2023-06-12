@@ -32,6 +32,7 @@ public class MttSettings {
 
     public static class SystemSettings {
         public int fps = 60;
+        public boolean runGatewayServer = false;
 
         @Override
         public String toString() {

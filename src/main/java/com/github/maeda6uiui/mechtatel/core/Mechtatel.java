@@ -14,6 +14,7 @@ import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import org.joml.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import py4j.GatewayServer;
 
 import java.awt.*;
 import java.io.IOException;
@@ -41,6 +42,12 @@ public class Mechtatel
         try {
             instance = new MttInstance(this, settings);
             logger.info("MttInstance successfully created");
+
+            if (settings.systemSettings.runGatewayServer) {
+                var gatewayServer = new GatewayServer(this);
+                gatewayServer.start();
+                logger.info("Start gateway server");
+            }
 
             logger.info("Start running the main loop");
             instance.run();

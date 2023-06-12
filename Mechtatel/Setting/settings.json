@@ -6,7 +6,8 @@
         "resizable": true
     },
     "system": {
-        "fps": 60
+        "fps": 60,
+        "runGatewayServer": false
     },
     "rendering": {
         "imageFormat": "unorm"

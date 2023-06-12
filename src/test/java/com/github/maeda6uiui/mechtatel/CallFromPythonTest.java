@@ -18,7 +18,7 @@ public class CallFromPythonTest extends Mechtatel {
         MttSettings settings;
         try {
             settings = MttSettings.load("./Mechtatel/Setting/settings.json");
-            settings.systemSettings.runGatewayServer = true;
+            settings.systemSettings.gatewayServer.enabled = true;
         } catch (IOException e) {
             System.out.println("Failed to load setting file. Use default settings");
             settings = new MttSettings();

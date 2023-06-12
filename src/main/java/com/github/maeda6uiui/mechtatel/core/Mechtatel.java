@@ -43,8 +43,8 @@ public class Mechtatel
             instance = new MttInstance(this, settings);
             logger.info("MttInstance successfully created");
 
-            if (settings.systemSettings.runGatewayServer) {
-                var gatewayServer = new GatewayServer(this);
+            if (settings.systemSettings.gatewayServer.enabled) {
+                var gatewayServer = new GatewayServer(this, settings.systemSettings.gatewayServer.port);
                 gatewayServer.start();
                 logger.info("Start gateway server");
             }

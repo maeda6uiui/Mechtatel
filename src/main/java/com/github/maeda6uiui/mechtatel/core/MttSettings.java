@@ -14,10 +14,17 @@ import java.nio.file.Paths;
  */
 public class MttSettings {
     public static class WindowSettings {
-        public String title = "Mechtatel";
-        public int width = 1280;
-        public int height = 720;
-        public boolean resizable = true;
+        public String title;
+        public int width;
+        public int height;
+        public boolean resizable;
+
+        public WindowSettings() {
+            title = "Mechtatel";
+            width = 1280;
+            height = 720;
+            resizable = true;
+        }
 
         @Override
         public String toString() {
@@ -30,20 +37,48 @@ public class MttSettings {
         }
     }
 
+    public static class GatewayServerSettings {
+        public boolean enabled;
+        public int port;
+
+        public GatewayServerSettings() {
+            enabled = false;
+            port = 25333;
+        }
+
+        @Override
+        public String toString() {
+            return "GatewayServerSettings{" +
+                    "enabled=" + enabled +
+                    ", port=" + port +
+                    '}';
+        }
+    }
+
     public static class SystemSettings {
-        public int fps = 60;
-        public boolean runGatewayServer = false;
+        public int fps;
+        public GatewayServerSettings gatewayServer;
+
+        public SystemSettings() {
+            fps = 60;
+            gatewayServer = new GatewayServerSettings();
+        }
 
         @Override
         public String toString() {
             return "SystemSettings{" +
                     "fps=" + fps +
+                    ", gatewayServer=" + gatewayServer +
                     '}';
         }
     }
 
     public static class RenderingSettings {
-        public String imageFormat = "srgb";
+        public String imageFormat;
+
+        public RenderingSettings() {
+            imageFormat = "srgb";
+        }
 
         @Override
         public String toString() {
@@ -54,10 +89,17 @@ public class MttSettings {
     }
 
     public static class BulletSettings {
-        public boolean dist = true;
-        public String dirname = "./Mechtatel/Bin";
-        public String buildType = "Debug";
-        public String flavor = "Sp";
+        public boolean dist;
+        public String dirname;
+        public String buildType;
+        public String flavor;
+
+        public BulletSettings() {
+            dist = true;
+            dirname = "./Mechtatel/Bin";
+            buildType = "Debug";
+            flavor = "Sp";
+        }
 
         @Override
         public String toString() {

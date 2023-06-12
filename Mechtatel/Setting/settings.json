@@ -7,7 +7,10 @@
     },
     "system": {
         "fps": 60,
-        "runGatewayServer": false
+        "gatewayServer": {
+            "enabled": false,
+            "port": 25333
+        }
     },
     "rendering": {
         "imageFormat": "unorm"

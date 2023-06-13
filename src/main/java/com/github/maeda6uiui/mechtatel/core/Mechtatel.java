@@ -165,6 +165,10 @@ public class Mechtatel
         return instance.getCursorPosY();
     }
 
+    public void setCursorPos(int x, int y) {
+        instance.setCursorPos(x, y);
+    }
+
     /**
      * Fixes the cursor to (0,0).
      */

@@ -6,7 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.shadow.ShadowMappingSettings;
+import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 

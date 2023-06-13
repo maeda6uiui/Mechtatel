@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.postprocessing.shadow;
+package com.github.maeda6uiui.mechtatel.core.shadow;
 
 /**
  * Settings for shadow mapping

@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow;
 
-import com.github.maeda6uiui.mechtatel.core.postprocessing.shadow.Pass2Info;
+import com.github.maeda6uiui.mechtatel.core.shadow.Pass2Info;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.UBO;
 
 import java.nio.ByteBuffer;

@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.postprocessing.shadow;
+package com.github.maeda6uiui.mechtatel.core.shadow;
 
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;

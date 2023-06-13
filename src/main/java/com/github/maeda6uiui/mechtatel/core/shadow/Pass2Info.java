@@ -1,6 +1,6 @@
-package com.github.maeda6uiui.mechtatel.core.postprocessing.shadow;
+package com.github.maeda6uiui.mechtatel.core.shadow;
 
-import static com.github.maeda6uiui.mechtatel.core.postprocessing.shadow.ShadowMappingSettings.OUTPUT_MODE_SHADOW_MAPPING;
+import static com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings.OUTPUT_MODE_SHADOW_MAPPING;
 
 /**
  * Pass 2 info

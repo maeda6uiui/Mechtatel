@@ -177,8 +177,8 @@ public class Mechtatel
         instance.setFixCursorFlag(false);
     }
 
-    public int setCursorMode(String cursorMode) {
-        return instance.setCursorMode(cursorMode);
+    public void setCursorMode(String cursorMode) {
+        instance.setCursorMode(cursorMode);
     }
 
     //=== Methods relating to components ===

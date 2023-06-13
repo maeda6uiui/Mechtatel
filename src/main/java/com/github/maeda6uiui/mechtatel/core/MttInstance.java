@@ -342,9 +342,7 @@ class MttInstance {
         this.fixCursorFlag = fixCursorFlag;
     }
 
-    public int setCursorMode(String cursorMode) {
-        int ret = 0;
-
+    public void setCursorMode(String cursorMode) {
         switch (cursorMode) {
             case "normal":
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -356,11 +354,8 @@ class MttInstance {
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
                 break;
             default:
-                ret = -1;
-                break;
+                throw new IllegalArgumentException("Unsupported cursor mode specified: " + cursorMode);
         }
-
-        return ret;
     }
 
     public void sortComponents() {

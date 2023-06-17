@@ -1,6 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.ubo;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
+import com.github.maeda6uiui.mechtatel.core.camera.CameraMode;
+import com.github.maeda6uiui.mechtatel.core.camera.OrthoCameraInfo;
+import com.github.maeda6uiui.mechtatel.core.camera.PerspectiveCameraInfo;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -28,8 +31,6 @@ public class CameraUBO extends UBO {
         Vector3fc eye = camera.getEye();
         Vector3fc center = camera.getCenter();
         Vector3fc up = camera.getUp();
-        float fovY = camera.getFovY();
-        float aspect = camera.getAspect();
         float zNear = camera.getZNear();
         float zFar = camera.getZFar();
 
@@ -37,8 +38,25 @@ public class CameraUBO extends UBO {
                 eye.x(), eye.y(), eye.z(),
                 center.x(), center.y(), center.z(),
                 up.x(), up.y(), up.z());
-        proj = new Matrix4f().perspective(fovY, aspect, zNear, zFar, true);
-        proj.m11(proj.m11() * (-1.0f));
+
+        if (camera.getCameraMode() == CameraMode.ORTHOGRAPHIC) {
+            OrthoCameraInfo cameraInfo = camera.getOrthoCameraInfo();
+            proj = new Matrix4f()
+                    .scale(1.0f, -1.0f, 1.0f)
+                    .ortho(
+                            cameraInfo.left,
+                            cameraInfo.right,
+                            cameraInfo.bottom,
+                            cameraInfo.top,
+                            zNear,
+                            zFar,
+                            true);
+        } else {
+            PerspectiveCameraInfo cameraInfo = camera.getPerspectiveCameraInfo();
+            proj = new Matrix4f()
+                    .scale(1.0f, -1.0f, 1.0f)
+                    .perspective(cameraInfo.fovY, cameraInfo.aspect, zNear, zFar, true);
+        }
 
         this.eye = new Vector3f(eye);
         this.center = new Vector3f(center);

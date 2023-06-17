@@ -81,7 +81,7 @@ class MttInstance {
 
         for (var screen : screens.values()) {
             if (screen.shouldAutoUpdateCameraAspect()) {
-                screen.getCamera().setAspect((float) width / (float) height);
+                screen.getCamera().getPerspectiveCameraInfo().aspect = (float) width / (float) height;
             }
         }
 
@@ -924,7 +924,7 @@ class MttInstance {
             IntBuffer height = stack.ints(0);
             glfwGetFramebufferSize(window, width, height);
 
-            screen.getCamera().setAspect((float) width.get(0) / (float) height.get(0));
+            screen.getCamera().getPerspectiveCameraInfo().aspect = (float) width.get(0) / (float) height.get(0);
         }
 
         screens.put(screenName, screen);

@@ -39,7 +39,7 @@ public class BufferCreator {
                 throw new RuntimeException("Failed to create a buffer");
             }
 
-            VkMemoryRequirements memRequirements = VkMemoryRequirements.mallocStack(stack);
+            VkMemoryRequirements memRequirements = VkMemoryRequirements.malloc(stack);
             vkGetBufferMemoryRequirements(device, pBuffer.get(0), memRequirements);
 
             VkMemoryAllocateInfo allocInfo = VkMemoryAllocateInfo.calloc(stack);

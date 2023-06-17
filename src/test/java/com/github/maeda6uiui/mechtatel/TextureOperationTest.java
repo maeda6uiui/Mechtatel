@@ -72,7 +72,7 @@ public class TextureOperationTest extends Mechtatel {
 
         texturedQuad = this.createTexturedQuad2D(
                 "final",
-                "./Mechtatel/Standard/Texture/lenna.jpg",
+                "./Mechtatel/Standard/Texture/checker.png",
                 new Vector2f(-1.0f, -1.0f),
                 new Vector2f(1.0f, 1.0f),
                 0.0f

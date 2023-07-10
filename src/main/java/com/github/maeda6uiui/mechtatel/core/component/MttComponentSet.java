@@ -10,22 +10,22 @@ import java.util.List;
  *
  * @author maeda6uiui
  */
-public class MttComponentSet {
-    private List<MttComponent> components;
+public class MttComponentSet<T extends MttComponent> {
+    private List<T> components;
 
     public MttComponentSet() {
         components = new ArrayList<>();
     }
 
-    protected List<MttComponent> getComponents() {
+    protected List<T> getComponents() {
         return components;
     }
 
-    public void add(MttComponent component) {
+    public void add(T component) {
         components.add(component);
     }
 
-    public boolean remove(MttComponent component) {
+    public boolean remove(T component) {
         return components.remove(component);
     }
 

@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.animation;
 
+import com.github.maeda6uiui.mechtatel.core.component.MttComponent3DSet;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel3DSet;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -32,7 +32,7 @@ public class MttAnimation {
 
     private AnimationInfo animationInfo;
     private Map<String, MttModel3D> models; //(model name, model)
-    private Map<String, MttModel3DSet> modelSets;   //(animation name, models per animation)
+    private Map<String, MttComponent3DSet> modelSets;   //(animation name, models per animation)
     private Map<String, AnimationPlayInfo> animationPlayInfos;
 
     public MttAnimation(
@@ -58,7 +58,7 @@ public class MttAnimation {
             String animationName = entry.getKey();
             AnimationInfo.Animation animation = entry.getValue();
 
-            var modelSet = new MttModel3DSet();
+            var modelSet = new MttComponent3DSet<MttModel3D>();
             for (String modelName : animation.models) {
                 MttModel3D model = models.get(modelName);
                 modelSet.add(model);
@@ -87,7 +87,7 @@ public class MttAnimation {
             String animationName = entry.getKey();
             AnimationInfo.Animation animation = entry.getValue();
 
-            var modelSet = new MttModel3DSet();
+            var modelSet = new MttComponent3DSet<MttModel3D>();
             for (String modelName : animation.models) {
                 MttModel3D model = models.get(modelName);
                 modelSet.add(model);
@@ -205,7 +205,7 @@ public class MttAnimation {
         return cs;
     }
 
-    private void applyRotationToModelSet(MttModel3DSet modelSet, Vector3fc rotation, String rotationApplyOrder) {
+    private void applyRotationToModelSet(MttComponent3DSet modelSet, Vector3fc rotation, String rotationApplyOrder) {
         char[] cs = this.getRotationApplyOrderCs(rotationApplyOrder);
         for (char c : cs) {
             if (c == 'x') {
@@ -219,7 +219,7 @@ public class MttAnimation {
     }
 
     private void applyDisplacement(
-            MttModel3DSet modelSet,
+            MttComponent3DSet modelSet,
             AnimationInfo.Displacement displacement,
             float frameDuration,
             float timeElapsed) {
@@ -244,7 +244,7 @@ public class MttAnimation {
                 float timeElapsed = curTime - animationPlayInfo.lastTime;
                 AnimationInfo.KeyFrame currentKeyFrame = animation.keyFrames.get(animationPlayInfo.currentFrameIndex);
 
-                MttModel3DSet modelSet = modelSets.get(animationName);
+                MttComponent3DSet modelSet = modelSets.get(animationName);
                 this.applyDisplacement(
                         modelSet,
                         currentKeyFrame.displacement,
@@ -279,7 +279,7 @@ public class MttAnimation {
         return new HashMap<>(models);
     }
 
-    public Map<String, MttModel3DSet> getModelSets() {
+    public Map<String, MttComponent3DSet> getModelSets() {
         return new HashMap<>(modelSets);
     }
 }

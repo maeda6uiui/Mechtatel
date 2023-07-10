@@ -1,67 +1,86 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
+import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Set of 3D components
  *
  * @author maeda6uiui
  */
-public class MttComponent3DSet extends MttComponentSet {
-    @Override
-    public void add(MttComponent component) {
-        if (!(component instanceof MttComponent3D)) {
-            throw new IllegalArgumentException("Cannot add 2D component");
-        }
+public class MttComponent3DSet<T extends MttComponent3D> {
+    private List<T> components;
 
-        super.add(component);
+    public MttComponent3DSet() {
+        components = new ArrayList<>();
+    }
+
+    protected List<T> getComponents() {
+        return components;
+    }
+
+    public void add(T component) {
+        components.add(component);
+    }
+
+    public boolean remove(T component) {
+        return components.remove(component);
+    }
+
+    public void clear() {
+        components.clear();
+    }
+
+    public void setMat(Matrix4fc mat) {
+        components.forEach(c -> c.setMat(mat));
+    }
+
+    public void setVisible(boolean visible) {
+        components.forEach(c -> c.setVisible(visible));
+    }
+
+    public void applyMat(Matrix4fc right) {
+        components.forEach(c -> c.applyMat(right));
+    }
+
+    public void reset() {
+        components.forEach(c -> c.reset());
+    }
+
+    public void cleanup() {
+        components.forEach(c -> c.cleanup());
     }
 
     public MttComponent3DSet translate(Vector3fc v) {
-        this.getComponents().forEach(c -> {
-            ((MttComponent3D) c).translate(v);
-        });
-
+        components.forEach(c -> c.translate(v));
         return this;
     }
 
     public MttComponent3DSet rotX(float ang) {
-        this.getComponents().forEach(c -> {
-            ((MttComponent3D) c).rotX(ang);
-        });
-
+        components.forEach(c -> c.rotX(ang));
         return this;
     }
 
     public MttComponent3DSet rotY(float ang) {
-        this.getComponents().forEach(c -> {
-            ((MttComponent3D) c).rotY(ang);
-        });
-
+        components.forEach(c -> c.rotY(ang));
         return this;
     }
 
     public MttComponent3DSet rotZ(float ang) {
-        this.getComponents().forEach(c -> {
-            ((MttComponent3D) c).rotZ(ang);
-        });
-
+        components.forEach(c -> c.rotZ(ang));
         return this;
     }
 
     public MttComponent3DSet rot(float ang, Vector3fc axis) {
-        this.getComponents().forEach(c -> {
-            ((MttComponent3D) c).rot(ang, axis);
-        });
-
+        components.forEach(c -> c.rot(ang, axis));
         return this;
     }
 
     public MttComponent3DSet rescale(Vector3fc scale) {
-        this.getComponents().forEach(c -> {
-            ((MttComponent3D) c).rescale(scale);
-        });
-
+        components.forEach(c -> c.rescale(scale));
         return this;
     }
 }

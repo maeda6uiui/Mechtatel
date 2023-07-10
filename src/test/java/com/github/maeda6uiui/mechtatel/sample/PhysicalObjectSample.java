@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel;
+package com.github.maeda6uiui.mechtatel.sample;
 
 import com.github.maeda6uiui.mechtatel.core.DrawPath;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;

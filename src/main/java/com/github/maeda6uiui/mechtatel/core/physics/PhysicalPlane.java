@@ -8,17 +8,17 @@ import com.jme3.math.Vector3f;
 import org.joml.Vector3fc;
 
 /**
- * 3D plane
+ * Physical plane
  *
  * @author maeda6uiui
  */
-public class PhysicalPlane3D extends PhysicalObject3D {
-    public PhysicalPlane3D(Vector3fc normal, float constant) {
+public class PhysicalPlane extends PhysicalObject {
+    public PhysicalPlane(Vector3fc normal, float constant) {
         var plane = new Plane(new Vector3f(normal.x(), normal.y(), normal.z()), constant);
         var shape = new PlaneCollisionShape(plane);
         float mass = PhysicsBody.massForStatic;
         var body = new PhysicsRigidBody(shape, mass);
-        PhysicalPlane3D.getPhysicsSpace().addCollisionObject(body);
+        PhysicalPlane.getPhysicsSpace().addCollisionObject(body);
 
         this.setShape(shape);
         this.setBody(body);

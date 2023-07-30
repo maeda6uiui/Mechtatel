@@ -185,7 +185,6 @@ public class Mechtatel
         instance.setCursorMode(cursorMode);
     }
 
-    //=== Methods relating to components ===
     public void sortComponents() {
         instance.sortComponents();
     }
@@ -532,32 +531,32 @@ public class Mechtatel
                 caretBlinkInterval, repeatDelay, keyInterpreter, supportedCharacters);
     }
 
-    public PhysicalPlane3D createPhysicalPlane3D(Vector3fc normal, float constant) {
-        return instance.createPhysicalPlane3D(normal, constant);
+    public PhysicalPlane createPhysicalPlane(Vector3fc normal, float constant) {
+        return instance.createPhysicalPlane(normal, constant);
     }
 
-    public PhysicalSphere3D createPhysicalSphere3D(float radius, float mass) {
-        return instance.createPhysicalSphere3D(radius, mass);
+    public PhysicalSphere createPhysicalSphere(float radius, float mass) {
+        return instance.createPhysicalSphere(radius, mass);
     }
 
-    public PhysicalCapsule3D createPhysicalCapsule3D(float radius, float height, float mass) {
-        return instance.createPhysicalCapsule3D(radius, height, mass);
+    public PhysicalCapsule createPhysicalCapsule(float radius, float height, float mass) {
+        return instance.createPhysicalCapsule(radius, height, mass);
     }
 
-    public PhysicalBox3D createPhysicalBox3D(float xHalfExtent, float yHalfExtent, float zHalfExtent, float mass) {
-        return instance.createPhysicalBox3D(xHalfExtent, yHalfExtent, zHalfExtent, mass);
+    public PhysicalBox createPhysicalBox(float xHalfExtent, float yHalfExtent, float zHalfExtent, float mass) {
+        return instance.createPhysicalBox(xHalfExtent, yHalfExtent, zHalfExtent, mass);
     }
 
-    public PhysicalBox3D createPhysicalBox3D(float halfExtent, float mass) {
-        return instance.createPhysicalBox3D(halfExtent, mass);
+    public PhysicalBox createPhysicalBox(float halfExtent, float mass) {
+        return instance.createPhysicalBox(halfExtent, mass);
     }
 
-    public PhysicalMesh3D createPhysicalMesh3D(MttModel model, float mass) {
-        return instance.createPhysicalMesh3D(model, mass);
+    public PhysicalMesh createPhysicalMesh(MttModel model, float mass) {
+        return instance.createPhysicalMesh(model, mass);
     }
 
-    public boolean removePhysicalObject3D(PhysicalObject3D physicalObject) {
-        return instance.removePhysicalObject3D(physicalObject);
+    public boolean removePhysicalObject(PhysicalObject physicalObject) {
+        return instance.removePhysicalObject(physicalObject);
     }
 
     public void setPhysicsSimulationTimeScale(float physicsSimulationTimeScale) {

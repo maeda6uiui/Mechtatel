@@ -11,13 +11,13 @@ import org.joml.Vector3fc;
 import java.util.ArrayList;
 
 /**
- * 3D mesh
+ * Physical mesh
  * Note that collision detection between two meshes doesn't work.
  *
  * @author maeda6uiui
  */
-public class PhysicalMesh3D extends PhysicalObject3D {
-    public PhysicalMesh3D(MttModel model, float mass) {
+public class PhysicalMesh extends PhysicalObject {
+    public PhysicalMesh(MttModel model, float mass) {
         var indexedMeshes = new ArrayList<IndexedMesh>();
 
         ModelLoader.Model innerModel = model.getModel();
@@ -42,7 +42,7 @@ public class PhysicalMesh3D extends PhysicalObject3D {
 
         var shape = new MeshCollisionShape(true, indexedMeshes);
         var body = new PhysicsRigidBody(shape, mass);
-        PhysicalMesh3D.getPhysicsSpace().addCollisionObject(body);
+        PhysicalMesh.getPhysicsSpace().addCollisionObject(body);
         body.setPhysicsLocation(new Vector3f(0.0f, 0.0f, 0.0f));
 
         this.setShape(shape);

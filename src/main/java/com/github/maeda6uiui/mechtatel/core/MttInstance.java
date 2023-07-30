@@ -58,7 +58,7 @@ class MttInstance {
 
     private List<MttGuiComponent> guiComponents;
 
-    private List<PhysicalObject3D> physicalObjects;
+    private List<PhysicalObject> physicalObjects;
     private float physicsSimulationTimeScale;
 
     private Map<String, MttScreen> screens;
@@ -238,7 +238,7 @@ class MttInstance {
                 physicalObjects.forEach(physicalObject -> {
                     physicalObject.updateObject();
                 });
-                PhysicalObject3D.updatePhysicsSpace((float) elapsedTime, physicsSimulationTimeScale);
+                PhysicalObject.updatePhysicsSpace((float) elapsedTime, physicsSimulationTimeScale);
 
                 animations.forEach((k, v) -> v.update());
 
@@ -705,46 +705,46 @@ class MttInstance {
         return guiComponents.remove(guiComponent);
     }
 
-    public PhysicalPlane3D createPhysicalPlane3D(Vector3fc normal, float constant) {
-        var physicalPlane = new PhysicalPlane3D(normal, constant);
+    public PhysicalPlane createPhysicalPlane(Vector3fc normal, float constant) {
+        var physicalPlane = new PhysicalPlane(normal, constant);
         physicalObjects.add(physicalPlane);
 
         return physicalPlane;
     }
 
-    public PhysicalSphere3D createPhysicalSphere3D(float radius, float mass) {
-        var physicalSphere = new PhysicalSphere3D(radius, mass);
+    public PhysicalSphere createPhysicalSphere(float radius, float mass) {
+        var physicalSphere = new PhysicalSphere(radius, mass);
         physicalObjects.add(physicalSphere);
 
         return physicalSphere;
     }
 
-    public PhysicalCapsule3D createPhysicalCapsule3D(float radius, float height, float mass) {
-        var physicalCapsule = new PhysicalCapsule3D(radius, height, mass);
+    public PhysicalCapsule createPhysicalCapsule(float radius, float height, float mass) {
+        var physicalCapsule = new PhysicalCapsule(radius, height, mass);
         physicalObjects.add(physicalCapsule);
 
         return physicalCapsule;
     }
 
-    public PhysicalBox3D createPhysicalBox3D(float xHalfExtent, float yHalfExtent, float zHalfExtent, float mass) {
-        var physicalBox = new PhysicalBox3D(xHalfExtent, yHalfExtent, zHalfExtent, mass);
+    public PhysicalBox createPhysicalBox(float xHalfExtent, float yHalfExtent, float zHalfExtent, float mass) {
+        var physicalBox = new PhysicalBox(xHalfExtent, yHalfExtent, zHalfExtent, mass);
         physicalObjects.add(physicalBox);
 
         return physicalBox;
     }
 
-    public PhysicalBox3D createPhysicalBox3D(float halfExtent, float mass) {
-        return this.createPhysicalBox3D(halfExtent, halfExtent, halfExtent, mass);
+    public PhysicalBox createPhysicalBox(float halfExtent, float mass) {
+        return this.createPhysicalBox(halfExtent, halfExtent, halfExtent, mass);
     }
 
-    public PhysicalMesh3D createPhysicalMesh3D(MttModel model, float mass) {
-        var physicalMesh = new PhysicalMesh3D(model, mass);
+    public PhysicalMesh createPhysicalMesh(MttModel model, float mass) {
+        var physicalMesh = new PhysicalMesh(model, mass);
         physicalObjects.add(physicalMesh);
 
         return physicalMesh;
     }
 
-    public boolean removePhysicalObject3D(PhysicalObject3D physicalObject) {
+    public boolean removePhysicalObject(PhysicalObject physicalObject) {
         if (physicalObjects.contains(physicalObject)) {
             physicalObject.cleanup();
             physicalObjects.remove(physicalObject);

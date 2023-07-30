@@ -15,7 +15,7 @@ import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.con
  *
  * @author maeda6uiui
  */
-public class PhysicalObject3D {
+public class PhysicalObject {
     private static PhysicsSpace physicsSpace;
     private CollisionShape shape;
     private PhysicsRigidBody body;
@@ -41,7 +41,7 @@ public class PhysicalObject3D {
         physicsSpace.update(simulateSeconds);
     }
 
-    public PhysicalObject3D() {
+    public PhysicalObject() {
         transRotMat = new Matrix4f().identity();
     }
 

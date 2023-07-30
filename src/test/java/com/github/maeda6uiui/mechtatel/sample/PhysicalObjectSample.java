@@ -6,7 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel;
-import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObjectSet3D;
+import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObjectSet;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector3f;
 
@@ -36,7 +36,7 @@ public class PhysicalObjectSample extends Mechtatel {
 
     private MttModel plane;
     private MttModel srcCube;
-    private PhysicalObjectSet3D physicalObjectSet;
+    private PhysicalObjectSet physicalObjectSet;
 
     private FreeCamera camera;
 
@@ -87,11 +87,11 @@ public class PhysicalObjectSample extends Mechtatel {
             e.printStackTrace();
         }
 
-        var physicalPlane = this.createPhysicalMesh3D(plane, 0.0f);
+        var physicalPlane = this.createPhysicalMesh(plane, 0.0f);
         physicalPlane.getBody().setRestitution(0.7f);
         physicalPlane.getBody().setFriction(0.5f);
 
-        physicalObjectSet = new PhysicalObjectSet3D();
+        physicalObjectSet = new PhysicalObjectSet();
 
         camera = new FreeCamera(mainScreen.getCamera());
 
@@ -125,7 +125,7 @@ public class PhysicalObjectSample extends Mechtatel {
             var dupCube = this.duplicateModel(srcCube);
             dupCube.rescale(new Vector3f(0.5f, 0.5f, 0.5f));
 
-            var physicalCube = this.createPhysicalBox3D(0.5f, 1.0f);
+            var physicalCube = this.createPhysicalBox(0.5f, 1.0f);
             physicalCube.setComponent(dupCube);
             physicalCube.getBody().setRestitution(0.7f);
             physicalCube.getBody().setFriction(0.5f);

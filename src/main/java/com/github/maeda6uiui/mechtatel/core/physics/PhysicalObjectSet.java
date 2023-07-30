@@ -8,10 +8,10 @@ import java.util.List;
  *
  * @author maeda6uiui
  */
-public class PhysicalObjectSet3D {
-    private List<PhysicalObject3D> physicalObjects;
+public class PhysicalObjectSet {
+    private List<PhysicalObject> physicalObjects;
 
-    public PhysicalObjectSet3D() {
+    public PhysicalObjectSet() {
         physicalObjects = new ArrayList<>();
     }
 
@@ -19,11 +19,11 @@ public class PhysicalObjectSet3D {
         physicalObjects.forEach(o -> o.cleanup());
     }
 
-    public void add(PhysicalObject3D physicalObject) {
+    public void add(PhysicalObject physicalObject) {
         physicalObjects.add(physicalObject);
     }
 
-    public boolean remove(PhysicalObject3D physicalObject) {
+    public boolean remove(PhysicalObject physicalObject) {
         boolean objectExists = false;
 
         if (physicalObjects.contains(physicalObject)) {
@@ -35,7 +35,7 @@ public class PhysicalObjectSet3D {
         return objectExists;
     }
 
-    public List<PhysicalObject3D> getPhysicalObjects() {
+    public List<PhysicalObject> getPhysicalObjects() {
         return new ArrayList<>(physicalObjects);
     }
 }

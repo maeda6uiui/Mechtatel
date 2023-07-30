@@ -26,10 +26,13 @@ public class VkMttQuad extends VkMttComponent {
     private long indexBuffer;
     private long indexBufferMemory;
 
+    private int indexCount;
+
     private void createBuffers(
             long commandPool,
             VkQueue graphicsQueue,
-            List<MttVertex3D> vertices) {
+            List<MttVertex3D> vertices,
+            boolean fill) {
         if (vertices.size() != 4) {
             throw new RuntimeException("Number of vertices must be 4");
         }
@@ -40,12 +43,24 @@ public class VkMttQuad extends VkMttComponent {
         vertexBufferMemory = bufferInfo.bufferMemory;
 
         var indices = new ArrayList<Integer>();
-        indices.add(0);
-        indices.add(1);
-        indices.add(2);
-        indices.add(2);
-        indices.add(3);
-        indices.add(0);
+        if (fill) {
+            indices.add(0);
+            indices.add(1);
+            indices.add(2);
+            indices.add(2);
+            indices.add(3);
+            indices.add(0);
+        } else {
+            indices.add(0);
+            indices.add(1);
+            indices.add(1);
+            indices.add(2);
+            indices.add(2);
+            indices.add(3);
+            indices.add(3);
+            indices.add(0);
+        }
+        indexCount = indices.size();
 
         bufferInfo = BufferCreator.createIndexBuffer(device, commandPool, graphicsQueue, indices);
         indexBuffer = bufferInfo.buffer;
@@ -60,7 +75,7 @@ public class VkMttQuad extends VkMttComponent {
             boolean fill) {
         this.device = device;
 
-        this.createBuffers(commandPool, graphicsQueue, vertices);
+        this.createBuffers(commandPool, graphicsQueue, vertices, fill);
 
         if (fill) {
             this.setComponentType("primitive_fill");
@@ -93,7 +108,7 @@ public class VkMttQuad extends VkMttComponent {
 
             vkCmdDrawIndexed(
                     commandBuffer,
-                    6,
+                    indexCount,
                     1,
                     0,
                     0,

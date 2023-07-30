@@ -76,7 +76,7 @@ public class ShadowMappingNaborRunner {
                     if (component.isTwoDComponent()) {
                         continue;
                     }
-                    if (component.shouldCastShadow()) {
+                    if (!component.shouldCastShadow()) {
                         continue;
                     }
 

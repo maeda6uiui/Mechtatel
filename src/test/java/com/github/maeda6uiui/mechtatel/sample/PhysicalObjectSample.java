@@ -79,9 +79,9 @@ public class PhysicalObjectSample extends Mechtatel {
         drawPath.apply();
 
         try {
-            plane = this.createModel3D("main", "./Mechtatel/Standard/Model/Plane/plane.obj");
+            plane = this.createModel("main", "./Mechtatel/Standard/Model/Plane/plane.obj");
 
-            srcCube = this.createModel3D("main", "./Mechtatel/Standard/Model/Cube/cube.obj");
+            srcCube = this.createModel("main", "./Mechtatel/Standard/Model/Cube/cube.obj");
             srcCube.setVisible(false);
         } catch (IOException e) {
             e.printStackTrace();
@@ -122,7 +122,7 @@ public class PhysicalObjectSample extends Mechtatel {
         z *= signZ;
 
         if (this.getKeyboardPressingCount("1") == 1) {
-            var dupCube = this.duplicateModel3D(srcCube);
+            var dupCube = this.duplicateModel(srcCube);
             dupCube.rescale(new Vector3f(0.5f, 0.5f, 0.5f));
 
             var physicalCube = this.createPhysicalBox3D(0.5f, 1.0f);

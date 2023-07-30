@@ -79,8 +79,8 @@ public class TextureOperationTest extends Mechtatel {
         );
 
         try {
-            firstModel = this.createModel3D("first", "./Mechtatel/Standard/Model/Plane/plane.obj");
-            secondModel = this.createModel3D("second", "./Mechtatel/Standard/Model/Teapot/teapot.obj");
+            firstModel = this.createModel("first", "./Mechtatel/Standard/Model/Plane/plane.obj");
+            secondModel = this.createModel("second", "./Mechtatel/Standard/Model/Teapot/teapot.obj");
         } catch (IOException e) {
             e.printStackTrace();
         }

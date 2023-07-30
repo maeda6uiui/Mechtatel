@@ -23,7 +23,7 @@ public class MttCapsule extends MttComponent {
             Vector4fc color) {
         super(vulkanInstance);
 
-        vkCapsule = vulkanInstance.createCapsule3D(center, length, radius, numVDivs, numHDivs, color);
+        vkCapsule = vulkanInstance.createCapsule(center, length, radius, numVDivs, numHDivs, color);
         this.associateVulkanComponent(vkCapsule);
     }
 }

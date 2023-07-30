@@ -20,7 +20,7 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
             MttVulkanInstance vulkanInstance, String screenName, String textureFilepath) {
         super(vulkanInstance);
 
-        vkTexturedQuadSet = vulkanInstance.createTexturedQuad2DSingleTextureSet(screenName, textureFilepath);
+        vkTexturedQuadSet = vulkanInstance.createTexturedQuadSingleTextureSet(screenName, textureFilepath);
         this.associateVulkanComponent(vkTexturedQuadSet);
     }
 
@@ -30,7 +30,7 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
             MttTexture texture) {
         super(vulkanInstance);
 
-        vkTexturedQuadSet = vulkanInstance.createTexturedQuad2DSingleTextureSet(screenName, texture.getVulkanTexture());
+        vkTexturedQuadSet = vulkanInstance.createTexturedQuadSingleTextureSet(screenName, texture.getVulkanTexture());
         this.associateVulkanComponent(vkTexturedQuadSet);
     }
 

@@ -22,7 +22,7 @@ public class MttModel extends MttComponent {
         super(vulkanInstance);
 
         this.modelFilepath = modelFilepath;
-        vkModel = vulkanInstance.createModel3D(screenName, modelFilepath);
+        vkModel = vulkanInstance.createModel(screenName, modelFilepath);
         this.associateVulkanComponent(vkModel);
     }
 
@@ -30,7 +30,7 @@ public class MttModel extends MttComponent {
         super(vulkanInstance);
 
         this.modelFilepath = srcModel.modelFilepath;
-        vkModel = vulkanInstance.duplicateModel3D(srcModel.vkModel);
+        vkModel = vulkanInstance.duplicateModel(srcModel.vkModel);
         this.associateVulkanComponent(vkModel);
     }
 

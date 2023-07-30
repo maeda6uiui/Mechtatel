@@ -67,8 +67,8 @@ public class TexturedScreenTest extends Mechtatel {
         drawPath.apply();
 
         try {
-            primaryCube = this.createModel3D("primary", "./Mechtatel/Standard/Model/Cube/cube.obj");
-            secondaryCube = this.createModel3D("secondary", "./Mechtatel/Standard/Model/Cube/cube.obj");
+            primaryCube = this.createModel("primary", "./Mechtatel/Standard/Model/Cube/cube.obj");
+            secondaryCube = this.createModel("secondary", "./Mechtatel/Standard/Model/Cube/cube.obj");
         } catch (IOException e) {
             e.printStackTrace();
         }

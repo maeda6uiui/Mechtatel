@@ -28,7 +28,7 @@ public class MttQuad extends MttComponent {
         vertices.add(v3);
         vertices.add(v4);
 
-        vkQuad = vulkanInstance.createQuad3D(vertices, fill);
+        vkQuad = vulkanInstance.createQuad(vertices, fill);
         this.associateVulkanComponent(vkQuad);
     }
 }

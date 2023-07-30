@@ -48,7 +48,7 @@ public class AnimationTest extends Mechtatel {
         MttScreen defaultScreen = this.getScreen("default");
         defaultScreen.getCamera().setEye(new Vector3f(10.0f, 10.0f, 10.0f));
 
-        this.createAxesLine3DSet(10.0f);
+        this.createAxesLineSet(10.0f);
 
         camera = new FreeCamera(defaultScreen.getCamera());
     }

@@ -14,7 +14,7 @@ public class MttLine extends MttComponent {
     public MttLine(MttVulkanInstance vulkanInstance, MttVertex3D v1, MttVertex3D v2) {
         super(vulkanInstance);
 
-        vkLine = vulkanInstance.createLine3D(v1, v2);
+        vkLine = vulkanInstance.createLine(v1, v2);
         this.associateVulkanComponent(vkLine);
     }
 }

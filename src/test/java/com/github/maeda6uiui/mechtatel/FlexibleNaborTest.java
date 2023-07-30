@@ -59,9 +59,9 @@ public class FlexibleNaborTest extends Mechtatel {
         drawPath.apply();
 
         try {
-            plane = this.createModel3D("main", "./Mechtatel/Standard/Model/Plane/plane.obj");
-            teapot = this.createModel3D("main", "./Mechtatel/Standard/Model/Teapot/teapot.obj");
-            cube = this.createModel3D("main", "./Mechtatel/Standard/Model/Cube/cube.obj");
+            plane = this.createModel("main", "./Mechtatel/Standard/Model/Plane/plane.obj");
+            teapot = this.createModel("main", "./Mechtatel/Standard/Model/Teapot/teapot.obj");
+            cube = this.createModel("main", "./Mechtatel/Standard/Model/Cube/cube.obj");
         } catch (IOException e) {
             e.printStackTrace();
         }

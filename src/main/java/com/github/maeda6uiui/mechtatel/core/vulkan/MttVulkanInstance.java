@@ -495,7 +495,7 @@ public class MttVulkanInstance
         Collections.sort(components);
     }
 
-    public VkMttModel createModel3D(String screenName, String modelFilepath) throws IOException {
+    public VkMttModel createModel(String screenName, String modelFilepath) throws IOException {
         VkMttScreen screen = screens.get(screenName);
 
         var model = new VkMttModel(
@@ -509,28 +509,28 @@ public class MttVulkanInstance
         return model;
     }
 
-    public VkMttModel duplicateModel3D(VkMttModel srcModel) {
+    public VkMttModel duplicateModel(VkMttModel srcModel) {
         var model = new VkMttModel(device, commandPool, graphicsQueue, srcModel);
         components.add(model);
 
         return model;
     }
 
-    public VkMttLine createLine3D(MttVertex3D v1, MttVertex3D v2) {
+    public VkMttLine createLine(MttVertex3D v1, MttVertex3D v2) {
         var line = new VkMttLine(device, commandPool, graphicsQueue, v1, v2);
         components.add(line);
 
         return line;
     }
 
-    public VkMttLineSet createLine3DSet() {
+    public VkMttLineSet createLineSet() {
         var lineSet = new VkMttLineSet(device, commandPool, graphicsQueue);
         components.add(lineSet);
 
         return lineSet;
     }
 
-    public VkMttSphere createSphere3D(
+    public VkMttSphere createSphere(
             Vector3fc center,
             float radius,
             int numVDivs,
@@ -542,7 +542,7 @@ public class MttVulkanInstance
         return sphere;
     }
 
-    public VkMttCapsule createCapsule3D(
+    public VkMttCapsule createCapsule(
             Vector3fc center,
             float length,
             float radius,
@@ -555,14 +555,14 @@ public class MttVulkanInstance
         return capsule;
     }
 
-    public VkMttQuad createQuad3D(List<MttVertex3D> vertices, boolean fill) {
+    public VkMttQuad createQuad(List<MttVertex3D> vertices, boolean fill) {
         var filledQuad = new VkMttQuad(device, commandPool, graphicsQueue, vertices, fill);
         components.add(filledQuad);
 
         return filledQuad;
     }
 
-    public VkMttTexturedQuad createTexturedQuad3D(
+    public VkMttTexturedQuad createTexturedQuad(
             String screenName, String textureFilepath, boolean generateMipmaps, List<MttVertex3DUV> vertices) {
         VkMttScreen screen = screens.get(screenName);
 
@@ -579,7 +579,7 @@ public class MttVulkanInstance
         return texturedQuad;
     }
 
-    public VkMttTexturedQuad createTexturedQuad3D(String screenName, VkMttTexture texture, List<MttVertex3DUV> vertices) {
+    public VkMttTexturedQuad createTexturedQuad(String screenName, VkMttTexture texture, List<MttVertex3DUV> vertices) {
         var texturedQuad = new VkMttTexturedQuad(
                 device,
                 commandPool,
@@ -592,7 +592,7 @@ public class MttVulkanInstance
         return texturedQuad;
     }
 
-    public VkMttTexturedQuad duplicateTexturedQuad3D(VkMttTexturedQuad srcQuad, List<MttVertex3DUV> vertices) {
+    public VkMttTexturedQuad duplicateTexturedQuad(VkMttTexturedQuad srcQuad, List<MttVertex3DUV> vertices) {
         var texturedQuad = new VkMttTexturedQuad(
                 device,
                 commandPool,
@@ -604,7 +604,7 @@ public class MttVulkanInstance
         return texturedQuad;
     }
 
-    public VkMttTexturedQuadSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, VkMttTexture texture) {
+    public VkMttTexturedQuadSingleTextureSet createTexturedQuadSingleTextureSet(String screenName, VkMttTexture texture) {
         var texturedQuadSet = new VkMttTexturedQuadSingleTextureSet(
                 device, commandPool, graphicsQueue, screenName, texture);
         components.add(texturedQuadSet);
@@ -612,7 +612,7 @@ public class MttVulkanInstance
         return texturedQuadSet;
     }
 
-    public VkMttTexturedQuadSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, String textureFilepath) {
+    public VkMttTexturedQuadSingleTextureSet createTexturedQuadSingleTextureSet(String screenName, String textureFilepath) {
         VkMttScreen screen = screens.get(screenName);
 
         var texturedQuadSet = new VkMttTexturedQuadSingleTextureSet(

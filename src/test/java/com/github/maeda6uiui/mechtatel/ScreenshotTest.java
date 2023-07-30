@@ -55,15 +55,15 @@ public class ScreenshotTest extends Mechtatel {
         drawPath.apply();
 
         try {
-            plane = this.createModel3D("main", "./Mechtatel/Standard/Model/Plane/plane.obj");
-            cube = this.createModel3D("main", "./Mechtatel/Standard/Model/Cube/cube.obj");
+            plane = this.createModel("main", "./Mechtatel/Standard/Model/Plane/plane.obj");
+            cube = this.createModel("main", "./Mechtatel/Standard/Model/Cube/cube.obj");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         cube.translate(new Vector3f(0.0f, 1.0f, 0.0f));
 
-        sphere = this.createSphere3D(
+        sphere = this.createSphere(
                 new Vector3f(5.0f, 2.0f, 0.0f),
                 2.0f, 32, 32, new Vector4f(1.0f, 0.0f, 1.0f, 1.0f)
         );

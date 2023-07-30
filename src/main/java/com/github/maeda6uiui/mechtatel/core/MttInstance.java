@@ -361,32 +361,32 @@ class MttInstance {
         vulkanInstance.sortComponents();
     }
 
-    public MttModel createModel3D(String screenName, String modelFilepath) throws IOException {
+    public MttModel createModel(String screenName, String modelFilepath) throws IOException {
         var model = new MttModel(vulkanInstance, screenName, modelFilepath);
         return model;
     }
 
-    public MttModel duplicateModel3D(MttModel srcModel) {
+    public MttModel duplicateModel(MttModel srcModel) {
         var model = new MttModel(vulkanInstance, srcModel);
         return model;
     }
 
-    public MttLine createLine3D(MttVertex3D v1, MttVertex3D v2) {
+    public MttLine createLine(MttVertex3D v1, MttVertex3D v2) {
         var line = new MttLine(vulkanInstance, v1, v2);
         return line;
     }
 
-    public MttLineSet createLine3DSet() {
+    public MttLineSet createLineSet() {
         var lineSet = new MttLineSet(vulkanInstance);
         return lineSet;
     }
 
-    public MttSphere createSphere3D(Vector3fc center, float radius, int numVDivs, int numHDivs, Vector4fc color) {
+    public MttSphere createSphere(Vector3fc center, float radius, int numVDivs, int numHDivs, Vector4fc color) {
         var sphere = new MttSphere(vulkanInstance, center, radius, numVDivs, numHDivs, color);
         return sphere;
     }
 
-    public MttCapsule createCapsule3D(Vector3fc center, float length, float radius, int numVDivs, int numHDivs, Vector4fc color) {
+    public MttCapsule createCapsule(Vector3fc center, float length, float radius, int numVDivs, int numHDivs, Vector4fc color) {
         var capsule = new MttCapsule(vulkanInstance, center, length, radius, numVDivs, numHDivs, color);
         return capsule;
     }
@@ -401,7 +401,7 @@ class MttInstance {
         return lineSet;
     }
 
-    public MttQuad createQuad3D(MttVertex3D v1, MttVertex3D v2, MttVertex3D v3, MttVertex3D v4, boolean fill) {
+    public MttQuad createQuad(MttVertex3D v1, MttVertex3D v2, MttVertex3D v3, MttVertex3D v4, boolean fill) {
         var quad = new MttQuad(vulkanInstance, v1, v2, v3, v4, fill);
         return quad;
     }
@@ -423,7 +423,7 @@ class MttInstance {
         return quad;
     }
 
-    public MttTexturedQuad createTexturedQuad3D(
+    public MttTexturedQuad createTexturedQuad(
             String screenName,
             String textureFilepath,
             boolean generateMipmaps,
@@ -443,7 +443,7 @@ class MttInstance {
         return texturedQuad;
     }
 
-    public MttTexturedQuad createTexturedQuad3D(
+    public MttTexturedQuad createTexturedQuad(
             String screenName,
             MttTexture texture,
             MttVertex3DUV v1,
@@ -461,7 +461,7 @@ class MttInstance {
         return texturedQuad;
     }
 
-    public MttTexturedQuad duplicateTexturedQuad3D(
+    public MttTexturedQuad duplicateTexturedQuad(
             MttTexturedQuad srcQuad,
             MttVertex3DUV v1,
             MttVertex3DUV v2,
@@ -506,13 +506,13 @@ class MttInstance {
         return texturedQuadSet;
     }
 
-    public MttBox createBox3D(float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
+    public MttBox createBox(float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
         var box = new MttBox(vulkanInstance, xHalfExtent, yHalfExtent, zHalfExtent, color);
         return box;
     }
 
-    public MttBox createBox3D(float halfExtent, Vector4fc color) {
-        return this.createBox3D(halfExtent, halfExtent, halfExtent, color);
+    public MttBox createBox(float halfExtent, Vector4fc color) {
+        return this.createBox(halfExtent, halfExtent, halfExtent, color);
     }
 
     public MttFont createFont(

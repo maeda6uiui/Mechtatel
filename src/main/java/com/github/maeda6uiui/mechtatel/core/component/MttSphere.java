@@ -22,7 +22,7 @@ public class MttSphere extends MttComponent {
             Vector4fc color) {
         super(vulkanInstance);
 
-        vkSphere = vulkanInstance.createSphere3D(center, radius, numVDivs, numHDivs, color);
+        vkSphere = vulkanInstance.createSphere(center, radius, numVDivs, numHDivs, color);
         this.associateVulkanComponent(vkSphere);
     }
 }

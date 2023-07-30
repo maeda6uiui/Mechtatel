@@ -77,8 +77,8 @@ public class SkyboxTest extends Mechtatel {
         );
 
         try {
-            skyboxModel = this.createModel3D("skybox", "./Mechtatel/Standard/Model/Skybox/skybox.obj");
-            mainModel = this.createModel3D("main", "./Mechtatel/Standard/Model/Cube/cube.obj");
+            skyboxModel = this.createModel("skybox", "./Mechtatel/Standard/Model/Skybox/skybox.obj");
+            mainModel = this.createModel("main", "./Mechtatel/Standard/Model/Cube/cube.obj");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -91,7 +91,7 @@ public class SkyboxTest extends Mechtatel {
                 false);
         skyboxTextureCreator.apply(skyboxModel);
 
-        this.createPositiveAxesLine3DSet(10.0f);
+        this.createPositiveAxesLineSet(10.0f);
 
         camera = new FreeCamera(mainScreen.getCamera());
     }

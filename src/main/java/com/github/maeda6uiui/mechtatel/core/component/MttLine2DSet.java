@@ -17,7 +17,7 @@ public class MttLine2DSet extends MttComponent {
     public MttLine2DSet(MttVulkanInstance vulkanInstance) {
         super(vulkanInstance);
 
-        vkLineSet = vulkanInstance.createLine3DSet();
+        vkLineSet = vulkanInstance.createLineSet();
         this.associateVulkanComponent(vkLineSet);
     }
 

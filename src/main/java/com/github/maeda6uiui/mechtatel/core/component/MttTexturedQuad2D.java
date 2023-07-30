@@ -44,7 +44,7 @@ public class MttTexturedQuad2D extends MttComponent {
         super(vulkanInstance);
 
         var vertices = this.createVertices(p1, p2, p3, p4, z);
-        vkTexturedQuad = vulkanInstance.createTexturedQuad3D(screenName, textureFilepath, generateMipmaps, vertices);
+        vkTexturedQuad = vulkanInstance.createTexturedQuad(screenName, textureFilepath, generateMipmaps, vertices);
         this.associateVulkanComponent(vkTexturedQuad);
     }
 
@@ -60,7 +60,7 @@ public class MttTexturedQuad2D extends MttComponent {
         super(vulkanInstance);
 
         var vertices = this.createVertices(p1, p2, p3, p4, z);
-        vkTexturedQuad = vulkanInstance.createTexturedQuad3D(screenName, texture.getVulkanTexture(), vertices);
+        vkTexturedQuad = vulkanInstance.createTexturedQuad(screenName, texture.getVulkanTexture(), vertices);
         this.associateVulkanComponent(vkTexturedQuad);
     }
 
@@ -75,7 +75,7 @@ public class MttTexturedQuad2D extends MttComponent {
         super(vulkanInstance);
 
         var vertices = this.createVertices(p1, p2, p3, p4, z);
-        vkTexturedQuad = vulkanInstance.duplicateTexturedQuad3D(srcQuad.vkTexturedQuad, vertices);
+        vkTexturedQuad = vulkanInstance.duplicateTexturedQuad(srcQuad.vkTexturedQuad, vertices);
         this.associateVulkanComponent(vkTexturedQuad);
     }
 

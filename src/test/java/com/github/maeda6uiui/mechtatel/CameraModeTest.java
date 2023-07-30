@@ -37,7 +37,7 @@ public class CameraModeTest extends Mechtatel {
 
         MttModel srcCube;
         try {
-            srcCube = this.createModel3D(
+            srcCube = this.createModel(
                     "default", "./Mechtatel/Standard/Model/Cube/cube.obj");
             srcCube.setVisible(false);
         } catch (IOException e) {
@@ -49,7 +49,7 @@ public class CameraModeTest extends Mechtatel {
         for (int i = 0; i <= 10; i++) {
             float x = -25.0f;
             for (int j = 0; j <= 10; j++) {
-                MttModel cube = this.duplicateModel3D(srcCube);
+                MttModel cube = this.duplicateModel(srcCube);
                 cube.translate(new Vector3f(x, 0.0f, z));
 
                 x += 5.0f;

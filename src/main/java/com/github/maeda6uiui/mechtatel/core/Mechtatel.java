@@ -256,29 +256,31 @@ public class Mechtatel
         return instance.createLine2DSet();
     }
 
-    public MttFilledQuad3D createFilledQuad3D(MttVertex3D v1, MttVertex3D v2, MttVertex3D v3, MttVertex3D v4) {
-        return instance.createFilledQuad3D(v1, v2, v3, v4);
+    public MttQuad3D createQuad3D(MttVertex3D v1, MttVertex3D v2, MttVertex3D v3, MttVertex3D v4, boolean fill) {
+        return instance.createQuad3D(v1, v2, v3, v4, fill);
     }
 
-    public MttFilledQuad3D createFilledQuad3D(Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, Vector4fc color) {
+    public MttQuad3D createQuad3D(Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, boolean fill, Vector4fc color) {
         var v1 = new MttVertex3D(p1, color);
         var v2 = new MttVertex3D(p2, color);
         var v3 = new MttVertex3D(p3, color);
         var v4 = new MttVertex3D(p4, color);
 
-        return instance.createFilledQuad3D(v1, v2, v3, v4);
+        return instance.createQuad3D(v1, v2, v3, v4, fill);
     }
 
-    public MttFilledQuad2D createFilledQuad2D(MttVertex2D p1, MttVertex2D p2, MttVertex2D p3, MttVertex2D p4, float z) {
-        return instance.createFilledQuad2D(p1, p2, p3, p4, z);
+    public MttQuad2D createQuad2D(MttVertex2D p1, MttVertex2D p2, MttVertex2D p3, MttVertex2D p4, float z, boolean fill) {
+        return instance.createQuad2D(p1, p2, p3, p4, z, fill);
     }
 
-    public MttFilledQuad2D createFilledQuad2D(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4, float z, Vector4fc color) {
-        return instance.createFilledQuad2D(p1, p2, p3, p4, z, color);
+    public MttQuad2D createQuad2D(
+            Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4,
+            float z, boolean fill, Vector4fc color) {
+        return instance.createQuad2D(p1, p2, p3, p4, z, fill, color);
     }
 
-    public MttFilledQuad2D createFilledQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, Vector4fc color) {
-        return instance.createFilledQuad2D(topLeft, bottomRight, z, color);
+    public MttQuad2D createQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, boolean fill, Vector4fc color) {
+        return instance.createQuad2D(topLeft, bottomRight, z, fill, color);
     }
 
     public MttTexturedQuad3D createTexturedQuad3D(
@@ -367,26 +369,6 @@ public class Mechtatel
 
     public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, MttTexture texture) {
         return instance.createTexturedQuad2DSingleTextureSet(screenName, texture);
-    }
-
-    public MttQuad2D createQuad2D(MttVertex2D v1, MttVertex2D v2, MttVertex2D v3, MttVertex2D v4, float z) {
-        return instance.createQuad2D(v1, v2, v3, v4, z);
-    }
-
-    public MttQuad2D createQuad2D(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4, float z, Vector4fc color) {
-        return instance.createQuad2D(p1, p2, p3, p4, z, color);
-    }
-
-    public MttQuad2D createQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, Vector4fc color) {
-        return instance.createQuad2D(topLeft, bottomRight, z, color);
-    }
-
-    public MttQuad3D createQuad3D(MttVertex3D v1, MttVertex3D v2, MttVertex3D v3, MttVertex3D v4) {
-        return instance.createQuad3D(v1, v2, v3, v4);
-    }
-
-    public MttQuad3D createQuad3D(Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, Vector4fc color) {
-        return instance.createQuad3D(p1, p2, p3, p4, color);
     }
 
     public MttBox3D createBox3D(float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
@@ -553,12 +535,7 @@ public class Mechtatel
     public PhysicalPlane3D createPhysicalPlane3D(Vector3fc normal, float constant) {
         return instance.createPhysicalPlane3D(normal, constant);
     }
-
-    public PhysicalPlane3D createPhysicalPlane3DWithComponent(
-            Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, Vector4fc color) {
-        return instance.createPhysicalPlane3DWithComponent(p1, p2, p3, p4, color);
-    }
-
+    
     public PhysicalSphere3D createPhysicalSphere3D(float radius, float mass) {
         return instance.createPhysicalSphere3D(radius, mass);
     }

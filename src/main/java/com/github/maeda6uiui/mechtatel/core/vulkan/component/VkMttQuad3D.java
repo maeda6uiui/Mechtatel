@@ -14,11 +14,11 @@ import java.util.List;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * 3D filled quadrangle
+ * 3D quadrangle
  *
  * @author maeda6uiui
  */
-public class VkMttFilledQuad3D extends VkMttComponent3D {
+public class VkMttQuad3D extends VkMttComponent3D {
     private VkDevice device;
 
     private long vertexBuffer;
@@ -52,15 +52,21 @@ public class VkMttFilledQuad3D extends VkMttComponent3D {
         indexBufferMemory = bufferInfo.bufferMemory;
     }
 
-    public VkMttFilledQuad3D(
+    public VkMttQuad3D(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<MttVertex3D> vertices) {
+            List<MttVertex3D> vertices,
+            boolean fill) {
         this.device = device;
 
         this.createBuffers(commandPool, graphicsQueue, vertices);
-        this.setComponentType("primitive_fill");
+
+        if (fill) {
+            this.setComponentType("primitive_fill");
+        } else {
+            this.setComponentType("primitive");
+        }
     }
 
     @Override

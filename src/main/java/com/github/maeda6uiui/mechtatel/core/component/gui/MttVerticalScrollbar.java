@@ -1,6 +1,5 @@
 package com.github.maeda6uiui.mechtatel.core.component.gui;
 
-import com.github.maeda6uiui.mechtatel.core.component.MttFilledQuad2D;
 import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import org.joml.Matrix4f;
@@ -18,7 +17,7 @@ import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.con
  */
 public class MttVerticalScrollbar extends MttGuiComponent {
     private MttQuad2D frame;
-    private MttFilledQuad2D grabFrame;
+    private MttQuad2D grabFrame;
 
     private Vector2f grabTopLeft;
     private Vector2f grabBottomRight;
@@ -43,7 +42,7 @@ public class MttVerticalScrollbar extends MttGuiComponent {
                 0.0f,
                 convertJavaColorToJOMLVector4f(frameColor)
         );
-        grabFrame = new MttFilledQuad2D(
+        grabFrame = new MttQuad2D(
                 vulkanInstance,
                 new Vector2f(x, y),
                 new Vector2f(x + width, y + grabHeight),

@@ -1,8 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
-import org.joml.Vector3fc;
-import org.joml.Vector4fc;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttQuad3D;
+
+import java.util.ArrayList;
 
 /**
  * 3D quadrangle
@@ -10,33 +11,24 @@ import org.joml.Vector4fc;
  * @author maeda6uiui
  */
 public class MttQuad3D extends MttComponent3D {
-    private MttLine3DSet lineSet;
+    private VkMttQuad3D vkFilledQuad;
 
-    private void setupLineSet(MttVertex3D v1, MttVertex3D v2, MttVertex3D v3, MttVertex3D v4) {
-        lineSet.add(v1, v2);
-        lineSet.add(v2, v3);
-        lineSet.add(v3, v4);
-        lineSet.add(v4, v1);
-        lineSet.createBuffer();
-    }
-
-    public MttQuad3D(MttVulkanInstance vulkanInstance, MttVertex3D v1, MttVertex3D v2, MttVertex3D v3, MttVertex3D v4) {
+    public MttQuad3D(
+            MttVulkanInstance vulkanInstance,
+            MttVertex3D v1,
+            MttVertex3D v2,
+            MttVertex3D v3,
+            MttVertex3D v4,
+            boolean fill) {
         super(vulkanInstance);
 
-        lineSet = new MttLine3DSet(vulkanInstance);
-        this.setupLineSet(v1, v2, v3, v4);
-        this.associateVulkanComponent(lineSet.getVulkanComponent());
-    }
+        var vertices = new ArrayList<MttVertex3D>();
+        vertices.add(v1);
+        vertices.add(v2);
+        vertices.add(v3);
+        vertices.add(v4);
 
-    public MttQuad3D(MttVulkanInstance vulkanInstance, Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, Vector4fc color) {
-        super(vulkanInstance);
-
-        lineSet = new MttLine3DSet(vulkanInstance);
-        var v1 = new MttVertex3D(p1, color);
-        var v2 = new MttVertex3D(p2, color);
-        var v3 = new MttVertex3D(p3, color);
-        var v4 = new MttVertex3D(p4, color);
-        this.setupLineSet(v1, v2, v3, v4);
-        this.associateVulkanComponent(lineSet.getVulkanComponent());
+        vkFilledQuad = vulkanInstance.createQuad3D(vertices, fill);
+        this.associateVulkanComponent(vkFilledQuad);
     }
 }

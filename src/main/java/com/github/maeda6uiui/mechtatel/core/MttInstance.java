@@ -402,24 +402,26 @@ class MttInstance {
         return lineSet;
     }
 
-    public MttFilledQuad3D createFilledQuad3D(MttVertex3D v1, MttVertex3D v2, MttVertex3D v3, MttVertex3D v4) {
-        var filledQuad = new MttFilledQuad3D(vulkanInstance, v1, v2, v3, v4);
-        return filledQuad;
+    public MttQuad3D createQuad3D(MttVertex3D v1, MttVertex3D v2, MttVertex3D v3, MttVertex3D v4, boolean fill) {
+        var quad = new MttQuad3D(vulkanInstance, v1, v2, v3, v4, fill);
+        return quad;
     }
 
-    public MttFilledQuad2D createFilledQuad2D(MttVertex2D p1, MttVertex2D p2, MttVertex2D p3, MttVertex2D p4, float z) {
-        var filledQuad = new MttFilledQuad2D(vulkanInstance, p1, p2, p3, p4, z);
-        return filledQuad;
+    public MttQuad2D createQuad2D(MttVertex2D p1, MttVertex2D p2, MttVertex2D p3, MttVertex2D p4, float z, boolean fill) {
+        var quad = new MttQuad2D(vulkanInstance, p1, p2, p3, p4, z, fill);
+        return quad;
     }
 
-    public MttFilledQuad2D createFilledQuad2D(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4, float z, Vector4fc color) {
-        var filledQuad = new MttFilledQuad2D(vulkanInstance, p1, p2, p3, p4, z, color);
-        return filledQuad;
+    public MttQuad2D createQuad2D(
+            Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4,
+            float z, boolean fill, Vector4fc color) {
+        var quad = new MttQuad2D(vulkanInstance, p1, p2, p3, p4, z, fill, color);
+        return quad;
     }
 
-    public MttFilledQuad2D createFilledQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, Vector4fc color) {
-        var filledQuad = new MttFilledQuad2D(vulkanInstance, topLeft, bottomRight, z, color);
-        return filledQuad;
+    public MttQuad2D createQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, boolean fill, Vector4fc color) {
+        var quad = new MttQuad2D(vulkanInstance, topLeft, bottomRight, z, fill, color);
+        return quad;
     }
 
     public MttTexturedQuad3D createTexturedQuad3D(
@@ -503,31 +505,6 @@ class MttInstance {
     public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, MttTexture texture) {
         var texturedQuadSet = new MttTexturedQuad2DSingleTextureSet(vulkanInstance, screenName, texture);
         return texturedQuadSet;
-    }
-
-    public MttQuad2D createQuad2D(MttVertex2D v1, MttVertex2D v2, MttVertex2D v3, MttVertex2D v4, float z) {
-        var quad = new MttQuad2D(vulkanInstance, v1, v2, v3, v4, z);
-        return quad;
-    }
-
-    public MttQuad2D createQuad2D(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4, float z, Vector4fc color) {
-        var quad = new MttQuad2D(vulkanInstance, p1, p2, p3, p4, z, color);
-        return quad;
-    }
-
-    public MttQuad2D createQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, Vector4fc color) {
-        var quad = new MttQuad2D(vulkanInstance, topLeft, bottomRight, z, color);
-        return quad;
-    }
-
-    public MttQuad3D createQuad3D(MttVertex3D v1, MttVertex3D v2, MttVertex3D v3, MttVertex3D v4) {
-        var quad = new MttQuad3D(vulkanInstance, v1, v2, v3, v4);
-        return quad;
-    }
-
-    public MttQuad3D createQuad3D(Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, Vector4fc color) {
-        var quad = new MttQuad3D(vulkanInstance, p1, p2, p3, p4, color);
-        return quad;
     }
 
     public MttBox3D createBox3D(float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
@@ -732,31 +709,6 @@ class MttInstance {
     public PhysicalPlane3D createPhysicalPlane3D(Vector3fc normal, float constant) {
         var physicalPlane = new PhysicalPlane3D(normal, constant);
         physicalObjects.add(physicalPlane);
-
-        return physicalPlane;
-    }
-
-    public PhysicalPlane3D createPhysicalPlane3DWithComponent(
-            Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, Vector4fc color) {
-        var edge1 = new Vector3f();
-        var edge2 = new Vector3f();
-        p2.sub(p1, edge1);
-        p4.sub(p1, edge2);
-
-        var normal = edge1.cross(edge2).normalize();
-
-        var center = new Vector3f();
-        center.x = (p1.x() + p2.x() + p3.x() + p4.x()) / 4.0f;
-        center.y = (p1.y() + p2.y() + p3.y() + p4.y()) / 4.0f;
-        center.z = (p1.z() + p2.z() + p3.z() + p4.z()) / 4.0f;
-
-        float constant = center.length();
-
-        var physicalPlane = new PhysicalPlane3D(normal, constant);
-        physicalObjects.add(physicalPlane);
-
-        var quad = new MttQuad3D(vulkanInstance, p1, p2, p3, p4, color);
-        physicalPlane.setComponent(quad);
 
         return physicalPlane;
     }

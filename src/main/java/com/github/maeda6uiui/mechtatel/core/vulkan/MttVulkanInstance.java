@@ -569,8 +569,8 @@ public class MttVulkanInstance
         return lineSet;
     }
 
-    public VkMttFilledQuad3D createFilledQuad3D(List<MttVertex3D> vertices) {
-        var filledQuad = new VkMttFilledQuad3D(device, commandPool, graphicsQueue, vertices);
+    public VkMttQuad3D createQuad3D(List<MttVertex3D> vertices, boolean fill) {
+        var filledQuad = new VkMttQuad3D(device, commandPool, graphicsQueue, vertices, fill);
         components.add(filledQuad);
 
         return filledQuad;

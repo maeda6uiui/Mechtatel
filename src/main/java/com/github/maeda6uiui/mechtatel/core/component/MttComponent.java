@@ -84,8 +84,8 @@ public class MttComponent {
         vkComponent.reset();
     }
 
-    public boolean isCastShadow() {
-        return vkComponent.isCastShadow();
+    public boolean shouldCastShadow() {
+        return vkComponent.shouldCastShadow();
     }
 
     public void setCastShadow(boolean castShadow) {

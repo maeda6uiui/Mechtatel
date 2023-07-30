@@ -96,7 +96,7 @@ public class VkMttComponent implements Comparable<VkMttComponent> {
         this.mat.identity();
     }
 
-    public boolean isCastShadow() {
+    public boolean shouldCastShadow() {
         return castShadow;
     }
 

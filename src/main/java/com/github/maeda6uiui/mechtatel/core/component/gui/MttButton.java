@@ -2,11 +2,13 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 
 import com.github.maeda6uiui.mechtatel.core.component.MttFont;
-import com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils;
+import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import org.joml.Vector2f;
 
 import java.awt.*;
+
+import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJavaColorToJOMLVector4f;
 
 /**
  * Button
@@ -36,7 +38,8 @@ public class MttButton extends MttGuiComponent {
                 new Vector2f(x, y),
                 new Vector2f(x + width, y + height),
                 0.0f,
-                ClassConversionUtils.convertJavaColorToJOMLVector4f(frameColor)
+                false,
+                convertJavaColorToJOMLVector4f(frameColor)
         );
 
         font = new MttFont(vulkanInstance, "default", new Font(

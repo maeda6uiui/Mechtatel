@@ -40,6 +40,7 @@ public class MttVerticalScrollbar extends MttGuiComponent {
                 new Vector2f(x, y),
                 new Vector2f(x + width, y + height),
                 0.0f,
+                false,
                 convertJavaColorToJOMLVector4f(frameColor)
         );
         grabFrame = new MttQuad2D(
@@ -47,6 +48,7 @@ public class MttVerticalScrollbar extends MttGuiComponent {
                 new Vector2f(x, y),
                 new Vector2f(x + width, y + grabHeight),
                 0.01f,
+                true,
                 convertJavaColorToJOMLVector4f(grabFrameColor)
         );
 

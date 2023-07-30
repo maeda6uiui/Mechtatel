@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.component.MttLine2D;
+import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.KeyInterpreter;
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
@@ -79,6 +80,7 @@ public class MttTextbox extends MttGuiComponent {
                 new Vector2f(x, y),
                 new Vector2f(x + width, y + height),
                 0.0f,
+                false,
                 convertJavaColorToJOMLVector4f(frameColor)
         );
 

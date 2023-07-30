@@ -32,6 +32,7 @@ public class MttFont extends MttComponent {
         super(vulkanInstance);
 
         vkMttFont = vulkanInstance.createFont(screenName, font, antiAlias, fontColor, requiredChars);
+        vkMttFont.setTwoDComponent(true);
         this.associateVulkanComponent(vkMttFont);
     }
 

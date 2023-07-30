@@ -38,6 +38,7 @@ public class MttQuad2D extends MttComponent {
         vertices.add(v4);
 
         vkQuad = vulkanInstance.createQuad(vertices, fill);
+        vkQuad.setTwoDComponent(true);
         this.associateVulkanComponent(vkQuad);
     }
 
@@ -64,6 +65,7 @@ public class MttQuad2D extends MttComponent {
         vertices.add(v4);
 
         vkQuad = vulkanInstance.createQuad(vertices, fill);
+        vkQuad.setTwoDComponent(true);
         this.associateVulkanComponent(vkQuad);
     }
 
@@ -88,6 +90,7 @@ public class MttQuad2D extends MttComponent {
         vertices.add(v4);
 
         vkQuad = vulkanInstance.createQuad(vertices, fill);
+        vkQuad.setTwoDComponent(true);
         this.associateVulkanComponent(vkQuad);
     }
 }

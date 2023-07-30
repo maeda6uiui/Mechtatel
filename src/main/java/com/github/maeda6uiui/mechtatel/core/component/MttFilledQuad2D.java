@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttFilledQuad2D;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttFilledQuad3D;
 import org.joml.Vector2fc;
 import org.joml.Vector3f;
 import org.joml.Vector4fc;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * @author maeda6uiui
  */
 public class MttFilledQuad2D extends MttComponent {
-    private VkMttFilledQuad2D vkFilledQuad;
+    private VkMttFilledQuad3D vkFilledQuad;
 
     public MttFilledQuad2D(
             MttVulkanInstance vulkanInstance,
@@ -36,7 +36,7 @@ public class MttFilledQuad2D extends MttComponent {
         vertices.add(v3);
         vertices.add(v4);
 
-        vkFilledQuad = vulkanInstance.createFilledQuad2D(vertices);
+        vkFilledQuad = vulkanInstance.createFilledQuad3D(vertices);
         this.associateVulkanComponent(vkFilledQuad);
     }
 
@@ -61,7 +61,7 @@ public class MttFilledQuad2D extends MttComponent {
         vertices.add(v3);
         vertices.add(v4);
 
-        vkFilledQuad = vulkanInstance.createFilledQuad2D(vertices);
+        vkFilledQuad = vulkanInstance.createFilledQuad3D(vertices);
         this.associateVulkanComponent(vkFilledQuad);
     }
 
@@ -84,7 +84,7 @@ public class MttFilledQuad2D extends MttComponent {
         vertices.add(v3);
         vertices.add(v4);
 
-        vkFilledQuad = vulkanInstance.createFilledQuad2D(vertices);
+        vkFilledQuad = vulkanInstance.createFilledQuad3D(vertices);
         this.associateVulkanComponent(vkFilledQuad);
     }
 }

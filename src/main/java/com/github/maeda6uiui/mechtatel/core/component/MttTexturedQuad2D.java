@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.component;
 
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttTexturedQuad2D;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttTexturedQuad3D;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.List;
  * @author maeda6uiui
  */
 public class MttTexturedQuad2D extends MttComponent {
-    private VkMttTexturedQuad2D vkTexturedQuad;
+    private VkMttTexturedQuad3D vkTexturedQuad;
 
     private List<MttVertex3DUV> createVertices(MttVertex2DUV p1, MttVertex2DUV p2, MttVertex2DUV p3, MttVertex2DUV p4, float z) {
         var v1 = new MttVertex3DUV(new Vector3f(p1.pos.x(), p1.pos.y(), z), p1.color, p1.texCoords);
@@ -35,6 +35,7 @@ public class MttTexturedQuad2D extends MttComponent {
             MttVulkanInstance vulkanInstance,
             String screenName,
             String textureFilepath,
+            boolean generateMipmaps,
             MttVertex2DUV p1,
             MttVertex2DUV p2,
             MttVertex2DUV p3,
@@ -43,7 +44,7 @@ public class MttTexturedQuad2D extends MttComponent {
         super(vulkanInstance);
 
         var vertices = this.createVertices(p1, p2, p3, p4, z);
-        vkTexturedQuad = vulkanInstance.createTexturedQuad2D(screenName, textureFilepath, vertices);
+        vkTexturedQuad = vulkanInstance.createTexturedQuad3D(screenName, textureFilepath, generateMipmaps, vertices);
         this.associateVulkanComponent(vkTexturedQuad);
     }
 
@@ -59,7 +60,7 @@ public class MttTexturedQuad2D extends MttComponent {
         super(vulkanInstance);
 
         var vertices = this.createVertices(p1, p2, p3, p4, z);
-        vkTexturedQuad = vulkanInstance.createTexturedQuad2D(screenName, texture.getVulkanTexture(), vertices);
+        vkTexturedQuad = vulkanInstance.createTexturedQuad3D(screenName, texture.getVulkanTexture(), vertices);
         this.associateVulkanComponent(vkTexturedQuad);
     }
 
@@ -74,7 +75,7 @@ public class MttTexturedQuad2D extends MttComponent {
         super(vulkanInstance);
 
         var vertices = this.createVertices(p1, p2, p3, p4, z);
-        vkTexturedQuad = vulkanInstance.duplicateTexturedQuad2D(srcQuad.vkTexturedQuad, vertices);
+        vkTexturedQuad = vulkanInstance.duplicateTexturedQuad3D(srcQuad.vkTexturedQuad, vertices);
         this.associateVulkanComponent(vkTexturedQuad);
     }
 

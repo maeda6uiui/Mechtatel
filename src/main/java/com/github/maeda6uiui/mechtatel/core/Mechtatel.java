@@ -312,7 +312,13 @@ public class Mechtatel
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
-            String screenName, String textureFilepath, MttVertex2DUV p1, MttVertex2DUV p2, MttVertex2DUV p3, MttVertex2DUV p4, float z) {
+            String screenName,
+            String textureFilepath,
+            MttVertex2DUV p1,
+            MttVertex2DUV p2,
+            MttVertex2DUV p3,
+            MttVertex2DUV p4,
+            float z) {
         return instance.createTexturedQuad2D(screenName, textureFilepath, p1, p2, p3, p4, z);
     }
 

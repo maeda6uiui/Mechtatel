@@ -576,13 +576,6 @@ public class MttVulkanInstance
         return filledQuad;
     }
 
-    public VkMttFilledQuad2D createFilledQuad2D(List<MttVertex3D> vertices) {
-        var filledQuad = new VkMttFilledQuad2D(device, commandPool, graphicsQueue, vertices);
-        components.add(filledQuad);
-
-        return filledQuad;
-    }
-
     public VkMttTexturedQuad3D createTexturedQuad3D(
             String screenName, String textureFilepath, boolean generateMipmaps, List<MttVertex3DUV> vertices) {
         VkMttScreen screen = screens.get(screenName);
@@ -615,47 +608,6 @@ public class MttVulkanInstance
 
     public VkMttTexturedQuad3D duplicateTexturedQuad3D(VkMttTexturedQuad3D srcQuad, List<MttVertex3DUV> vertices) {
         var texturedQuad = new VkMttTexturedQuad3D(
-                device,
-                commandPool,
-                graphicsQueue,
-                srcQuad,
-                vertices);
-        components.add(texturedQuad);
-
-        return texturedQuad;
-    }
-
-    public VkMttTexturedQuad2D createTexturedQuad2D(String screenName, String textureFilepath, List<MttVertex3DUV> vertices) {
-        VkMttScreen screen = screens.get(screenName);
-
-        var texturedQuad = new VkMttTexturedQuad2D(
-                device,
-                commandPool,
-                graphicsQueue,
-                screen,
-                textureFilepath,
-                false,
-                vertices);
-        components.add(texturedQuad);
-
-        return texturedQuad;
-    }
-
-    public VkMttTexturedQuad2D createTexturedQuad2D(String screenName, VkMttTexture texture, List<MttVertex3DUV> vertices) {
-        var texturedQuad = new VkMttTexturedQuad2D(
-                device,
-                commandPool,
-                graphicsQueue,
-                screenName,
-                texture,
-                vertices);
-        components.add(texturedQuad);
-
-        return texturedQuad;
-    }
-
-    public VkMttTexturedQuad2D duplicateTexturedQuad2D(VkMttTexturedQuad2D srcQuad, List<MttVertex3DUV> vertices) {
-        var texturedQuad = new VkMttTexturedQuad2D(
                 device,
                 commandPool,
                 graphicsQueue,

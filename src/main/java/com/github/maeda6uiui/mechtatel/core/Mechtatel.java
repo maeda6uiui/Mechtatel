@@ -535,22 +535,13 @@ public class Mechtatel
     public PhysicalPlane3D createPhysicalPlane3D(Vector3fc normal, float constant) {
         return instance.createPhysicalPlane3D(normal, constant);
     }
-    
+
     public PhysicalSphere3D createPhysicalSphere3D(float radius, float mass) {
         return instance.createPhysicalSphere3D(radius, mass);
     }
 
-    public PhysicalSphere3D createPhysicalSphere3DWithComponent(
-            float radius, float mass, int numVDivs, int numHDivs, Vector4fc color) {
-        return instance.createPhysicalSphere3DWithComponent(radius, mass, numVDivs, numHDivs, color);
-    }
-
     public PhysicalCapsule3D createPhysicalCapsule3D(float radius, float height, float mass) {
         return instance.createPhysicalCapsule3D(radius, height, mass);
-    }
-
-    public PhysicalCapsule3D createPhysicalCapsule3DWithComponent(float radius, float height, float mass, int numVDivs, int numHDivs, Vector4fc color) {
-        return instance.createPhysicalCapsule3DWithComponent(radius, height, mass, numVDivs, numHDivs, color);
     }
 
     public PhysicalBox3D createPhysicalBox3D(float xHalfExtent, float yHalfExtent, float zHalfExtent, float mass) {
@@ -560,15 +551,7 @@ public class Mechtatel
     public PhysicalBox3D createPhysicalBox3D(float halfExtent, float mass) {
         return instance.createPhysicalBox3D(halfExtent, mass);
     }
-
-    public PhysicalBox3D createPhysicalBox3DWithComponent(float xHalfExtent, float yHalfExtent, float zHalfExtent, float mass, Vector4fc color) {
-        return instance.createPhysicalBox3DWithComponent(xHalfExtent, yHalfExtent, zHalfExtent, mass, color);
-    }
-
-    public PhysicalBox3D createPhysicalBox3DWithComponent(float halfExtent, float mass, Vector4fc color) {
-        return instance.createPhysicalBox3DWithComponent(halfExtent, mass, color);
-    }
-
+    
     public PhysicalMesh3D createPhysicalMesh3D(MttModel3D model, float mass) {
         return instance.createPhysicalMesh3D(model, mass);
     }

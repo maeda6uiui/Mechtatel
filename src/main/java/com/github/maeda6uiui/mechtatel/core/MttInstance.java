@@ -17,7 +17,6 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 import com.jme3.system.NativeLibraryLoader;
 import org.joml.Vector2fc;
-import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
 import org.lwjgl.openal.AL;
@@ -720,30 +719,9 @@ class MttInstance {
         return physicalSphere;
     }
 
-    public PhysicalSphere3D createPhysicalSphere3DWithComponent(
-            float radius, float mass, int numVDivs, int numHDivs, Vector4fc color) {
-        var physicalSphere = new PhysicalSphere3D(radius, mass);
-        physicalObjects.add(physicalSphere);
-
-        var sphere = new MttSphere3D(vulkanInstance, new Vector3f(0.0f, 0.0f, 0.0f), radius, numVDivs, numHDivs, color);
-        physicalSphere.setComponent(sphere);
-
-        return physicalSphere;
-    }
-
     public PhysicalCapsule3D createPhysicalCapsule3D(float radius, float height, float mass) {
         var physicalCapsule = new PhysicalCapsule3D(radius, height, mass);
         physicalObjects.add(physicalCapsule);
-
-        return physicalCapsule;
-    }
-
-    public PhysicalCapsule3D createPhysicalCapsule3DWithComponent(float radius, float height, float mass, int numVDivs, int numHDivs, Vector4fc color) {
-        var physicalCapsule = new PhysicalCapsule3D(radius, height, mass);
-        physicalObjects.add(physicalCapsule);
-
-        var capsule = new MttCapsule3D(vulkanInstance, new Vector3f(0.0f, 0.0f, 0.0f), height, radius, numVDivs, numHDivs, color);
-        physicalCapsule.setComponent(capsule);
 
         return physicalCapsule;
     }
@@ -757,20 +735,6 @@ class MttInstance {
 
     public PhysicalBox3D createPhysicalBox3D(float halfExtent, float mass) {
         return this.createPhysicalBox3D(halfExtent, halfExtent, halfExtent, mass);
-    }
-
-    public PhysicalBox3D createPhysicalBox3DWithComponent(float xHalfExtent, float yHalfExtent, float zHalfExtent, float mass, Vector4fc color) {
-        var physicalBox = new PhysicalBox3D(xHalfExtent, yHalfExtent, zHalfExtent, mass);
-        physicalObjects.add(physicalBox);
-
-        var box = new MttBox3D(vulkanInstance, xHalfExtent, yHalfExtent, zHalfExtent, color);
-        physicalBox.setComponent(box);
-
-        return physicalBox;
-    }
-
-    public PhysicalBox3D createPhysicalBox3DWithComponent(float halfExtent, float mass, Vector4fc color) {
-        return this.createPhysicalBox3DWithComponent(halfExtent, halfExtent, halfExtent, mass, color);
     }
 
     public PhysicalMesh3D createPhysicalMesh3D(MttModel3D model, float mass) {

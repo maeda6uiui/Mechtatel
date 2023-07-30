@@ -20,11 +20,11 @@ import java.util.List;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Set of 2D textured quadrangles with a single texture
+ * Set of textured quadrangles with a single texture
  *
  * @author maeda6uiui
  */
-public class VkMttTexturedQuad2DSingleTextureSet extends VkMttComponent {
+public class VkMttTexturedQuadSingleTextureSet extends VkMttComponent {
     private VkDevice device;
     private long commandPool;
     private VkQueue graphicsQueue;
@@ -39,7 +39,7 @@ public class VkMttTexturedQuad2DSingleTextureSet extends VkMttComponent {
     private boolean bufferCreated;
     private boolean isExternalTexture;
 
-    public VkMttTexturedQuad2DSingleTextureSet(
+    public VkMttTexturedQuadSingleTextureSet(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -63,10 +63,9 @@ public class VkMttTexturedQuad2DSingleTextureSet extends VkMttComponent {
 
         this.setComponentType("gbuffer");
         this.setScreenName(screen.getScreenName());
-        this.setTwoDComponent(true);
     }
 
-    public VkMttTexturedQuad2DSingleTextureSet(
+    public VkMttTexturedQuadSingleTextureSet(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,

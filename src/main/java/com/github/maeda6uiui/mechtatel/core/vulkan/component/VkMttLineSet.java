@@ -16,11 +16,11 @@ import java.util.List;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Set of 3D lines
+ * Set of lines
  *
  * @author maeda6uiui
  */
-public class VkMttLine3DSet extends VkMttComponent {
+public class VkMttLineSet extends VkMttComponent {
     private VkDevice device;
     private long commandPool;
     private VkQueue graphicsQueue;
@@ -31,7 +31,7 @@ public class VkMttLine3DSet extends VkMttComponent {
     private long vertexBufferMemory;
     private boolean bufferCreated;
 
-    public VkMttLine3DSet(VkDevice device, long commandPool, VkQueue graphicsQueue) {
+    public VkMttLineSet(VkDevice device, long commandPool, VkQueue graphicsQueue) {
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;

@@ -495,10 +495,10 @@ public class MttVulkanInstance
         Collections.sort(components);
     }
 
-    public VkMttModel3D createModel3D(String screenName, String modelFilepath) throws IOException {
+    public VkMttModel createModel3D(String screenName, String modelFilepath) throws IOException {
         VkMttScreen screen = screens.get(screenName);
 
-        var model = new VkMttModel3D(
+        var model = new VkMttModel(
                 device,
                 commandPool,
                 graphicsQueue,
@@ -509,64 +509,64 @@ public class MttVulkanInstance
         return model;
     }
 
-    public VkMttModel3D duplicateModel3D(VkMttModel3D srcModel) {
-        var model = new VkMttModel3D(device, commandPool, graphicsQueue, srcModel);
+    public VkMttModel duplicateModel3D(VkMttModel srcModel) {
+        var model = new VkMttModel(device, commandPool, graphicsQueue, srcModel);
         components.add(model);
 
         return model;
     }
 
-    public VkMttLine3D createLine3D(MttVertex3D v1, MttVertex3D v2) {
-        var line = new VkMttLine3D(device, commandPool, graphicsQueue, v1, v2);
+    public VkMttLine createLine3D(MttVertex3D v1, MttVertex3D v2) {
+        var line = new VkMttLine(device, commandPool, graphicsQueue, v1, v2);
         components.add(line);
 
         return line;
     }
 
-    public VkMttLine3DSet createLine3DSet() {
-        var lineSet = new VkMttLine3DSet(device, commandPool, graphicsQueue);
+    public VkMttLineSet createLine3DSet() {
+        var lineSet = new VkMttLineSet(device, commandPool, graphicsQueue);
         components.add(lineSet);
 
         return lineSet;
     }
 
-    public VkMttSphere3D createSphere3D(
+    public VkMttSphere createSphere3D(
             Vector3fc center,
             float radius,
             int numVDivs,
             int numHDivs,
             Vector4fc color) {
-        var sphere = new VkMttSphere3D(device, commandPool, graphicsQueue, center, radius, numVDivs, numHDivs, color);
+        var sphere = new VkMttSphere(device, commandPool, graphicsQueue, center, radius, numVDivs, numHDivs, color);
         components.add(sphere);
 
         return sphere;
     }
 
-    public VkMttCapsule3D createCapsule3D(
+    public VkMttCapsule createCapsule3D(
             Vector3fc center,
             float length,
             float radius,
             int numVDivs,
             int numHDivs,
             Vector4fc color) {
-        var capsule = new VkMttCapsule3D(device, commandPool, graphicsQueue, center, length, radius, numVDivs, numHDivs, color);
+        var capsule = new VkMttCapsule(device, commandPool, graphicsQueue, center, length, radius, numVDivs, numHDivs, color);
         components.add(capsule);
 
         return capsule;
     }
 
-    public VkMttQuad3D createQuad3D(List<MttVertex3D> vertices, boolean fill) {
-        var filledQuad = new VkMttQuad3D(device, commandPool, graphicsQueue, vertices, fill);
+    public VkMttQuad createQuad3D(List<MttVertex3D> vertices, boolean fill) {
+        var filledQuad = new VkMttQuad(device, commandPool, graphicsQueue, vertices, fill);
         components.add(filledQuad);
 
         return filledQuad;
     }
 
-    public VkMttTexturedQuad3D createTexturedQuad3D(
+    public VkMttTexturedQuad createTexturedQuad3D(
             String screenName, String textureFilepath, boolean generateMipmaps, List<MttVertex3DUV> vertices) {
         VkMttScreen screen = screens.get(screenName);
 
-        var texturedQuad = new VkMttTexturedQuad3D(
+        var texturedQuad = new VkMttTexturedQuad(
                 device,
                 commandPool,
                 graphicsQueue,
@@ -579,8 +579,8 @@ public class MttVulkanInstance
         return texturedQuad;
     }
 
-    public VkMttTexturedQuad3D createTexturedQuad3D(String screenName, VkMttTexture texture, List<MttVertex3DUV> vertices) {
-        var texturedQuad = new VkMttTexturedQuad3D(
+    public VkMttTexturedQuad createTexturedQuad3D(String screenName, VkMttTexture texture, List<MttVertex3DUV> vertices) {
+        var texturedQuad = new VkMttTexturedQuad(
                 device,
                 commandPool,
                 graphicsQueue,
@@ -592,8 +592,8 @@ public class MttVulkanInstance
         return texturedQuad;
     }
 
-    public VkMttTexturedQuad3D duplicateTexturedQuad3D(VkMttTexturedQuad3D srcQuad, List<MttVertex3DUV> vertices) {
-        var texturedQuad = new VkMttTexturedQuad3D(
+    public VkMttTexturedQuad duplicateTexturedQuad3D(VkMttTexturedQuad srcQuad, List<MttVertex3DUV> vertices) {
+        var texturedQuad = new VkMttTexturedQuad(
                 device,
                 commandPool,
                 graphicsQueue,
@@ -604,18 +604,18 @@ public class MttVulkanInstance
         return texturedQuad;
     }
 
-    public VkMttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, VkMttTexture texture) {
-        var texturedQuadSet = new VkMttTexturedQuad2DSingleTextureSet(
+    public VkMttTexturedQuadSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, VkMttTexture texture) {
+        var texturedQuadSet = new VkMttTexturedQuadSingleTextureSet(
                 device, commandPool, graphicsQueue, screenName, texture);
         components.add(texturedQuadSet);
 
         return texturedQuadSet;
     }
 
-    public VkMttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, String textureFilepath) {
+    public VkMttTexturedQuadSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, String textureFilepath) {
         VkMttScreen screen = screens.get(screenName);
 
-        var texturedQuadSet = new VkMttTexturedQuad2DSingleTextureSet(
+        var texturedQuadSet = new VkMttTexturedQuadSingleTextureSet(
                 device,
                 commandPool,
                 graphicsQueue,

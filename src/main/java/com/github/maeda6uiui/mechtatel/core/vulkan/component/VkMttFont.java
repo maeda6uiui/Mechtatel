@@ -28,7 +28,7 @@ public class VkMttFont extends VkMttComponent {
 
     private Map<Character, Glyph> glyphs;
     private VkMttTexture texture;
-    private VkMttTexturedQuad2DSingleTextureSet vkQuadSet;
+    private VkMttTexturedQuadSingleTextureSet vkQuadSet;
     private int imageWidth;
     private int imageHeight;
 
@@ -52,7 +52,7 @@ public class VkMttFont extends VkMttComponent {
                 fontColor,
                 requiredChars
         );
-        vkQuadSet = new VkMttTexturedQuad2DSingleTextureSet(
+        vkQuadSet = new VkMttTexturedQuadSingleTextureSet(
                 device,
                 commandPool,
                 graphicsQueue,

@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttQuad3D;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttQuad;
 import org.joml.Vector2fc;
 import org.joml.Vector3f;
 import org.joml.Vector4fc;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * @author maeda6uiui
  */
 public class MttQuad2D extends MttComponent {
-    private VkMttQuad3D vkQuad;
+    private VkMttQuad vkQuad;
 
     public MttQuad2D(
             MttVulkanInstance vulkanInstance,

@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttSphere3D;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttSphere;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
 
@@ -11,7 +11,7 @@ import org.joml.Vector4fc;
  * @author maeda6uiui
  */
 public class MttSphere3D extends MttComponent {
-    private VkMttSphere3D vkSphere;
+    private VkMttSphere vkSphere;
 
     public MttSphere3D(
             MttVulkanInstance vulkanInstance,

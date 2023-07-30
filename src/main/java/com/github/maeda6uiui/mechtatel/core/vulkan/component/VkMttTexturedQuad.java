@@ -17,11 +17,11 @@ import java.util.List;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * 3D textured quadrangle
+ * Textured quadrangle
  *
  * @author maeda6uiui
  */
-public class VkMttTexturedQuad3D extends VkMttComponent {
+public class VkMttTexturedQuad extends VkMttComponent {
     private VkDevice device;
 
     private boolean isExternalTexture;
@@ -58,7 +58,7 @@ public class VkMttTexturedQuad3D extends VkMttComponent {
         indexBufferMemory = bufferInfo.bufferMemory;
     }
 
-    public VkMttTexturedQuad3D(
+    public VkMttTexturedQuad(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -83,11 +83,11 @@ public class VkMttTexturedQuad3D extends VkMttComponent {
         this.setScreenName(screen.getScreenName());
     }
 
-    public VkMttTexturedQuad3D(
+    public VkMttTexturedQuad(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            VkMttTexturedQuad3D srcQuad,
+            VkMttTexturedQuad srcQuad,
             List<MttVertex3DUV> vertices) {
         this.device = device;
 
@@ -100,7 +100,7 @@ public class VkMttTexturedQuad3D extends VkMttComponent {
         this.setScreenName(srcQuad.getScreenName());
     }
 
-    public VkMttTexturedQuad3D(
+    public VkMttTexturedQuad(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,

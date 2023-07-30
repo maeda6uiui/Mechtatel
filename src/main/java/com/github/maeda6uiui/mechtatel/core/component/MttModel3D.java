@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.component;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttModel3D;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttModel;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.Set;
  */
 public class MttModel3D extends MttComponent {
     private String modelFilepath;
-    private VkMttModel3D vkModel;
+    private VkMttModel vkModel;
 
     public MttModel3D(MttVulkanInstance vulkanInstance, String screenName, String modelFilepath) throws IOException {
         super(vulkanInstance);

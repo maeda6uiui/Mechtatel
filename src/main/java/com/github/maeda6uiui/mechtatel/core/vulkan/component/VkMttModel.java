@@ -18,11 +18,11 @@ import java.util.*;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * 3D model
+ * Model
  *
  * @author maeda6uiui
  */
-public class VkMttModel3D extends VkMttComponent {
+public class VkMttModel extends VkMttComponent {
     private VkDevice device;
 
     private boolean isDuplicatedModel;
@@ -98,7 +98,7 @@ public class VkMttModel3D extends VkMttComponent {
         }
     }
 
-    public VkMttModel3D(
+    public VkMttModel(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -123,13 +123,14 @@ public class VkMttModel3D extends VkMttComponent {
 
         this.setComponentType("gbuffer");
         this.setScreenName(screen.getScreenName());
+        this.setCastShadow(true);
     }
 
-    public VkMttModel3D(
+    public VkMttModel(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            VkMttModel3D srcModel) {
+            VkMttModel srcModel) {
         this.device = device;
 
         isDuplicatedModel = true;

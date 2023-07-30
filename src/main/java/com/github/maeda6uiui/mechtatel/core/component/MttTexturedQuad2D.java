@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.component;
 
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttTexturedQuad3D;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttTexturedQuad;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.List;
  * @author maeda6uiui
  */
 public class MttTexturedQuad2D extends MttComponent {
-    private VkMttTexturedQuad3D vkTexturedQuad;
+    private VkMttTexturedQuad vkTexturedQuad;
 
     private List<MttVertex3DUV> createVertices(MttVertex2DUV p1, MttVertex2DUV p2, MttVertex2DUV p3, MttVertex2DUV p4, float z) {
         var v1 = new MttVertex3DUV(new Vector3f(p1.pos.x(), p1.pos.y(), z), p1.color, p1.texCoords);

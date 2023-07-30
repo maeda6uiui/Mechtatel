@@ -14,47 +14,68 @@ import java.util.List;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * 3D line
+ * Quadrangle
  *
  * @author maeda6uiui
  */
-public class VkMttLine3D extends VkMttComponent {
+public class VkMttQuad extends VkMttComponent {
     private VkDevice device;
 
     private long vertexBuffer;
     private long vertexBufferMemory;
+    private long indexBuffer;
+    private long indexBufferMemory;
 
-    private void createBuffer(long commandPool, VkQueue graphicsQueue, List<MttVertex3D> vertices) {
+    private void createBuffers(
+            long commandPool,
+            VkQueue graphicsQueue,
+            List<MttVertex3D> vertices) {
+        if (vertices.size() != 4) {
+            throw new RuntimeException("Number of vertices must be 4");
+        }
+
         BufferCreator.BufferInfo bufferInfo = BufferCreator.createVertexBuffer3D(
-                device,
-                commandPool,
-                graphicsQueue,
-                vertices);
+                device, commandPool, graphicsQueue, vertices);
         vertexBuffer = bufferInfo.buffer;
         vertexBufferMemory = bufferInfo.bufferMemory;
+
+        var indices = new ArrayList<Integer>();
+        indices.add(0);
+        indices.add(1);
+        indices.add(2);
+        indices.add(2);
+        indices.add(3);
+        indices.add(0);
+
+        bufferInfo = BufferCreator.createIndexBuffer(device, commandPool, graphicsQueue, indices);
+        indexBuffer = bufferInfo.buffer;
+        indexBufferMemory = bufferInfo.bufferMemory;
     }
 
-    public VkMttLine3D(
+    public VkMttQuad(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            MttVertex3D v1,
-            MttVertex3D v2) {
+            List<MttVertex3D> vertices,
+            boolean fill) {
         this.device = device;
 
-        var vertices = new ArrayList<MttVertex3D>();
-        vertices.add(v1);
-        vertices.add(v2);
+        this.createBuffers(commandPool, graphicsQueue, vertices);
 
-        this.createBuffer(commandPool, graphicsQueue, vertices);
-
-        this.setComponentType("primitive");
+        if (fill) {
+            this.setComponentType("primitive_fill");
+        } else {
+            this.setComponentType("primitive");
+        }
     }
 
     @Override
     public void cleanup() {
         vkDestroyBuffer(device, vertexBuffer, null);
+        vkDestroyBuffer(device, indexBuffer, null);
+
         vkFreeMemory(device, vertexBufferMemory, null);
+        vkFreeMemory(device, indexBufferMemory, null);
     }
 
     @Override
@@ -68,10 +89,13 @@ public class VkMttLine3D extends VkMttComponent {
             LongBuffer offsets = stack.longs(0);
             vkCmdBindVertexBuffers(commandBuffer, 0, lVertexBuffers, offsets);
 
-            vkCmdDraw(
+            vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+
+            vkCmdDrawIndexed(
                     commandBuffer,
-                    2,
+                    6,
                     1,
+                    0,
                     0,
                     0);
         }

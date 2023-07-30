@@ -20,7 +20,7 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class VkMttCapsule3D extends VkMttComponent {
+public class VkMttCapsule extends VkMttComponent {
     private VkDevice device;
 
     private long vertexBuffer;
@@ -52,7 +52,7 @@ public class VkMttCapsule3D extends VkMttComponent {
         indexBufferMemory = bufferInfo.bufferMemory;
     }
 
-    public VkMttCapsule3D(
+    public VkMttCapsule(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,

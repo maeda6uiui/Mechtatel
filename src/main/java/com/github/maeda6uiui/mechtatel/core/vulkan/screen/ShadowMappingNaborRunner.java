@@ -76,7 +76,7 @@ public class ShadowMappingNaborRunner {
                     if (component.isTwoDComponent()) {
                         continue;
                     }
-                    if (!((VkMttComponent3D) component).isCastShadow()) {
+                    if (component.isCastShadow()) {
                         continue;
                     }
 

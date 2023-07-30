@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.physics;
 
+import com.github.maeda6uiui.mechtatel.core.component.MttComponent;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;
@@ -19,7 +20,7 @@ public class PhysicalObject3D {
     private CollisionShape shape;
     private PhysicsRigidBody body;
 
-    private MttComponent3D component;
+    private MttComponent component;
     private Matrix4f transRotMat;
 
     static {
@@ -65,7 +66,7 @@ public class PhysicalObject3D {
         return body;
     }
 
-    public void setComponent(MttComponent3D component) {
+    public void setComponent(MttComponent component) {
         this.component = component;
     }
 

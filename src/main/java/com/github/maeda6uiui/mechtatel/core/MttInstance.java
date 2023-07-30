@@ -10,7 +10,7 @@ import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.physics.*;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
-import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
+import com.github.maeda6uiui.mechtatel.core.sound.MttSound;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
@@ -69,7 +69,7 @@ class MttInstance {
 
     private Map<String, MttAnimation> animations;
 
-    private List<Sound3D> sounds3D;
+    private List<MttSound> sounds3D;
 
     private void framebufferResizeCallback(long window, int width, int height) {
         mtt.reshape(width, height);
@@ -758,21 +758,21 @@ class MttInstance {
         this.physicsSimulationTimeScale = physicsSimulationTimeScale;
     }
 
-    public Sound3D createSound3D(String filepath, boolean loop, boolean relative) throws IOException {
-        var sound = new Sound3D(filepath, loop, relative);
+    public MttSound createSound(String filepath, boolean loop, boolean relative) throws IOException {
+        var sound = new MttSound(filepath, loop, relative);
         sounds3D.add(sound);
 
         return sound;
     }
 
-    public Sound3D duplicateSound3D(Sound3D srcSound, boolean loop, boolean relative) {
-        var sound = new Sound3D(srcSound, loop, relative);
+    public MttSound duplicateSound(MttSound srcSound, boolean loop, boolean relative) {
+        var sound = new MttSound(srcSound, loop, relative);
         sounds3D.add(sound);
 
         return sound;
     }
 
-    public boolean removeSound3D(Sound3D sound) {
+    public boolean removeSound(MttSound sound) {
         if (sounds3D.contains(sound)) {
             sound.cleanup();
             sounds3D.remove(sound);

@@ -6,24 +6,24 @@ import java.io.IOException;
 
 /**
  * 3D sound
- * 3D functionalities are supposed to work only when you load a monaural sound
+ * 3D functionalities are supposed to work only when you load a monaural sound.
  *
  * @author maeda6uiui
  */
-public class Sound3D {
+public class MttSound {
     private SoundBuffer buffer;
     private SoundSource source;
     private boolean isDuplicatedSound;
     private boolean isCleanedUp;
 
-    public Sound3D(String filepath, boolean loop, boolean relative) throws IOException {
+    public MttSound(String filepath, boolean loop, boolean relative) throws IOException {
         buffer = new SoundBuffer(filepath);
         source = new SoundSource(buffer, loop, relative);
         isDuplicatedSound = false;
         isCleanedUp = false;
     }
 
-    public Sound3D(Sound3D srcSound, boolean loop, boolean relative) {
+    public MttSound(MttSound srcSound, boolean loop, boolean relative) {
         buffer = srcSound.buffer;
         source = new SoundSource(buffer, loop, relative);
         isDuplicatedSound = true;

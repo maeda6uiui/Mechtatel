@@ -13,8 +13,8 @@ import java.util.Map;
  *
  * @author maeda6uiui
  */
-public class Sound2D extends StreamPlayer implements StreamPlayerListener {
-    public Sound2D(String soundFilepath) throws StreamPlayerException {
+public class MttSound2D extends StreamPlayer implements StreamPlayerListener {
+    public MttSound2D(String soundFilepath) throws StreamPlayerException {
         addStreamPlayerListener(this);
         open(new File(soundFilepath));
     }

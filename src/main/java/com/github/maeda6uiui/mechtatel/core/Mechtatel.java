@@ -8,7 +8,7 @@ import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.KeyInterp
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.physics.*;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
-import com.github.maeda6uiui.mechtatel.core.sound.Sound3D;
+import com.github.maeda6uiui.mechtatel.core.sound.MttSound;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import org.joml.*;
@@ -563,24 +563,18 @@ public class Mechtatel
         instance.setPhysicsSimulationTimeScale(physicsSimulationTimeScale);
     }
 
-    public Sound3D createSound3D(String filepath, boolean loop, boolean relative) {
-        Sound3D sound;
-        try {
-            sound = instance.createSound3D(filepath, loop, relative);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not load a sound " + filepath);
-        }
-
+    public MttSound createSound(String filepath, boolean loop, boolean relative) throws IOException {
+        MttSound sound = instance.createSound(filepath, loop, relative);
         return sound;
     }
 
-    public Sound3D duplicateSound3D(Sound3D srcSound, boolean loop, boolean relative) {
-        Sound3D sound = instance.duplicateSound3D(srcSound, loop, relative);
+    public MttSound duplicateSound(MttSound srcSound, boolean loop, boolean relative) {
+        MttSound sound = instance.duplicateSound(srcSound, loop, relative);
         return sound;
     }
 
-    public boolean removeSound3D(Sound3D sound) {
-        return instance.removeSound3D(sound);
+    public boolean removeSound(MttSound sound) {
+        return instance.removeSound(sound);
     }
 
     @Override

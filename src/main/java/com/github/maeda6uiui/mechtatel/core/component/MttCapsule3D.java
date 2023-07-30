@@ -10,7 +10,7 @@ import org.joml.Vector4fc;
  *
  * @author maeda6uiui
  */
-public class MttCapsule3D extends MttComponent3D {
+public class MttCapsule3D extends MttComponent {
     private VkMttCapsule3D vkCapsule;
 
     public MttCapsule3D(

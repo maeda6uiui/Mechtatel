@@ -9,7 +9,7 @@ import org.joml.Vector4fc;
  *
  * @author maeda6uiui
  */
-public class MttBox3D extends MttComponent3D {
+public class MttBox3D extends MttComponent {
     private MttLine3DSet lineSet;
 
     private void setupLineSet(float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {

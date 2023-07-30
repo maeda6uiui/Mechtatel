@@ -22,7 +22,7 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class VkMttModel3D extends VkMttComponent3D {
+public class VkMttModel3D extends VkMttComponent {
     private VkDevice device;
 
     private boolean isDuplicatedModel;
@@ -147,6 +147,7 @@ public class VkMttModel3D extends VkMttComponent3D {
 
         this.setComponentType("gbuffer");
         this.setScreenName(srcModel.getScreenName());
+        this.setCastShadow(true);
     }
 
     @Override

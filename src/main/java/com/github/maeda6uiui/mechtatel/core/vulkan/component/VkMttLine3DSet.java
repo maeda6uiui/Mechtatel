@@ -20,7 +20,7 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class VkMttLine3DSet extends VkMttComponent3D {
+public class VkMttLine3DSet extends VkMttComponent {
     private VkDevice device;
     private long commandPool;
     private VkQueue graphicsQueue;

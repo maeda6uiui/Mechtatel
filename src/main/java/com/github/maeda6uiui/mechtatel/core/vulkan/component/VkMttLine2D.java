@@ -49,6 +49,7 @@ public class VkMttLine2D extends VkMttComponent {
         this.createBuffer(commandPool, graphicsQueue, vertices);
 
         this.setComponentType("primitive");
+        this.setTwoDComponent(true);
     }
 
     @Override

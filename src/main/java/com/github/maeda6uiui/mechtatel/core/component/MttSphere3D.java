@@ -10,7 +10,7 @@ import org.joml.Vector4fc;
  *
  * @author maeda6uiui
  */
-public class MttSphere3D extends MttComponent3D {
+public class MttSphere3D extends MttComponent {
     private VkMttSphere3D vkSphere;
 
     public MttSphere3D(

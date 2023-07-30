@@ -63,6 +63,7 @@ public class VkMttTexturedQuad2DSingleTextureSet extends VkMttComponent {
 
         this.setComponentType("gbuffer");
         this.setScreenName(screen.getScreenName());
+        this.setTwoDComponent(true);
     }
 
     public VkMttTexturedQuad2DSingleTextureSet(

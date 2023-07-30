@@ -11,7 +11,7 @@ import java.util.ArrayList;
  *
  * @author maeda6uiui
  */
-public class MttTexturedQuad3D extends MttComponent3D {
+public class MttTexturedQuad3D extends MttComponent {
     private VkMttTexturedQuad3D vkTexturedQuad;
 
     public MttTexturedQuad3D(

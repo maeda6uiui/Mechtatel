@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class VkMttQuad3D extends VkMttComponent3D {
+public class VkMttQuad3D extends VkMttComponent {
     private VkDevice device;
 
     private long vertexBuffer;

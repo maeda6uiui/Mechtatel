@@ -21,7 +21,7 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class VkMttTexturedQuad3D extends VkMttComponent3D {
+public class VkMttTexturedQuad3D extends VkMttComponent {
     private VkDevice device;
 
     private boolean isExternalTexture;

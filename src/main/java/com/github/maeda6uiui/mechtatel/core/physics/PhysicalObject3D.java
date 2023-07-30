@@ -1,6 +1,5 @@
 package com.github.maeda6uiui.mechtatel.core.physics;
 
-import com.github.maeda6uiui.mechtatel.core.component.MttComponent3D;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;

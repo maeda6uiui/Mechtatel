@@ -4,6 +4,8 @@ import com.github.maeda6uiui.mechtatel.core.util.UniversalCounter;
 import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanInstanceForComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent;
 import org.joml.Matrix4fc;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 /**
  * Component
@@ -16,6 +18,8 @@ public class MttComponent {
     private IMttVulkanInstanceForComponent vulkanInstance;
     private VkMttComponent vkComponent;
 
+    private Vector3f scale;
+
     private void setDefaultValues() {
         tag = "Component_" + UniversalCounter.get();
     }
@@ -24,6 +28,8 @@ public class MttComponent {
     public MttComponent(IMttVulkanInstanceForComponent vulkanInstance) {
         this.setDefaultValues();
         this.vulkanInstance = vulkanInstance;
+
+        scale = new Vector3f(1.0f, 1.0f, 1.0f);
     }
 
     protected void associateVulkanComponent(VkMttComponent vkComponent) {
@@ -76,6 +82,56 @@ public class MttComponent {
 
     public void reset() {
         vkComponent.reset();
+    }
+
+    public boolean isCastShadow() {
+        return vkComponent.isCastShadow();
+    }
+
+    public void setCastShadow(boolean castShadow) {
+        vkComponent.setCastShadow(castShadow);
+    }
+
+    public MttComponent translate(Vector3fc v) {
+        vkComponent.translate(v);
+        return this;
+    }
+
+    public MttComponent rotX(float ang) {
+        vkComponent.rotX(ang);
+        return this;
+    }
+
+    public MttComponent rotY(float ang) {
+        vkComponent.rotY(ang);
+        return this;
+    }
+
+    public MttComponent rotZ(float ang) {
+        vkComponent.rotZ(ang);
+        return this;
+    }
+
+    public MttComponent rot(float ang, Vector3fc axis) {
+        vkComponent.rot(ang, axis);
+        return this;
+    }
+
+    public MttComponent rescale(Vector3fc scale) {
+        vkComponent.rescale(scale);
+        this.scale.mul(scale);
+
+        return this;
+    }
+
+    /**
+     * Returns the model scale.
+     * Returned scale is only valid if all rescaling is done via {@link #rescale(Vector3fc)}.
+     *
+     * @return Scale of the model
+     */
+    public Vector3f getScale() {
+        return new Vector3f(scale);
     }
 
     protected IMttVulkanInstanceForComponent getVulkanInstance() {

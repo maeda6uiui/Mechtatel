@@ -10,7 +10,7 @@ import org.joml.Vector4fc;
  *
  * @author maeda6uiui
  */
-public class MttLine3DSet extends MttComponent3D {
+public class MttLine3DSet extends MttComponent {
     private VkMttLine3DSet vkLineSet;
 
     public MttLine3DSet(MttVulkanInstance vulkanInstance) {

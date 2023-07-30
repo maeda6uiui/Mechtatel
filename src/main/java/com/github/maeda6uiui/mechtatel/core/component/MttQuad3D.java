@@ -10,7 +10,7 @@ import java.util.ArrayList;
  *
  * @author maeda6uiui
  */
-public class MttQuad3D extends MttComponent3D {
+public class MttQuad3D extends MttComponent {
     private VkMttQuad3D vkQuad;
 
     public MttQuad3D(

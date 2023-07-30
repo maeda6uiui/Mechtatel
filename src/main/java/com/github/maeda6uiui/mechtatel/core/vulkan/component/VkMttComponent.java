@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
+import org.joml.Vector3fc;
 import org.lwjgl.vulkan.VkCommandBuffer;
 
 /**
@@ -14,6 +15,7 @@ public class VkMttComponent implements Comparable<VkMttComponent> {
     private boolean visible;
     private String componentType;
     private boolean twoDComponent;
+    private boolean castShadow;
     private int drawOrder;
     private String screenName;
 
@@ -21,7 +23,8 @@ public class VkMttComponent implements Comparable<VkMttComponent> {
         mat = new Matrix4f().identity();
         visible = true;
         componentType = "n/a";
-        twoDComponent = true;
+        twoDComponent = false;
+        castShadow = false;
         drawOrder = 0;
         screenName = "n/a";
     }
@@ -91,6 +94,38 @@ public class VkMttComponent implements Comparable<VkMttComponent> {
 
     public void reset() {
         this.mat.identity();
+    }
+
+    public boolean isCastShadow() {
+        return castShadow;
+    }
+
+    public void setCastShadow(boolean castShadow) {
+        this.castShadow = castShadow;
+    }
+
+    public void translate(Vector3fc v) {
+        this.getMat().translate(v);
+    }
+
+    public void rotX(float ang) {
+        this.getMat().rotate(ang, 1.0f, 0.0f, 0.0f);
+    }
+
+    public void rotY(float ang) {
+        this.getMat().rotate(ang, 0.0f, 1.0f, 0.0f);
+    }
+
+    public void rotZ(float ang) {
+        this.getMat().rotate(ang, 0.0f, 0.0f, 1.0f);
+    }
+
+    public void rot(float ang, Vector3fc axis) {
+        this.getMat().rotate(ang, axis);
+    }
+
+    public void rescale(Vector3fc scale) {
+        this.getMat().scale(scale);
     }
 
     public void draw(VkCommandBuffer commandBuffer, long pipelineLayout) {

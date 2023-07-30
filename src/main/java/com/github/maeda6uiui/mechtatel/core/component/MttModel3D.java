@@ -14,7 +14,7 @@ import java.util.Set;
  *
  * @author maeda6uiui
  */
-public class MttModel3D extends MttComponent3D {
+public class MttModel3D extends MttComponent {
     private String modelFilepath;
     private VkMttModel3D vkModel;
 

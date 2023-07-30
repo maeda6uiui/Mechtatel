@@ -4,7 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.CameraMode;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
+import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector3f;
 
@@ -35,7 +35,7 @@ public class CameraModeTest extends Mechtatel {
         MttScreen defaultScreen = this.getScreen("default");
         camera = new FreeCamera(defaultScreen.getCamera());
 
-        MttModel3D srcCube;
+        MttModel srcCube;
         try {
             srcCube = this.createModel3D(
                     "default", "./Mechtatel/Standard/Model/Cube/cube.obj");
@@ -49,7 +49,7 @@ public class CameraModeTest extends Mechtatel {
         for (int i = 0; i <= 10; i++) {
             float x = -25.0f;
             for (int j = 0; j <= 10; j++) {
-                MttModel3D cube = this.duplicateModel3D(srcCube);
+                MttModel cube = this.duplicateModel3D(srcCube);
                 cube.translate(new Vector3f(x, 0.0f, z));
 
                 x += 5.0f;

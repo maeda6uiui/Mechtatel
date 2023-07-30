@@ -10,10 +10,10 @@ import org.joml.Vector4fc;
  *
  * @author maeda6uiui
  */
-public class MttCapsule3D extends MttComponent {
+public class MttCapsule extends MttComponent {
     private VkMttCapsule vkCapsule;
 
-    public MttCapsule3D(
+    public MttCapsule(
             MttVulkanInstance vulkanInstance,
             Vector3fc center,
             float length,

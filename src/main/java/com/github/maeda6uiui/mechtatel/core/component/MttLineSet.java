@@ -6,14 +6,14 @@ import org.joml.Vector3fc;
 import org.joml.Vector4fc;
 
 /**
- * Set of 3D lines
+ * Set of lines
  *
  * @author maeda6uiui
  */
-public class MttLine3DSet extends MttComponent {
+public class MttLineSet extends MttComponent {
     private VkMttLineSet vkLineSet;
 
-    public MttLine3DSet(MttVulkanInstance vulkanInstance) {
+    public MttLineSet(MttVulkanInstance vulkanInstance) {
         super(vulkanInstance);
 
         vkLineSet = vulkanInstance.createLine3DSet();

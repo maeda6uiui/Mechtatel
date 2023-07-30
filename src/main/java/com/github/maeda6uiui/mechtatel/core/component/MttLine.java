@@ -4,14 +4,14 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttLine;
 
 /**
- * 3D line
+ * Line
  *
  * @author maeda6uiui
  */
-public class MttLine3D extends MttComponent {
+public class MttLine extends MttComponent {
     private VkMttLine vkLine;
 
-    public MttLine3D(MttVulkanInstance vulkanInstance, MttVertex3D v1, MttVertex3D v2) {
+    public MttLine(MttVulkanInstance vulkanInstance, MttVertex3D v1, MttVertex3D v2) {
         super(vulkanInstance);
 
         vkLine = vulkanInstance.createLine3D(v1, v2);

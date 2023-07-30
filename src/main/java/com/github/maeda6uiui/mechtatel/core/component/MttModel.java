@@ -10,15 +10,15 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 3D model
+ * Model
  *
  * @author maeda6uiui
  */
-public class MttModel3D extends MttComponent {
+public class MttModel extends MttComponent {
     private String modelFilepath;
     private VkMttModel vkModel;
 
-    public MttModel3D(MttVulkanInstance vulkanInstance, String screenName, String modelFilepath) throws IOException {
+    public MttModel(MttVulkanInstance vulkanInstance, String screenName, String modelFilepath) throws IOException {
         super(vulkanInstance);
 
         this.modelFilepath = modelFilepath;
@@ -26,7 +26,7 @@ public class MttModel3D extends MttComponent {
         this.associateVulkanComponent(vkModel);
     }
 
-    public MttModel3D(MttVulkanInstance vulkanInstance, MttModel3D srcModel) {
+    public MttModel(MttVulkanInstance vulkanInstance, MttModel srcModel) {
         super(vulkanInstance);
 
         this.modelFilepath = srcModel.modelFilepath;

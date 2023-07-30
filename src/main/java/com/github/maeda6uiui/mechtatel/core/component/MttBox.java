@@ -5,12 +5,12 @@ import org.joml.Vector3f;
 import org.joml.Vector4fc;
 
 /**
- * 3D box
+ * Box
  *
  * @author maeda6uiui
  */
-public class MttBox3D extends MttComponent {
-    private MttLine3DSet lineSet;
+public class MttBox extends MttComponent {
+    private MttLineSet lineSet;
 
     private void setupLineSet(float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
         //Top
@@ -40,15 +40,15 @@ public class MttBox3D extends MttComponent {
         lineSet.createBuffer();
     }
 
-    public MttBox3D(MttVulkanInstance vulkanInstance, float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
+    public MttBox(MttVulkanInstance vulkanInstance, float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
         super(vulkanInstance);
 
-        lineSet = new MttLine3DSet(vulkanInstance);
+        lineSet = new MttLineSet(vulkanInstance);
         this.setupLineSet(xHalfExtent, yHalfExtent, zHalfExtent, color);
         this.associateVulkanComponent(lineSet.getVulkanComponent());
     }
 
-    public MttBox3D(MttVulkanInstance vulkanInstance, float halfExtent, Vector4fc color) {
+    public MttBox(MttVulkanInstance vulkanInstance, float halfExtent, Vector4fc color) {
         this(vulkanInstance, halfExtent, halfExtent, halfExtent, color);
     }
 }

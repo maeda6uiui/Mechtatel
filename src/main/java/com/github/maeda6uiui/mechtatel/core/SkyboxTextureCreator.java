@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core;
 
-import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
+import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 
 import java.nio.file.Paths;
@@ -39,7 +39,7 @@ public class SkyboxTextureCreator {
         texPz = mtt.createTexture(screenName, texPzFilepath, generateMipmaps);
     }
 
-    public void apply(MttModel3D model) {
+    public void apply(MttModel model) {
         model.replaceTexture(0, texPx);
         model.replaceTexture(1, texNz);
         model.replaceTexture(2, texNx);

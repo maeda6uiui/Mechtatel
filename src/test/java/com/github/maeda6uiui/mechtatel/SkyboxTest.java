@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.*;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
+import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.component.MttTexturedQuad2D;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
@@ -40,8 +40,8 @@ public class SkyboxTest extends Mechtatel {
 
     private MttTexturedQuad2D texturedQuad;
 
-    private MttModel3D skyboxModel;
-    private MttModel3D mainModel;
+    private MttModel skyboxModel;
+    private MttModel mainModel;
 
     private FreeCamera camera;
 

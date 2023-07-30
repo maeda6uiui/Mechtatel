@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.animation;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttComponentSet;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
+import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -31,7 +31,7 @@ public class MttAnimation {
     }
 
     private AnimationInfo animationInfo;
-    private Map<String, MttModel3D> models; //(model name, model)
+    private Map<String, MttModel> models; //(model name, model)
     private Map<String, MttComponentSet> modelSets;   //(animation name, models per animation)
     private Map<String, AnimationPlayInfo> animationPlayInfos;
 
@@ -48,7 +48,7 @@ public class MttAnimation {
             AnimationInfo.Model animModel = entry.getValue();
 
             String modelFilepath = Paths.get(animationDirname, animModel.filename).toString();
-            MttModel3D model = new MttModel3D(vulkanInstance, screenName, modelFilepath);
+            MttModel model = new MttModel(vulkanInstance, screenName, modelFilepath);
             models.put(modelName, model);
         }
 
@@ -58,9 +58,9 @@ public class MttAnimation {
             String animationName = entry.getKey();
             AnimationInfo.Animation animation = entry.getValue();
 
-            var modelSet = new MttComponentSet<MttModel3D>();
+            var modelSet = new MttComponentSet<MttModel>();
             for (String modelName : animation.models) {
-                MttModel3D model = models.get(modelName);
+                MttModel model = models.get(modelName);
                 modelSet.add(model);
             }
 
@@ -71,13 +71,13 @@ public class MttAnimation {
     }
 
     public MttAnimation(
-            MttVulkanInstance vulkanInstance, AnimationInfo animationInfo, Map<String, MttModel3D> srcModels) {
+            MttVulkanInstance vulkanInstance, AnimationInfo animationInfo, Map<String, MttModel> srcModels) {
         this.animationInfo = animationInfo;
 
         //Duplicate models
         models = new HashMap<>();
         srcModels.forEach((modelName, srcModel) -> {
-            MttModel3D model = new MttModel3D(vulkanInstance, srcModel);
+            MttModel model = new MttModel(vulkanInstance, srcModel);
             models.put(modelName, model);
         });
 
@@ -87,9 +87,9 @@ public class MttAnimation {
             String animationName = entry.getKey();
             AnimationInfo.Animation animation = entry.getValue();
 
-            var modelSet = new MttComponentSet<MttModel3D>();
+            var modelSet = new MttComponentSet<MttModel>();
             for (String modelName : animation.models) {
-                MttModel3D model = models.get(modelName);
+                MttModel model = models.get(modelName);
                 modelSet.add(model);
             }
 
@@ -125,7 +125,7 @@ public class MttAnimation {
     private void resetAnimationModels(String animationName) {
         List<String> modelNames = animationInfo.getAnimations().get(animationName).models;
         modelNames.forEach(modelName -> {
-            MttModel3D model = models.get(modelName);
+            MttModel model = models.get(modelName);
             model.reset();
         });
     }
@@ -275,7 +275,7 @@ public class MttAnimation {
         });
     }
 
-    public Map<String, MttModel3D> getModels() {
+    public Map<String, MttModel> getModels() {
         return new HashMap<>(models);
     }
 

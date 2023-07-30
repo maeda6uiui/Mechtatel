@@ -7,14 +7,14 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttTexturedQuad;
 import java.util.ArrayList;
 
 /**
- * 3D textured quadrangle
+ * Textured quadrangle
  *
  * @author maeda6uiui
  */
-public class MttTexturedQuad3D extends MttComponent {
+public class MttTexturedQuad extends MttComponent {
     private VkMttTexturedQuad vkTexturedQuad;
 
-    public MttTexturedQuad3D(
+    public MttTexturedQuad(
             MttVulkanInstance vulkanInstance,
             String screenName,
             String textureFilepath,
@@ -35,7 +35,7 @@ public class MttTexturedQuad3D extends MttComponent {
         this.associateVulkanComponent(vkTexturedQuad);
     }
 
-    public MttTexturedQuad3D(
+    public MttTexturedQuad(
             MttVulkanInstance vulkanInstance,
             String screenName,
             MttTexture texture,
@@ -55,9 +55,9 @@ public class MttTexturedQuad3D extends MttComponent {
         this.associateVulkanComponent(vkTexturedQuad);
     }
 
-    public MttTexturedQuad3D(
+    public MttTexturedQuad(
             MttVulkanInstance vulkanInstance,
-            MttTexturedQuad3D srcQuad,
+            MttTexturedQuad srcQuad,
             MttVertex3DUV v1,
             MttVertex3DUV v2,
             MttVertex3DUV v3,

@@ -6,14 +6,14 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttQuad;
 import java.util.ArrayList;
 
 /**
- * 3D quadrangle
+ * Quadrangle
  *
  * @author maeda6uiui
  */
-public class MttQuad3D extends MttComponent {
+public class MttQuad extends MttComponent {
     private VkMttQuad vkQuad;
 
-    public MttQuad3D(
+    public MttQuad(
             MttVulkanInstance vulkanInstance,
             MttVertex3D v1,
             MttVertex3D v2,

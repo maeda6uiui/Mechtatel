@@ -5,7 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
+import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -33,9 +33,9 @@ public class ShadowMappingTest extends Mechtatel {
     }
 
     private FreeCamera camera;
-    private MttModel3D plane;
-    private MttModel3D teapot;
-    private List<MttModel3D> cubes;
+    private MttModel plane;
+    private MttModel teapot;
+    private List<MttModel> cubes;
     private List<Vector3f> cubePositions;
     private List<Float> cubeRotations;
 

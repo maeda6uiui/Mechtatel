@@ -5,7 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
+import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector3f;
@@ -30,9 +30,9 @@ public class FlexibleNaborTest extends Mechtatel {
     }
 
     private MttScreen mainScreen;
-    private MttModel3D plane;
-    private MttModel3D teapot;
-    private MttModel3D cube;
+    private MttModel plane;
+    private MttModel teapot;
+    private MttModel cube;
     private FreeCamera camera;
 
     @Override

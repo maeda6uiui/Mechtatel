@@ -5,7 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
+import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.component.MttTexturedQuad2D;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
@@ -44,8 +44,8 @@ public class TextureOperationTest extends Mechtatel {
 
     private MttTexturedQuad2D texturedQuad;
 
-    private MttModel3D firstModel;
-    private MttModel3D secondModel;
+    private MttModel firstModel;
+    private MttModel secondModel;
 
     private FreeCamera camera;
 

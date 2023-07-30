@@ -190,36 +190,36 @@ public class Mechtatel
         instance.sortComponents();
     }
 
-    public MttModel3D createModel3D(String screenName, String modelFilepath) throws IOException {
+    public MttModel createModel3D(String screenName, String modelFilepath) throws IOException {
         return instance.createModel3D(screenName, modelFilepath);
     }
 
-    public MttModel3D duplicateModel3D(MttModel3D srcModel) {
+    public MttModel duplicateModel3D(MttModel srcModel) {
         return instance.duplicateModel3D(srcModel);
     }
 
-    public MttLine3D createLine3D(MttVertex3D v1, MttVertex3D v2) {
+    public MttLine createLine3D(MttVertex3D v1, MttVertex3D v2) {
         return instance.createLine3D(v1, v2);
     }
 
-    public MttLine3D createLine3D(Vector3fc p1, Vector4fc color1, Vector3fc p2, Vector4fc color2) {
+    public MttLine createLine3D(Vector3fc p1, Vector4fc color1, Vector3fc p2, Vector4fc color2) {
         var v1 = new MttVertex3D(p1, color1);
         var v2 = new MttVertex3D(p2, color2);
         return instance.createLine3D(v1, v2);
     }
 
-    public MttLine3D createLine3D(Vector3fc p1, Vector3fc p2, Vector4fc color) {
+    public MttLine createLine3D(Vector3fc p1, Vector3fc p2, Vector4fc color) {
         var v1 = new MttVertex3D(p1, color);
         var v2 = new MttVertex3D(p2, color);
         return instance.createLine3D(v1, v2);
     }
 
-    public MttLine3DSet createLine3DSet() {
+    public MttLineSet createLine3DSet() {
         return instance.createLine3DSet();
     }
 
-    public MttLine3DSet createAxesLine3DSet(float length) {
-        MttLine3DSet axes = instance.createLine3DSet();
+    public MttLineSet createAxesLine3DSet(float length) {
+        MttLineSet axes = instance.createLine3DSet();
 
         axes.add(new Vector3f(-length, 0.0f, 0.0f), new Vector3f(length, 0.0f, 0.0f), new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
         axes.add(new Vector3f(0.0f, -length, 0.0f), new Vector3f(0.0f, length, 0.0f), new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
@@ -229,8 +229,8 @@ public class Mechtatel
         return axes;
     }
 
-    public MttLine3DSet createPositiveAxesLine3DSet(float length) {
-        MttLine3DSet axes = instance.createLine3DSet();
+    public MttLineSet createPositiveAxesLine3DSet(float length) {
+        MttLineSet axes = instance.createLine3DSet();
 
         axes.add(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(length, 0.0f, 0.0f), new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
         axes.add(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, length, 0.0f), new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
@@ -240,11 +240,11 @@ public class Mechtatel
         return axes;
     }
 
-    public MttSphere3D createSphere3D(Vector3fc center, float radius, int numVDivs, int numHDivs, Vector4fc color) {
+    public MttSphere createSphere3D(Vector3fc center, float radius, int numVDivs, int numHDivs, Vector4fc color) {
         return instance.createSphere3D(center, radius, numVDivs, numHDivs, color);
     }
 
-    public MttCapsule3D createCapsule3D(Vector3fc center, float length, float radius, int numVDivs, int numHDivs, Vector4fc color) {
+    public MttCapsule createCapsule3D(Vector3fc center, float length, float radius, int numVDivs, int numHDivs, Vector4fc color) {
         return instance.createCapsule3D(center, length, radius, numVDivs, numHDivs, color);
     }
 
@@ -256,11 +256,11 @@ public class Mechtatel
         return instance.createLine2DSet();
     }
 
-    public MttQuad3D createQuad3D(MttVertex3D v1, MttVertex3D v2, MttVertex3D v3, MttVertex3D v4, boolean fill) {
+    public MttQuad createQuad3D(MttVertex3D v1, MttVertex3D v2, MttVertex3D v3, MttVertex3D v4, boolean fill) {
         return instance.createQuad3D(v1, v2, v3, v4, fill);
     }
 
-    public MttQuad3D createQuad3D(Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, boolean fill, Vector4fc color) {
+    public MttQuad createQuad3D(Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, boolean fill, Vector4fc color) {
         var v1 = new MttVertex3D(p1, color);
         var v2 = new MttVertex3D(p2, color);
         var v3 = new MttVertex3D(p3, color);
@@ -283,7 +283,7 @@ public class Mechtatel
         return instance.createQuad2D(topLeft, bottomRight, z, fill, color);
     }
 
-    public MttTexturedQuad3D createTexturedQuad3D(
+    public MttTexturedQuad createTexturedQuad3D(
             String screenName,
             String textureFilepath,
             boolean generateMipmaps,
@@ -294,7 +294,7 @@ public class Mechtatel
         return instance.createTexturedQuad3D(screenName, textureFilepath, generateMipmaps, v1, v2, v3, v4);
     }
 
-    public MttTexturedQuad3D createTexturedQuad3D(
+    public MttTexturedQuad createTexturedQuad3D(
             String screenName,
             MttTexture texture,
             MttVertex3DUV v1,
@@ -304,8 +304,8 @@ public class Mechtatel
         return instance.createTexturedQuad3D(screenName, texture, v1, v2, v3, v4);
     }
 
-    public MttTexturedQuad3D duplicateTexturedQuad3D(
-            MttTexturedQuad3D srcQuad,
+    public MttTexturedQuad duplicateTexturedQuad3D(
+            MttTexturedQuad srcQuad,
             MttVertex3DUV v1,
             MttVertex3DUV v2,
             MttVertex3DUV v3,
@@ -371,11 +371,11 @@ public class Mechtatel
         return instance.createTexturedQuad2DSingleTextureSet(screenName, texture);
     }
 
-    public MttBox3D createBox3D(float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
+    public MttBox createBox3D(float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
         return instance.createBox3D(xHalfExtent, yHalfExtent, zHalfExtent, color);
     }
 
-    public MttBox3D createBox3D(float halfExtent, Vector4fc color) {
+    public MttBox createBox3D(float halfExtent, Vector4fc color) {
         return instance.createBox3D(halfExtent, color);
     }
 
@@ -551,8 +551,8 @@ public class Mechtatel
     public PhysicalBox3D createPhysicalBox3D(float halfExtent, float mass) {
         return instance.createPhysicalBox3D(halfExtent, mass);
     }
-    
-    public PhysicalMesh3D createPhysicalMesh3D(MttModel3D model, float mass) {
+
+    public PhysicalMesh3D createPhysicalMesh3D(MttModel model, float mass) {
         return instance.createPhysicalMesh3D(model, mass);
     }
 
@@ -686,7 +686,7 @@ public class Mechtatel
         return instance.createAnimation(tag, screenName, animationInfo);
     }
 
-    public MttAnimation createAnimation(String tag, AnimationInfo animationInfo, Map<String, MttModel3D> srcModels) {
+    public MttAnimation createAnimation(String tag, AnimationInfo animationInfo, Map<String, MttModel> srcModels) {
         return instance.createAnimation(tag, animationInfo, srcModels);
     }
 }

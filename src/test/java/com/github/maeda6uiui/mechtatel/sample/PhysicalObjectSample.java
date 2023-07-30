@@ -5,7 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
+import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObjectSet3D;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector3f;
@@ -34,8 +34,8 @@ public class PhysicalObjectSample extends Mechtatel {
 
     private MttScreen mainScreen;
 
-    private MttModel3D plane;
-    private MttModel3D srcCube;
+    private MttModel plane;
+    private MttModel srcCube;
     private PhysicalObjectSet3D physicalObjectSet;
 
     private FreeCamera camera;

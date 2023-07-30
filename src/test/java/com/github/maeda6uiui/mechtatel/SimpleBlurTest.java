@@ -5,7 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
+import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 
@@ -29,7 +29,7 @@ public class SimpleBlurTest extends Mechtatel {
     }
 
     private MttScreen mainScreen;
-    private MttModel3D mainModel;
+    private MttModel mainModel;
     private FreeCamera camera;
 
     @Override

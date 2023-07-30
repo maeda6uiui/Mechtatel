@@ -10,10 +10,10 @@ import org.joml.Vector4fc;
  *
  * @author maeda6uiui
  */
-public class MttSphere3D extends MttComponent {
+public class MttSphere extends MttComponent {
     private VkMttSphere vkSphere;
 
-    public MttSphere3D(
+    public MttSphere(
             MttVulkanInstance vulkanInstance,
             Vector3fc center,
             float radius,

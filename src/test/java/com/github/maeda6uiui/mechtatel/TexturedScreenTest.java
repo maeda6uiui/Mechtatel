@@ -5,7 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel3D;
+import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import org.joml.Matrix4f;
@@ -32,11 +32,11 @@ public class TexturedScreenTest extends Mechtatel {
     }
 
     private MttScreen primaryScreen;
-    private MttModel3D primaryCube;
+    private MttModel primaryCube;
     private FreeCamera camera;
 
     private MttScreen secondaryScreen;
-    private MttModel3D secondaryCube;
+    private MttModel secondaryCube;
     private Vector3f secondaryCameraPosition;
 
     @Override

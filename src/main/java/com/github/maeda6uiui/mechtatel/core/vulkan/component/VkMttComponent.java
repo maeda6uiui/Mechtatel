@@ -76,7 +76,7 @@ public class VkMttComponent implements Comparable<VkMttComponent> {
         return twoDComponent;
     }
 
-    protected void setTwoDComponent(boolean twoDComponent) {
+    public void setTwoDComponent(boolean twoDComponent) {
         this.twoDComponent = twoDComponent;
     }
 

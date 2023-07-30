@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * @author maeda6uiui
  */
 public class MttQuad3D extends MttComponent3D {
-    private VkMttQuad3D vkFilledQuad;
+    private VkMttQuad3D vkQuad;
 
     public MttQuad3D(
             MttVulkanInstance vulkanInstance,
@@ -28,7 +28,7 @@ public class MttQuad3D extends MttComponent3D {
         vertices.add(v3);
         vertices.add(v4);
 
-        vkFilledQuad = vulkanInstance.createQuad3D(vertices, fill);
-        this.associateVulkanComponent(vkFilledQuad);
+        vkQuad = vulkanInstance.createQuad3D(vertices, fill);
+        this.associateVulkanComponent(vkQuad);
     }
 }

@@ -555,20 +555,6 @@ public class MttVulkanInstance
         return capsule;
     }
 
-    public VkMttLine2D createLine2D(MttVertex3D v1, MttVertex3D v2) {
-        var line = new VkMttLine2D(device, commandPool, graphicsQueue, v1, v2);
-        components.add(line);
-
-        return line;
-    }
-
-    public VkMttLine2DSet createLine2DSet() {
-        var lineSet = new VkMttLine2DSet(device, commandPool, graphicsQueue);
-        components.add(lineSet);
-
-        return lineSet;
-    }
-
     public VkMttQuad3D createQuad3D(List<MttVertex3D> vertices, boolean fill) {
         var filledQuad = new VkMttQuad3D(device, commandPool, graphicsQueue, vertices, fill);
         components.add(filledQuad);

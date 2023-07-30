@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttLine2DSet;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttLine3DSet;
 import org.joml.Vector2fc;
 import org.joml.Vector3f;
 import org.joml.Vector4fc;
@@ -12,12 +12,12 @@ import org.joml.Vector4fc;
  * @author maeda6uiui
  */
 public class MttLine2DSet extends MttComponent {
-    private VkMttLine2DSet vkLineSet;
+    private VkMttLine3DSet vkLineSet;
 
     public MttLine2DSet(MttVulkanInstance vulkanInstance) {
         super(vulkanInstance);
 
-        vkLineSet = vulkanInstance.createLine2DSet();
+        vkLineSet = vulkanInstance.createLine3DSet();
         this.associateVulkanComponent(vkLineSet);
     }
 

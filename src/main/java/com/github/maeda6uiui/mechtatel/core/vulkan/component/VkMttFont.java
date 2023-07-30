@@ -60,6 +60,7 @@ public class VkMttFont extends VkMttComponent {
                 texture
         );
         vkQuadSet.setScreenName(screen.getScreenName());
+        vkQuadSet.setTwoDComponent(true);
 
         this.setComponentType("gbuffer");
         this.setScreenName(screen.getScreenName());

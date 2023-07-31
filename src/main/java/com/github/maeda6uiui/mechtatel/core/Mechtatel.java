@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import py4j.GatewayServer;
 
 import java.awt.*;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -578,7 +579,8 @@ public class Mechtatel
     }
 
     @Override
-    public MttTexture createTexture(String screenName, String textureFilepath, boolean generateMipmaps) {
+    public MttTexture createTexture(
+            String screenName, String textureFilepath, boolean generateMipmaps) throws FileNotFoundException {
         return instance.createTexture(screenName, textureFilepath, generateMipmaps);
     }
 

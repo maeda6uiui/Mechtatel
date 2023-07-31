@@ -26,6 +26,7 @@ import org.lwjgl.system.MemoryStack;
 
 import java.awt.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -782,7 +783,8 @@ class MttInstance {
         }
     }
 
-    public MttTexture createTexture(String screenName, String textureFilepath, boolean generateMipmaps) {
+    public MttTexture createTexture(
+            String screenName, String textureFilepath, boolean generateMipmaps) throws FileNotFoundException {
         var texture = new MttTexture(vulkanInstance, screenName, textureFilepath, generateMipmaps);
         return texture;
     }

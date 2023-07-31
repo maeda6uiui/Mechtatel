@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 
+import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 
 /**
@@ -23,7 +24,7 @@ public class SkyboxTextureCreator {
             String screenName,
             String textureDirname,
             String textureExtension,
-            boolean generateMipmaps) {
+            boolean generateMipmaps) throws FileNotFoundException {
         String texNxFilepath = Paths.get(textureDirname, String.format("nx.%s", textureExtension)).toString();
         String texNyFilepath = Paths.get(textureDirname, String.format("ny.%s", textureExtension)).toString();
         String texNzFilepath = Paths.get(textureDirname, String.format("nz.%s", textureExtension)).toString();

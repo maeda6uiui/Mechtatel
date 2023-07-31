@@ -3,6 +3,10 @@ package com.github.maeda6uiui.mechtatel.core.texture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanInstanceForTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 
+import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 /**
  * Texture
  *
@@ -26,7 +30,11 @@ public class MttTexture {
             IMttVulkanInstanceForTexture vulkanInstance,
             String screenName,
             String textureFilepath,
-            boolean generateMipmaps) {
+            boolean generateMipmaps) throws FileNotFoundException {
+        if (!Files.exists(Paths.get(textureFilepath))) {
+            throw new FileNotFoundException("Specified texture file does not exist: " + textureFilepath);
+        }
+
         texture = vulkanInstance.createTexture(screenName, textureFilepath, generateMipmaps);
         this.vulkanInstance = vulkanInstance;
     }

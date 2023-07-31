@@ -79,17 +79,17 @@ public class SkyboxTest extends Mechtatel {
         try {
             skyboxModel = this.createModel("skybox", "./Mechtatel/Standard/Model/Skybox/skybox.obj");
             mainModel = this.createModel("main", "./Mechtatel/Standard/Model/Cube/cube.obj");
+
+            var skyboxTextureCreator = new SkyboxTextureCreator(
+                    this,
+                    "skybox",
+                    "./Mechtatel/Standard/Model/Skybox/Hill",
+                    "png",
+                    false);
+            skyboxTextureCreator.apply(skyboxModel);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        var skyboxTextureCreator = new SkyboxTextureCreator(
-                this,
-                "skybox",
-                "./Mechtatel/Standard/Model/Skybox/Hill",
-                "png",
-                false);
-        skyboxTextureCreator.apply(skyboxModel);
 
         this.createPositiveAxesLineSet(10.0f);
 

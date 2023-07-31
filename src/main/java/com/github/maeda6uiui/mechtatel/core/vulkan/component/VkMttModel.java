@@ -44,8 +44,7 @@ public class VkMttModel extends VkMttComponent {
     private void loadTextures(
             long commandPool,
             VkQueue graphicsQueue,
-            IVkMttScreenForVkMttTexture screen,
-            String modelFilepath) {
+            IVkMttScreenForVkMttTexture screen) {
         Map<Integer, ModelLoader.Material> materials = model.materials;
 
         textures = new HashMap<>();
@@ -54,7 +53,6 @@ public class VkMttModel extends VkMttComponent {
             int index = materialEntry.getKey();
             ModelLoader.Material material = materialEntry.getValue();
 
-            //The filepath of the texture is supposed to be a relative path from the model
             var texture = new VkMttTexture(
                     device,
                     commandPool,
@@ -103,11 +101,7 @@ public class VkMttModel extends VkMttComponent {
         isDuplicatedModel = false;
 
         model = ModelLoader.loadModel(modelFilepath);
-        this.loadTextures(
-                commandPool,
-                graphicsQueue,
-                screen,
-                modelFilepath);
+        this.loadTextures(commandPool, graphicsQueue, screen);
         this.createBuffers(commandPool, graphicsQueue);
 
         drawMeshIndices = new ArrayList<>();

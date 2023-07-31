@@ -8,9 +8,13 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 import org.lwjgl.system.MemoryStack;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static org.lwjgl.assimp.Assimp.*;
@@ -66,24 +70,30 @@ public class ModelLoader {
         }
     }
 
-    private static void processMaterial(AIMaterial aiMaterial, Material material) {
+    private static void processMaterial(
+            AIMaterial aiMaterial, Material material, String modelDirname) throws FileNotFoundException {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             //Get the filepath of the diffuse texture
-            AIString aiDiffuseTexFilepath = AIString.calloc(stack);
+            AIString aiDiffuseTexFilename = AIString.calloc(stack);
             aiGetMaterialTexture(
                     aiMaterial,
                     aiTextureType_DIFFUSE,
                     0,
-                    aiDiffuseTexFilepath,
+                    aiDiffuseTexFilename,
                     (IntBuffer) null,
                     null,
                     null,
                     null,
                     null,
                     null);
-            String diffuseTextFilepath = aiDiffuseTexFilepath.dataString();
+            String diffuseTexFilename = aiDiffuseTexFilename.dataString();
 
-            material.diffuseTexFilepath = diffuseTextFilepath;
+            Path diffuseTexFile = Paths.get(modelDirname, diffuseTexFilename);
+            if (!Files.exists(diffuseTexFile)) {
+                throw new FileNotFoundException("Texture file for the model does not exist: " + diffuseTexFile);
+            }
+
+            material.diffuseTexFilepath = diffuseTexFile.toString();
 
             //Get the material colors
             AIColor4D color = AIColor4D.calloc(stack);
@@ -182,12 +192,19 @@ public class ModelLoader {
 
         List<BD1Buffer> buffers = manipulator.getBuffers(false);
 
+        String modelDirname = Paths.get(modelFilepath).getParent().toString();
+
         var model = new Model(buffers.size(), buffers.size());
         for (int i = 0; i < buffers.size(); i++) {
             BD1Buffer buffer = buffers.get(i);
 
             String textureFilename = manipulator.getTextureFilename(buffer.textureID);
-            model.materials.get(i).diffuseTexFilepath = textureFilename;
+            String textureFilepath = Paths.get(modelDirname, textureFilename).toString();
+            if (!Files.exists(Paths.get(textureFilepath))) {
+                throw new FileNotFoundException("Texture file for the model does not exist: " + textureFilepath);
+            }
+
+            model.materials.get(i).diffuseTexFilepath = textureFilepath;
             model.meshes.get(i).materialIndex = i;
 
             IntBuffer indexBuffer = buffer.indexBuffer;
@@ -239,9 +256,11 @@ public class ModelLoader {
             var model = new Model(numMaterials, numMeshes);
 
             //Process materials
+            String modelDirname = Paths.get(modelFilepath).getParent().toString();
+
             for (int i = 0; i < numMaterials; i++) {
                 AIMaterial aiMaterial = AIMaterial.create(pMaterials.get(i));
-                processMaterial(aiMaterial, model.materials.get(i));
+                processMaterial(aiMaterial, model.materials.get(i), modelDirname);
             }
 
             //Process meshes

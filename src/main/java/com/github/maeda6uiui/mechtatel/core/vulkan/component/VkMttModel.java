@@ -12,7 +12,6 @@ import org.lwjgl.vulkan.VkQueue;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
-import java.nio.file.Paths;
 import java.util.*;
 
 import static org.lwjgl.vulkan.VK10.*;
@@ -47,8 +46,6 @@ public class VkMttModel extends VkMttComponent {
             VkQueue graphicsQueue,
             IVkMttScreenForVkMttTexture screen,
             String modelFilepath) {
-        String modelDirname = Paths.get(modelFilepath).getParent().toString();
-
         Map<Integer, ModelLoader.Material> materials = model.materials;
 
         textures = new HashMap<>();
@@ -58,15 +55,12 @@ public class VkMttModel extends VkMttComponent {
             ModelLoader.Material material = materialEntry.getValue();
 
             //The filepath of the texture is supposed to be a relative path from the model
-            String diffuseTexFilepath = material.diffuseTexFilepath;
-            diffuseTexFilepath = Paths.get(modelDirname, diffuseTexFilepath).toString();
-
             var texture = new VkMttTexture(
                     device,
                     commandPool,
                     graphicsQueue,
                     screen,
-                    diffuseTexFilepath,
+                    material.diffuseTexFilepath,
                     true);
 
             textures.put(index, texture);

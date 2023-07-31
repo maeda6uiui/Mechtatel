@@ -47,7 +47,7 @@ public class VkMttModel extends VkMttComponent {
             VkQueue graphicsQueue,
             IVkMttScreenForVkMttTexture screen,
             String modelFilepath) {
-        String modelDir = Paths.get(modelFilepath).getParent().toString();
+        String modelDirname = Paths.get(modelFilepath).getParent().toString();
 
         Map<Integer, ModelLoader.Material> materials = model.materials;
 
@@ -59,7 +59,7 @@ public class VkMttModel extends VkMttComponent {
 
             //The filepath of the texture is supposed to be a relative path from the model
             String diffuseTexFilepath = material.diffuseTexFilepath;
-            diffuseTexFilepath = Paths.get(modelDir, diffuseTexFilepath).toString();
+            diffuseTexFilepath = Paths.get(modelDirname, diffuseTexFilepath).toString();
 
             var texture = new VkMttTexture(
                     device,

@@ -6,11 +6,7 @@
         "resizable": true
     },
     "system": {
-        "fps": 60,
-        "gatewayServer": {
-            "enabled": false,
-            "port": 25333
-        }
+        "fps": 60
     },
     "rendering": {
         "imageFormat": "unorm"

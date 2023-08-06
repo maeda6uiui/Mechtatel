@@ -37,38 +37,17 @@ public class MttSettings {
         }
     }
 
-    public static class GatewayServerSettings {
-        public boolean enabled;
-        public int port;
-
-        public GatewayServerSettings() {
-            enabled = false;
-            port = 25333;
-        }
-
-        @Override
-        public String toString() {
-            return "GatewayServerSettings{" +
-                    "enabled=" + enabled +
-                    ", port=" + port +
-                    '}';
-        }
-    }
-
     public static class SystemSettings {
         public int fps;
-        public GatewayServerSettings gatewayServer;
 
         public SystemSettings() {
             fps = 60;
-            gatewayServer = new GatewayServerSettings();
         }
 
         @Override
         public String toString() {
             return "SystemSettings{" +
                     "fps=" + fps +
-                    ", gatewayServer=" + gatewayServer +
                     '}';
         }
     }

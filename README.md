@@ -99,14 +99,13 @@ Copy the downloaded binary under ./Mechtatel/Bin.
 I'm sorry that currently there is no elaborate document for this project.
 But you could check out the [test code](./src/test/java/com/github/maeda6uiui/mechtatel/) and hopefully get the gist of how Mechtatel works. 
 
-## Todoリスト
-
-- 3Dモデルのアニメーション機能の実装
-  - OBJ形式をベースにしたい
-- PythonからMechtatelを扱う機能の実装
-  - 実際のゲーム開発は基本的にPythonで行うようにしたい
-
 ## 進捗報告
+
+### 2023-08-06
+
+MechtatelをPythonから扱う機能を実装していましたが、実装が面倒なことに加えて技術的な壁にぶち当たったので、この機能の開発は断念することにします。
+その代わりに、YAMLファイルで処理を記述できるようにすることを検討しています。
+(GitHub Actionsのワークフローみたいなものを想定しています)
 
 ### 2023-06-04
 

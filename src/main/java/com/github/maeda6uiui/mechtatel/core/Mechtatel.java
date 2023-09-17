@@ -376,18 +376,8 @@ public class Mechtatel
         return instance.createFont(screenName, font, antiAlias, fontColor, requiredChars);
     }
 
-    public MttButton createButton(
-            float x,
-            float y,
-            float width,
-            float height,
-            String text,
-            String fontName,
-            int fontStyle,
-            int fontSize,
-            Color fontColor,
-            Color frameColor) {
-        return instance.createButton(x, y, width, height, text, fontName, fontStyle, fontSize, fontColor, frameColor);
+    public MttButton createButton(MttButton.MttButtonCreateInfo createInfo) {
+        return instance.createButton(createInfo);
     }
 
     public MttCheckbox createCheckbox(

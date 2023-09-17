@@ -16,35 +16,49 @@ import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.con
  * @author maeda6uiui
  */
 public class MttButton extends MttGuiComponent {
+    public static class MttButtonCreateInfo {
+        public float x;
+        public float y;
+        public float width;
+        public float height;
+        public String text;
+        public String fontName;
+        public int fontStyle;
+        public int fontSize;
+        public Color fontColor;
+        public Color frameColor;
+    }
+
     private MttQuad2D frame;
     private MttFont font;
 
-    public MttButton(
-            MttVulkanInstance vulkanInstance,
-            float x,
-            float y,
-            float width,
-            float height,
-            String text,
-            String fontName,
-            int fontStyle,
-            int fontSize,
-            Color fontColor,
-            Color frameColor) {
-        super(vulkanInstance, x, y, width, height);
+    public MttButton(MttVulkanInstance vulkanInstance, MttButtonCreateInfo createInfo) {
+        super(
+                vulkanInstance,
+                createInfo.x,
+                createInfo.y,
+                createInfo.width,
+                createInfo.height
+        );
 
         frame = new MttQuad2D(
                 vulkanInstance,
-                new Vector2f(x, y),
-                new Vector2f(x + width, y + height),
+                new Vector2f(createInfo.x, createInfo.y),
+                new Vector2f(createInfo.x + createInfo.width, createInfo.y + createInfo.height),
                 0.0f,
                 false,
-                convertJavaColorToJOMLVector4f(frameColor)
+                convertJavaColorToJOMLVector4f(createInfo.frameColor)
         );
 
-        font = new MttFont(vulkanInstance, "default", new Font(
-                fontName, fontStyle, fontSize), true, fontColor, text);
-        font.prepare(text, new Vector2f(x, y));
+        font = new MttFont(
+                vulkanInstance,
+                "default",
+                new Font(createInfo.fontName, createInfo.fontStyle, createInfo.fontSize),
+                true,
+                createInfo.fontColor,
+                createInfo.text
+        );
+        font.prepare(createInfo.text, new Vector2f(createInfo.x, createInfo.y));
         font.createBuffers();
     }
 

@@ -522,19 +522,8 @@ class MttInstance {
         return mttFont;
     }
 
-    public MttButton createButton(
-            float x,
-            float y,
-            float width,
-            float height,
-            String text,
-            String fontName,
-            int fontStyle,
-            int fontSize,
-            Color fontColor,
-            Color frameColor) {
-        var mttButton = new MttButton(
-                vulkanInstance, x, y, width, height, text, fontName, fontStyle, fontSize, fontColor, frameColor);
+    public MttButton createButton(MttButton.MttButtonCreateInfo createInfo) {
+        var mttButton = new MttButton(vulkanInstance, createInfo);
         guiComponents.add(mttButton);
 
         return mttButton;

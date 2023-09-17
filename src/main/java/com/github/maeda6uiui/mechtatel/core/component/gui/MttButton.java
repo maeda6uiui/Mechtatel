@@ -27,6 +27,56 @@ public class MttButton extends MttGuiComponent {
         public int fontSize;
         public Color fontColor;
         public Color frameColor;
+
+        public MttButtonCreateInfo setX(float x) {
+            this.x = x;
+            return this;
+        }
+
+        public MttButtonCreateInfo setY(float y) {
+            this.y = y;
+            return this;
+        }
+
+        public MttButtonCreateInfo setWidth(float width) {
+            this.width = width;
+            return this;
+        }
+
+        public MttButtonCreateInfo setHeight(float height) {
+            this.height = height;
+            return this;
+        }
+
+        public MttButtonCreateInfo setText(String text) {
+            this.text = text;
+            return this;
+        }
+
+        public MttButtonCreateInfo setFontName(String fontName) {
+            this.fontName = fontName;
+            return this;
+        }
+
+        public MttButtonCreateInfo setFontStyle(int fontStyle) {
+            this.fontStyle = fontStyle;
+            return this;
+        }
+
+        public MttButtonCreateInfo setFontSize(int fontSize) {
+            this.fontSize = fontSize;
+            return this;
+        }
+
+        public MttButtonCreateInfo setFontColor(Color fontColor) {
+            this.fontColor = fontColor;
+            return this;
+        }
+
+        public MttButtonCreateInfo setFrameColor(Color frameColor) {
+            this.frameColor = frameColor;
+            return this;
+        }
     }
 
     private MttQuad2D frame;

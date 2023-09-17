@@ -393,32 +393,8 @@ public class Mechtatel
         return instance.createHorizontalScrollbar(createInfo);
     }
 
-    public MttListbox createListbox(
-            float x,
-            float y,
-            float width,
-            float height,
-            float scrollbarWidth,
-            float scrollbarGrabHeight,
-            Color scrollbarFrameColor,
-            Color scrollbarGrabColor,
-            String nonSelectedFontName,
-            int nonSelectedFontStyle,
-            int nonSelectedFontSize,
-            Color nonSelectedFontColor,
-            Color frameColor,
-            List<String> itemTexts,
-            float itemHeight,
-            String selectedFontName,
-            int selectedFontStyle,
-            int selectedFontSize,
-            Color selectedFontColor) {
-        return instance.createListbox(
-                x, y, width, height,
-                scrollbarWidth, scrollbarGrabHeight, scrollbarFrameColor, scrollbarGrabColor,
-                nonSelectedFontName, nonSelectedFontStyle, nonSelectedFontSize, nonSelectedFontColor,
-                frameColor, itemTexts, itemHeight,
-                selectedFontName, selectedFontStyle, selectedFontSize, selectedFontColor);
+    public MttListbox createListbox(MttListbox.MttListboxCreateInfo createInfo) {
+        return instance.createListbox(createInfo);
     }
 
     public MttLabel createLabel(MttLabel.MttLabelCreateInfo createInfo) {

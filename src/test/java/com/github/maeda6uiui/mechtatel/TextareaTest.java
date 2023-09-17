@@ -31,9 +31,26 @@ public class TextareaTest extends Mechtatel {
     public void init() {
         var keyInterpreter = new JISKeyInterpreter();
         textarea = this.createTextarea(
-                -0.9f, -0.9f, 0.9f, 0.9f, 0.1f, 0.001f, 0.01f,
-                Font.SANS_SERIF, Font.PLAIN, 32, Color.GREEN, Color.WHITE, Color.LIGHT_GRAY,
-                0.5f, 0.5f, keyInterpreter, MttTextarea.DEFAULT_SUPPORTED_CHARACTERS);
+                new MttTextarea.MttTextareaCreateInfo()
+                        .setX(-0.9f)
+                        .setY(-0.9f)
+                        .setWidth(0.9f)
+                        .setHeight(0.9f)
+                        .setCaretLength(0.1f)
+                        .setCaretMarginX(0.001f)
+                        .setCaretMarginY(0.01f)
+                        .setFontName(Font.SANS_SERIF)
+                        .setFontStyle(Font.PLAIN)
+                        .setFontSize(32)
+                        .setFontColor(Color.GREEN)
+                        .setFrameColor(Color.WHITE)
+                        .setCaretColor(Color.LIGHT_GRAY)
+                        .setCaretBlinkInterval(0.5f)
+                        .setSecondsPerFrame(this.getSecondsPerFrame())
+                        .setRepeatDelay(0.5f)
+                        .setKeyInterpreter(keyInterpreter)
+                        .setSupportedCharacters(MttTextarea.DEFAULT_SUPPORTED_CHARACTERS)
+        );
     }
 
     @Override

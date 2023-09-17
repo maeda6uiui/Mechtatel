@@ -592,30 +592,8 @@ class MttInstance {
         return mttTextbox;
     }
 
-    public MttTextarea createTextarea(
-            float x,
-            float y,
-            float width,
-            float height,
-            float caretLength,
-            float caretMarginX,
-            float caretMarginY,
-            String fontName,
-            int fontStyle,
-            int fontSize,
-            Color fontColor,
-            Color frameColor,
-            Color caretColor,
-            float caretBlinkInterval,
-            float repeatDelay,
-            KeyInterpreter keyInterpreter,
-            String supportedCharacters) {
-        float secondsPerFrame = this.getSecondsPerFrame();
-        var mttTextarea = new MttTextarea(
-                vulkanInstance, x, y, width, height, caretLength, caretMarginX, caretMarginY,
-                fontName, fontStyle, fontSize, fontColor, frameColor, caretColor, caretBlinkInterval,
-                secondsPerFrame,
-                repeatDelay, keyInterpreter, supportedCharacters);
+    public MttTextarea createTextarea(MttTextarea.MttTextareaCreateInfo createInfo) {
+        var mttTextarea = new MttTextarea(vulkanInstance, createInfo);
         guiComponents.add(mttTextarea);
 
         return mttTextarea;

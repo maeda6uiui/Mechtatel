@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.component.gui.MttCheckbox;
 
 import java.awt.*;
 import java.io.IOException;
@@ -26,16 +27,42 @@ public class CheckboxTest extends Mechtatel {
     @Override
     public void init() {
         this.createCheckbox(
-                -0.9f, -0.9f, 0.9f, 0.1f,
-                -0.9f, -0.9f, 0.05f, 0.1f, -0.8f, -0.93f,
-                "This is a sample checkbox", Font.SANS_SERIF, Font.PLAIN, 64,
-                Color.GREEN, Color.WHITE
+                new MttCheckbox.MttCheckboxCreateInfo()
+                        .setX(-0.9f)
+                        .setY(-0.9f)
+                        .setWidth(0.9f)
+                        .setHeight(0.1f)
+                        .setBoxX(-0.9f)
+                        .setBoxY(-0.9f)
+                        .setBoxWidth(0.05f)
+                        .setBoxHeight(0.1f)
+                        .setTextX(-0.8f)
+                        .setTextY(-0.93f)
+                        .setText("This is a sample checkbox")
+                        .setFontName(Font.SANS_SERIF)
+                        .setFontStyle(Font.PLAIN)
+                        .setFontSize(64)
+                        .setFontColor(Color.GREEN)
+                        .setCheckboxColor(Color.WHITE)
         );
         this.createCheckbox(
-                -0.9f, -0.75f, 0.9f, 0.1f,
-                -0.9f, -0.75f, 0.05f, 0.1f, -0.8f, -0.78f,
-                "これはチェックボックスのサンプルです", Font.SANS_SERIF, Font.PLAIN, 64,
-                Color.ORANGE, Color.GREEN
+                new MttCheckbox.MttCheckboxCreateInfo()
+                        .setX(-0.9f)
+                        .setY(-0.75f)
+                        .setWidth(0.9f)
+                        .setHeight(0.1f)
+                        .setBoxX(-0.9f)
+                        .setBoxY(-0.75f)
+                        .setBoxWidth(0.05f)
+                        .setBoxHeight(0.1f)
+                        .setTextX(-0.8f)
+                        .setTextY(-0.78f)
+                        .setText("これはチェックボックスのサンプルです")
+                        .setFontName(Font.SANS_SERIF)
+                        .setFontStyle(Font.PLAIN)
+                        .setFontSize(64)
+                        .setFontColor(Color.ORANGE)
+                        .setCheckboxColor(Color.GREEN)
         );
     }
 }

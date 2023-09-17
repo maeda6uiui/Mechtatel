@@ -380,27 +380,8 @@ public class Mechtatel
         return instance.createButton(createInfo);
     }
 
-    public MttCheckbox createCheckbox(
-            float x,
-            float y,
-            float width,
-            float height,
-            float boxX,
-            float boxY,
-            float boxWidth,
-            float boxHeight,
-            float textX,
-            float textY,
-            String text,
-            String fontName,
-            int fontStyle,
-            int fontSize,
-            Color fontColor,
-            Color checkboxColor) {
-        return instance.createCheckbox(
-                x, y, width, height,
-                boxX, boxY, boxWidth, boxHeight, textX, textY,
-                text, fontName, fontStyle, fontSize, fontColor, checkboxColor);
+    public MttCheckbox createCheckbox(MttCheckbox.MttCheckboxCreateInfo createInfo) {
+        return instance.createCheckbox(createInfo);
     }
 
     public MttVerticalScrollbar createVerticalScrollbar(

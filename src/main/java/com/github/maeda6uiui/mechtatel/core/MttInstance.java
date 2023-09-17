@@ -529,28 +529,8 @@ class MttInstance {
         return mttButton;
     }
 
-    public MttCheckbox createCheckbox(
-            float x,
-            float y,
-            float width,
-            float height,
-            float boxX,
-            float boxY,
-            float boxWidth,
-            float boxHeight,
-            float textX,
-            float textY,
-            String text,
-            String fontName,
-            int fontStyle,
-            int fontSize,
-            Color fontColor,
-            Color checkboxColor) {
-        var mttCheckbox = new MttCheckbox(
-                vulkanInstance,
-                x, y, width, height,
-                boxX, boxY, boxWidth, boxHeight, textX, textY,
-                text, fontName, fontStyle, fontSize, fontColor, checkboxColor);
+    public MttCheckbox createCheckbox(MttCheckbox.MttCheckboxCreateInfo createInfo) {
+        var mttCheckbox = new MttCheckbox(vulkanInstance, createInfo);
         guiComponents.add(mttCheckbox);
 
         return mttCheckbox;

@@ -17,6 +17,105 @@ import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.con
  * @author maeda6uiui
  */
 public class MttCheckbox extends MttGuiComponent {
+    public static class MttCheckboxCreateInfo {
+        public float x;
+        public float y;
+        public float width;
+        public float height;
+        public float boxX;
+        public float boxY;
+        public float boxWidth;
+        public float boxHeight;
+        public float textX;
+        public float textY;
+        public String text;
+        public String fontName;
+        public int fontStyle;
+        public int fontSize;
+        public Color fontColor;
+        public Color checkboxColor;
+
+        public MttCheckboxCreateInfo setX(float x) {
+            this.x = x;
+            return this;
+        }
+
+        public MttCheckboxCreateInfo setY(float y) {
+            this.y = y;
+            return this;
+        }
+
+        public MttCheckboxCreateInfo setWidth(float width) {
+            this.width = width;
+            return this;
+        }
+
+        public MttCheckboxCreateInfo setHeight(float height) {
+            this.height = height;
+            return this;
+        }
+
+        public MttCheckboxCreateInfo setBoxX(float boxX) {
+            this.boxX = boxX;
+            return this;
+        }
+
+        public MttCheckboxCreateInfo setBoxY(float boxY) {
+            this.boxY = boxY;
+            return this;
+        }
+
+        public MttCheckboxCreateInfo setBoxWidth(float boxWidth) {
+            this.boxWidth = boxWidth;
+            return this;
+        }
+
+        public MttCheckboxCreateInfo setBoxHeight(float boxHeight) {
+            this.boxHeight = boxHeight;
+            return this;
+        }
+
+        public MttCheckboxCreateInfo setTextX(float textX) {
+            this.textX = textX;
+            return this;
+        }
+
+        public MttCheckboxCreateInfo setTextY(float textY) {
+            this.textY = textY;
+            return this;
+        }
+
+        public MttCheckboxCreateInfo setText(String text) {
+            this.text = text;
+            return this;
+        }
+
+        public MttCheckboxCreateInfo setFontName(String fontName) {
+            this.fontName = fontName;
+            return this;
+        }
+
+        public MttCheckboxCreateInfo setFontStyle(int fontStyle) {
+            this.fontStyle = fontStyle;
+            return this;
+        }
+
+        public MttCheckboxCreateInfo setFontSize(int fontSize) {
+            this.fontSize = fontSize;
+            return this;
+        }
+
+        public MttCheckboxCreateInfo setFontColor(Color fontColor) {
+            this.fontColor = fontColor;
+            return this;
+        }
+
+        public MttCheckboxCreateInfo setCheckboxColor(Color checkboxColor) {
+            this.checkboxColor = checkboxColor;
+            return this;
+        }
+    }
+
     private MttQuad2D checkboxFrame;
     private MttLine2DSet checkboxCross;
     private MttFont font;
@@ -26,28 +125,12 @@ public class MttCheckbox extends MttGuiComponent {
 
     private boolean selected;
 
-    public MttCheckbox(
-            MttVulkanInstance vulkanInstance,
-            float x,
-            float y,
-            float width,
-            float height,
-            float boxX,
-            float boxY,
-            float boxWidth,
-            float boxHeight,
-            float textX,
-            float textY,
-            String text,
-            String fontName,
-            int fontStyle,
-            int fontSize,
-            Color fontColor,
-            Color checkboxColor) {
-        super(vulkanInstance, x, y, width, height);
+    public MttCheckbox(MttVulkanInstance vulkanInstance, MttCheckboxCreateInfo createInfo) {
+        super(vulkanInstance, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
-        checkboxTopLeft = new Vector2f(boxX, boxY);
-        checkboxBottomRight = new Vector2f(boxX + boxWidth, boxY + boxHeight);
+        checkboxTopLeft = new Vector2f(createInfo.boxX, createInfo.boxY);
+        checkboxBottomRight = new Vector2f(
+                createInfo.boxX + createInfo.boxWidth, createInfo.boxY + createInfo.boxHeight);
 
         checkboxFrame = new MttQuad2D(
                 vulkanInstance,
@@ -55,26 +138,32 @@ public class MttCheckbox extends MttGuiComponent {
                 checkboxBottomRight,
                 0.0f,
                 false,
-                convertJavaColorToJOMLVector4f(checkboxColor)
+                convertJavaColorToJOMLVector4f(createInfo.checkboxColor)
         );
         checkboxCross = new MttLine2DSet(vulkanInstance);
         checkboxCross.add(
                 checkboxTopLeft,
                 checkboxBottomRight,
-                convertJavaColorToJOMLVector4f(checkboxColor),
+                convertJavaColorToJOMLVector4f(createInfo.checkboxColor),
                 0.0f
         );
         checkboxCross.add(
                 new Vector2f(checkboxTopLeft.x, checkboxBottomRight.y),
                 new Vector2f(checkboxBottomRight.x, checkboxTopLeft.y),
-                convertJavaColorToJOMLVector4f(checkboxColor),
+                convertJavaColorToJOMLVector4f(createInfo.checkboxColor),
                 0.0f
         );
         checkboxCross.createBuffer();
 
-        font = new MttFont(vulkanInstance, "default", new Font(
-                fontName, fontStyle, fontSize), true, fontColor, text);
-        font.prepare(text, new Vector2f(textX, textY));
+        font = new MttFont(
+                vulkanInstance,
+                "default",
+                new Font(createInfo.fontName, createInfo.fontStyle, createInfo.fontSize),
+                true,
+                createInfo.fontColor,
+                createInfo.text
+        );
+        font.prepare(createInfo.text, new Vector2f(createInfo.textX, createInfo.textY));
         font.createBuffers();
 
         selected = false;

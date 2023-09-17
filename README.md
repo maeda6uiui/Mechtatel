@@ -101,6 +101,41 @@ But you could check out the [test code](./src/test/java/com/github/maeda6uiui/me
 
 ## 進捗報告
 
+### 2023-09-17
+
+久しぶりにIntelliJを起動してMechtatelのコードを更新しました。
+
+GUIコンポーネントを作成するメソッドの引数が多かったので、必要な変数をクラスにまとめて、Builder形式のSetterを用意してみました。
+(Builderの意味をちゃんと理解してないので、もしかしたらこの実装をBuilderとは呼ばないかも...)
+
+```java
+@Override
+public void init() {
+    var keyInterpreter = new JISKeyInterpreter();
+    textarea = this.createTextarea(
+            new MttTextarea.MttTextareaCreateInfo()
+                    .setX(-0.9f)
+                    .setY(-0.9f)
+                    .setWidth(0.9f)
+                    .setHeight(0.9f)
+                    .setCaretLength(0.1f)
+                    .setCaretMarginX(0.001f)
+                    .setCaretMarginY(0.01f)
+                    .setFontName(Font.SANS_SERIF)
+                    .setFontStyle(Font.PLAIN)
+                    .setFontSize(32)
+                    .setFontColor(Color.GREEN)
+                    .setFrameColor(Color.WHITE)
+                    .setCaretColor(Color.LIGHT_GRAY)
+                    .setCaretBlinkInterval(0.5f)
+                    .setSecondsPerFrame(this.getSecondsPerFrame())
+                    .setRepeatDelay(0.5f)
+                    .setKeyInterpreter(keyInterpreter)
+                    .setSupportedCharacters(MttTextarea.DEFAULT_SUPPORTED_CHARACTERS)
+    );
+}
+```
+
 ### 2023-08-06
 
 MechtatelをPythonから扱う機能を実装していましたが、実装が面倒なことに加えて技術的な壁にぶち当たったので、この機能の開発は断念することにします。

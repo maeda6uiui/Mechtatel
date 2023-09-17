@@ -421,19 +421,8 @@ public class Mechtatel
                 selectedFontName, selectedFontStyle, selectedFontSize, selectedFontColor);
     }
 
-    public MttLabel createLabel(
-            float x,
-            float y,
-            float width,
-            float height,
-            String requiredChars,
-            String fontName,
-            int fontStyle,
-            int fontSize,
-            Color fontColor,
-            Color frameColor) {
-        return instance.createLabel(
-                x, y, width, height, requiredChars, fontName, fontStyle, fontSize, fontColor, frameColor);
+    public MttLabel createLabel(MttLabel.MttLabelCreateInfo createInfo) {
+        return instance.createLabel(createInfo);
     }
 
     public MttTextbox createTextbox(

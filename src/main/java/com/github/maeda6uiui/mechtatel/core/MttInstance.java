@@ -5,7 +5,6 @@ import com.github.maeda6uiui.mechtatel.core.animation.MttAnimation;
 import com.github.maeda6uiui.mechtatel.core.component.*;
 import com.github.maeda6uiui.mechtatel.core.component.gui.*;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
-import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.KeyInterpreter;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.physics.*;
@@ -565,28 +564,9 @@ class MttInstance {
         return mttLabel;
     }
 
-    public MttTextbox createTextbox(
-            float x,
-            float y,
-            float width,
-            float height,
-            float caretMarginX,
-            float caretMarginY,
-            String fontName,
-            int fontStyle,
-            int fontSize,
-            Color fontColor,
-            Color frameColor,
-            Color caretColor,
-            float caretBlinkInterval,
-            float repeatDelay,
-            KeyInterpreter keyInterpreter,
-            String supportedCharacters) {
+    public MttTextbox createTextbox(MttTextbox.MttTextboxCreateInfo createInfo) {
         float secondsPerFrame = this.getSecondsPerFrame();
-        var mttTextbox = new MttTextbox(
-                vulkanInstance, x, y, width, height, caretMarginX, caretMarginY,
-                fontName, fontStyle, fontSize, fontColor, frameColor, caretColor,
-                caretBlinkInterval, secondsPerFrame, repeatDelay, keyInterpreter, supportedCharacters);
+        var mttTextbox = new MttTextbox(vulkanInstance, createInfo);
         guiComponents.add(mttTextbox);
 
         return mttTextbox;

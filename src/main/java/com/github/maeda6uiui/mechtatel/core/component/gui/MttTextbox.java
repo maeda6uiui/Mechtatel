@@ -36,6 +36,111 @@ public class MttTextbox extends MttGuiComponent {
         SPECIAL_KEYS.add("LEFT");
     }
 
+    public static class MttTextboxCreateInfo {
+        public float x;
+        public float y;
+        public float width;
+        public float height;
+        public float caretMarginX;
+        public float caretMarginY;
+        public String fontName;
+        public int fontStyle;
+        public int fontSize;
+        public Color fontColor;
+        public Color frameColor;
+        public Color caretColor;
+        public float caretBlinkInterval;
+        public float secondsPerFrame;
+        public float repeatDelay;
+        public KeyInterpreter keyInterpreter;
+        public String supportedCharacters;
+
+        public MttTextboxCreateInfo setX(float x) {
+            this.x = x;
+            return this;
+        }
+
+        public MttTextboxCreateInfo setY(float y) {
+            this.y = y;
+            return this;
+        }
+
+        public MttTextboxCreateInfo setWidth(float width) {
+            this.width = width;
+            return this;
+        }
+
+        public MttTextboxCreateInfo setHeight(float height) {
+            this.height = height;
+            return this;
+        }
+
+        public MttTextboxCreateInfo setCaretMarginX(float caretMarginX) {
+            this.caretMarginX = caretMarginX;
+            return this;
+        }
+
+        public MttTextboxCreateInfo setCaretMarginY(float caretMarginY) {
+            this.caretMarginY = caretMarginY;
+            return this;
+        }
+
+        public MttTextboxCreateInfo setFontName(String fontName) {
+            this.fontName = fontName;
+            return this;
+        }
+
+        public MttTextboxCreateInfo setFontStyle(int fontStyle) {
+            this.fontStyle = fontStyle;
+            return this;
+        }
+
+        public MttTextboxCreateInfo setFontSize(int fontSize) {
+            this.fontSize = fontSize;
+            return this;
+        }
+
+        public MttTextboxCreateInfo setFontColor(Color fontColor) {
+            this.fontColor = fontColor;
+            return this;
+        }
+
+        public MttTextboxCreateInfo setFrameColor(Color frameColor) {
+            this.frameColor = frameColor;
+            return this;
+        }
+
+        public MttTextboxCreateInfo setCaretColor(Color caretColor) {
+            this.caretColor = caretColor;
+            return this;
+        }
+
+        public MttTextboxCreateInfo setCaretBlinkInterval(float caretBlinkInterval) {
+            this.caretBlinkInterval = caretBlinkInterval;
+            return this;
+        }
+
+        public MttTextboxCreateInfo setSecondsPerFrame(float secondsPerFrame) {
+            this.secondsPerFrame = secondsPerFrame;
+            return this;
+        }
+
+        public MttTextboxCreateInfo setRepeatDelay(float repeatDelay) {
+            this.repeatDelay = repeatDelay;
+            return this;
+        }
+
+        public MttTextboxCreateInfo setKeyInterpreter(KeyInterpreter keyInterpreter) {
+            this.keyInterpreter = keyInterpreter;
+            return this;
+        }
+
+        public MttTextboxCreateInfo setSupportedCharacters(String supportedCharacters) {
+            this.supportedCharacters = supportedCharacters;
+            return this;
+        }
+    }
+
     private MttQuad2D frame;
     private MttLine2D caret;
     private MttFont font;
@@ -54,43 +159,30 @@ public class MttTextbox extends MttGuiComponent {
 
     private boolean visible;
 
-    public MttTextbox(
-            MttVulkanInstance vulkanInstance,
-            float x,
-            float y,
-            float width,
-            float height,
-            float caretMarginX,
-            float caretMarginY,
-            String fontName,
-            int fontStyle,
-            int fontSize,
-            Color fontColor,
-            Color frameColor,
-            Color caretColor,
-            float caretBlinkInterval,
-            float secondsPerFrame,
-            float repeatDelay,
-            KeyInterpreter keyInterpreter,
-            String supportedCharacters) {
-        super(vulkanInstance, x, y, width, height);
+    public MttTextbox(MttVulkanInstance vulkanInstance, MttTextboxCreateInfo createInfo) {
+        super(vulkanInstance, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         frame = new MttQuad2D(
                 vulkanInstance,
-                new Vector2f(x, y),
-                new Vector2f(x + width, y + height),
+                new Vector2f(createInfo.x, createInfo.y),
+                new Vector2f(createInfo.x + createInfo.width, createInfo.y + createInfo.height),
                 0.0f,
                 false,
-                convertJavaColorToJOMLVector4f(frameColor)
+                convertJavaColorToJOMLVector4f(createInfo.frameColor)
         );
 
         caret = new MttLine2D(
                 vulkanInstance,
                 new MttVertex2D(
-                        new Vector2f(x + caretMarginX, y + caretMarginY), convertJavaColorToJOMLVector4f(caretColor)
+                        new Vector2f(createInfo.x + createInfo.caretMarginX, createInfo.y + createInfo.caretMarginY),
+                        convertJavaColorToJOMLVector4f(createInfo.caretColor)
                 ),
                 new MttVertex2D(
-                        new Vector2f(x + caretMarginX, y + height - caretMarginY), convertJavaColorToJOMLVector4f(caretColor)
+                        new Vector2f(
+                                createInfo.x + createInfo.caretMarginX,
+                                createInfo.y + createInfo.height - createInfo.caretMarginY
+                        ),
+                        convertJavaColorToJOMLVector4f(createInfo.caretColor)
                 ),
                 0.0f
         );
@@ -98,10 +190,10 @@ public class MttTextbox extends MttGuiComponent {
         font = new MttFont(
                 vulkanInstance,
                 "default",
-                new Font(fontName, fontStyle, fontSize),
+                new Font(createInfo.fontName, createInfo.fontStyle, createInfo.fontSize),
                 true,
-                fontColor,
-                supportedCharacters);
+                createInfo.fontColor,
+                createInfo.supportedCharacters);
 
         glyphs = font.getGlyphs();
 
@@ -109,12 +201,12 @@ public class MttTextbox extends MttGuiComponent {
         prevText = "";
         caretColumn = 0;
 
-        this.keyInterpreter = keyInterpreter;
+        this.keyInterpreter = createInfo.keyInterpreter;
 
-        this.caretBlinkInterval = caretBlinkInterval;
+        this.caretBlinkInterval = createInfo.caretBlinkInterval;
         this.lastTime = (float) glfwGetTime();
 
-        repeatDelayFrames = Math.round(repeatDelay / secondsPerFrame);
+        repeatDelayFrames = Math.round(createInfo.repeatDelay / createInfo.secondsPerFrame);
 
         visible = true;
     }

@@ -4,7 +4,6 @@ import com.github.maeda6uiui.mechtatel.core.animation.AnimationInfo;
 import com.github.maeda6uiui.mechtatel.core.animation.MttAnimation;
 import com.github.maeda6uiui.mechtatel.core.component.*;
 import com.github.maeda6uiui.mechtatel.core.component.gui.*;
-import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.KeyInterpreter;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.physics.*;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
@@ -401,27 +400,8 @@ public class Mechtatel
         return instance.createLabel(createInfo);
     }
 
-    public MttTextbox createTextbox(
-            float x,
-            float y,
-            float width,
-            float height,
-            float caretMarginX,
-            float caretMarginY,
-            String fontName,
-            int fontStyle,
-            int fontSize,
-            Color fontColor,
-            Color frameColor,
-            Color caretColor,
-            float caretBlinkInterval,
-            float repeatDelay,
-            KeyInterpreter keyInterpreter,
-            String supportedCharacters) {
-        return instance.createTextbox(
-                x, y, width, height, caretMarginX, caretMarginY,
-                fontName, fontStyle, fontSize, fontColor, frameColor, caretColor,
-                caretBlinkInterval, repeatDelay, keyInterpreter, supportedCharacters);
+    public MttTextbox createTextbox(MttTextbox.MttTextboxCreateInfo createInfo) {
+        return instance.createTextbox(createInfo);
     }
 
     public MttTextarea createTextarea(MttTextarea.MttTextareaCreateInfo createInfo) {

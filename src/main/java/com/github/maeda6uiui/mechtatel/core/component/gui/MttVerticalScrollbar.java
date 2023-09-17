@@ -16,6 +16,51 @@ import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.con
  * @author maeda6uiui
  */
 public class MttVerticalScrollbar extends MttGuiComponent {
+    public static class MttVerticalScrollbarCreateInfo {
+        public float x;
+        public float y;
+        public float width;
+        public float height;
+        public float grabHeight;
+        public Color frameColor;
+        public Color grabFrameColor;
+
+        public MttVerticalScrollbarCreateInfo setX(float x) {
+            this.x = x;
+            return this;
+        }
+
+        public MttVerticalScrollbarCreateInfo setY(float y) {
+            this.y = y;
+            return this;
+        }
+
+        public MttVerticalScrollbarCreateInfo setWidth(float width) {
+            this.width = width;
+            return this;
+        }
+
+        public MttVerticalScrollbarCreateInfo setHeight(float height) {
+            this.height = height;
+            return this;
+        }
+
+        public MttVerticalScrollbarCreateInfo setGrabHeight(float grabHeight) {
+            this.grabHeight = grabHeight;
+            return this;
+        }
+
+        public MttVerticalScrollbarCreateInfo setFrameColor(Color frameColor) {
+            this.frameColor = frameColor;
+            return this;
+        }
+
+        public MttVerticalScrollbarCreateInfo setGrabFrameColor(Color grabFrameColor) {
+            this.grabFrameColor = grabFrameColor;
+            return this;
+        }
+    }
+
     private MttQuad2D frame;
     private MttQuad2D grabFrame;
 
@@ -24,39 +69,31 @@ public class MttVerticalScrollbar extends MttGuiComponent {
     private float prevFCursorY;
     private boolean grabbed;
 
-    public MttVerticalScrollbar(
-            MttVulkanInstance vulkanInstance,
-            float x,
-            float y,
-            float width,
-            float height,
-            float grabHeight,
-            Color frameColor,
-            Color grabFrameColor) {
-        super(vulkanInstance, x, y, width, height);
+    public MttVerticalScrollbar(MttVulkanInstance vulkanInstance, MttVerticalScrollbarCreateInfo createInfo) {
+        super(vulkanInstance, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         frame = new MttQuad2D(
                 vulkanInstance,
-                new Vector2f(x, y),
-                new Vector2f(x + width, y + height),
+                new Vector2f(createInfo.x, createInfo.y),
+                new Vector2f(createInfo.x + createInfo.width, createInfo.y + createInfo.height),
                 0.0f,
                 false,
-                convertJavaColorToJOMLVector4f(frameColor)
+                convertJavaColorToJOMLVector4f(createInfo.frameColor)
         );
         grabFrame = new MttQuad2D(
                 vulkanInstance,
-                new Vector2f(x, y),
-                new Vector2f(x + width, y + grabHeight),
+                new Vector2f(createInfo.x, createInfo.y),
+                new Vector2f(createInfo.x + createInfo.width, createInfo.y + createInfo.grabHeight),
                 0.01f,
                 true,
-                convertJavaColorToJOMLVector4f(grabFrameColor)
+                convertJavaColorToJOMLVector4f(createInfo.grabFrameColor)
         );
 
         frame.setDrawOrder(1);
         vulkanInstance.sortComponents();
 
-        grabTopLeft = new Vector2f(x, y);
-        grabBottomRight = new Vector2f(x + width, y + grabHeight);
+        grabTopLeft = new Vector2f(createInfo.x, createInfo.y);
+        grabBottomRight = new Vector2f(createInfo.x + createInfo.width, createInfo.y + createInfo.grabHeight);
 
         prevFCursorY = 0.0f;
         grabbed = false;

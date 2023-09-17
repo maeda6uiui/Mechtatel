@@ -2,6 +2,8 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.component.gui.MttHorizontalScrollbar;
+import com.github.maeda6uiui.mechtatel.core.component.gui.MttVerticalScrollbar;
 
 import java.awt.*;
 import java.io.IOException;
@@ -26,23 +28,27 @@ public class ScrollbarTest extends Mechtatel {
     @Override
     public void init() {
         var vScrollbar = this.createVerticalScrollbar(
-                -0.9f,
-                -0.9f,
-                0.1f,
-                1.8f,
-                0.1f,
-                Color.WHITE,
-                Color.GRAY);
+                new MttVerticalScrollbar.MttVerticalScrollbarCreateInfo()
+                        .setX(-0.9f)
+                        .setY(-0.9f)
+                        .setWidth(0.1f)
+                        .setHeight(1.8f)
+                        .setGrabHeight(0.1f)
+                        .setFrameColor(Color.WHITE)
+                        .setGrabFrameColor(Color.GRAY)
+        );
         vScrollbar.setScrollAmount(0.5f);
 
         var hScrollbar = this.createHorizontalScrollbar(
-                -0.7f,
-                -0.9f,
-                1.2f,
-                0.1f,
-                0.1f,
-                Color.WHITE,
-                Color.GRAY);
+                new MttHorizontalScrollbar.MttHorizontalScrollbarCreateInfo()
+                        .setX(-0.7f)
+                        .setY(-0.9f)
+                        .setWidth(1.2f)
+                        .setHeight(0.1f)
+                        .setGrabWidth(0.1f)
+                        .setFrameColor(Color.WHITE)
+                        .setGrabFrameColor(Color.GRAY)
+        );
         hScrollbar.setScrollAmount(0.5f);
     }
 }

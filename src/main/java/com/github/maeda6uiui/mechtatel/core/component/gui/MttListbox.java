@@ -135,8 +135,15 @@ public class MttListbox extends MttGuiComponent {
         );
 
         scrollbar = new MttVerticalScrollbar(
-                vulkanInstance, x + width - scrollbarWidth, y, scrollbarWidth, height, scrollbarGrabHeight,
-                scrollbarFrameColor, scrollbarGrabColor
+                vulkanInstance,
+                new MttVerticalScrollbar.MttVerticalScrollbarCreateInfo()
+                        .setX(x + width - scrollbarWidth)
+                        .setY(y)
+                        .setWidth(scrollbarWidth)
+                        .setHeight(height)
+                        .setGrabHeight(scrollbarGrabHeight)
+                        .setFrameColor(scrollbarFrameColor)
+                        .setGrabFrameColor(scrollbarGrabColor)
         );
 
         items = new ArrayList<>();

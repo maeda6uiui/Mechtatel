@@ -384,26 +384,13 @@ public class Mechtatel
         return instance.createCheckbox(createInfo);
     }
 
-    public MttVerticalScrollbar createVerticalScrollbar(
-            float x,
-            float y,
-            float width,
-            float height,
-            float grabHeight,
-            Color frameColor,
-            Color grabFrameColor) {
-        return instance.createVerticalScrollbar(x, y, width, height, grabHeight, frameColor, grabFrameColor);
+    public MttVerticalScrollbar createVerticalScrollbar(MttVerticalScrollbar.MttVerticalScrollbarCreateInfo createInfo) {
+        return instance.createVerticalScrollbar(createInfo);
     }
 
     public MttHorizontalScrollbar createHorizontalScrollbar(
-            float x,
-            float y,
-            float width,
-            float height,
-            float grabWidth,
-            Color frameColor,
-            Color grabFrameColor) {
-        return instance.createHorizontalScrollbar(x, y, width, height, grabWidth, frameColor, grabFrameColor);
+            MttHorizontalScrollbar.MttHorizontalScrollbarCreateInfo createInfo) {
+        return instance.createHorizontalScrollbar(createInfo);
     }
 
     public MttListbox createListbox(

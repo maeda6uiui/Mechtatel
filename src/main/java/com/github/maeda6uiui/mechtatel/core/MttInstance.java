@@ -536,31 +536,16 @@ class MttInstance {
         return mttCheckbox;
     }
 
-    public MttVerticalScrollbar createVerticalScrollbar(
-            float x,
-            float y,
-            float width,
-            float height,
-            float grabHeight,
-            Color frameColor,
-            Color grabFrameColor) {
-        var mttScrollbar = new MttVerticalScrollbar(
-                vulkanInstance, x, y, width, height, grabHeight, frameColor, grabFrameColor);
+    public MttVerticalScrollbar createVerticalScrollbar(MttVerticalScrollbar.MttVerticalScrollbarCreateInfo createInfo) {
+        var mttScrollbar = new MttVerticalScrollbar(vulkanInstance, createInfo);
         guiComponents.add(mttScrollbar);
 
         return mttScrollbar;
     }
 
     public MttHorizontalScrollbar createHorizontalScrollbar(
-            float x,
-            float y,
-            float width,
-            float height,
-            float grabWidth,
-            Color frameColor,
-            Color grabFrameColor) {
-        var mttScrollbar = new MttHorizontalScrollbar(
-                vulkanInstance, x, y, width, height, grabWidth, frameColor, grabFrameColor);
+            MttHorizontalScrollbar.MttHorizontalScrollbarCreateInfo createInfo) {
+        var mttScrollbar = new MttHorizontalScrollbar(vulkanInstance, createInfo);
         guiComponents.add(mttScrollbar);
 
         return mttScrollbar;

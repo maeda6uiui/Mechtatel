@@ -25,7 +25,7 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class Nabor {
+public abstract class Nabor {
     private VkDevice device;
 
     private int msaaSamples;

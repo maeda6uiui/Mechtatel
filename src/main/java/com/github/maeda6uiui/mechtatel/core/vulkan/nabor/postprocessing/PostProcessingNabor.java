@@ -21,7 +21,7 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class PostProcessingNabor extends Nabor {
+public abstract class PostProcessingNabor extends Nabor {
     public PostProcessingNabor(
             VkDevice device,
             int msaaSamples,

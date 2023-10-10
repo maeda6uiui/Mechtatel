@@ -4,37 +4,13 @@ Mechtatel (露: Мечтатель 英: Dreamer)
 
 > Мечтай до тех пор, пока не узнаешь, что давно пора повзрослеть и бросить эту фигню.
 
-> Dream until you realize that it's high time you grew up and gave up this garbage.
-
-> もう大人なんだからこんなの諦めよう、と思えるまでは夢を見たっていいじゃない。
-
-## 概要(Overview)
-
-This project aims to create a Vulkan-based game engine in Java with help of [LWJGL](https://www.lwjgl.org/).
-It's still far from what you call a game engine, but I'll keep on developing little by little in my free time.
-Leave a star in this repo if you like it!
-
----
+## 概要
 
 Javaでゲームエンジンを作ることを目標としているプロジェクトです。
 [LWJGL](https://www.lwjgl.org/)でVulkanを使用して開発を進めています。
 現状はまだゲームエンジンと呼べるような代物ではありませんが、気力と時間があるときに少しずつ開発を進めていきたいと思っています。
 
-## 開発者からのメッセージ(Message from developer)
-
-It's been years since I came up with an idea like "Isn't it great if I could create a game engine and build my own game upon it?"
-If you just want to create a game, then you should take advantage of the great game engines such as Unity and Unreal Engine.
-As for me, I simply love to write code, and want to develop a game starting from the lowest level possible.
-
-*Mechtatel* is a word that means "Dreamer" in Russian.
-It's a word that best describes me, only dreaming and being far from achivements.
-Maybe I wouldn't achieve anything until I die, maybe I would make some aesthetic garbage, I don't know...
-But if you are a nerd or something and like my work, then leave a star in this repo.
-It'll be my great mental support.
-
-Thank you!
-
----
+## 開発者からのメッセージ
 
 「自作のゲームエンジンを作りたい」と思ってから何年も経ち、思いつきでコードを書いては捨て、書いては捨て、そんなことを繰り返しながら、ただのゴミを生産してきた人生です。
 
@@ -49,18 +25,18 @@ Thank you!
 結局自分が死ぬまで何も成し遂げられないかもしれませんし、あるいは何か芸術的なゴミを生み出すことができるかもしれません。
 「この人を応援したい！」とか思うような頭のおかしい人は、Starでも付けていってください...。
 
-## Mechtatelを試してみたい方へ(For those who want to try out Mechtatel)
+## Mechtatelを試してみたい方へ
 
-**Note that Mechtatel is currently under active development, and is subject to drastic change.**
+**Mechtatelは現在開発中のため、仕様が大幅に変更される可能性があります。**
 
-Clone this repository.
+このリポジトリをCloneします。
 
 ```
 git clone -b develop https://github.com/maeda6uiui/Mechtatel.git
 ```
 
-Change `lwjgl.natives` in pom.xml according to your platform.
-You can find supported platforms on the [official page of LWJGL](https://www.lwjgl.org/customize). For example, if you are running Linux x64, then `lwjgl.natives` is `natives-linux`.
+pom.xmlに記載の`lwjgl.natives`をプラットフォームに合わせて変更します。
+[LWJGLの公式サイト](https://www.lwjgl.org/customize)でサポートされているプラットフォームを確認できます。
 
 ```xml
 <properties>
@@ -71,33 +47,33 @@ You can find supported platforms on the [official page of LWJGL](https://www.lwj
 </properties>
 ```
 
-You have to download following binaries and place them under ./Mechtatel/Bin.
+以下のバイナリをダウンロードして./Mechtatel/Binフォルダに配置してください。
 
 - [shaderc](https://github.com/google/shaderc)
 - [Libbulletjme](https://github.com/stephengold/Libbulletjme)
 
 **Shaderc**
 
-Download a Shaderc artifact for your platform from their [GitHub repository](https://github.com/google/shaderc).
+[GitHubリポジトリ](https://github.com/google/shaderc)に記載のリンクから、使用しているプラットフォーム向けのバイナリをダウンロードしてください。
 
-![Shaderc downloads](./Image/shaderc_downloads.png)
+![Shaderc Downloads](./Image/shaderc_downloads.png)
 
-Extract the ZIP file and copy install/bin/shaderc_shared.dll (if you are using Windows) under ./Mechtatel/Bin.
+ZIPファイルを展開して、install/bin/shaderc_shared.dll (Windowsの場合)を./Mechtatel/Binフォルダにコピーしてください。
 
 **Libbulletjme**
 
-Download a Libbulletjme binary for your platform from the [release](https://github.com/stephengold/Libbulletjme/releases/tag/17.5.4) of their GitHub repository.
-Mechtatel currently uses v17.5.4 of Libbulletjme, but this version may change in the future.
+GitHubリポジトリの[release](https://github.com/stephengold/Libbulletjme/releases/tag/17.5.4)から、使用しているプラットフォーム向けのバイナリをダウンロードしてください。
+ダウンロードしたバイナリは./Mechtatel/Binフォルダにコピーしてください。
 
-Mechtatel uses the DebugSp binary by default.
-You can change this setting in [settings.json](./Mechtatel/Setting/settings.json).
+Mechtatelは現在Libbulletjmeのv17.5.4を使用していますが、将来的にこのバージョンは変更される場合があります。
 
-Copy the downloaded binary under ./Mechtatel/Bin.
+Mechtatelのデフォルト設定ではDebugSpバイナリを使用します。
+この設定は[settings.json](./Mechtatel/Setting/settings.json)で変更することができます。
 
 ---
 
-I'm sorry that currently there is no elaborate document for this project.
-But you could check out the [test code](./src/test/java/com/github/maeda6uiui/mechtatel/) and hopefully get the gist of how Mechtatel works. 
+今のところこのプロジェクトに関する詳細なドキュメントはありません。
+[テストコード](./src/test/java/com/github/maeda6uiui/mechtatel/)を確認していただくと、Mechtatelがどういうふうに動作するのか、雰囲気だけでも理解していただけるかもしれません...。
 
 ## 進捗報告
 

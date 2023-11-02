@@ -5,7 +5,6 @@ import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttCheckbox;
 
 import java.awt.*;
-import java.io.IOException;
 
 public class CheckboxTest extends Mechtatel {
     public CheckboxTest(MttSettings settings) {
@@ -13,15 +12,14 @@ public class CheckboxTest extends Mechtatel {
     }
 
     public static void main(String[] args) {
-        MttSettings settings;
-        try {
-            settings = MttSettings.load("./Mechtatel/Setting/settings.json");
-        } catch (IOException e) {
-            System.out.println("Failed to load setting file. Use default settings");
-            settings = new MttSettings();
-        }
-
-        new CheckboxTest(settings);
+        MttSettings
+                .load("./Mechtatel/Setting/settings.json")
+                .ifPresentOrElse(
+                        CheckboxTest::new,
+                        () -> {
+                            System.out.println("Failed to load settings");
+                        }
+                );
     }
 
     @Override

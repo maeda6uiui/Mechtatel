@@ -17,15 +17,14 @@ public class SimpleBlurTest extends Mechtatel {
     }
 
     public static void main(String[] args) {
-        MttSettings settings;
-        try {
-            settings = MttSettings.load("./Mechtatel/Setting/settings.json");
-        } catch (IOException e) {
-            System.out.println("Failed to load setting file. Use default settings");
-            settings = new MttSettings();
-        }
-
-        new SimpleBlurTest(settings);
+        MttSettings
+                .load("./Mechtatel/Setting/settings.json")
+                .ifPresentOrElse(
+                        SimpleBlurTest::new,
+                        () -> {
+                            System.out.println("Failed to load settings");
+                        }
+                );
     }
 
     private MttScreen mainScreen;

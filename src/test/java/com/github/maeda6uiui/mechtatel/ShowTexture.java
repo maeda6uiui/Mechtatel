@@ -8,23 +8,20 @@ import com.github.maeda6uiui.mechtatel.core.component.MttTexturedQuad2D;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector2f;
 
-import java.io.IOException;
-
 public class ShowTexture extends Mechtatel {
     public ShowTexture(MttSettings settings) {
         super(settings);
     }
 
     public static void main(String[] args) {
-        MttSettings settings;
-        try {
-            settings = MttSettings.load("./Mechtatel/Setting/settings.json");
-        } catch (IOException e) {
-            System.out.println("Failed to load setting file. Use default settings");
-            settings = new MttSettings();
-        }
-
-        new ShowTexture(settings);
+        MttSettings
+                .load("./Mechtatel/Setting/settings.json")
+                .ifPresentOrElse(
+                        ShowTexture::new,
+                        () -> {
+                            System.out.println("Failed to load settings");
+                        }
+                );
     }
 
     private MttScreen mainScreen;

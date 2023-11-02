@@ -20,15 +20,14 @@ public class TexturedScreenTest extends Mechtatel {
     }
 
     public static void main(String[] args) {
-        MttSettings settings;
-        try {
-            settings = MttSettings.load("./Mechtatel/Setting/settings.json");
-        } catch (IOException e) {
-            System.out.println("Failed to load setting file. Use default settings");
-            settings = new MttSettings();
-        }
-
-        new TexturedScreenTest(settings);
+        MttSettings
+                .load("./Mechtatel/Setting/settings.json")
+                .ifPresentOrElse(
+                        TexturedScreenTest::new,
+                        () -> {
+                            System.out.println("Failed to load settings");
+                        }
+                );
     }
 
     private MttScreen primaryScreen;

@@ -6,7 +6,6 @@ import com.github.maeda6uiui.mechtatel.core.component.gui.MttHorizontalScrollbar
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttVerticalScrollbar;
 
 import java.awt.*;
-import java.io.IOException;
 
 public class ScrollbarTest extends Mechtatel {
     public ScrollbarTest(MttSettings settings) {
@@ -14,15 +13,14 @@ public class ScrollbarTest extends Mechtatel {
     }
 
     public static void main(String[] args) {
-        MttSettings settings;
-        try {
-            settings = MttSettings.load("./Mechtatel/Setting/settings.json");
-        } catch (IOException e) {
-            System.out.println("Failed to load setting file. Use default settings");
-            settings = new MttSettings();
-        }
-
-        new ScrollbarTest(settings);
+        MttSettings
+                .load("./Mechtatel/Setting/settings.json")
+                .ifPresentOrElse(
+                        ScrollbarTest::new,
+                        () -> {
+                            System.out.println("Failed to load settings");
+                        }
+                );
     }
 
     @Override

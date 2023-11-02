@@ -6,7 +6,6 @@ import com.github.maeda6uiui.mechtatel.core.component.gui.MttTextarea;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.JISKeyInterpreter;
 
 import java.awt.*;
-import java.io.IOException;
 
 public class TextareaTest extends Mechtatel {
     public TextareaTest(MttSettings settings) {
@@ -14,15 +13,14 @@ public class TextareaTest extends Mechtatel {
     }
 
     public static void main(String[] args) {
-        MttSettings settings;
-        try {
-            settings = MttSettings.load("./Mechtatel/Setting/settings.json");
-        } catch (IOException e) {
-            System.out.println("Failed to load setting file. Use default settings");
-            settings = new MttSettings();
-        }
-
-        new TextareaTest(settings);
+        MttSettings
+                .load("./Mechtatel/Setting/settings.json")
+                .ifPresentOrElse(
+                        TextareaTest::new,
+                        () -> {
+                            System.out.println("Failed to load settings");
+                        }
+                );
     }
 
     private MttTextarea textarea;

@@ -2,10 +2,14 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 /**
  * Settings for Mechtatel
@@ -13,6 +17,8 @@ import java.nio.file.Paths;
  * @author maeda6uiui
  */
 public class MttSettings {
+    private static final Logger logger = LoggerFactory.getLogger(MttSettings.class);
+
     public static class WindowSettings {
         public String title;
         public int width;
@@ -100,20 +106,49 @@ public class MttSettings {
     @JsonProperty("bullet")
     public BulletSettings bulletSettings;
 
-    public MttSettings() {
+    private static MttSettings instance;
+
+    private MttSettings() {
         windowSettings = new WindowSettings();
         systemSettings = new SystemSettings();
         renderingSettings = new RenderingSettings();
         bulletSettings = new BulletSettings();
     }
 
-    public static MttSettings load(String jsonFilepath) throws IOException {
-        String json = Files.readString(Paths.get(jsonFilepath));
+    /**
+     * Loads settings from a JSON file.
+     * This method returns empty value if setting file specified does not exist
+     * or if it fails to load settings from the file.
+     *
+     * @param jsonFilepath Filepath of the JSON file
+     * @return Settings
+     */
+    public static Optional<MttSettings> load(String jsonFilepath) {
+        Path settingsFile = Paths.get(jsonFilepath);
+        if (!Files.exists(settingsFile)) {
+            logger.error("Setting file ({}) was not found", settingsFile);
+            return Optional.empty();
+        }
 
-        var mapper = new ObjectMapper();
-        MttSettings settings = mapper.readValue(json, MttSettings.class);
+        try {
+            String json = Files.readString(settingsFile);
 
-        return settings;
+            var mapper = new ObjectMapper();
+            instance = mapper.readValue(json, MttSettings.class);
+            return Optional.of(instance);
+        } catch (IOException e) {
+            logger.error("Failed to load setting file", e);
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Returns currently retained {@link MttSettings} instance.
+     *
+     * @return Settings
+     */
+    public static Optional<MttSettings> get() {
+        return Optional.ofNullable(instance);
     }
 
     @Override

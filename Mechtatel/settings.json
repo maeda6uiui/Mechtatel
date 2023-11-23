@@ -1,0 +1,14 @@
+{
+    "window": {
+        "title": "Mechtatel",
+        "width": 1280,
+        "height": 720,
+        "resizable": true
+    },
+    "system": {
+        "fps": 60
+    },
+    "rendering": {
+        "imageFormat": "unorm"
+    }
+}

@@ -5,7 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttTexturedQuad;
 import org.joml.Vector3f;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class MttTexturedQuad2D extends MttComponent {
     public MttTexturedQuad2D(
             MttVulkanInstance vulkanInstance,
             String screenName,
-            URL textureResource,
+            URI textureResource,
             boolean generateMipmaps,
             MttVertex2DUV p1,
             MttVertex2DUV p2,

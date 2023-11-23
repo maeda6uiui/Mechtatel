@@ -48,7 +48,7 @@ public class MttAnimation {
             AnimationInfo.Model animModel = entry.getValue();
 
             Path modelFile = animationDirectory.resolve(animModel.filename);
-            MttModel model = new MttModel(vulkanInstance, screenName, modelFile.toUri().toURL());
+            MttModel model = new MttModel(vulkanInstance, screenName, modelFile.toUri());
             models.put(modelName, model);
         }
 

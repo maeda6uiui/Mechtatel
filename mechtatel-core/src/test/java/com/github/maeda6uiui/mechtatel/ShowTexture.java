@@ -8,6 +8,8 @@ import com.github.maeda6uiui.mechtatel.core.component.MttTexturedQuad2D;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector2f;
 
+import java.net.URISyntaxException;
+
 public class ShowTexture extends Mechtatel {
     public ShowTexture(MttSettings settings) {
         super(settings);
@@ -37,11 +39,15 @@ public class ShowTexture extends Mechtatel {
         drawPath.setPresentScreenName("main");
         drawPath.apply();
 
-        texturedQuad = this.createTexturedQuad2D(
-                "main",
-                this.getClass().getResource("/Standard/Texture/checker.png"),
-                new Vector2f(-1.0f, -1.0f),
-                new Vector2f(1.0f, 1.0f),
-                0.0f);
+        try {
+            texturedQuad = this.createTexturedQuad2D(
+                    "main",
+                    this.getClass().getResource("/Standard/Texture/checker.png"),
+                    new Vector2f(-1.0f, -1.0f),
+                    new Vector2f(1.0f, 1.0f),
+                    0.0f);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 }

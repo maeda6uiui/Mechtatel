@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.animation.AnimationInfo;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Objects;
 
 public class LoadAnimationInfoTest {
@@ -29,7 +30,7 @@ public class LoadAnimationInfoTest {
                     System.out.printf("%d: %s\n", kk, vv.displacement.translation);
                 });
             });
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
     }

@@ -10,7 +10,7 @@ import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkQueue;
 
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.*;
@@ -96,7 +96,7 @@ public class VkMttModel extends VkMttComponent {
             long commandPool,
             VkQueue graphicsQueue,
             IVkMttScreenForVkMttTexture screen,
-            URL modelResource) throws IOException {
+            URI modelResource) throws IOException {
         this.device = device;
 
         isDuplicatedModel = false;

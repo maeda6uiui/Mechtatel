@@ -27,6 +27,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -361,7 +363,7 @@ class MttInstance {
         vulkanInstance.sortComponents();
     }
 
-    public MttModel createModel(String screenName, URL modelResource) throws IOException {
+    public MttModel createModel(String screenName, URI modelResource) throws IOException {
         var model = new MttModel(vulkanInstance, screenName, modelResource);
         return model;
     }
@@ -425,7 +427,7 @@ class MttInstance {
 
     public MttTexturedQuad createTexturedQuad(
             String screenName,
-            URL textureResource,
+            URI textureResource,
             boolean generateMipmaps,
             MttVertex3DUV v1,
             MttVertex3DUV v2,
@@ -478,7 +480,7 @@ class MttInstance {
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
-            String screenName, URL textureResource,
+            String screenName, URI textureResource,
             MttVertex2DUV p1, MttVertex2DUV p2, MttVertex2DUV p3, MttVertex2DUV p4, float z) {
         var texturedQuad = new MttTexturedQuad2D(
                 vulkanInstance, screenName, textureResource, false, p1, p2, p3, p4, z);
@@ -498,7 +500,7 @@ class MttInstance {
     }
 
     public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(
-            String screenName, URL textureResource) {
+            String screenName, URI textureResource) {
         var texturedQuadSet = new MttTexturedQuad2DSingleTextureSet(vulkanInstance, screenName, textureResource);
         return texturedQuadSet;
     }
@@ -638,8 +640,8 @@ class MttInstance {
         this.physicsSimulationTimeScale = physicsSimulationTimeScale;
     }
 
-    public MttSound createSound(URL soundResource, boolean loop, boolean relative) throws IOException {
-        var sound = new MttSound(soundResource, loop, relative);
+    public MttSound createSound(URL soundResource, boolean loop, boolean relative) throws URISyntaxException, IOException {
+        var sound = new MttSound(soundResource.toURI(), loop, relative);
         sounds3D.add(sound);
 
         return sound;
@@ -663,7 +665,7 @@ class MttInstance {
     }
 
     public MttTexture createTexture(
-            String screenName, URL textureResource, boolean generateMipmaps) throws FileNotFoundException {
+            String screenName, URI textureResource, boolean generateMipmaps) throws FileNotFoundException {
         var texture = new MttTexture(vulkanInstance, screenName, textureResource, generateMipmaps);
         return texture;
     }

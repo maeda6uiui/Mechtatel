@@ -10,6 +10,7 @@ import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import org.joml.Vector2f;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Objects;
 
 public class SkyboxTest extends Mechtatel {
@@ -68,15 +69,15 @@ public class SkyboxTest extends Mechtatel {
         drawPath.setPresentScreenName("final");
         drawPath.apply();
 
-        texturedQuad = this.createTexturedQuad2D(
-                "final",
-                this.getClass().getResource("/Standard/Texture/checker.png"),
-                new Vector2f(-1.0f, -1.0f),
-                new Vector2f(1.0f, 1.0f),
-                0.0f
-        );
-
         try {
+            texturedQuad = this.createTexturedQuad2D(
+                    "final",
+                    this.getClass().getResource("/Standard/Texture/checker.png"),
+                    new Vector2f(-1.0f, -1.0f),
+                    new Vector2f(1.0f, 1.0f),
+                    0.0f
+            );
+
             skyboxModel = this.createModel(
                     "skybox", this.getClass().getResource("/Standard/Model/Skybox/skybox.obj"));
             mainModel = this.createModel(
@@ -89,7 +90,7 @@ public class SkyboxTest extends Mechtatel {
                     "png",
                     false);
             skyboxTextureCreator.apply(skyboxModel);
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
 

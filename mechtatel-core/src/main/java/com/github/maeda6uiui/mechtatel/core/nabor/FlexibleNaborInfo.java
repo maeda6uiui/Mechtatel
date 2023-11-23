@@ -1,6 +1,5 @@
 package com.github.maeda6uiui.mechtatel.core.nabor;
 
-import jakarta.validation.constraints.NotNull;
 import org.joml.Vector3f;
 
 import java.net.URL;
@@ -20,7 +19,7 @@ public class FlexibleNaborInfo {
     private Vector3f lightingClampMin;
     private Vector3f lightingClampMax;
 
-    public FlexibleNaborInfo(@NotNull URL vertShaderResource, @NotNull URL fragShaderResource) {
+    public FlexibleNaborInfo(URL vertShaderResource, URL fragShaderResource) {
         this.vertShaderResource = vertShaderResource;
         this.fragShaderResource = fragShaderResource;
         uniformResources = new ArrayList<>();

@@ -11,6 +11,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,7 +80,7 @@ public class ShadowMappingTest extends Mechtatel {
             cubes.add(cube);
             cubePositions.add(new Vector3f(6.0f, 2.0f, 0.0f));
             cubeRotations.add(0.0f);
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
     }

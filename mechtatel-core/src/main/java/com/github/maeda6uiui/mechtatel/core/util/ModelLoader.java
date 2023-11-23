@@ -8,9 +8,10 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 import org.lwjgl.system.MemoryStack;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
@@ -27,7 +28,7 @@ import static org.lwjgl.assimp.Assimp.*;
  */
 public class ModelLoader {
     public static class Material {
-        public URL diffuseTexResource;
+        public URI diffuseTexResource;
 
         public Vector4fc ambientColor;
         public Vector4fc diffuseColor;
@@ -94,7 +95,7 @@ public class ModelLoader {
                 throw new FileNotFoundException("Texture file for the model does not exist: " + diffuseTexFile);
             }
 
-            material.diffuseTexResource = diffuseTexFile.toUri().toURL();
+            material.diffuseTexResource = diffuseTexFile.toUri();
 
             //Get the material colors
             AIColor4D color = AIColor4D.calloc(stack);
@@ -180,8 +181,8 @@ public class ModelLoader {
         }
     }
 
-    private static Model loadModelWithJXM(URL modelResource) throws IOException {
-        var manipulator = new BD1Manipulator(modelResource.getFile());
+    private static Model loadModelWithJXM(URI modelResource) throws IOException {
+        var manipulator = new BD1Manipulator(new File(modelResource));
 
         //Rescale the model so that 1 coord represents 1 meter
         final float RESCALE_FACTOR = 1.7f / 20.0f;
@@ -193,19 +194,19 @@ public class ModelLoader {
 
         List<BD1Buffer> buffers = manipulator.getBuffers(false);
 
-        String modelDirname = Paths.get(modelResource.getFile()).getParent().toString();
+        Path modelDir = Paths.get(modelResource).getParent();
 
         var model = new Model(buffers.size(), buffers.size());
         for (int i = 0; i < buffers.size(); i++) {
             BD1Buffer buffer = buffers.get(i);
 
             String textureFilename = manipulator.getTextureFilename(buffer.textureID);
-            Path textureFile = Paths.get(modelDirname, textureFilename);
+            Path textureFile = modelDir.resolve(textureFilename);
             if (!Files.exists(textureFile)) {
                 throw new FileNotFoundException("Texture file for the model does not exist: " + textureFile);
             }
 
-            model.materials.get(i).diffuseTexResource = textureFile.toUri().toURL();
+            model.materials.get(i).diffuseTexResource = textureFile.toUri();
             model.meshes.get(i).materialIndex = i;
 
             IntBuffer indexBuffer = buffer.indexBuffer;
@@ -241,13 +242,14 @@ public class ModelLoader {
         return model;
     }
 
-    private static Model loadModelWithAssimp(URL modelResource) throws IOException {
+    private static Model loadModelWithAssimp(URI modelResource) throws IOException {
+        Path modelFile = Paths.get(modelResource);
         try (AIScene scene = aiImportFile(
-                modelResource.getFile(),
+                modelFile.toString(),
                 aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs)) {
             if (scene == null || scene.mRootNode() == null) {
                 String errorStr = String.format(
-                        "Could not load a model %s\n%s", modelResource.getFile(), aiGetErrorString());
+                        "Could not load a model %s\n%s", modelResource.getPath(), aiGetErrorString());
                 throw new IOException(errorStr);
             }
 
@@ -260,11 +262,10 @@ public class ModelLoader {
             var model = new Model(numMaterials, numMeshes);
 
             //Process materials
-            String modelDirname = Paths.get(modelResource.getFile()).getParent().toString();
-
+            Path modelDir = modelFile.getParent();
             for (int i = 0; i < numMaterials; i++) {
                 AIMaterial aiMaterial = AIMaterial.create(pMaterials.get(i));
-                processMaterial(aiMaterial, model.materials.get(i), modelDirname);
+                processMaterial(aiMaterial, model.materials.get(i), modelDir.toString());
             }
 
             //Process meshes
@@ -277,8 +278,8 @@ public class ModelLoader {
         }
     }
 
-    public static Model loadModel(URL modelResource) throws IOException {
-        String modelFilepath = modelResource.getFile();
+    public static Model loadModel(URI modelResource) throws IOException {
+        String modelFilepath = modelResource.getPath();
         if (modelFilepath.endsWith(".bd1") || modelFilepath.endsWith(".BD1")) {
             return loadModelWithJXM(modelResource);
         } else {

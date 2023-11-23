@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 
 import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
@@ -11,6 +12,6 @@ import java.net.URL;
  * @author maeda6uiui
  */
 public interface IMechtatelForSkyboxTextureCreator {
-    MttTexture createTexture(
-            String screenName, URL textureResource, boolean generateMipmaps) throws FileNotFoundException;
+    MttTexture createTexture(String screenName, URL textureResource, boolean generateMipmaps)
+            throws URISyntaxException, FileNotFoundException;
 }

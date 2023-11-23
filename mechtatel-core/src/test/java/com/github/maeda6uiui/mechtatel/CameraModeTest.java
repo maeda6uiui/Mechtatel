@@ -9,6 +9,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector3f;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class CameraModeTest extends Mechtatel {
     public CameraModeTest(MttSettings settings) {
@@ -38,7 +39,7 @@ public class CameraModeTest extends Mechtatel {
             srcCube = this.createModel(
                     "default", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
             srcCube.setVisible(false);
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
             return;
         }

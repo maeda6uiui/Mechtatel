@@ -11,6 +11,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector3f;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class FlexibleNaborTest extends Mechtatel {
     public FlexibleNaborTest(MttSettings settings) {
@@ -64,7 +65,7 @@ public class FlexibleNaborTest extends Mechtatel {
                     "main", this.getClass().getResource("/Standard/Model/Teapot/teapot.obj"));
             cube = this.createModel(
                     "main", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
 

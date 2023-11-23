@@ -10,6 +10,7 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class SimpleBlurTest extends Mechtatel {
     public SimpleBlurTest(MttSettings settings) {
@@ -45,7 +46,7 @@ public class SimpleBlurTest extends Mechtatel {
         try {
             mainModel = this.createModel(
                     "main", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
 

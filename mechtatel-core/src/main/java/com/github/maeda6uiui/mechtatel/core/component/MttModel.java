@@ -6,7 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttModel;
 
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
@@ -16,10 +16,10 @@ import java.util.Set;
  * @author maeda6uiui
  */
 public class MttModel extends MttComponent {
-    private URL modelResource;
+    private URI modelResource;
     private VkMttModel vkModel;
 
-    public MttModel(MttVulkanInstance vulkanInstance, String screenName, URL modelResource) throws IOException {
+    public MttModel(MttVulkanInstance vulkanInstance, String screenName, URI modelResource) throws IOException {
         super(vulkanInstance);
 
         this.modelResource = modelResource;
@@ -35,7 +35,7 @@ public class MttModel extends MttComponent {
         this.associateVulkanComponent(vkModel);
     }
 
-    public URL getModelResource() {
+    public URI getModelResource() {
         return modelResource;
     }
 

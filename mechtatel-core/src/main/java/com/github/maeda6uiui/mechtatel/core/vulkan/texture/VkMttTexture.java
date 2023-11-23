@@ -10,10 +10,11 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
-import java.net.URL;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,7 +76,7 @@ public class VkMttTexture {
     private int height;
     private int mipLevels;
 
-    private URL textureResource;
+    private URI textureResource;
     private boolean generateMipmaps;
 
     private void memcpy(ByteBuffer dst, ByteBuffer src, long size) {
@@ -309,7 +310,8 @@ public class VkMttTexture {
             IntBuffer pHeight = stack.mallocInt(1);
             IntBuffer pChannels = stack.mallocInt(1);
 
-            ByteBuffer pixels = stbi_load(textureResource.getFile(), pWidth, pHeight, pChannels, STBI_rgb_alpha);
+            ByteBuffer pixels = stbi_load(
+                    Paths.get(textureResource).toString(), pWidth, pHeight, pChannels, STBI_rgb_alpha);
             if (pixels == null) {
                 throw new RuntimeException("Failed to load a texture image " + textureResource);
             }
@@ -334,7 +336,7 @@ public class VkMttTexture {
             long commandPool,
             VkQueue graphicsQueue,
             IVkMttScreenForVkMttTexture screen,
-            URL textureResource,
+            URI textureResource,
             boolean generateMipmaps) {
         allocationIndex = allocateTextureIndex();
         if (allocationIndex < 0) {

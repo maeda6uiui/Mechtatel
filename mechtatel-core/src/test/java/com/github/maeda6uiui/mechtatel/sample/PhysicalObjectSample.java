@@ -11,6 +11,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector3f;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Random;
 
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJOMLVector3fToJMEVector3f;
@@ -84,7 +85,7 @@ public class PhysicalObjectSample extends Mechtatel {
             srcCube = this.createModel(
                     "main", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
             srcCube.setVisible(false);
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
 

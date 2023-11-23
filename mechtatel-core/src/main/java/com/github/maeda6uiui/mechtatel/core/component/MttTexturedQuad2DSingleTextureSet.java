@@ -8,7 +8,7 @@ import org.joml.Vector2fc;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-import java.net.URL;
+import java.net.URI;
 
 /**
  * Set of 2D textured quadrangles with a single texture
@@ -19,7 +19,7 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
     private VkMttTexturedQuadSingleTextureSet vkTexturedQuadSet;
 
     public MttTexturedQuad2DSingleTextureSet(
-            MttVulkanInstance vulkanInstance, String screenName, URL textureResource) {
+            MttVulkanInstance vulkanInstance, String screenName, URI textureResource) {
         super(vulkanInstance);
 
         vkTexturedQuadSet = vulkanInstance.createTexturedQuadSingleTextureSet(screenName, textureResource);

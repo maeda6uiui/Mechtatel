@@ -59,7 +59,6 @@ class RawAnimationInfo {
     public List<Animation> animations;
 
     public static RawAnimationInfo load(URL jsonResource) throws IOException {
-        RawAnimationInfo animInfo = new ObjectMapper().readValue(jsonResource, RawAnimationInfo.class);
-        return animInfo;
+        return new ObjectMapper().readValue(jsonResource, RawAnimationInfo.class);
     }
 }

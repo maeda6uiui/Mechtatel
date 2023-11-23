@@ -9,6 +9,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector3f;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Objects;
 
 public class AnimationTest extends Mechtatel {
@@ -37,7 +38,7 @@ public class AnimationTest extends Mechtatel {
                     Objects.requireNonNull(
                             this.getClass().getResource("/Standard/Model/Cube/sample_animations.json")));
             animation = this.createAnimation("cubes", "default", animationInfo);
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
 

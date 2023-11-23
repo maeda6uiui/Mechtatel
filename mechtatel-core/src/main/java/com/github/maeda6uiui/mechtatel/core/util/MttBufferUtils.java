@@ -5,7 +5,7 @@ import org.lwjgl.system.MemoryUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -28,10 +28,10 @@ public class MttBufferUtils {
         return newBuffer;
     }
 
-    public static ByteBuffer ioResourceToByteBuffer(URL resource, int bufferSize) throws IOException {
+    public static ByteBuffer ioResourceToByteBuffer(URI resource, int bufferSize) throws IOException {
         ByteBuffer buffer;
 
-        Path path = Paths.get(resource.getFile());
+        Path path = Paths.get(resource);
         if (Files.isReadable(path)) {
             try (SeekableByteChannel fc = Files.newByteChannel(path)) {
                 buffer = BufferUtils.createByteBuffer((int) fc.size() + 1);
@@ -39,7 +39,7 @@ public class MttBufferUtils {
                 }
             }
         } else {
-            try (InputStream source = resource.openStream();
+            try (InputStream source = resource.toURL().openStream();
                  ReadableByteChannel rbc = Channels.newChannel(source)) {
                 buffer = BufferUtils.createByteBuffer(bufferSize);
 

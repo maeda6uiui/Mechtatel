@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.sound;
 import org.joml.Vector3fc;
 
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * 3D sound
@@ -16,8 +17,8 @@ public class MttSound {
     private boolean isDuplicatedSound;
     private boolean isCleanedUp;
 
-    public MttSound(String filepath, boolean loop, boolean relative) throws IOException {
-        buffer = new SoundBuffer(filepath);
+    public MttSound(URL soundResource, boolean loop, boolean relative) throws IOException {
+        buffer = new SoundBuffer(soundResource);
         source = new SoundSource(buffer, loop, relative);
         isDuplicatedSound = false;
         isCleanedUp = false;

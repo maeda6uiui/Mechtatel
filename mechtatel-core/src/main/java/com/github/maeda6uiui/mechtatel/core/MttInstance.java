@@ -638,8 +638,8 @@ class MttInstance {
         this.physicsSimulationTimeScale = physicsSimulationTimeScale;
     }
 
-    public MttSound createSound(String filepath, boolean loop, boolean relative) throws IOException {
-        var sound = new MttSound(filepath, loop, relative);
+    public MttSound createSound(URL soundResource, boolean loop, boolean relative) throws IOException {
+        var sound = new MttSound(soundResource, loop, relative);
         sounds3D.add(sound);
 
         return sound;

@@ -443,8 +443,8 @@ public class Mechtatel
         instance.setPhysicsSimulationTimeScale(physicsSimulationTimeScale);
     }
 
-    public MttSound createSound(String filepath, boolean loop, boolean relative) throws IOException {
-        MttSound sound = instance.createSound(filepath, loop, relative);
+    public MttSound createSound(@NotNull URL soundResource, boolean loop, boolean relative) throws IOException {
+        MttSound sound = instance.createSound(soundResource, loop, relative);
         return sound;
     }
 

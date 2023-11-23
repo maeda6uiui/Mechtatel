@@ -5,6 +5,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBVorbisInfo;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
@@ -20,7 +21,7 @@ import static org.lwjgl.stb.STBVorbis.*;
 class SoundBuffer {
     private int buffer;
 
-    private ShortBuffer readVorbis(String resource, int bufferSize, STBVorbisInfo info) throws IOException {
+    private ShortBuffer readVorbis(URL resource, int bufferSize, STBVorbisInfo info) throws IOException {
         ByteBuffer vorbis = MttBufferUtils.ioResourceToByteBuffer(resource, bufferSize);
         IntBuffer error = BufferUtils.createIntBuffer(1);
         long decoder = stb_vorbis_open_memory(vorbis, error, null);
@@ -39,10 +40,10 @@ class SoundBuffer {
         return pcm;
     }
 
-    public SoundBuffer(String filepath) throws IOException {
+    public SoundBuffer(URL soundResource) throws IOException {
         this.buffer = alGenBuffers();
         try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
-            ShortBuffer pcm = this.readVorbis(filepath, 32 * 1024, info);
+            ShortBuffer pcm = this.readVorbis(soundResource, 32 * 1024, info);
             alBufferData(buffer, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
         }
     }

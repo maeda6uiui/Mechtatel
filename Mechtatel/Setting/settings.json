@@ -14,7 +14,7 @@
     "bullet": {
         "dist": true,
         "dirname": "./Mechtatel/Bin",
-        "buildType": "Debug",
+        "buildType": "Release",
         "flavor": "Sp"
     }
 }

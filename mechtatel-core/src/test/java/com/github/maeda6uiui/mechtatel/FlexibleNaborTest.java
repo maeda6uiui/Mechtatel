@@ -11,7 +11,10 @@ import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector3f;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 public class FlexibleNaborTest extends Mechtatel {
@@ -42,9 +45,19 @@ public class FlexibleNaborTest extends Mechtatel {
         screenCreator.setUseShadowMapping(true);
         screenCreator.addPostProcessingNabor("sepia");
 
+        URL fragShaderResource;
+        try {
+            fragShaderResource = Paths.get("./Mechtatel/Addon/maeda6uiui/Shader/sepia.frag").toUri().toURL();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return;
+        }
+
         var naborInfo = new FlexibleNaborInfo(
-                this.getClass().getResource("/Standard/Shader/PostProcessing/post_processing.vert"),
-                this.getClass().getClassLoader().getResource("./Mechtatel/Addon/maeda6uiui/Shader/sepia.frag"));
+                Objects.requireNonNull(this.getClass().getResource(
+                        "/Standard/Shader/PostProcessing/post_processing.vert")),
+                fragShaderResource
+        );
         naborInfo.setLightingType("parallel_light");
         screenCreator.addFlexibleNaborInfo("sepia", naborInfo);
 

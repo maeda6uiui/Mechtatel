@@ -10,6 +10,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.sound.MttSound;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
+import jakarta.validation.constraints.NotNull;
 import org.joml.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -183,7 +184,7 @@ public class Mechtatel
         instance.sortComponents();
     }
 
-    public MttModel createModel(String screenName, URL modelResource) throws IOException {
+    public MttModel createModel(String screenName, @NotNull URL modelResource) throws IOException {
         return instance.createModel(screenName, modelResource);
     }
 
@@ -278,7 +279,7 @@ public class Mechtatel
 
     public MttTexturedQuad createTexturedQuad(
             String screenName,
-            URL textureResource,
+            @NotNull URL textureResource,
             boolean generateMipmaps,
             MttVertex3DUV v1,
             MttVertex3DUV v2,
@@ -308,7 +309,7 @@ public class Mechtatel
 
     public MttTexturedQuad2D createTexturedQuad2D(
             String screenName,
-            URL textureResource,
+            @NotNull URL textureResource,
             MttVertex2DUV p1,
             MttVertex2DUV p2,
             MttVertex2DUV p3,
@@ -323,7 +324,7 @@ public class Mechtatel
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
-            String screenName, URL textureResource, Vector2fc topLeft, Vector2fc bottomRight, float z) {
+            String screenName, @NotNull URL textureResource, Vector2fc topLeft, Vector2fc bottomRight, float z) {
         var p1 = new MttVertex2DUV(topLeft, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
         var p2 = new MttVertex2DUV(new Vector2f(topLeft.x(), bottomRight.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 1.0f));
         var p3 = new MttVertex2DUV(bottomRight, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
@@ -357,7 +358,7 @@ public class Mechtatel
     }
 
     public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(
-            String screenName, URL textureResource) {
+            String screenName, @NotNull URL textureResource) {
         return instance.createTexturedQuad2DSingleTextureSet(screenName, textureResource);
     }
 

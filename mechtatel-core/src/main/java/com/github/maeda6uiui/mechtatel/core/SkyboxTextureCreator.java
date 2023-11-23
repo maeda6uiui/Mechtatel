@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,7 +24,7 @@ public class SkyboxTextureCreator {
     public SkyboxTextureCreator(
             IMechtatelForSkyboxTextureCreator mtt,
             String screenName,
-            URL textureDirectory,
+            @NotNull URL textureDirectory,
             String textureExtension,
             boolean generateMipmaps) throws IOException {
         String textureDirname = textureDirectory.getFile();

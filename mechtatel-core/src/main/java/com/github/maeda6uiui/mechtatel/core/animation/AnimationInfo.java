@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.animation;
 
+import jakarta.validation.constraints.NotNull;
 import org.joml.Vector3f;
 
 import java.io.IOException;
@@ -65,13 +66,13 @@ public class AnimationInfo {
     }
 
     private String name;
-    private String animationDirname;
+    private URL animationDirectory;
     private Map<String, Model> models;
 
     private Map<String, Animation> animations;
 
-    public AnimationInfo(URL jsonResource) throws IOException {
-        animationDirname = Paths.get(jsonResource.getFile()).getParent().toString();
+    public AnimationInfo(@NotNull URL jsonResource) throws IOException {
+        animationDirectory = Paths.get(jsonResource.getFile()).getParent().toUri().toURL();
 
         RawAnimationInfo rawAnimInfo = RawAnimationInfo.load(jsonResource);
         name = rawAnimInfo.name;
@@ -123,8 +124,8 @@ public class AnimationInfo {
         return name;
     }
 
-    public String getAnimationDirname() {
-        return animationDirname;
+    public URL getAnimationDirectory() {
+        return animationDirectory;
     }
 
     public Map<String, Model> getModels() {

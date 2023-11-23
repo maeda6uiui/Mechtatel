@@ -12,6 +12,7 @@ import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 public class FlexibleNaborTest extends Mechtatel {
     public FlexibleNaborTest(MttSettings settings) {
@@ -60,11 +61,17 @@ public class FlexibleNaborTest extends Mechtatel {
 
         try {
             plane = this.createModel(
-                    "main", this.getClass().getResource("/Standard/Model/Plane/plane.obj"));
+                    "main",
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj"))
+            );
             teapot = this.createModel(
-                    "main", this.getClass().getResource("/Standard/Model/Teapot/teapot.obj"));
+                    "main",
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Teapot/teapot.obj"))
+            );
             cube = this.createModel(
-                    "main", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
+                    "main",
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
+            );
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }

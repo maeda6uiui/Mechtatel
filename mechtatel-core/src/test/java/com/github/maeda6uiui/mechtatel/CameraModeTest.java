@@ -10,6 +10,7 @@ import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 public class CameraModeTest extends Mechtatel {
     public CameraModeTest(MttSettings settings) {
@@ -37,7 +38,9 @@ public class CameraModeTest extends Mechtatel {
         MttModel srcCube;
         try {
             srcCube = this.createModel(
-                    "default", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
+                    "default",
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
+            );
             srcCube.setVisible(false);
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();

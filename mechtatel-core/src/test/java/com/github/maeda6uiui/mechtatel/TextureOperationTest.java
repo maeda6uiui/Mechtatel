@@ -15,6 +15,7 @@ import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 public class TextureOperationTest extends Mechtatel {
     public TextureOperationTest(MttSettings settings) {
@@ -73,16 +74,20 @@ public class TextureOperationTest extends Mechtatel {
         try {
             texturedQuad = this.createTexturedQuad2D(
                     "final",
-                    this.getClass().getResource("/Standard/Texture/checker.png"),
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Texture/checker.png")),
                     new Vector2f(-1.0f, -1.0f),
                     new Vector2f(1.0f, 1.0f),
                     0.0f
             );
 
             firstModel = this.createModel(
-                    "first", this.getClass().getResource("/Standard/Model/Plane/plane.obj"));
+                    "first",
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj"))
+            );
             secondModel = this.createModel(
-                    "second", this.getClass().getResource("/Standard/Model/Teapot/teapot.obj"));
+                    "second",
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Teapot/teapot.obj"))
+            );
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }

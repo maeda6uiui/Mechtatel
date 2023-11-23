@@ -12,6 +12,7 @@ import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Objects;
 import java.util.Random;
 
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJOMLVector3fToJMEVector3f;
@@ -80,10 +81,14 @@ public class PhysicalObjectSample extends Mechtatel {
 
         try {
             plane = this.createModel(
-                    "main", this.getClass().getResource("/Standard/Model/Plane/plane.obj"));
+                    "main",
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj"))
+            );
 
             srcCube = this.createModel(
-                    "main", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
+                    "main",
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
+            );
             srcCube.setVisible(false);
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();

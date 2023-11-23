@@ -72,16 +72,20 @@ public class SkyboxTest extends Mechtatel {
         try {
             texturedQuad = this.createTexturedQuad2D(
                     "final",
-                    this.getClass().getResource("/Standard/Texture/checker.png"),
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Texture/checker.png")),
                     new Vector2f(-1.0f, -1.0f),
                     new Vector2f(1.0f, 1.0f),
                     0.0f
             );
 
             skyboxModel = this.createModel(
-                    "skybox", this.getClass().getResource("/Standard/Model/Skybox/skybox.obj"));
+                    "skybox",
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Skybox/skybox.obj"))
+            );
             mainModel = this.createModel(
-                    "main", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
+                    "main",
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
+            );
 
             var skyboxTextureCreator = new SkyboxTextureCreator(
                     this,

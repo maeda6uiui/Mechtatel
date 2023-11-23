@@ -9,6 +9,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector2f;
 
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 public class ShowTexture extends Mechtatel {
     public ShowTexture(MttSettings settings) {
@@ -42,7 +43,7 @@ public class ShowTexture extends Mechtatel {
         try {
             texturedQuad = this.createTexturedQuad2D(
                     "main",
-                    this.getClass().getResource("/Standard/Texture/checker.png"),
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Texture/checker.png")),
                     new Vector2f(-1.0f, -1.0f),
                     new Vector2f(1.0f, 1.0f),
                     0.0f);

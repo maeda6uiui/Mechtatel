@@ -12,6 +12,7 @@ import org.joml.Vector4f;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 public class ScreenshotTest extends Mechtatel {
     public ScreenshotTest(MttSettings settings) {
@@ -56,9 +57,13 @@ public class ScreenshotTest extends Mechtatel {
 
         try {
             plane = this.createModel(
-                    "main", this.getClass().getResource("/Standard/Model/Plane/plane.obj"));
+                    "main",
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj"))
+            );
             cube = this.createModel(
-                    "main", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
+                    "main",
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
+            );
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }

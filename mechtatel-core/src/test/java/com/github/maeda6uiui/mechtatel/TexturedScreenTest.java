@@ -14,6 +14,7 @@ import org.joml.Vector4f;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 public class TexturedScreenTest extends Mechtatel {
     public TexturedScreenTest(MttSettings settings) {
@@ -68,9 +69,13 @@ public class TexturedScreenTest extends Mechtatel {
 
         try {
             primaryCube = this.createModel(
-                    "primary", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
+                    "primary",
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
+            );
             secondaryCube = this.createModel(
-                    "secondary", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
+                    "secondary",
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
+            );
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }

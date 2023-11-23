@@ -1,0 +1,22 @@
+package com.github.maeda6uiui.mechtatel.core.physics;
+
+import com.jme3.bullet.collision.shapes.SphereCollisionShape;
+import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.jme3.math.Vector3f;
+
+/**
+ * Physical sphere
+ *
+ * @author maeda6uiui
+ */
+public class PhysicalSphere extends PhysicalObject {
+    public PhysicalSphere(float radius, float mass) {
+        var shape = new SphereCollisionShape(radius);
+        var body = new PhysicsRigidBody(shape, mass);
+        PhysicalSphere.getPhysicsSpace().addCollisionObject(body);
+        body.setPhysicsLocation(new Vector3f(0.0f, 0.0f, 0.0f));
+
+        this.setShape(shape);
+        this.setBody(body);
+    }
+}

@@ -22,7 +22,7 @@ public class ShadowMappingTest extends Mechtatel {
 
     public static void main(String[] args) {
         MttSettings
-                .load("./Mechtatel/Setting/settings.json")
+                .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
                         ShadowMappingTest::new,
                         () -> {

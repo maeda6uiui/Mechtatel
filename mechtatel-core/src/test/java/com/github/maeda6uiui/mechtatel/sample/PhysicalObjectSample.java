@@ -22,7 +22,7 @@ public class PhysicalObjectSample extends Mechtatel {
 
     public static void main(String[] args) {
         MttSettings
-                .load("./Mechtatel/Setting/settings.json")
+                .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
                         PhysicalObjectSample::new,
                         () -> {

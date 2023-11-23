@@ -711,7 +711,11 @@ public abstract class Nabor {
         }
     }
 
-    protected int setupShaderModules() throws URISyntaxException, IOException {
+    protected void setupShaderModules(boolean skipIfExists) {
+        if (skipIfExists && !vertShaderModules.isEmpty()) {
+            return;
+        }
+
         try (ShaderSPIRVUtils.SPIRV vertShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(
                 vertShaderResource.toURI(), ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER);
              ShaderSPIRVUtils.SPIRV fragShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(
@@ -721,8 +725,8 @@ public abstract class Nabor {
 
             this.addVertShaderModule(vertShaderModule);
             this.addFragShaderModule(fragShaderModule);
-
-            return vertShaderModules.size();
+        } catch (URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

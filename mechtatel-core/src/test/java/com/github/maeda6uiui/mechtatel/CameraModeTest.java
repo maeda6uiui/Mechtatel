@@ -47,7 +47,6 @@ public class CameraModeTest extends Mechtatel {
             this.closeWindow();
 
             return;
-            return;
         }
 
         float z = -25.0f;

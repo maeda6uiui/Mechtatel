@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.sample;
+package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.DrawPath;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
@@ -17,8 +17,8 @@ import java.util.Random;
 
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJOMLVector3fToJMEVector3f;
 
-public class PhysicalObjectSample extends Mechtatel {
-    public PhysicalObjectSample(MttSettings settings) {
+public class PhysicalObjectTest extends Mechtatel {
+    public PhysicalObjectTest(MttSettings settings) {
         super(settings);
     }
 
@@ -26,7 +26,7 @@ public class PhysicalObjectSample extends Mechtatel {
         MttSettings
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
-                        PhysicalObjectSample::new,
+                        PhysicalObjectTest::new,
                         () -> {
                             System.out.println("Failed to load settings");
                         }

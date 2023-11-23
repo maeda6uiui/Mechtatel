@@ -36,7 +36,7 @@ public class CameraModeTest extends Mechtatel {
         MttModel srcCube;
         try {
             srcCube = this.createModel(
-                    "default", "./Mechtatel/Standard/Model/Cube/cube.obj");
+                    "default", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
             srcCube.setVisible(false);
         } catch (IOException e) {
             e.printStackTrace();

@@ -78,9 +78,11 @@ public class PhysicalObjectSample extends Mechtatel {
         drawPath.apply();
 
         try {
-            plane = this.createModel("main", "./Mechtatel/Standard/Model/Plane/plane.obj");
+            plane = this.createModel(
+                    "main", this.getClass().getResource("/Standard/Model/Plane/plane.obj"));
 
-            srcCube = this.createModel("main", "./Mechtatel/Standard/Model/Cube/cube.obj");
+            srcCube = this.createModel(
+                    "main", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
             srcCube.setVisible(false);
         } catch (IOException e) {
             e.printStackTrace();

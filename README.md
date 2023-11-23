@@ -10,6 +10,9 @@ Javaでゲームエンジンを作ることを目標としているプロジェ�
 [LWJGL](https://www.lwjgl.org/)でVulkanを使用して開発を進めています。
 現状はまだゲームエンジンと呼べるような代物ではありませんが、気力と時間があるときに少しずつ開発を進めていきたいと思っています。
 
+今のところこのプロジェクトに関する詳細なドキュメントはありません。
+[テストコード](./src/test/java/com/github/maeda6uiui/mechtatel/)を確認していただくと、Mechtatelがどういうふうに動作するのか、雰囲気だけでも理解していただけるかもしれません...。
+
 ## 開発者からのメッセージ
 
 「自作のゲームエンジンを作りたい」と思ってから何年も経ち、思いつきでコードを書いては捨て、書いては捨て、そんなことを繰り返しながら、ただのゴミを生産してきた人生です。
@@ -25,55 +28,13 @@ Javaでゲームエンジンを作ることを目標としているプロジェ�
 結局自分が死ぬまで何も成し遂げられないかもしれませんし、あるいは何か芸術的なゴミを生み出すことができるかもしれません。
 「この人を応援したい！」とか思うような頭のおかしい人は、Starでも付けていってください...。
 
-## Mechtatelを試してみたい方へ
+## 依存関係
 
-**Mechtatelは現在開発中のため、仕様が大幅に変更される可能性があります。**
-
-このリポジトリをCloneします。
-
-```
-git clone -b develop https://github.com/maeda6uiui/Mechtatel.git
-```
-
-pom.xmlに記載の`lwjgl.natives`をプラットフォームに合わせて変更します。
-[LWJGLの公式サイト](https://www.lwjgl.org/customize)でサポートされているプラットフォームを確認できます。
-
-```xml
-<properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-    <lwjgl.version>3.3.1</lwjgl.version>
-    <lwjgl.natives>natives-windows</lwjgl.natives>
-</properties>
-```
-
-以下のバイナリをダウンロードして./Mechtatel/Binフォルダに配置してください。
+(Windows以外のプラットフォームを使用している方へ)
+以下のバイナリを./Mechtatel/Binディレクトリに配置する必要があります。
 
 - [shaderc](https://github.com/google/shaderc)
 - [Libbulletjme](https://github.com/stephengold/Libbulletjme)
-
-**Shaderc**
-
-[GitHubリポジトリ](https://github.com/google/shaderc)に記載のリンクから、使用しているプラットフォーム向けのバイナリをダウンロードしてください。
-
-![Shaderc Downloads](./Image/shaderc_downloads.png)
-
-ZIPファイルを展開して、install/bin/shaderc_shared.dll (Windowsの場合)を./Mechtatel/Binフォルダにコピーしてください。
-
-**Libbulletjme**
-
-GitHubリポジトリの[release](https://github.com/stephengold/Libbulletjme/releases/tag/17.5.4)から、使用しているプラットフォーム向けのバイナリをダウンロードしてください。
-ダウンロードしたバイナリは./Mechtatel/Binフォルダにコピーしてください。
-
-Mechtatelは現在Libbulletjmeのv17.5.4を使用していますが、将来的にこのバージョンは変更される場合があります。
-
-Mechtatelのデフォルト設定ではDebugSpバイナリを使用します。
-この設定は[settings.json](./Mechtatel/Setting/settings.json)で変更することができます。
-
----
-
-今のところこのプロジェクトに関する詳細なドキュメントはありません。
-[テストコード](./src/test/java/com/github/maeda6uiui/mechtatel/)を確認していただくと、Mechtatelがどういうふうに動作するのか、雰囲気だけでも理解していただけるかもしれません...。
 
 ## 進捗報告
 

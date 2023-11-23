@@ -29,10 +29,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.openal.ALC10.*;
@@ -157,10 +155,11 @@ class MttInstance {
         physicsSimulationTimeScale = 1.0f;
 
         NativeLibraryLoader.loadLibbulletjme(
-                settings.bulletSettings.dist,
-                new File(settings.bulletSettings.dirname),
-                settings.bulletSettings.buildType,
-                settings.bulletSettings.flavor);
+                true,
+                new File(Objects.requireNonNull(this.getClass().getResource("/Bin")).getFile()),
+                "Release",
+                "Sp"
+        );
 
         screens = new HashMap<>();
 

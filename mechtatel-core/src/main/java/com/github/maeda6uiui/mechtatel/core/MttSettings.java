@@ -73,38 +73,12 @@ public class MttSettings {
         }
     }
 
-    public static class BulletSettings {
-        public boolean dist;
-        public String dirname;
-        public String buildType;
-        public String flavor;
-
-        public BulletSettings() {
-            dist = true;
-            dirname = "./Mechtatel/Bin";
-            buildType = "Debug";
-            flavor = "Sp";
-        }
-
-        @Override
-        public String toString() {
-            return "BulletSettings{" +
-                    "dist=" + dist +
-                    ", dirname='" + dirname + '\'' +
-                    ", buildType='" + buildType + '\'' +
-                    ", flavor='" + flavor + '\'' +
-                    '}';
-        }
-    }
-
     @JsonProperty("window")
     public WindowSettings windowSettings;
     @JsonProperty("system")
     public SystemSettings systemSettings;
     @JsonProperty("rendering")
     public RenderingSettings renderingSettings;
-    @JsonProperty("bullet")
-    public BulletSettings bulletSettings;
 
     private static MttSettings instance;
 
@@ -112,7 +86,6 @@ public class MttSettings {
         windowSettings = new WindowSettings();
         systemSettings = new SystemSettings();
         renderingSettings = new RenderingSettings();
-        bulletSettings = new BulletSettings();
     }
 
     /**
@@ -157,7 +130,6 @@ public class MttSettings {
                 "windowSettings=" + windowSettings +
                 ", systemSettings=" + systemSettings +
                 ", renderingSettings=" + renderingSettings +
-                ", bulletSettings=" + bulletSettings +
                 '}';
     }
 }

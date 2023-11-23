@@ -436,8 +436,7 @@ class AlbedoNabor extends Nabor {
                             vertShaderFilepath, ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER);
                     ShaderSPIRVUtils.SPIRV fragShaderSPIRV
                             = ShaderSPIRVUtils.compileShaderFile(
-                            fragShaderFilepath, ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER);
-            ) {
+                            fragShaderFilepath, ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER)) {
                 vertShaderModule = this.createShaderModule(device, vertShaderSPIRV.bytecode());
                 fragShaderModule = this.createShaderModule(device, fragShaderSPIRV.bytecode());
 

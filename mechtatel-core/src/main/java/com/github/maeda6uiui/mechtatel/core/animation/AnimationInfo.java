@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.animation;
 import org.joml.Vector3f;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,10 +70,10 @@ public class AnimationInfo {
 
     private Map<String, Animation> animations;
 
-    public AnimationInfo(String jsonFilepath) throws IOException {
-        animationDirname = Paths.get(jsonFilepath).getParent().toString();
+    public AnimationInfo(URL jsonResource) throws IOException {
+        animationDirname = Paths.get(jsonResource.getFile()).getParent().toString();
 
-        RawAnimationInfo rawAnimInfo = RawAnimationInfo.load(jsonFilepath);
+        RawAnimationInfo rawAnimInfo = RawAnimationInfo.load(jsonResource);
         name = rawAnimInfo.name;
 
         models = new HashMap<>();

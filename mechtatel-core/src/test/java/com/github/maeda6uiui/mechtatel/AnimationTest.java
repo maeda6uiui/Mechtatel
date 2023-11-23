@@ -9,6 +9,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector3f;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class AnimationTest extends Mechtatel {
     public AnimationTest(MttSettings settings) {
@@ -32,7 +33,9 @@ public class AnimationTest extends Mechtatel {
     @Override
     public void init() {
         try {
-            var animationInfo = new AnimationInfo("./Mechtatel/Standard/Model/Cube/sample_animations.json");
+            var animationInfo = new AnimationInfo(
+                    Objects.requireNonNull(
+                            this.getClass().getResource("/Standard/Model/Cube/sample_animations.json")));
             animation = this.createAnimation("cubes", "default", animationInfo);
         } catch (IOException e) {
             e.printStackTrace();

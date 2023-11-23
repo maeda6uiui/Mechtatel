@@ -10,6 +10,7 @@ import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import org.joml.Vector2f;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class SkyboxTest extends Mechtatel {
     public SkyboxTest(MttSettings settings) {
@@ -69,20 +70,22 @@ public class SkyboxTest extends Mechtatel {
 
         texturedQuad = this.createTexturedQuad2D(
                 "final",
-                "./Mechtatel/Standard/Texture/checker.png",
+                this.getClass().getResource("/Standard/Texture/checker.png"),
                 new Vector2f(-1.0f, -1.0f),
                 new Vector2f(1.0f, 1.0f),
                 0.0f
         );
 
         try {
-            skyboxModel = this.createModel("skybox", "./Mechtatel/Standard/Model/Skybox/skybox.obj");
-            mainModel = this.createModel("main", "./Mechtatel/Standard/Model/Cube/cube.obj");
+            skyboxModel = this.createModel(
+                    "skybox", this.getClass().getResource("/Standard/Model/Skybox/skybox.obj"));
+            mainModel = this.createModel(
+                    "main", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
 
             var skyboxTextureCreator = new SkyboxTextureCreator(
                     this,
                     "skybox",
-                    "./Mechtatel/Standard/Model/Skybox/Hill",
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Skybox/Hill")),
                     "png",
                     false);
             skyboxTextureCreator.apply(skyboxModel);

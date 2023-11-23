@@ -71,15 +71,17 @@ public class TextureOperationTest extends Mechtatel {
 
         texturedQuad = this.createTexturedQuad2D(
                 "final",
-                "./Mechtatel/Standard/Texture/checker.png",
+                this.getClass().getResource("/Standard/Texture/checker.png"),
                 new Vector2f(-1.0f, -1.0f),
                 new Vector2f(1.0f, 1.0f),
                 0.0f
         );
 
         try {
-            firstModel = this.createModel("first", "./Mechtatel/Standard/Model/Plane/plane.obj");
-            secondModel = this.createModel("second", "./Mechtatel/Standard/Model/Teapot/teapot.obj");
+            firstModel = this.createModel(
+                    "first", this.getClass().getResource("/Standard/Model/Plane/plane.obj"));
+            secondModel = this.createModel(
+                    "second", this.getClass().getResource("/Standard/Model/Teapot/teapot.obj"));
         } catch (IOException e) {
             e.printStackTrace();
         }

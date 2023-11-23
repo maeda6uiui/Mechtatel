@@ -3,11 +3,14 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.animation.AnimationInfo;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class LoadAnimationInfoTest {
     public static void main(String[] args) {
         try {
-            var animInfo = new AnimationInfo("./Mechtatel/Standard/Model/Cube/sample_animations.json");
+            var animInfo = new AnimationInfo(
+                    Objects.requireNonNull(LoadAnimationInfoTest.class.getResource(
+                            "/Standard/Model/Cube/sample_animations.json")));
 
             System.out.println("asset_name=");
             System.out.println(animInfo.getName());

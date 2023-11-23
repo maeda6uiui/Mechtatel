@@ -54,8 +54,10 @@ public class ScreenshotTest extends Mechtatel {
         drawPath.apply();
 
         try {
-            plane = this.createModel("main", "./Mechtatel/Standard/Model/Plane/plane.obj");
-            cube = this.createModel("main", "./Mechtatel/Standard/Model/Cube/cube.obj");
+            plane = this.createModel(
+                    "main", this.getClass().getResource("/Standard/Model/Plane/plane.obj"));
+            cube = this.createModel(
+                    "main", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
         } catch (IOException e) {
             e.printStackTrace();
         }

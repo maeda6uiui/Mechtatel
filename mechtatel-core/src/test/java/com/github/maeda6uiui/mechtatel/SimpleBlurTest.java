@@ -43,7 +43,8 @@ public class SimpleBlurTest extends Mechtatel {
         drawPath.apply();
 
         try {
-            mainModel = this.createModel("main", "./Mechtatel/Standard/Model/Cube/cube.obj");
+            mainModel = this.createModel(
+                    "main", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
         } catch (IOException e) {
             e.printStackTrace();
         }

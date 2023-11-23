@@ -39,7 +39,7 @@ public class ShowTexture extends Mechtatel {
 
         texturedQuad = this.createTexturedQuad2D(
                 "main",
-                "./Mechtatel/Standard/Texture/checker.png",
+                this.getClass().getResource("/Standard/Texture/checker.png"),
                 new Vector2f(-1.0f, -1.0f),
                 new Vector2f(1.0f, 1.0f),
                 0.0f);

@@ -65,13 +65,16 @@ public class ShadowMappingTest extends Mechtatel {
         cubePositions = new ArrayList<>();
         cubeRotations = new ArrayList<>();
         try {
-            plane = this.createModel("main", "./Mechtatel/Standard/Model/Plane/plane.obj");
+            plane = this.createModel(
+                    "main", this.getClass().getResource("/Standard/Model/Plane/plane.obj"));
             plane.rescale(new Vector3f(2.0f, 1.0f, 2.0f));
 
-            teapot = this.createModel("main", "./Mechtatel/Standard/Model/Teapot/teapot.obj");
+            teapot = this.createModel(
+                    "main", this.getClass().getResource("/Standard/Model/Teapot/teapot.obj"));
             teapot.rescale(new Vector3f(2.0f, 2.0f, 2.0f));
 
-            var cube = this.createModel("main", "./Mechtatel/Standard/Model/Cube/cube.obj");
+            var cube = this.createModel(
+                    "main", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
             cube.translate(new Vector3f(6.0f, 2.0f, 0.0f));
             cubes.add(cube);
             cubePositions.add(new Vector3f(6.0f, 2.0f, 0.0f));

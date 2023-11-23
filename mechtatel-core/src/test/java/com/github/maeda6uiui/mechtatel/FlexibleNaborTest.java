@@ -41,8 +41,8 @@ public class FlexibleNaborTest extends Mechtatel {
         screenCreator.addPostProcessingNabor("sepia");
 
         var naborInfo = new FlexibleNaborInfo(
-                "./Mechtatel/Standard/Shader/PostProcessing/post_processing.vert",
-                "./Mechtatel/Addon/maeda6uiui/Shader/sepia.frag");
+                this.getClass().getResource("/Standard/Shader/PostProcessing/post_processing.vert"),
+                this.getClass().getClassLoader().getResource("./Mechtatel/Addon/maeda6uiui/Shader/sepia.frag"));
         naborInfo.setLightingType("parallel_light");
         screenCreator.addFlexibleNaborInfo("sepia", naborInfo);
 
@@ -58,9 +58,12 @@ public class FlexibleNaborTest extends Mechtatel {
         drawPath.apply();
 
         try {
-            plane = this.createModel("main", "./Mechtatel/Standard/Model/Plane/plane.obj");
-            teapot = this.createModel("main", "./Mechtatel/Standard/Model/Teapot/teapot.obj");
-            cube = this.createModel("main", "./Mechtatel/Standard/Model/Cube/cube.obj");
+            plane = this.createModel(
+                    "main", this.getClass().getResource("/Standard/Model/Plane/plane.obj"));
+            teapot = this.createModel(
+                    "main", this.getClass().getResource("/Standard/Model/Teapot/teapot.obj"));
+            cube = this.createModel(
+                    "main", this.getClass().getResource("/Standard/Model/Cube/cube.obj"));
         } catch (IOException e) {
             e.printStackTrace();
         }

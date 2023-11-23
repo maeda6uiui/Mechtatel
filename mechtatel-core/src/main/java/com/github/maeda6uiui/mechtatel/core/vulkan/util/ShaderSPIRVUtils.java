@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.util;
 import org.lwjgl.system.NativeResource;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -72,8 +73,8 @@ public class ShaderSPIRVUtils {
         return new SPIRV(result, shaderc_result_get_bytes(result));
     }
 
-    public static SPIRV compileShaderFile(String filepath, ShaderKind shaderKind) throws IOException {
-        String source = new String(Files.readAllBytes(Paths.get(filepath)));
-        return compileShader(filepath, source, shaderKind);
+    public static SPIRV compileShaderFile(URI shaderResource, ShaderKind shaderKind) throws IOException {
+        String source = new String(Files.readAllBytes(Paths.get(shaderResource)));
+        return compileShader(shaderResource.getPath(), source, shaderKind);
     }
 }

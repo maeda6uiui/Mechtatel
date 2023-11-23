@@ -6,11 +6,11 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
@@ -421,31 +421,15 @@ class AlbedoNabor extends Nabor {
         int msaaSamples = this.getMsaaSamples();
         VkExtent2D extent = this.getExtent();
 
-        long vertShaderModule;
-        long fragShaderModule;
-        if (!this.getVertShaderModules().isEmpty()) {
-            vertShaderModule = this.getVertShaderModule(0);
-            fragShaderModule = this.getFragShaderModule(0);
-        } else {
-            String vertShaderFilepath = this.getVertShaderResource().getFile();
-            String fragShaderFilepath = this.getFragShaderResource().getFile();
-
-            try (
-                    ShaderSPIRVUtils.SPIRV vertShaderSPIRV
-                            = ShaderSPIRVUtils.compileShaderFile(
-                            vertShaderFilepath, ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER);
-                    ShaderSPIRVUtils.SPIRV fragShaderSPIRV
-                            = ShaderSPIRVUtils.compileShaderFile(
-                            fragShaderFilepath, ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER)) {
-                vertShaderModule = this.createShaderModule(device, vertShaderSPIRV.bytecode());
-                fragShaderModule = this.createShaderModule(device, fragShaderSPIRV.bytecode());
-
-                this.addVertShaderModule(vertShaderModule);
-                this.addFragShaderModule(fragShaderModule);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        int numShaderModules;
+        try {
+            numShaderModules = this.setupShaderModules();
+        } catch (URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
         }
+
+        long vertShaderModule = this.getVertShaderModule(numShaderModules - 1);
+        long fragShaderModule = this.getFragShaderModule(numShaderModules - 1);
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
             ByteBuffer entryPoint = stack.UTF8("main");

@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -11,6 +12,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
@@ -706,6 +708,21 @@ public abstract class Nabor {
             }
 
             return pShaderModule.get(0);
+        }
+    }
+
+    protected int setupShaderModules() throws URISyntaxException, IOException {
+        try (ShaderSPIRVUtils.SPIRV vertShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(
+                vertShaderResource.toURI(), ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER);
+             ShaderSPIRVUtils.SPIRV fragShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(
+                     fragShaderResource.toURI(), ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER)) {
+            long vertShaderModule = this.createShaderModule(device, vertShaderSPIRV.bytecode());
+            long fragShaderModule = this.createShaderModule(device, fragShaderSPIRV.bytecode());
+
+            this.addVertShaderModule(vertShaderModule);
+            this.addFragShaderModule(fragShaderModule);
+
+            return vertShaderModules.size();
         }
     }
 

@@ -10,6 +10,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.sound.MttSound;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
+import jakarta.validation.constraints.NotNull;
 import org.joml.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -184,7 +185,7 @@ public class Mechtatel
         instance.sortComponents();
     }
 
-    public MttModel createModel(String screenName, URL modelResource) throws URISyntaxException, IOException {
+    public MttModel createModel(String screenName, @NotNull URL modelResource) throws URISyntaxException, IOException {
         return instance.createModel(screenName, modelResource.toURI());
     }
 
@@ -279,7 +280,7 @@ public class Mechtatel
 
     public MttTexturedQuad createTexturedQuad(
             String screenName,
-            URL textureResource,
+            @NotNull URL textureResource,
             boolean generateMipmaps,
             MttVertex3DUV v1,
             MttVertex3DUV v2,
@@ -309,7 +310,7 @@ public class Mechtatel
 
     public MttTexturedQuad2D createTexturedQuad2D(
             String screenName,
-            URL textureResource,
+            @NotNull URL textureResource,
             MttVertex2DUV p1,
             MttVertex2DUV p2,
             MttVertex2DUV p3,
@@ -324,7 +325,7 @@ public class Mechtatel
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
-            String screenName, URL textureResource, Vector2fc topLeft, Vector2fc bottomRight, float z)
+            String screenName, @NotNull URL textureResource, Vector2fc topLeft, Vector2fc bottomRight, float z)
             throws URISyntaxException {
         var p1 = new MttVertex2DUV(topLeft, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
         var p2 = new MttVertex2DUV(new Vector2f(topLeft.x(), bottomRight.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 1.0f));
@@ -359,7 +360,7 @@ public class Mechtatel
     }
 
     public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(
-            String screenName, URL textureResource) throws URISyntaxException {
+            String screenName, @NotNull URL textureResource) throws URISyntaxException {
         return instance.createTexturedQuad2DSingleTextureSet(screenName, textureResource.toURI());
     }
 
@@ -444,7 +445,7 @@ public class Mechtatel
         instance.setPhysicsSimulationTimeScale(physicsSimulationTimeScale);
     }
 
-    public MttSound createSound(URL soundResource, boolean loop, boolean relative)
+    public MttSound createSound(@NotNull URL soundResource, boolean loop, boolean relative)
             throws URISyntaxException, IOException {
         MttSound sound = instance.createSound(soundResource, loop, relative);
         return sound;
@@ -461,7 +462,7 @@ public class Mechtatel
 
     @Override
     public MttTexture createTexture(
-            String screenName, URL textureResource, boolean generateMipmaps)
+            String screenName, @NotNull URL textureResource, boolean generateMipmaps)
             throws URISyntaxException, FileNotFoundException {
         return instance.createTexture(screenName, textureResource.toURI(), generateMipmaps);
     }

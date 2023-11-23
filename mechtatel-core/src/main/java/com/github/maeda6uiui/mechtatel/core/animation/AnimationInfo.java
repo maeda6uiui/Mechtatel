@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.animation;
 
+import jakarta.validation.constraints.NotNull;
 import org.joml.Vector3f;
 
 import java.io.IOException;
@@ -72,7 +73,7 @@ public class AnimationInfo {
 
     private Map<String, Animation> animations;
 
-    public AnimationInfo(URL jsonResource) throws URISyntaxException, IOException {
+    public AnimationInfo(@NotNull URL jsonResource) throws URISyntaxException, IOException {
         animationDirectory = Paths.get(jsonResource.toURI()).getParent();
 
         RawAnimationInfo rawAnimInfo = RawAnimationInfo.load(jsonResource);

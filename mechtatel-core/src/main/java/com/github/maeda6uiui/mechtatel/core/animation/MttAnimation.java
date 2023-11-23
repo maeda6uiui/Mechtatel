@@ -7,9 +7,7 @@ import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,14 +40,14 @@ public class MttAnimation {
         this.animationInfo = animationInfo;
 
         //Load models
-        URL animationDirectory = animationInfo.getAnimationDirectory();
+        Path animationDirectory = animationInfo.getAnimationDirectory();
 
         models = new HashMap<>();
         for (var entry : animationInfo.getModels().entrySet()) {
             String modelName = entry.getKey();
             AnimationInfo.Model animModel = entry.getValue();
 
-            Path modelFile = Paths.get(animationDirectory.getFile(), animModel.filename);
+            Path modelFile = animationDirectory.resolve(animModel.filename);
             MttModel model = new MttModel(vulkanInstance, screenName, modelFile.toUri().toURL());
             models.put(modelName, model);
         }

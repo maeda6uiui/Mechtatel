@@ -4,7 +4,9 @@ import jakarta.validation.constraints.NotNull;
 import org.joml.Vector3f;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,13 +68,13 @@ public class AnimationInfo {
     }
 
     private String name;
-    private URL animationDirectory;
+    private Path animationDirectory;
     private Map<String, Model> models;
 
     private Map<String, Animation> animations;
 
-    public AnimationInfo(@NotNull URL jsonResource) throws IOException {
-        animationDirectory = Paths.get(jsonResource.getFile()).getParent().toUri().toURL();
+    public AnimationInfo(@NotNull URL jsonResource) throws URISyntaxException, IOException {
+        animationDirectory = Paths.get(jsonResource.toURI()).getParent();
 
         RawAnimationInfo rawAnimInfo = RawAnimationInfo.load(jsonResource);
         name = rawAnimInfo.name;
@@ -124,7 +126,7 @@ public class AnimationInfo {
         return name;
     }
 
-    public URL getAnimationDirectory() {
+    public Path getAnimationDirectory() {
         return animationDirectory;
     }
 

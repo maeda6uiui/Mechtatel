@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -61,11 +59,7 @@ class RawAnimationInfo {
     public List<Animation> animations;
 
     public static RawAnimationInfo load(URL jsonResource) throws IOException {
-        String json = Files.readString(Paths.get(jsonResource.getFile()));
-
-        var mapper = new ObjectMapper();
-        RawAnimationInfo animInfo = mapper.readValue(json, RawAnimationInfo.class);
-
+        RawAnimationInfo animInfo = new ObjectMapper().readValue(jsonResource, RawAnimationInfo.class);
         return animInfo;
     }
 }

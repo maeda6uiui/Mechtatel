@@ -163,8 +163,6 @@ public class PhysicalObjectTest extends Mechtatel {
             } catch (IOException e) {
                 e.printStackTrace();
                 this.closeWindow();
-
-                return;
             }
         }
     }

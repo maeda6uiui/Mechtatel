@@ -79,8 +79,6 @@ public class TexturedScreenTest extends Mechtatel {
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
             this.closeWindow();
-
-            return;
         }
     }
 

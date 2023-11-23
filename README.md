@@ -1,42 +1,81 @@
 # Mechtatel
 
-Mechtatel (露: Мечтатель 英: Dreamer)
+Mechtatel (ru: Мечтатель en: Dreamer)
 
 > Мечтай до тех пор, пока не узнаешь, что давно пора повзрослеть и бросить эту фигню.
 
-## 概要
+## Overview
 
-Javaでゲームエンジンを作ることを目標としているプロジェクトです。
-[LWJGL](https://www.lwjgl.org/)でVulkanを使用して開発を進めています。
-現状はまだゲームエンジンと呼べるような代物ではありませんが、気力と時間があるときに少しずつ開発を進めていきたいと思っています。
+This project aims to create a Vulkan-based game engine in Java with help of [LWJGL](https://www.lwjgl.org/).
+It's still far from what you call a game engine, but I'll keep on developing little by little in my free time.
+Leave a star in this repo if you like it!
 
-今のところこのプロジェクトに関する詳細なドキュメントはありません。
-[テストコード](./src/test/java/com/github/maeda6uiui/mechtatel/)を確認していただくと、Mechtatelがどういうふうに動作するのか、雰囲気だけでも理解していただけるかもしれません...。
+I'm sorry that currently there is no elaborate document for this project.
+But you could check out the [test code](./mechtatel-core/src/test/java/com/github/maeda6uiui/mechtatel/) and hopefully get the gist of how Mechtatel works.
 
-## 開発者からのメッセージ
+## Message from developer
 
-「自作のゲームエンジンを作りたい」と思ってから何年も経ち、思いつきでコードを書いては捨て、書いては捨て、そんなことを繰り返しながら、ただのゴミを生産してきた人生です。
+It's been years since I came up with an idea like "Isn't it great if I could create a game engine and build my own game upon it?"
+If you just want to create a game, then you should take advantage of the great game engines such as Unity and Unreal Engine.
+As for me, I simply love to write code, and want to develop a game starting from the lowest level possible.
 
-ゲームを作りたいだけならば、UnityやUnreal Engineといった偉大なゲームエンジンを使用するべきだと思います。
+*Mechtatel* is a word that means "Dreamer" in Russian.
+It's a word that best describes me, only dreaming and being far from achivements.
+Maybe I wouldn't achieve anything until I die, maybe I would make some aesthetic garbage, I don't know...
+But if you are a nerd or something and like my work, then leave a star in this repo.
+It'll be my great mental support.
 
-しかし自分は、単純にコードを書くのが好きで、可能な限り低水準な部分からゲームを作成してみたいのです。
-どんなゲームを作りたいのかもまだ定まっていないので、とりあえず汎用的に使えるゲームエンジンを開発すればいいのではないか、という理由もあります。
+Thank you!
 
-プロジェクト名の*Mechtatel*というのはロシア語で「夢を見る人」(Dreamer)という意味です。
-いつまでも夢を見ていて結局何も成し遂げられない、そんな自分の現状を端的に表現する単語です。
+## Todo
 
-結局自分が死ぬまで何も成し遂げられないかもしれませんし、あるいは何か芸術的なゴミを生み出すことができるかもしれません。
-「この人を応援したい！」とか思うような頭のおかしい人は、Starでも付けていってください...。
+- Create `mechtatel-logging` module
+- Add binaries for Linux x64 and macOS x64 
+- Implement functionality to run `mechtatel-core` via YAML definitions<br>i.e. Load and manipulate resources according to the procedure defined in a YAML file
 
-## 依存関係
+## 進捗報告(Progress report)
 
-(Windows以外のプラットフォームを使用している方へ)
-以下のバイナリを./Mechtatel/Binディレクトリに配置する必要があります。
+### 2023-11-23
 
-- [shaderc](https://github.com/google/shaderc)
-- [Libbulletjme](https://github.com/stephengold/Libbulletjme)
+これまで開発してきたコア機能を`mechtatel-core`モジュールにまとめました。
+かなり大規模な変更を加えたので、もしかしたら動かなくなっているところがあるかもしれません。
 
-## 進捗報告
+Mechtatelの標準アセットはresourcesディレクトリに配置するように変更しました。
+これにより、標準アセットはビルド後のJARファイル内に含まれるようになります。
+標準アセットの読込みは`getResource`を用いて以下のように行います。
+
+```java
+skyboxModel = this.createModel(
+        "skybox",
+        Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Skybox/skybox.obj"))
+);
+```
+
+resourcesディレクトリ以外にあるファイル(ユーザーが用意したファイルなど)は、別途URLを作成してメソッドの引数に渡すことで読み込むことができます。
+
+```java
+URL fragShaderResource;
+try {
+    fragShaderResource = Paths.get("./Mechtatel/Addon/maeda6uiui/Shader/sepia.frag").toUri().toURL();
+} catch (MalformedURLException e) {
+    e.printStackTrace();
+    this.closeWindow();
+
+    return;
+}
+
+var naborInfo = new FlexibleNaborInfo(
+        Objects.requireNonNull(this.getClass().getResource(
+                "/Standard/Shader/PostProcessing/post_processing.vert")),
+        fragShaderResource
+);
+naborInfo.setLightingType("parallel_light");
+screenCreator.addFlexibleNaborInfo("sepia", naborInfo);
+```
+
+これまで./Mechtatel/Binに配置していたバイナリについても、resourcesディレクトリに配置し、Gitで管理するようにしました。
+今の段階ではWindows版のバイナリのみですが、macOSとLinux用のバイナリについても追加する予定です。
+これにより、開発者が各自でバイナリを用意するという面倒な前準備が必要なくなるはずです。
 
 ### 2023-09-17
 

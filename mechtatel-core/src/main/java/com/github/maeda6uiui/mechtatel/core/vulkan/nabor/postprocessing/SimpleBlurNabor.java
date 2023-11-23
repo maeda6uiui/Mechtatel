@@ -21,8 +21,8 @@ public class SimpleBlurNabor extends PostProcessingNabor {
                 device,
                 VK_SAMPLE_COUNT_1_BIT,
                 false,
-                "./Mechtatel/Standard/Shader/PostProcessing/post_processing.vert",
-                "./Mechtatel/Standard/Shader/PostProcessing/simple_blur.frag"
+                SimpleBlurNabor.class.getResource("/Standard/Shader/PostProcessing/post_processing.vert"),
+                SimpleBlurNabor.class.getResource("/Standard/Shader/PostProcessing/simple_blur.frag")
         );
     }
 

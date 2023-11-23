@@ -25,8 +25,8 @@ public class PointLightNabor extends PostProcessingNabor {
                 device,
                 VK_SAMPLE_COUNT_1_BIT,
                 false,
-                "./Mechtatel/Standard/Shader/PostProcessing/post_processing.vert",
-                "./Mechtatel/Standard/Shader/PostProcessing/point_light.frag"
+                PointLightNabor.class.getResource("/Standard/Shader/PostProcessing/post_processing.vert"),
+                PointLightNabor.class.getResource("/Standard/Shader/PostProcessing/point_light.frag")
         );
     }
 

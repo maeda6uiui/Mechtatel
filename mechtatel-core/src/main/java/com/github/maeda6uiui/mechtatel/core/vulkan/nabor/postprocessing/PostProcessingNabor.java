@@ -8,6 +8,7 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
@@ -26,9 +27,9 @@ public abstract class PostProcessingNabor extends Nabor {
             VkDevice device,
             int msaaSamples,
             boolean isContainer,
-            String vertShaderFilepath,
-            String fragShaderFilepath) {
-        super(device, msaaSamples, isContainer, vertShaderFilepath, fragShaderFilepath);
+            URL vertShaderResource,
+            URL fragShaderResource) {
+        super(device, msaaSamples, isContainer, vertShaderResource, fragShaderResource);
     }
 
     public void transitionColorImageLayout(long commandPool, VkQueue graphicsQueue) {
@@ -367,27 +368,29 @@ public abstract class PostProcessingNabor extends Nabor {
 
         long vertShaderModule;
         long fragShaderModule;
-        if (this.getVertShaderModules().size() != 0) {
+        if (!this.getVertShaderModules().isEmpty()) {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            String vertShaderFilepath = this.getVertShaderFilepath();
-            String fragShaderFilepath = this.getFragShaderFilepath();
+            String vertShaderFilepath = this.getVertShaderResource().getFile();
+            String fragShaderFilepath = this.getFragShaderResource().getFile();
 
-            ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
-            ShaderSPIRVUtils.SPIRV fragShaderSPIRV;
-            try {
-                vertShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(vertShaderFilepath, ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER);
-                fragShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(fragShaderFilepath, ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER);
+            try (
+                    ShaderSPIRVUtils.SPIRV vertShaderSPIRV
+                            = ShaderSPIRVUtils.compileShaderFile(
+                            vertShaderFilepath, ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER);
+                    ShaderSPIRVUtils.SPIRV fragShaderSPIRV
+                            = ShaderSPIRVUtils.compileShaderFile(
+                            fragShaderFilepath, ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER);
+            ) {
+                vertShaderModule = this.createShaderModule(device, vertShaderSPIRV.bytecode());
+                fragShaderModule = this.createShaderModule(device, fragShaderSPIRV.bytecode());
+
+                this.addVertShaderModule(vertShaderModule);
+                this.addFragShaderModule(fragShaderModule);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
-            vertShaderModule = this.createShaderModule(device, vertShaderSPIRV.bytecode());
-            fragShaderModule = this.createShaderModule(device, fragShaderSPIRV.bytecode());
-
-            this.addVertShaderModule(vertShaderModule);
-            this.addFragShaderModule(fragShaderModule);
         }
 
         this.createGraphicsPipelines(vertShaderModule, fragShaderModule);

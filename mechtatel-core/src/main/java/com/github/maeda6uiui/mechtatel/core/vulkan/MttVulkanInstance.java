@@ -133,7 +133,6 @@ public class MttVulkanInstance
             long window,
             int albedoMsaaSamples) {
         //Load the Shaderc library
-        System.setProperty("java.library.path", "./Mechtatel/Bin");
         System.loadLibrary("shaderc_shared");
 
         this.enableValidationLayer = enableValidationLayer;

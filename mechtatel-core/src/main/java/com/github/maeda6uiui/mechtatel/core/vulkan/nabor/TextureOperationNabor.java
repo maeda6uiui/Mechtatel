@@ -57,8 +57,8 @@ public class TextureOperationNabor extends Nabor {
                 device,
                 VK_SAMPLE_COUNT_1_BIT,
                 false,
-                "./Mechtatel/Standard/Shader/TextureOperation/texture_operation.vert",
-                "./Mechtatel/Standard/Shader/TextureOperation/texture_operation.frag"
+                TextureOperationNabor.class.getResource("/Standard/Shader/TextureOperation/texture_operation.vert"),
+                TextureOperationNabor.class.getResource("/Standard/Shader/TextureOperation/texture_operation.frag")
         );
     }
 
@@ -395,27 +395,29 @@ public class TextureOperationNabor extends Nabor {
 
         long vertShaderModule;
         long fragShaderModule;
-        if (this.getVertShaderModules().size() != 0) {
+        if (!this.getVertShaderModules().isEmpty()) {
             vertShaderModule = this.getVertShaderModule(0);
             fragShaderModule = this.getFragShaderModule(0);
         } else {
-            String vertShaderFilepath = this.getVertShaderFilepath();
-            String fragShaderFilepath = this.getFragShaderFilepath();
+            String vertShaderFilepath = this.getVertShaderResource().getFile();
+            String fragShaderFilepath = this.getFragShaderResource().getFile();
 
-            ShaderSPIRVUtils.SPIRV vertShaderSPIRV;
-            ShaderSPIRVUtils.SPIRV fragShaderSPIRV;
-            try {
-                vertShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(vertShaderFilepath, ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER);
-                fragShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(fragShaderFilepath, ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER);
+            try (
+                    ShaderSPIRVUtils.SPIRV vertShaderSPIRV
+                            = ShaderSPIRVUtils.compileShaderFile(
+                            vertShaderFilepath, ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER);
+                    ShaderSPIRVUtils.SPIRV fragShaderSPIRV
+                            = ShaderSPIRVUtils.compileShaderFile(
+                            fragShaderFilepath, ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER);
+            ) {
+                vertShaderModule = this.createShaderModule(device, vertShaderSPIRV.bytecode());
+                fragShaderModule = this.createShaderModule(device, fragShaderSPIRV.bytecode());
+
+                this.addVertShaderModule(vertShaderModule);
+                this.addFragShaderModule(fragShaderModule);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
-            vertShaderModule = this.createShaderModule(device, vertShaderSPIRV.bytecode());
-            fragShaderModule = this.createShaderModule(device, fragShaderSPIRV.bytecode());
-
-            this.addVertShaderModule(vertShaderModule);
-            this.addFragShaderModule(fragShaderModule);
         }
 
         try (MemoryStack stack = MemoryStack.stackPush()) {

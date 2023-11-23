@@ -25,8 +25,8 @@ public class ParallelLightNabor extends PostProcessingNabor {
                 device,
                 VK_SAMPLE_COUNT_1_BIT,
                 false,
-                "./Mechtatel/Standard/Shader/PostProcessing/post_processing.vert",
-                "./Mechtatel/Standard/Shader/PostProcessing/parallel_light.frag"
+                ParallelLightNabor.class.getResource("/Standard/Shader/PostProcessing/post_processing.vert"),
+                ParallelLightNabor.class.getResource("/Standard/Shader/PostProcessing/parallel_light.frag")
         );
     }
 

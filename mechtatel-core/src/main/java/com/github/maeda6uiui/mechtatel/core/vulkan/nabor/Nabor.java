@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
@@ -31,8 +32,8 @@ public abstract class Nabor {
     private int msaaSamples;
     private VkExtent2D extent;
 
-    private String vertShaderFilepath;
-    private String fragShaderFilepath;
+    private URL vertShaderResource;
+    private URL fragShaderResource;
 
     private boolean isContainer;
     private boolean isSharedShaderModules;
@@ -70,16 +71,16 @@ public abstract class Nabor {
             VkDevice device,
             int msaaSamples,
             boolean isContainer,
-            String vertShaderFilepath,
-            String fragShaderFilepath) {
+            URL vertShaderResource,
+            URL fragShaderResource) {
         this.device = device;
 
         this.msaaSamples = msaaSamples;
         this.isContainer = isContainer;
         isSharedShaderModules = false;
 
-        this.vertShaderFilepath = vertShaderFilepath;
-        this.fragShaderFilepath = fragShaderFilepath;
+        this.vertShaderResource = vertShaderResource;
+        this.fragShaderResource = fragShaderResource;
 
         textureSamplers = new ArrayList<>();
 
@@ -125,12 +126,12 @@ public abstract class Nabor {
         throw new RuntimeException("Unsupported operation");
     }
 
-    public String getVertShaderFilepath() {
-        return vertShaderFilepath;
+    public URL getVertShaderResource() {
+        return vertShaderResource;
     }
 
-    public String getFragShaderFilepath() {
-        return fragShaderFilepath;
+    public URL getFragShaderResource() {
+        return fragShaderResource;
     }
 
     public boolean isContainer() {

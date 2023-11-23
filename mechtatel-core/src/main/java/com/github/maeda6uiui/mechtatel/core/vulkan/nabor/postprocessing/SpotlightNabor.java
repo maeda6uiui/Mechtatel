@@ -25,8 +25,8 @@ public class SpotlightNabor extends PostProcessingNabor {
                 device,
                 VK_SAMPLE_COUNT_1_BIT,
                 false,
-                "./Mechtatel/Standard/Shader/PostProcessing/post_processing.vert",
-                "./Mechtatel/Standard/Shader/PostProcessing/spotlight.frag"
+                SpotlightNabor.class.getResource("/Standard/Shader/PostProcessing/post_processing.vert"),
+                SpotlightNabor.class.getResource("/Standard/Shader/PostProcessing/spotlight.frag")
         );
     }
 

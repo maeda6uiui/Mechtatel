@@ -22,8 +22,8 @@ public class FogNabor extends PostProcessingNabor {
                 device,
                 VK_SAMPLE_COUNT_1_BIT,
                 false,
-                "./Mechtatel/Standard/Shader/PostProcessing/post_processing.vert",
-                "./Mechtatel/Standard/Shader/PostProcessing/fog.frag"
+                FogNabor.class.getResource("/Standard/Shader/PostProcessing/post_processing.vert"),
+                FogNabor.class.getResource("/Standard/Shader/PostProcessing/fog.frag")
         );
     }
 

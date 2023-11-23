@@ -89,8 +89,8 @@ public class PostProcessingNaborChain {
 
                     ppNabor = new FlexibleNabor(
                             device,
-                            flexibleNaborInfo.getVertShaderFilepath(),
-                            flexibleNaborInfo.getFragShaderFilepath(),
+                            flexibleNaborInfo.getVertShaderResource(),
+                            flexibleNaborInfo.getFragShaderResource(),
                             flexibleNaborInfo.getUniformResources()
                     );
                 }

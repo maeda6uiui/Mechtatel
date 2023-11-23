@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.nabor;
 
 import org.joml.Vector3f;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,16 +12,16 @@ import java.util.List;
  * @author maeda6uiui
  */
 public class FlexibleNaborInfo {
-    private String vertShaderFilepath;
-    private String fragShaderFilepath;
+    private URL vertShaderResource;
+    private URL fragShaderResource;
     private List<String> uniformResources;
     private String lightingType;
     private Vector3f lightingClampMin;
     private Vector3f lightingClampMax;
 
-    public FlexibleNaborInfo(String vertShaderFilepath, String fragShaderFilepath) {
-        this.vertShaderFilepath = vertShaderFilepath;
-        this.fragShaderFilepath = fragShaderFilepath;
+    public FlexibleNaborInfo(URL vertShaderResource, URL fragShaderResource) {
+        this.vertShaderResource = vertShaderResource;
+        this.fragShaderResource = fragShaderResource;
         uniformResources = new ArrayList<>();
         uniformResources.add("camera");
         lightingType = "parallel_light";
@@ -28,12 +29,12 @@ public class FlexibleNaborInfo {
         lightingClampMax = new Vector3f(1.0f, 1.0f, 1.0f);
     }
 
-    public String getVertShaderFilepath() {
-        return vertShaderFilepath;
+    public URL getVertShaderResource() {
+        return vertShaderResource;
     }
 
-    public String getFragShaderFilepath() {
-        return fragShaderFilepath;
+    public URL getFragShaderResource() {
+        return fragShaderResource;
     }
 
     public List<String> getUniformResources() {

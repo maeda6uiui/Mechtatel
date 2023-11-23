@@ -28,7 +28,13 @@ public class GBufferNabor extends Nabor {
             int depthImageFormat,
             int positionImageFormat,
             int normalImageFormat) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, true, "", "");
+        super(
+                device,
+                VK_SAMPLE_COUNT_1_BIT,
+                true,
+                GBufferNabor.class.getResource(""),
+                GBufferNabor.class.getResource("")
+        );
 
         albedoNabor = new AlbedoNabor(device, albedoMsaaSamples, depthImageFormat);
         propertiesNabor = new PropertiesNabor(device, depthImageFormat, positionImageFormat, normalImageFormat);

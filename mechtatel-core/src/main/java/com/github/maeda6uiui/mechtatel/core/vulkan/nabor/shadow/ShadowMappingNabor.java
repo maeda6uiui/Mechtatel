@@ -29,7 +29,13 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     private Pass2Nabor pass2;
 
     public ShadowMappingNabor(VkDevice device, int depthImageFormat, int depthImageWidth, int depthImageHeight) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, true, "", "");
+        super(
+                device,
+                VK_SAMPLE_COUNT_1_BIT,
+                true,
+                ShadowMappingNabor.class.getResource(""),
+                ShadowMappingNabor.class.getResource("")
+        );
 
         this.depthImageWidth = depthImageWidth;
         this.depthImageHeight = depthImageHeight;

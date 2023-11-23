@@ -6,6 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttModel;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
@@ -15,27 +16,27 @@ import java.util.Set;
  * @author maeda6uiui
  */
 public class MttModel extends MttComponent {
-    private String modelFilepath;
+    private URL modelResource;
     private VkMttModel vkModel;
 
-    public MttModel(MttVulkanInstance vulkanInstance, String screenName, String modelFilepath) throws IOException {
+    public MttModel(MttVulkanInstance vulkanInstance, String screenName, URL modelResource) throws IOException {
         super(vulkanInstance);
 
-        this.modelFilepath = modelFilepath;
-        vkModel = vulkanInstance.createModel(screenName, modelFilepath);
+        this.modelResource = modelResource;
+        vkModel = vulkanInstance.createModel(screenName, modelResource);
         this.associateVulkanComponent(vkModel);
     }
 
     public MttModel(MttVulkanInstance vulkanInstance, MttModel srcModel) {
         super(vulkanInstance);
 
-        this.modelFilepath = srcModel.modelFilepath;
+        this.modelResource = srcModel.modelResource;
         vkModel = vulkanInstance.duplicateModel(srcModel.vkModel);
         this.associateVulkanComponent(vkModel);
     }
 
-    public String getModelFilepath() {
-        return modelFilepath;
+    public URL getModelResource() {
+        return modelResource;
     }
 
     public ModelLoader.Model getModel() {

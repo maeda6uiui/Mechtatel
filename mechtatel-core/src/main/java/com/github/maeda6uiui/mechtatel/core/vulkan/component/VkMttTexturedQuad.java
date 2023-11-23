@@ -9,6 +9,7 @@ import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkQueue;
 
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class VkMttTexturedQuad extends VkMttComponent {
             long commandPool,
             VkQueue graphicsQueue,
             IVkMttScreenForVkMttTexture screen,
-            String textureFilepath,
+            URL textureResource,
             boolean generateMipmaps,
             List<MttVertex3DUV> vertices) {
         this.device = device;
@@ -75,7 +76,7 @@ public class VkMttTexturedQuad extends VkMttComponent {
                 commandPool,
                 graphicsQueue,
                 screen,
-                textureFilepath,
+                textureResource,
                 generateMipmaps);
         this.createBuffers(commandPool, graphicsQueue, vertices);
 

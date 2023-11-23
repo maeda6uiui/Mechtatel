@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -182,8 +183,8 @@ public class Mechtatel
         instance.sortComponents();
     }
 
-    public MttModel createModel(String screenName, String modelFilepath) throws IOException {
-        return instance.createModel(screenName, modelFilepath);
+    public MttModel createModel(String screenName, URL modelResource) throws IOException {
+        return instance.createModel(screenName, modelResource);
     }
 
     public MttModel duplicateModel(MttModel srcModel) {
@@ -277,13 +278,13 @@ public class Mechtatel
 
     public MttTexturedQuad createTexturedQuad(
             String screenName,
-            String textureFilepath,
+            URL textureResource,
             boolean generateMipmaps,
             MttVertex3DUV v1,
             MttVertex3DUV v2,
             MttVertex3DUV v3,
             MttVertex3DUV v4) {
-        return instance.createTexturedQuad(screenName, textureFilepath, generateMipmaps, v1, v2, v3, v4);
+        return instance.createTexturedQuad(screenName, textureResource, generateMipmaps, v1, v2, v3, v4);
     }
 
     public MttTexturedQuad createTexturedQuad(
@@ -307,13 +308,13 @@ public class Mechtatel
 
     public MttTexturedQuad2D createTexturedQuad2D(
             String screenName,
-            String textureFilepath,
+            URL textureResource,
             MttVertex2DUV p1,
             MttVertex2DUV p2,
             MttVertex2DUV p3,
             MttVertex2DUV p4,
             float z) {
-        return instance.createTexturedQuad2D(screenName, textureFilepath, p1, p2, p3, p4, z);
+        return instance.createTexturedQuad2D(screenName, textureResource, p1, p2, p3, p4, z);
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
@@ -322,13 +323,13 @@ public class Mechtatel
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
-            String screenName, String textureFilepath, Vector2fc topLeft, Vector2fc bottomRight, float z) {
+            String screenName, URL textureResource, Vector2fc topLeft, Vector2fc bottomRight, float z) {
         var p1 = new MttVertex2DUV(topLeft, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 0.0f));
         var p2 = new MttVertex2DUV(new Vector2f(topLeft.x(), bottomRight.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(0.0f, 1.0f));
         var p3 = new MttVertex2DUV(bottomRight, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
         var p4 = new MttVertex2DUV(new Vector2f(bottomRight.x(), topLeft.y()), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 0.0f));
 
-        return instance.createTexturedQuad2D(screenName, textureFilepath, p1, p2, p3, p4, z);
+        return instance.createTexturedQuad2D(screenName, textureResource, p1, p2, p3, p4, z);
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
@@ -355,8 +356,9 @@ public class Mechtatel
         return instance.duplicateTexturedQuad2D(srcQuad, p1, p2, p3, p4, z);
     }
 
-    public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, String textureFilepath) {
-        return instance.createTexturedQuad2DSingleTextureSet(screenName, textureFilepath);
+    public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(
+            String screenName, URL textureResource) {
+        return instance.createTexturedQuad2DSingleTextureSet(screenName, textureResource);
     }
 
     public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, MttTexture texture) {
@@ -456,8 +458,8 @@ public class Mechtatel
 
     @Override
     public MttTexture createTexture(
-            String screenName, String textureFilepath, boolean generateMipmaps) throws FileNotFoundException {
-        return instance.createTexture(screenName, textureFilepath, generateMipmaps);
+            String screenName, URL textureResource, boolean generateMipmaps) throws FileNotFoundException {
+        return instance.createTexture(screenName, textureResource, generateMipmaps);
     }
 
     public MttTexture texturizeColorOfScreen(String srcScreenName, String dstScreenName) {

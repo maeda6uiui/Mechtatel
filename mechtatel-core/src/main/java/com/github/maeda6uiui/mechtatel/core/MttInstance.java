@@ -27,6 +27,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
@@ -360,8 +361,8 @@ class MttInstance {
         vulkanInstance.sortComponents();
     }
 
-    public MttModel createModel(String screenName, String modelFilepath) throws IOException {
-        var model = new MttModel(vulkanInstance, screenName, modelFilepath);
+    public MttModel createModel(String screenName, URL modelResource) throws IOException {
+        var model = new MttModel(vulkanInstance, screenName, modelResource);
         return model;
     }
 
@@ -424,7 +425,7 @@ class MttInstance {
 
     public MttTexturedQuad createTexturedQuad(
             String screenName,
-            String textureFilepath,
+            URL textureResource,
             boolean generateMipmaps,
             MttVertex3DUV v1,
             MttVertex3DUV v2,
@@ -433,7 +434,7 @@ class MttInstance {
         var texturedQuad = new MttTexturedQuad(
                 vulkanInstance,
                 screenName,
-                textureFilepath,
+                textureResource,
                 generateMipmaps,
                 v1,
                 v2,
@@ -477,9 +478,10 @@ class MttInstance {
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
-            String screenName, String textureFilepath, MttVertex2DUV p1, MttVertex2DUV p2, MttVertex2DUV p3, MttVertex2DUV p4, float z) {
+            String screenName, URL textureResource,
+            MttVertex2DUV p1, MttVertex2DUV p2, MttVertex2DUV p3, MttVertex2DUV p4, float z) {
         var texturedQuad = new MttTexturedQuad2D(
-                vulkanInstance, screenName, textureFilepath, false, p1, p2, p3, p4, z);
+                vulkanInstance, screenName, textureResource, false, p1, p2, p3, p4, z);
         return texturedQuad;
     }
 
@@ -495,8 +497,9 @@ class MttInstance {
         return texturedQuad;
     }
 
-    public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, String textureFilepath) {
-        var texturedQuadSet = new MttTexturedQuad2DSingleTextureSet(vulkanInstance, screenName, textureFilepath);
+    public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(
+            String screenName, URL textureResource) {
+        var texturedQuadSet = new MttTexturedQuad2DSingleTextureSet(vulkanInstance, screenName, textureResource);
         return texturedQuadSet;
     }
 
@@ -660,8 +663,8 @@ class MttInstance {
     }
 
     public MttTexture createTexture(
-            String screenName, String textureFilepath, boolean generateMipmaps) throws FileNotFoundException {
-        var texture = new MttTexture(vulkanInstance, screenName, textureFilepath, generateMipmaps);
+            String screenName, URL textureResource, boolean generateMipmaps) throws FileNotFoundException {
+        var texture = new MttTexture(vulkanInstance, screenName, textureResource, generateMipmaps);
         return texture;
     }
 

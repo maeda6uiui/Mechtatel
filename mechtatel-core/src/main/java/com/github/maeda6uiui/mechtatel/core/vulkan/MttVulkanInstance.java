@@ -32,6 +32,7 @@ import org.lwjgl.vulkan.*;
 
 import java.awt.*;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.IntBuffer;
 import java.util.List;
 import java.util.*;
@@ -494,7 +495,7 @@ public class MttVulkanInstance
         Collections.sort(components);
     }
 
-    public VkMttModel createModel(String screenName, String modelFilepath) throws IOException {
+    public VkMttModel createModel(String screenName, URL modelResource) throws IOException {
         VkMttScreen screen = screens.get(screenName);
 
         var model = new VkMttModel(
@@ -502,7 +503,7 @@ public class MttVulkanInstance
                 commandPool,
                 graphicsQueue,
                 screen,
-                modelFilepath);
+                modelResource);
         components.add(model);
 
         return model;
@@ -562,7 +563,7 @@ public class MttVulkanInstance
     }
 
     public VkMttTexturedQuad createTexturedQuad(
-            String screenName, String textureFilepath, boolean generateMipmaps, List<MttVertex3DUV> vertices) {
+            String screenName, URL textureResource, boolean generateMipmaps, List<MttVertex3DUV> vertices) {
         VkMttScreen screen = screens.get(screenName);
 
         var texturedQuad = new VkMttTexturedQuad(
@@ -570,7 +571,7 @@ public class MttVulkanInstance
                 commandPool,
                 graphicsQueue,
                 screen,
-                textureFilepath,
+                textureResource,
                 generateMipmaps,
                 vertices);
         components.add(texturedQuad);
@@ -611,7 +612,8 @@ public class MttVulkanInstance
         return texturedQuadSet;
     }
 
-    public VkMttTexturedQuadSingleTextureSet createTexturedQuadSingleTextureSet(String screenName, String textureFilepath) {
+    public VkMttTexturedQuadSingleTextureSet createTexturedQuadSingleTextureSet(
+            String screenName, URL textureResource) {
         VkMttScreen screen = screens.get(screenName);
 
         var texturedQuadSet = new VkMttTexturedQuadSingleTextureSet(
@@ -619,7 +621,7 @@ public class MttVulkanInstance
                 commandPool,
                 graphicsQueue,
                 screen,
-                textureFilepath);
+                textureResource);
         components.add(texturedQuadSet);
 
         return texturedQuadSet;
@@ -644,7 +646,7 @@ public class MttVulkanInstance
     }
 
     @Override
-    public VkMttTexture createTexture(String screenName, String textureFilepath, boolean generateMipmaps) {
+    public VkMttTexture createTexture(String screenName, URL textureResource, boolean generateMipmaps) {
         VkMttScreen screen = screens.get(screenName);
 
         var texture = new VkMttTexture(
@@ -652,7 +654,7 @@ public class MttVulkanInstance
                 commandPool,
                 graphicsQueue,
                 screen,
-                textureFilepath,
+                textureResource,
                 generateMipmaps
         );
         textures.add(texture);

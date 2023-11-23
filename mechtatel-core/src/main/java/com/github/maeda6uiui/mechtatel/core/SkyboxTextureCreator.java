@@ -3,7 +3,8 @@ package com.github.maeda6uiui.mechtatel.core;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Paths;
 
 /**
@@ -22,22 +23,23 @@ public class SkyboxTextureCreator {
     public SkyboxTextureCreator(
             IMechtatelForSkyboxTextureCreator mtt,
             String screenName,
-            String textureDirname,
+            URL textureDirectory,
             String textureExtension,
-            boolean generateMipmaps) throws FileNotFoundException {
-        String texNxFilepath = Paths.get(textureDirname, String.format("nx.%s", textureExtension)).toString();
-        String texNyFilepath = Paths.get(textureDirname, String.format("ny.%s", textureExtension)).toString();
-        String texNzFilepath = Paths.get(textureDirname, String.format("nz.%s", textureExtension)).toString();
-        String texPxFilepath = Paths.get(textureDirname, String.format("px.%s", textureExtension)).toString();
-        String texPyFilepath = Paths.get(textureDirname, String.format("py.%s", textureExtension)).toString();
-        String texPzFilepath = Paths.get(textureDirname, String.format("pz.%s", textureExtension)).toString();
+            boolean generateMipmaps) throws IOException {
+        String textureDirname = textureDirectory.getFile();
+        URL texNxResource = Paths.get(textureDirname, String.format("nx.%s", textureExtension)).toUri().toURL();
+        URL texNyResource = Paths.get(textureDirname, String.format("ny.%s", textureExtension)).toUri().toURL();
+        URL texNzResource = Paths.get(textureDirname, String.format("nz.%s", textureExtension)).toUri().toURL();
+        URL texPxResource = Paths.get(textureDirname, String.format("px.%s", textureExtension)).toUri().toURL();
+        URL texPyResource = Paths.get(textureDirname, String.format("py.%s", textureExtension)).toUri().toURL();
+        URL texPzResource = Paths.get(textureDirname, String.format("pz.%s", textureExtension)).toUri().toURL();
 
-        texNx = mtt.createTexture(screenName, texNxFilepath, generateMipmaps);
-        texNy = mtt.createTexture(screenName, texNyFilepath, generateMipmaps);
-        texNz = mtt.createTexture(screenName, texNzFilepath, generateMipmaps);
-        texPx = mtt.createTexture(screenName, texPxFilepath, generateMipmaps);
-        texPy = mtt.createTexture(screenName, texPyFilepath, generateMipmaps);
-        texPz = mtt.createTexture(screenName, texPzFilepath, generateMipmaps);
+        texNx = mtt.createTexture(screenName, texNxResource, generateMipmaps);
+        texNy = mtt.createTexture(screenName, texNyResource, generateMipmaps);
+        texNz = mtt.createTexture(screenName, texNzResource, generateMipmaps);
+        texPx = mtt.createTexture(screenName, texPxResource, generateMipmaps);
+        texPy = mtt.createTexture(screenName, texPyResource, generateMipmaps);
+        texPz = mtt.createTexture(screenName, texPzResource, generateMipmaps);
     }
 
     public void apply(MttModel model) {

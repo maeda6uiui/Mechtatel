@@ -10,6 +10,7 @@ import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkQueue;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.*;
@@ -58,7 +59,7 @@ public class VkMttModel extends VkMttComponent {
                     commandPool,
                     graphicsQueue,
                     screen,
-                    material.diffuseTexFilepath,
+                    material.diffuseTexResource,
                     true);
 
             textures.put(index, texture);
@@ -95,12 +96,12 @@ public class VkMttModel extends VkMttComponent {
             long commandPool,
             VkQueue graphicsQueue,
             IVkMttScreenForVkMttTexture screen,
-            String modelFilepath) throws IOException {
+            URL modelResource) throws IOException {
         this.device = device;
 
         isDuplicatedModel = false;
 
-        model = ModelLoader.loadModel(modelFilepath);
+        model = ModelLoader.loadModel(modelResource);
         this.loadTextures(commandPool, graphicsQueue, screen);
         this.createBuffers(commandPool, graphicsQueue);
 

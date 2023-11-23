@@ -51,6 +51,9 @@ public class SimpleBlurTest extends Mechtatel {
             );
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
+            this.closeWindow();
+
+            return;
         }
 
         camera = new FreeCamera(mainScreen.getCamera());

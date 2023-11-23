@@ -92,6 +92,9 @@ public class PhysicalObjectTest extends Mechtatel {
             srcCube.setVisible(false);
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
+            this.closeWindow();
+
+            return;
         }
 
         var physicalPlane = this.createPhysicalMesh(plane, 0.0f);
@@ -159,6 +162,9 @@ public class PhysicalObjectTest extends Mechtatel {
                 screenshotCount++;
             } catch (IOException e) {
                 e.printStackTrace();
+                this.closeWindow();
+
+                return;
             }
         }
     }

@@ -90,6 +90,9 @@ public class TextureOperationTest extends Mechtatel {
             );
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
+            this.closeWindow();
+
+            return;
         }
 
         camera = new FreeCamera(firstScreen.getCamera());
@@ -148,6 +151,9 @@ public class TextureOperationTest extends Mechtatel {
                 this.saveScreenshot("final", "bgra", "screenshot.jpg");
             } catch (IOException e) {
                 e.printStackTrace();
+                this.closeWindow();
+
+                return;
             }
         }
 

@@ -32,6 +32,9 @@ public class LoadAnimationInfoTest {
             });
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
+            this.closeWindow();
+
+            return;
         }
     }
 }

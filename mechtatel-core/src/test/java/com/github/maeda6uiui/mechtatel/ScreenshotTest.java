@@ -66,6 +66,9 @@ public class ScreenshotTest extends Mechtatel {
             );
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
+            this.closeWindow();
+
+            return;
         }
 
         cube.translate(new Vector3f(0.0f, 1.0f, 0.0f));
@@ -109,6 +112,9 @@ public class ScreenshotTest extends Mechtatel {
                 this.saveScreenshot("main", "bgra", "screenshot.png");
             } catch (IOException e) {
                 e.printStackTrace();
+                this.closeWindow();
+
+                return;
             }
         }
     }

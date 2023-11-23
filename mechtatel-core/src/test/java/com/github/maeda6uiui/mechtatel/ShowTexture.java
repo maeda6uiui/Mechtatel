@@ -49,6 +49,9 @@ public class ShowTexture extends Mechtatel {
                     0.0f);
         } catch (URISyntaxException e) {
             e.printStackTrace();
+            this.closeWindow();
+
+            return;
         }
     }
 }

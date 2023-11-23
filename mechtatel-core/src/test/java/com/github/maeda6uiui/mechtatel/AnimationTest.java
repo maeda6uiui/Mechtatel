@@ -40,6 +40,9 @@ public class AnimationTest extends Mechtatel {
             animation = this.createAnimation("cubes", "default", animationInfo);
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
+            this.closeWindow();
+
+            return;
         }
 
         System.out.println("model_names=");

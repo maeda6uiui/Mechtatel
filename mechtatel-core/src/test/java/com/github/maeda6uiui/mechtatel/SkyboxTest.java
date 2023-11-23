@@ -96,6 +96,9 @@ public class SkyboxTest extends Mechtatel {
             skyboxTextureCreator.apply(skyboxModel);
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
+            this.closeWindow();
+
+            return;
         }
 
         this.createPositiveAxesLineSet(10.0f);
@@ -147,6 +150,9 @@ public class SkyboxTest extends Mechtatel {
                 this.saveScreenshot("final", "bgra", "screenshot.jpg");
             } catch (IOException e) {
                 e.printStackTrace();
+                this.closeWindow();
+
+                return;
             }
         }
 

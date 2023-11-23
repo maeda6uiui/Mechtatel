@@ -89,6 +89,9 @@ public class ShadowMappingTest extends Mechtatel {
             cubeRotations.add(0.0f);
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
+            this.closeWindow();
+
+            return;
         }
     }
 

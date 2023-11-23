@@ -44,6 +44,9 @@ public class CameraModeTest extends Mechtatel {
             srcCube.setVisible(false);
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
+            this.closeWindow();
+
+            return;
             return;
         }
 

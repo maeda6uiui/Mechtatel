@@ -50,6 +50,8 @@ public class FlexibleNaborTest extends Mechtatel {
             fragShaderResource = Paths.get("./Mechtatel/Addon/maeda6uiui/Shader/sepia.frag").toUri().toURL();
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            this.closeWindow();
+
             return;
         }
 
@@ -87,6 +89,9 @@ public class FlexibleNaborTest extends Mechtatel {
             );
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
+            this.closeWindow();
+
+            return;
         }
 
         cube.translate(new Vector3f(0.0f, 3.0f, 0.0f));
@@ -117,6 +122,9 @@ public class FlexibleNaborTest extends Mechtatel {
                 this.saveScreenshot("main", "bgra", "screenshot.png");
             } catch (IOException e) {
                 e.printStackTrace();
+                this.closeWindow();
+
+                return;
             }
         }
     }

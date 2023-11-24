@@ -33,6 +33,11 @@ Thank you!
 
 ## 進捗報告(Progress report)
 
+### 2023-11-24
+
+- `mechtatel-logging`モジュールを追加しました
+- LinuxとmacOS用のバイナリを追加しました
+
 ### 2023-11-23
 
 これまで開発してきたコア機能を`mechtatel-core`モジュールにまとめました。

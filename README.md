@@ -29,7 +29,6 @@ Thank you!
 
 ## Todo
 
-- Create `mechtatel-logging` module
 - Add binaries for Linux x64 and macOS x64 
 - Implement functionality to run `mechtatel-core` via YAML definitions<br>i.e. Load and manipulate resources according to the procedure defined in a YAML file
 

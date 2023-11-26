@@ -72,21 +72,14 @@ class MttInstance {
 
     private List<MttSound> sounds3D;
 
+    private boolean mustRecreate;
+
     private void framebufferResizeCallback(long window, int width, int height) {
         mtt.reshape(width, height);
 
-        if (vulkanInstance != null) {
-            vulkanInstance.recreateSwapchain();
-        }
-
-        for (var screen : screens.values()) {
-            if (screen.shouldAutoUpdateCameraAspect()) {
-                screen.getCamera().getPerspectiveCameraInfo().aspect = (float) width / (float) height;
-            }
-        }
-
         windowWidth = width;
         windowHeight = height;
+        mustRecreate = true;
     }
 
     private void keyCallback(long window, int key, int scancode, int action, int mods) {
@@ -207,6 +200,8 @@ class MttInstance {
         AL.createCapabilities(deviceCaps);
 
         sounds3D = new ArrayList<>();
+
+        mustRecreate = false;
     }
 
     public void run() {
@@ -222,6 +217,19 @@ class MttInstance {
             if (elapsedTime >= 1.0 / fps) {
                 keyboard.update();
                 mouse.update();
+
+                if (mustRecreate) {
+                    vulkanInstance.recreateResourcesOnResize(window);
+                    for (var screen : screens.values()) {
+                        if (screen.shouldAutoUpdateCameraAspect()) {
+                            screen.getCamera().getPerspectiveCameraInfo().aspect
+                                    = (float) windowWidth / (float) windowHeight;
+                        }
+                    }
+
+                    mustRecreate = false;
+                }
+
                 mtt.update();
 
                 Map<String, Integer> keyboardPressingCounts = keyboard.getPressingCounts();

@@ -61,7 +61,6 @@ public class MttVulkanInstance
     private VkDevice device;
     private VkQueue graphicsQueue;
 
-    private long window;
     private long surface;
     private VkQueue presentQueue;
 
@@ -89,81 +88,83 @@ public class MttVulkanInstance
 
     private QuadDrawer quadDrawer;
 
-    private void createSwapchainObjects() {
-        //Create a swapchain
+    private VkExtent2D getFramebufferSize(long window) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer width = stack.ints(0);
             IntBuffer height = stack.ints(0);
-            glfwGetFramebufferSize(window, width, height);
+            while (width.get(0) == 0 && height.get(0) == 0) {
+                glfwGetFramebufferSize(window, width, height);
+                glfwWaitEvents();
+            }
 
-            swapchain = new Swapchain(
-                    device,
-                    surface,
-                    width.get(0),
-                    height.get(0));
-        }
+            VkExtent2D framebufferSize = VkExtent2D.create();
+            framebufferSize.set(width.get(0), height.get(0));
 
-        //Create a present nabor
-        if (presentNabor == null) {
-            presentNabor = new PresentNabor(device);
-            presentNabor.compile(
-                    swapchain.getSwapchainImageFormat(),
-                    VK_FILTER_NEAREST,
-                    VK_SAMPLER_MIPMAP_MODE_NEAREST,
-                    VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
-                    swapchain.getSwapchainExtent(),
-                    commandPool,
-                    graphicsQueue,
-                    swapchain.getNumSwapchainImages());
-        } else {
-            presentNabor.recreate(
-                    swapchain.getSwapchainImageFormat(),
-                    swapchain.getSwapchainExtent());
+            return framebufferSize;
         }
+    }
+
+    /**
+     * Recreates resources that must be updated when framebuffer size has changed.
+     * Call this method in the application's main loop to keep it in sync with Vulkan's procedure.
+     * e.g. Set a flag to {@code true} in the callback invoked on framebuffer resize,
+     * and then call this method in the main loop if the flag is set to {@code true}.
+     *
+     * @param window Window handle
+     */
+    public void recreateResourcesOnResize(long window) {
+        vkDeviceWaitIdle(device);
+
+        //Recreate swapchain
+        swapchain.cleanup();
+
+        VkExtent2D framebufferSize = this.getFramebufferSize(window);
+        swapchain = new Swapchain(device, surface, framebufferSize.width(), framebufferSize.height());
+
+        //Recreate present nabor
+        presentNabor.recreate(
+                swapchain.getSwapchainImageFormat(),
+                swapchain.getSwapchainExtent());
+
+        //Recreate framebuffers for present nabor
         swapchain.createFramebuffers(presentNabor.getRenderPass());
+
+        //Recreate nabor for texture operations
+        textureOperationNabor.recreate(
+                swapchain.getSwapchainImageFormat(),
+                swapchain.getSwapchainExtent());
+        textureOperationNabor.cleanupUserDefImages();
+        textureOperationInfos.clear();
+
+        //Recreate screens
+        screens.forEach((name, screen) -> screen.recreate(
+                swapchain.getSwapchainImageFormat(), swapchain.getSwapchainExtent()));
     }
 
-    private void recreateScreens() {
-        for (var screen : screens.values()) {
-            screen.recreate(swapchain.getSwapchainImageFormat(), swapchain.getSwapchainExtent());
-        }
-    }
-
-    public MttVulkanInstance(
-            boolean enableValidationLayer,
-            long window,
-            int albedoMsaaSamples) {
-        //Load the Shaderc library
+    public MttVulkanInstance(boolean enableValidationLayer, long window, int albedoMsaaSamples) {
         System.loadLibrary("shaderc_shared");
 
         this.enableValidationLayer = enableValidationLayer;
-        this.window = window;
 
-        //Create a Vulkan instance
         instance = InstanceCreator.createInstance(enableValidationLayer);
 
-        //Set up a debug messenger
         if (enableValidationLayer) {
             debugMessenger = ValidationLayers.setupDebugMessenger(instance);
         }
 
-        //Create a window surface
         surface = SurfaceCreator.createSurface(instance, window);
 
-        //Pick up a physical device
         physicalDevice = PhysicalDevicePicker.pickPhysicalDevice(instance, surface);
 
-        //Create a logical device and queues
         LogicalDeviceCreator.VkDeviceAndVkQueues deviceAndQueues
                 = LogicalDeviceCreator.createLogicalDevice(physicalDevice, enableValidationLayer, surface);
         device = deviceAndQueues.device;
         graphicsQueue = deviceAndQueues.graphicsQueue;
         presentQueue = deviceAndQueues.presentQueue;
 
-        //Get the MSAA sample count
-        this.albedoMsaaSamples = albedoMsaaSamples < 0 ? MultisamplingUtils.getMaxUsableSampleCount(device) : albedoMsaaSamples;
+        this.albedoMsaaSamples
+                = albedoMsaaSamples < 0 ? MultisamplingUtils.getMaxUsableSampleCount(device) : albedoMsaaSamples;
 
-        //Get the image format for depth
         depthImageFormat = DepthResourceUtils.findDepthFormat(device);
         depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
 
@@ -174,7 +175,21 @@ public class MttVulkanInstance
 
         commandPool = CommandPoolCreator.createCommandPool(device, surface);
 
-        this.createSwapchainObjects();
+        VkExtent2D framebufferSize = this.getFramebufferSize(window);
+        swapchain = new Swapchain(device, surface, framebufferSize.width(), framebufferSize.height());
+
+        presentNabor = new PresentNabor(device);
+        presentNabor.compile(
+                swapchain.getSwapchainImageFormat(),
+                VK_FILTER_NEAREST,
+                VK_SAMPLER_MIPMAP_MODE_NEAREST,
+                VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
+                swapchain.getSwapchainExtent(),
+                commandPool,
+                graphicsQueue,
+                swapchain.getNumSwapchainImages());
+
+        swapchain.createFramebuffers(presentNabor.getRenderPass());
 
         textureOperationNabor = new TextureOperationNabor(device);
         textureOperationNabor.compile(
@@ -186,7 +201,6 @@ public class MttVulkanInstance
                 commandPool,
                 graphicsQueue,
                 1);
-
         textureOperationInfos = new HashMap<>();
 
         screens = new HashMap<>();
@@ -229,31 +243,6 @@ public class MttVulkanInstance
         vkDestroySurfaceKHR(instance, surface, null);
 
         vkDestroyInstance(instance, null);
-    }
-
-    public void recreateSwapchain() {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer width = stack.ints(0);
-            IntBuffer height = stack.ints(0);
-
-            while (width.get(0) == 0 && height.get(0) == 0) {
-                glfwGetFramebufferSize(window, width, height);
-                glfwWaitEvents();
-            }
-        }
-
-        vkDeviceWaitIdle(device);
-
-        swapchain.cleanup();
-        this.createSwapchainObjects();
-
-        textureOperationNabor.recreate(
-                swapchain.getSwapchainImageFormat(),
-                swapchain.getSwapchainExtent());
-        textureOperationNabor.cleanupUserDefImages();
-        textureOperationInfos.clear();
-
-        this.recreateScreens();
     }
 
     public VkMttScreen createScreen(
@@ -438,20 +427,15 @@ public class MttVulkanInstance
             }
 
             Frame thisFrame = inFlightFrames.get(currentFrame);
-            int result = thisFrame.present(
+            thisFrame.present(
                     swapchain.getSwapchain(),
                     imagesInFlight,
                     commandBuffers,
                     graphicsQueue,
                     presentQueue);
-            if (result < 0) {
-                this.recreateSwapchain();
-            }
-
             currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 
             vkDeviceWaitIdle(device);
-
             vkFreeCommandBuffers(device, commandPool, PointerBufferUtils.asPointerBuffer(commandBuffers));
         }
     }

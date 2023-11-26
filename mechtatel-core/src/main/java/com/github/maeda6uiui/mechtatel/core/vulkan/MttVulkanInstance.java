@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
+import com.github.maeda6uiui.mechtatel.core.PlatformInfo;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex3D;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex3DUV;
@@ -141,8 +142,22 @@ public class MttVulkanInstance
                 swapchain.getSwapchainImageFormat(), swapchain.getSwapchainExtent()));
     }
 
+    private void loadShadercLib() {
+        String shadercLibFilename;
+        switch (PlatformInfo.PLATFORM) {
+            case "windows" -> shadercLibFilename = "shaderc_shared.dll";
+            case "linux" -> shadercLibFilename = "libshaderc_shared.so";
+            case "macos" -> shadercLibFilename = "libshaderc_shared.dylib";
+            default -> throw new RuntimeException("Unsupported platform: " + PlatformInfo.PLATFORM);
+        }
+
+        String shadercLibFilepath = Objects.requireNonNull(
+                this.getClass().getResource("/Bin/" + shadercLibFilename)).getFile();
+        System.load(shadercLibFilepath);
+    }
+
     public MttVulkanInstance(boolean enableValidationLayer, long window, int albedoMsaaSamples) {
-        System.loadLibrary("shaderc_shared");
+        this.loadShadercLib();
 
         this.enableValidationLayer = enableValidationLayer;
 

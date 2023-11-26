@@ -22,6 +22,7 @@ public class CommandPoolCreator {
 
             VkCommandPoolCreateInfo poolInfo = VkCommandPoolCreateInfo.calloc(stack);
             poolInfo.sType(VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO);
+            poolInfo.flags(VK_COMMAND_POOL_CREATE_TRANSIENT_BIT);
             poolInfo.queueFamilyIndex(queueFamilyIndices.graphicsFamily);
 
             LongBuffer pCommandPool = stack.mallocLong(1);

@@ -4,7 +4,6 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.nio.IntBuffer;
-import java.nio.LongBuffer;
 import java.util.List;
 import java.util.Map;
 
@@ -37,24 +36,12 @@ public class Frame {
         return imageAvailableSemaphore;
     }
 
-    public LongBuffer pImageAvailableSemaphore() {
-        return MemoryStack.stackPush().longs(imageAvailableSemaphore);
-    }
-
     public long renderFinishedSemaphore() {
         return renderFinishedSemaphore;
     }
 
-    public LongBuffer pRenderFinishedSemaphore() {
-        return MemoryStack.stackPush().longs(renderFinishedSemaphore);
-    }
-
     public long fence() {
         return fence;
-    }
-
-    public LongBuffer pFence() {
-        return MemoryStack.stackPush().longs(fence);
     }
 
     public int present(
@@ -64,7 +51,7 @@ public class Frame {
             VkQueue graphicsQueue,
             VkQueue presentQueue) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            vkWaitForFences(device, this.pFence(), true, UINT64_MAX);
+            vkWaitForFences(device, fence, true, UINT64_MAX);
 
             IntBuffer pImageIndex = stack.mallocInt(1);
             int vkResult = vkAcquireNextImageKHR(
@@ -84,20 +71,20 @@ public class Frame {
             VkSubmitInfo submitInfo = VkSubmitInfo.calloc(stack);
             submitInfo.sType(VK_STRUCTURE_TYPE_SUBMIT_INFO);
             submitInfo.waitSemaphoreCount(1);
-            submitInfo.pWaitSemaphores(this.pImageAvailableSemaphore());
+            submitInfo.pWaitSemaphores(stack.longs(imageAvailableSemaphore));
             submitInfo.pWaitDstStageMask(stack.ints(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT));
-            submitInfo.pSignalSemaphores(this.pRenderFinishedSemaphore());
+            submitInfo.pSignalSemaphores(stack.longs(renderFinishedSemaphore));
             submitInfo.pCommandBuffers(stack.pointers(commandBuffers.get(imageIndex)));
 
-            vkResetFences(device, this.pFence());
+            vkResetFences(device, fence);
 
-            if (vkQueueSubmit(graphicsQueue, submitInfo, this.fence()) != VK_SUCCESS) {
+            if (vkQueueSubmit(graphicsQueue, submitInfo, fence) != VK_SUCCESS) {
                 throw new RuntimeException("Failed to submit a draw command buffer");
             }
 
             VkPresentInfoKHR presentInfo = VkPresentInfoKHR.calloc(stack);
             presentInfo.sType(VK_STRUCTURE_TYPE_PRESENT_INFO_KHR);
-            presentInfo.pWaitSemaphores(this.pRenderFinishedSemaphore());
+            presentInfo.pWaitSemaphores(stack.longs(renderFinishedSemaphore));
             presentInfo.swapchainCount(1);
             presentInfo.pSwapchains(stack.longs(swapchain));
             presentInfo.pImageIndices(pImageIndex);

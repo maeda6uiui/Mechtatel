@@ -38,7 +38,7 @@ public class Frame {
     }
 
     public LongBuffer pImageAvailableSemaphore() {
-        return MemoryStack.stackGet().longs(imageAvailableSemaphore);
+        return MemoryStack.stackPush().longs(imageAvailableSemaphore);
     }
 
     public long renderFinishedSemaphore() {
@@ -46,7 +46,7 @@ public class Frame {
     }
 
     public LongBuffer pRenderFinishedSemaphore() {
-        return MemoryStack.stackGet().longs(renderFinishedSemaphore);
+        return MemoryStack.stackPush().longs(renderFinishedSemaphore);
     }
 
     public long fence() {
@@ -54,7 +54,7 @@ public class Frame {
     }
 
     public LongBuffer pFence() {
-        return MemoryStack.stackGet().longs(fence);
+        return MemoryStack.stackPush().longs(fence);
     }
 
     public int present(

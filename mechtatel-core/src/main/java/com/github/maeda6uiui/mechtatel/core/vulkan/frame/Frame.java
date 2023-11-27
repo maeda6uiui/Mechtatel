@@ -44,7 +44,7 @@ public class Frame {
         return fence;
     }
 
-    public int present(
+    public void present(
             long swapchain,
             Map<Integer, Frame> imagesInFlight,
             List<VkCommandBuffer> commandBuffers,
@@ -57,7 +57,9 @@ public class Frame {
             int vkResult = vkAcquireNextImageKHR(
                     device, swapchain, UINT64_MAX, this.imageAvailableSemaphore(), VK_NULL_HANDLE, pImageIndex);
             if (vkResult == VK_ERROR_OUT_OF_DATE_KHR) {
-                return -1;
+                return;
+            } else if (vkResult != VK_SUCCESS) {
+                throw new RuntimeException("Cannot get image");
             }
 
             final int imageIndex = pImageIndex.get(0);
@@ -90,13 +92,9 @@ public class Frame {
             presentInfo.pImageIndices(pImageIndex);
 
             vkResult = vkQueuePresentKHR(presentQueue, presentInfo);
-            if (vkResult == VK_ERROR_OUT_OF_DATE_KHR || vkResult == VK_SUBOPTIMAL_KHR) {
-                return -1;
-            } else if (vkResult != VK_SUCCESS) {
+            if (!(vkResult == VK_SUCCESS || vkResult == VK_ERROR_OUT_OF_DATE_KHR || vkResult == VK_SUBOPTIMAL_KHR)) {
                 throw new RuntimeException("Failed to present a swapchain image");
             }
-
-            return 0;
         }
     }
 }

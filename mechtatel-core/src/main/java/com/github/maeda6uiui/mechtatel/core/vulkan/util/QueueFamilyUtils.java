@@ -2,6 +2,8 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.util;
 
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.IntBuffer;
 import java.util.Set;
@@ -15,6 +17,8 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class QueueFamilyUtils {
+    private static final Logger logger = LoggerFactory.getLogger(QueueFamilyUtils.class);
+
     public static class QueueFamilyIndices {
         public Integer graphicsFamily;
         public Integer presentFamily;
@@ -46,6 +50,8 @@ public class QueueFamilyUtils {
                     indices.presentFamily = i;
                 }
             }
+
+            logger.debug("graphicsFamily={} presentFamily={}", indices.graphicsFamily, indices.presentFamily);
 
             return indices;
         }

@@ -119,32 +119,26 @@ public class MttVulkanInstance
     public void recreateResourcesOnResize(long window) {
         vkDeviceWaitIdle(device);
 
-        //Recreate swapchain
         swapchain.cleanup();
 
         VkExtent2D framebufferSize = this.getFramebufferSize(window);
         swapchain = new Swapchain(device, surface, framebufferSize.width(), framebufferSize.height());
 
-        //Recreate present nabor
         presentNabor.recreate(
                 swapchain.getSwapchainImageFormat(),
                 swapchain.getSwapchainExtent());
 
-        //Recreate framebuffers for present nabor
         swapchain.createFramebuffers(presentNabor.getRenderPass());
 
-        //Recreate nabor for texture operations
         textureOperationNabor.recreate(
                 swapchain.getSwapchainImageFormat(),
                 swapchain.getSwapchainExtent());
         textureOperationNabor.cleanupUserDefImages();
         textureOperationInfos.clear();
 
-        //Recreate screens
         screens.forEach((name, screen) -> screen.recreate(
                 swapchain.getSwapchainImageFormat(), swapchain.getSwapchainExtent()));
 
-        //Clear images
         imagesInFlight.clear();
     }
 

@@ -143,6 +143,9 @@ public class MttVulkanInstance
         //Recreate screens
         screens.forEach((name, screen) -> screen.recreate(
                 swapchain.getSwapchainImageFormat(), swapchain.getSwapchainExtent()));
+
+        //Clear images
+        imagesInFlight.clear();
     }
 
     private void loadShadercLib() {

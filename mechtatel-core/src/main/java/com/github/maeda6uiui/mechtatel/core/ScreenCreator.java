@@ -21,9 +21,9 @@ public class ScreenCreator {
     private int depthImageHeight;
     private int screenWidth;
     private int screenHeight;
-    private String samplerFilter;
-    private String samplerMipmapMode;
-    private String samplerAddressMode;
+    private SamplerFilterMode samplerFilter;
+    private SamplerMipmapMode samplerMipmapMode;
+    private SamplerAddressMode samplerAddressMode;
     private boolean shouldChangeExtentOnRecreate;
     private boolean useShadowMapping;
     private Map<String, FlexibleNaborInfo> flexibleNaborInfos;
@@ -37,9 +37,9 @@ public class ScreenCreator {
         depthImageHeight = 2048;
         screenWidth = -1;
         screenHeight = -1;
-        samplerFilter = "nearest";
-        samplerMipmapMode = "nearest";
-        samplerAddressMode = "repeat";
+        samplerFilter = SamplerFilterMode.NEAREST;
+        samplerMipmapMode = SamplerMipmapMode.NEAREST;
+        samplerAddressMode = SamplerAddressMode.REPEAT;
         shouldChangeExtentOnRecreate = true;
         useShadowMapping = false;
         flexibleNaborInfos = new HashMap<>();
@@ -51,9 +51,9 @@ public class ScreenCreator {
         depthImageHeight = 2048;
         screenWidth = -1;
         screenHeight = -1;
-        samplerFilter = "nearest";
-        samplerMipmapMode = "nearest";
-        samplerAddressMode = "repeat";
+        samplerFilter = SamplerFilterMode.NEAREST;
+        samplerMipmapMode = SamplerMipmapMode.NEAREST;
+        samplerAddressMode = SamplerAddressMode.REPEAT;
         shouldChangeExtentOnRecreate = true;
         useShadowMapping = false;
         flexibleNaborInfos.clear();
@@ -70,15 +70,15 @@ public class ScreenCreator {
         screenHeight = height;
     }
 
-    public void setSamplerFilter(String samplerFilter) {
+    public void setSamplerFilter(SamplerFilterMode samplerFilter) {
         this.samplerFilter = samplerFilter;
     }
 
-    public void setSamplerMipmapMode(String samplerMipmapMode) {
+    public void setSamplerMipmapMode(SamplerMipmapMode samplerMipmapMode) {
         this.samplerMipmapMode = samplerMipmapMode;
     }
 
-    public void setSamplerAddressMode(String samplerAddressMode) {
+    public void setSamplerAddressMode(SamplerAddressMode samplerAddressMode) {
         this.samplerAddressMode = samplerAddressMode;
     }
 

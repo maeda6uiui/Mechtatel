@@ -1,5 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.screen;
 
+import com.github.maeda6uiui.mechtatel.core.SamplerAddressMode;
+import com.github.maeda6uiui.mechtatel.core.SamplerFilterMode;
+import com.github.maeda6uiui.mechtatel.core.SamplerMipmapMode;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
@@ -52,9 +55,9 @@ public class MttScreen {
             int depthImageHeight,
             int screenWidth,
             int screenHeight,
-            String samplerFilter,
-            String samplerMipmapMode,
-            String samplerAddressMode,
+            SamplerFilterMode samplerFilter,
+            SamplerMipmapMode samplerMipmapMode,
+            SamplerAddressMode samplerAddressMode,
             boolean shouldChangeExtentOnRecreate,
             boolean useShadowMapping,
             Map<String, FlexibleNaborInfo> flexibleNaborInfos,

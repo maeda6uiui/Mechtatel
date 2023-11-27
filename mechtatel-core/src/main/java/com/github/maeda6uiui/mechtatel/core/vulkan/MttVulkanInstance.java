@@ -1,6 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
 import com.github.maeda6uiui.mechtatel.core.PlatformInfo;
+import com.github.maeda6uiui.mechtatel.core.SamplerAddressMode;
+import com.github.maeda6uiui.mechtatel.core.SamplerFilterMode;
+import com.github.maeda6uiui.mechtatel.core.SamplerMipmapMode;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex3D;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex3DUV;
@@ -266,9 +269,9 @@ public class MttVulkanInstance
             int depthImageHeight,
             int screenWidth,
             int screenHeight,
-            String samplerFilter,
-            String samplerMipmapMode,
-            String samplerAddressMode,
+            SamplerFilterMode samplerFilter,
+            SamplerMipmapMode samplerMipmapMode,
+            SamplerAddressMode samplerAddressMode,
             boolean shouldChangeExtentOnRecreate,
             boolean useShadowMapping,
             Map<String, FlexibleNaborInfo> flexibleNaborInfos,
@@ -286,34 +289,28 @@ public class MttVulkanInstance
         }
 
         int iSamplerFilter;
-        if (samplerFilter.equals("nearest")) {
-            iSamplerFilter = VK_FILTER_NEAREST;
-        } else if (samplerFilter.equals("linear")) {
-            iSamplerFilter = VK_FILTER_LINEAR;
-        } else {
-            throw new IllegalArgumentException("Unsupported sampler filter specified: " + samplerFilter);
+        switch (samplerFilter) {
+            case NEAREST -> iSamplerFilter = VK_FILTER_NEAREST;
+            case LINEAR -> iSamplerFilter = VK_FILTER_LINEAR;
+            default -> throw new IllegalArgumentException("Unsupported sampler filter specified: " + samplerFilter);
         }
 
         int iSamplerMipmapMode;
-        if (samplerMipmapMode.equals("nearest")) {
-            iSamplerMipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
-        } else if (samplerMipmapMode.equals("linear")) {
-            iSamplerMipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-        } else {
-            throw new IllegalArgumentException("Unsupported sampler mipmap mode specified: " + samplerMipmapMode);
+        switch (samplerMipmapMode) {
+            case NEAREST -> iSamplerMipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
+            case LINEAR -> iSamplerMipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+            default -> throw new IllegalArgumentException(
+                    "Unsupported sampler mipmap mode specified: " + samplerMipmapMode);
         }
 
         int iSamplerAddressMode;
-        if (samplerAddressMode.equals("repeat")) {
-            iSamplerAddressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-        } else if (samplerAddressMode.equals("mirrored_repeat")) {
-            iSamplerAddressMode = VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
-        } else if (samplerAddressMode.equals("clamp_to_edge")) {
-            iSamplerAddressMode = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-        } else if (samplerAddressMode.equals("clamp_to_border")) {
-            iSamplerAddressMode = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-        } else {
-            throw new IllegalArgumentException("Unsupported sampler address mode specified: " + samplerAddressMode);
+        switch (samplerAddressMode) {
+            case REPEAT -> iSamplerAddressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+            case MIRRORED_REPEAT -> iSamplerAddressMode = VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
+            case CLAMP_TO_EDGE -> iSamplerAddressMode = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+            case CLAMP_TO_BORDER -> iSamplerAddressMode = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+            default -> throw new IllegalArgumentException(
+                    "Unsupported sampler address mode specified: " + samplerAddressMode);
         }
 
         var screen = new VkMttScreen(

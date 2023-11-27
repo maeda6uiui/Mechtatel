@@ -18,7 +18,7 @@ public class SetLogLevelTest extends Mechtatel {
         MttSettings
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
-                        AnimationTest::new,
+                        SetLogLevelTest::new,
                         () -> logger.error("Failed to load settings")
                 );
     }

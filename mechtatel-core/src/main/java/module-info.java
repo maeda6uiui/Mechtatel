@@ -29,4 +29,6 @@ module com.github.maeda6uiui.mechtatel.core {
     exports com.github.maeda6uiui.mechtatel.core.screen;
     exports com.github.maeda6uiui.mechtatel.core.shadow;
     exports com.github.maeda6uiui.mechtatel.core.sound;
+    exports com.github.maeda6uiui.mechtatel.core.text;
+    exports com.github.maeda6uiui.mechtatel.core.texture;
 }

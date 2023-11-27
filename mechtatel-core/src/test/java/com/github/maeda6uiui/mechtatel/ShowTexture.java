@@ -7,11 +7,15 @@ import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
 import com.github.maeda6uiui.mechtatel.core.component.MttTexturedQuad2D;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector2f;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URISyntaxException;
 import java.util.Objects;
 
 public class ShowTexture extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(ShowTexture.class);
+
     public ShowTexture(MttSettings settings) {
         super(settings);
     }
@@ -21,9 +25,7 @@ public class ShowTexture extends Mechtatel {
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
                         ShowTexture::new,
-                        () -> {
-                            System.out.println("Failed to load settings");
-                        }
+                        () -> logger.error("Failed to load settings")
                 );
     }
 
@@ -48,7 +50,7 @@ public class ShowTexture extends Mechtatel {
                     new Vector2f(1.0f, 1.0f),
                     0.0f);
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            logger.error("Error", e);
             this.closeWindow();
         }
     }

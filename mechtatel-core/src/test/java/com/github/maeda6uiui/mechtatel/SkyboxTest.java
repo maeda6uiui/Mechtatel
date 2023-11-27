@@ -8,12 +8,16 @@ import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import org.joml.Vector2f;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
 public class SkyboxTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(SkyboxTest.class);
+
     public SkyboxTest(MttSettings settings) {
         super(settings);
     }
@@ -23,9 +27,7 @@ public class SkyboxTest extends Mechtatel {
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
                         SkyboxTest::new,
-                        () -> {
-                            System.out.println("Failed to load settings");
-                        }
+                        () -> logger.error("Failed to load settings")
                 );
     }
 
@@ -95,7 +97,7 @@ public class SkyboxTest extends Mechtatel {
                     false);
             skyboxTextureCreator.apply(skyboxModel);
         } catch (URISyntaxException | IOException e) {
-            e.printStackTrace();
+            logger.error("Error", e);
             this.closeWindow();
 
             return;
@@ -149,7 +151,7 @@ public class SkyboxTest extends Mechtatel {
             try {
                 this.saveScreenshot("final", "bgra", "screenshot.jpg");
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Error", e);
                 this.closeWindow();
 
                 return;

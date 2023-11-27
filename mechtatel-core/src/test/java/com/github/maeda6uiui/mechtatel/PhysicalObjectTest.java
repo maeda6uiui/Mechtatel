@@ -9,6 +9,8 @@ import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObjectSet;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector3f;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -18,6 +20,8 @@ import java.util.Random;
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJOMLVector3fToJMEVector3f;
 
 public class PhysicalObjectTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(PhysicalObjectTest.class);
+
     public PhysicalObjectTest(MttSettings settings) {
         super(settings);
     }
@@ -27,9 +31,7 @@ public class PhysicalObjectTest extends Mechtatel {
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
                         PhysicalObjectTest::new,
-                        () -> {
-                            System.out.println("Failed to load settings");
-                        }
+                        () -> logger.error("Failed to load settings")
                 );
     }
 
@@ -91,7 +93,7 @@ public class PhysicalObjectTest extends Mechtatel {
             );
             srcCube.setVisible(false);
         } catch (URISyntaxException | IOException e) {
-            e.printStackTrace();
+            logger.error("Error", e);
             this.closeWindow();
 
             return;
@@ -161,7 +163,7 @@ public class PhysicalObjectTest extends Mechtatel {
                         String.format("screenshot_%d.jpg", screenshotCount));
                 screenshotCount++;
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Error", e);
                 this.closeWindow();
             }
         }

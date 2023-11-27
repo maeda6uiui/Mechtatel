@@ -4,10 +4,14 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttHorizontalScrollbar;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttVerticalScrollbar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 
 public class ScrollbarTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(ScrollbarTest.class);
+
     public ScrollbarTest(MttSettings settings) {
         super(settings);
     }
@@ -17,9 +21,7 @@ public class ScrollbarTest extends Mechtatel {
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
                         ScrollbarTest::new,
-                        () -> {
-                            System.out.println("Failed to load settings");
-                        }
+                        () -> logger.error("Failed to load settings")
                 );
     }
 

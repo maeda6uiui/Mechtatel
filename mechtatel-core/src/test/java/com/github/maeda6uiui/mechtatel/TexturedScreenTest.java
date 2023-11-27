@@ -11,12 +11,16 @@ import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
 public class TexturedScreenTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(TexturedScreenTest.class);
+
     public TexturedScreenTest(MttSettings settings) {
         super(settings);
     }
@@ -26,9 +30,7 @@ public class TexturedScreenTest extends Mechtatel {
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
                         TexturedScreenTest::new,
-                        () -> {
-                            System.out.println("Failed to load settings");
-                        }
+                        () -> logger.error("Failed to load settings")
                 );
     }
 
@@ -77,7 +79,7 @@ public class TexturedScreenTest extends Mechtatel {
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
             );
         } catch (URISyntaxException | IOException e) {
-            e.printStackTrace();
+            logger.error("Error", e);
             this.closeWindow();
         }
     }

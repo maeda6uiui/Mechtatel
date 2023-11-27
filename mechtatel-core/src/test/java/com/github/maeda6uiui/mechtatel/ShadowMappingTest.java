@@ -9,6 +9,8 @@ import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -18,6 +20,8 @@ import java.util.Objects;
 
 
 public class ShadowMappingTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(ShadowMappingTest.class);
+
     public ShadowMappingTest(MttSettings settings) {
         super(settings);
     }
@@ -27,9 +31,7 @@ public class ShadowMappingTest extends Mechtatel {
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
                         ShadowMappingTest::new,
-                        () -> {
-                            System.out.println("Failed to load settings");
-                        }
+                        () -> logger.error("Failed to load settings")
                 );
     }
 
@@ -88,7 +90,7 @@ public class ShadowMappingTest extends Mechtatel {
             cubePositions.add(new Vector3f(6.0f, 2.0f, 0.0f));
             cubeRotations.add(0.0f);
         } catch (URISyntaxException | IOException e) {
-            e.printStackTrace();
+            logger.error("Error", e);
             this.closeWindow();
         }
     }

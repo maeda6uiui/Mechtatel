@@ -7,12 +7,16 @@ import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector3f;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
 public class CameraModeTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(CameraModeTest.class);
+
     public CameraModeTest(MttSettings settings) {
         super(settings);
     }
@@ -22,9 +26,7 @@ public class CameraModeTest extends Mechtatel {
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
                         CameraModeTest::new,
-                        () -> {
-                            System.out.println("Failed to load settings");
-                        }
+                        () -> logger.error("Failed to load settings")
                 );
     }
 
@@ -43,7 +45,7 @@ public class CameraModeTest extends Mechtatel {
             );
             srcCube.setVisible(false);
         } catch (URISyntaxException | IOException e) {
-            e.printStackTrace();
+            logger.error("Error", e);
             this.closeWindow();
 
             return;

@@ -8,12 +8,16 @@ import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
 public class SimpleBlurTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(SimpleBlurTest.class);
+
     public SimpleBlurTest(MttSettings settings) {
         super(settings);
     }
@@ -23,9 +27,7 @@ public class SimpleBlurTest extends Mechtatel {
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
                         SimpleBlurTest::new,
-                        () -> {
-                            System.out.println("Failed to load settings");
-                        }
+                        () -> logger.error("Failed to load settings")
                 );
     }
 
@@ -50,7 +52,7 @@ public class SimpleBlurTest extends Mechtatel {
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
             );
         } catch (URISyntaxException | IOException e) {
-            e.printStackTrace();
+            logger.error("Error", e);
             this.closeWindow();
 
             return;

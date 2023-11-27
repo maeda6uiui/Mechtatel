@@ -4,10 +4,14 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttTextbox;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.JISKeyInterpreter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 
 public class TextboxTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(TextboxTest.class);
+
     public TextboxTest(MttSettings settings) {
         super(settings);
     }
@@ -17,9 +21,7 @@ public class TextboxTest extends Mechtatel {
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
                         TextboxTest::new,
-                        () -> {
-                            System.out.println("Failed to load settings");
-                        }
+                        () -> logger.error("Failed to load settings")
                 );
     }
 

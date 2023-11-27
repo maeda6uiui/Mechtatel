@@ -1,12 +1,16 @@
 package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.animation.AnimationInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
 public class LoadAnimationInfoTest {
+    private static final Logger logger = LoggerFactory.getLogger(LoadAnimationInfoTest.class);
+
     public static void main(String[] args) {
         try {
             var animInfo = new AnimationInfo(
@@ -31,7 +35,7 @@ public class LoadAnimationInfoTest {
                 });
             });
         } catch (URISyntaxException | IOException e) {
-            e.printStackTrace();
+            logger.error("Error", e);
         }
     }
 }

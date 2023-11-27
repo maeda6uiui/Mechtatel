@@ -9,12 +9,16 @@ import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.component.MttSphere;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
 public class ScreenshotTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(ScreenshotTest.class);
+
     public ScreenshotTest(MttSettings settings) {
         super(settings);
     }
@@ -24,9 +28,7 @@ public class ScreenshotTest extends Mechtatel {
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
                         ScreenshotTest::new,
-                        () -> {
-                            System.out.println("Failed to load settings");
-                        }
+                        () -> logger.error("Failed to load settings")
                 );
     }
 
@@ -65,7 +67,7 @@ public class ScreenshotTest extends Mechtatel {
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
             );
         } catch (URISyntaxException | IOException e) {
-            e.printStackTrace();
+            logger.error("Error", e);
             this.closeWindow();
 
             return;
@@ -111,7 +113,7 @@ public class ScreenshotTest extends Mechtatel {
             try {
                 this.saveScreenshot("main", "bgra", "screenshot.png");
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Error", e);
                 this.closeWindow();
             }
         }

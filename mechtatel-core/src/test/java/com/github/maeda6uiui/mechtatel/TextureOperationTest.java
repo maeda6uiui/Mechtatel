@@ -12,12 +12,16 @@ import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
 public class TextureOperationTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(TextureOperationTest.class);
+
     public TextureOperationTest(MttSettings settings) {
         super(settings);
     }
@@ -27,9 +31,7 @@ public class TextureOperationTest extends Mechtatel {
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
                         TextureOperationTest::new,
-                        () -> {
-                            System.out.println("Failed to load settings");
-                        }
+                        () -> logger.error("Failed to load settings")
                 );
     }
 
@@ -89,7 +91,7 @@ public class TextureOperationTest extends Mechtatel {
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Teapot/teapot.obj"))
             );
         } catch (URISyntaxException | IOException e) {
-            e.printStackTrace();
+            logger.error("Error", e);
             this.closeWindow();
 
             return;
@@ -150,7 +152,7 @@ public class TextureOperationTest extends Mechtatel {
             try {
                 this.saveScreenshot("final", "bgra", "screenshot.jpg");
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Error", e);
                 this.closeWindow();
 
                 return;

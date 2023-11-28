@@ -44,9 +44,9 @@ public class InstanceCreator {
             VkApplicationInfo appInfo = VkApplicationInfo.calloc(stack);
             appInfo.sType(VK_STRUCTURE_TYPE_APPLICATION_INFO);
             appInfo.pApplicationName(stack.UTF8Safe("Mechtatel"));
-            appInfo.applicationVersion(VK_MAKE_VERSION(1, 0, 0));
-            appInfo.pEngineName(null);
-            appInfo.engineVersion(VK_MAKE_VERSION(1, 0, 0));
+            appInfo.applicationVersion(VK_MAKE_VERSION(0, 0, 1));
+            appInfo.pEngineName(stack.UTF8Safe("Mechtatel"));
+            appInfo.engineVersion(VK_MAKE_VERSION(0, 0, 1));
             appInfo.apiVersion(VK_API_VERSION_1_0);
 
             VkInstanceCreateInfo createInfo = VkInstanceCreateInfo.calloc(stack);

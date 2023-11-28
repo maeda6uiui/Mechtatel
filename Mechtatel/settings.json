@@ -10,5 +10,10 @@
     },
     "rendering": {
         "imageFormat": "unorm"
+    },
+    "vulkan": {
+        "enableValidationLayer": true,
+        "useGraphicsQueueAsPresentQueue": false,
+        "albedoMSAASamples": 2
     }
 }

@@ -73,12 +73,35 @@ public class MttSettings {
         }
     }
 
+    public static class VulkanSettings {
+        public boolean enableValidationLayer;
+        public boolean useGraphicsQueueAsPresentQueue;
+        public int albedoMSAASamples;
+
+        public VulkanSettings() {
+            enableValidationLayer = false;
+            useGraphicsQueueAsPresentQueue = false;
+            albedoMSAASamples = 2;
+        }
+
+        @Override
+        public String toString() {
+            return "VulkanSettings{" +
+                    "enableValidationLayer=" + enableValidationLayer +
+                    ", useGraphicsQueueAsPresentQueue=" + useGraphicsQueueAsPresentQueue +
+                    ", albedoMSAASamples=" + albedoMSAASamples +
+                    '}';
+        }
+    }
+
     @JsonProperty("window")
     public WindowSettings windowSettings;
     @JsonProperty("system")
     public SystemSettings systemSettings;
     @JsonProperty("rendering")
     public RenderingSettings renderingSettings;
+    @JsonProperty("vulkan")
+    public VulkanSettings vulkanSettings;
 
     private static MttSettings instance;
 
@@ -86,6 +109,7 @@ public class MttSettings {
         windowSettings = new WindowSettings();
         systemSettings = new SystemSettings();
         renderingSettings = new RenderingSettings();
+        vulkanSettings = new VulkanSettings();
     }
 
     /**
@@ -130,6 +154,7 @@ public class MttSettings {
                 "windowSettings=" + windowSettings +
                 ", systemSettings=" + systemSettings +
                 ", renderingSettings=" + renderingSettings +
+                ", vulkanSettings=" + vulkanSettings +
                 '}';
     }
 }

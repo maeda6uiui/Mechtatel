@@ -6,6 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -112,26 +115,15 @@ public class MttSettings {
         vulkanSettings = new VulkanSettings();
     }
 
-    /**
-     * Loads settings from a JSON file.
-     * This method returns empty value if setting file specified does not exist
-     * or if it fails to load settings from the file.
-     *
-     * @param jsonFilepath Filepath of the JSON file
-     * @return Settings
-     */
-    public static Optional<MttSettings> load(String jsonFilepath) {
-        Path settingsFile = Paths.get(jsonFilepath);
-        if (!Files.exists(settingsFile)) {
-            logger.error("Setting file ({}) was not found", settingsFile);
+    public static Optional<MttSettings> load(Path jsonFile) {
+        if (!Files.exists(jsonFile)) {
+            logger.error("Setting file ({}) was not found", jsonFile);
             return Optional.empty();
         }
 
         try {
-            String json = Files.readString(settingsFile);
-
-            var mapper = new ObjectMapper();
-            instance = mapper.readValue(json, MttSettings.class);
+            String json = Files.readString(jsonFile);
+            instance = new ObjectMapper().readValue(json, MttSettings.class);
             return Optional.of(instance);
         } catch (IOException e) {
             logger.error("Failed to load setting file", e);
@@ -139,11 +131,22 @@ public class MttSettings {
         }
     }
 
-    /**
-     * Returns currently retained {@link MttSettings} instance.
-     *
-     * @return Settings
-     */
+    public static Optional<MttSettings> load(URL jsonResource) {
+        URI jsonResourceURI;
+        try {
+            jsonResourceURI = jsonResource.toURI();
+        } catch (URISyntaxException e) {
+            logger.error("URI syntax is invalid", e);
+            return Optional.empty();
+        }
+
+        return load(Paths.get(jsonResourceURI));
+    }
+
+    public static Optional<MttSettings> load(String jsonFilepath) {
+        return load(Paths.get(jsonFilepath));
+    }
+
     public static Optional<MttSettings> get() {
         return Optional.ofNullable(instance);
     }

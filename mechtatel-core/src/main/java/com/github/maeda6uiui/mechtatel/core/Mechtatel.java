@@ -178,7 +178,7 @@ public class Mechtatel
         instance.setFixCursorFlag(false);
     }
 
-    public void setCursorMode(String cursorMode) {
+    public void setCursorMode(CursorMode cursorMode) {
         instance.setCursorMode(cursorMode);
     }
 

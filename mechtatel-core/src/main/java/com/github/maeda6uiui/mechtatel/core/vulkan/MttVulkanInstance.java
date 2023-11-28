@@ -68,7 +68,7 @@ public class MttVulkanInstance
     private long surface;
     private VkQueue presentQueue;
 
-    private int albedoMsaaSamples;
+    private int albedoMSAASamples;
     private int depthImageFormat;
     private int depthImageAspect;
 
@@ -159,7 +159,7 @@ public class MttVulkanInstance
     public MttVulkanInstance(
             boolean enableValidationLayer,
             boolean useGraphicsQueueAsPresentQueue,
-            int albedoMsaaSamples,
+            int albedoMSAASamples,
             long window) {
         this.loadShadercLib();
 
@@ -185,8 +185,8 @@ public class MttVulkanInstance
         graphicsQueue = deviceAndQueues.graphicsQueue;
         presentQueue = deviceAndQueues.presentQueue;
 
-        this.albedoMsaaSamples
-                = albedoMsaaSamples < 0 ? MultisamplingUtils.getMaxUsableSampleCount(device) : albedoMsaaSamples;
+        this.albedoMSAASamples
+                = albedoMSAASamples < 0 ? MultisamplingUtils.getMaxUsableSampleCount(device) : albedoMSAASamples;
 
         depthImageFormat = DepthResourceUtils.findDepthFormat(device);
         depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
@@ -327,7 +327,7 @@ public class MttVulkanInstance
                 depthImageHeight,
                 depthImageAspect,
                 swapchain.getSwapchainImageFormat(),
-                albedoMsaaSamples,
+                albedoMSAASamples,
                 iSamplerFilter,
                 iSamplerMipmapMode,
                 iSamplerAddressMode,

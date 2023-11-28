@@ -91,7 +91,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
             int depthImageHeight,
             int depthImageAspect,
             int colorImageFormat,
-            int albedoMsaaSamples,
+            int albedoMSAASamples,
             int samplerFilter,
             int samplerMipmapMode,
             int samplerAddressMode,
@@ -121,7 +121,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
         //GBuffer nabor
         gBufferNabor = new GBufferNabor(
                 device,
-                albedoMsaaSamples,
+                albedoMSAASamples,
                 depthImageFormat,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT);

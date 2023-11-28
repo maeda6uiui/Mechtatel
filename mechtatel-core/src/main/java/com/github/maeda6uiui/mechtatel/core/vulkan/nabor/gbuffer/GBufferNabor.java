@@ -24,7 +24,7 @@ public class GBufferNabor extends Nabor {
 
     public GBufferNabor(
             VkDevice device,
-            int albedoMsaaSamples,
+            int albedoMSAASamples,
             int depthImageFormat,
             int positionImageFormat,
             int normalImageFormat) {
@@ -36,7 +36,7 @@ public class GBufferNabor extends Nabor {
                 GBufferNabor.class.getResource("")
         );
 
-        albedoNabor = new AlbedoNabor(device, albedoMsaaSamples, depthImageFormat);
+        albedoNabor = new AlbedoNabor(device, albedoMSAASamples, depthImageFormat);
         propertiesNabor = new PropertiesNabor(device, depthImageFormat, positionImageFormat, normalImageFormat);
     }
 

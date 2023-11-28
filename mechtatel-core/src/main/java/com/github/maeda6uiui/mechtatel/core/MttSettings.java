@@ -116,6 +116,14 @@ public class MttSettings {
         vulkanSettings = new VulkanSettings();
     }
 
+    /**
+     * Loads settings from a JSON file.
+     * This method returns empty value if the file specified as {@code jsonFile} does not exist
+     * or if it fails to load settings from the file specified.
+     *
+     * @param jsonFile Path of the setting file
+     * @return Settings
+     */
     public static Optional<MttSettings> load(@NotNull Path jsonFile) {
         if (!Files.exists(jsonFile)) {
             logger.error("Setting file ({}) was not found", jsonFile);
@@ -132,6 +140,13 @@ public class MttSettings {
         }
     }
 
+    /**
+     * Loads settings from a JSON file.
+     *
+     * @param jsonResource URL of the setting file
+     * @return Settings
+     * @see #load(Path)
+     */
     public static Optional<MttSettings> load(@NotNull URL jsonResource) {
         URI jsonResourceURI;
         try {
@@ -144,6 +159,13 @@ public class MttSettings {
         return load(Paths.get(jsonResourceURI));
     }
 
+    /**
+     * Loads settings from a JSON file.
+     *
+     * @param jsonFilepath Filepath of the setting file
+     * @return Settings
+     * @see #load(Path)
+     */
     public static Optional<MttSettings> load(@NotNull String jsonFilepath) {
         return load(Paths.get(jsonFilepath));
     }

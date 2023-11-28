@@ -23,7 +23,10 @@ public class LogicalDeviceCreator {
     }
 
     public static VkDeviceAndVkQueues createLogicalDevice(
-            VkPhysicalDevice physicalDevice, boolean enableValidationLayer, long surface) {
+            VkPhysicalDevice physicalDevice,
+            boolean enableValidationLayer,
+            boolean useGraphicsQueueAsPresentQueue,
+            long surface) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             QueueFamilyUtils.QueueFamilyIndices indices
                     = QueueFamilyUtils.findQueueFamilies(physicalDevice, surface);
@@ -37,7 +40,11 @@ public class LogicalDeviceCreator {
 
             VkDeviceQueueCreateInfo presentQueueCreateInfo = queueCreateInfos.get(1);
             presentQueueCreateInfo.sType(VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO);
-            presentQueueCreateInfo.queueFamilyIndex(indices.presentFamily);
+            if (useGraphicsQueueAsPresentQueue) {
+                presentQueueCreateInfo.queueFamilyIndex(indices.graphicsFamily);
+            } else {
+                presentQueueCreateInfo.queueFamilyIndex(indices.presentFamily);
+            }
             presentQueueCreateInfo.pQueuePriorities(stack.floats(1.0f));
 
             VkPhysicalDeviceFeatures deviceFeatures = VkPhysicalDeviceFeatures.calloc(stack);
@@ -66,7 +73,11 @@ public class LogicalDeviceCreator {
             var graphicsQueue = new VkQueue(pGraphicsQueue.get(0), device);
 
             PointerBuffer pPresentQueue = stack.pointers(VK_NULL_HANDLE);
-            vkGetDeviceQueue(device, indices.presentFamily, 0, pPresentQueue);
+            if (useGraphicsQueueAsPresentQueue) {
+                vkGetDeviceQueue(device, indices.graphicsFamily, 0, pPresentQueue);
+            } else {
+                vkGetDeviceQueue(device, indices.presentFamily, 0, pPresentQueue);
+            }
             var presentQueue = new VkQueue(pPresentQueue.get(0), device);
 
             var ret = new VkDeviceAndVkQueues();

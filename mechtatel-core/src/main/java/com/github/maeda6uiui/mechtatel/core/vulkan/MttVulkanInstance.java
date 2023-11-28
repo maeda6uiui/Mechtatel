@@ -156,7 +156,11 @@ public class MttVulkanInstance
         System.load(shadercLibFilepath);
     }
 
-    public MttVulkanInstance(boolean enableValidationLayer, long window, int albedoMsaaSamples) {
+    public MttVulkanInstance(
+            boolean enableValidationLayer,
+            boolean useGraphicsQueueAsPresentQueue,
+            int albedoMsaaSamples,
+            long window) {
         this.loadShadercLib();
 
         this.enableValidationLayer = enableValidationLayer;
@@ -171,8 +175,12 @@ public class MttVulkanInstance
 
         physicalDevice = PhysicalDevicePicker.pickPhysicalDevice(instance, surface);
 
-        LogicalDeviceCreator.VkDeviceAndVkQueues deviceAndQueues
-                = LogicalDeviceCreator.createLogicalDevice(physicalDevice, enableValidationLayer, surface);
+        LogicalDeviceCreator.VkDeviceAndVkQueues deviceAndQueues = LogicalDeviceCreator.createLogicalDevice(
+                physicalDevice,
+                enableValidationLayer,
+                useGraphicsQueueAsPresentQueue,
+                surface
+        );
         device = deviceAndQueues.device;
         graphicsQueue = deviceAndQueues.graphicsQueue;
         presentQueue = deviceAndQueues.presentQueue;

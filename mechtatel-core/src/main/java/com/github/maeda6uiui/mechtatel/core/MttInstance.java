@@ -136,8 +136,10 @@ class MttInstance {
 
         vulkanInstance = new MttVulkanInstance(
                 true,
-                window,
-                VK_SAMPLE_COUNT_2_BIT);
+                false,
+                VK_SAMPLE_COUNT_2_BIT,
+                window
+        );
 
         this.fps = settings.systemSettings.fps;
 

@@ -14,7 +14,7 @@ import static org.lwjgl.vulkan.VK10.*;
 public class MultisamplingUtils {
     public static int getMaxUsableSampleCount(VkDevice device) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkPhysicalDeviceProperties physicalDeviceProperties = VkPhysicalDeviceProperties.mallocStack(stack);
+            VkPhysicalDeviceProperties physicalDeviceProperties = VkPhysicalDeviceProperties.malloc(stack);
             vkGetPhysicalDeviceProperties(device.getPhysicalDevice(), physicalDeviceProperties);
 
             int sampleCountFlags = physicalDeviceProperties.limits().framebufferColorSampleCounts()

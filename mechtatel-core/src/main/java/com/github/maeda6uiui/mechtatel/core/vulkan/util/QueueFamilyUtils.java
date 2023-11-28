@@ -62,7 +62,7 @@ public class QueueFamilyUtils {
             IntBuffer extensionCount = stack.ints(0);
             vkEnumerateDeviceExtensionProperties(device, (String) null, extensionCount, null);
 
-            VkExtensionProperties.Buffer availableExtensions = VkExtensionProperties.mallocStack(extensionCount.get(0), stack);
+            VkExtensionProperties.Buffer availableExtensions = VkExtensionProperties.malloc(extensionCount.get(0), stack);
             vkEnumerateDeviceExtensionProperties(device, (String) null, extensionCount, availableExtensions);
 
             return availableExtensions.stream()
@@ -85,7 +85,7 @@ public class QueueFamilyUtils {
                         = SwapchainUtils.querySwapchainSupport(device, surface, stack);
                 swapchainAdequate = swapchainSupport.formats.hasRemaining() && swapchainSupport.presentModes.hasRemaining();
 
-                VkPhysicalDeviceFeatures supportedFeatures = VkPhysicalDeviceFeatures.mallocStack(stack);
+                VkPhysicalDeviceFeatures supportedFeatures = VkPhysicalDeviceFeatures.malloc(stack);
                 vkGetPhysicalDeviceFeatures(device, supportedFeatures);
                 anisotropySupported = supportedFeatures.samplerAnisotropy();
             }

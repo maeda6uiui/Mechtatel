@@ -10,7 +10,7 @@ import static org.lwjgl.vulkan.VK10.vkGetPhysicalDeviceMemoryProperties;
  */
 public class MemoryUtils {
     public static int findMemoryType(VkDevice device, int typeFilter, int properties) {
-        VkPhysicalDeviceMemoryProperties memProperties = VkPhysicalDeviceMemoryProperties.mallocStack();
+        VkPhysicalDeviceMemoryProperties memProperties = VkPhysicalDeviceMemoryProperties.malloc();
         vkGetPhysicalDeviceMemoryProperties(device.getPhysicalDevice(), memProperties);
 
         for (int i = 0; i < memProperties.memoryTypeCount(); i++) {

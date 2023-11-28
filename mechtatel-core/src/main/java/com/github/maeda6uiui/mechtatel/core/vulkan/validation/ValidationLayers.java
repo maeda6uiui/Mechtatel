@@ -101,7 +101,7 @@ public class ValidationLayers {
             IntBuffer layerCount = stack.ints(0);
             vkEnumerateInstanceLayerProperties(layerCount, null);
 
-            VkLayerProperties.Buffer availableLayers = VkLayerProperties.mallocStack(layerCount.get(0), stack);
+            VkLayerProperties.Buffer availableLayers = VkLayerProperties.malloc(layerCount.get(0), stack);
             vkEnumerateInstanceLayerProperties(layerCount, availableLayers);
 
             Set<String> availableLayerNames = availableLayers.stream().

@@ -4,7 +4,6 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.nio.LongBuffer;
-import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -46,7 +45,7 @@ public class ImageUtils {
                 throw new RuntimeException("Failed to create an image");
             }
 
-            VkMemoryRequirements memRequirements = VkMemoryRequirements.mallocStack(stack);
+            VkMemoryRequirements memRequirements = VkMemoryRequirements.malloc(stack);
             vkGetImageMemoryRequirements(device, pImage.get(0), memRequirements);
 
             VkMemoryAllocateInfo allocInfo = VkMemoryAllocateInfo.calloc(stack);
@@ -128,13 +127,13 @@ public class ImageUtils {
 
                 sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
                 destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-            } else if(oldLayout==VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL&&newLayout==VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL){
+            } else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
                 barrier.srcAccessMask(VK_ACCESS_SHADER_READ_BIT);
                 barrier.dstAccessMask(VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
 
-                sourceStage=VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-                destinationStage=VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-            }else if (oldLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+                sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+                destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+            } else if (oldLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
                 barrier.srcAccessMask(VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT);
                 barrier.dstAccessMask(VK_ACCESS_SHADER_READ_BIT);
 

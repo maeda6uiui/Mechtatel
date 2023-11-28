@@ -35,6 +35,7 @@ import java.nio.IntBuffer;
 import java.util.List;
 import java.util.*;
 
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.openal.ALC10.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -295,6 +296,7 @@ class MttInstance {
             sound.cleanup();
         });
 
+        glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
         glfwTerminate();
     }

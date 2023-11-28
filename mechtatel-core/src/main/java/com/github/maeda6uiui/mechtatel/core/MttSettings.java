@@ -105,7 +105,7 @@ public class MttSettings {
 
     private static MttSettings instance;
 
-    private MttSettings() {
+    public MttSettings() {
         windowSettings = new WindowSettings();
         systemSettings = new SystemSettings();
         renderingSettings = new RenderingSettings();

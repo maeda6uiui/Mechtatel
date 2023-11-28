@@ -1,9 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
-import com.github.maeda6uiui.mechtatel.core.PlatformInfo;
-import com.github.maeda6uiui.mechtatel.core.SamplerAddressMode;
-import com.github.maeda6uiui.mechtatel.core.SamplerFilterMode;
-import com.github.maeda6uiui.mechtatel.core.SamplerMipmapMode;
+import com.github.maeda6uiui.mechtatel.core.*;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex3D;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex3DUV;
@@ -57,7 +54,6 @@ public class MttVulkanInstance
 
     private VkInstance instance;
 
-    private boolean enableValidationLayer;
     private long debugMessenger;
 
     private VkPhysicalDevice physicalDevice;
@@ -91,6 +87,8 @@ public class MttVulkanInstance
     private List<VkMttTexture> textures;
 
     private QuadDrawer quadDrawer;
+
+    private MttSettings.VulkanSettings vulkanSettings;
 
     private VkExtent2D getFramebufferSize(long window) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -156,18 +154,12 @@ public class MttVulkanInstance
         System.load(shadercLibFilepath);
     }
 
-    public MttVulkanInstance(
-            boolean enableValidationLayer,
-            boolean useGraphicsQueueAsPresentQueue,
-            int albedoMSAASamples,
-            long window) {
+    public MttVulkanInstance(long window, MttSettings.VulkanSettings vulkanSettings) {
         this.loadShadercLib();
 
-        this.enableValidationLayer = enableValidationLayer;
+        instance = InstanceCreator.createInstance(vulkanSettings.enableValidationLayer);
 
-        instance = InstanceCreator.createInstance(enableValidationLayer);
-
-        if (enableValidationLayer) {
+        if (vulkanSettings.enableValidationLayer) {
             debugMessenger = ValidationLayers.setupDebugMessenger(instance);
         }
 
@@ -177,16 +169,17 @@ public class MttVulkanInstance
 
         LogicalDeviceCreator.VkDeviceAndVkQueues deviceAndQueues = LogicalDeviceCreator.createLogicalDevice(
                 physicalDevice,
-                enableValidationLayer,
-                useGraphicsQueueAsPresentQueue,
+                vulkanSettings.enableValidationLayer,
+                vulkanSettings.useGraphicsQueueAsPresentQueue,
                 surface
         );
         device = deviceAndQueues.device;
         graphicsQueue = deviceAndQueues.graphicsQueue;
         presentQueue = deviceAndQueues.presentQueue;
 
-        this.albedoMSAASamples
-                = albedoMSAASamples < 0 ? MultisamplingUtils.getMaxUsableSampleCount(device) : albedoMSAASamples;
+        albedoMSAASamples = vulkanSettings.albedoMSAASamples < 0
+                ? MultisamplingUtils.getMaxUsableSampleCount(device)
+                : vulkanSettings.albedoMSAASamples;
 
         depthImageFormat = DepthResourceUtils.findDepthFormat(device);
         depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
@@ -235,6 +228,8 @@ public class MttVulkanInstance
         textures = new ArrayList<>();
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
+
+        this.vulkanSettings = vulkanSettings;
     }
 
     public void cleanup() {
@@ -259,7 +254,7 @@ public class MttVulkanInstance
 
         vkDestroyDevice(device, null);
 
-        if (enableValidationLayer) {
+        if (vulkanSettings.enableValidationLayer) {
             ValidationLayers.destroyDebugUtilsMessengerEXT(instance, debugMessenger, null);
         }
 

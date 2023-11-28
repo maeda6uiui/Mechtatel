@@ -38,7 +38,6 @@ import java.util.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.openal.ALC10.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
-import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_2_BIT;
 
 /**
  * Provides abstraction of the low-level operations
@@ -134,12 +133,7 @@ class MttInstance {
         glfwSetMouseButtonCallback(window, this::mouseButtonCallback);
         glfwSetCursorPosCallback(window, this::cursorPositionCallback);
 
-        vulkanInstance = new MttVulkanInstance(
-                true,
-                false,
-                VK_SAMPLE_COUNT_2_BIT,
-                window
-        );
+        vulkanInstance = new MttVulkanInstance(window, settings.vulkanSettings);
 
         this.fps = settings.systemSettings.fps;
 

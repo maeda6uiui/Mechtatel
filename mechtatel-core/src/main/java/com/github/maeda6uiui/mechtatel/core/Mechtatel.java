@@ -41,6 +41,12 @@ public class Mechtatel
     public Mechtatel(MttSettings settings) {
         logger.debug(settings.toString());
         logger.debug("Platform={} Architecture={}", PlatformInfo.PLATFORM, PlatformInfo.ARCHITECTURE);
+        logger.debug(
+                "Mechtatel version={}.{}.{}",
+                EngineInfo.MAJOR_VERSION,
+                EngineInfo.MINOR_VERSION,
+                EngineInfo.PATCH_VERSION
+        );
 
         try {
             instance = new MttInstance(this, settings);

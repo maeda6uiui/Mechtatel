@@ -43,6 +43,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class MttWindow
         implements IMttWindowForDrawPath, IMttWindowForScreenCreator, IMttWindowForSkyboxTextureCreator {
     private IMechtatelForMttWindow mtt;
+
     private long window;
     private int width;
     private int height;
@@ -70,6 +71,7 @@ public class MttWindow
     private List<MttSound> sounds3D;
 
     private boolean mustRecreate;
+    private boolean validWindow;
 
     private void framebufferResizeCallback(long window, int width, int height) {
         mtt.reshape(this, width, height);
@@ -167,6 +169,7 @@ public class MttWindow
         sounds3D = new ArrayList<>();
 
         mustRecreate = false;
+        validWindow = true;
 
         mtt.registerWindow(this);
         mtt.init(this);
@@ -245,6 +248,8 @@ public class MttWindow
 
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
+
+        validWindow = false;
     }
 
     public void closeWindow() {
@@ -318,6 +323,10 @@ public class MttWindow
             case HIDDEN -> glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
             default -> throw new IllegalArgumentException("Unsupported cursor mode specified: " + cursorMode);
         }
+    }
+
+    public boolean isValidWindow() {
+        return validWindow;
     }
 
     public void sortComponents() {

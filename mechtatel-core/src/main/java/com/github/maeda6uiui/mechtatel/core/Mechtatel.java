@@ -29,6 +29,8 @@ public class Mechtatel implements IMechtatelForMttWindow {
 
     private int fps;
     private float secondsPerFrame;
+
+    private MttWindow primaryWindow;
     private List<MttWindow> windows;
     private List<MttWindow> newWindowsQueue;
 
@@ -110,7 +112,7 @@ public class Mechtatel implements IMechtatelForMttWindow {
         newWindowsQueue = new ArrayList<>();
 
         try {
-            var primaryWindow = new MttWindow(this, settings);
+            primaryWindow = new MttWindow(this, settings);
             windows.add(primaryWindow);
             logger.info("Primary window successfully created");
         } catch (Exception e) {
@@ -160,6 +162,10 @@ public class Mechtatel implements IMechtatelForMttWindow {
         logger.info("Exiting the Mechtatel engine...");
 
         glfwTerminate();
+    }
+
+    public MttWindow getPrimaryWindow() {
+        return primaryWindow;
     }
 
     @Override

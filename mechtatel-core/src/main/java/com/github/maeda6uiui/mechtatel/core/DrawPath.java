@@ -9,15 +9,15 @@ import java.util.List;
  * @author maeda6uiui
  */
 public class DrawPath {
-    private IMttWindowForDrawPath mtt;
+    private IMttWindowForDrawPath window;
 
     private List<String> screenDrawOrder;
     private List<String> textureOperationOrder;
     private List<String> deferredScreenDrawOrder;
     private String presentScreenName;
 
-    public DrawPath(IMttWindowForDrawPath mtt) {
-        this.mtt = mtt;
+    public DrawPath(IMttWindowForDrawPath window) {
+        this.window = window;
 
         screenDrawOrder = new ArrayList<>();
         textureOperationOrder = new ArrayList<>();
@@ -49,9 +49,9 @@ public class DrawPath {
     }
 
     public void apply() {
-        mtt.setScreenDrawOrder(screenDrawOrder);
-        mtt.setTextureOperationOrder(textureOperationOrder);
-        mtt.setDeferredScreenDrawOrder(deferredScreenDrawOrder);
-        mtt.setPresentScreenName(presentScreenName);
+        window.setScreenDrawOrder(screenDrawOrder);
+        window.setTextureOperationOrder(textureOperationOrder);
+        window.setDeferredScreenDrawOrder(deferredScreenDrawOrder);
+        window.setPresentScreenName(presentScreenName);
     }
 }

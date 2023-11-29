@@ -23,7 +23,7 @@ public class SkyboxTextureCreator {
     private MttTexture texPz;
 
     public SkyboxTextureCreator(
-            IMttWindowForSkyboxTextureCreator mtt,
+            IMttWindowForSkyboxTextureCreator window,
             String screenName,
             URL textureDirUrl,
             String textureExtension,
@@ -36,12 +36,12 @@ public class SkyboxTextureCreator {
         URL texPyResource = textureDir.resolve(String.format("py.%s", textureExtension)).toUri().toURL();
         URL texPzResource = textureDir.resolve(String.format("pz.%s", textureExtension)).toUri().toURL();
 
-        texNx = mtt.createTexture(screenName, texNxResource, generateMipmaps);
-        texNy = mtt.createTexture(screenName, texNyResource, generateMipmaps);
-        texNz = mtt.createTexture(screenName, texNzResource, generateMipmaps);
-        texPx = mtt.createTexture(screenName, texPxResource, generateMipmaps);
-        texPy = mtt.createTexture(screenName, texPyResource, generateMipmaps);
-        texPz = mtt.createTexture(screenName, texPzResource, generateMipmaps);
+        texNx = window.createTexture(screenName, texNxResource, generateMipmaps);
+        texNy = window.createTexture(screenName, texNyResource, generateMipmaps);
+        texNz = window.createTexture(screenName, texNzResource, generateMipmaps);
+        texPx = window.createTexture(screenName, texPxResource, generateMipmaps);
+        texPy = window.createTexture(screenName, texPyResource, generateMipmaps);
+        texPz = window.createTexture(screenName, texPzResource, generateMipmaps);
     }
 
     public void apply(MttModel model) {

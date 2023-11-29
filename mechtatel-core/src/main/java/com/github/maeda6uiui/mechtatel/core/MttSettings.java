@@ -64,16 +64,19 @@ public class MttSettings {
     }
 
     public static class RenderingSettings {
+        public RenderingEngine engine;
         public MttTexture.ImageFormat imageFormat;
 
         public RenderingSettings() {
+            engine = RenderingEngine.VULKAN;
             imageFormat = MttTexture.ImageFormat.SRGB;
         }
 
         @Override
         public String toString() {
             return "RenderingSettings{" +
-                    "imageFormat='" + imageFormat + '\'' +
+                    "engine=" + engine +
+                    ", imageFormat=" + imageFormat +
                     '}';
         }
     }

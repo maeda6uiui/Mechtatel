@@ -9,6 +9,7 @@
         "fps": 60
     },
     "rendering": {
+        "engine": "VULKAN",
         "imageFormat": "UNORM"
     },
     "vulkan": {

@@ -9,7 +9,7 @@
         "fps": 60
     },
     "rendering": {
-        "imageFormat": "unorm"
+        "imageFormat": "UNORM"
     },
     "vulkan": {
         "enableValidationLayer": true,

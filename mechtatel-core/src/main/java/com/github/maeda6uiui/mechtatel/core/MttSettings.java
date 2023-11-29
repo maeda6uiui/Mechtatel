@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,10 +64,10 @@ public class MttSettings {
     }
 
     public static class RenderingSettings {
-        public String imageFormat;
+        public MttTexture.ImageFormat imageFormat;
 
         public RenderingSettings() {
-            imageFormat = "srgb";
+            imageFormat = MttTexture.ImageFormat.SRGB;
         }
 
         @Override

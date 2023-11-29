@@ -14,16 +14,19 @@ import java.nio.file.Paths;
  * @author maeda6uiui
  */
 public class MttTexture {
+    public enum ImageFormat {
+        SRGB,
+        UNORM
+    }
+
     private VkMttTexture texture;
     private IMttVulkanInstanceForTexture vulkanInstance;
 
-    public static void setImageFormat(String imageFormat) {
-        if (imageFormat.equals("srgb")) {
-            VkMttTexture.setImageFormatToSRGB();
-        } else if (imageFormat.equals("unorm")) {
-            VkMttTexture.setImageFormatToUNORM();
-        } else {
-            throw new IllegalArgumentException("Unsupported image format specified");
+    public static void setImageFormat(ImageFormat imageFormat) {
+        switch (imageFormat) {
+            case SRGB -> VkMttTexture.setImageFormatToSRGB();
+            case UNORM -> VkMttTexture.setImageFormatToUNORM();
+            default -> throw new IllegalArgumentException("Unsupported image format specified: " + imageFormat);
         }
     }
 

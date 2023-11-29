@@ -152,6 +152,11 @@ public class Mechtatel implements IMechtatelForMttWindow {
     }
 
     @Override
+    public void registerWindow(MttWindow window) {
+        windows.add(window);
+    }
+
+    @Override
     public void init(MttWindow window) {
         logger.info("Mechtatel initialized");
     }

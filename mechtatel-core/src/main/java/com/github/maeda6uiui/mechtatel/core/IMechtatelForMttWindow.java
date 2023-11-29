@@ -6,6 +6,8 @@ package com.github.maeda6uiui.mechtatel.core;
  * @author maeda6uiui
  */
 interface IMechtatelForMttWindow {
+    void registerWindow(MttWindow window);
+
     void init(MttWindow window);
 
     void dispose(MttWindow window);

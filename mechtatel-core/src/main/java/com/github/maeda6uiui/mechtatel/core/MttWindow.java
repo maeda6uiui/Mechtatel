@@ -156,10 +156,8 @@ public class MttWindow
                 null
         );
         screens.put("default", defaultScreen);
-
         screenDrawOrder = new ArrayList<>();
         screenDrawOrder.add("default");
-
         textureOperationOrder = new ArrayList<>();
         deferredScreenDrawOrder = new ArrayList<>();
         presentScreenName = "default";
@@ -169,6 +167,8 @@ public class MttWindow
         sounds3D = new ArrayList<>();
 
         mustRecreate = false;
+
+        mtt.registerWindow(this);
     }
 
     public void update(double elapsedTime) {

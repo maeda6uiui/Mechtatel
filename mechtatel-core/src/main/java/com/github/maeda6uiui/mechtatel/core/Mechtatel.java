@@ -132,7 +132,7 @@ public class Mechtatel implements IMechtatelForMttWindow {
         while (!windows.isEmpty()) {
             double currentTime = glfwGetTime();
             double elapsedTime = currentTime - lastTime;
-            if (elapsedTime >= 1.0 / fps) {
+            if (elapsedTime >= secondsPerFrame) {
                 Iterator<MttWindow> it = windows.iterator();
                 while (it.hasNext()) {
                     MttWindow window = it.next();

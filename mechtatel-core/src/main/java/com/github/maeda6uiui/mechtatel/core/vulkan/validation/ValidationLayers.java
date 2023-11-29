@@ -41,7 +41,7 @@ public class ValidationLayers {
                 logger.warn(callbackData.pMessageString());
                 break;
             case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-                logger.info(callbackData.pMessageString());
+                logger.debug(callbackData.pMessageString());
                 break;
             case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
                 logger.trace(callbackData.pMessageString());

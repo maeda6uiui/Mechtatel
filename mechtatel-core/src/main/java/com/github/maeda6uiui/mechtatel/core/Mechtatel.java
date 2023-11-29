@@ -1,6 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.jme3.system.NativeLibraryLoader;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
@@ -34,20 +35,9 @@ public class Mechtatel implements IMechtatelForMttWindow {
     private List<MttWindow> windows;
     private List<MttWindow> newWindowsQueue;
 
-    public Mechtatel(MttSettings settings) {
-        logger.debug(settings.toString());
-        logger.debug("Platform={} Architecture={}", PlatformInfo.PLATFORM, PlatformInfo.ARCHITECTURE);
-        logger.debug(
-                "Mechtatel version={}.{}.{}",
-                EngineInfo.MAJOR_VERSION,
-                EngineInfo.MINOR_VERSION,
-                EngineInfo.PATCH_VERSION
-        );
-        logger.info("Starting the Mechtatel engine...");
-
+    private void initMechtatel(MttSettings settings) {
         if (!glfwInit()) {
-            logger.error("Failed to initialize GLFW");
-            return;
+            throw new RuntimeException("Failed to initialize GLFW");
         }
 
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -59,19 +49,13 @@ public class Mechtatel implements IMechtatelForMttWindow {
 
         long alcDevice = alcOpenDevice((ByteBuffer) null);
         if (alcDevice == 0) {
-            logger.error("Failed to open default OpenAL device");
-            glfwTerminate();
-
-            return;
+            throw new RuntimeException("Failed to open default OpenAL device");
         }
         ALCCapabilities deviceCaps = ALC.createCapabilities(alcDevice);
 
         long alcContext = alcCreateContext(alcDevice, (IntBuffer) null);
         if (alcContext == 0) {
-            logger.error("Failed to create OpenAL context");
-            glfwTerminate();
-
-            return;
+            throw new RuntimeException("Failed to create OpenAL context");
         }
 
         alcMakeContextCurrent(alcContext);
@@ -90,17 +74,15 @@ public class Mechtatel implements IMechtatelForMttWindow {
                 case "windows" -> shadercLibFilename = "shaderc_shared.dll";
                 case "linux" -> shadercLibFilename = "libshaderc_shared.so";
                 case "macos" -> shadercLibFilename = "libshaderc_shared.dylib";
-                default -> {
-                    logger.error("shaderc library is not available for this platform: {}", PlatformInfo.PLATFORM);
-                    glfwTerminate();
-
-                    return;
-                }
+                default -> throw new IllegalArgumentException(
+                        "shaderc library is not available for this platform: " + PlatformInfo.PLATFORM);
             }
 
             String shadercLibFilepath = Objects.requireNonNull(
                     this.getClass().getResource("/Bin/" + shadercLibFilename)).getFile();
             System.load(shadercLibFilepath);
+
+            MttVulkanInstance.create(settings.vulkanSettings, false);
         }
 
         MttTexture.setImageFormat(settings.renderingSettings.imageFormat);
@@ -111,11 +93,24 @@ public class Mechtatel implements IMechtatelForMttWindow {
         windows = new ArrayList<>();
         newWindowsQueue = new ArrayList<>();
 
+        primaryWindow = new MttWindow(this, settings);
+        windows.add(primaryWindow);
+    }
+
+    public Mechtatel(MttSettings settings) {
+        logger.debug(settings.toString());
+        logger.debug("Platform={} Architecture={}", PlatformInfo.PLATFORM, PlatformInfo.ARCHITECTURE);
+        logger.debug(
+                "Mechtatel version={}.{}.{}",
+                EngineInfo.MAJOR_VERSION,
+                EngineInfo.MINOR_VERSION,
+                EngineInfo.PATCH_VERSION
+        );
+        logger.info("Starting the Mechtatel engine...");
+
         try {
-            primaryWindow = new MttWindow(this, settings);
-            windows.add(primaryWindow);
-            logger.info("Primary window successfully created");
-        } catch (Exception e) {
+            this.initMechtatel(settings);
+        } catch (RuntimeException e) {
             logger.error("Fatal error", e);
             glfwTerminate();
 

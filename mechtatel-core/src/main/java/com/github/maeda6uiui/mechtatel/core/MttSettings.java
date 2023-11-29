@@ -104,12 +104,14 @@ public class MttSettings {
         }
 
         public boolean enableValidationLayer;
+        public int preferablePhysicalDeviceIndex;
         public boolean useGraphicsQueueAsPresentQueue;
         public int albedoMSAASamples;
         public AppInfo appInfo;
 
         public VulkanSettings() {
             enableValidationLayer = false;
+            preferablePhysicalDeviceIndex = 0;
             useGraphicsQueueAsPresentQueue = false;
             albedoMSAASamples = 2;
             appInfo = new AppInfo();

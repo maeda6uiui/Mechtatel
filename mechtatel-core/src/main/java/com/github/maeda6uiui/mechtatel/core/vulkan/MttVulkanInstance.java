@@ -168,7 +168,11 @@ public class MttVulkanInstance
 
         surface = SurfaceCreator.createSurface(instance, window);
 
-        physicalDevice = PhysicalDevicePicker.pickPhysicalDevice(instance, surface);
+        physicalDevice = PhysicalDevicePicker.pickPhysicalDevice(
+                instance,
+                surface,
+                vulkanSettings.preferablePhysicalDeviceIndex
+        );
 
         LogicalDeviceCreator.VkDeviceAndVkQueues deviceAndQueues = LogicalDeviceCreator.createLogicalDevice(
                 physicalDevice,

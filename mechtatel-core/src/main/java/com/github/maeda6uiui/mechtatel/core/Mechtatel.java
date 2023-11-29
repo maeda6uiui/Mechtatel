@@ -31,7 +31,7 @@ public class Mechtatel implements IMechtatelForMttWindow {
     private int fps;
     private float secondsPerFrame;
 
-    private MttWindow primaryWindow;
+    private MttWindow initialWindow;
     private List<MttWindow> windows;
     private List<MttWindow> newWindowsQueue;
 
@@ -93,8 +93,8 @@ public class Mechtatel implements IMechtatelForMttWindow {
         windows = new ArrayList<>();
         newWindowsQueue = new ArrayList<>();
 
-        primaryWindow = new MttWindow(this, settings);
-        windows.add(primaryWindow);
+        initialWindow = new MttWindow(this, settings);
+        windows.add(initialWindow);
     }
 
     public Mechtatel(MttSettings settings) {
@@ -159,8 +159,8 @@ public class Mechtatel implements IMechtatelForMttWindow {
         glfwTerminate();
     }
 
-    public MttWindow getPrimaryWindow() {
-        return primaryWindow;
+    public MttWindow getInitialWindow() {
+        return initialWindow;
     }
 
     @Override

@@ -79,14 +79,40 @@ public class MttSettings {
     }
 
     public static class VulkanSettings {
+        public static class AppInfo {
+            public String name;
+            public int majorVersion;
+            public int minorVersion;
+            public int patchVersion;
+
+            public AppInfo() {
+                name = "Mechtatel";
+                majorVersion = 0;
+                minorVersion = 0;
+                patchVersion = 0;
+            }
+
+            @Override
+            public String toString() {
+                return "AppInfo{" +
+                        "name='" + name + '\'' +
+                        ", majorVersion=" + majorVersion +
+                        ", minorVersion=" + minorVersion +
+                        ", patchVersion=" + patchVersion +
+                        '}';
+            }
+        }
+
         public boolean enableValidationLayer;
         public boolean useGraphicsQueueAsPresentQueue;
         public int albedoMSAASamples;
+        public AppInfo appInfo;
 
         public VulkanSettings() {
             enableValidationLayer = false;
             useGraphicsQueueAsPresentQueue = false;
             albedoMSAASamples = 2;
+            appInfo = new AppInfo();
         }
 
         @Override
@@ -95,6 +121,7 @@ public class MttSettings {
                     "enableValidationLayer=" + enableValidationLayer +
                     ", useGraphicsQueueAsPresentQueue=" + useGraphicsQueueAsPresentQueue +
                     ", albedoMSAASamples=" + albedoMSAASamples +
+                    ", appInfo=" + appInfo +
                     '}';
         }
     }

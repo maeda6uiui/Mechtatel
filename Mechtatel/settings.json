@@ -14,6 +14,12 @@
     "vulkan": {
         "enableValidationLayer": true,
         "useGraphicsQueueAsPresentQueue": false,
-        "albedoMSAASamples": 2
+        "albedoMSAASamples": 2,
+        "appInfo": {
+            "name": "Mechtatel",
+            "majorVersion": 0,
+            "minorVersion": 0,
+            "patchVersion": 0
+        }
     }
 }

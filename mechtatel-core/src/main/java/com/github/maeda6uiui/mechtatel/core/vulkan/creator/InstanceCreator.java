@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.creator;
 
+import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.PointerBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.lwjgl.PointerBuffer;
@@ -35,23 +36,25 @@ public class InstanceCreator {
         return glfwExtensions;
     }
 
-    public static VkInstance createInstance(boolean enableValidationLayer) {
+    public static VkInstance createInstance(
+            boolean enableValidationLayer, MttSettings.VulkanSettings.AppInfo appInfo) {
         if (enableValidationLayer && !ValidationLayers.checkValidationLayerSupport()) {
             throw new RuntimeException("Validation requested but not supported");
         }
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkApplicationInfo appInfo = VkApplicationInfo.calloc(stack);
-            appInfo.sType(VK_STRUCTURE_TYPE_APPLICATION_INFO);
-            appInfo.pApplicationName(stack.UTF8Safe("Mechtatel"));
-            appInfo.applicationVersion(VK_MAKE_VERSION(0, 0, 1));
-            appInfo.pEngineName(stack.UTF8Safe("Mechtatel"));
-            appInfo.engineVersion(VK_MAKE_VERSION(0, 0, 1));
-            appInfo.apiVersion(VK_API_VERSION_1_0);
+            VkApplicationInfo vkAppInfo = VkApplicationInfo.calloc(stack);
+            vkAppInfo.sType(VK_STRUCTURE_TYPE_APPLICATION_INFO);
+            vkAppInfo.pApplicationName(stack.UTF8Safe(appInfo.name));
+            vkAppInfo.applicationVersion(VK_MAKE_VERSION(
+                    appInfo.majorVersion, appInfo.minorVersion, appInfo.patchVersion));
+            vkAppInfo.pEngineName(stack.UTF8Safe("Mechtatel"));
+            vkAppInfo.engineVersion(VK_MAKE_VERSION(0, 0, 1));
+            vkAppInfo.apiVersion(VK_API_VERSION_1_0);
 
             VkInstanceCreateInfo createInfo = VkInstanceCreateInfo.calloc(stack);
             createInfo.sType(VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO);
-            createInfo.pApplicationInfo(appInfo);
+            createInfo.pApplicationInfo(vkAppInfo);
             createInfo.ppEnabledExtensionNames(getRequiredExtensions(enableValidationLayer));
 
             if (enableValidationLayer) {

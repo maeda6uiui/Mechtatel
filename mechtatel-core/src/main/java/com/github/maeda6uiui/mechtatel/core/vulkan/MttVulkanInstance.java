@@ -157,7 +157,10 @@ public class MttVulkanInstance
     public MttVulkanInstance(long window, MttSettings.VulkanSettings vulkanSettings) {
         this.loadShadercLib();
 
-        instance = InstanceCreator.createInstance(vulkanSettings.enableValidationLayer);
+        instance = InstanceCreator.createInstance(
+                vulkanSettings.enableValidationLayer,
+                vulkanSettings.appInfo
+        );
 
         if (vulkanSettings.enableValidationLayer) {
             debugMessenger = ValidationLayers.setupDebugMessenger(instance);

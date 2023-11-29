@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.animation;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttComponentSet;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -36,7 +36,7 @@ public class MttAnimation {
     private Map<String, AnimationPlayInfo> animationPlayInfos;
 
     public MttAnimation(
-            MttVulkanInstance vulkanInstance, String screenName, AnimationInfo animationInfo) throws IOException {
+            MttVulkanImpl vulkanImpl, String screenName, AnimationInfo animationInfo) throws IOException {
         this.animationInfo = animationInfo;
 
         //Load models
@@ -48,7 +48,7 @@ public class MttAnimation {
             AnimationInfo.Model animModel = entry.getValue();
 
             Path modelFile = animationDirectory.resolve(animModel.filename);
-            MttModel model = new MttModel(vulkanInstance, screenName, modelFile.toUri());
+            MttModel model = new MttModel(vulkanImpl, screenName, modelFile.toUri());
             models.put(modelName, model);
         }
 
@@ -71,13 +71,13 @@ public class MttAnimation {
     }
 
     public MttAnimation(
-            MttVulkanInstance vulkanInstance, AnimationInfo animationInfo, Map<String, MttModel> srcModels) {
+            MttVulkanImpl vulkanImpl, AnimationInfo animationInfo, Map<String, MttModel> srcModels) {
         this.animationInfo = animationInfo;
 
         //Duplicate models
         models = new HashMap<>();
         srcModels.forEach((modelName, srcModel) -> {
-            MttModel model = new MttModel(vulkanInstance, srcModel);
+            MttModel model = new MttModel(vulkanImpl, srcModel);
             models.put(modelName, model);
         });
 

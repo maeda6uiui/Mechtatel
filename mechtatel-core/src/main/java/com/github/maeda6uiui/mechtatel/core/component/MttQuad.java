@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttQuad;
 
 import java.util.ArrayList;
@@ -14,13 +14,13 @@ public class MttQuad extends MttComponent {
     private VkMttQuad vkQuad;
 
     public MttQuad(
-            MttVulkanInstance vulkanInstance,
+            MttVulkanImpl vulkanImpl,
             MttVertex3D v1,
             MttVertex3D v2,
             MttVertex3D v3,
             MttVertex3D v4,
             boolean fill) {
-        super(vulkanInstance);
+        super(vulkanImpl);
 
         var vertices = new ArrayList<MttVertex3D>();
         vertices.add(v1);
@@ -28,7 +28,7 @@ public class MttQuad extends MttComponent {
         vertices.add(v3);
         vertices.add(v4);
 
-        vkQuad = vulkanInstance.createQuad(vertices, fill);
+        vkQuad = vulkanImpl.createQuad(vertices, fill);
         this.associateVulkanComponent(vkQuad);
     }
 }

@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttSphere;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
@@ -14,15 +14,15 @@ public class MttSphere extends MttComponent {
     private VkMttSphere vkSphere;
 
     public MttSphere(
-            MttVulkanInstance vulkanInstance,
+            MttVulkanImpl vulkanImpl,
             Vector3fc center,
             float radius,
             int numVDivs,
             int numHDivs,
             Vector4fc color) {
-        super(vulkanInstance);
+        super(vulkanImpl);
 
-        vkSphere = vulkanInstance.createSphere(center, radius, numVDivs, numHDivs, color);
+        vkSphere = vulkanImpl.createSphere(center, radius, numVDivs, numHDivs, color);
         this.associateVulkanComponent(vkSphere);
     }
 }

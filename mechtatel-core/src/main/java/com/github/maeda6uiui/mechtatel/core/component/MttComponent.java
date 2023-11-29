@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
 import com.github.maeda6uiui.mechtatel.core.util.UniversalCounter;
-import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanInstanceForComponent;
+import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplForComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
@@ -15,7 +15,7 @@ import org.joml.Vector3fc;
 public class MttComponent {
     private String tag;
 
-    private IMttVulkanInstanceForComponent vulkanInstance;
+    private IMttVulkanImplForComponent vulkanImpl;
     private VkMttComponent vkComponent;
 
     private Vector3f scale;
@@ -25,9 +25,9 @@ public class MttComponent {
     }
 
     //Vulkan
-    public MttComponent(IMttVulkanInstanceForComponent vulkanInstance) {
+    public MttComponent(IMttVulkanImplForComponent vulkanImpl) {
         this.setDefaultValues();
-        this.vulkanInstance = vulkanInstance;
+        this.vulkanImpl = vulkanImpl;
 
         scale = new Vector3f(1.0f, 1.0f, 1.0f);
     }
@@ -134,11 +134,11 @@ public class MttComponent {
         return new Vector3f(scale);
     }
 
-    protected IMttVulkanInstanceForComponent getVulkanInstance() {
-        return vulkanInstance;
+    protected IMttVulkanImplForComponent getVulkanInstance() {
+        return vulkanImpl;
     }
 
     public void cleanup() {
-        vulkanInstance.removeComponent(vkComponent);
+        vulkanImpl.removeComponent(vkComponent);
     }
 }

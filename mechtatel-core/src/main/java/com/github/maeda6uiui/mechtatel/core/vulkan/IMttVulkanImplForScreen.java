@@ -14,11 +14,11 @@ import org.joml.Vector4f;
 import java.util.List;
 
 /**
- * Interface to MttVulkanInstance providing access to draw()
+ * Interface to {@link MttVulkanImpl} for Vulkan screens
  *
  * @author maeda6uiui
  */
-public interface IMttVulkanInstanceForScreen {
+public interface IMttVulkanImplForScreen {
     void draw(
             VkMttScreen screen,
             Vector4f backgroundColor,

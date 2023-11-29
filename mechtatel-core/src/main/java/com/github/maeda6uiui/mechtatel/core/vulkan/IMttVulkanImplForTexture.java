@@ -5,11 +5,11 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 import java.net.URI;
 
 /**
- * Interface to MttVulkanInstance providing access to required methods for textures
+ * Interface to {@link MttVulkanImpl} for Vulkan textures
  *
  * @author maeda6uiui
  */
-public interface IMttVulkanInstanceForTexture {
+public interface IMttVulkanImplForTexture {
     VkMttTexture createTexture(String screenName, URI textureResource, boolean generateMipmaps);
 
     VkMttTexture texturizeColorOfScreen(String srcScreenName, String dstScreenName);

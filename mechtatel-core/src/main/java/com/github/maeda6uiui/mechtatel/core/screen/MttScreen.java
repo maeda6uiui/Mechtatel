@@ -11,8 +11,8 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
-import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanInstanceForScreen;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplForScreen;
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.ParallelLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.SpotlightNabor;
@@ -34,7 +34,7 @@ public class MttScreen {
 
     private boolean shouldAutoUpdateCameraAspect;
 
-    private IMttVulkanInstanceForScreen vulkanInstance;
+    private IMttVulkanImplForScreen vulkanImpl;
 
     private Vector4f backgroundColor;
     private Camera camera;
@@ -49,7 +49,7 @@ public class MttScreen {
     private SimpleBlurInfo simpleBlurInfo;
 
     public MttScreen(
-            MttVulkanInstance vulkanInstance,
+            MttVulkanImpl vulkanImpl,
             String screenName,
             int depthImageWidth,
             int depthImageHeight,
@@ -62,7 +62,7 @@ public class MttScreen {
             boolean useShadowMapping,
             Map<String, FlexibleNaborInfo> flexibleNaborInfos,
             List<String> ppNaborNames) {
-        screen = vulkanInstance.createScreen(
+        screen = vulkanImpl.createScreen(
                 screenName,
                 depthImageWidth,
                 depthImageHeight,
@@ -78,7 +78,7 @@ public class MttScreen {
         );
         shouldAutoUpdateCameraAspect = true;
 
-        this.vulkanInstance = vulkanInstance;
+        this.vulkanImpl = vulkanImpl;
 
         backgroundColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
         parallelLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
@@ -99,7 +99,7 @@ public class MttScreen {
     }
 
     public void draw() {
-        vulkanInstance.draw(
+        vulkanImpl.draw(
                 screen,
                 backgroundColor,
                 camera,

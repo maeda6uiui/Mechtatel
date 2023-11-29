@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttComponent;
 import com.github.maeda6uiui.mechtatel.core.util.UniversalCounter;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 
 import java.util.Map;
 
@@ -25,12 +25,12 @@ public class MttGuiComponent extends MttComponent {
     private boolean cursorOn;
 
     public MttGuiComponent(
-            MttVulkanInstance vulkanInstance,
+            MttVulkanImpl vulkanImpl,
             float x,
             float y,
             float width,
             float height) {
-        super(vulkanInstance);
+        super(vulkanImpl);
 
         guiComponentID = UniversalCounter.get();
         focusedGUIComponentID = guiComponentID;

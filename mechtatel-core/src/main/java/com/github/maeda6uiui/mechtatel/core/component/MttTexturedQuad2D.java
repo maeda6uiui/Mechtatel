@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttTexturedQuad;
 import org.joml.Vector3f;
 
@@ -36,7 +36,7 @@ public class MttTexturedQuad2D extends MttComponent {
     }
 
     public MttTexturedQuad2D(
-            MttVulkanInstance vulkanInstance,
+            MttVulkanImpl vulkanImpl,
             String screenName,
             URI textureResource,
             boolean generateMipmaps,
@@ -45,20 +45,20 @@ public class MttTexturedQuad2D extends MttComponent {
             MttVertex2DUV p3,
             MttVertex2DUV p4,
             float z) throws FileNotFoundException {
-        super(vulkanInstance);
+        super(vulkanImpl);
 
         if (!Files.exists(Paths.get(textureResource))) {
             throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
         }
 
         var vertices = this.createVertices(p1, p2, p3, p4, z);
-        vkTexturedQuad = vulkanInstance.createTexturedQuad(screenName, textureResource, generateMipmaps, vertices);
+        vkTexturedQuad = vulkanImpl.createTexturedQuad(screenName, textureResource, generateMipmaps, vertices);
         vkTexturedQuad.setTwoDComponent(true);
         this.associateVulkanComponent(vkTexturedQuad);
     }
 
     public MttTexturedQuad2D(
-            MttVulkanInstance vulkanInstance,
+            MttVulkanImpl vulkanImpl,
             String screenName,
             MttTexture texture,
             MttVertex2DUV p1,
@@ -66,26 +66,26 @@ public class MttTexturedQuad2D extends MttComponent {
             MttVertex2DUV p3,
             MttVertex2DUV p4,
             float z) {
-        super(vulkanInstance);
+        super(vulkanImpl);
 
         var vertices = this.createVertices(p1, p2, p3, p4, z);
-        vkTexturedQuad = vulkanInstance.createTexturedQuad(screenName, texture.getVulkanTexture(), vertices);
+        vkTexturedQuad = vulkanImpl.createTexturedQuad(screenName, texture.getVulkanTexture(), vertices);
         vkTexturedQuad.setTwoDComponent(true);
         this.associateVulkanComponent(vkTexturedQuad);
     }
 
     public MttTexturedQuad2D(
-            MttVulkanInstance vulkanInstance,
+            MttVulkanImpl vulkanImpl,
             MttTexturedQuad2D srcQuad,
             MttVertex2DUV p1,
             MttVertex2DUV p2,
             MttVertex2DUV p3,
             MttVertex2DUV p4,
             float z) {
-        super(vulkanInstance);
+        super(vulkanImpl);
 
         var vertices = this.createVertices(p1, p2, p3, p4, z);
-        vkTexturedQuad = vulkanInstance.duplicateTexturedQuad(srcQuad.vkTexturedQuad, vertices);
+        vkTexturedQuad = vulkanImpl.duplicateTexturedQuad(srcQuad.vkTexturedQuad, vertices);
         vkTexturedQuad.setTwoDComponent(true);
         this.associateVulkanComponent(vkTexturedQuad);
     }

@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttFont;
 import org.joml.Vector2fc;
 
@@ -23,15 +23,15 @@ public class MttFont extends MttComponent {
     private VkMttFont vkMttFont;
 
     public MttFont(
-            MttVulkanInstance vulkanInstance,
+            MttVulkanImpl vulkanImpl,
             String screenName,
             Font font,
             boolean antiAlias,
             Color fontColor,
             String requiredChars) {
-        super(vulkanInstance);
+        super(vulkanImpl);
 
-        vkMttFont = vulkanInstance.createFont(screenName, font, antiAlias, fontColor, requiredChars);
+        vkMttFont = vulkanImpl.createFont(screenName, font, antiAlias, fontColor, requiredChars);
         vkMttFont.setTwoDComponent(true);
         this.associateVulkanComponent(vkMttFont);
     }

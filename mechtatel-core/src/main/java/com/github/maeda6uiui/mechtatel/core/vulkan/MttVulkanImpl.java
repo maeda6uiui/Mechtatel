@@ -44,12 +44,12 @@ import static org.lwjgl.vulkan.KHRSurface.vkDestroySurfaceKHR;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Provides functionality relating to Vulkan
+ * Provides Mechtatel functionality implemented with Vulkan
  *
  * @author maeda6uiui
  */
-public class MttVulkanInstance
-        implements IMttVulkanInstanceForComponent, IMttVulkanInstanceForTexture, IMttVulkanInstanceForScreen {
+public class MttVulkanImpl
+        implements IMttVulkanImplForComponent, IMttVulkanImplForTexture, IMttVulkanImplForScreen {
     private static final int MAX_FRAMES_IN_FLIGHT = 2;
 
     private VkInstance instance;
@@ -154,7 +154,7 @@ public class MttVulkanInstance
         System.load(shadercLibFilepath);
     }
 
-    public MttVulkanInstance(long window, MttSettings.VulkanSettings vulkanSettings) {
+    public MttVulkanImpl(long window, MttSettings.VulkanSettings vulkanSettings) {
         this.loadShadercLib();
 
         instance = InstanceCreator.createInstance(

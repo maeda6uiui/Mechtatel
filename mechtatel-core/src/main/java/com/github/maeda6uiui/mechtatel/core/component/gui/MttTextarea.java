@@ -7,7 +7,7 @@ import com.github.maeda6uiui.mechtatel.core.component.MttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.KeyInterpreter;
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
 import com.github.maeda6uiui.mechtatel.core.text.TextUtil;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
@@ -170,11 +170,11 @@ public class MttTextarea extends MttGuiComponent {
 
     private boolean visible;
 
-    public MttTextarea(MttVulkanInstance vulkanInstance, MttTextareaCreateInfo createInfo) {
-        super(vulkanInstance, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
+    public MttTextarea(MttVulkanImpl vulkanImpl, MttTextareaCreateInfo createInfo) {
+        super(vulkanImpl, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         frame = new MttQuad2D(
-                vulkanInstance,
+                vulkanImpl,
                 new Vector2f(createInfo.x, createInfo.y),
                 new Vector2f(createInfo.x + createInfo.width, createInfo.y + createInfo.height),
                 0.0f,
@@ -183,7 +183,7 @@ public class MttTextarea extends MttGuiComponent {
         );
 
         caret = new MttLine2D(
-                vulkanInstance,
+                vulkanImpl,
                 new MttVertex2D(
                         new Vector2f(createInfo.x + createInfo.caretMarginX, createInfo.y + createInfo.caretMarginY),
                         convertJavaColorToJOMLVector4f(createInfo.caretColor)
@@ -199,7 +199,7 @@ public class MttTextarea extends MttGuiComponent {
         );
 
         font = new MttFont(
-                vulkanInstance,
+                vulkanImpl,
                 "default",
                 new Font(createInfo.fontName, createInfo.fontStyle, createInfo.fontSize),
                 true,

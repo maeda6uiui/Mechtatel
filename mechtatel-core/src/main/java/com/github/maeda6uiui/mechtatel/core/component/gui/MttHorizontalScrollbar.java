@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
@@ -69,11 +69,11 @@ public class MttHorizontalScrollbar extends MttGuiComponent {
     private float prevFCursorX;
     private boolean grabbed;
 
-    public MttHorizontalScrollbar(MttVulkanInstance vulkanInstance, MttHorizontalScrollbarCreateInfo createInfo) {
-        super(vulkanInstance, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
+    public MttHorizontalScrollbar(MttVulkanImpl vulkanImpl, MttHorizontalScrollbarCreateInfo createInfo) {
+        super(vulkanImpl, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         frame = new MttQuad2D(
-                vulkanInstance,
+                vulkanImpl,
                 new Vector2f(createInfo.x, createInfo.y),
                 new Vector2f(createInfo.x + createInfo.width, createInfo.y + createInfo.height),
                 0.0f,
@@ -81,7 +81,7 @@ public class MttHorizontalScrollbar extends MttGuiComponent {
                 convertJavaColorToJOMLVector4f(createInfo.frameColor)
         );
         grabFrame = new MttQuad2D(
-                vulkanInstance,
+                vulkanImpl,
                 new Vector2f(createInfo.x, createInfo.y),
                 new Vector2f(createInfo.x + createInfo.grabWidth, createInfo.y + createInfo.height),
                 0.01f,
@@ -90,7 +90,7 @@ public class MttHorizontalScrollbar extends MttGuiComponent {
         );
 
         frame.setDrawOrder(1);
-        vulkanInstance.sortComponents();
+        vulkanImpl.sortComponents();
 
         grabTopLeft = new Vector2f(createInfo.x, createInfo.y);
         grabBottomRight = new Vector2f(createInfo.x + createInfo.grabWidth, createInfo.y + createInfo.height);

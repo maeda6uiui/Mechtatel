@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.texture;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanInstanceForTexture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplForTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 
 import java.io.FileNotFoundException;
@@ -20,7 +20,7 @@ public class MttTexture {
     }
 
     private VkMttTexture texture;
-    private IMttVulkanInstanceForTexture vulkanInstance;
+    private IMttVulkanImplForTexture vulkanImpl;
 
     public static void setImageFormat(ImageFormat imageFormat) {
         switch (imageFormat) {
@@ -31,7 +31,7 @@ public class MttTexture {
     }
 
     public MttTexture(
-            IMttVulkanInstanceForTexture vulkanInstance,
+            IMttVulkanImplForTexture vulkanImpl,
             String screenName,
             URI textureResource,
             boolean generateMipmaps) throws FileNotFoundException {
@@ -39,34 +39,34 @@ public class MttTexture {
             throw new FileNotFoundException("Specified texture file does not exist: " + textureResource.getPath());
         }
 
-        texture = vulkanInstance.createTexture(screenName, textureResource, generateMipmaps);
-        this.vulkanInstance = vulkanInstance;
+        texture = vulkanImpl.createTexture(screenName, textureResource, generateMipmaps);
+        this.vulkanImpl = vulkanImpl;
     }
 
     public MttTexture(
-            IMttVulkanInstanceForTexture vulkanInstance,
+            IMttVulkanImplForTexture vulkanImpl,
             String srcScreenName,
             String dstScreenName,
             String textureType) {
         if (textureType.equals("color")) {
-            texture = vulkanInstance.texturizeColorOfScreen(srcScreenName, dstScreenName);
+            texture = vulkanImpl.texturizeColorOfScreen(srcScreenName, dstScreenName);
         } else if (textureType.equals("depth")) {
-            texture = vulkanInstance.texturizeDepthOfScreen(srcScreenName, dstScreenName);
+            texture = vulkanImpl.texturizeDepthOfScreen(srcScreenName, dstScreenName);
         } else {
             throw new RuntimeException("Unsupported texture type");
         }
 
-        this.vulkanInstance = vulkanInstance;
+        this.vulkanImpl = vulkanImpl;
     }
 
-    public MttTexture(IMttVulkanInstanceForTexture vulkanInstance, VkMttTexture texture) {
+    public MttTexture(IMttVulkanImplForTexture vulkanImpl, VkMttTexture texture) {
         this.texture = texture;
-        this.vulkanInstance = vulkanInstance;
+        this.vulkanImpl = vulkanImpl;
     }
 
     public void cleanup() {
         texture.cleanup();
-        vulkanInstance.removeTexture(texture);
+        vulkanImpl.removeTexture(texture);
     }
 
     public VkMttTexture getVulkanTexture() {

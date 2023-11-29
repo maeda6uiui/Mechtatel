@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttTexturedQuad;
 
 import java.io.FileNotFoundException;
@@ -19,7 +19,7 @@ public class MttTexturedQuad extends MttComponent {
     private VkMttTexturedQuad vkTexturedQuad;
 
     public MttTexturedQuad(
-            MttVulkanInstance vulkanInstance,
+            MttVulkanImpl vulkanImpl,
             String screenName,
             URI textureResource,
             boolean generateMipmaps,
@@ -27,7 +27,7 @@ public class MttTexturedQuad extends MttComponent {
             MttVertex3DUV v2,
             MttVertex3DUV v3,
             MttVertex3DUV v4) throws FileNotFoundException {
-        super(vulkanInstance);
+        super(vulkanImpl);
 
         if (!Files.exists(Paths.get(textureResource))) {
             throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
@@ -39,19 +39,19 @@ public class MttTexturedQuad extends MttComponent {
         vertices.add(v3);
         vertices.add(v4);
 
-        vkTexturedQuad = vulkanInstance.createTexturedQuad(screenName, textureResource, generateMipmaps, vertices);
+        vkTexturedQuad = vulkanImpl.createTexturedQuad(screenName, textureResource, generateMipmaps, vertices);
         this.associateVulkanComponent(vkTexturedQuad);
     }
 
     public MttTexturedQuad(
-            MttVulkanInstance vulkanInstance,
+            MttVulkanImpl vulkanImpl,
             String screenName,
             MttTexture texture,
             MttVertex3DUV v1,
             MttVertex3DUV v2,
             MttVertex3DUV v3,
             MttVertex3DUV v4) {
-        super(vulkanInstance);
+        super(vulkanImpl);
 
         var vertices = new ArrayList<MttVertex3DUV>();
         vertices.add(v1);
@@ -59,18 +59,18 @@ public class MttTexturedQuad extends MttComponent {
         vertices.add(v3);
         vertices.add(v4);
 
-        vkTexturedQuad = vulkanInstance.createTexturedQuad(screenName, texture.getVulkanTexture(), vertices);
+        vkTexturedQuad = vulkanImpl.createTexturedQuad(screenName, texture.getVulkanTexture(), vertices);
         this.associateVulkanComponent(vkTexturedQuad);
     }
 
     public MttTexturedQuad(
-            MttVulkanInstance vulkanInstance,
+            MttVulkanImpl vulkanImpl,
             MttTexturedQuad srcQuad,
             MttVertex3DUV v1,
             MttVertex3DUV v2,
             MttVertex3DUV v3,
             MttVertex3DUV v4) {
-        super(vulkanInstance);
+        super(vulkanImpl);
 
         var vertices = new ArrayList<MttVertex3DUV>();
         vertices.add(v1);
@@ -78,7 +78,7 @@ public class MttTexturedQuad extends MttComponent {
         vertices.add(v3);
         vertices.add(v4);
 
-        vkTexturedQuad = vulkanInstance.duplicateTexturedQuad(srcQuad.vkTexturedQuad, vertices);
+        vkTexturedQuad = vulkanImpl.duplicateTexturedQuad(srcQuad.vkTexturedQuad, vertices);
         this.associateVulkanComponent(vkTexturedQuad);
     }
 

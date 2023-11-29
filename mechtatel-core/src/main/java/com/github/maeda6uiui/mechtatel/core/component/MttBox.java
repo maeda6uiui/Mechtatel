@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Vector3f;
 import org.joml.Vector4fc;
 
@@ -40,15 +40,15 @@ public class MttBox extends MttComponent {
         lineSet.createBuffer();
     }
 
-    public MttBox(MttVulkanInstance vulkanInstance, float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
-        super(vulkanInstance);
+    public MttBox(MttVulkanImpl vulkanImpl, float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
+        super(vulkanImpl);
 
-        lineSet = new MttLineSet(vulkanInstance);
+        lineSet = new MttLineSet(vulkanImpl);
         this.setupLineSet(xHalfExtent, yHalfExtent, zHalfExtent, color);
         this.associateVulkanComponent(lineSet.getVulkanComponent());
     }
 
-    public MttBox(MttVulkanInstance vulkanInstance, float halfExtent, Vector4fc color) {
-        this(vulkanInstance, halfExtent, halfExtent, halfExtent, color);
+    public MttBox(MttVulkanImpl vulkanImpl, float halfExtent, Vector4fc color) {
+        this(vulkanImpl, halfExtent, halfExtent, halfExtent, color);
     }
 }

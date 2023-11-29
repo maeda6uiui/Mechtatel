@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.component;
 
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttModel;
 
 import java.io.IOException;
@@ -19,19 +19,19 @@ public class MttModel extends MttComponent {
     private URI modelResource;
     private VkMttModel vkModel;
 
-    public MttModel(MttVulkanInstance vulkanInstance, String screenName, URI modelResource) throws IOException {
-        super(vulkanInstance);
+    public MttModel(MttVulkanImpl vulkanImpl, String screenName, URI modelResource) throws IOException {
+        super(vulkanImpl);
 
         this.modelResource = modelResource;
-        vkModel = vulkanInstance.createModel(screenName, modelResource);
+        vkModel = vulkanImpl.createModel(screenName, modelResource);
         this.associateVulkanComponent(vkModel);
     }
 
-    public MttModel(MttVulkanInstance vulkanInstance, MttModel srcModel) {
-        super(vulkanInstance);
+    public MttModel(MttVulkanImpl vulkanImpl, MttModel srcModel) {
+        super(vulkanImpl);
 
         this.modelResource = srcModel.modelResource;
-        vkModel = vulkanInstance.duplicateModel(srcModel.vkModel);
+        vkModel = vulkanImpl.duplicateModel(srcModel.vkModel);
         this.associateVulkanComponent(vkModel);
     }
 

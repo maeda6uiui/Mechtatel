@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttLine;
 
 /**
@@ -11,10 +11,10 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttLine;
 public class MttLine extends MttComponent {
     private VkMttLine vkLine;
 
-    public MttLine(MttVulkanInstance vulkanInstance, MttVertex3D v1, MttVertex3D v2) {
-        super(vulkanInstance);
+    public MttLine(MttVulkanImpl vulkanImpl, MttVertex3D v1, MttVertex3D v2) {
+        super(vulkanImpl);
 
-        vkLine = vulkanInstance.createLine(v1, v2);
+        vkLine = vulkanImpl.createLine(v1, v2);
         this.associateVulkanComponent(vkLine);
     }
 }

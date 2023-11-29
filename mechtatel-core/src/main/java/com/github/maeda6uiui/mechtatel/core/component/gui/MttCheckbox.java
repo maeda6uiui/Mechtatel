@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.component.MttLine2DSet;
 import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Vector2f;
 
 import java.awt.*;
@@ -125,22 +125,22 @@ public class MttCheckbox extends MttGuiComponent {
 
     private boolean selected;
 
-    public MttCheckbox(MttVulkanInstance vulkanInstance, MttCheckboxCreateInfo createInfo) {
-        super(vulkanInstance, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
+    public MttCheckbox(MttVulkanImpl vulkanImpl, MttCheckboxCreateInfo createInfo) {
+        super(vulkanImpl, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         checkboxTopLeft = new Vector2f(createInfo.boxX, createInfo.boxY);
         checkboxBottomRight = new Vector2f(
                 createInfo.boxX + createInfo.boxWidth, createInfo.boxY + createInfo.boxHeight);
 
         checkboxFrame = new MttQuad2D(
-                vulkanInstance,
+                vulkanImpl,
                 checkboxTopLeft,
                 checkboxBottomRight,
                 0.0f,
                 false,
                 convertJavaColorToJOMLVector4f(createInfo.checkboxColor)
         );
-        checkboxCross = new MttLine2DSet(vulkanInstance);
+        checkboxCross = new MttLine2DSet(vulkanImpl);
         checkboxCross.add(
                 checkboxTopLeft,
                 checkboxBottomRight,
@@ -156,7 +156,7 @@ public class MttCheckbox extends MttGuiComponent {
         checkboxCross.createBuffer();
 
         font = new MttFont(
-                vulkanInstance,
+                vulkanImpl,
                 "default",
                 new Font(createInfo.fontName, createInfo.fontStyle, createInfo.fontSize),
                 true,

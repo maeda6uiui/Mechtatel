@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttTexturedQuadSingleTextureSet;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
@@ -22,24 +22,24 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
     private VkMttTexturedQuadSingleTextureSet vkTexturedQuadSet;
 
     public MttTexturedQuad2DSingleTextureSet(
-            MttVulkanInstance vulkanInstance, String screenName, URI textureResource) throws FileNotFoundException {
-        super(vulkanInstance);
+            MttVulkanImpl vulkanImpl, String screenName, URI textureResource) throws FileNotFoundException {
+        super(vulkanImpl);
 
         if (!Files.exists(Paths.get(textureResource))) {
             throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
         }
 
-        vkTexturedQuadSet = vulkanInstance.createTexturedQuadSingleTextureSet(screenName, textureResource);
+        vkTexturedQuadSet = vulkanImpl.createTexturedQuadSingleTextureSet(screenName, textureResource);
         this.associateVulkanComponent(vkTexturedQuadSet);
     }
 
     public MttTexturedQuad2DSingleTextureSet(
-            MttVulkanInstance vulkanInstance,
+            MttVulkanImpl vulkanImpl,
             String screenName,
             MttTexture texture) {
-        super(vulkanInstance);
+        super(vulkanImpl);
 
-        vkTexturedQuadSet = vulkanInstance.createTexturedQuadSingleTextureSet(screenName, texture.getVulkanTexture());
+        vkTexturedQuadSet = vulkanImpl.createTexturedQuadSingleTextureSet(screenName, texture.getVulkanTexture());
         this.associateVulkanComponent(vkTexturedQuadSet);
     }
 

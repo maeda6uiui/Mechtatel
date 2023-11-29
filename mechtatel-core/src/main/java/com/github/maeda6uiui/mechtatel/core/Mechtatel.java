@@ -108,53 +108,58 @@ public class Mechtatel implements IMechtatelForMttWindow {
 
         windows = new ArrayList<>();
         newWindowsQueue = new ArrayList<>();
-        try {
-            //Create a primary window
-            var window = new MttWindow(this, settings);
-            windows.add(window);
-            logger.info("Primary window successfully created");
 
-            //Start the main loop
-            logger.info("Start the main loop...");
-            this.run();
+        try {
+            var primaryWindow = new MttWindow(this, settings);
+            windows.add(primaryWindow);
+            logger.info("Primary window successfully created");
         } catch (Exception e) {
             logger.error("Fatal error", e);
-        } finally {
-            logger.info("Exiting the Mechtatel engine...");
             glfwTerminate();
+
+            return;
         }
+
+        logger.info("Mechtatel engine successfully started");
     }
 
     public void run() {
         double lastTime = 0.0;
         glfwSetTime(0.0);
 
+        logger.info("Starting the main loop...");
+
         while (!windows.isEmpty()) {
             double currentTime = glfwGetTime();
             double elapsedTime = currentTime - lastTime;
-
-            Iterator<MttWindow> it = windows.iterator();
-            while (it.hasNext()) {
-                MttWindow window = it.next();
-                if (window.shouldClose()) {
-                    window.cleanup();
-                    it.remove();
+            if (elapsedTime >= 1.0 / fps) {
+                Iterator<MttWindow> it = windows.iterator();
+                while (it.hasNext()) {
+                    MttWindow window = it.next();
+                    if (window.shouldClose()) {
+                        window.cleanup();
+                        it.remove();
+                    }
                 }
+
+                windows.forEach(window -> {
+                    window.update(elapsedTime);
+                    window.draw();
+                });
+                if (!newWindowsQueue.isEmpty()) {
+                    windows.addAll(newWindowsQueue);
+                    newWindowsQueue.clear();
+                }
+
+                lastTime = glfwGetTime();
             }
 
-            windows.forEach(window -> {
-                window.update(elapsedTime);
-                window.draw();
-            });
-            if (!newWindowsQueue.isEmpty()) {
-                windows.addAll(newWindowsQueue);
-                newWindowsQueue.clear();
-            }
-
-            lastTime = glfwGetTime();
+            glfwPollEvents();
         }
 
-        glfwPollEvents();
+        logger.info("Exiting the Mechtatel engine...");
+
+        glfwTerminate();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.creator;
 
+import com.github.maeda6uiui.mechtatel.core.EngineInfo;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.PointerBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
@@ -48,8 +49,9 @@ public class InstanceCreator {
             vkAppInfo.pApplicationName(stack.UTF8Safe(appInfo.name));
             vkAppInfo.applicationVersion(VK_MAKE_VERSION(
                     appInfo.majorVersion, appInfo.minorVersion, appInfo.patchVersion));
-            vkAppInfo.pEngineName(stack.UTF8Safe("Mechtatel"));
-            vkAppInfo.engineVersion(VK_MAKE_VERSION(0, 0, 1));
+            vkAppInfo.pEngineName(stack.UTF8Safe(EngineInfo.NAME));
+            vkAppInfo.engineVersion(VK_MAKE_VERSION(
+                    EngineInfo.MAJOR_VERSION, EngineInfo.MINOR_VERSION, EngineInfo.PATCH_VERSION));
             vkAppInfo.apiVersion(VK_API_VERSION_1_0);
 
             VkInstanceCreateInfo createInfo = VkInstanceCreateInfo.calloc(stack);

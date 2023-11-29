@@ -5,7 +5,10 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttTexturedQuad;
 import org.joml.Vector3f;
 
+import java.io.FileNotFoundException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,8 +44,12 @@ public class MttTexturedQuad2D extends MttComponent {
             MttVertex2DUV p2,
             MttVertex2DUV p3,
             MttVertex2DUV p4,
-            float z) {
+            float z) throws FileNotFoundException {
         super(vulkanInstance);
+
+        if (!Files.exists(Paths.get(textureResource))) {
+            throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
+        }
 
         var vertices = this.createVertices(p1, p2, p3, p4, z);
         vkTexturedQuad = vulkanInstance.createTexturedQuad(screenName, textureResource, generateMipmaps, vertices);

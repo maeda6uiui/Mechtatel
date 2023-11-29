@@ -8,7 +8,10 @@ import org.joml.Vector2fc;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import java.io.FileNotFoundException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Set of 2D textured quadrangles with a single texture
@@ -19,8 +22,12 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
     private VkMttTexturedQuadSingleTextureSet vkTexturedQuadSet;
 
     public MttTexturedQuad2DSingleTextureSet(
-            MttVulkanInstance vulkanInstance, String screenName, URI textureResource) {
+            MttVulkanInstance vulkanInstance, String screenName, URI textureResource) throws FileNotFoundException {
         super(vulkanInstance);
+
+        if (!Files.exists(Paths.get(textureResource))) {
+            throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
+        }
 
         vkTexturedQuadSet = vulkanInstance.createTexturedQuadSingleTextureSet(screenName, textureResource);
         this.associateVulkanComponent(vkTexturedQuadSet);

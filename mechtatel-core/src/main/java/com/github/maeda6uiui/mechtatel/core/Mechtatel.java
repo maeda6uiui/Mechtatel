@@ -156,6 +156,7 @@ public class Mechtatel implements IMechtatelForMttWindow {
 
         logger.info("Exiting the Mechtatel engine...");
 
+        MttVulkanInstance.get().ifPresent(MttVulkanInstance::cleanup);
         glfwTerminate();
     }
 

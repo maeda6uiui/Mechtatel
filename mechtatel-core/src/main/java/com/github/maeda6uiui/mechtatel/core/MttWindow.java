@@ -14,48 +14,45 @@ import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
-import com.jme3.system.NativeLibraryLoader;
+import jakarta.validation.constraints.NotNull;
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
-import org.lwjgl.openal.AL;
-import org.lwjgl.openal.ALC;
-import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.system.MemoryStack;
 
 import java.awt.*;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.openal.ALC10.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
- * Provides abstraction of the low-level operations
+ * Window
  *
  * @author maeda6uiui
  */
-class MttInstance {
-    private IMechtatelForMttInstance mtt;
+public class MttWindow
+        implements IMttWindowForDrawPath, IMttWindowForScreenCreator, IMttWindowForSkyboxTextureCreator {
+    private IMechtatelForMttWindow mtt;
     private long window;
-    private int windowWidth;
-    private int windowHeight;
+    private int width;
+    private int height;
+    private String title;
+
     private Keyboard keyboard;
     private Mouse mouse;
     private boolean fixCursorFlag;
-    private MttVulkanInstance vulkanInstance;
 
-    private int fps;
+    private MttVulkanInstance vulkanInstance;
 
     private List<MttGuiComponent> guiComponents;
 
@@ -75,20 +72,20 @@ class MttInstance {
     private boolean mustRecreate;
 
     private void framebufferResizeCallback(long window, int width, int height) {
-        mtt.reshape(width, height);
+        mtt.reshape(this, width, height);
 
-        windowWidth = width;
-        windowHeight = height;
+        this.width = width;
+        this.height = height;
         mustRecreate = true;
     }
 
     private void keyCallback(long window, int key, int scancode, int action, int mods) {
-        boolean pressingFlag = (action == GLFW_PRESS || action == GLFW_REPEAT) ? true : false;
+        boolean pressingFlag = action == GLFW_PRESS || action == GLFW_REPEAT;
         keyboard.setPressingFlag(key, pressingFlag);
     }
 
     private void mouseButtonCallback(long window, int button, int action, int mods) {
-        boolean pressingFlag = (action == GLFW_PRESS) ? true : false;
+        boolean pressingFlag = action == GLFW_PRESS;
         mouse.setPressingFlag(button, pressingFlag);
     }
 
@@ -100,30 +97,32 @@ class MttInstance {
         }
     }
 
-    public MttInstance(IMechtatelForMttInstance mtt, MttSettings settings) {
-        if (!glfwInit()) {
-            throw new RuntimeException("Failed to initialize GLFW");
-        }
-
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        if (settings.windowSettings.resizable) {
-            glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-        } else {
-            glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-        }
-
-        window = glfwCreateWindow(
+    public MttWindow(IMechtatelForMttWindow mtt, MttSettings settings) {
+        this(
+                mtt,
+                settings,
                 settings.windowSettings.width,
                 settings.windowSettings.height,
-                settings.windowSettings.title,
-                NULL,
-                NULL);
+                settings.windowSettings.title
+        );
+    }
+
+    public MttWindow(
+            IMechtatelForMttWindow mtt,
+            MttSettings settings,
+            int width,
+            int height,
+            String title) {
+        this.mtt = mtt;
+
+        window = glfwCreateWindow(width, height, title, NULL, NULL);
         if (window == NULL) {
             throw new RuntimeException("Failed to create a window");
         }
 
-        this.windowWidth = settings.windowSettings.width;
-        this.windowHeight = settings.windowSettings.height;
+        this.width = width;
+        this.height = height;
+        this.title = title;
 
         keyboard = new Keyboard();
         mouse = new Mouse();
@@ -136,26 +135,12 @@ class MttInstance {
 
         vulkanInstance = new MttVulkanInstance(window, settings.vulkanSettings);
 
-        this.fps = settings.systemSettings.fps;
-
-        MttTexture.setImageFormat(settings.renderingSettings.imageFormat);
-
-        this.mtt = mtt;
-
         guiComponents = new ArrayList<>();
 
         physicalObjects = new ArrayList<>();
         physicsSimulationTimeScale = 1.0f;
 
-        NativeLibraryLoader.loadLibbulletjme(
-                true,
-                new File(Objects.requireNonNull(this.getClass().getResource("/Bin")).getFile()),
-                "Release",
-                "Sp"
-        );
-
         screens = new HashMap<>();
-
         MttScreen defaultScreen = this.createScreen(
                 "default",
                 2048,
@@ -181,140 +166,112 @@ class MttInstance {
 
         animations = new HashMap<>();
 
-        //Set up OpenAL
-        long alcDevice = alcOpenDevice((ByteBuffer) null);
-        if (alcDevice == 0) {
-            throw new RuntimeException("Failed to open default OpenAL device");
-        }
-        ALCCapabilities deviceCaps = ALC.createCapabilities(alcDevice);
-
-        long alcContext = alcCreateContext(alcDevice, (IntBuffer) null);
-        if (alcContext == 0) {
-            throw new RuntimeException("Failed to create OpenAL context");
-        }
-
-        alcMakeContextCurrent(alcContext);
-        AL.createCapabilities(deviceCaps);
-
         sounds3D = new ArrayList<>();
 
         mustRecreate = false;
     }
 
-    public void run() {
-        double lastTime = 0.0;
-        glfwSetTime(0.0);
+    public void update(double elapsedTime) {
+        keyboard.update();
+        mouse.update();
 
-        mtt.init();
-
-        while (!glfwWindowShouldClose(window)) {
-            double currentTime = glfwGetTime();
-            double elapsedTime = currentTime - lastTime;
-
-            if (elapsedTime >= 1.0 / fps) {
-                keyboard.update();
-                mouse.update();
-
-                if (mustRecreate) {
-                    vulkanInstance.recreateResourcesOnResize(window);
-                    for (var screen : screens.values()) {
-                        if (screen.shouldAutoUpdateCameraAspect()) {
-                            screen.getCamera().getPerspectiveCameraInfo().aspect
-                                    = (float) windowWidth / (float) windowHeight;
-                        }
-                    }
-
-                    mustRecreate = false;
+        if (mustRecreate) {
+            vulkanInstance.recreateResourcesOnResize(window);
+            for (var screen : screens.values()) {
+                if (screen.shouldAutoUpdateCameraAspect()) {
+                    screen.getCamera().getPerspectiveCameraInfo().aspect
+                            = (float) width / (float) height;
                 }
-
-                mtt.update();
-
-                Map<String, Integer> keyboardPressingCounts = keyboard.getPressingCounts();
-                guiComponents.forEach(guiComponent -> {
-                    guiComponent.update(
-                            this.getCursorPosX(),
-                            this.getCursorPosY(),
-                            this.getWindowWidth(),
-                            this.getWindowHeight(),
-                            this.getMousePressingCount("BUTTON_LEFT"),
-                            this.getMousePressingCount("BUTTON_MIDDLE"),
-                            this.getMousePressingCount("BUTTON_RIGHT"),
-                            keyboardPressingCounts
-                    );
-                });
-                physicalObjects.forEach(physicalObject -> {
-                    physicalObject.updateObject();
-                });
-                PhysicalObject.updatePhysicsSpace((float) elapsedTime, physicsSimulationTimeScale);
-
-                animations.forEach((k, v) -> v.update());
-
-                for (var screenName : screenDrawOrder) {
-                    mtt.preDraw(screenName);
-
-                    MttScreen screen = screens.get(screenName);
-                    screen.draw();
-
-                    mtt.postDraw(screenName);
-                }
-                for (var textureOperationName : textureOperationOrder) {
-                    mtt.preTextureOperation(textureOperationName);
-                    vulkanInstance.runTextureOperations(textureOperationName);
-                    mtt.postTextureOperation(textureOperationName);
-                }
-                for (var screenName : deferredScreenDrawOrder) {
-                    mtt.preDeferredDraw(screenName);
-
-                    MttScreen screen = screens.get(screenName);
-                    screen.draw();
-
-                    mtt.postDeferredDraw(screenName);
-                }
-
-                mtt.prePresent();
-                vulkanInstance.presentToFrontScreen(presentScreenName);
-                mtt.postPresent();
-
-                lastTime = glfwGetTime();
             }
 
-            glfwPollEvents();
+            mustRecreate = false;
         }
+
+        Map<String, Integer> keyboardPressingCounts = keyboard.getPressingCounts();
+        guiComponents.forEach(guiComponent -> {
+            guiComponent.update(
+                    this.getCursorPosX(),
+                    this.getCursorPosY(),
+                    this.getWidth(),
+                    this.getHeight(),
+                    this.getMousePressingCount("BUTTON_LEFT"),
+                    this.getMousePressingCount("BUTTON_MIDDLE"),
+                    this.getMousePressingCount("BUTTON_RIGHT"),
+                    keyboardPressingCounts
+            );
+        });
+        physicalObjects.forEach(PhysicalObject::updateObject);
+        PhysicalObject.updatePhysicsSpace((float) elapsedTime, physicsSimulationTimeScale);
+
+        animations.forEach((k, v) -> v.update());
+
+        mtt.update(this);
+    }
+
+    public void draw() {
+        for (var screenName : screenDrawOrder) {
+            mtt.preDraw(this, screenName);
+
+            MttScreen screen = screens.get(screenName);
+            screen.draw();
+
+            mtt.postDraw(this, screenName);
+        }
+        for (var textureOperationName : textureOperationOrder) {
+            mtt.preTextureOperation(this, textureOperationName);
+            vulkanInstance.runTextureOperations(textureOperationName);
+            mtt.postTextureOperation(this, textureOperationName);
+        }
+        for (var screenName : deferredScreenDrawOrder) {
+            mtt.preDeferredDraw(this, screenName);
+
+            MttScreen screen = screens.get(screenName);
+            screen.draw();
+
+            mtt.postDeferredDraw(this, screenName);
+        }
+
+        mtt.prePresent(this);
+        vulkanInstance.presentToFrontScreen(presentScreenName);
+        mtt.postPresent(this);
     }
 
     public void cleanup() {
-        mtt.dispose();
+        mtt.dispose(this);
         vulkanInstance.cleanup();
-        physicalObjects.forEach(physicalObject -> {
-            physicalObject.cleanup();
-        });
-        sounds3D.forEach(sound -> {
-            sound.cleanup();
-        });
+        physicalObjects.forEach(PhysicalObject::cleanup);
+        sounds3D.forEach(MttSound::cleanup);
 
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
-        glfwTerminate();
     }
 
     public void closeWindow() {
         glfwSetWindowShouldClose(window, true);
     }
 
-    public int getWindowWidth() {
-        return windowWidth;
+    public void showWindow() {
+        glfwShowWindow(window);
     }
 
-    public int getWindowHeight() {
-        return windowHeight;
+    public void hideWindow() {
+        glfwHideWindow(window);
     }
 
-    public int getFPS() {
-        return fps;
+    public boolean shouldClose() {
+        return glfwWindowShouldClose(window);
     }
 
-    public float getSecondsPerFrame() {
-        return 1.0f / fps;
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public int getKeyboardPressingCount(String key) {
@@ -345,8 +302,12 @@ class MttInstance {
         glfwSetCursorPos(window, x, y);
     }
 
-    public void setFixCursorFlag(boolean fixCursorFlag) {
-        this.fixCursorFlag = fixCursorFlag;
+    public void fixCursor() {
+        fixCursorFlag = true;
+    }
+
+    public void unfixCursor() {
+        fixCursorFlag = false;
     }
 
     public void setCursorMode(CursorMode cursorMode) {
@@ -362,8 +323,8 @@ class MttInstance {
         vulkanInstance.sortComponents();
     }
 
-    public MttModel createModel(String screenName, URI modelResource) throws IOException {
-        var model = new MttModel(vulkanInstance, screenName, modelResource);
+    public MttModel createModel(String screenName, @NotNull URL modelResource) throws URISyntaxException, IOException {
+        var model = new MttModel(vulkanInstance, screenName, modelResource.toURI());
         return model;
     }
 
@@ -426,16 +387,16 @@ class MttInstance {
 
     public MttTexturedQuad createTexturedQuad(
             String screenName,
-            URI textureResource,
+            @NotNull URL textureResource,
             boolean generateMipmaps,
             MttVertex3DUV v1,
             MttVertex3DUV v2,
             MttVertex3DUV v3,
-            MttVertex3DUV v4) {
+            MttVertex3DUV v4) throws URISyntaxException, FileNotFoundException {
         var texturedQuad = new MttTexturedQuad(
                 vulkanInstance,
                 screenName,
-                textureResource,
+                textureResource.toURI(),
                 generateMipmaps,
                 v1,
                 v2,
@@ -479,15 +440,17 @@ class MttInstance {
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
-            String screenName, URI textureResource,
-            MttVertex2DUV p1, MttVertex2DUV p2, MttVertex2DUV p3, MttVertex2DUV p4, float z) {
+            String screenName, @NotNull URL textureResource,
+            MttVertex2DUV p1, MttVertex2DUV p2, MttVertex2DUV p3, MttVertex2DUV p4, float z)
+            throws URISyntaxException, FileNotFoundException {
         var texturedQuad = new MttTexturedQuad2D(
-                vulkanInstance, screenName, textureResource, false, p1, p2, p3, p4, z);
+                vulkanInstance, screenName, textureResource.toURI(), false, p1, p2, p3, p4, z);
         return texturedQuad;
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
-            String screenName, MttTexture texture, MttVertex2DUV p1, MttVertex2DUV p2, MttVertex2DUV p3, MttVertex2DUV p4, float z) {
+            String screenName, MttTexture texture,
+            MttVertex2DUV p1, MttVertex2DUV p2, MttVertex2DUV p3, MttVertex2DUV p4, float z) {
         var texturedQuad = new MttTexturedQuad2D(vulkanInstance, screenName, texture, p1, p2, p3, p4, z);
         return texturedQuad;
     }
@@ -499,8 +462,9 @@ class MttInstance {
     }
 
     public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(
-            String screenName, URI textureResource) {
-        var texturedQuadSet = new MttTexturedQuad2DSingleTextureSet(vulkanInstance, screenName, textureResource);
+            String screenName, @NotNull URL textureResource) throws URISyntaxException, FileNotFoundException {
+        var texturedQuadSet = new MttTexturedQuad2DSingleTextureSet(
+                vulkanInstance, screenName, textureResource.toURI());
         return texturedQuadSet;
     }
 
@@ -568,7 +532,6 @@ class MttInstance {
     }
 
     public MttTextbox createTextbox(MttTextbox.MttTextboxCreateInfo createInfo) {
-        float secondsPerFrame = this.getSecondsPerFrame();
         var mttTextbox = new MttTextbox(vulkanInstance, createInfo);
         guiComponents.add(mttTextbox);
 
@@ -639,7 +602,7 @@ class MttInstance {
         this.physicsSimulationTimeScale = physicsSimulationTimeScale;
     }
 
-    public MttSound createSound(URL soundResource, boolean loop, boolean relative) throws URISyntaxException, IOException {
+    public MttSound createSound(@NotNull URL soundResource, boolean loop, boolean relative) throws URISyntaxException, IOException {
         var sound = new MttSound(soundResource.toURI(), loop, relative);
         sounds3D.add(sound);
 
@@ -664,8 +627,9 @@ class MttInstance {
     }
 
     public MttTexture createTexture(
-            String screenName, URI textureResource, boolean generateMipmaps) throws FileNotFoundException {
-        var texture = new MttTexture(vulkanInstance, screenName, textureResource, generateMipmaps);
+            String screenName, @NotNull URL textureResource, boolean generateMipmaps)
+            throws URISyntaxException, FileNotFoundException {
+        var texture = new MttTexture(vulkanInstance, screenName, textureResource.toURI(), generateMipmaps);
         return texture;
     }
 

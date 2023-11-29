@@ -14,7 +14,7 @@ import java.util.Map;
  * @author maeda6uiui
  */
 public class ScreenCreator {
-    private IMechtatelForScreenCreator mtt;
+    private IMttWindowForScreenCreator mtt;
 
     private String screenName;
     private int depthImageWidth;
@@ -29,7 +29,7 @@ public class ScreenCreator {
     private Map<String, FlexibleNaborInfo> flexibleNaborInfos;
     private List<String> ppNaborNames;
 
-    public ScreenCreator(IMechtatelForScreenCreator mtt, String screenName) {
+    public ScreenCreator(IMttWindowForScreenCreator mtt, String screenName) {
         this.mtt = mtt;
 
         this.screenName = screenName;

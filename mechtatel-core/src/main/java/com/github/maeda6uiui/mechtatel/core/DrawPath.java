@@ -9,14 +9,14 @@ import java.util.List;
  * @author maeda6uiui
  */
 public class DrawPath {
-    private IMechtatelForDrawPath mtt;
+    private IMttWindowForDrawPath mtt;
 
     private List<String> screenDrawOrder;
     private List<String> textureOperationOrder;
     private List<String> deferredScreenDrawOrder;
     private String presentScreenName;
 
-    public DrawPath(IMechtatelForDrawPath mtt) {
+    public DrawPath(IMttWindowForDrawPath mtt) {
         this.mtt = mtt;
 
         screenDrawOrder = new ArrayList<>();

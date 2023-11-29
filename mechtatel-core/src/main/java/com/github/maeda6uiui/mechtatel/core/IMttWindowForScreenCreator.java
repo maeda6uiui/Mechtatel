@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Interface to Mechtatel providing access to methods relating to screen creation
+ * Interface to {@link MttWindow} providing access to methods relating to screen creation
  *
  * @author maeda6uiui
  */
-public interface IMechtatelForScreenCreator {
+public interface IMttWindowForScreenCreator {
     MttScreen createScreen(
             String screenName,
             int depthImageWidth,

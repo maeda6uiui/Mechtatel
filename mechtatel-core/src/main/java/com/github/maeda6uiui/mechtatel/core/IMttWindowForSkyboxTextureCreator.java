@@ -7,11 +7,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
- * Interface to Mechtatel providing access to required methods for skybox texture creation
+ * Interface to {@link MttWindow} providing access to required methods for skybox texture creation
  *
  * @author maeda6uiui
  */
-public interface IMechtatelForSkyboxTextureCreator {
+public interface IMttWindowForSkyboxTextureCreator {
     MttTexture createTexture(String screenName, URL textureResource, boolean generateMipmaps)
             throws URISyntaxException, FileNotFoundException;
 }

@@ -23,7 +23,7 @@ public class SkyboxTextureCreator {
     private MttTexture texPz;
 
     public SkyboxTextureCreator(
-            IMechtatelForSkyboxTextureCreator mtt,
+            IMttWindowForSkyboxTextureCreator mtt,
             String screenName,
             URL textureDirUrl,
             String textureExtension,

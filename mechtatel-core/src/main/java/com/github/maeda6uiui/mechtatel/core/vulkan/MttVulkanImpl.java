@@ -1,6 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
-import com.github.maeda6uiui.mechtatel.core.*;
+import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.SamplerAddressMode;
+import com.github.maeda6uiui.mechtatel.core.SamplerFilterMode;
+import com.github.maeda6uiui.mechtatel.core.SamplerMipmapMode;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex3D;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex3DUV;
@@ -13,7 +16,10 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.*;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.*;
+import com.github.maeda6uiui.mechtatel.core.vulkan.creator.CommandPoolCreator;
+import com.github.maeda6uiui.mechtatel.core.vulkan.creator.LogicalDeviceCreator;
+import com.github.maeda6uiui.mechtatel.core.vulkan.creator.SurfaceCreator;
+import com.github.maeda6uiui.mechtatel.core.vulkan.creator.SyncObjectsCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
@@ -23,7 +29,6 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.TextureOperationParametersUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
-import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.joml.Vector4f;
@@ -52,43 +57,32 @@ public class MttVulkanImpl
         implements IMttVulkanImplForComponent, IMttVulkanImplForTexture, IMttVulkanImplForScreen {
     private static final int MAX_FRAMES_IN_FLIGHT = 2;
 
-    private VkInstance instance;
-
-    private long debugMessenger;
-
+    private long surface;
     private VkPhysicalDevice physicalDevice;
 
     private VkDevice device;
     private VkQueue graphicsQueue;
-
-    private long surface;
     private VkQueue presentQueue;
+    private long commandPool;
+    private Swapchain swapchain;
 
     private int albedoMSAASamples;
     private int depthImageFormat;
     private int depthImageAspect;
 
-    private Swapchain swapchain;
-
     private TextureOperationNabor textureOperationNabor;
     private Map<String, TextureOperationNabor.TextureOperationInfo> textureOperationInfos;
-
     private PresentNabor presentNabor;
-
-    private Map<String, VkMttScreen> screens;
-
-    private long commandPool;
 
     private List<Frame> inFlightFrames;
     private Map<Integer, Frame> imagesInFlight;
     private int currentFrame;
 
+    private Map<String, VkMttScreen> screens;
     private List<VkMttComponent> components;
     private List<VkMttTexture> textures;
 
     private QuadDrawer quadDrawer;
-
-    private MttSettings.VulkanSettings vulkanSettings;
 
     private VkExtent2D getFramebufferSize(long window) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -125,7 +119,6 @@ public class MttVulkanImpl
         presentNabor.recreate(
                 swapchain.getSwapchainImageFormat(),
                 swapchain.getSwapchainExtent());
-
         swapchain.createFramebuffers(presentNabor.getRenderPass());
 
         textureOperationNabor.recreate(
@@ -134,45 +127,23 @@ public class MttVulkanImpl
         textureOperationNabor.cleanupUserDefImages();
         textureOperationInfos.clear();
 
-        screens.forEach((name, screen) -> screen.recreate(
+        screens.values().forEach(screen -> screen.recreate(
                 swapchain.getSwapchainImageFormat(), swapchain.getSwapchainExtent()));
 
         imagesInFlight.clear();
     }
 
-    private void loadShadercLib() {
-        String shadercLibFilename;
-        switch (PlatformInfo.PLATFORM) {
-            case "windows" -> shadercLibFilename = "shaderc_shared.dll";
-            case "linux" -> shadercLibFilename = "libshaderc_shared.so";
-            case "macos" -> shadercLibFilename = "libshaderc_shared.dylib";
-            default -> throw new RuntimeException("Unsupported platform: " + PlatformInfo.PLATFORM);
-        }
-
-        String shadercLibFilepath = Objects.requireNonNull(
-                this.getClass().getResource("/Bin/" + shadercLibFilename)).getFile();
-        System.load(shadercLibFilepath);
-    }
-
     public MttVulkanImpl(long window, MttSettings.VulkanSettings vulkanSettings) {
-        this.loadShadercLib();
-
-        instance = InstanceCreator.createInstance(
-                vulkanSettings.enableValidationLayer,
-                vulkanSettings.appInfo
-        );
-
-        if (vulkanSettings.enableValidationLayer) {
-            debugMessenger = ValidationLayers.setupDebugMessenger(instance);
-        }
-
-        surface = SurfaceCreator.createSurface(instance, window);
-
-        physicalDevice = PhysicalDevicePicker.pickPhysicalDevice(
-                instance,
-                surface,
-                vulkanSettings.preferablePhysicalDeviceIndex
-        );
+        MttVulkanInstance
+                .get()
+                .ifPresent(p -> {
+                    surface = SurfaceCreator.createSurface(p.getVkInstance(), window);
+                    physicalDevice = PhysicalDevicePicker.pickPhysicalDevice(
+                            p.getVkInstance(),
+                            surface,
+                            vulkanSettings.preferablePhysicalDeviceIndex
+                    );
+                });
 
         LogicalDeviceCreator.VkDeviceAndVkQueues deviceAndQueues = LogicalDeviceCreator.createLogicalDevice(
                 physicalDevice,
@@ -184,10 +155,14 @@ public class MttVulkanImpl
         graphicsQueue = deviceAndQueues.graphicsQueue;
         presentQueue = deviceAndQueues.presentQueue;
 
+        commandPool = CommandPoolCreator.createCommandPool(device, surface);
+
+        VkExtent2D framebufferSize = this.getFramebufferSize(window);
+        swapchain = new Swapchain(device, surface, framebufferSize.width(), framebufferSize.height());
+
         albedoMSAASamples = vulkanSettings.albedoMSAASamples < 0
                 ? MultisamplingUtils.getMaxUsableSampleCount(device)
                 : vulkanSettings.albedoMSAASamples;
-
         depthImageFormat = DepthResourceUtils.findDepthFormat(device);
         depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
 
@@ -195,11 +170,6 @@ public class MttVulkanImpl
         if (hasStencilComponent) {
             depthImageAspect |= VK_IMAGE_ASPECT_STENCIL_BIT;
         }
-
-        commandPool = CommandPoolCreator.createCommandPool(device, surface);
-
-        VkExtent2D framebufferSize = this.getFramebufferSize(window);
-        swapchain = new Swapchain(device, surface, framebufferSize.width(), framebufferSize.height());
 
         presentNabor = new PresentNabor(device);
         presentNabor.compile(
@@ -211,7 +181,6 @@ public class MttVulkanImpl
                 commandPool,
                 graphicsQueue,
                 swapchain.getNumSwapchainImages());
-
         swapchain.createFramebuffers(presentNabor.getRenderPass());
 
         textureOperationNabor = new TextureOperationNabor(device);
@@ -226,24 +195,21 @@ public class MttVulkanImpl
                 1);
         textureOperationInfos = new HashMap<>();
 
-        screens = new HashMap<>();
-
         inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
         imagesInFlight = new HashMap<>(swapchain.getNumSwapchainImages());
 
+        screens = new HashMap<>();
         components = new ArrayList<>();
         textures = new ArrayList<>();
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
-
-        this.vulkanSettings = vulkanSettings;
     }
 
     public void cleanup() {
         quadDrawer.cleanup();
 
-        components.forEach(component -> component.cleanup());
-        textures.forEach(texture -> texture.cleanup());
+        components.forEach(VkMttComponent::cleanup);
+        textures.forEach(VkMttTexture::cleanup);
 
         inFlightFrames.forEach(frame -> {
             vkDestroySemaphore(device, frame.renderFinishedSemaphore(), null);
@@ -255,19 +221,13 @@ public class MttVulkanImpl
         swapchain.cleanup();
         textureOperationNabor.cleanup(false);
         presentNabor.cleanup(false);
-        screens.forEach((k, screen) -> screen.cleanup());
+        screens.values().forEach(VkMttScreen::cleanup);
 
         vkDestroyCommandPool(device, commandPool, null);
 
         vkDestroyDevice(device, null);
 
-        if (vulkanSettings.enableValidationLayer) {
-            ValidationLayers.destroyDebugUtilsMessengerEXT(instance, debugMessenger, null);
-        }
-
-        vkDestroySurfaceKHR(instance, surface, null);
-
-        vkDestroyInstance(instance, null);
+        MttVulkanInstance.get().ifPresent(p -> vkDestroySurfaceKHR(p.getVkInstance(), surface, null));
     }
 
     public VkMttScreen createScreen(
@@ -742,7 +702,7 @@ public class MttVulkanImpl
     }
 
     public boolean updateTextureOperationParameters(String operationName, TextureOperationParameters parameters) {
-        if (textureOperationInfos.containsKey(operationName) == false) {
+        if (!textureOperationInfos.containsKey(operationName)) {
             return false;
         }
 

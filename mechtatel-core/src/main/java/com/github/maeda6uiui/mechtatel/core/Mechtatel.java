@@ -30,6 +30,7 @@ public class Mechtatel implements IMechtatelForMttWindow {
     private int fps;
     private float secondsPerFrame;
     private List<MttWindow> windows;
+    private List<MttWindow> newWindowsQueue;
 
     public Mechtatel(MttSettings settings) {
         logger.debug(settings.toString());
@@ -106,6 +107,7 @@ public class Mechtatel implements IMechtatelForMttWindow {
         secondsPerFrame = 1.0f / fps;
 
         windows = new ArrayList<>();
+        newWindowsQueue = new ArrayList<>();
         try {
             //Create a primary window
             var window = new MttWindow(this, settings);
@@ -144,6 +146,10 @@ public class Mechtatel implements IMechtatelForMttWindow {
                 window.update(elapsedTime);
                 window.draw();
             });
+            if (!newWindowsQueue.isEmpty()) {
+                windows.addAll(newWindowsQueue);
+                newWindowsQueue.clear();
+            }
 
             lastTime = glfwGetTime();
         }
@@ -153,7 +159,7 @@ public class Mechtatel implements IMechtatelForMttWindow {
 
     @Override
     public void registerWindow(MttWindow window) {
-        windows.add(window);
+        newWindowsQueue.add(window);
     }
 
     @Override

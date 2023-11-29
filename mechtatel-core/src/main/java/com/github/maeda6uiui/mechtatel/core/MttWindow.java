@@ -169,6 +169,7 @@ public class MttWindow
         mustRecreate = false;
 
         mtt.registerWindow(this);
+        mtt.init(this);
     }
 
     public void update(double elapsedTime) {

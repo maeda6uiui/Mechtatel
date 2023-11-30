@@ -1,11 +1,15 @@
 package com.github.maeda6uiui.mechtatel.core.physics;
 
+import com.github.maeda6uiui.mechtatel.core.component.MttComponent;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.*;
 
@@ -18,8 +22,10 @@ public class PhysicalObject {
     private CollisionShape shape;
     private PhysicsRigidBody body;
 
-    public PhysicalObject() {
+    private List<MttComponent> components;
 
+    public PhysicalObject() {
+        components = new ArrayList<>();
     }
 
     public void cleanup() {
@@ -63,5 +69,25 @@ public class PhysicalObject {
     public Matrix4f getRotationMatrix() {
         var rot = body.getPhysicsRotationMatrix(null);
         return convertJMEMatrix3fToJOMLMatrix4f(rot);
+    }
+
+    public void addComponent(MttComponent component) {
+        components.add(component);
+    }
+
+    public boolean removeComponent(MttComponent component) {
+        return components.remove(component);
+    }
+
+    public void removeAllComponents() {
+        components.clear();
+    }
+
+    public void syncComponents() {
+        Vector3f location = this.getLocation();
+        Matrix4f rotationMat = this.getRotationMatrix();
+        var transformMat = new Matrix4f().translate(location).mul(rotationMat);
+
+        components.forEach(component -> component.setMat(transformMat));
     }
 }

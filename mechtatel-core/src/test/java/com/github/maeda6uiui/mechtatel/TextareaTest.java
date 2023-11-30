@@ -15,6 +15,7 @@ public class TextareaTest extends Mechtatel {
 
     public TextareaTest(MttSettings settings) {
         super(settings);
+        this.run();
     }
 
     public static void main(String[] args) {

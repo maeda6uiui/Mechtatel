@@ -21,6 +21,7 @@ public class TextureOperationTest extends Mechtatel {
 
     public TextureOperationTest(MttSettings settings) {
         super(settings);
+        this.run();
     }
 
     public static void main(String[] args) {

@@ -21,6 +21,7 @@ public class ShadowMappingTest extends Mechtatel {
 
     public ShadowMappingTest(MttSettings settings) {
         super(settings);
+        this.run();
     }
 
     public static void main(String[] args) {

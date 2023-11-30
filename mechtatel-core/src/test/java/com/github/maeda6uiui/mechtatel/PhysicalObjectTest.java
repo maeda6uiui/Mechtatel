@@ -24,6 +24,7 @@ public class PhysicalObjectTest extends Mechtatel {
 
     public PhysicalObjectTest(MttSettings settings) {
         super(settings);
+        this.run();
     }
 
     public static void main(String[] args) {

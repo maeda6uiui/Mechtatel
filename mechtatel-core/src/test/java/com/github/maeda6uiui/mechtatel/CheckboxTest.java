@@ -14,6 +14,7 @@ public class CheckboxTest extends Mechtatel {
 
     public CheckboxTest(MttSettings settings) {
         super(settings);
+        this.run();
     }
 
     public static void main(String[] args) {

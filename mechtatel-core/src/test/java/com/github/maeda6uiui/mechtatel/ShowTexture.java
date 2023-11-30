@@ -16,6 +16,7 @@ public class ShowTexture extends Mechtatel {
 
     public ShowTexture(MttSettings settings) {
         super(settings);
+        this.run();
     }
 
     public static void main(String[] args) {

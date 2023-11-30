@@ -18,6 +18,7 @@ public class ScreenshotTest extends Mechtatel {
 
     public ScreenshotTest(MttSettings settings) {
         super(settings);
+        this.run();
     }
 
     public static void main(String[] args) {

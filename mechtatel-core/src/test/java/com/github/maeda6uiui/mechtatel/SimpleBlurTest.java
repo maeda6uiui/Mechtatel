@@ -17,6 +17,7 @@ public class SimpleBlurTest extends Mechtatel {
 
     public SimpleBlurTest(MttSettings settings) {
         super(settings);
+        this.run();
     }
 
     public static void main(String[] args) {

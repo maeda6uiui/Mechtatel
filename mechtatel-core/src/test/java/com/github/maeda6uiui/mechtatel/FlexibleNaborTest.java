@@ -21,6 +21,7 @@ public class FlexibleNaborTest extends Mechtatel {
 
     public FlexibleNaborTest(MttSettings settings) {
         super(settings);
+        this.run();
     }
 
     public static void main(String[] args) {

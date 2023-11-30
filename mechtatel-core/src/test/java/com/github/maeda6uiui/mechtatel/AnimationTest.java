@@ -20,6 +20,7 @@ public class AnimationTest extends Mechtatel {
 
     public AnimationTest(MttSettings settings) {
         super(settings);
+        this.run();
     }
 
     public static void main(String[] args) {

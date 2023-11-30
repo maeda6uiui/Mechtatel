@@ -15,6 +15,7 @@ public class ScrollbarTest extends Mechtatel {
 
     public ScrollbarTest(MttSettings settings) {
         super(settings);
+        this.run();
     }
 
     public static void main(String[] args) {

@@ -20,6 +20,7 @@ public class TexturedScreenTest extends Mechtatel {
 
     public TexturedScreenTest(MttSettings settings) {
         super(settings);
+        this.run();
     }
 
     public static void main(String[] args) {

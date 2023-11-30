@@ -12,6 +12,7 @@ public class SetLogLevelTest extends Mechtatel {
 
     public SetLogLevelTest(MttSettings settings) {
         super(settings);
+        this.run();
     }
 
     public static void main(String[] args) {

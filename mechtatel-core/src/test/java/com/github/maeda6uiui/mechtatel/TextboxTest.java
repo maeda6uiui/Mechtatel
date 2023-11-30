@@ -15,6 +15,7 @@ public class TextboxTest extends Mechtatel {
 
     public TextboxTest(MttSettings settings) {
         super(settings);
+        this.run();
     }
 
     public static void main(String[] args) {

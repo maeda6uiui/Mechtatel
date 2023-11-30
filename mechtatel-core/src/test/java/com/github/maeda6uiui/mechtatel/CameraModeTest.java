@@ -20,6 +20,7 @@ public class CameraModeTest extends Mechtatel {
 
     public CameraModeTest(MttSettings settings) {
         super(settings);
+        this.run();
     }
 
     public static void main(String[] args) {

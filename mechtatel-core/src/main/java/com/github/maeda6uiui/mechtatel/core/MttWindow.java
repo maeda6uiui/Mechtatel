@@ -19,6 +19,8 @@ import org.joml.Vector2fc;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
 import org.lwjgl.system.MemoryStack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.FileNotFoundException;
@@ -42,6 +44,8 @@ import static org.lwjgl.system.MemoryUtil.NULL;
  */
 public class MttWindow
         implements IMttWindowForDrawPath, IMttWindowForScreenCreator, IMttWindowForSkyboxTextureCreator {
+    private static final Logger logger = LoggerFactory.getLogger(MttWindow.class);
+
     private IMechtatelForMttWindow mtt;
 
     private long handle;
@@ -171,6 +175,8 @@ public class MttWindow
         mustRecreate = false;
         validWindow = true;
 
+        logger.debug("Window ({}) successfully created", Long.toHexString(handle));
+
         mtt.registerWindow(this);
         mtt.init(this);
     }
@@ -189,6 +195,7 @@ public class MttWindow
             }
 
             mustRecreate = false;
+            logger.debug("Window ({}) recreated", Long.toHexString(handle));
         }
 
         Map<String, Integer> keyboardPressingCounts = keyboard.getPressingCounts();
@@ -250,6 +257,7 @@ public class MttWindow
         glfwDestroyWindow(handle);
 
         validWindow = false;
+        logger.debug("Window ({}) cleaned up", Long.toHexString(handle));
     }
 
     public void close() {

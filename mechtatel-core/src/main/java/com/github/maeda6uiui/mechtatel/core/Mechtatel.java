@@ -171,17 +171,17 @@ public class Mechtatel implements IMechtatelForMttWindow {
 
     @Override
     public void init(MttWindow window) {
-        logger.info("Mechtatel initialized");
+
     }
 
     @Override
     public void dispose(MttWindow window) {
-        logger.info("Mechtatel disposed");
+
     }
 
     @Override
     public void reshape(MttWindow window, int width, int height) {
-        logger.trace("Framebuffer size changed: (width, height)=({},{})", width, height);
+
     }
 
     @Override

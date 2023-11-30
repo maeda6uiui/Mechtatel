@@ -58,13 +58,12 @@ public class MttTexturedQuad2D extends MttComponent {
             MttVulkanImpl vulkanImpl,
             String screenName,
             URI textureResource,
-            boolean generateMipmaps,
             List<MttVertexUV> vertices) throws FileNotFoundException {
         if (!Files.exists(Paths.get(textureResource))) {
             throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
         }
 
-        vkTexturedQuad = vulkanImpl.createTexturedQuad(screenName, textureResource, generateMipmaps, vertices);
+        vkTexturedQuad = vulkanImpl.createTexturedQuad(screenName, textureResource, false, vertices);
         vkTexturedQuad.setTwoDComponent(true);
         this.associateVulkanComponent(vkTexturedQuad);
     }
@@ -92,7 +91,6 @@ public class MttTexturedQuad2D extends MttComponent {
             MttVulkanImpl vulkanImpl,
             String screenName,
             URI textureResource,
-            boolean generateMipmaps,
             MttVertex2DUV v1,
             MttVertex2DUV v2,
             MttVertex2DUV v3,
@@ -101,21 +99,20 @@ public class MttTexturedQuad2D extends MttComponent {
         super(vulkanImpl);
 
         var vertices = this.createVertices(v1, v2, v3, v4, z);
-        this.create(vulkanImpl, screenName, textureResource, generateMipmaps, vertices);
+        this.create(vulkanImpl, screenName, textureResource, vertices);
     }
 
     public MttTexturedQuad2D(
             MttVulkanImpl vulkanImpl,
             String screenName,
             URI textureResource,
-            boolean generateMipmaps,
             Vector2fc topLeft,
             Vector2fc bottomRight,
             float z) throws FileNotFoundException {
         super(vulkanImpl);
 
         var vertices = this.createVertices(topLeft, bottomRight, z);
-        this.create(vulkanImpl, screenName, textureResource, generateMipmaps, vertices);
+        this.create(vulkanImpl, screenName, textureResource, vertices);
     }
 
     public MttTexturedQuad2D(

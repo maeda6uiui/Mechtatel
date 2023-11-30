@@ -128,7 +128,7 @@ public class MttComponent {
      * Returns the model scale.
      * Returned scale is only valid if all rescaling is done via {@link #rescale(Vector3fc)}.
      *
-     * @return Scale of the model
+     * @return Scale of the component
      */
     public Vector3f getScale() {
         return new Vector3f(scale);

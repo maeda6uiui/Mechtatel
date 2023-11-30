@@ -29,12 +29,13 @@ Thank you!
 
 ## Currently working on
 
+- Remove `useGraphicsQueueAsPresentQueue` option as it doesn't solve AMDGPU issue
 - Investigate the cause of unnatural behaviors of collision (as in [PhysicalObjectTest.java](./mechtatel-core/src/test/java/com/github/maeda6uiui/mechtatel/PhysicalObjectTest.java))
-- Refer to a `MttScreen` by its instance, not by its name
 - Add test code to show multiple windows
 
 ## Todo
 
+- Refer to a `MttScreen` by its instance, not by its name
 - Implement functionality to share images (rendering results) across multiple windows 
 - Integrate ImGui for rich UI implementation
 - Implement functionality to run `mechtatel-core` via YAML definitions<br>i.e. Load and manipulate resources according to the procedure defined in a YAML file

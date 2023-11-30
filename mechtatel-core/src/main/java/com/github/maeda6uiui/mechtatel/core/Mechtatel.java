@@ -1,7 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core;
 
+import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObjects;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.jme3.bullet.PhysicsSpace;
 import com.jme3.system.NativeLibraryLoader;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
@@ -86,6 +88,8 @@ public class Mechtatel implements IMechtatelForMttWindow {
         }
 
         MttTexture.setImageFormat(settings.renderingSettings.imageFormat);
+
+        PhysicalObjects.init(PhysicsSpace.BroadphaseType.DBVT);
 
         fps = settings.systemSettings.fps;
         secondsPerFrame = 1.0f / fps;

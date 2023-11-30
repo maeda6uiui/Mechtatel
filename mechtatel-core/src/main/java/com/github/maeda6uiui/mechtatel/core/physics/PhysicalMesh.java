@@ -42,7 +42,6 @@ public class PhysicalMesh extends PhysicalObject {
 
         var shape = new MeshCollisionShape(true, indexedMeshes);
         var body = new PhysicsRigidBody(shape, mass);
-        PhysicalMesh.getPhysicsSpace().addCollisionObject(body);
         body.setPhysicsLocation(new Vector3f(0.0f, 0.0f, 0.0f));
 
         this.setShape(shape);

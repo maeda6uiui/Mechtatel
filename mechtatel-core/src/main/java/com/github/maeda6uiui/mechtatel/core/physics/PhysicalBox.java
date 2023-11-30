@@ -13,7 +13,6 @@ public class PhysicalBox extends PhysicalObject {
     public PhysicalBox(float xHalfExtent, float yHalfExtent, float zHalfExtent, float mass) {
         var shape = new BoxCollisionShape(xHalfExtent, yHalfExtent, zHalfExtent);
         var body = new PhysicsRigidBody(shape, mass);
-        PhysicalBox.getPhysicsSpace().addCollisionObject(body);
         body.setPhysicsLocation(new Vector3f(0.0f, 0.0f, 0.0f));
 
         this.setShape(shape);

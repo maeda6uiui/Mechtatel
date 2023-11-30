@@ -13,7 +13,6 @@ public class PhysicalSphere extends PhysicalObject {
     public PhysicalSphere(float radius, float mass) {
         var shape = new SphereCollisionShape(radius);
         var body = new PhysicsRigidBody(shape, mass);
-        PhysicalSphere.getPhysicsSpace().addCollisionObject(body);
         body.setPhysicsLocation(new Vector3f(0.0f, 0.0f, 0.0f));
 
         this.setShape(shape);

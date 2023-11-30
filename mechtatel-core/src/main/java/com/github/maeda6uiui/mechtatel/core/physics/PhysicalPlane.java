@@ -18,7 +18,6 @@ public class PhysicalPlane extends PhysicalObject {
         var shape = new PlaneCollisionShape(plane);
         float mass = PhysicsBody.massForStatic;
         var body = new PhysicsRigidBody(shape, mass);
-        PhysicalPlane.getPhysicsSpace().addCollisionObject(body);
 
         this.setShape(shape);
         this.setBody(body);

@@ -1,11 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.physics;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttComponent;
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import org.joml.Matrix4f;
-import org.joml.Vector3fc;
 
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJMEMatrix3fToJOMLMatrix4f;
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJMEVector3fToJOMLVector3f;
@@ -16,30 +14,11 @@ import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.con
  * @author maeda6uiui
  */
 public class PhysicalObject {
-    private static PhysicsSpace physicsSpace;
     private CollisionShape shape;
     private PhysicsRigidBody body;
 
     private MttComponent component;
     private Matrix4f transRotMat;
-
-    static {
-        physicsSpace = new PhysicsSpace(PhysicsSpace.BroadphaseType.DBVT);
-        physicsSpace.setGravity(new com.jme3.math.Vector3f(0.0f, -9.8f, 0.0f));
-    }
-
-    public static PhysicsSpace getPhysicsSpace() {
-        return physicsSpace;
-    }
-
-    public static void setGravity(Vector3fc gravity) {
-        physicsSpace.setGravity(new com.jme3.math.Vector3f(gravity.x(), gravity.y(), gravity.z()));
-    }
-
-    public static void updatePhysicsSpace(float timeDelta, float scale) {
-        float simulateSeconds = scale * timeDelta;
-        physicsSpace.update(simulateSeconds);
-    }
 
     public PhysicalObject() {
         transRotMat = new Matrix4f().identity();
@@ -47,7 +26,7 @@ public class PhysicalObject {
 
     public void cleanup() {
         if (body != null) {
-            physicsSpace.removeCollisionObject(body);
+            PhysicalObjects.get().ifPresent(p -> p.removeCollisionObject(body));
         }
         if (component != null) {
             component.cleanup();
@@ -60,6 +39,7 @@ public class PhysicalObject {
 
     protected void setBody(PhysicsRigidBody body) {
         this.body = body;
+        PhysicalObjects.get().ifPresent(p -> p.addCollisionObject(body));
     }
 
     public PhysicsRigidBody getBody() {

@@ -16,7 +16,7 @@ public class PhysicalObjectSet {
     }
 
     public void cleanup() {
-        physicalObjects.forEach(o -> o.cleanup());
+        physicalObjects.forEach(PhysicalObject::cleanup);
     }
 
     public void add(PhysicalObject physicalObject) {

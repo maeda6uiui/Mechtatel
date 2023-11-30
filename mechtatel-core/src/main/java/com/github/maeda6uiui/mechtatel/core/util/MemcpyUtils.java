@@ -45,7 +45,7 @@ public class MemcpyUtils {
         buffer.rewind();
     }
 
-    public static void memcpyVertex3D(ByteBuffer buffer, List<MttVertex> vertices) {
+    public static void memcpyVertex(ByteBuffer buffer, List<MttVertex> vertices) {
         for (var vertex : vertices) {
             buffer.putFloat(vertex.pos.x());
             buffer.putFloat(vertex.pos.y());
@@ -64,7 +64,7 @@ public class MemcpyUtils {
         buffer.rewind();
     }
 
-    public static void memcpyVertex3DUV(ByteBuffer buffer, List<MttVertexUV> vertices) {
+    public static void memcpyVertexUV(ByteBuffer buffer, List<MttVertexUV> vertices) {
         for (var vertex : vertices) {
             buffer.putFloat(vertex.pos.x());
             buffer.putFloat(vertex.pos.y());

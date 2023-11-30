@@ -219,7 +219,7 @@ public class BufferCreator {
 
             vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, data);
             {
-                MemcpyUtils.memcpyVertex3D(data.getByteBuffer(0, (int) bufferSize), vertices);
+                MemcpyUtils.memcpyVertex(data.getByteBuffer(0, (int) bufferSize), vertices);
             }
             vkUnmapMemory(device, stagingBufferMemory);
 
@@ -270,7 +270,7 @@ public class BufferCreator {
 
             vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, data);
             {
-                MemcpyUtils.memcpyVertex3DUV(data.getByteBuffer(0, (int) bufferSize), vertices);
+                MemcpyUtils.memcpyVertexUV(data.getByteBuffer(0, (int) bufferSize), vertices);
             }
             vkUnmapMemory(device, stagingBufferMemory);
 

@@ -134,7 +134,7 @@ public class MttComponent {
         return new Vector3f(scale);
     }
 
-    protected IMttVulkanImplForComponent getVulkanInstance() {
+    protected IMttVulkanImplForComponent getVulkanImpl() {
         return vulkanImpl;
     }
 

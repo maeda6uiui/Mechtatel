@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Textured quadrangle
@@ -33,13 +33,11 @@ public class MttTexturedQuad extends MttComponent {
             throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
         }
 
-        var vertices = new ArrayList<MttVertexUV>();
-        vertices.add(v1);
-        vertices.add(v2);
-        vertices.add(v3);
-        vertices.add(v4);
-
-        vkTexturedQuad = vulkanImpl.createTexturedQuad(screenName, textureResource, generateMipmaps, vertices);
+        vkTexturedQuad = vulkanImpl.createTexturedQuad(
+                screenName,
+                textureResource,
+                generateMipmaps,
+                Arrays.asList(v1, v2, v3, v4));
         this.associateVulkanComponent(vkTexturedQuad);
     }
 
@@ -53,13 +51,10 @@ public class MttTexturedQuad extends MttComponent {
             MttVertexUV v4) {
         super(vulkanImpl);
 
-        var vertices = new ArrayList<MttVertexUV>();
-        vertices.add(v1);
-        vertices.add(v2);
-        vertices.add(v3);
-        vertices.add(v4);
-
-        vkTexturedQuad = vulkanImpl.createTexturedQuad(screenName, texture.getVulkanTexture(), vertices);
+        vkTexturedQuad = vulkanImpl.createTexturedQuad(
+                screenName,
+                texture.getVulkanTexture(),
+                Arrays.asList(v1, v2, v3, v4));
         this.associateVulkanComponent(vkTexturedQuad);
     }
 
@@ -72,13 +67,9 @@ public class MttTexturedQuad extends MttComponent {
             MttVertexUV v4) {
         super(vulkanImpl);
 
-        var vertices = new ArrayList<MttVertexUV>();
-        vertices.add(v1);
-        vertices.add(v2);
-        vertices.add(v3);
-        vertices.add(v4);
-
-        vkTexturedQuad = vulkanImpl.duplicateTexturedQuad(srcQuad.vkTexturedQuad, vertices);
+        vkTexturedQuad = vulkanImpl.duplicateTexturedQuad(
+                srcQuad.vkTexturedQuad,
+                Arrays.asList(v1, v2, v3, v4));
         this.associateVulkanComponent(vkTexturedQuad);
     }
 

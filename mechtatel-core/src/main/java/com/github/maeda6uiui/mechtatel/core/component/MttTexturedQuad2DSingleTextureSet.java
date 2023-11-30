@@ -44,33 +44,29 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
     }
 
     public MttTexturedQuad2DSingleTextureSet add(
-            MttVertex2DUV p1, MttVertex2DUV p2, MttVertex2DUV p3, MttVertex2DUV p4, float z) {
-        var v1 = new MttVertexUV(
-                new Vector3f(p1.pos.x(), p1.pos.y(), z),
-                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), p1.texCoords);
-        var v2 = new MttVertexUV(
-                new Vector3f(p2.pos.x(), p2.pos.y(), z),
-                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), p2.texCoords);
-        var v3 = new MttVertexUV(
-                new Vector3f(p3.pos.x(), p3.pos.y(), z),
-                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), p3.texCoords);
-        var v4 = new MttVertexUV(
-                new Vector3f(p4.pos.x(), p4.pos.y(), z),
-                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), p4.texCoords);
-        vkTexturedQuadSet.add(v1, v2, v3, v4);
+            MttVertex2DUV v1, MttVertex2DUV v2, MttVertex2DUV v3, MttVertex2DUV v4, float z) {
+        var vv1 = new MttVertexUV(
+                new Vector3f(v1.pos.x(), v1.pos.y(), z),
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), v1.texCoords);
+        var vv2 = new MttVertexUV(
+                new Vector3f(v2.pos.x(), v2.pos.y(), z),
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), v2.texCoords);
+        var vv3 = new MttVertexUV(
+                new Vector3f(v3.pos.x(), v3.pos.y(), z),
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), v3.texCoords);
+        var vv4 = new MttVertexUV(
+                new Vector3f(v4.pos.x(), v4.pos.y(), z),
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), v4.texCoords);
+        vkTexturedQuadSet.add(vv1, vv2, vv3, vv4);
 
         return this;
     }
 
     public MttTexturedQuad2DSingleTextureSet add(
-            Vector2fc p1,
-            Vector2fc p1UV,
-            Vector2fc p2,
-            Vector2fc p2UV,
-            Vector2fc p3,
-            Vector2fc p3UV,
-            Vector2fc p4,
-            Vector2fc p4UV,
+            Vector2fc p1, Vector2fc p1UV,
+            Vector2fc p2, Vector2fc p2UV,
+            Vector2fc p3, Vector2fc p3UV,
+            Vector2fc p4, Vector2fc p4UV,
             float z) {
         var v1 = new MttVertexUV(
                 new Vector3f(p1.x(), p1.y(), z), new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), p1UV);

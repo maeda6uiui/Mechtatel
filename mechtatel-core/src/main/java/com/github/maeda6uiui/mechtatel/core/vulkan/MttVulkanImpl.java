@@ -135,10 +135,10 @@ public class MttVulkanImpl
     public MttVulkanImpl(long window, MttSettings.VulkanSettings vulkanSettings) {
         MttVulkanInstance
                 .get()
-                .ifPresent(p -> {
-                    surface = SurfaceCreator.createSurface(p.getVkInstance(), window);
+                .ifPresent(v -> {
+                    surface = SurfaceCreator.createSurface(v.getVkInstance(), window);
                     physicalDevice = PhysicalDevicePicker.pickPhysicalDevice(
-                            p.getVkInstance(),
+                            v.getVkInstance(),
                             surface,
                             vulkanSettings.preferablePhysicalDeviceIndex
                     );
@@ -227,7 +227,7 @@ public class MttVulkanImpl
 
         vkDestroyDevice(device, null);
 
-        MttVulkanInstance.get().ifPresent(p -> vkDestroySurfaceKHR(p.getVkInstance(), surface, null));
+        MttVulkanInstance.get().ifPresent(v -> vkDestroySurfaceKHR(v.getVkInstance(), surface, null));
     }
 
     public VkMttScreen createScreen(

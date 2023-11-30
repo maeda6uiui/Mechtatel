@@ -4,7 +4,6 @@ import com.github.maeda6uiui.mechtatel.core.util.UniversalCounter;
 import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplForComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent;
 import org.joml.Matrix4fc;
-import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 /**
@@ -18,8 +17,6 @@ public class MttComponent {
     private IMttVulkanImplForComponent vulkanImpl;
     private VkMttComponent vkComponent;
 
-    private Vector3f scale;
-
     private void setDefaultValues() {
         tag = "Component_" + UniversalCounter.get();
     }
@@ -28,8 +25,6 @@ public class MttComponent {
     public MttComponent(IMttVulkanImplForComponent vulkanImpl) {
         this.setDefaultValues();
         this.vulkanImpl = vulkanImpl;
-
-        scale = new Vector3f(1.0f, 1.0f, 1.0f);
     }
 
     protected void associateVulkanComponent(VkMttComponent vkComponent) {
@@ -119,19 +114,7 @@ public class MttComponent {
 
     public MttComponent rescale(Vector3fc scale) {
         vkComponent.rescale(scale);
-        this.scale.mul(scale);
-
         return this;
-    }
-
-    /**
-     * Returns the model scale.
-     * Returned scale is only valid if all rescaling is done via {@link #rescale(Vector3fc)}.
-     *
-     * @return Scale of the component
-     */
-    public Vector3f getScale() {
-        return new Vector3f(scale);
     }
 
     public void cleanup() {

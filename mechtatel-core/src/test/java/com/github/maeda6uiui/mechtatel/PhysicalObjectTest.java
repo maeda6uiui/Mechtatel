@@ -3,18 +3,21 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.*;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel;
-import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObjectSet;
+import com.github.maeda6uiui.mechtatel.core.physics.PhysicalBox;
+import com.github.maeda6uiui.mechtatel.core.physics.PhysicalMesh;
+import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObject;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.jme3.bullet.objects.PhysicsBody;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-
-import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJOMLVector3fToJMEVector3f;
 
 public class PhysicalObjectTest extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(PhysicalObjectTest.class);
@@ -32,16 +35,34 @@ public class PhysicalObjectTest extends Mechtatel {
                 );
     }
 
+    static class PhysicalObjectWithModel {
+        private PhysicalObject physicalObject;
+        private MttModel model;
+
+        public PhysicalObjectWithModel(PhysicalObject physicalObject, MttModel model) {
+            this.physicalObject = physicalObject;
+            this.model = model;
+        }
+
+        public void cleanup() {
+            physicalObject.cleanup();
+            model.cleanup();
+        }
+
+        public void sync() {
+            //Todo: Sync location and rotation of physical object and model
+        }
+    }
+
     private MttScreen mainScreen;
-
-    private MttModel plane;
-    private MttModel srcCube;
-    private PhysicalObjectSet physicalObjectSet;
-
+    private MttModel level;
+    private MttModel box;
     private FreeCamera camera;
 
     private Random random;
     private int screenshotCount;
+
+    private List<PhysicalObjectWithModel> powms;
 
     @Override
     public void init(MttWindow window) {
@@ -79,16 +100,16 @@ public class PhysicalObjectTest extends Mechtatel {
         drawPath.apply();
 
         try {
-            plane = window.createModel(
+            level = window.createModel(
                     "main",
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj"))
             );
 
-            srcCube = window.createModel(
+            box = window.createModel(
                     "main",
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
             );
-            srcCube.setVisible(false);
+            box.setVisible(false);
         } catch (URISyntaxException | IOException e) {
             logger.error("Error", e);
             window.close();
@@ -96,16 +117,16 @@ public class PhysicalObjectTest extends Mechtatel {
             return;
         }
 
-        var physicalPlane = window.createPhysicalMesh(plane, 0.0f);
-        physicalPlane.getBody().setRestitution(0.7f);
-        physicalPlane.getBody().setFriction(0.5f);
-
-        physicalObjectSet = new PhysicalObjectSet();
-
         camera = new FreeCamera(mainScreen.getCamera());
 
         random = new Random();
         screenshotCount = 0;
+
+        var phLevel = new PhysicalMesh(level, PhysicsBody.massForStatic);
+        phLevel.getBody().setRestitution(0.7f);
+        phLevel.getBody().setFriction(0.5f);
+
+        powms = new ArrayList<>();
     }
 
     @Override
@@ -131,23 +152,24 @@ public class PhysicalObjectTest extends Mechtatel {
         z *= signZ;
 
         if (window.getKeyboardPressingCount("1") == 1) {
-            var dupCube = window.duplicateModel(srcCube);
-            dupCube.rescale(new Vector3f(0.5f, 0.5f, 0.5f));
+            var phBox = new PhysicalBox(0.5f, 1.0f);
+            phBox.getBody().setRestitution(0.7f);
+            phBox.getBody().setFriction(0.5f);
+            phBox.setLocation(new Vector3f(x, 10.0f, z));
 
-            var physicalCube = window.createPhysicalBox(0.5f, 1.0f);
-            physicalCube.setComponent(dupCube);
-            physicalCube.getBody().setRestitution(0.7f);
-            physicalCube.getBody().setFriction(0.5f);
+            var dupBox = window.duplicateModel(box);
+            dupBox.rescale(new Vector3f(0.5f, 0.5f, 0.5f));
 
-            physicalCube.getBody().setPhysicsLocation(
-                    convertJOMLVector3fToJMEVector3f(new Vector3f(x, 10.0f, z)));
-
-            physicalObjectSet.add(physicalCube);
+            var powm = new PhysicalObjectWithModel(phBox, dupBox);
+            powms.add(powm);
         }
 
         if (window.getKeyboardPressingCount("C") == 1) {
-            physicalObjectSet.cleanup();
+            powms.forEach(PhysicalObjectWithModel::cleanup);
+            powms.clear();
         }
+
+        powms.forEach(PhysicalObjectWithModel::sync);
     }
 
     @Override

@@ -55,8 +55,6 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class MttVulkanImpl
         implements IMttVulkanImplForComponent, IMttVulkanImplForTexture, IMttVulkanImplForScreen {
-    private static final int MAX_FRAMES_IN_FLIGHT = 2;
-
     private long surface;
     private VkPhysicalDevice physicalDevice;
 
@@ -74,6 +72,7 @@ public class MttVulkanImpl
     private Map<String, TextureOperationNabor.TextureOperationInfo> textureOperationInfos;
     private PresentNabor presentNabor;
 
+    private int maxNumFramesInFlight;
     private List<Frame> inFlightFrames;
     private Map<Integer, Frame> imagesInFlight;
     private int currentFrame;
@@ -195,7 +194,8 @@ public class MttVulkanImpl
                 1);
         textureOperationInfos = new HashMap<>();
 
-        inFlightFrames = SyncObjectsCreator.createSyncObjects(device, MAX_FRAMES_IN_FLIGHT);
+        maxNumFramesInFlight = vulkanSettings.maxNumFramesInFlight;
+        inFlightFrames = SyncObjectsCreator.createSyncObjects(device, maxNumFramesInFlight);
         imagesInFlight = new HashMap<>(swapchain.getNumSwapchainImages());
 
         screens = new HashMap<>();
@@ -412,7 +412,7 @@ public class MttVulkanImpl
                     commandBuffers,
                     graphicsQueue,
                     presentQueue);
-            currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+            currentFrame = (currentFrame + 1) % maxNumFramesInFlight;
 
             vkDeviceWaitIdle(device);
             vkFreeCommandBuffers(device, commandPool, PointerBufferUtils.asPointerBuffer(commandBuffers));

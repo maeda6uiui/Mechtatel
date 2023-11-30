@@ -17,6 +17,7 @@
         "preferablePhysicalDeviceIndex": 0,
         "useGraphicsQueueAsPresentQueue": false,
         "albedoMSAASamples": 2,
+        "maxNumFramesInFlight": 2,
         "appInfo": {
             "name": "Mechtatel",
             "majorVersion": 0,

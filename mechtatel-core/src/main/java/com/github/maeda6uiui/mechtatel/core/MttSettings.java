@@ -110,6 +110,7 @@ public class MttSettings {
         public int preferablePhysicalDeviceIndex;
         public boolean useGraphicsQueueAsPresentQueue;
         public int albedoMSAASamples;
+        public int maxNumFramesInFlight;
         public AppInfo appInfo;
 
         public VulkanSettings() {
@@ -117,6 +118,7 @@ public class MttSettings {
             preferablePhysicalDeviceIndex = 0;
             useGraphicsQueueAsPresentQueue = false;
             albedoMSAASamples = 2;
+            maxNumFramesInFlight = 2;
             appInfo = new AppInfo();
         }
 
@@ -124,8 +126,10 @@ public class MttSettings {
         public String toString() {
             return "VulkanSettings{" +
                     "enableValidationLayer=" + enableValidationLayer +
+                    ", preferablePhysicalDeviceIndex=" + preferablePhysicalDeviceIndex +
                     ", useGraphicsQueueAsPresentQueue=" + useGraphicsQueueAsPresentQueue +
                     ", albedoMSAASamples=" + albedoMSAASamples +
+                    ", maxNumFramesInFlight=" + maxNumFramesInFlight +
                     ", appInfo=" + appInfo +
                     '}';
         }

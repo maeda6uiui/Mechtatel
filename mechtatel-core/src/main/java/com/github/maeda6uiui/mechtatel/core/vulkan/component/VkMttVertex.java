@@ -7,7 +7,7 @@ import org.lwjgl.vulkan.VkVertexInputBindingDescription;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Vertex3D
+ * 3D vertex
  *
  * @author maeda6uiui
  */

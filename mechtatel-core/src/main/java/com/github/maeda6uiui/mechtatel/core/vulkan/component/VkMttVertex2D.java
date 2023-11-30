@@ -8,7 +8,7 @@ import static com.github.maeda6uiui.mechtatel.core.component.MttVertex2D.OFFSETO
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Vertex2D
+ * 2D vertex
  *
  * @author maeda6uiui
  */

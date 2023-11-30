@@ -7,7 +7,7 @@ import org.lwjgl.vulkan.VkVertexInputBindingDescription;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Vertex2D with a UV
+ * 2D vertex with a UV
  *
  * @author maeda6uiui
  */

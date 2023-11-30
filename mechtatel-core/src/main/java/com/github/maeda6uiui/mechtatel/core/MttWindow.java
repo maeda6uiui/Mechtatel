@@ -7,7 +7,6 @@ import com.github.maeda6uiui.mechtatel.core.component.gui.*;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
-import com.github.maeda6uiui.mechtatel.core.physics.*;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.sound.MttSound;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
@@ -60,9 +59,6 @@ public class MttWindow
     private MttVulkanImpl vulkanImpl;
 
     private List<MttGuiComponent> guiComponents;
-
-    private List<PhysicalObject> physicalObjects;
-    private float physicsSimulationTimeScale;
 
     private Map<String, MttScreen> screens;
     private List<String> screenDrawOrder;
@@ -143,9 +139,6 @@ public class MttWindow
 
         guiComponents = new ArrayList<>();
 
-        physicalObjects = new ArrayList<>();
-        physicsSimulationTimeScale = 1.0f;
-
         screens = new HashMap<>();
         MttScreen defaultScreen = this.createScreen(
                 "default",
@@ -181,7 +174,7 @@ public class MttWindow
         mtt.init(this);
     }
 
-    public void update(double elapsedTime) {
+    public void update() {
         keyboard.update();
         mouse.update();
 
@@ -211,8 +204,6 @@ public class MttWindow
                     keyboardPressingCounts
             );
         });
-        physicalObjects.forEach(PhysicalObject::updateObject);
-        PhysicalObject.updatePhysicsSpace((float) elapsedTime, physicsSimulationTimeScale);
 
         animations.values().forEach(MttAnimation::update);
 
@@ -250,7 +241,6 @@ public class MttWindow
     public void cleanup() {
         mtt.dispose(this);
         vulkanImpl.cleanup();
-        physicalObjects.forEach(PhysicalObject::cleanup);
         sounds3D.forEach(MttSound::cleanup);
 
         glfwFreeCallbacks(handle);
@@ -569,60 +559,6 @@ public class MttWindow
 
     public boolean removeGuiComponent(MttGuiComponent guiComponent) {
         return guiComponents.remove(guiComponent);
-    }
-
-    public PhysicalPlane createPhysicalPlane(Vector3fc normal, float constant) {
-        var physicalPlane = new PhysicalPlane(normal, constant);
-        physicalObjects.add(physicalPlane);
-
-        return physicalPlane;
-    }
-
-    public PhysicalSphere createPhysicalSphere(float radius, float mass) {
-        var physicalSphere = new PhysicalSphere(radius, mass);
-        physicalObjects.add(physicalSphere);
-
-        return physicalSphere;
-    }
-
-    public PhysicalCapsule createPhysicalCapsule(float radius, float height, float mass) {
-        var physicalCapsule = new PhysicalCapsule(radius, height, mass);
-        physicalObjects.add(physicalCapsule);
-
-        return physicalCapsule;
-    }
-
-    public PhysicalBox createPhysicalBox(float xHalfExtent, float yHalfExtent, float zHalfExtent, float mass) {
-        var physicalBox = new PhysicalBox(xHalfExtent, yHalfExtent, zHalfExtent, mass);
-        physicalObjects.add(physicalBox);
-
-        return physicalBox;
-    }
-
-    public PhysicalBox createPhysicalBox(float halfExtent, float mass) {
-        return this.createPhysicalBox(halfExtent, halfExtent, halfExtent, mass);
-    }
-
-    public PhysicalMesh createPhysicalMesh(MttModel model, float mass) {
-        var physicalMesh = new PhysicalMesh(model, mass);
-        physicalObjects.add(physicalMesh);
-
-        return physicalMesh;
-    }
-
-    public boolean removePhysicalObject(PhysicalObject physicalObject) {
-        if (physicalObjects.contains(physicalObject)) {
-            physicalObject.cleanup();
-            physicalObjects.remove(physicalObject);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public void setPhysicsSimulationTimeScale(float physicsSimulationTimeScale) {
-        this.physicsSimulationTimeScale = physicsSimulationTimeScale;
     }
 
     public MttSound createSound(@NotNull URL soundResource, boolean loop, boolean relative) throws URISyntaxException, IOException {

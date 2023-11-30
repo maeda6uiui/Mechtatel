@@ -252,15 +252,15 @@ public class MttWindow
         validWindow = false;
     }
 
-    public void closeWindow() {
+    public void close() {
         glfwSetWindowShouldClose(window, true);
     }
 
-    public void showWindow() {
+    public void show() {
         glfwShowWindow(window);
     }
 
-    public void hideWindow() {
+    public void hide() {
         glfwHideWindow(window);
     }
 

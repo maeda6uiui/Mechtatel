@@ -35,25 +35,6 @@ public class PhysicalObjectTest extends Mechtatel {
                 );
     }
 
-    static class PhysicalObjectWithModel {
-        private PhysicalObject physicalObject;
-        private MttModel model;
-
-        public PhysicalObjectWithModel(PhysicalObject physicalObject, MttModel model) {
-            this.physicalObject = physicalObject;
-            this.model = model;
-        }
-
-        public void cleanup() {
-            physicalObject.cleanup();
-            model.cleanup();
-        }
-
-        public void sync() {
-            //Todo: Sync location and rotation of physical object and model
-        }
-    }
-
     private MttScreen mainScreen;
     private MttModel level;
     private MttModel box;
@@ -62,7 +43,7 @@ public class PhysicalObjectTest extends Mechtatel {
     private Random random;
     private int screenshotCount;
 
-    private List<PhysicalObjectWithModel> powms;
+    private List<PhysicalObject> physicalObjects;
 
     @Override
     public void init(MttWindow window) {
@@ -126,7 +107,7 @@ public class PhysicalObjectTest extends Mechtatel {
         phLevel.getBody().setRestitution(0.7f);
         phLevel.getBody().setFriction(0.5f);
 
-        powms = new ArrayList<>();
+        physicalObjects = new ArrayList<>();
     }
 
     @Override
@@ -160,16 +141,17 @@ public class PhysicalObjectTest extends Mechtatel {
             var dupBox = window.duplicateModel(box);
             dupBox.rescale(new Vector3f(0.5f, 0.5f, 0.5f));
 
-            var powm = new PhysicalObjectWithModel(phBox, dupBox);
-            powms.add(powm);
+            phBox.addComponent(dupBox);
+
+            physicalObjects.add(phBox);
         }
 
         if (window.getKeyboardPressingCount("C") == 1) {
-            powms.forEach(PhysicalObjectWithModel::cleanup);
-            powms.clear();
+            physicalObjects.forEach(PhysicalObject::cleanup);
+            physicalObjects.clear();
         }
 
-        powms.forEach(PhysicalObjectWithModel::sync);
+        physicalObjects.forEach(PhysicalObject::syncComponents);
     }
 
     @Override

@@ -15,7 +15,9 @@ import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 import jakarta.validation.constraints.NotNull;
-import org.joml.*;
+import org.joml.Vector2fc;
+import org.joml.Vector3fc;
+import org.joml.Vector4fc;
 import org.lwjgl.system.MemoryStack;
 
 import java.awt.*;
@@ -349,66 +351,6 @@ public class MttWindow
     public MttLineSet createLineSet() {
         var lineSet = new MttLineSet(vulkanImpl);
         return lineSet;
-    }
-
-    public MttLineSet createAxesLineSet(float length) {
-        MttLineSet axes = this.createLineSet();
-        axes
-                .add(
-                        new Vector3f(-length, 0.0f, 0.0f),
-                        new Vector3f(length, 0.0f, 0.0f),
-                        new Vector4f(1.0f, 0.0f, 0.0f, 1.0f)
-                ).add(
-                        new Vector3f(0.0f, -length, 0.0f),
-                        new Vector3f(0.0f, length, 0.0f),
-                        new Vector4f(0.0f, 1.0f, 0.0f, 1.0f)
-                ).add(
-                        new Vector3f(0.0f, 0.0f, -length),
-                        new Vector3f(0.0f, 0.0f, length),
-                        new Vector4f(0.0f, 0.0f, 1.0f, 1.0f)
-                ).createBuffer();
-
-        return axes;
-    }
-
-    public MttLineSet createPositiveAxesLineSet(float length) {
-        MttLineSet axes = this.createLineSet();
-        axes
-                .add(
-                        new Vector3f(0.0f, 0.0f, 0.0f),
-                        new Vector3f(length, 0.0f, 0.0f),
-                        new Vector4f(1.0f, 0.0f, 0.0f, 1.0f)
-                ).add(
-                        new Vector3f(0.0f, 0.0f, 0.0f),
-                        new Vector3f(0.0f, length, 0.0f),
-                        new Vector4f(0.0f, 1.0f, 0.0f, 1.0f)
-                ).add(
-                        new Vector3f(0.0f, 0.0f, 0.0f),
-                        new Vector3f(0.0f, 0.0f, length),
-                        new Vector4f(0.0f, 0.0f, 1.0f, 1.0f)
-                ).createBuffer();
-
-        return axes;
-    }
-
-    public MttLineSet createNegativeAxesLineSet(float length) {
-        MttLineSet axes = this.createLineSet();
-        axes
-                .add(
-                        new Vector3f(0.0f, 0.0f, 0.0f),
-                        new Vector3f(-length, 0.0f, 0.0f),
-                        new Vector4f(1.0f, 0.0f, 0.0f, 1.0f)
-                ).add(
-                        new Vector3f(0.0f, 0.0f, 0.0f),
-                        new Vector3f(0.0f, -length, 0.0f),
-                        new Vector4f(0.0f, 1.0f, 0.0f, 1.0f)
-                ).add(
-                        new Vector3f(0.0f, 0.0f, 0.0f),
-                        new Vector3f(0.0f, 0.0f, -length),
-                        new Vector4f(0.0f, 0.0f, 1.0f, 1.0f)
-                ).createBuffer();
-
-        return axes;
     }
 
     public MttSphere createSphere(Vector3fc center, float radius, int numVDivs, int numHDivs, Vector4fc color) {

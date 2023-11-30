@@ -20,16 +20,19 @@ public class MttLineSet extends MttComponent {
         this.associateVulkanComponent(vkLineSet);
     }
 
-    public void add(MttVertex3D v1, MttVertex3D v2) {
+    public MttLineSet add(MttVertex3D v1, MttVertex3D v2) {
         vkLineSet.add(v1, v2);
+        return this;
     }
 
-    public void add(Vector3fc p1, Vector4fc color1, Vector3fc p2, Vector4fc color2) {
+    public MttLineSet add(Vector3fc p1, Vector4fc color1, Vector3fc p2, Vector4fc color2) {
         vkLineSet.add(p1, color1, p2, color2);
+        return this;
     }
 
-    public void add(Vector3fc p1, Vector3fc p2, Vector4fc color) {
+    public MttLineSet add(Vector3fc p1, Vector3fc p2, Vector4fc color) {
         vkLineSet.add(p1, p2, color);
+        return this;
     }
 
     public void clear(boolean doCleanup) {

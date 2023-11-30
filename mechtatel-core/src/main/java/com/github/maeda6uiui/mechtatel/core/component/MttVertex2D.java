@@ -4,7 +4,9 @@ import org.joml.Vector2fc;
 import org.joml.Vector4fc;
 
 /**
- * Vertex2D
+ * 2D vertex
+ *
+ * @author maeda6uiui
  */
 public class MttVertex2D {
     public static final int SIZEOF = (2 + 4) * Float.BYTES;

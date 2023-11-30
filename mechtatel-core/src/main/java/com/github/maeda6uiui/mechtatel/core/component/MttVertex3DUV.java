@@ -6,7 +6,7 @@ import org.joml.Vector3fc;
 import org.joml.Vector4fc;
 
 /**
- * Vertex3D with a UV
+ * 3D vertex with UV
  *
  * @author maeda6uiui
  */

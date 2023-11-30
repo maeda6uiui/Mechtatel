@@ -5,7 +5,7 @@ import org.joml.Vector3fc;
 import org.joml.Vector4fc;
 
 /**
- * Vertex3D
+ * 3D vertex
  *
  * @author maeda6uiui
  */

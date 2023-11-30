@@ -134,10 +134,6 @@ public class MttComponent {
         return new Vector3f(scale);
     }
 
-    protected IMttVulkanImplForComponent getVulkanImpl() {
-        return vulkanImpl;
-    }
-
     public void cleanup() {
         vulkanImpl.removeComponent(vkComponent);
     }

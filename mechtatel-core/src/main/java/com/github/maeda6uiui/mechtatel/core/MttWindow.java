@@ -170,7 +170,6 @@ public class MttWindow
 
         logger.debug("Window ({}) successfully created", Long.toHexString(handle));
 
-        mtt.registerWindow(this);
         mtt.init(this);
     }
 

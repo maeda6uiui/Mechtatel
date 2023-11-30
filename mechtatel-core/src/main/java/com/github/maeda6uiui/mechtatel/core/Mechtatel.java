@@ -170,7 +170,6 @@ public class Mechtatel implements IMechtatelForMttWindow {
         return initialWindow;
     }
 
-    @Override
     public void registerWindow(MttWindow window) {
         newWindowsQueue.add(window);
     }

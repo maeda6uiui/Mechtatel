@@ -44,7 +44,7 @@ public class MttWindow
         implements IMttWindowForDrawPath, IMttWindowForScreenCreator, IMttWindowForSkyboxTextureCreator {
     private IMechtatelForMttWindow mtt;
 
-    private long window;
+    private long handle;
     private int width;
     private int height;
     private String title;
@@ -117,8 +117,8 @@ public class MttWindow
             String title) {
         this.mtt = mtt;
 
-        window = glfwCreateWindow(width, height, title, NULL, NULL);
-        if (window == NULL) {
+        handle = glfwCreateWindow(width, height, title, NULL, NULL);
+        if (handle == NULL) {
             throw new RuntimeException("Failed to create a window");
         }
 
@@ -130,12 +130,12 @@ public class MttWindow
         mouse = new Mouse();
         fixCursorFlag = false;
 
-        glfwSetFramebufferSizeCallback(window, this::framebufferResizeCallback);
-        glfwSetKeyCallback(window, this::keyCallback);
-        glfwSetMouseButtonCallback(window, this::mouseButtonCallback);
-        glfwSetCursorPosCallback(window, this::cursorPositionCallback);
+        glfwSetFramebufferSizeCallback(handle, this::framebufferResizeCallback);
+        glfwSetKeyCallback(handle, this::keyCallback);
+        glfwSetMouseButtonCallback(handle, this::mouseButtonCallback);
+        glfwSetCursorPosCallback(handle, this::cursorPositionCallback);
 
-        vulkanImpl = new MttVulkanImpl(window, settings.vulkanSettings);
+        vulkanImpl = new MttVulkanImpl(handle, settings.vulkanSettings);
 
         guiComponents = new ArrayList<>();
 
@@ -180,7 +180,7 @@ public class MttWindow
         mouse.update();
 
         if (mustRecreate) {
-            vulkanImpl.recreateResourcesOnResize(window);
+            vulkanImpl.recreateResourcesOnResize(handle);
             for (var screen : screens.values()) {
                 if (screen.shouldAutoUpdateCameraAspect()) {
                     screen.getCamera().getPerspectiveCameraInfo().aspect
@@ -246,26 +246,26 @@ public class MttWindow
         physicalObjects.forEach(PhysicalObject::cleanup);
         sounds3D.forEach(MttSound::cleanup);
 
-        glfwFreeCallbacks(window);
-        glfwDestroyWindow(window);
+        glfwFreeCallbacks(handle);
+        glfwDestroyWindow(handle);
 
         validWindow = false;
     }
 
     public void close() {
-        glfwSetWindowShouldClose(window, true);
+        glfwSetWindowShouldClose(handle, true);
     }
 
     public void show() {
-        glfwShowWindow(window);
+        glfwShowWindow(handle);
     }
 
     public void hide() {
-        glfwHideWindow(window);
+        glfwHideWindow(handle);
     }
 
     public boolean shouldClose() {
-        return glfwWindowShouldClose(window);
+        return glfwWindowShouldClose(handle);
     }
 
     public int getWidth() {
@@ -305,7 +305,7 @@ public class MttWindow
     }
 
     public void setCursorPos(int x, int y) {
-        glfwSetCursorPos(window, x, y);
+        glfwSetCursorPos(handle, x, y);
     }
 
     public void fixCursor() {
@@ -318,9 +318,9 @@ public class MttWindow
 
     public void setCursorMode(CursorMode cursorMode) {
         switch (cursorMode) {
-            case NORMAL -> glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            case DISABLED -> glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            case HIDDEN -> glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+            case NORMAL -> glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            case DISABLED -> glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            case HIDDEN -> glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
             default -> throw new IllegalArgumentException("Unsupported cursor mode specified: " + cursorMode);
         }
     }
@@ -698,7 +698,7 @@ public class MttWindow
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer width = stack.ints(0);
             IntBuffer height = stack.ints(0);
-            glfwGetFramebufferSize(window, width, height);
+            glfwGetFramebufferSize(handle, width, height);
 
             screen.getCamera().getPerspectiveCameraInfo().aspect = (float) width.get(0) / (float) height.get(0);
         }

@@ -1,6 +1,5 @@
 package com.github.maeda6uiui.mechtatel.core;
 
-import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObject;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObjects;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
@@ -33,8 +32,6 @@ public class Mechtatel implements IMechtatelForMttWindow {
 
     private int fps;
     private float secondsPerFrame;
-
-    private List<PhysicalObject> physicalObjects;
 
     private MttWindow initialWindow;
     private List<MttWindow> windows;
@@ -93,7 +90,6 @@ public class Mechtatel implements IMechtatelForMttWindow {
         MttTexture.setImageFormat(settings.renderingSettings.imageFormat);
 
         PhysicalObjects.init(PhysicsSpace.BroadphaseType.DBVT);
-        physicalObjects = new ArrayList<>();
 
         fps = settings.systemSettings.fps;
         secondsPerFrame = 1.0f / fps;
@@ -166,7 +162,6 @@ public class Mechtatel implements IMechtatelForMttWindow {
 
         logger.info("Exiting the Mechtatel engine...");
 
-        physicalObjects.forEach(PhysicalObject::cleanup);
         MttVulkanInstance.get().ifPresent(MttVulkanInstance::cleanup);
         glfwTerminate();
     }

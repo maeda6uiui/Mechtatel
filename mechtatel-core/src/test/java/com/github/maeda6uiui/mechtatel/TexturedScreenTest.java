@@ -1,9 +1,6 @@
 package com.github.maeda6uiui.mechtatel;
 
-import com.github.maeda6uiui.mechtatel.core.DrawPath;
-import com.github.maeda6uiui.mechtatel.core.Mechtatel;
-import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
+import com.github.maeda6uiui.mechtatel.core.*;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
@@ -43,15 +40,15 @@ public class TexturedScreenTest extends Mechtatel {
     private Vector3f secondaryCameraPosition;
 
     @Override
-    public void init() {
-        var primaryScreenCreator = new ScreenCreator(this, "primary");
+    public void init(MttWindow window) {
+        var primaryScreenCreator = new ScreenCreator(window, "primary");
         primaryScreen = primaryScreenCreator.create();
         primaryScreen.setBackgroundColor(new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
         primaryScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
 
         camera = new FreeCamera(primaryScreen.getCamera());
 
-        var secondaryScreenCreator = new ScreenCreator(this, "secondary");
+        var secondaryScreenCreator = new ScreenCreator(window, "secondary");
         secondaryScreenCreator.addPostProcessingNabor("parallel_light");
         secondaryScreenCreator.setDepthImageSize(1024, 1024);
         secondaryScreenCreator.setScreenSize(512, 512);
@@ -63,46 +60,46 @@ public class TexturedScreenTest extends Mechtatel {
         secondaryCameraPosition = new Vector3f(1.2f, 1.2f, 1.2f);
         secondaryScreen.getCamera().setEye(secondaryCameraPosition);
 
-        var drawPath = new DrawPath(this);
+        var drawPath = new DrawPath(window);
         drawPath.addToScreenDrawOrder("secondary");
         drawPath.addToScreenDrawOrder("primary");
         drawPath.setPresentScreenName("primary");
         drawPath.apply();
 
         try {
-            primaryCube = this.createModel(
+            primaryCube = window.createModel(
                     "primary",
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
             );
-            secondaryCube = this.createModel(
+            secondaryCube = window.createModel(
                     "secondary",
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
             );
         } catch (URISyntaxException | IOException e) {
             logger.error("Error", e);
-            this.closeWindow();
+            window.close();
         }
     }
 
     @Override
-    public void update() {
+    public void update(MttWindow window) {
         camera.translate(
-                this.getKeyboardPressingCount("W"),
-                this.getKeyboardPressingCount("S"),
-                this.getKeyboardPressingCount("A"),
-                this.getKeyboardPressingCount("D")
+                window.getKeyboardPressingCount("W"),
+                window.getKeyboardPressingCount("S"),
+                window.getKeyboardPressingCount("A"),
+                window.getKeyboardPressingCount("D")
         );
         camera.rotate(
-                this.getKeyboardPressingCount("UP"),
-                this.getKeyboardPressingCount("DOWN"),
-                this.getKeyboardPressingCount("LEFT"),
-                this.getKeyboardPressingCount("RIGHT")
+                window.getKeyboardPressingCount("UP"),
+                window.getKeyboardPressingCount("DOWN"),
+                window.getKeyboardPressingCount("LEFT"),
+                window.getKeyboardPressingCount("RIGHT")
         );
 
         secondaryCameraPosition = new Matrix4f().rotateY(0.01f).transformPosition(secondaryCameraPosition);
         secondaryScreen.getCamera().setEye(secondaryCameraPosition);
 
-        MttTexture secondaryDrawResult = this.texturizeColorOfScreen("secondary", "primary");
+        MttTexture secondaryDrawResult = window.texturizeColorOfScreen("secondary", "primary");
         primaryCube.replaceTexture(0, secondaryDrawResult);
     }
 }

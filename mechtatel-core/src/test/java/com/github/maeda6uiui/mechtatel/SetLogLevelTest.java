@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.logging.MttLogging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,17 +25,17 @@ public class SetLogLevelTest extends Mechtatel {
     }
 
     @Override
-    public void init() {
+    public void init(MttWindow window) {
         logger.debug("init");
     }
 
     @Override
-    public void reshape(int width, int height) {
+    public void reshape(MttWindow window, int width, int height) {
         logger.debug("width={} height={}", width, height);
     }
 
     @Override
-    public void dispose() {
+    public void dispose(MttWindow window) {
         logger.debug("dispose");
     }
 }

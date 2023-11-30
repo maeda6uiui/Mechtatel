@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.animation.AnimationInfo;
 import com.github.maeda6uiui.mechtatel.core.animation.MttAnimation;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
@@ -34,15 +35,15 @@ public class AnimationTest extends Mechtatel {
     private FreeCamera camera;
 
     @Override
-    public void init() {
+    public void init(MttWindow window) {
         try {
             var animationInfo = new AnimationInfo(
                     Objects.requireNonNull(
                             this.getClass().getResource("/Standard/Model/Cube/sample_animations.json")));
-            animation = this.createAnimation("cubes", "default", animationInfo);
+            animation = window.createAnimation("cubes", "default", animationInfo);
         } catch (URISyntaxException | IOException e) {
             logger.error("Error", e);
-            this.closeWindow();
+            window.close();
 
             return;
         }
@@ -53,38 +54,38 @@ public class AnimationTest extends Mechtatel {
         System.out.println("animation_names=");
         animation.getModelSets().keySet().forEach(System.out::println);
 
-        MttScreen defaultScreen = this.getScreen("default");
+        MttScreen defaultScreen = window.getScreen("default");
         defaultScreen.getCamera().setEye(new Vector3f(10.0f, 10.0f, 10.0f));
 
-        this.createAxesLineSet(10.0f);
+        window.createLineSet().addAxes(10.0f).createBuffer();
 
         camera = new FreeCamera(defaultScreen.getCamera());
     }
 
     @Override
-    public void update() {
+    public void update(MttWindow window) {
         camera.translate(
-                this.getKeyboardPressingCount("W"),
-                this.getKeyboardPressingCount("S"),
-                this.getKeyboardPressingCount("A"),
-                this.getKeyboardPressingCount("D")
+                window.getKeyboardPressingCount("W"),
+                window.getKeyboardPressingCount("S"),
+                window.getKeyboardPressingCount("A"),
+                window.getKeyboardPressingCount("D")
         );
         camera.rotate(
-                this.getKeyboardPressingCount("UP"),
-                this.getKeyboardPressingCount("DOWN"),
-                this.getKeyboardPressingCount("LEFT"),
-                this.getKeyboardPressingCount("RIGHT")
+                window.getKeyboardPressingCount("UP"),
+                window.getKeyboardPressingCount("DOWN"),
+                window.getKeyboardPressingCount("LEFT"),
+                window.getKeyboardPressingCount("RIGHT")
         );
 
-        if (this.getKeyboardPressingCount("1") == 1) {
+        if (window.getKeyboardPressingCount("1") == 1) {
             animation.startAnimation("up_and_down_with_rotation");
-        } else if (this.getKeyboardPressingCount("2") == 1) {
+        } else if (window.getKeyboardPressingCount("2") == 1) {
             animation.stopAnimation("up_and_down_with_rotation");
-        } else if (this.getKeyboardPressingCount("3") == 1) {
+        } else if (window.getKeyboardPressingCount("3") == 1) {
             animation.startAnimation("right_and_left_with_rotation");
-        } else if (this.getKeyboardPressingCount("4") == 1) {
+        } else if (window.getKeyboardPressingCount("4") == 1) {
             animation.stopAnimation("right_and_left_with_rotation");
-        } else if (this.getKeyboardPressingCount("5") == 1) {
+        } else if (window.getKeyboardPressingCount("5") == 1) {
             animation.stopAllAnimations();
         }
     }

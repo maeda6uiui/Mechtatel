@@ -1,9 +1,6 @@
 package com.github.maeda6uiui.mechtatel;
 
-import com.github.maeda6uiui.mechtatel.core.DrawPath;
-import com.github.maeda6uiui.mechtatel.core.Mechtatel;
-import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
+import com.github.maeda6uiui.mechtatel.core.*;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.component.MttTexturedQuad2D;
@@ -53,19 +50,19 @@ public class TextureOperationTest extends Mechtatel {
     private FreeCamera camera;
 
     @Override
-    public void init() {
-        var firstScreenCreator = new ScreenCreator(this, "first");
+    public void init(MttWindow window) {
+        var firstScreenCreator = new ScreenCreator(window, "first");
         firstScreen = firstScreenCreator.create();
         firstScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
 
-        var secondScreenCreator = new ScreenCreator(this, "second");
+        var secondScreenCreator = new ScreenCreator(window, "second");
         secondScreen = secondScreenCreator.create();
         secondScreen.getCamera().setEye(new Vector3f(1.0f, 2.0f, 1.0f));
 
-        var finalScreenCreator = new ScreenCreator(this, "final");
+        var finalScreenCreator = new ScreenCreator(window, "final");
         finalScreen = finalScreenCreator.create();
 
-        var drawPath = new DrawPath(this);
+        var drawPath = new DrawPath(window);
         drawPath.addToScreenDrawOrder("first");
         drawPath.addToScreenDrawOrder("second");
         drawPath.addToTextureOperationOrder("test");
@@ -74,7 +71,7 @@ public class TextureOperationTest extends Mechtatel {
         drawPath.apply();
 
         try {
-            texturedQuad = this.createTexturedQuad2D(
+            texturedQuad = window.createTexturedQuad2D(
                     "final",
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Texture/checker.png")),
                     new Vector2f(-1.0f, -1.0f),
@@ -82,17 +79,17 @@ public class TextureOperationTest extends Mechtatel {
                     0.0f
             );
 
-            firstModel = this.createModel(
+            firstModel = window.createModel(
                     "first",
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj"))
             );
-            secondModel = this.createModel(
+            secondModel = window.createModel(
                     "second",
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Teapot/teapot.obj"))
             );
         } catch (URISyntaxException | IOException e) {
             logger.error("Error", e);
-            this.closeWindow();
+            window.close();
 
             return;
         }
@@ -101,18 +98,18 @@ public class TextureOperationTest extends Mechtatel {
     }
 
     @Override
-    public void update() {
+    public void update(MttWindow window) {
         camera.translate(
-                this.getKeyboardPressingCount("W"),
-                this.getKeyboardPressingCount("S"),
-                this.getKeyboardPressingCount("A"),
-                this.getKeyboardPressingCount("D")
+                window.getKeyboardPressingCount("W"),
+                window.getKeyboardPressingCount("S"),
+                window.getKeyboardPressingCount("A"),
+                window.getKeyboardPressingCount("D")
         );
         camera.rotate(
-                this.getKeyboardPressingCount("UP"),
-                this.getKeyboardPressingCount("DOWN"),
-                this.getKeyboardPressingCount("LEFT"),
-                this.getKeyboardPressingCount("RIGHT")
+                window.getKeyboardPressingCount("UP"),
+                window.getKeyboardPressingCount("DOWN"),
+                window.getKeyboardPressingCount("LEFT"),
+                window.getKeyboardPressingCount("RIGHT")
         );
 
         //You need to create textures from screens in every frame if you enable resizing of the window.
@@ -126,15 +123,15 @@ public class TextureOperationTest extends Mechtatel {
         //
         //You should run cleanup() of textures created here after you are done with them,
         //otherwise unused texture allocations are accumulated.
-        firstColorTexture = this.texturizeColorOfScreen("first", "final");
-        firstDepthTexture = this.texturizeDepthOfScreen("first", "final");
-        secondColorTexture = this.texturizeColorOfScreen("second", "final");
-        secondDepthTexture = this.texturizeDepthOfScreen("second", "final");
+        firstColorTexture = window.texturizeColorOfScreen("first", "final");
+        firstDepthTexture = window.texturizeDepthOfScreen("first", "final");
+        secondColorTexture = window.texturizeColorOfScreen("second", "final");
+        secondDepthTexture = window.texturizeDepthOfScreen("second", "final");
 
         var textureOperationParameters = new TextureOperationParameters();
         textureOperationParameters.setOperationType(TextureOperationParameters.TEXTURE_OPERATION_ADD);
 
-        finalTexture = this.createTextureOperation(
+        finalTexture = window.createTextureOperation(
                 "test",
                 firstColorTexture,
                 secondColorTexture,
@@ -147,13 +144,13 @@ public class TextureOperationTest extends Mechtatel {
     }
 
     @Override
-    public void postPresent() {
-        if (this.getKeyboardPressingCount("ENTER") == 1) {
+    public void postPresent(MttWindow window) {
+        if (window.getKeyboardPressingCount("ENTER") == 1) {
             try {
-                this.saveScreenshot("final", "bgra", "screenshot.jpg");
+                window.saveScreenshot("final", "bgra", "screenshot.jpg");
             } catch (IOException e) {
                 logger.error("Error", e);
-                this.closeWindow();
+                window.close();
 
                 return;
             }

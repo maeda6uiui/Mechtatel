@@ -1,9 +1,6 @@
 package com.github.maeda6uiui.mechtatel;
 
-import com.github.maeda6uiui.mechtatel.core.DrawPath;
-import com.github.maeda6uiui.mechtatel.core.Mechtatel;
-import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
+import com.github.maeda6uiui.mechtatel.core.*;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.component.MttSphere;
@@ -39,8 +36,8 @@ public class ScreenshotTest extends Mechtatel {
     private MttSphere sphere;
 
     @Override
-    public void init() {
-        var screenCreator = new ScreenCreator(this, "main");
+    public void init(MttWindow window) {
+        var screenCreator = new ScreenCreator(window, "main");
         screenCreator.addPostProcessingNabor("parallel_light");
         screenCreator.addPostProcessingNabor("fog");
         screenCreator.setUseShadowMapping(true);
@@ -52,69 +49,69 @@ public class ScreenshotTest extends Mechtatel {
 
         camera = new FreeCamera(mainScreen.getCamera());
 
-        var drawPath = new DrawPath(this);
+        var drawPath = new DrawPath(window);
         drawPath.addToScreenDrawOrder("main");
         drawPath.setPresentScreenName("main");
         drawPath.apply();
 
         try {
-            plane = this.createModel(
+            plane = window.createModel(
                     "main",
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj"))
             );
-            cube = this.createModel(
+            cube = window.createModel(
                     "main",
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
             );
         } catch (URISyntaxException | IOException e) {
             logger.error("Error", e);
-            this.closeWindow();
+            window.close();
 
             return;
         }
 
         cube.translate(new Vector3f(0.0f, 1.0f, 0.0f));
 
-        sphere = this.createSphere(
+        sphere = window.createSphere(
                 new Vector3f(5.0f, 2.0f, 0.0f),
                 2.0f, 32, 32, new Vector4f(1.0f, 0.0f, 1.0f, 1.0f)
         );
     }
 
     @Override
-    public void dispose() {
+    public void dispose(MttWindow window) {
 
     }
 
     @Override
-    public void reshape(int width, int height) {
+    public void reshape(MttWindow window, int width, int height) {
 
     }
 
     @Override
-    public void update() {
+    public void update(MttWindow window) {
         camera.translate(
-                this.getKeyboardPressingCount("W"),
-                this.getKeyboardPressingCount("S"),
-                this.getKeyboardPressingCount("A"),
-                this.getKeyboardPressingCount("D")
+                window.getKeyboardPressingCount("W"),
+                window.getKeyboardPressingCount("S"),
+                window.getKeyboardPressingCount("A"),
+                window.getKeyboardPressingCount("D")
         );
         camera.rotate(
-                this.getKeyboardPressingCount("UP"),
-                this.getKeyboardPressingCount("DOWN"),
-                this.getKeyboardPressingCount("LEFT"),
-                this.getKeyboardPressingCount("RIGHT")
+                window.getKeyboardPressingCount("UP"),
+                window.getKeyboardPressingCount("DOWN"),
+                window.getKeyboardPressingCount("LEFT"),
+                window.getKeyboardPressingCount("RIGHT")
         );
     }
 
     @Override
-    public void postPresent() {
-        if (this.getKeyboardPressingCount("ENTER") == 1) {
+    public void postPresent(MttWindow window) {
+        if (window.getKeyboardPressingCount("ENTER") == 1) {
             try {
-                this.saveScreenshot("main", "bgra", "screenshot.png");
+                window.saveScreenshot("main", "bgra", "screenshot.png");
             } catch (IOException e) {
                 logger.error("Error", e);
-                this.closeWindow();
+                window.close();
             }
         }
     }

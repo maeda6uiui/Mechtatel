@@ -1,15 +1,13 @@
 package com.github.maeda6uiui.mechtatel;
 
-import com.github.maeda6uiui.mechtatel.core.DrawPath;
-import com.github.maeda6uiui.mechtatel.core.Mechtatel;
-import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import com.github.maeda6uiui.mechtatel.core.ScreenCreator;
+import com.github.maeda6uiui.mechtatel.core.*;
 import com.github.maeda6uiui.mechtatel.core.component.MttTexturedQuad2D;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector2f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
@@ -33,25 +31,25 @@ public class ShowTexture extends Mechtatel {
     private MttTexturedQuad2D texturedQuad;
 
     @Override
-    public void init() {
-        var mainScreenCreator = new ScreenCreator(this, "main");
+    public void init(MttWindow window) {
+        var mainScreenCreator = new ScreenCreator(window, "main");
         mainScreen = mainScreenCreator.create();
 
-        var drawPath = new DrawPath(this);
+        var drawPath = new DrawPath(window);
         drawPath.addToScreenDrawOrder("main");
         drawPath.setPresentScreenName("main");
         drawPath.apply();
 
         try {
-            texturedQuad = this.createTexturedQuad2D(
+            texturedQuad = window.createTexturedQuad2D(
                     "main",
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Texture/checker.png")),
                     new Vector2f(-1.0f, -1.0f),
                     new Vector2f(1.0f, 1.0f),
                     0.0f);
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException | FileNotFoundException e) {
             logger.error("Error", e);
-            this.closeWindow();
+            window.close();
         }
     }
 }

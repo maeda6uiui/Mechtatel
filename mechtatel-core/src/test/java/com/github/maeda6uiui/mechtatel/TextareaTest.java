@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttTextarea;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.JISKeyInterpreter;
 import org.slf4j.Logger;
@@ -28,9 +29,9 @@ public class TextareaTest extends Mechtatel {
     private MttTextarea textarea;
 
     @Override
-    public void init() {
+    public void init(MttWindow window) {
         var keyInterpreter = new JISKeyInterpreter();
-        textarea = this.createTextarea(
+        textarea = window.createTextarea(
                 new MttTextarea.MttTextareaCreateInfo()
                         .setX(-0.9f)
                         .setY(-0.9f)
@@ -54,12 +55,12 @@ public class TextareaTest extends Mechtatel {
     }
 
     @Override
-    public void update() {
-        if (this.getKeyboardPressingCount("F1") == 1) {
+    public void update(MttWindow window) {
+        if (window.getKeyboardPressingCount("F1") == 1) {
             System.out.println(textarea.getText());
-        } else if (this.getKeyboardPressingCount("F2") == 1) {
+        } else if (window.getKeyboardPressingCount("F2") == 1) {
             System.out.println(textarea.getLines());
-        } else if (this.getKeyboardPressingCount("F3") == 1) {
+        } else if (window.getKeyboardPressingCount("F3") == 1) {
             textarea.clear();
         }
     }

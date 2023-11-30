@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttTextbox;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.JISKeyInterpreter;
 import org.slf4j.Logger;
@@ -28,9 +29,9 @@ public class TextboxTest extends Mechtatel {
     private MttTextbox textbox;
 
     @Override
-    public void init() {
+    public void init(MttWindow window) {
         var keyInterpreter = new JISKeyInterpreter();
-        textbox = this.createTextbox(
+        textbox = window.createTextbox(
                 new MttTextbox.MttTextboxCreateInfo()
                         .setX(-0.9f)
                         .setY(-0.9f)
@@ -53,10 +54,10 @@ public class TextboxTest extends Mechtatel {
     }
 
     @Override
-    public void update() {
-        if (this.getKeyboardPressingCount("F1") == 1) {
+    public void update(MttWindow window) {
+        if (window.getKeyboardPressingCount("F1") == 1) {
             System.out.println(textbox.getText());
-        } else if (this.getKeyboardPressingCount("F2") == 1) {
+        } else if (window.getKeyboardPressingCount("F2") == 1) {
             textbox.clear();
         }
     }

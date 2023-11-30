@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttHorizontalScrollbar;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttVerticalScrollbar;
 import org.slf4j.Logger;
@@ -26,8 +27,8 @@ public class ScrollbarTest extends Mechtatel {
     }
 
     @Override
-    public void init() {
-        var vScrollbar = this.createVerticalScrollbar(
+    public void init(MttWindow window) {
+        var vScrollbar = window.createVerticalScrollbar(
                 new MttVerticalScrollbar.MttVerticalScrollbarCreateInfo()
                         .setX(-0.9f)
                         .setY(-0.9f)
@@ -39,7 +40,7 @@ public class ScrollbarTest extends Mechtatel {
         );
         vScrollbar.setScrollAmount(0.5f);
 
-        var hScrollbar = this.createHorizontalScrollbar(
+        var hScrollbar = window.createHorizontalScrollbar(
                 new MttHorizontalScrollbar.MttHorizontalScrollbarCreateInfo()
                         .setX(-0.7f)
                         .setY(-0.9f)

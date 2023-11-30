@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.CameraMode;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel;
@@ -33,20 +34,20 @@ public class CameraModeTest extends Mechtatel {
     private FreeCamera camera;
 
     @Override
-    public void init() {
-        MttScreen defaultScreen = this.getScreen("default");
+    public void init(MttWindow window) {
+        MttScreen defaultScreen = window.getScreen("default");
         camera = new FreeCamera(defaultScreen.getCamera());
 
         MttModel srcCube;
         try {
-            srcCube = this.createModel(
+            srcCube = window.createModel(
                     "default",
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
             );
             srcCube.setVisible(false);
         } catch (URISyntaxException | IOException e) {
             logger.error("Error", e);
-            this.closeWindow();
+            window.close();
 
             return;
         }
@@ -55,7 +56,7 @@ public class CameraModeTest extends Mechtatel {
         for (int i = 0; i <= 10; i++) {
             float x = -25.0f;
             for (int j = 0; j <= 10; j++) {
-                MttModel cube = this.duplicateModel(srcCube);
+                MttModel cube = window.duplicateModel(srcCube);
                 cube.translate(new Vector3f(x, 0.0f, z));
 
                 x += 5.0f;
@@ -65,24 +66,24 @@ public class CameraModeTest extends Mechtatel {
     }
 
     @Override
-    public void update() {
+    public void update(MttWindow window) {
         camera.translate(
-                this.getKeyboardPressingCount("W"),
-                this.getKeyboardPressingCount("S"),
-                this.getKeyboardPressingCount("A"),
-                this.getKeyboardPressingCount("D")
+                window.getKeyboardPressingCount("W"),
+                window.getKeyboardPressingCount("S"),
+                window.getKeyboardPressingCount("A"),
+                window.getKeyboardPressingCount("D")
         );
         camera.rotate(
-                this.getKeyboardPressingCount("UP"),
-                this.getKeyboardPressingCount("DOWN"),
-                this.getKeyboardPressingCount("LEFT"),
-                this.getKeyboardPressingCount("RIGHT")
+                window.getKeyboardPressingCount("UP"),
+                window.getKeyboardPressingCount("DOWN"),
+                window.getKeyboardPressingCount("LEFT"),
+                window.getKeyboardPressingCount("RIGHT")
         );
 
-        MttScreen defaultScreen = this.getScreen("default");
-        if (this.getKeyboardPressingCount("F1") == 1) {
+        MttScreen defaultScreen = window.getScreen("default");
+        if (window.getKeyboardPressingCount("F1") == 1) {
             defaultScreen.getCamera().setCameraMode(CameraMode.ORTHOGRAPHIC);
-        } else if (this.getKeyboardPressingCount("F2") == 1) {
+        } else if (window.getKeyboardPressingCount("F2") == 1) {
             defaultScreen.getCamera().setCameraMode(CameraMode.PERSPECTIVE);
         }
     }

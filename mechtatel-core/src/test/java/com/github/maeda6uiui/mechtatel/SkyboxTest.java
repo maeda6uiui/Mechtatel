@@ -49,21 +49,21 @@ public class SkyboxTest extends Mechtatel {
     private FreeCamera camera;
 
     @Override
-    public void init() {
-        var skyboxScreenCreator = new ScreenCreator(this, "skybox");
+    public void init(MttWindow window) {
+        var skyboxScreenCreator = new ScreenCreator(window, "skybox");
         skyboxScreenCreator.setDepthImageSize(1024, 1024);
         skyboxScreenCreator.setSamplerAddressMode(SamplerAddressMode.CLAMP_TO_EDGE);
         skyboxScreen = skyboxScreenCreator.create();
         skyboxScreen.getCamera().setZNear(500.0f);
         skyboxScreen.getCamera().setZFar(2000.0f);
 
-        var mainScreenCreator = new ScreenCreator(this, "main");
+        var mainScreenCreator = new ScreenCreator(window, "main");
         mainScreen = mainScreenCreator.create();
 
-        var finalScreenCreator = new ScreenCreator(this, "final");
+        var finalScreenCreator = new ScreenCreator(window, "final");
         finalScreen = finalScreenCreator.create();
 
-        var drawPath = new DrawPath(this);
+        var drawPath = new DrawPath(window);
         drawPath.addToScreenDrawOrder("skybox");
         drawPath.addToScreenDrawOrder("main");
         drawPath.addToTextureOperationOrder("merge_by_depth");
@@ -72,7 +72,7 @@ public class SkyboxTest extends Mechtatel {
         drawPath.apply();
 
         try {
-            texturedQuad = this.createTexturedQuad2D(
+            texturedQuad = window.createTexturedQuad2D(
                     "final",
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Texture/checker.png")),
                     new Vector2f(-1.0f, -1.0f),
@@ -80,17 +80,17 @@ public class SkyboxTest extends Mechtatel {
                     0.0f
             );
 
-            skyboxModel = this.createModel(
+            skyboxModel = window.createModel(
                     "skybox",
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Skybox/skybox.obj"))
             );
-            mainModel = this.createModel(
+            mainModel = window.createModel(
                     "main",
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
             );
 
             var skyboxTextureCreator = new SkyboxTextureCreator(
-                    this,
+                    window,
                     "skybox",
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Skybox/Hill")),
                     "png",
@@ -98,42 +98,42 @@ public class SkyboxTest extends Mechtatel {
             skyboxTextureCreator.apply(skyboxModel);
         } catch (URISyntaxException | IOException e) {
             logger.error("Error", e);
-            this.closeWindow();
+            window.close();
 
             return;
         }
 
-        this.createPositiveAxesLineSet(10.0f);
+        window.createLineSet().addPositiveAxes(10.0f).createBuffer();
 
         camera = new FreeCamera(mainScreen.getCamera());
     }
 
     @Override
-    public void update() {
+    public void update(MttWindow window) {
         camera.translate(
-                this.getKeyboardPressingCount("W"),
-                this.getKeyboardPressingCount("S"),
-                this.getKeyboardPressingCount("A"),
-                this.getKeyboardPressingCount("D")
+                window.getKeyboardPressingCount("W"),
+                window.getKeyboardPressingCount("S"),
+                window.getKeyboardPressingCount("A"),
+                window.getKeyboardPressingCount("D")
         );
         camera.rotate(
-                this.getKeyboardPressingCount("UP"),
-                this.getKeyboardPressingCount("DOWN"),
-                this.getKeyboardPressingCount("LEFT"),
-                this.getKeyboardPressingCount("RIGHT")
+                window.getKeyboardPressingCount("UP"),
+                window.getKeyboardPressingCount("DOWN"),
+                window.getKeyboardPressingCount("LEFT"),
+                window.getKeyboardPressingCount("RIGHT")
         );
         skyboxScreen.syncCamera(mainScreen.getCamera());
 
-        skyboxColorTexture = this.texturizeColorOfScreen("skybox", "final");
-        skyboxDepthTexture = this.texturizeDepthOfScreen("skybox", "final");
-        mainColorTexture = this.texturizeColorOfScreen("main", "final");
-        mainDepthTexture = this.texturizeDepthOfScreen("main", "final");
+        skyboxColorTexture = window.texturizeColorOfScreen("skybox", "final");
+        skyboxDepthTexture = window.texturizeDepthOfScreen("skybox", "final");
+        mainColorTexture = window.texturizeColorOfScreen("main", "final");
+        mainDepthTexture = window.texturizeDepthOfScreen("main", "final");
 
         var textureOperationParameters = new TextureOperationParameters();
         textureOperationParameters.setOperationType(TextureOperationParameters.TEXTURE_OPERATION_MERGE_BY_DEPTH);
         textureOperationParameters.setFirstTextureFixedDepth(0.99999f);
 
-        finalTexture = this.createTextureOperation(
+        finalTexture = window.createTextureOperation(
                 "merge_by_depth",
                 skyboxColorTexture,
                 mainColorTexture,
@@ -146,13 +146,13 @@ public class SkyboxTest extends Mechtatel {
     }
 
     @Override
-    public void postPresent() {
-        if (this.getKeyboardPressingCount("ENTER") == 1) {
+    public void postPresent(MttWindow window) {
+        if (window.getKeyboardPressingCount("ENTER") == 1) {
             try {
-                this.saveScreenshot("final", "bgra", "screenshot.jpg");
+                window.saveScreenshot("final", "bgra", "screenshot.jpg");
             } catch (IOException e) {
                 logger.error("Error", e);
-                this.closeWindow();
+                window.close();
 
                 return;
             }

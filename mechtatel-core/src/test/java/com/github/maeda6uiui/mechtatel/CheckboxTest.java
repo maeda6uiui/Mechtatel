@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.component.gui.MttCheckbox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +26,8 @@ public class CheckboxTest extends Mechtatel {
     }
 
     @Override
-    public void init() {
-        this.createCheckbox(
+    public void init(MttWindow window) {
+        window.createCheckbox(
                 new MttCheckbox.MttCheckboxCreateInfo()
                         .setX(-0.9f)
                         .setY(-0.9f)
@@ -45,7 +46,7 @@ public class CheckboxTest extends Mechtatel {
                         .setFontColor(Color.GREEN)
                         .setCheckboxColor(Color.WHITE)
         );
-        this.createCheckbox(
+        window.createCheckbox(
                 new MttCheckbox.MttCheckboxCreateInfo()
                         .setX(-0.9f)
                         .setY(-0.75f)

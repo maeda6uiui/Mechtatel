@@ -2,6 +2,12 @@ package com.github.maeda6uiui.mechtatel.core.physics;
 
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;
+import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
+
+import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.*;
 
 /**
  * Base class for physical objects
@@ -37,5 +43,25 @@ public class PhysicalObject {
 
     public PhysicsRigidBody getBody() {
         return body;
+    }
+
+    public void setLocation(Vector3fc location) {
+        var loc = convertJOMLVector3fToJMEVector3f(location);
+        body.setPhysicsLocation(loc);
+    }
+
+    public Vector3f getLocation() {
+        var loc = body.getPhysicsLocation(null);
+        return convertJMEVector3fToJOMLVector3f(loc);
+    }
+
+    public void setRotationMatrix(Matrix4fc rotationMatrix) {
+        var rot = convertJOMLMatrix4fToJMEMatrix3f(rotationMatrix);
+        body.setPhysicsRotation(rot);
+    }
+
+    public Matrix4f getRotationMatrix() {
+        var rot = body.getPhysicsRotationMatrix(null);
+        return convertJMEMatrix3fToJOMLMatrix4f(rot);
     }
 }

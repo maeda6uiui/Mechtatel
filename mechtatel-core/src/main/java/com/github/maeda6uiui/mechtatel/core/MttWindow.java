@@ -207,7 +207,7 @@ public class MttWindow
         physicalObjects.forEach(PhysicalObject::updateObject);
         PhysicalObject.updatePhysicsSpace((float) elapsedTime, physicsSimulationTimeScale);
 
-        animations.forEach((k, v) -> v.update());
+        animations.values().forEach(MttAnimation::update);
 
         mtt.update(this);
     }
@@ -334,70 +334,57 @@ public class MttWindow
     }
 
     public MttModel createModel(String screenName, @NotNull URL modelResource) throws URISyntaxException, IOException {
-        var model = new MttModel(vulkanImpl, screenName, modelResource.toURI());
-        return model;
+        return new MttModel(vulkanImpl, screenName, modelResource.toURI());
     }
 
     public MttModel duplicateModel(MttModel srcModel) {
-        var model = new MttModel(vulkanImpl, srcModel);
-        return model;
+        return new MttModel(vulkanImpl, srcModel);
     }
 
     public MttLine createLine(MttVertex v1, MttVertex v2) {
-        var line = new MttLine(vulkanImpl, v1, v2);
-        return line;
+        return new MttLine(vulkanImpl, v1, v2);
     }
 
     public MttLineSet createLineSet() {
-        var lineSet = new MttLineSet(vulkanImpl);
-        return lineSet;
+        return new MttLineSet(vulkanImpl);
     }
 
     public MttSphere createSphere(Vector3fc center, float radius, int numVDivs, int numHDivs, Vector4fc color) {
-        var sphere = new MttSphere(vulkanImpl, center, radius, numVDivs, numHDivs, color);
-        return sphere;
+        return new MttSphere(vulkanImpl, center, radius, numVDivs, numHDivs, color);
     }
 
     public MttCapsule createCapsule(Vector3fc center, float length, float radius, int numVDivs, int numHDivs, Vector4fc color) {
-        var capsule = new MttCapsule(vulkanImpl, center, length, radius, numVDivs, numHDivs, color);
-        return capsule;
+        return new MttCapsule(vulkanImpl, center, length, radius, numVDivs, numHDivs, color);
     }
 
     public MttLine2D createLine2D(MttVertex2D p1, MttVertex2D p2, float z) {
-        var line = new MttLine2D(vulkanImpl, p1, p2, z);
-        return line;
+        return new MttLine2D(vulkanImpl, p1, p2, z);
     }
 
     public MttLine2DSet createLine2DSet() {
-        var lineSet = new MttLine2DSet(vulkanImpl);
-        return lineSet;
+        return new MttLine2DSet(vulkanImpl);
     }
 
     public MttQuad createQuad(MttVertex v1, MttVertex v2, MttVertex v3, MttVertex v4, boolean fill) {
-        var quad = new MttQuad(vulkanImpl, v1, v2, v3, v4, fill);
-        return quad;
+        return new MttQuad(vulkanImpl, v1, v2, v3, v4, fill);
     }
 
     public MttQuad createQuad(Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, boolean fill, Vector4fc color) {
-        var quad = new MttQuad(vulkanImpl, p1, p2, p3, p4, fill, color);
-        return quad;
+        return new MttQuad(vulkanImpl, p1, p2, p3, p4, fill, color);
     }
 
     public MttQuad2D createQuad2D(
             MttVertex2D v1, MttVertex2D v2, MttVertex2D v3, MttVertex2D v4, float z, boolean fill) {
-        var quad = new MttQuad2D(vulkanImpl, v1, v2, v3, v4, z, fill);
-        return quad;
+        return new MttQuad2D(vulkanImpl, v1, v2, v3, v4, z, fill);
     }
 
     public MttQuad2D createQuad2D(
             Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4, float z, boolean fill, Vector4fc color) {
-        var quad = new MttQuad2D(vulkanImpl, p1, p2, p3, p4, z, fill, color);
-        return quad;
+        return new MttQuad2D(vulkanImpl, p1, p2, p3, p4, z, fill, color);
     }
 
     public MttQuad2D createQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, boolean fill, Vector4fc color) {
-        var quad = new MttQuad2D(vulkanImpl, topLeft, bottomRight, z, fill, color);
-        return quad;
+        return new MttQuad2D(vulkanImpl, topLeft, bottomRight, z, fill, color);
     }
 
     public MttTexturedQuad createTexturedQuad(
@@ -408,7 +395,7 @@ public class MttWindow
             MttVertexUV v2,
             MttVertexUV v3,
             MttVertexUV v4) throws URISyntaxException, FileNotFoundException {
-        var texturedQuad = new MttTexturedQuad(
+        return new MttTexturedQuad(
                 vulkanImpl,
                 screenName,
                 textureResource.toURI(),
@@ -416,8 +403,8 @@ public class MttWindow
                 v1,
                 v2,
                 v3,
-                v4);
-        return texturedQuad;
+                v4
+        );
     }
 
     public MttTexturedQuad createTexturedQuad(
@@ -427,15 +414,15 @@ public class MttWindow
             MttVertexUV v2,
             MttVertexUV v3,
             MttVertexUV v4) {
-        var texturedQuad = new MttTexturedQuad(
+        return new MttTexturedQuad(
                 vulkanImpl,
                 screenName,
                 texture,
                 v1,
                 v2,
                 v3,
-                v4);
-        return texturedQuad;
+                v4
+        );
     }
 
     public MttTexturedQuad duplicateTexturedQuad(
@@ -444,75 +431,66 @@ public class MttWindow
             MttVertexUV v2,
             MttVertexUV v3,
             MttVertexUV v4) {
-        var texturedQuad = new MttTexturedQuad(
+        return new MttTexturedQuad(
                 vulkanImpl,
                 srcQuad,
                 v1,
                 v2,
                 v3,
-                v4);
-        return texturedQuad;
+                v4
+        );
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
             String screenName, @NotNull URL textureResource,
             MttVertex2DUV v1, MttVertex2DUV v2, MttVertex2DUV v3, MttVertex2DUV v4, float z)
             throws URISyntaxException, FileNotFoundException {
-        var texturedQuad = new MttTexturedQuad2D(
+        return new MttTexturedQuad2D(
                 vulkanImpl, screenName, textureResource.toURI(), v1, v2, v3, v4, z);
-        return texturedQuad;
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
             String screenName, @NotNull URL textureResource,
             Vector2fc topLeft, Vector2fc bottomRight, float z) throws URISyntaxException, FileNotFoundException {
-        var texturedQuad = new MttTexturedQuad2D(
+        return new MttTexturedQuad2D(
                 vulkanImpl, screenName, textureResource.toURI(), topLeft, bottomRight, z);
-        return texturedQuad;
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
             String screenName, MttTexture texture,
             MttVertex2DUV v1, MttVertex2DUV v2, MttVertex2DUV v3, MttVertex2DUV v4, float z) {
-        var texturedQuad = new MttTexturedQuad2D(vulkanImpl, screenName, texture, v1, v2, v3, v4, z);
-        return texturedQuad;
+        return new MttTexturedQuad2D(vulkanImpl, screenName, texture, v1, v2, v3, v4, z);
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
             String screenName, MttTexture texture,
             Vector2fc topLeft, Vector2fc bottomRight, float z) {
-        var texturedQuad = new MttTexturedQuad2D(vulkanImpl, screenName, texture, topLeft, bottomRight, z);
-        return texturedQuad;
+        return new MttTexturedQuad2D(vulkanImpl, screenName, texture, topLeft, bottomRight, z);
     }
 
     public MttTexturedQuad2D duplicateTexturedQuad2D(
             MttTexturedQuad2D srcQuad,
             MttVertex2DUV v1, MttVertex2DUV v2, MttVertex2DUV v3, MttVertex2DUV v4, float z) {
-        var texturedQuad = new MttTexturedQuad2D(vulkanImpl, srcQuad, v1, v2, v3, v4, z);
-        return texturedQuad;
+        return new MttTexturedQuad2D(vulkanImpl, srcQuad, v1, v2, v3, v4, z);
     }
 
     public MttTexturedQuad2D duplicateTexturedQuad2D(
             MttTexturedQuad2D srcQuad, Vector2fc topLeft, Vector2fc bottomRight, float z) {
-        var texturedQuad = new MttTexturedQuad2D(vulkanImpl, srcQuad, topLeft, bottomRight, z);
-        return texturedQuad;
+        return new MttTexturedQuad2D(vulkanImpl, srcQuad, topLeft, bottomRight, z);
     }
 
     public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(
             String screenName, @NotNull URL textureResource) throws URISyntaxException, FileNotFoundException {
-        var texturedQuadSet = new MttTexturedQuad2DSingleTextureSet(
+        return new MttTexturedQuad2DSingleTextureSet(
                 vulkanImpl, screenName, textureResource.toURI());
-        return texturedQuadSet;
     }
 
     public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, MttTexture texture) {
-        var texturedQuadSet = new MttTexturedQuad2DSingleTextureSet(vulkanImpl, screenName, texture);
-        return texturedQuadSet;
+        return new MttTexturedQuad2DSingleTextureSet(vulkanImpl, screenName, texture);
     }
 
     public MttBox createBox(float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
-        var box = new MttBox(vulkanImpl, xHalfExtent, yHalfExtent, zHalfExtent, color);
-        return box;
+        return new MttBox(vulkanImpl, xHalfExtent, yHalfExtent, zHalfExtent, color);
     }
 
     public MttBox createBox(float halfExtent, Vector4fc color) {
@@ -521,8 +499,7 @@ public class MttWindow
 
     public MttFont createFont(
             String screenName, Font font, boolean antiAlias, Color fontColor, String requiredChars) {
-        var mttFont = new MttFont(vulkanImpl, screenName, font, antiAlias, fontColor, requiredChars);
-        return mttFont;
+        return new MttFont(vulkanImpl, screenName, font, antiAlias, fontColor, requiredChars);
     }
 
     public MttButton createButton(MttButton.MttButtonCreateInfo createInfo) {
@@ -629,10 +606,11 @@ public class MttWindow
         if (physicalObjects.contains(physicalObject)) {
             physicalObject.cleanup();
             physicalObjects.remove(physicalObject);
+
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public void setPhysicsSimulationTimeScale(float physicsSimulationTimeScale) {
@@ -657,27 +635,25 @@ public class MttWindow
         if (sounds3D.contains(sound)) {
             sound.cleanup();
             sounds3D.remove(sound);
+
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public MttTexture createTexture(
             String screenName, @NotNull URL textureResource, boolean generateMipmaps)
             throws URISyntaxException, FileNotFoundException {
-        var texture = new MttTexture(vulkanImpl, screenName, textureResource.toURI(), generateMipmaps);
-        return texture;
+        return new MttTexture(vulkanImpl, screenName, textureResource.toURI(), generateMipmaps);
     }
 
     public MttTexture texturizeColorOfScreen(String srcScreenName, String dstScreenName) {
-        var texture = new MttTexture(vulkanImpl, srcScreenName, dstScreenName, "color");
-        return texture;
+        return new MttTexture(vulkanImpl, srcScreenName, dstScreenName, "color");
     }
 
     public MttTexture texturizeDepthOfScreen(String srcScreenName, String dstScreenName) {
-        var texture = new MttTexture(vulkanImpl, srcScreenName, dstScreenName, "depth");
-        return texture;
+        return new MttTexture(vulkanImpl, srcScreenName, dstScreenName, "depth");
     }
 
     public void saveScreenshot(String screenName, String srcImageFormat, String outputFilepath) throws IOException {
@@ -767,9 +743,7 @@ public class MttWindow
                 secondDepthTexture.getVulkanTexture(),
                 dstScreenName,
                 parameters);
-        var texture = new MttTexture(vulkanImpl, vulkanTexture);
-
-        return texture;
+        return new MttTexture(vulkanImpl, vulkanTexture);
     }
 
     public boolean updateTextureOperationParameters(String operationName, TextureOperationParameters parameters) {

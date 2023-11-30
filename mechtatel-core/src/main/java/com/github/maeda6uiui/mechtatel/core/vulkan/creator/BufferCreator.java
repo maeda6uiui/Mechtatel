@@ -1,9 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.creator;
 
+import com.github.maeda6uiui.mechtatel.core.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex2DUV;
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex3D;
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex3DUV;
+import com.github.maeda6uiui.mechtatel.core.component.MttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.util.MemcpyUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.MemoryUtils;
 import org.lwjgl.PointerBuffer;
@@ -199,9 +199,9 @@ public class BufferCreator {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<MttVertex3D> vertices) {
+            List<MttVertex> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            long bufferSize = MttVertex3D.SIZEOF * vertices.size();
+            long bufferSize = MttVertex.SIZEOF * vertices.size();
 
             LongBuffer pBuffer = stack.mallocLong(1);
             LongBuffer pBufferMemory = stack.mallocLong(1);
@@ -250,9 +250,9 @@ public class BufferCreator {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<MttVertex3DUV> vertices) {
+            List<MttVertexUV> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            long bufferSize = MttVertex3DUV.SIZEOF * vertices.size();
+            long bufferSize = MttVertexUV.SIZEOF * vertices.size();
 
             LongBuffer pBuffer = stack.mallocLong(1);
             LongBuffer pBufferMemory = stack.mallocLong(1);

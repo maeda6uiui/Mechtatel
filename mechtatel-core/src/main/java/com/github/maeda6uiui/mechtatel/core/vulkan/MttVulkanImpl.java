@@ -5,8 +5,8 @@ import com.github.maeda6uiui.mechtatel.core.SamplerAddressMode;
 import com.github.maeda6uiui.mechtatel.core.SamplerFilterMode;
 import com.github.maeda6uiui.mechtatel.core.SamplerMipmapMode;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex3D;
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex3DUV;
+import com.github.maeda6uiui.mechtatel.core.component.MttVertex;
+import com.github.maeda6uiui.mechtatel.core.component.MttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
@@ -479,7 +479,7 @@ public class MttVulkanImpl
         return model;
     }
 
-    public VkMttLine createLine(MttVertex3D v1, MttVertex3D v2) {
+    public VkMttLine createLine(MttVertex v1, MttVertex v2) {
         var line = new VkMttLine(device, commandPool, graphicsQueue, v1, v2);
         components.add(line);
 
@@ -518,7 +518,7 @@ public class MttVulkanImpl
         return capsule;
     }
 
-    public VkMttQuad createQuad(List<MttVertex3D> vertices, boolean fill) {
+    public VkMttQuad createQuad(List<MttVertex> vertices, boolean fill) {
         var filledQuad = new VkMttQuad(device, commandPool, graphicsQueue, vertices, fill);
         components.add(filledQuad);
 
@@ -526,7 +526,7 @@ public class MttVulkanImpl
     }
 
     public VkMttTexturedQuad createTexturedQuad(
-            String screenName, URI textureResource, boolean generateMipmaps, List<MttVertex3DUV> vertices) {
+            String screenName, URI textureResource, boolean generateMipmaps, List<MttVertexUV> vertices) {
         VkMttScreen screen = screens.get(screenName);
 
         var texturedQuad = new VkMttTexturedQuad(
@@ -542,7 +542,7 @@ public class MttVulkanImpl
         return texturedQuad;
     }
 
-    public VkMttTexturedQuad createTexturedQuad(String screenName, VkMttTexture texture, List<MttVertex3DUV> vertices) {
+    public VkMttTexturedQuad createTexturedQuad(String screenName, VkMttTexture texture, List<MttVertexUV> vertices) {
         var texturedQuad = new VkMttTexturedQuad(
                 device,
                 commandPool,
@@ -555,7 +555,7 @@ public class MttVulkanImpl
         return texturedQuad;
     }
 
-    public VkMttTexturedQuad duplicateTexturedQuad(VkMttTexturedQuad srcQuad, List<MttVertex3DUV> vertices) {
+    public VkMttTexturedQuad duplicateTexturedQuad(VkMttTexturedQuad srcQuad, List<MttVertexUV> vertices) {
         var texturedQuad = new VkMttTexturedQuad(
                 device,
                 commandPool,

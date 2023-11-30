@@ -15,14 +15,14 @@ public class MttQuad extends MttComponent {
 
     public MttQuad(
             MttVulkanImpl vulkanImpl,
-            MttVertex3D v1,
-            MttVertex3D v2,
-            MttVertex3D v3,
-            MttVertex3D v4,
+            MttVertex v1,
+            MttVertex v2,
+            MttVertex v3,
+            MttVertex v4,
             boolean fill) {
         super(vulkanImpl);
 
-        var vertices = new ArrayList<MttVertex3D>();
+        var vertices = new ArrayList<MttVertex>();
         vertices.add(v1);
         vertices.add(v2);
         vertices.add(v3);

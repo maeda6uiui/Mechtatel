@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.util;
 
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex3D;
+import com.github.maeda6uiui.mechtatel.core.component.MttVertex;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
@@ -14,7 +14,7 @@ import java.util.List;
  * @author maeda6uiui
  */
 public class VertexUtils {
-    public static List<MttVertex3D> createSphereVertices(
+    public static List<MttVertex> createSphereVertices(
             Vector3fc center,
             float radius,
             int numVDivs,
@@ -46,9 +46,9 @@ public class VertexUtils {
             }
         }
 
-        var vertices = new ArrayList<MttVertex3D>();
+        var vertices = new ArrayList<MttVertex>();
         positions.forEach(pos -> {
-            var vertex = new MttVertex3D(pos.add(center), color);
+            var vertex = new MttVertex(pos.add(center), color);
             vertices.add(vertex);
         });
 
@@ -85,7 +85,7 @@ public class VertexUtils {
         return indices;
     }
 
-    public static List<MttVertex3D> createCapsuleVertices(
+    public static List<MttVertex> createCapsuleVertices(
             Vector3fc center,
             float length,
             float radius,
@@ -131,9 +131,9 @@ public class VertexUtils {
             transPositions.add(transPosition);
         });
 
-        var vertices = new ArrayList<MttVertex3D>();
+        var vertices = new ArrayList<MttVertex>();
         transPositions.forEach(pos -> {
-            var vertex = new MttVertex3D(pos, color);
+            var vertex = new MttVertex(pos, color);
             vertices.add(vertex);
         });
 

@@ -20,13 +20,13 @@ import java.util.List;
 public class MttTexturedQuad2D extends MttComponent {
     private VkMttTexturedQuad vkTexturedQuad;
 
-    private List<MttVertex3DUV> createVertices(MttVertex2DUV p1, MttVertex2DUV p2, MttVertex2DUV p3, MttVertex2DUV p4, float z) {
-        var v1 = new MttVertex3DUV(new Vector3f(p1.pos.x(), p1.pos.y(), z), p1.color, p1.texCoords);
-        var v2 = new MttVertex3DUV(new Vector3f(p2.pos.x(), p2.pos.y(), z), p2.color, p2.texCoords);
-        var v3 = new MttVertex3DUV(new Vector3f(p3.pos.x(), p3.pos.y(), z), p3.color, p3.texCoords);
-        var v4 = new MttVertex3DUV(new Vector3f(p4.pos.x(), p4.pos.y(), z), p4.color, p4.texCoords);
+    private List<MttVertexUV> createVertices(MttVertex2DUV p1, MttVertex2DUV p2, MttVertex2DUV p3, MttVertex2DUV p4, float z) {
+        var v1 = new MttVertexUV(new Vector3f(p1.pos.x(), p1.pos.y(), z), p1.color, p1.texCoords);
+        var v2 = new MttVertexUV(new Vector3f(p2.pos.x(), p2.pos.y(), z), p2.color, p2.texCoords);
+        var v3 = new MttVertexUV(new Vector3f(p3.pos.x(), p3.pos.y(), z), p3.color, p3.texCoords);
+        var v4 = new MttVertexUV(new Vector3f(p4.pos.x(), p4.pos.y(), z), p4.color, p4.texCoords);
 
-        var vertices = new ArrayList<MttVertex3DUV>();
+        var vertices = new ArrayList<MttVertexUV>();
         vertices.add(v1);
         vertices.add(v2);
         vertices.add(v3);

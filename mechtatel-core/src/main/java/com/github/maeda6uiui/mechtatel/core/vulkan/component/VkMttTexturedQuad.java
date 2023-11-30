@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex3DUV;
+import com.github.maeda6uiui.mechtatel.core.component.MttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.IVkMttScreenForVkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
@@ -36,7 +36,7 @@ public class VkMttTexturedQuad extends VkMttComponent {
     private void createBuffers(
             long commandPool,
             VkQueue graphicsQueue,
-            List<MttVertex3DUV> vertices) {
+            List<MttVertexUV> vertices) {
         if (vertices.size() != 4) {
             throw new RuntimeException("Number of vertices must be 4");
         }
@@ -66,7 +66,7 @@ public class VkMttTexturedQuad extends VkMttComponent {
             IVkMttScreenForVkMttTexture screen,
             URI textureResource,
             boolean generateMipmaps,
-            List<MttVertex3DUV> vertices) {
+            List<MttVertexUV> vertices) {
         this.device = device;
 
         isExternalTexture = false;
@@ -89,7 +89,7 @@ public class VkMttTexturedQuad extends VkMttComponent {
             long commandPool,
             VkQueue graphicsQueue,
             VkMttTexturedQuad srcQuad,
-            List<MttVertex3DUV> vertices) {
+            List<MttVertexUV> vertices) {
         this.device = device;
 
         isExternalTexture = true;
@@ -107,7 +107,7 @@ public class VkMttTexturedQuad extends VkMttComponent {
             VkQueue graphicsQueue,
             String screenName,
             VkMttTexture texture,
-            List<MttVertex3DUV> vertices) {
+            List<MttVertexUV> vertices) {
         this.device = device;
 
         isExternalTexture = true;

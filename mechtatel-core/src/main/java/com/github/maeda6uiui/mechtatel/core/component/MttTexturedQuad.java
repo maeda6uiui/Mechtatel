@@ -23,17 +23,17 @@ public class MttTexturedQuad extends MttComponent {
             String screenName,
             URI textureResource,
             boolean generateMipmaps,
-            MttVertex3DUV v1,
-            MttVertex3DUV v2,
-            MttVertex3DUV v3,
-            MttVertex3DUV v4) throws FileNotFoundException {
+            MttVertexUV v1,
+            MttVertexUV v2,
+            MttVertexUV v3,
+            MttVertexUV v4) throws FileNotFoundException {
         super(vulkanImpl);
 
         if (!Files.exists(Paths.get(textureResource))) {
             throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
         }
 
-        var vertices = new ArrayList<MttVertex3DUV>();
+        var vertices = new ArrayList<MttVertexUV>();
         vertices.add(v1);
         vertices.add(v2);
         vertices.add(v3);
@@ -47,13 +47,13 @@ public class MttTexturedQuad extends MttComponent {
             MttVulkanImpl vulkanImpl,
             String screenName,
             MttTexture texture,
-            MttVertex3DUV v1,
-            MttVertex3DUV v2,
-            MttVertex3DUV v3,
-            MttVertex3DUV v4) {
+            MttVertexUV v1,
+            MttVertexUV v2,
+            MttVertexUV v3,
+            MttVertexUV v4) {
         super(vulkanImpl);
 
-        var vertices = new ArrayList<MttVertex3DUV>();
+        var vertices = new ArrayList<MttVertexUV>();
         vertices.add(v1);
         vertices.add(v2);
         vertices.add(v3);
@@ -66,13 +66,13 @@ public class MttTexturedQuad extends MttComponent {
     public MttTexturedQuad(
             MttVulkanImpl vulkanImpl,
             MttTexturedQuad srcQuad,
-            MttVertex3DUV v1,
-            MttVertex3DUV v2,
-            MttVertex3DUV v3,
-            MttVertex3DUV v4) {
+            MttVertexUV v1,
+            MttVertexUV v2,
+            MttVertexUV v3,
+            MttVertexUV v4) {
         super(vulkanImpl);
 
-        var vertices = new ArrayList<MttVertex3DUV>();
+        var vertices = new ArrayList<MttVertexUV>();
         vertices.add(v1);
         vertices.add(v2);
         vertices.add(v3);

@@ -23,24 +23,24 @@ public class MttLine2DSet extends MttComponent {
     }
 
     public MttLine2DSet add(MttVertex2D p1, MttVertex2D p2, float z) {
-        var v1 = new MttVertex3D(new Vector3f(p1.pos.x(), p1.pos.y(), z), p1.color);
-        var v2 = new MttVertex3D(new Vector3f(p2.pos.x(), p2.pos.y(), z), p2.color);
+        var v1 = new MttVertex(new Vector3f(p1.pos.x(), p1.pos.y(), z), p1.color);
+        var v2 = new MttVertex(new Vector3f(p2.pos.x(), p2.pos.y(), z), p2.color);
         vkLineSet.add(v1, v2);
 
         return this;
     }
 
     public MttLine2DSet add(Vector2fc p1, Vector4fc color1, Vector2fc p2, Vector4fc color2, float z) {
-        var v1 = new MttVertex3D(new Vector3f(p1.x(), p1.y(), z), color1);
-        var v2 = new MttVertex3D(new Vector3f(p2.x(), p2.y(), z), color2);
+        var v1 = new MttVertex(new Vector3f(p1.x(), p1.y(), z), color1);
+        var v2 = new MttVertex(new Vector3f(p2.x(), p2.y(), z), color2);
         vkLineSet.add(v1, v2);
 
         return this;
     }
 
     public MttLine2DSet add(Vector2fc p1, Vector2fc p2, Vector4fc color, float z) {
-        var v1 = new MttVertex3D(new Vector3f(p1.x(), p1.y(), z), color);
-        var v2 = new MttVertex3D(new Vector3f(p2.x(), p2.y(), z), color);
+        var v1 = new MttVertex(new Vector3f(p1.x(), p1.y(), z), color);
+        var v2 = new MttVertex(new Vector3f(p2.x(), p2.y(), z), color);
         vkLineSet.add(v1, v2);
 
         return this;

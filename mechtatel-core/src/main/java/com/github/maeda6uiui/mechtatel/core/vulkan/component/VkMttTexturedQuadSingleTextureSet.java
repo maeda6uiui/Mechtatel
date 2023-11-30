@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex2DUV;
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex3DUV;
+import com.github.maeda6uiui.mechtatel.core.component.MttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.IVkMttScreenForVkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
@@ -30,7 +30,7 @@ public class VkMttTexturedQuadSingleTextureSet extends VkMttComponent {
     private long commandPool;
     private VkQueue graphicsQueue;
 
-    private List<MttVertex3DUV> vertices;
+    private List<MttVertexUV> vertices;
     private VkMttTexture texture;
 
     private long vertexBuffer;
@@ -87,7 +87,7 @@ public class VkMttTexturedQuadSingleTextureSet extends VkMttComponent {
         this.setScreenName(screenName);
     }
 
-    public void add(MttVertex3DUV v1, MttVertex3DUV v2, MttVertex3DUV v3, MttVertex3DUV v4) {
+    public void add(MttVertexUV v1, MttVertexUV v2, MttVertexUV v3, MttVertexUV v4) {
         vertices.add(v1);
         vertices.add(v2);
         vertices.add(v3);
@@ -95,13 +95,13 @@ public class VkMttTexturedQuadSingleTextureSet extends VkMttComponent {
     }
 
     public void add(MttVertex2DUV topLeft, MttVertex2DUV bottomRight, float z) {
-        var v1 = new MttVertex3DUV(
+        var v1 = new MttVertexUV(
                 new Vector3f(topLeft.pos.x(), topLeft.pos.y(), z), topLeft.color, topLeft.texCoords);
-        var v2 = new MttVertex3DUV(
+        var v2 = new MttVertexUV(
                 new Vector3f(topLeft.pos.x(), bottomRight.pos.y(), z), topLeft.color, new Vector2f(topLeft.texCoords.x(), bottomRight.texCoords.y()));
-        var v3 = new MttVertex3DUV(
+        var v3 = new MttVertexUV(
                 new Vector3f(bottomRight.pos.x(), bottomRight.pos.y(), z), topLeft.color, bottomRight.texCoords);
-        var v4 = new MttVertex3DUV(
+        var v4 = new MttVertexUV(
                 new Vector3f(bottomRight.pos.x(), topLeft.pos.y(), z), topLeft.color, new Vector2f(bottomRight.texCoords.x(), topLeft.texCoords.y()));
 
         vertices.add(v1);

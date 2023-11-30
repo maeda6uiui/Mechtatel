@@ -1,56 +1,49 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex3DUV;
+import com.github.maeda6uiui.mechtatel.core.component.MttVertex;
 import org.lwjgl.vulkan.VkVertexInputAttributeDescription;
 import org.lwjgl.vulkan.VkVertexInputBindingDescription;
 
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Vertex3D with a UV
+ * Vertex3D
  *
  * @author maeda6uiui
  */
-public class VkMttVertex3DUV {
+public class VkMttVertex {
     public static VkVertexInputBindingDescription.Buffer getBindingDescription() {
         VkVertexInputBindingDescription.Buffer bindingDescription = VkVertexInputBindingDescription.calloc(1);
         bindingDescription.binding(0);
-        bindingDescription.stride(MttVertex3DUV.SIZEOF);
+        bindingDescription.stride(MttVertex.SIZEOF);
         bindingDescription.inputRate(VK_VERTEX_INPUT_RATE_VERTEX);
 
         return bindingDescription;
     }
 
     public static VkVertexInputAttributeDescription.Buffer getAttributeDescriptions() {
-        VkVertexInputAttributeDescription.Buffer attributeDescriptions = VkVertexInputAttributeDescription.calloc(4);
+        VkVertexInputAttributeDescription.Buffer attributeDescriptions = VkVertexInputAttributeDescription.calloc(3);
 
         //Position
         VkVertexInputAttributeDescription posDescription = attributeDescriptions.get(0);
         posDescription.binding(0);
         posDescription.location(0);
         posDescription.format(VK_FORMAT_R32G32B32_SFLOAT);
-        posDescription.offset(MttVertex3DUV.OFFSETOF_POS);
+        posDescription.offset(MttVertex.OFFSETOF_POS);
 
         //Color
         VkVertexInputAttributeDescription colorDescription = attributeDescriptions.get(1);
         colorDescription.binding(0);
         colorDescription.location(1);
         colorDescription.format(VK_FORMAT_R32G32B32A32_SFLOAT);
-        colorDescription.offset(MttVertex3DUV.OFFSETOF_COLOR);
-
-        //Texture coordinates
-        VkVertexInputAttributeDescription texCoordsDescription = attributeDescriptions.get(2);
-        texCoordsDescription.binding(0);
-        texCoordsDescription.location(2);
-        texCoordsDescription.format(VK_FORMAT_R32G32_SFLOAT);
-        texCoordsDescription.offset(MttVertex3DUV.OFFSETOF_TEXCOORDS);
+        colorDescription.offset(MttVertex.OFFSETOF_COLOR);
 
         //Normal
-        VkVertexInputAttributeDescription normalDescription = attributeDescriptions.get(3);
+        VkVertexInputAttributeDescription normalDescription = attributeDescriptions.get(2);
         normalDescription.binding(0);
-        normalDescription.location(3);
+        normalDescription.location(2);
         normalDescription.format(VK_FORMAT_R32G32B32_SFLOAT);
-        normalDescription.offset(MttVertex3DUV.OFFSETOF_NORMAL);
+        normalDescription.offset(MttVertex.OFFSETOF_NORMAL);
 
         return attributeDescriptions;
     }

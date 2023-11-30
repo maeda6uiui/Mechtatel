@@ -26,12 +26,12 @@ public class MttQuad2D extends MttComponent {
             boolean fill) {
         super(vulkanImpl);
 
-        var v1 = new MttVertex3D(new Vector3f(p1.pos.x(), p1.pos.y(), z), p1.color);
-        var v2 = new MttVertex3D(new Vector3f(p2.pos.x(), p2.pos.y(), z), p2.color);
-        var v3 = new MttVertex3D(new Vector3f(p3.pos.x(), p3.pos.y(), z), p3.color);
-        var v4 = new MttVertex3D(new Vector3f(p4.pos.x(), p4.pos.y(), z), p4.color);
+        var v1 = new MttVertex(new Vector3f(p1.pos.x(), p1.pos.y(), z), p1.color);
+        var v2 = new MttVertex(new Vector3f(p2.pos.x(), p2.pos.y(), z), p2.color);
+        var v3 = new MttVertex(new Vector3f(p3.pos.x(), p3.pos.y(), z), p3.color);
+        var v4 = new MttVertex(new Vector3f(p4.pos.x(), p4.pos.y(), z), p4.color);
 
-        var vertices = new ArrayList<MttVertex3D>();
+        var vertices = new ArrayList<MttVertex>();
         vertices.add(v1);
         vertices.add(v2);
         vertices.add(v3);
@@ -53,12 +53,12 @@ public class MttQuad2D extends MttComponent {
             Vector4fc color) {
         super(vulkanImpl);
 
-        var v1 = new MttVertex3D(new Vector3f(p1.x(), p1.y(), z), color);
-        var v2 = new MttVertex3D(new Vector3f(p2.x(), p2.y(), z), color);
-        var v3 = new MttVertex3D(new Vector3f(p3.x(), p3.y(), z), color);
-        var v4 = new MttVertex3D(new Vector3f(p4.x(), p4.y(), z), color);
+        var v1 = new MttVertex(new Vector3f(p1.x(), p1.y(), z), color);
+        var v2 = new MttVertex(new Vector3f(p2.x(), p2.y(), z), color);
+        var v3 = new MttVertex(new Vector3f(p3.x(), p3.y(), z), color);
+        var v4 = new MttVertex(new Vector3f(p4.x(), p4.y(), z), color);
 
-        var vertices = new ArrayList<MttVertex3D>();
+        var vertices = new ArrayList<MttVertex>();
         vertices.add(v1);
         vertices.add(v2);
         vertices.add(v3);
@@ -78,12 +78,12 @@ public class MttQuad2D extends MttComponent {
             Vector4fc color) {
         super(vulkanImpl);
 
-        var v1 = new MttVertex3D(new Vector3f(topLeft.x(), topLeft.y(), z), color);
-        var v2 = new MttVertex3D(new Vector3f(topLeft.x(), bottomRight.y(), z), color);
-        var v3 = new MttVertex3D(new Vector3f(bottomRight.x(), bottomRight.y(), z), color);
-        var v4 = new MttVertex3D(new Vector3f(bottomRight.x(), topLeft.y(), z), color);
+        var v1 = new MttVertex(new Vector3f(topLeft.x(), topLeft.y(), z), color);
+        var v2 = new MttVertex(new Vector3f(topLeft.x(), bottomRight.y(), z), color);
+        var v3 = new MttVertex(new Vector3f(bottomRight.x(), bottomRight.y(), z), color);
+        var v4 = new MttVertex(new Vector3f(bottomRight.x(), topLeft.y(), z), color);
 
-        var vertices = new ArrayList<MttVertex3D>();
+        var vertices = new ArrayList<MttVertex>();
         vertices.add(v1);
         vertices.add(v2);
         vertices.add(v3);

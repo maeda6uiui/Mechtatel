@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttVertex3DUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
@@ -443,8 +443,8 @@ class AlbedoNabor extends Nabor {
             //Vertex stage
             VkPipelineVertexInputStateCreateInfo vertexInputInfo = VkPipelineVertexInputStateCreateInfo.calloc(stack);
             vertexInputInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO);
-            vertexInputInfo.pVertexBindingDescriptions(VkMttVertex3DUV.getBindingDescription());
-            vertexInputInfo.pVertexAttributeDescriptions(VkMttVertex3DUV.getAttributeDescriptions());
+            vertexInputInfo.pVertexBindingDescriptions(VkMttVertexUV.getBindingDescription());
+            vertexInputInfo.pVertexAttributeDescriptions(VkMttVertexUV.getAttributeDescriptions());
 
             //Assembly stage
             VkPipelineInputAssemblyStateCreateInfo inputAssembly = VkPipelineInputAssemblyStateCreateInfo.calloc(stack);

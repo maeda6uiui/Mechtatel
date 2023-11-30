@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex3D;
+import com.github.maeda6uiui.mechtatel.core.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
@@ -24,7 +24,7 @@ public class VkMttLine extends VkMttComponent {
     private long vertexBuffer;
     private long vertexBufferMemory;
 
-    private void createBuffer(long commandPool, VkQueue graphicsQueue, List<MttVertex3D> vertices) {
+    private void createBuffer(long commandPool, VkQueue graphicsQueue, List<MttVertex> vertices) {
         BufferCreator.BufferInfo bufferInfo = BufferCreator.createVertexBuffer3D(
                 device,
                 commandPool,
@@ -38,11 +38,11 @@ public class VkMttLine extends VkMttComponent {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            MttVertex3D v1,
-            MttVertex3D v2) {
+            MttVertex v1,
+            MttVertex v2) {
         this.device = device;
 
-        var vertices = new ArrayList<MttVertex3D>();
+        var vertices = new ArrayList<MttVertex>();
         vertices.add(v1);
         vertices.add(v2);
 

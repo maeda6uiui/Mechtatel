@@ -15,8 +15,8 @@ public class MttLine2D extends MttComponent {
     public MttLine2D(MttVulkanImpl vulkanImpl, MttVertex2D p1, MttVertex2D p2, float z) {
         super(vulkanImpl);
 
-        var v1 = new MttVertex3D(new Vector3f(p1.pos.x(), p1.pos.y(), z), p1.color);
-        var v2 = new MttVertex3D(new Vector3f(p2.pos.x(), p2.pos.y(), z), p2.color);
+        var v1 = new MttVertex(new Vector3f(p1.pos.x(), p1.pos.y(), z), p1.color);
+        var v2 = new MttVertex(new Vector3f(p2.pos.x(), p2.pos.y(), z), p2.color);
         vkLine = vulkanImpl.createLine(v1, v2);
         vkLine.setTwoDComponent(true);
         this.associateVulkanComponent(vkLine);

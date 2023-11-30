@@ -1,9 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.util;
 
+import com.github.maeda6uiui.mechtatel.core.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex2DUV;
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex3D;
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex3DUV;
+import com.github.maeda6uiui.mechtatel.core.component.MttVertexUV;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -45,7 +45,7 @@ public class MemcpyUtils {
         buffer.rewind();
     }
 
-    public static void memcpyVertex3D(ByteBuffer buffer, List<MttVertex3D> vertices) {
+    public static void memcpyVertex3D(ByteBuffer buffer, List<MttVertex> vertices) {
         for (var vertex : vertices) {
             buffer.putFloat(vertex.pos.x());
             buffer.putFloat(vertex.pos.y());
@@ -64,7 +64,7 @@ public class MemcpyUtils {
         buffer.rewind();
     }
 
-    public static void memcpyVertex3DUV(ByteBuffer buffer, List<MttVertex3DUV> vertices) {
+    public static void memcpyVertex3DUV(ByteBuffer buffer, List<MttVertexUV> vertices) {
         for (var vertex : vertices) {
             buffer.putFloat(vertex.pos.x());
             buffer.putFloat(vertex.pos.y());

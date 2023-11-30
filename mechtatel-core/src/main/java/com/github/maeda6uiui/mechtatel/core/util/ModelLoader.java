@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.util;
 
 import com.github.dabasan.jxm.bd1.BD1Buffer;
 import com.github.dabasan.jxm.bd1.BD1Manipulator;
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex3DUV;
+import com.github.maeda6uiui.mechtatel.core.component.MttVertexUV;
 import org.joml.*;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -44,7 +44,7 @@ public class ModelLoader {
     public static class Mesh {
         public int materialIndex;
 
-        public final List<MttVertex3DUV> vertices;
+        public final List<MttVertexUV> vertices;
         public final List<Integer> indices;
 
         public Mesh() {
@@ -172,7 +172,7 @@ public class ModelLoader {
         //Create vertices
         int numVertices = positions.size();
         for (int i = 0; i < numVertices; i++) {
-            var vertex = new MttVertex3DUV(
+            var vertex = new MttVertexUV(
                     positions.get(i),
                     new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
                     texCoords.get(i),
@@ -234,7 +234,7 @@ public class ModelLoader {
                         uvBuffer.get(j * 2 + 1)
                 );
 
-                var vertex = new MttVertex3DUV(position, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), texCoords, normal);
+                var vertex = new MttVertexUV(position, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), texCoords, normal);
                 model.meshes.get(i).vertices.add(vertex);
             }
         }

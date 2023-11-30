@@ -10,7 +10,7 @@ import org.joml.Vector4fc;
  *
  * @author maeda6uiui
  */
-public class MttVertex3DUV {
+public class MttVertexUV {
     public static final int SIZEOF = (3 + 4 + 2 + 3) * Float.BYTES;
     public static final int OFFSETOF_POS = 0;
     public static final int OFFSETOF_COLOR = 3 * Float.BYTES;
@@ -22,14 +22,14 @@ public class MttVertex3DUV {
     public Vector2fc texCoords;
     public Vector3fc normal;
 
-    public MttVertex3DUV(Vector3fc pos, Vector4fc color, Vector2fc texCoords, Vector3fc normal) {
+    public MttVertexUV(Vector3fc pos, Vector4fc color, Vector2fc texCoords, Vector3fc normal) {
         this.pos = pos;
         this.color = color;
         this.texCoords = texCoords;
         this.normal = normal;
     }
 
-    public MttVertex3DUV(Vector3fc pos, Vector4fc color, Vector2fc texCoords) {
+    public MttVertexUV(Vector3fc pos, Vector4fc color, Vector2fc texCoords) {
         this.pos = pos;
         this.color = color;
         this.texCoords = texCoords;

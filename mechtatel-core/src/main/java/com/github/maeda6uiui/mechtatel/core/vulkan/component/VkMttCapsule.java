@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex3D;
+import com.github.maeda6uiui.mechtatel.core.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.util.VertexUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import org.joml.Vector3fc;
@@ -33,7 +33,7 @@ public class VkMttCapsule extends VkMttComponent {
     private void createBuffers(
             long commandPool,
             VkQueue graphicsQueue,
-            List<MttVertex3D> vertices,
+            List<MttVertex> vertices,
             List<Integer> indices) {
         BufferCreator.BufferInfo bufferInfo = BufferCreator.createVertexBuffer3D(
                 device,
@@ -64,7 +64,7 @@ public class VkMttCapsule extends VkMttComponent {
             Vector4fc color) {
         this.device = device;
 
-        List<MttVertex3D> vertices = VertexUtils.createCapsuleVertices(center, length, radius, numVDivs, numHDivs, color);
+        List<MttVertex> vertices = VertexUtils.createCapsuleVertices(center, length, radius, numVDivs, numHDivs, color);
         List<Integer> indices = VertexUtils.createCapsuleIndices(numVDivs, numHDivs);
 
         numIndices = indices.size();

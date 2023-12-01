@@ -490,10 +490,10 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
                         null);
 
                 for (var component : components) {
-                    if (component.getScreenName().equals(screenName) == false) {
+                    if (!component.getScreenName().equals(screenName)) {
                         continue;
                     }
-                    if (component.getComponentType().equals("gbuffer") == false) {
+                    if (!component.getNaborName().equals("gbuffer")) {
                         continue;
                     }
 
@@ -555,10 +555,10 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
                         null);
 
                 for (var component : components) {
-                    if (component.getScreenName().equals(screenName) == false) {
+                    if (!component.getScreenName().equals(screenName)) {
                         continue;
                     }
-                    if (component.getComponentType().equals("gbuffer") == false) {
+                    if (!component.getNaborName().equals("gbuffer")) {
                         continue;
                     }
 
@@ -638,7 +638,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
                         null);
 
                 for (var component : components) {
-                    if (component.getComponentType().equals("primitive")) {
+                    if (component.getNaborName().equals("primitive")) {
                         ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
                         component.getMat().get(pcBuffer);
                         if (component.isTwoDComponent()) {
@@ -708,7 +708,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
                         null);
 
                 for (var component : components) {
-                    if (component.getComponentType().equals("primitive_fill")) {
+                    if (component.getNaborName().equals("primitive_fill")) {
                         ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
                         component.getMat().get(pcBuffer);
                         if (component.isTwoDComponent()) {

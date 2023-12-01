@@ -1,125 +1,57 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
-import org.joml.Matrix4f;
+import com.github.maeda6uiui.mechtatel.core.component.IMttComponentForVkMttComponent;
 import org.joml.Matrix4fc;
-import org.joml.Vector3fc;
 import org.lwjgl.vulkan.VkCommandBuffer;
 
 /**
- * Component
+ * Vulkan implementation of component
  *
  * @author maeda6uiui
  */
 public class VkMttComponent implements Comparable<VkMttComponent> {
-    private Matrix4f mat;
-    private boolean visible;
-    private String componentType;
-    private boolean twoDComponent;
-    private boolean castShadow;
-    private int drawOrder;
-    private String screenName;
+    private IMttComponentForVkMttComponent mttComponent;
 
-    public VkMttComponent() {
-        mat = new Matrix4f().identity();
-        visible = true;
-        componentType = "n/a";
-        twoDComponent = false;
-        castShadow = false;
-        drawOrder = 0;
-        screenName = "n/a";
+    private String screenName;
+    private String naborName;
+
+    public VkMttComponent(IMttComponentForVkMttComponent mttComponent, String screenName, String naborName) {
+        this.mttComponent = mttComponent;
+        this.screenName = screenName;
+        this.naborName = naborName;
     }
 
     @Override
-    public int compareTo(VkMttComponent component) {
-        return Integer.compare(this.drawOrder, component.drawOrder);
-    }
-
-    public Matrix4f getMat() {
-        return mat;
-    }
-
-    public void setMat(Matrix4fc mat) {
-        this.mat = new Matrix4f(mat);
-    }
-
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
-    protected void setComponentType(String componentType) {
-        this.componentType = componentType;
-    }
-
-    public boolean isVisible() {
-        return visible;
-    }
-
-    public String getComponentType() {
-        return componentType;
-    }
-
-    public int getDrawOrder() {
-        return drawOrder;
-    }
-
-    public void setDrawOrder(int drawOrder) {
-        this.drawOrder = drawOrder;
-    }
-
-    public boolean isTwoDComponent() {
-        return twoDComponent;
-    }
-
-    public void setTwoDComponent(boolean twoDComponent) {
-        this.twoDComponent = twoDComponent;
-    }
-
-    protected void setScreenName(String screenName) {
-        this.screenName = screenName;
+    public int compareTo(VkMttComponent that) {
+        return Integer.compare(this.mttComponent.getDrawOrder(), that.mttComponent.getDrawOrder());
     }
 
     public String getScreenName() {
         return screenName;
     }
 
-    public void applyMat(Matrix4fc right) {
-        this.mat.mul(right);
+    public String getNaborName() {
+        return naborName;
     }
 
-    public void reset() {
-        this.mat.identity();
+    public Matrix4fc getMat() {
+        return mttComponent.getMat();
+    }
+
+    public boolean isVisible() {
+        return mttComponent.isVisible();
+    }
+
+    public int getDrawOrder() {
+        return mttComponent.getDrawOrder();
+    }
+
+    public boolean isTwoDComponent() {
+        return mttComponent.isTwoDComponent();
     }
 
     public boolean shouldCastShadow() {
-        return castShadow;
-    }
-
-    public void setCastShadow(boolean castShadow) {
-        this.castShadow = castShadow;
-    }
-
-    public void translate(Vector3fc v) {
-        this.getMat().translate(v);
-    }
-
-    public void rotX(float ang) {
-        this.getMat().rotate(ang, 1.0f, 0.0f, 0.0f);
-    }
-
-    public void rotY(float ang) {
-        this.getMat().rotate(ang, 0.0f, 1.0f, 0.0f);
-    }
-
-    public void rotZ(float ang) {
-        this.getMat().rotate(ang, 0.0f, 0.0f, 1.0f);
-    }
-
-    public void rot(float ang, Vector3fc axis) {
-        this.getMat().rotate(ang, axis);
-    }
-
-    public void rescale(Vector3fc scale) {
-        this.getMat().scale(scale);
+        return mttComponent.shouldCastShadow();
     }
 
     public void draw(VkCommandBuffer commandBuffer, long pipelineLayout) {

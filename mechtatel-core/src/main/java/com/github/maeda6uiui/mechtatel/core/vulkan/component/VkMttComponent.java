@@ -31,13 +31,7 @@ public class VkMttComponent implements Comparable<VkMttComponent> {
 
     @Override
     public int compareTo(VkMttComponent component) {
-        if (this.drawOrder < component.drawOrder) {
-            return -1;
-        } else if (this.drawOrder > component.drawOrder) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return Integer.compare(this.drawOrder, component.drawOrder);
     }
 
     public Matrix4f getMat() {

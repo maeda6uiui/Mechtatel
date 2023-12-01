@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,19 +20,15 @@ import static org.lwjgl.vulkan.VK10.*;
 public class QueueFamilyUtils {
     private static final Logger logger = LoggerFactory.getLogger(QueueFamilyUtils.class);
 
-    public static class QueueFamilyIndices {
-        public Integer graphicsFamily;
-        public Integer presentFamily;
-
-        public boolean isComplete() {
-            return graphicsFamily != null && presentFamily != null;
-        }
+    public record QueueFamilyIndices(int graphicsFamily, int presentFamily) {
     }
 
-    public static QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, long surface) {
+    public static QueueFamilyIndices findQueueFamilies(
+            VkPhysicalDevice device,
+            long surface,
+            int preferableGraphicsFamilyIndex,
+            int preferablePresentFamilyIndex) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            var indices = new QueueFamilyIndices();
-
             IntBuffer queueFamilyCount = stack.ints(0);
             vkGetPhysicalDeviceQueueFamilyProperties(device, queueFamilyCount, null);
 
@@ -40,20 +37,52 @@ public class QueueFamilyUtils {
 
             IntBuffer presentSupport = stack.ints(VK_FALSE);
 
-            for (int i = 0; i < queueFamilies.capacity() || !indices.isComplete(); i++) {
+            var graphicsFamilyCandidates = new ArrayList<Integer>();
+            var presentFamilyCandidates = new ArrayList<Integer>();
+            for (int i = 0; i < queueFamilies.capacity(); i++) {
                 if ((queueFamilies.get(i).queueFlags() & VK_QUEUE_GRAPHICS_BIT) != 0) {
-                    indices.graphicsFamily = i;
+                    graphicsFamilyCandidates.add(i);
                 }
 
                 KHRSurface.vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, presentSupport);
                 if (presentSupport.get(0) == VK_TRUE) {
-                    indices.presentFamily = i;
+                    presentFamilyCandidates.add(i);
                 }
             }
 
-            logger.debug("graphicsFamily={} presentFamily={}", indices.graphicsFamily, indices.presentFamily);
+            logger.debug("Graphics family candidates: {}", graphicsFamilyCandidates);
+            logger.debug("Present family candidates: {}", presentFamilyCandidates);
 
-            return indices;
+            if (graphicsFamilyCandidates.isEmpty()) {
+                throw new RuntimeException("No suitable graphics family found");
+            }
+            if (presentFamilyCandidates.isEmpty()) {
+                throw new RuntimeException("No suitable present family found");
+            }
+
+            int graphicsFamily;
+            if (preferableGraphicsFamilyIndex == -1) {
+                graphicsFamily = graphicsFamilyCandidates.get(0);
+            } else if (graphicsFamilyCandidates.contains(preferableGraphicsFamilyIndex)) {
+                graphicsFamily = preferableGraphicsFamilyIndex;
+            } else {
+                graphicsFamily = graphicsFamilyCandidates.get(0);
+                logger.warn("Queue family ({}) is not a suitable graphics family", preferableGraphicsFamilyIndex);
+            }
+
+            int presentFamily;
+            if (preferablePresentFamilyIndex == -1) {
+                presentFamily = presentFamilyCandidates.get(0);
+            } else if (presentFamilyCandidates.contains(preferablePresentFamilyIndex)) {
+                presentFamily = preferablePresentFamilyIndex;
+            } else {
+                presentFamily = presentFamilyCandidates.get(0);
+                logger.warn("Queue family ({}) is not a suitable present family", preferablePresentFamilyIndex);
+            }
+
+            logger.debug("graphicsFamily={} presentFamily={}", graphicsFamily, presentFamily);
+
+            return new QueueFamilyIndices(graphicsFamily, presentFamily);
         }
     }
 
@@ -73,8 +102,6 @@ public class QueueFamilyUtils {
     }
 
     public static boolean isDeviceSuitable(VkPhysicalDevice device, long surface, Set<String> deviceExtensions) {
-        QueueFamilyIndices indices = findQueueFamilies(device, surface);
-
         boolean extensionsSupported = checkExtensionSupported(device, deviceExtensions);
         boolean swapchainAdequate = false;
         boolean anisotropySupported = false;
@@ -91,6 +118,6 @@ public class QueueFamilyUtils {
             }
         }
 
-        return indices.isComplete() && extensionsSupported && swapchainAdequate && anisotropySupported;
+        return extensionsSupported && swapchainAdequate && anisotropySupported;
     }
 }

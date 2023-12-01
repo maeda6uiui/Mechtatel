@@ -16,35 +16,39 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class LogicalDeviceCreator {
-    public static class VkDeviceAndVkQueues {
-        public VkDevice device;
-        public VkQueue graphicsQueue;
-        public VkQueue presentQueue;
+    public record DeviceAndQueues(
+            VkDevice device,
+            VkQueue graphicsQueue,
+            VkQueue presentQueue,
+            int graphicsFamilyIndex,
+            int presentFamilyIndex) {
     }
 
-    public static VkDeviceAndVkQueues createLogicalDevice(
+    public static DeviceAndQueues createLogicalDevice(
             VkPhysicalDevice physicalDevice,
-            boolean enableValidationLayer,
-            boolean useGraphicsQueueAsPresentQueue,
-            long surface) {
+            long surface,
+            int preferableGraphicsFamilyIndex,
+            int preferablePresentFamilyIndex,
+            boolean enableValidationLayer) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             QueueFamilyUtils.QueueFamilyIndices indices
-                    = QueueFamilyUtils.findQueueFamilies(physicalDevice, surface);
+                    = QueueFamilyUtils.findQueueFamilies(
+                    physicalDevice,
+                    surface,
+                    preferableGraphicsFamilyIndex,
+                    preferablePresentFamilyIndex
+            );
 
             VkDeviceQueueCreateInfo.Buffer queueCreateInfos = VkDeviceQueueCreateInfo.calloc(2, stack);
 
             VkDeviceQueueCreateInfo graphicsQueueCreateInfo = queueCreateInfos.get(0);
             graphicsQueueCreateInfo.sType(VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO);
-            graphicsQueueCreateInfo.queueFamilyIndex(indices.graphicsFamily);
+            graphicsQueueCreateInfo.queueFamilyIndex(indices.graphicsFamily());
             graphicsQueueCreateInfo.pQueuePriorities(stack.floats(1.0f));
 
             VkDeviceQueueCreateInfo presentQueueCreateInfo = queueCreateInfos.get(1);
             presentQueueCreateInfo.sType(VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO);
-            if (useGraphicsQueueAsPresentQueue) {
-                presentQueueCreateInfo.queueFamilyIndex(indices.graphicsFamily);
-            } else {
-                presentQueueCreateInfo.queueFamilyIndex(indices.presentFamily);
-            }
+            presentQueueCreateInfo.queueFamilyIndex(indices.presentFamily());
             presentQueueCreateInfo.pQueuePriorities(stack.floats(1.0f));
 
             VkPhysicalDeviceFeatures deviceFeatures = VkPhysicalDeviceFeatures.calloc(stack);
@@ -69,23 +73,19 @@ public class LogicalDeviceCreator {
             var device = new VkDevice(pDevice.get(0), physicalDevice, createInfo);
 
             PointerBuffer pGraphicsQueue = stack.pointers(VK_NULL_HANDLE);
-            vkGetDeviceQueue(device, indices.graphicsFamily, 0, pGraphicsQueue);
+            vkGetDeviceQueue(device, indices.graphicsFamily(), 0, pGraphicsQueue);
             var graphicsQueue = new VkQueue(pGraphicsQueue.get(0), device);
 
             PointerBuffer pPresentQueue = stack.pointers(VK_NULL_HANDLE);
-            if (useGraphicsQueueAsPresentQueue) {
-                vkGetDeviceQueue(device, indices.graphicsFamily, 0, pPresentQueue);
-            } else {
-                vkGetDeviceQueue(device, indices.presentFamily, 0, pPresentQueue);
-            }
+            vkGetDeviceQueue(device, indices.presentFamily(), 0, pPresentQueue);
             var presentQueue = new VkQueue(pPresentQueue.get(0), device);
 
-            var ret = new VkDeviceAndVkQueues();
-            ret.device = device;
-            ret.graphicsQueue = graphicsQueue;
-            ret.presentQueue = presentQueue;
-
-            return ret;
+            return new DeviceAndQueues(
+                    device,
+                    graphicsQueue,
+                    presentQueue,
+                    indices.graphicsFamily(),
+                    indices.presentFamily());
         }
     }
 }

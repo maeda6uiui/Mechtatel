@@ -58,9 +58,7 @@ public class MttVulkanImpl
     private long surface;
     private VkPhysicalDevice physicalDevice;
 
-    private VkDevice device;
-    private VkQueue graphicsQueue;
-    private VkQueue presentQueue;
+    private LogicalDeviceCreator.DeviceAndQueues dq;
     private long commandPool;
     private Swapchain swapchain;
 
@@ -108,12 +106,19 @@ public class MttVulkanImpl
      * @param window Window handle
      */
     public void recreateResourcesOnResize(long window) {
-        vkDeviceWaitIdle(device);
+        vkDeviceWaitIdle(dq.device());
 
         swapchain.cleanup();
 
         VkExtent2D framebufferSize = this.getFramebufferSize(window);
-        swapchain = new Swapchain(device, surface, framebufferSize.width(), framebufferSize.height());
+        swapchain = new Swapchain(
+                dq.device(),
+                surface,
+                dq.graphicsFamilyIndex(),
+                dq.presentFamilyIndex(),
+                framebufferSize.width(),
+                framebufferSize.height()
+        );
 
         presentNabor.recreate(
                 swapchain.getSwapchainImageFormat(),
@@ -144,25 +149,29 @@ public class MttVulkanImpl
                     );
                 });
 
-        LogicalDeviceCreator.VkDeviceAndVkQueues deviceAndQueues = LogicalDeviceCreator.createLogicalDevice(
+        dq = LogicalDeviceCreator.createLogicalDevice(
                 physicalDevice,
-                vulkanSettings.enableValidationLayer,
-                vulkanSettings.useGraphicsQueueAsPresentQueue,
-                surface
+                surface,
+                vulkanSettings.preferableGraphicsFamilyIndex,
+                vulkanSettings.preferablePresentFamilyIndex,
+                vulkanSettings.enableValidationLayer
         );
-        device = deviceAndQueues.device;
-        graphicsQueue = deviceAndQueues.graphicsQueue;
-        presentQueue = deviceAndQueues.presentQueue;
 
-        commandPool = CommandPoolCreator.createCommandPool(device, surface);
+        commandPool = CommandPoolCreator.createCommandPool(dq.device(), dq.graphicsFamilyIndex());
 
         VkExtent2D framebufferSize = this.getFramebufferSize(window);
-        swapchain = new Swapchain(device, surface, framebufferSize.width(), framebufferSize.height());
+        swapchain = new Swapchain(
+                dq.device(),
+                surface,
+                dq.graphicsFamilyIndex(),
+                dq.presentFamilyIndex(),
+                framebufferSize.width(),
+                framebufferSize.height());
 
         albedoMSAASamples = vulkanSettings.albedoMSAASamples < 0
-                ? MultisamplingUtils.getMaxUsableSampleCount(device)
+                ? MultisamplingUtils.getMaxUsableSampleCount(dq.device())
                 : vulkanSettings.albedoMSAASamples;
-        depthImageFormat = DepthResourceUtils.findDepthFormat(device);
+        depthImageFormat = DepthResourceUtils.findDepthFormat(dq.device());
         depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
 
         boolean hasStencilComponent = DepthResourceUtils.hasStencilComponent(depthImageFormat);
@@ -170,7 +179,7 @@ public class MttVulkanImpl
             depthImageAspect |= VK_IMAGE_ASPECT_STENCIL_BIT;
         }
 
-        presentNabor = new PresentNabor(device);
+        presentNabor = new PresentNabor(dq.device());
         presentNabor.compile(
                 swapchain.getSwapchainImageFormat(),
                 VK_FILTER_NEAREST,
@@ -178,11 +187,11 @@ public class MttVulkanImpl
                 VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
                 swapchain.getSwapchainExtent(),
                 commandPool,
-                graphicsQueue,
+                dq.graphicsQueue(),
                 swapchain.getNumSwapchainImages());
         swapchain.createFramebuffers(presentNabor.getRenderPass());
 
-        textureOperationNabor = new TextureOperationNabor(device);
+        textureOperationNabor = new TextureOperationNabor(dq.device());
         textureOperationNabor.compile(
                 swapchain.getSwapchainImageFormat(),
                 VK_FILTER_NEAREST,
@@ -190,19 +199,19 @@ public class MttVulkanImpl
                 VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
                 swapchain.getSwapchainExtent(),
                 commandPool,
-                graphicsQueue,
+                dq.graphicsQueue(),
                 1);
         textureOperationInfos = new HashMap<>();
 
         maxNumFramesInFlight = vulkanSettings.maxNumFramesInFlight;
-        inFlightFrames = SyncObjectsCreator.createSyncObjects(device, maxNumFramesInFlight);
+        inFlightFrames = SyncObjectsCreator.createSyncObjects(dq.device(), maxNumFramesInFlight);
         imagesInFlight = new HashMap<>(swapchain.getNumSwapchainImages());
 
         screens = new HashMap<>();
         components = new ArrayList<>();
         textures = new ArrayList<>();
 
-        quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
+        quadDrawer = new QuadDrawer(dq.device(), commandPool, dq.graphicsQueue());
     }
 
     public void cleanup() {
@@ -212,9 +221,9 @@ public class MttVulkanImpl
         textures.forEach(VkMttTexture::cleanup);
 
         inFlightFrames.forEach(frame -> {
-            vkDestroySemaphore(device, frame.renderFinishedSemaphore(), null);
-            vkDestroySemaphore(device, frame.imageAvailableSemaphore(), null);
-            vkDestroyFence(device, frame.fence(), null);
+            vkDestroySemaphore(dq.device(), frame.renderFinishedSemaphore(), null);
+            vkDestroySemaphore(dq.device(), frame.imageAvailableSemaphore(), null);
+            vkDestroyFence(dq.device(), frame.fence(), null);
         });
         imagesInFlight.clear();
 
@@ -223,9 +232,9 @@ public class MttVulkanImpl
         presentNabor.cleanup(false);
         screens.values().forEach(VkMttScreen::cleanup);
 
-        vkDestroyCommandPool(device, commandPool, null);
+        vkDestroyCommandPool(dq.device(), commandPool, null);
 
-        vkDestroyDevice(device, null);
+        vkDestroyDevice(dq.device(), null);
 
         MttVulkanInstance.get().ifPresent(v -> vkDestroySurfaceKHR(v.getVkInstance(), surface, null));
     }
@@ -281,9 +290,9 @@ public class MttVulkanImpl
         }
 
         var screen = new VkMttScreen(
-                device,
+                dq.device(),
                 commandPool,
-                graphicsQueue,
+                dq.graphicsQueue(),
                 depthImageFormat,
                 depthImageWidth,
                 depthImageHeight,
@@ -332,9 +341,9 @@ public class MttVulkanImpl
 
             long parametersUBOMemory = textureOperationNabor.getUniformBufferMemory(0);
             var parametersUBO = new TextureOperationParametersUBO(textureOperationInfo.parameters);
-            parametersUBO.update(device, parametersUBOMemory);
+            parametersUBO.update(dq.device(), parametersUBOMemory);
 
-            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
+            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(dq.device(), commandPool);
 
             vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
             {
@@ -355,9 +364,9 @@ public class MttVulkanImpl
             }
             vkCmdEndRenderPass(commandBuffer);
 
-            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
+            CommandBufferUtils.endSingleTimeCommands(dq.device(), commandPool, commandBuffer, dq.graphicsQueue());
 
-            textureOperationNabor.copyColorImage(commandPool, graphicsQueue, textureOperationInfo.dstImage);
+            textureOperationNabor.copyColorImage(commandPool, dq.graphicsQueue(), textureOperationInfo.dstImage);
         }
     }
 
@@ -381,7 +390,7 @@ public class MttVulkanImpl
             long colorImageView = screen.getColorImageView();
 
             var commandBuffers
-                    = CommandBufferUtils.createCommandBuffers(device, commandPool, swapchain.getNumSwapchainImages());
+                    = CommandBufferUtils.createCommandBuffers(dq.device(), commandPool, swapchain.getNumSwapchainImages());
 
             for (int i = 0; i < commandBuffers.size(); i++) {
                 VkCommandBuffer commandBuffer = commandBuffers.get(i);
@@ -410,12 +419,12 @@ public class MttVulkanImpl
                     swapchain.getSwapchain(),
                     imagesInFlight,
                     commandBuffers,
-                    graphicsQueue,
-                    presentQueue);
+                    dq.graphicsQueue(),
+                    dq.presentQueue());
             currentFrame = (currentFrame + 1) % maxNumFramesInFlight;
 
-            vkDeviceWaitIdle(device);
-            vkFreeCommandBuffers(device, commandPool, PointerBufferUtils.asPointerBuffer(commandBuffers));
+            vkDeviceWaitIdle(dq.device());
+            vkFreeCommandBuffers(dq.device(), commandPool, PointerBufferUtils.asPointerBuffer(commandBuffers));
         }
     }
 
@@ -462,9 +471,9 @@ public class MttVulkanImpl
         VkMttScreen screen = screens.get(screenName);
 
         var model = new VkMttModel(
-                device,
+                dq.device(),
                 commandPool,
-                graphicsQueue,
+                dq.graphicsQueue(),
                 screen,
                 modelResource);
         components.add(model);
@@ -473,21 +482,21 @@ public class MttVulkanImpl
     }
 
     public VkMttModel duplicateModel(VkMttModel srcModel) {
-        var model = new VkMttModel(device, commandPool, graphicsQueue, srcModel);
+        var model = new VkMttModel(dq.device(), commandPool, dq.graphicsQueue(), srcModel);
         components.add(model);
 
         return model;
     }
 
     public VkMttLine createLine(MttVertex v1, MttVertex v2) {
-        var line = new VkMttLine(device, commandPool, graphicsQueue, v1, v2);
+        var line = new VkMttLine(dq.device(), commandPool, dq.graphicsQueue(), v1, v2);
         components.add(line);
 
         return line;
     }
 
     public VkMttLineSet createLineSet() {
-        var lineSet = new VkMttLineSet(device, commandPool, graphicsQueue);
+        var lineSet = new VkMttLineSet(dq.device(), commandPool, dq.graphicsQueue());
         components.add(lineSet);
 
         return lineSet;
@@ -499,7 +508,7 @@ public class MttVulkanImpl
             int numVDivs,
             int numHDivs,
             Vector4fc color) {
-        var sphere = new VkMttSphere(device, commandPool, graphicsQueue, center, radius, numVDivs, numHDivs, color);
+        var sphere = new VkMttSphere(dq.device(), commandPool, dq.graphicsQueue(), center, radius, numVDivs, numHDivs, color);
         components.add(sphere);
 
         return sphere;
@@ -512,14 +521,14 @@ public class MttVulkanImpl
             int numVDivs,
             int numHDivs,
             Vector4fc color) {
-        var capsule = new VkMttCapsule(device, commandPool, graphicsQueue, center, length, radius, numVDivs, numHDivs, color);
+        var capsule = new VkMttCapsule(dq.device(), commandPool, dq.graphicsQueue(), center, length, radius, numVDivs, numHDivs, color);
         components.add(capsule);
 
         return capsule;
     }
 
     public VkMttQuad createQuad(List<MttVertex> vertices, boolean fill) {
-        var filledQuad = new VkMttQuad(device, commandPool, graphicsQueue, vertices, fill);
+        var filledQuad = new VkMttQuad(dq.device(), commandPool, dq.graphicsQueue(), vertices, fill);
         components.add(filledQuad);
 
         return filledQuad;
@@ -530,9 +539,9 @@ public class MttVulkanImpl
         VkMttScreen screen = screens.get(screenName);
 
         var texturedQuad = new VkMttTexturedQuad(
-                device,
+                dq.device(),
                 commandPool,
-                graphicsQueue,
+                dq.graphicsQueue(),
                 screen,
                 textureResource,
                 generateMipmaps,
@@ -544,9 +553,9 @@ public class MttVulkanImpl
 
     public VkMttTexturedQuad createTexturedQuad(String screenName, VkMttTexture texture, List<MttVertexUV> vertices) {
         var texturedQuad = new VkMttTexturedQuad(
-                device,
+                dq.device(),
                 commandPool,
-                graphicsQueue,
+                dq.graphicsQueue(),
                 screenName,
                 texture,
                 vertices);
@@ -557,9 +566,9 @@ public class MttVulkanImpl
 
     public VkMttTexturedQuad duplicateTexturedQuad(VkMttTexturedQuad srcQuad, List<MttVertexUV> vertices) {
         var texturedQuad = new VkMttTexturedQuad(
-                device,
+                dq.device(),
                 commandPool,
-                graphicsQueue,
+                dq.graphicsQueue(),
                 srcQuad,
                 vertices);
         components.add(texturedQuad);
@@ -569,7 +578,7 @@ public class MttVulkanImpl
 
     public VkMttTexturedQuadSingleTextureSet createTexturedQuadSingleTextureSet(String screenName, VkMttTexture texture) {
         var texturedQuadSet = new VkMttTexturedQuadSingleTextureSet(
-                device, commandPool, graphicsQueue, screenName, texture);
+                dq.device(), commandPool, dq.graphicsQueue(), screenName, texture);
         components.add(texturedQuadSet);
 
         return texturedQuadSet;
@@ -580,9 +589,9 @@ public class MttVulkanImpl
         VkMttScreen screen = screens.get(screenName);
 
         var texturedQuadSet = new VkMttTexturedQuadSingleTextureSet(
-                device,
+                dq.device(),
                 commandPool,
-                graphicsQueue,
+                dq.graphicsQueue(),
                 screen,
                 textureResource);
         components.add(texturedQuadSet);
@@ -595,9 +604,9 @@ public class MttVulkanImpl
         VkMttScreen screen = screens.get(screenName);
 
         var mttFont = new VkMttFont(
-                device,
+                dq.device(),
                 commandPool,
-                graphicsQueue,
+                dq.graphicsQueue(),
                 screen,
                 font,
                 antiAlias,
@@ -613,9 +622,9 @@ public class MttVulkanImpl
         VkMttScreen screen = screens.get(screenName);
 
         var texture = new VkMttTexture(
-                device,
+                dq.device(),
                 commandPool,
-                graphicsQueue,
+                dq.graphicsQueue(),
                 screen,
                 textureResource,
                 generateMipmaps
@@ -631,7 +640,7 @@ public class MttVulkanImpl
         long imageView = srcScreen.getColorImageView();
 
         VkMttScreen dstScreen = screens.get(dstScreenName);
-        var texture = new VkMttTexture(device, dstScreen, imageView);
+        var texture = new VkMttTexture(dq.device(), dstScreen, imageView);
         textures.add(texture);
 
         return texture;
@@ -643,7 +652,7 @@ public class MttVulkanImpl
         long imageView = srcScreen.getDepthImageView();
 
         VkMttScreen dstScreen = screens.get(dstScreenName);
-        var texture = new VkMttTexture(device, dstScreen, imageView);
+        var texture = new VkMttTexture(dq.device(), dstScreen, imageView);
         textures.add(texture);
 
         return texture;
@@ -697,7 +706,7 @@ public class MttVulkanImpl
         textureOperationInfos.put(operationName, textureOperationInfo);
 
         VkMttScreen dstScreen = screens.get(dstScreenName);
-        var dstTexture = new VkMttTexture(device, dstScreen, dstImageView);
+        var dstTexture = new VkMttTexture(dq.device(), dstScreen, dstImageView);
         return dstTexture;
     }
 

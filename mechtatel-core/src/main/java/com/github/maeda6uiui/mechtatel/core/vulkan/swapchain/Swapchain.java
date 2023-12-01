@@ -1,6 +1,5 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.swapchain;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.QueueFamilyUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.SwapchainUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -74,6 +73,8 @@ public class Swapchain {
 
     private void createSwapchain(
             long surface,
+            int graphicsFamilyIndex,
+            int presentFamilyIndex,
             int width,
             int height) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -102,11 +103,9 @@ public class Swapchain {
             createInfo.imageArrayLayers(1);
             createInfo.imageUsage(VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
 
-            QueueFamilyUtils.QueueFamilyIndices indices
-                    = QueueFamilyUtils.findQueueFamilies(device.getPhysicalDevice(), surface);
-            if (!indices.graphicsFamily.equals(indices.presentFamily)) {
+            if (graphicsFamilyIndex != presentFamilyIndex) {
                 createInfo.imageSharingMode(VK_SHARING_MODE_CONCURRENT);
-                createInfo.pQueueFamilyIndices(stack.ints(indices.graphicsFamily, indices.presentFamily));
+                createInfo.pQueueFamilyIndices(stack.ints(graphicsFamilyIndex, presentFamilyIndex));
             } else {
                 createInfo.imageSharingMode(VK_SHARING_MODE_EXCLUSIVE);
             }
@@ -163,11 +162,13 @@ public class Swapchain {
     public Swapchain(
             VkDevice device,
             long surface,
+            int graphicsFamilyIndex,
+            int presentFamilyIndex,
             int width,
             int height) {
         this.device = device;
 
-        this.createSwapchain(surface, width, height);
+        this.createSwapchain(surface, graphicsFamilyIndex, presentFamilyIndex, width, height);
     }
 
     public void createFramebuffers(long renderPass) {

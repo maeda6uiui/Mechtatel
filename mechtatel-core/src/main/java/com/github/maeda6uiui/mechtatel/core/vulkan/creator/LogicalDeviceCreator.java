@@ -39,17 +39,27 @@ public class LogicalDeviceCreator {
                     preferablePresentFamilyIndex
             );
 
-            VkDeviceQueueCreateInfo.Buffer queueCreateInfos = VkDeviceQueueCreateInfo.calloc(2, stack);
+            VkDeviceQueueCreateInfo.Buffer queueCreateInfos;
+            if (indices.graphicsFamily() == indices.presentFamily()) {
+                queueCreateInfos = VkDeviceQueueCreateInfo.calloc(1, stack);
 
-            VkDeviceQueueCreateInfo graphicsQueueCreateInfo = queueCreateInfos.get(0);
-            graphicsQueueCreateInfo.sType(VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO);
-            graphicsQueueCreateInfo.queueFamilyIndex(indices.graphicsFamily());
-            graphicsQueueCreateInfo.pQueuePriorities(stack.floats(1.0f));
+                VkDeviceQueueCreateInfo graphicsQueueCreateInfo = queueCreateInfos.get(0);
+                graphicsQueueCreateInfo.sType(VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO);
+                graphicsQueueCreateInfo.queueFamilyIndex(indices.graphicsFamily());
+                graphicsQueueCreateInfo.pQueuePriorities(stack.floats(1.0f));
+            } else {
+                queueCreateInfos = VkDeviceQueueCreateInfo.calloc(2, stack);
 
-            VkDeviceQueueCreateInfo presentQueueCreateInfo = queueCreateInfos.get(1);
-            presentQueueCreateInfo.sType(VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO);
-            presentQueueCreateInfo.queueFamilyIndex(indices.presentFamily());
-            presentQueueCreateInfo.pQueuePriorities(stack.floats(1.0f));
+                VkDeviceQueueCreateInfo graphicsQueueCreateInfo = queueCreateInfos.get(0);
+                graphicsQueueCreateInfo.sType(VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO);
+                graphicsQueueCreateInfo.queueFamilyIndex(indices.graphicsFamily());
+                graphicsQueueCreateInfo.pQueuePriorities(stack.floats(1.0f));
+
+                VkDeviceQueueCreateInfo presentQueueCreateInfo = queueCreateInfos.get(1);
+                presentQueueCreateInfo.sType(VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO);
+                presentQueueCreateInfo.queueFamilyIndex(indices.presentFamily());
+                presentQueueCreateInfo.pQueuePriorities(stack.floats(1.0f));
+            }
 
             VkPhysicalDeviceFeatures deviceFeatures = VkPhysicalDeviceFeatures.calloc(stack);
             deviceFeatures.samplerAnisotropy(true);

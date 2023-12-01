@@ -48,8 +48,10 @@ public class PhysicalDevicePicker {
             if (devices.isEmpty()) {
                 throw new RuntimeException("Failed to find a suitable GPU");
             } else if (preferablePhysicalDeviceIndex == -1) {
+                logger.debug("Return physical device {}", devices.size() - 1);
                 return devices.get(devices.size() - 1);
             } else if (preferablePhysicalDeviceIndex >= 0 && preferablePhysicalDeviceIndex < devices.size()) {
+                logger.debug("Return physical device {}", preferablePhysicalDeviceIndex);
                 return devices.get(preferablePhysicalDeviceIndex);
             } else {
                 logger.warn(

@@ -108,7 +108,8 @@ public class MttSettings {
 
         public boolean enableValidationLayer;
         public int preferablePhysicalDeviceIndex;
-        public boolean useGraphicsQueueAsPresentQueue;
+        public int preferableGraphicsFamilyIndex;
+        public int preferablePresentFamilyIndex;
         public int albedoMSAASamples;
         public int maxNumFramesInFlight;
         public AppInfo appInfo;
@@ -116,7 +117,8 @@ public class MttSettings {
         public VulkanSettings() {
             enableValidationLayer = false;
             preferablePhysicalDeviceIndex = 0;
-            useGraphicsQueueAsPresentQueue = false;
+            preferableGraphicsFamilyIndex = -1;
+            preferablePresentFamilyIndex = -1;
             albedoMSAASamples = 2;
             maxNumFramesInFlight = 2;
             appInfo = new AppInfo();
@@ -127,7 +129,8 @@ public class MttSettings {
             return "VulkanSettings{" +
                     "enableValidationLayer=" + enableValidationLayer +
                     ", preferablePhysicalDeviceIndex=" + preferablePhysicalDeviceIndex +
-                    ", useGraphicsQueueAsPresentQueue=" + useGraphicsQueueAsPresentQueue +
+                    ", preferableGraphicsFamilyIndex=" + preferableGraphicsFamilyIndex +
+                    ", preferablePresentFamilyIndex=" + preferablePresentFamilyIndex +
                     ", albedoMSAASamples=" + albedoMSAASamples +
                     ", maxNumFramesInFlight=" + maxNumFramesInFlight +
                     ", appInfo=" + appInfo +

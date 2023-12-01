@@ -15,7 +15,8 @@
     "vulkan": {
         "enableValidationLayer": true,
         "preferablePhysicalDeviceIndex": 0,
-        "useGraphicsQueueAsPresentQueue": false,
+        "preferableGraphicsFamilyIndex": -1,
+        "preferablePresentFamilyIndex": -1,
         "albedoMSAASamples": 2,
         "maxNumFramesInFlight": 2,
         "appInfo": {

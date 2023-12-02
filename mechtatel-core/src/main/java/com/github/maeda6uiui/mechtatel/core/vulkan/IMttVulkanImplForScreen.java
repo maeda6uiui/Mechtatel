@@ -1,6 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
+import com.github.maeda6uiui.mechtatel.core.component.MttComponent;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
@@ -10,6 +11,7 @@ import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.lwjgl.vulkan.VkExtent2D;
 
 import java.util.List;
 
@@ -31,5 +33,10 @@ public interface IMttVulkanImplForScreen {
             List<Spotlight> spotlights,
             Vector3f spotlightAmbientColor,
             ShadowMappingSettings shadowMappingSettings,
-            SimpleBlurInfo simpleBlurInfo);
+            SimpleBlurInfo simpleBlurInfo,
+            List<MttComponent> components);
+
+    VkExtent2D getSwapchainExtent();
+
+    int getSwapchainImageFormat();
 }

@@ -4,6 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.SamplerAddressMode;
 import com.github.maeda6uiui.mechtatel.core.SamplerFilterMode;
 import com.github.maeda6uiui.mechtatel.core.SamplerMipmapMode;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
+import com.github.maeda6uiui.mechtatel.core.component.MttComponent;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
@@ -131,6 +132,8 @@ public class MttScreen {
 
     private boolean shouldAutoUpdateCameraAspect;
 
+    private List<MttComponent> components;
+
     public MttScreen(MttVulkanImpl vulkanImpl, MttScreenCreateInfo createInfo) {
         var dq = vulkanImpl.getDeviceAndQueues();
         screen = new VkMttScreen(
@@ -173,6 +176,8 @@ public class MttScreen {
         parallelLights = new ArrayList<>();
         pointLights = new ArrayList<>();
         spotlights = new ArrayList<>();
+
+        components = new ArrayList<>();
     }
 
     public void cleanup() {
@@ -192,8 +197,15 @@ public class MttScreen {
                 spotlights,
                 spotlightAmbientColor,
                 shadowMappingSettings,
-                simpleBlurInfo
+                simpleBlurInfo,
+                components
         );
+    }
+
+    public void recreate() {
+        if (vulkanImpl != null) {
+            screen.recreate(vulkanImpl.getSwapchainImageFormat(), vulkanImpl.getSwapchainExtent());
+        }
     }
 
     public VkMttScreen getVulkanScreen() {

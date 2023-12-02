@@ -6,6 +6,8 @@ import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 
+import java.util.Optional;
+
 /**
  * Component
  *
@@ -71,8 +73,8 @@ public class MttComponent implements IMttComponentForVkMttComponent {
         this.vkComponent = vkComponent;
     }
 
-    protected VkMttComponent getVulkanComponent() {
-        return vkComponent;
+    protected Optional<VkMttComponent> getVulkanComponent() {
+        return Optional.ofNullable(vkComponent);
     }
 
     @Override

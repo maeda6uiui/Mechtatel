@@ -46,6 +46,7 @@ public class MttWindow
     private static final Logger logger = LoggerFactory.getLogger(MttWindow.class);
 
     private IMechtatelForMttWindow mtt;
+    private MttVulkanImpl vulkanImpl;
 
     private long handle;
     private int width;
@@ -55,23 +56,16 @@ public class MttWindow
     private Keyboard keyboard;
     private Mouse mouse;
     private boolean fixCursorFlag;
+    private boolean mustRecreate;
+    private boolean validWindow;
 
-    private MttVulkanImpl vulkanImpl;
+    private MttScreen defaultScreen;
+    private List<MttScreen> screens;
 
     private List<MttGuiComponent> guiComponents;
-
-    private Map<String, MttScreen> screens;
-    private List<String> screenDrawOrder;
-    private List<String> textureOperationOrder;
-    private List<String> deferredScreenDrawOrder;
-    private String presentScreenName;
-
     private Map<String, MttAnimation> animations;
 
     private List<MttSound> sounds3D;
-
-    private boolean mustRecreate;
-    private boolean validWindow;
 
     private void framebufferResizeCallback(long window, int width, int height) {
         mtt.reshape(this, width, height);
@@ -115,8 +109,6 @@ public class MttWindow
             int width,
             int height,
             String title) {
-        this.mtt = mtt;
-
         handle = glfwCreateWindow(width, height, title, NULL, NULL);
         if (handle == NULL) {
             throw new RuntimeException("Failed to create a window");
@@ -126,47 +118,39 @@ public class MttWindow
         this.height = height;
         this.title = title;
 
+        this.mtt = mtt;
+        vulkanImpl = new MttVulkanImpl(handle, settings.vulkanSettings);
+
         keyboard = new Keyboard();
         mouse = new Mouse();
         fixCursorFlag = false;
+        mustRecreate = false;
+        validWindow = true;
 
         glfwSetFramebufferSizeCallback(handle, this::framebufferResizeCallback);
         glfwSetKeyCallback(handle, this::keyCallback);
         glfwSetMouseButtonCallback(handle, this::mouseButtonCallback);
         glfwSetCursorPosCallback(handle, this::cursorPositionCallback);
 
-        vulkanImpl = new MttVulkanImpl(handle, settings.vulkanSettings);
+        defaultScreen = new MttScreen(
+                vulkanImpl,
+                new MttScreen.MttScreenCreateInfo()
+                        .setDepthImageWidth(2048)
+                        .setDepthImageHeight(2048)
+                        .setScreenWidth(-1)
+                        .setScreenHeight(-1)
+                        .setSamplerFilter(SamplerFilterMode.NEAREST)
+                        .setSamplerMipmapMode(SamplerMipmapMode.NEAREST)
+                        .setSamplerAddressMode(SamplerAddressMode.REPEAT)
+                        .setShouldChangeExtentOnRecreate(true)
+                        .setUseShadowMapping(false)
+        );
+        screens = new ArrayList<>();
 
         guiComponents = new ArrayList<>();
-
-        screens = new HashMap<>();
-        MttScreen defaultScreen = this.createScreen(
-                "default",
-                2048,
-                2048,
-                -1,
-                -1,
-                SamplerFilterMode.NEAREST,
-                SamplerMipmapMode.NEAREST,
-                SamplerAddressMode.REPEAT,
-                true,
-                false,
-                null,
-                null
-        );
-        screens.put("default", defaultScreen);
-        screenDrawOrder = new ArrayList<>();
-        screenDrawOrder.add("default");
-        textureOperationOrder = new ArrayList<>();
-        deferredScreenDrawOrder = new ArrayList<>();
-        presentScreenName = "default";
-
         animations = new HashMap<>();
 
         sounds3D = new ArrayList<>();
-
-        mustRecreate = false;
-        validWindow = true;
 
         logger.debug("Window ({}) successfully created", Long.toHexString(handle));
 
@@ -179,12 +163,11 @@ public class MttWindow
 
         if (mustRecreate) {
             vulkanImpl.recreateResourcesOnResize(handle);
-            for (var screen : screens.values()) {
+            screens.forEach(screen -> {
                 if (screen.shouldAutoUpdateCameraAspect()) {
-                    screen.getCamera().getPerspectiveCameraInfo().aspect
-                            = (float) width / (float) height;
+                    screen.getCamera().getPerspectiveCameraInfo().aspect = (float) width / (float) height;
                 }
-            }
+            });
 
             mustRecreate = false;
             logger.debug("Window ({}) recreated", Long.toHexString(handle));
@@ -506,30 +489,30 @@ public class MttWindow
         return mttButton;
     }
 
-    public MttCheckbox createCheckbox(MttCheckbox.MttCheckboxCreateInfo createInfo) {
-        var mttCheckbox = new MttCheckbox(vulkanImpl, createInfo);
+    public MttCheckBox createCheckbox(MttCheckBox.MttCheckBoxCreateInfo createInfo) {
+        var mttCheckbox = new MttCheckBox(vulkanImpl, createInfo);
         guiComponents.add(mttCheckbox);
 
         return mttCheckbox;
     }
 
-    public MttVerticalScrollbar createVerticalScrollbar(MttVerticalScrollbar.MttVerticalScrollbarCreateInfo createInfo) {
-        var mttScrollbar = new MttVerticalScrollbar(vulkanImpl, createInfo);
+    public MttVerticalScrollBar createVerticalScrollbar(MttVerticalScrollBar.MttVerticalScrollBarCreateInfo createInfo) {
+        var mttScrollbar = new MttVerticalScrollBar(vulkanImpl, createInfo);
         guiComponents.add(mttScrollbar);
 
         return mttScrollbar;
     }
 
-    public MttHorizontalScrollbar createHorizontalScrollbar(
-            MttHorizontalScrollbar.MttHorizontalScrollbarCreateInfo createInfo) {
-        var mttScrollbar = new MttHorizontalScrollbar(vulkanImpl, createInfo);
+    public MttHorizontalScrollBar createHorizontalScrollbar(
+            MttHorizontalScrollBar.MttHorizontalScrollBarCreateInfo createInfo) {
+        var mttScrollbar = new MttHorizontalScrollBar(vulkanImpl, createInfo);
         guiComponents.add(mttScrollbar);
 
         return mttScrollbar;
     }
 
-    public MttListbox createListbox(MttListbox.MttListboxCreateInfo createInfo) {
-        var mttListbox = new MttListbox(vulkanImpl, createInfo);
+    public MttListBox createListbox(MttListBox.MttListBoxCreateInfo createInfo) {
+        var mttListbox = new MttListBox(vulkanImpl, createInfo);
         guiComponents.add(mttListbox);
 
         return mttListbox;
@@ -542,15 +525,15 @@ public class MttWindow
         return mttLabel;
     }
 
-    public MttTextbox createTextbox(MttTextbox.MttTextboxCreateInfo createInfo) {
-        var mttTextbox = new MttTextbox(vulkanImpl, createInfo);
+    public MttTextField createTextbox(MttTextField.MttTextFieldCreateInfo createInfo) {
+        var mttTextbox = new MttTextField(vulkanImpl, createInfo);
         guiComponents.add(mttTextbox);
 
         return mttTextbox;
     }
 
-    public MttTextarea createTextarea(MttTextarea.MttTextareaCreateInfo createInfo) {
-        var mttTextarea = new MttTextarea(vulkanImpl, createInfo);
+    public MttTextArea createTextarea(MttTextArea.MttTextAreaCreateInfo createInfo) {
+        var mttTextarea = new MttTextArea(vulkanImpl, createInfo);
         guiComponents.add(mttTextarea);
 
         return mttTextarea;

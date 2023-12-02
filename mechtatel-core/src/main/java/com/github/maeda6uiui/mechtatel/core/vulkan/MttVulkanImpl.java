@@ -385,8 +385,7 @@ public class MttVulkanImpl implements IMttVulkanImplForScreen {
             VkMttTexture firstDepthTexture,
             VkMttTexture secondColorTexture,
             VkMttTexture secondDepthTexture,
-            VkMttScreen dstScreen,
-            TextureOperationParameters parameters) {
+            VkMttScreen dstScreen) {
         long dstImage;
         long dstImageView;
         if (textureOperationInfos.containsKey(name)) {

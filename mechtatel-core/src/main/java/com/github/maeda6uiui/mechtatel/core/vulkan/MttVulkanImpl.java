@@ -452,6 +452,26 @@ public class MttVulkanImpl
         return commandPool;
     }
 
+    public int getDepthImageFormat() {
+        return depthImageFormat;
+    }
+
+    public int getDepthImageAspect() {
+        return depthImageAspect;
+    }
+
+    public VkExtent2D getSwapchainExtent() {
+        return swapchain.getSwapchainExtent();
+    }
+
+    public int getSwapchainImageFormat() {
+        return swapchain.getSwapchainImageFormat();
+    }
+
+    public int getAlbedoMSAASamples() {
+        return albedoMSAASamples;
+    }
+
     @Override
     public VkMttTexture texturizeColorOfScreen(String srcScreenName, String dstScreenName) {
         VkMttScreen srcScreen = screens.get(srcScreenName);

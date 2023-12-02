@@ -38,7 +38,7 @@ public class MttQuad extends MttComponent {
             MttVertex v3,
             MttVertex v4,
             boolean fill) {
-        super(vulkanImpl, generateCreateInfo(fill));
+        super(generateCreateInfo(fill));
 
         this.setup(vulkanImpl, Arrays.asList(v1, v2, v3, v4), fill);
     }
@@ -51,7 +51,7 @@ public class MttQuad extends MttComponent {
             Vector3fc p4,
             boolean fill,
             Vector4fc color) {
-        super(vulkanImpl, generateCreateInfo(fill));
+        super(generateCreateInfo(fill));
 
         var v1 = new MttVertex(p1, color);
         var v2 = new MttVertex(p2, color);

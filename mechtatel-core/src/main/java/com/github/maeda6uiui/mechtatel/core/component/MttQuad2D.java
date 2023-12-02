@@ -58,7 +58,7 @@ public class MttQuad2D extends MttComponent {
             MttVertex2D v4,
             float z,
             boolean fill) {
-        super(vulkanImpl, generateCreateInfo());
+        super(generateCreateInfo());
 
         this.setup(vulkanImpl, v1, v2, v3, v4, z, fill);
     }
@@ -72,7 +72,7 @@ public class MttQuad2D extends MttComponent {
             float z,
             boolean fill,
             Vector4fc color) {
-        super(vulkanImpl, generateCreateInfo());
+        super(generateCreateInfo());
 
         var v1 = new MttVertex2D(new Vector2f(p1.x(), p1.y()), color);
         var v2 = new MttVertex2D(new Vector2f(p2.x(), p2.y()), color);
@@ -88,7 +88,7 @@ public class MttQuad2D extends MttComponent {
             float z,
             boolean fill,
             Vector4fc color) {
-        super(vulkanImpl, generateCreateInfo());
+        super(generateCreateInfo());
 
         var v1 = new MttVertex2D(new Vector2f(topLeft.x(), topLeft.y()), color);
         var v2 = new MttVertex2D(new Vector2f(topLeft.x(), bottomRight.y()), color);

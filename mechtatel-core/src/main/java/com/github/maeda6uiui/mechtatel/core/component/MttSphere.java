@@ -21,7 +21,6 @@ public class MttSphere extends MttComponent {
             int numHDivs,
             Vector4fc color) {
         super(
-                vulkanImpl,
                 new MttComponentCreateInfo()
                         .setVisible(true)
                         .setTwoDComponent(false)

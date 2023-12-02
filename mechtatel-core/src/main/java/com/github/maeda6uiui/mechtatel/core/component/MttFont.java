@@ -31,7 +31,6 @@ public class MttFont extends MttComponent {
             Color fontColor,
             String requiredChars) {
         super(
-                vulkanImpl,
                 new MttComponentCreateInfo()
                         .setVisible(true)
                         .setTwoDComponent(true)

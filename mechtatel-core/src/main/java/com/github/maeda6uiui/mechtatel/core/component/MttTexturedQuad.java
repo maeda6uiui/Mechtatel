@@ -36,7 +36,7 @@ public class MttTexturedQuad extends MttComponent {
             MttVertexUV v2,
             MttVertexUV v3,
             MttVertexUV v4) throws FileNotFoundException {
-        super(vulkanImpl, generateCreateInfo());
+        super(generateCreateInfo());
 
         if (!Files.exists(Paths.get(textureResource))) {
             throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
@@ -63,7 +63,7 @@ public class MttTexturedQuad extends MttComponent {
             MttVertexUV v2,
             MttVertexUV v3,
             MttVertexUV v4) {
-        super(vulkanImpl, generateCreateInfo());
+        super(generateCreateInfo());
 
         var dq = vulkanImpl.getDeviceAndQueues();
         vkTexturedQuad = new VkMttTexturedQuad(
@@ -84,7 +84,7 @@ public class MttTexturedQuad extends MttComponent {
             MttVertexUV v2,
             MttVertexUV v3,
             MttVertexUV v4) {
-        super(vulkanImpl, generateCreateInfo());
+        super(generateCreateInfo());
 
         var dq = vulkanImpl.getDeviceAndQueues();
         vkTexturedQuad = new VkMttTexturedQuad(

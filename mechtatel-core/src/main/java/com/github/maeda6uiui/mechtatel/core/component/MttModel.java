@@ -22,7 +22,6 @@ public class MttModel extends MttComponent {
 
     public MttModel(MttVulkanImpl vulkanImpl, MttScreen screen, URI modelResource) throws IOException {
         super(
-                vulkanImpl,
                 new MttComponentCreateInfo()
                         .setVisible(true)
                         .setTwoDComponent(false)
@@ -45,7 +44,6 @@ public class MttModel extends MttComponent {
 
     public MttModel(MttVulkanImpl vulkanImpl, MttModel srcModel) {
         super(
-                vulkanImpl,
                 new MttComponentCreateInfo()
                         .setVisible(true)
                         .setTwoDComponent(false)

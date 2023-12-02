@@ -13,7 +13,6 @@ public class MttLine extends MttComponent {
 
     public MttLine(MttVulkanImpl vulkanImpl, MttVertex v1, MttVertex v2) {
         super(
-                vulkanImpl,
                 new MttComponentCreateInfo()
                         .setVisible(true)
                         .setTwoDComponent(false)

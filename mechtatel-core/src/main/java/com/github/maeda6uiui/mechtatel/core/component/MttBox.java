@@ -45,7 +45,6 @@ public class MttBox extends MttComponent {
 
     public MttBox(MttVulkanImpl vulkanImpl, float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
         super(
-                vulkanImpl,
                 new MttComponentCreateInfo()
                         .setVisible(true)
                         .setTwoDComponent(false)

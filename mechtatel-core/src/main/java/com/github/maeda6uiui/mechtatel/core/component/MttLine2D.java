@@ -14,7 +14,6 @@ public class MttLine2D extends MttComponent {
 
     public MttLine2D(MttVulkanImpl vulkanImpl, MttVertex2D p1, MttVertex2D p2, float z) {
         super(
-                vulkanImpl,
                 new MttComponentCreateInfo()
                         .setVisible(true)
                         .setTwoDComponent(true)

@@ -16,7 +16,6 @@ public class MttLine2DSet extends MttComponent {
 
     public MttLine2DSet(MttVulkanImpl vulkanImpl) {
         super(
-                vulkanImpl,
                 new MttComponentCreateInfo()
                         .setVisible(true)
                         .setTwoDComponent(true)

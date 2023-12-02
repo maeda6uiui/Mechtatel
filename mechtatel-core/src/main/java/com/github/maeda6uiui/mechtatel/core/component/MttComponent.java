@@ -1,6 +1,5 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplForComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
@@ -54,7 +53,6 @@ public class MttComponent implements IMttComponentForVkMttComponent {
     private boolean castShadow;
     private int drawOrder;
 
-    private IMttVulkanImplForComponent vulkanImpl;
     private VkMttComponent vkComponent;
 
     private void setInitialProperties(MttComponentCreateInfo createInfo) {
@@ -64,8 +62,7 @@ public class MttComponent implements IMttComponentForVkMttComponent {
         drawOrder = createInfo.drawOrder;
     }
 
-    public MttComponent(IMttVulkanImplForComponent vulkanImpl, MttComponentCreateInfo createInfo) {
-        this.vulkanImpl = vulkanImpl;
+    public MttComponent(MttComponentCreateInfo createInfo) {
         this.setInitialProperties(createInfo);
     }
 
@@ -157,6 +154,8 @@ public class MttComponent implements IMttComponentForVkMttComponent {
     }
 
     public void cleanup() {
-        vulkanImpl.removeComponent(vkComponent);
+        if (vkComponent != null) {
+            vkComponent.cleanup();
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -12,51 +11,51 @@ import java.util.Map;
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJavaColorToJOMLVector4f;
 
 /**
- * Horizontal scrollbar
+ * Vertical scroll bar
  *
  * @author maeda6uiui
  */
-public class MttHorizontalScrollbar extends MttGuiComponent {
-    public static class MttHorizontalScrollbarCreateInfo {
+public class MttVerticalScrollBar extends MttGuiComponent {
+    public static class MttVerticalScrollBarCreateInfo {
         public float x;
         public float y;
         public float width;
         public float height;
-        public float grabWidth;
+        public float grabHeight;
         public Color frameColor;
         public Color grabFrameColor;
 
-        public MttHorizontalScrollbarCreateInfo setX(float x) {
+        public MttVerticalScrollBarCreateInfo setX(float x) {
             this.x = x;
             return this;
         }
 
-        public MttHorizontalScrollbarCreateInfo setY(float y) {
+        public MttVerticalScrollBarCreateInfo setY(float y) {
             this.y = y;
             return this;
         }
 
-        public MttHorizontalScrollbarCreateInfo setWidth(float width) {
+        public MttVerticalScrollBarCreateInfo setWidth(float width) {
             this.width = width;
             return this;
         }
 
-        public MttHorizontalScrollbarCreateInfo setHeight(float height) {
+        public MttVerticalScrollBarCreateInfo setHeight(float height) {
             this.height = height;
             return this;
         }
 
-        public MttHorizontalScrollbarCreateInfo setGrabWidth(float grabWidth) {
-            this.grabWidth = grabWidth;
+        public MttVerticalScrollBarCreateInfo setGrabHeight(float grabHeight) {
+            this.grabHeight = grabHeight;
             return this;
         }
 
-        public MttHorizontalScrollbarCreateInfo setFrameColor(Color frameColor) {
+        public MttVerticalScrollBarCreateInfo setFrameColor(Color frameColor) {
             this.frameColor = frameColor;
             return this;
         }
 
-        public MttHorizontalScrollbarCreateInfo setGrabFrameColor(Color grabFrameColor) {
+        public MttVerticalScrollBarCreateInfo setGrabFrameColor(Color grabFrameColor) {
             this.grabFrameColor = grabFrameColor;
             return this;
         }
@@ -67,10 +66,10 @@ public class MttHorizontalScrollbar extends MttGuiComponent {
 
     private Vector2f grabTopLeft;
     private Vector2f grabBottomRight;
-    private float prevFCursorX;
+    private float prevFCursorY;
     private boolean grabbed;
 
-    public MttHorizontalScrollbar(MttVulkanImpl vulkanImpl, MttScreen screen, MttHorizontalScrollbarCreateInfo createInfo) {
+    public MttVerticalScrollBar(MttVulkanImpl vulkanImpl, MttVerticalScrollBarCreateInfo createInfo) {
         super(createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         frame = new MttQuad2D(
@@ -84,7 +83,7 @@ public class MttHorizontalScrollbar extends MttGuiComponent {
         grabFrame = new MttQuad2D(
                 vulkanImpl,
                 new Vector2f(createInfo.x, createInfo.y),
-                new Vector2f(createInfo.x + createInfo.grabWidth, createInfo.y + createInfo.height),
+                new Vector2f(createInfo.x + createInfo.width, createInfo.y + createInfo.grabHeight),
                 0.01f,
                 true,
                 convertJavaColorToJOMLVector4f(createInfo.grabFrameColor)
@@ -93,9 +92,9 @@ public class MttHorizontalScrollbar extends MttGuiComponent {
         frame.setDrawOrder(1);
 
         grabTopLeft = new Vector2f(createInfo.x, createInfo.y);
-        grabBottomRight = new Vector2f(createInfo.x + createInfo.grabWidth, createInfo.y + createInfo.height);
+        grabBottomRight = new Vector2f(createInfo.x + createInfo.width, createInfo.y + createInfo.grabHeight);
 
-        prevFCursorX = 0.0f;
+        prevFCursorY = 0.0f;
         grabbed = false;
     }
 
@@ -127,26 +126,26 @@ public class MttHorizontalScrollbar extends MttGuiComponent {
         }
 
         if (grabbed) {
-            float diffFCursorX = fCursorX - prevFCursorX;
+            float diffFCursorY = fCursorY - prevFCursorY;
 
             float grabMoveAmount;
-            float frameX = this.getX();
-            float frameWidth = this.getWidth();
-            if (grabTopLeft.x + diffFCursorX < frameX) {
-                grabMoveAmount = frameX - grabTopLeft.x;
-            } else if (grabBottomRight.x + diffFCursorX > frameX + frameWidth) {
-                grabMoveAmount = frameX + frameWidth - grabBottomRight.x;
+            float frameY = this.getY();
+            float frameHeight = this.getHeight();
+            if (grabTopLeft.y + diffFCursorY < frameY) {
+                grabMoveAmount = frameY - grabTopLeft.y;
+            } else if (grabBottomRight.y + diffFCursorY > frameY + frameHeight) {
+                grabMoveAmount = frameY + frameHeight - grabBottomRight.y;
             } else {
-                grabMoveAmount = diffFCursorX;
+                grabMoveAmount = diffFCursorY;
             }
 
-            grabTopLeft.x += grabMoveAmount;
-            grabBottomRight.x += grabMoveAmount;
+            grabTopLeft.y += grabMoveAmount;
+            grabBottomRight.y += grabMoveAmount;
 
-            grabFrame.applyMat(new Matrix4f().translate(grabMoveAmount, 0.0f, 0.0f));
+            grabFrame.applyMat(new Matrix4f().translate(0.0f, grabMoveAmount, 0.0f));
         }
 
-        prevFCursorX = fCursorX;
+        prevFCursorY = fCursorY;
     }
 
     @Override
@@ -156,9 +155,9 @@ public class MttHorizontalScrollbar extends MttGuiComponent {
     }
 
     public float getScrollAmount() {
-        float grabWidth = grabBottomRight.x - grabTopLeft.x;
-        float grabWholeAmount = this.getWidth() - grabWidth;
-        float scrollAmount = (grabTopLeft.x - this.getX()) / grabWholeAmount;
+        float grabHeight = grabBottomRight.y - grabTopLeft.y;
+        float grabWholeAmount = this.getHeight() - grabHeight;
+        float scrollAmount = (grabTopLeft.y - this.getY()) / grabWholeAmount;
 
         return scrollAmount;
     }
@@ -170,13 +169,13 @@ public class MttHorizontalScrollbar extends MttGuiComponent {
             scrollAmount = 1.0f;
         }
 
-        float grabWidth = grabBottomRight.x - grabTopLeft.x;
-        float grabWholeAmount = this.getWidth() - grabWidth;
+        float grabHeight = grabBottomRight.y - grabTopLeft.y;
+        float grabWholeAmount = this.getHeight() - grabHeight;
         float grabMoveAmount = scrollAmount * grabWholeAmount;
 
-        grabFrame.applyMat(new Matrix4f().translate(grabMoveAmount, 0.0f, 0.0f));
+        grabFrame.applyMat(new Matrix4f().translate(0.0f, grabMoveAmount, 0.0f));
 
-        grabTopLeft.x = grabMoveAmount + this.getX();
-        grabBottomRight.x = grabTopLeft.x + grabWidth;
+        grabTopLeft.y = grabMoveAmount + this.getY();
+        grabBottomRight.y = grabTopLeft.y + grabHeight;
     }
 }

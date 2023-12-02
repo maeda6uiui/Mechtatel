@@ -21,11 +21,11 @@ import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.con
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
 /**
- * Textarea
+ * Text area
  *
  * @author maeda6uiui
  */
-public class MttTextarea extends MttGuiComponent {
+public class MttTextArea extends MttGuiComponent {
     public static final String DEFAULT_SUPPORTED_CHARACTERS
             = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~ ";
     private static final List<String> SPECIAL_KEYS;
@@ -41,7 +41,7 @@ public class MttTextarea extends MttGuiComponent {
         SPECIAL_KEYS.add("ENTER");
     }
 
-    public static class MttTextareaCreateInfo {
+    public static class MttTextAreaCreateInfo {
         public float x;
         public float y;
         public float width;
@@ -61,92 +61,92 @@ public class MttTextarea extends MttGuiComponent {
         public KeyInterpreter keyInterpreter;
         public String supportedCharacters;
 
-        public MttTextareaCreateInfo setX(float x) {
+        public MttTextAreaCreateInfo setX(float x) {
             this.x = x;
             return this;
         }
 
-        public MttTextareaCreateInfo setY(float y) {
+        public MttTextAreaCreateInfo setY(float y) {
             this.y = y;
             return this;
         }
 
-        public MttTextareaCreateInfo setWidth(float width) {
+        public MttTextAreaCreateInfo setWidth(float width) {
             this.width = width;
             return this;
         }
 
-        public MttTextareaCreateInfo setHeight(float height) {
+        public MttTextAreaCreateInfo setHeight(float height) {
             this.height = height;
             return this;
         }
 
-        public MttTextareaCreateInfo setCaretLength(float caretLength) {
+        public MttTextAreaCreateInfo setCaretLength(float caretLength) {
             this.caretLength = caretLength;
             return this;
         }
 
-        public MttTextareaCreateInfo setCaretMarginX(float caretMarginX) {
+        public MttTextAreaCreateInfo setCaretMarginX(float caretMarginX) {
             this.caretMarginX = caretMarginX;
             return this;
         }
 
-        public MttTextareaCreateInfo setCaretMarginY(float caretMarginY) {
+        public MttTextAreaCreateInfo setCaretMarginY(float caretMarginY) {
             this.caretMarginY = caretMarginY;
             return this;
         }
 
-        public MttTextareaCreateInfo setFontName(String fontName) {
+        public MttTextAreaCreateInfo setFontName(String fontName) {
             this.fontName = fontName;
             return this;
         }
 
-        public MttTextareaCreateInfo setFontStyle(int fontStyle) {
+        public MttTextAreaCreateInfo setFontStyle(int fontStyle) {
             this.fontStyle = fontStyle;
             return this;
         }
 
-        public MttTextareaCreateInfo setFontSize(int fontSize) {
+        public MttTextAreaCreateInfo setFontSize(int fontSize) {
             this.fontSize = fontSize;
             return this;
         }
 
-        public MttTextareaCreateInfo setFontColor(Color fontColor) {
+        public MttTextAreaCreateInfo setFontColor(Color fontColor) {
             this.fontColor = fontColor;
             return this;
         }
 
-        public MttTextareaCreateInfo setFrameColor(Color frameColor) {
+        public MttTextAreaCreateInfo setFrameColor(Color frameColor) {
             this.frameColor = frameColor;
             return this;
         }
 
-        public MttTextareaCreateInfo setCaretColor(Color caretColor) {
+        public MttTextAreaCreateInfo setCaretColor(Color caretColor) {
             this.caretColor = caretColor;
             return this;
         }
 
-        public MttTextareaCreateInfo setCaretBlinkInterval(float caretBlinkInterval) {
+        public MttTextAreaCreateInfo setCaretBlinkInterval(float caretBlinkInterval) {
             this.caretBlinkInterval = caretBlinkInterval;
             return this;
         }
 
-        public MttTextareaCreateInfo setSecondsPerFrame(float secondsPerFrame) {
+        public MttTextAreaCreateInfo setSecondsPerFrame(float secondsPerFrame) {
             this.secondsPerFrame = secondsPerFrame;
             return this;
         }
 
-        public MttTextareaCreateInfo setRepeatDelay(float repeatDelay) {
+        public MttTextAreaCreateInfo setRepeatDelay(float repeatDelay) {
             this.repeatDelay = repeatDelay;
             return this;
         }
 
-        public MttTextareaCreateInfo setKeyInterpreter(KeyInterpreter keyInterpreter) {
+        public MttTextAreaCreateInfo setKeyInterpreter(KeyInterpreter keyInterpreter) {
             this.keyInterpreter = keyInterpreter;
             return this;
         }
 
-        public MttTextareaCreateInfo setSupportedCharacters(String supportedCharacters) {
+        public MttTextAreaCreateInfo setSupportedCharacters(String supportedCharacters) {
             this.supportedCharacters = supportedCharacters;
             return this;
         }
@@ -171,7 +171,7 @@ public class MttTextarea extends MttGuiComponent {
 
     private boolean visible;
 
-    public MttTextarea(MttVulkanImpl vulkanImpl, MttScreen screen, MttTextareaCreateInfo createInfo) {
+    public MttTextArea(MttVulkanImpl vulkanImpl, MttScreen screen, MttTextAreaCreateInfo createInfo) {
         super(createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         frame = new MttQuad2D(

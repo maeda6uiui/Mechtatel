@@ -15,16 +15,16 @@ import java.util.Map;
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJavaColorToJOMLVector4f;
 
 /**
- * Listbox
+ * List box
  *
  * @author maeda6uiui
  */
-public class MttListbox extends MttGuiComponent {
-    public static class MttListboxItem extends MttGuiComponent {
+public class MttListBox extends MttGuiComponent {
+    public static class MttListBoxItem extends MttGuiComponent {
         private MttFont nonSelectedFont;
         private MttFont selectedFont;
 
-        public MttListboxItem(
+        public MttListBoxItem(
                 MttVulkanImpl vulkanImpl,
                 MttScreen screen,
                 float x,
@@ -99,7 +99,7 @@ public class MttListbox extends MttGuiComponent {
         }
     }
 
-    public static class MttListboxCreateInfo {
+    public static class MttListBoxCreateInfo {
         public float x;
         public float y;
         public float width;
@@ -120,110 +120,110 @@ public class MttListbox extends MttGuiComponent {
         public int selectedFontSize;
         public Color selectedFontColor;
 
-        public MttListboxCreateInfo setX(float x) {
+        public MttListBoxCreateInfo setX(float x) {
             this.x = x;
             return this;
         }
 
-        public MttListboxCreateInfo setY(float y) {
+        public MttListBoxCreateInfo setY(float y) {
             this.y = y;
             return this;
         }
 
-        public MttListboxCreateInfo setWidth(float width) {
+        public MttListBoxCreateInfo setWidth(float width) {
             this.width = width;
             return this;
         }
 
-        public MttListboxCreateInfo setHeight(float height) {
+        public MttListBoxCreateInfo setHeight(float height) {
             this.height = height;
             return this;
         }
 
-        public MttListboxCreateInfo setScrollbarWidth(float scrollbarWidth) {
+        public MttListBoxCreateInfo setScrollbarWidth(float scrollbarWidth) {
             this.scrollbarWidth = scrollbarWidth;
             return this;
         }
 
-        public MttListboxCreateInfo setScrollbarGrabHeight(float scrollbarGrabHeight) {
+        public MttListBoxCreateInfo setScrollbarGrabHeight(float scrollbarGrabHeight) {
             this.scrollbarGrabHeight = scrollbarGrabHeight;
             return this;
         }
 
-        public MttListboxCreateInfo setScrollbarFrameColor(Color scrollbarFrameColor) {
+        public MttListBoxCreateInfo setScrollbarFrameColor(Color scrollbarFrameColor) {
             this.scrollbarFrameColor = scrollbarFrameColor;
             return this;
         }
 
-        public MttListboxCreateInfo setScrollbarGrabColor(Color scrollbarGrabColor) {
+        public MttListBoxCreateInfo setScrollbarGrabColor(Color scrollbarGrabColor) {
             this.scrollbarGrabColor = scrollbarGrabColor;
             return this;
         }
 
-        public MttListboxCreateInfo setNonSelectedFontName(String nonSelectedFontName) {
+        public MttListBoxCreateInfo setNonSelectedFontName(String nonSelectedFontName) {
             this.nonSelectedFontName = nonSelectedFontName;
             return this;
         }
 
-        public MttListboxCreateInfo setNonSelectedFontStyle(int nonSelectedFontStyle) {
+        public MttListBoxCreateInfo setNonSelectedFontStyle(int nonSelectedFontStyle) {
             this.nonSelectedFontStyle = nonSelectedFontStyle;
             return this;
         }
 
-        public MttListboxCreateInfo setNonSelectedFontSize(int nonSelectedFontSize) {
+        public MttListBoxCreateInfo setNonSelectedFontSize(int nonSelectedFontSize) {
             this.nonSelectedFontSize = nonSelectedFontSize;
             return this;
         }
 
-        public MttListboxCreateInfo setNonSelectedFontColor(Color nonSelectedFontColor) {
+        public MttListBoxCreateInfo setNonSelectedFontColor(Color nonSelectedFontColor) {
             this.nonSelectedFontColor = nonSelectedFontColor;
             return this;
         }
 
-        public MttListboxCreateInfo setFrameColor(Color frameColor) {
+        public MttListBoxCreateInfo setFrameColor(Color frameColor) {
             this.frameColor = frameColor;
             return this;
         }
 
-        public MttListboxCreateInfo setItemTexts(List<String> itemTexts) {
+        public MttListBoxCreateInfo setItemTexts(List<String> itemTexts) {
             this.itemTexts = itemTexts;
             return this;
         }
 
-        public MttListboxCreateInfo setItemHeight(float itemHeight) {
+        public MttListBoxCreateInfo setItemHeight(float itemHeight) {
             this.itemHeight = itemHeight;
             return this;
         }
 
-        public MttListboxCreateInfo setSelectedFontName(String selectedFontName) {
+        public MttListBoxCreateInfo setSelectedFontName(String selectedFontName) {
             this.selectedFontName = selectedFontName;
             return this;
         }
 
-        public MttListboxCreateInfo setSelectedFontStyle(int selectedFontStyle) {
+        public MttListBoxCreateInfo setSelectedFontStyle(int selectedFontStyle) {
             this.selectedFontStyle = selectedFontStyle;
             return this;
         }
 
-        public MttListboxCreateInfo setSelectedFontSize(int selectedFontSize) {
+        public MttListBoxCreateInfo setSelectedFontSize(int selectedFontSize) {
             this.selectedFontSize = selectedFontSize;
             return this;
         }
 
-        public MttListboxCreateInfo setSelectedFontColor(Color selectedFontColor) {
+        public MttListBoxCreateInfo setSelectedFontColor(Color selectedFontColor) {
             this.selectedFontColor = selectedFontColor;
             return this;
         }
     }
 
     private MttQuad2D frame;
-    private MttVerticalScrollbar scrollbar;
-    private List<MttListboxItem> items;
+    private MttVerticalScrollBar scrollbar;
+    private List<MttListBoxItem> items;
     private float itemHeight;
     private int numDisplayedItems;
     private float scrollAmountPerItem;
 
-    public MttListbox(MttVulkanImpl vulkanImpl, MttScreen screen, MttListboxCreateInfo createInfo) {
+    public MttListBox(MttVulkanImpl vulkanImpl, MttScreen screen, MttListBoxCreateInfo createInfo) {
         super(createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         frame = new MttQuad2D(
@@ -235,9 +235,9 @@ public class MttListbox extends MttGuiComponent {
                 convertJavaColorToJOMLVector4f(createInfo.frameColor)
         );
 
-        scrollbar = new MttVerticalScrollbar(
+        scrollbar = new MttVerticalScrollBar(
                 vulkanImpl,
-                new MttVerticalScrollbar.MttVerticalScrollbarCreateInfo()
+                new MttVerticalScrollBar.MttVerticalScrollBarCreateInfo()
                         .setX(createInfo.x + createInfo.width - createInfo.scrollbarWidth)
                         .setY(createInfo.y)
                         .setWidth(createInfo.scrollbarWidth)
@@ -251,7 +251,7 @@ public class MttListbox extends MttGuiComponent {
         this.itemHeight = createInfo.itemHeight;
         numDisplayedItems = 0;
         for (int i = 0; i < createInfo.itemTexts.size(); i++) {
-            var item = new MttListboxItem(
+            var item = new MttListBoxItem(
                     vulkanImpl,
                     screen,
                     createInfo.x,

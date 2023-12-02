@@ -20,11 +20,11 @@ import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.con
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
 /**
- * Textbox
+ * Text field
  *
  * @author maeda6uiui
  */
-public class MttTextbox extends MttGuiComponent {
+public class MttTextField extends MttGuiComponent {
     public static final String DEFAULT_SUPPORTED_CHARACTERS
             = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~ ";
     private static final List<String> SPECIAL_KEYS;
@@ -37,7 +37,7 @@ public class MttTextbox extends MttGuiComponent {
         SPECIAL_KEYS.add("LEFT");
     }
 
-    public static class MttTextboxCreateInfo {
+    public static class MttTextFieldCreateInfo {
         public float x;
         public float y;
         public float width;
@@ -56,87 +56,87 @@ public class MttTextbox extends MttGuiComponent {
         public KeyInterpreter keyInterpreter;
         public String supportedCharacters;
 
-        public MttTextboxCreateInfo setX(float x) {
+        public MttTextFieldCreateInfo setX(float x) {
             this.x = x;
             return this;
         }
 
-        public MttTextboxCreateInfo setY(float y) {
+        public MttTextFieldCreateInfo setY(float y) {
             this.y = y;
             return this;
         }
 
-        public MttTextboxCreateInfo setWidth(float width) {
+        public MttTextFieldCreateInfo setWidth(float width) {
             this.width = width;
             return this;
         }
 
-        public MttTextboxCreateInfo setHeight(float height) {
+        public MttTextFieldCreateInfo setHeight(float height) {
             this.height = height;
             return this;
         }
 
-        public MttTextboxCreateInfo setCaretMarginX(float caretMarginX) {
+        public MttTextFieldCreateInfo setCaretMarginX(float caretMarginX) {
             this.caretMarginX = caretMarginX;
             return this;
         }
 
-        public MttTextboxCreateInfo setCaretMarginY(float caretMarginY) {
+        public MttTextFieldCreateInfo setCaretMarginY(float caretMarginY) {
             this.caretMarginY = caretMarginY;
             return this;
         }
 
-        public MttTextboxCreateInfo setFontName(String fontName) {
+        public MttTextFieldCreateInfo setFontName(String fontName) {
             this.fontName = fontName;
             return this;
         }
 
-        public MttTextboxCreateInfo setFontStyle(int fontStyle) {
+        public MttTextFieldCreateInfo setFontStyle(int fontStyle) {
             this.fontStyle = fontStyle;
             return this;
         }
 
-        public MttTextboxCreateInfo setFontSize(int fontSize) {
+        public MttTextFieldCreateInfo setFontSize(int fontSize) {
             this.fontSize = fontSize;
             return this;
         }
 
-        public MttTextboxCreateInfo setFontColor(Color fontColor) {
+        public MttTextFieldCreateInfo setFontColor(Color fontColor) {
             this.fontColor = fontColor;
             return this;
         }
 
-        public MttTextboxCreateInfo setFrameColor(Color frameColor) {
+        public MttTextFieldCreateInfo setFrameColor(Color frameColor) {
             this.frameColor = frameColor;
             return this;
         }
 
-        public MttTextboxCreateInfo setCaretColor(Color caretColor) {
+        public MttTextFieldCreateInfo setCaretColor(Color caretColor) {
             this.caretColor = caretColor;
             return this;
         }
 
-        public MttTextboxCreateInfo setCaretBlinkInterval(float caretBlinkInterval) {
+        public MttTextFieldCreateInfo setCaretBlinkInterval(float caretBlinkInterval) {
             this.caretBlinkInterval = caretBlinkInterval;
             return this;
         }
 
-        public MttTextboxCreateInfo setSecondsPerFrame(float secondsPerFrame) {
+        public MttTextFieldCreateInfo setSecondsPerFrame(float secondsPerFrame) {
             this.secondsPerFrame = secondsPerFrame;
             return this;
         }
 
-        public MttTextboxCreateInfo setRepeatDelay(float repeatDelay) {
+        public MttTextFieldCreateInfo setRepeatDelay(float repeatDelay) {
             this.repeatDelay = repeatDelay;
             return this;
         }
 
-        public MttTextboxCreateInfo setKeyInterpreter(KeyInterpreter keyInterpreter) {
+        public MttTextFieldCreateInfo setKeyInterpreter(KeyInterpreter keyInterpreter) {
             this.keyInterpreter = keyInterpreter;
             return this;
         }
 
-        public MttTextboxCreateInfo setSupportedCharacters(String supportedCharacters) {
+        public MttTextFieldCreateInfo setSupportedCharacters(String supportedCharacters) {
             this.supportedCharacters = supportedCharacters;
             return this;
         }
@@ -160,7 +160,7 @@ public class MttTextbox extends MttGuiComponent {
 
     private boolean visible;
 
-    public MttTextbox(MttVulkanImpl vulkanImpl, MttScreen screen, MttTextboxCreateInfo createInfo) {
+    public MttTextField(MttVulkanImpl vulkanImpl, MttScreen screen, MttTextFieldCreateInfo createInfo) {
         super(createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         frame = new MttQuad2D(

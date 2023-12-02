@@ -13,12 +13,12 @@ import java.util.Map;
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJavaColorToJOMLVector4f;
 
 /**
- * Checkbox
+ * Check box
  *
  * @author maeda6uiui
  */
-public class MttCheckbox extends MttGuiComponent {
-    public static class MttCheckboxCreateInfo {
+public class MttCheckBox extends MttGuiComponent {
+    public static class MttCheckBoxCreateInfo {
         public float x;
         public float y;
         public float width;
@@ -36,82 +36,82 @@ public class MttCheckbox extends MttGuiComponent {
         public Color fontColor;
         public Color checkboxColor;
 
-        public MttCheckboxCreateInfo setX(float x) {
+        public MttCheckBoxCreateInfo setX(float x) {
             this.x = x;
             return this;
         }
 
-        public MttCheckboxCreateInfo setY(float y) {
+        public MttCheckBoxCreateInfo setY(float y) {
             this.y = y;
             return this;
         }
 
-        public MttCheckboxCreateInfo setWidth(float width) {
+        public MttCheckBoxCreateInfo setWidth(float width) {
             this.width = width;
             return this;
         }
 
-        public MttCheckboxCreateInfo setHeight(float height) {
+        public MttCheckBoxCreateInfo setHeight(float height) {
             this.height = height;
             return this;
         }
 
-        public MttCheckboxCreateInfo setBoxX(float boxX) {
+        public MttCheckBoxCreateInfo setBoxX(float boxX) {
             this.boxX = boxX;
             return this;
         }
 
-        public MttCheckboxCreateInfo setBoxY(float boxY) {
+        public MttCheckBoxCreateInfo setBoxY(float boxY) {
             this.boxY = boxY;
             return this;
         }
 
-        public MttCheckboxCreateInfo setBoxWidth(float boxWidth) {
+        public MttCheckBoxCreateInfo setBoxWidth(float boxWidth) {
             this.boxWidth = boxWidth;
             return this;
         }
 
-        public MttCheckboxCreateInfo setBoxHeight(float boxHeight) {
+        public MttCheckBoxCreateInfo setBoxHeight(float boxHeight) {
             this.boxHeight = boxHeight;
             return this;
         }
 
-        public MttCheckboxCreateInfo setTextX(float textX) {
+        public MttCheckBoxCreateInfo setTextX(float textX) {
             this.textX = textX;
             return this;
         }
 
-        public MttCheckboxCreateInfo setTextY(float textY) {
+        public MttCheckBoxCreateInfo setTextY(float textY) {
             this.textY = textY;
             return this;
         }
 
-        public MttCheckboxCreateInfo setText(String text) {
+        public MttCheckBoxCreateInfo setText(String text) {
             this.text = text;
             return this;
         }
 
-        public MttCheckboxCreateInfo setFontName(String fontName) {
+        public MttCheckBoxCreateInfo setFontName(String fontName) {
             this.fontName = fontName;
             return this;
         }
 
-        public MttCheckboxCreateInfo setFontStyle(int fontStyle) {
+        public MttCheckBoxCreateInfo setFontStyle(int fontStyle) {
             this.fontStyle = fontStyle;
             return this;
         }
 
-        public MttCheckboxCreateInfo setFontSize(int fontSize) {
+        public MttCheckBoxCreateInfo setFontSize(int fontSize) {
             this.fontSize = fontSize;
             return this;
         }
 
-        public MttCheckboxCreateInfo setFontColor(Color fontColor) {
+        public MttCheckBoxCreateInfo setFontColor(Color fontColor) {
             this.fontColor = fontColor;
             return this;
         }
 
-        public MttCheckboxCreateInfo setCheckboxColor(Color checkboxColor) {
+        public MttCheckBoxCreateInfo setCheckboxColor(Color checkboxColor) {
             this.checkboxColor = checkboxColor;
             return this;
         }
@@ -126,7 +126,7 @@ public class MttCheckbox extends MttGuiComponent {
 
     private boolean selected;
 
-    public MttCheckbox(MttVulkanImpl vulkanImpl, MttScreen screen, MttCheckboxCreateInfo createInfo) {
+    public MttCheckBox(MttVulkanImpl vulkanImpl, MttScreen screen, MttCheckBoxCreateInfo createInfo) {
         super(createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         checkboxTopLeft = new Vector2f(createInfo.boxX, createInfo.boxY);

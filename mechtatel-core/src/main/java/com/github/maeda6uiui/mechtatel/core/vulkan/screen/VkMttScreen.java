@@ -17,6 +17,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProc
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow.ShadowMappingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
+import jakarta.validation.constraints.NotNull;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
@@ -96,8 +97,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             VkExtent2D extent,
             boolean shouldChangeExtentOnRecreate,
             boolean useShadowMapping,
-            Map<String, FlexibleNaborInfo> flexibleNaborInfos,
-            List<String> ppNaborNames) {
+            @NotNull Map<String, FlexibleNaborInfo> flexibleNaborInfos,
+            @NotNull List<String> ppNaborNames) {
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
@@ -311,7 +312,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             fragShaderModulesStorage.put("merge_scenes_fill", fragShaderModules);
         }
 
-        if (ppNaborNames != null) {
+        if (!ppNaborNames.isEmpty()) {
             ppNaborChain = new PostProcessingNaborChain(
                     device,
                     commandPool,
@@ -328,14 +329,10 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             );
 
             var ppNaborChainVertShaderModules = ppNaborChain.getVertShaderModules();
-            ppNaborChainVertShaderModules.forEach(
-                    (naborName, vertShaderModules) -> vertShaderModulesStorage.put(naborName, vertShaderModules)
-            );
+            vertShaderModulesStorage.putAll(ppNaborChainVertShaderModules);
 
             var ppNaborChainFragShaderModules = ppNaborChain.getFragShaderModules();
-            ppNaborChainFragShaderModules.forEach(
-                    (naborName, fragShaderModules) -> fragShaderModulesStorage.put(naborName, fragShaderModules)
-            );
+            fragShaderModulesStorage.putAll(ppNaborChainFragShaderModules);
         }
 
         if (useShadowMapping) {

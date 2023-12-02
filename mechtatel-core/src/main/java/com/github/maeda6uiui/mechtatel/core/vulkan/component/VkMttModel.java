@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 import com.github.maeda6uiui.mechtatel.core.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.IVkMttScreenForVkMttTexture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
@@ -46,7 +46,7 @@ public class VkMttModel extends VkMttComponent {
     private void loadTextures(
             long commandPool,
             VkQueue graphicsQueue,
-            IVkMttScreenForVkMttTexture screen) {
+            VkMttScreen screen) {
         Map<Integer, ModelLoader.Material> materials = model.materials;
 
         textures = new HashMap<>();
@@ -97,9 +97,9 @@ public class VkMttModel extends VkMttComponent {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            IVkMttScreenForVkMttTexture screen,
+            VkMttScreen screen,
             URI modelResource) throws IOException {
-        super(mttComponent, screen.getScreenName(), "gbuffer");
+        super(mttComponent, screen, "gbuffer");
 
         this.device = device;
 
@@ -121,7 +121,7 @@ public class VkMttModel extends VkMttComponent {
             long commandPool,
             VkQueue graphicsQueue,
             VkMttModel srcModel) {
-        super(mttComponent, srcModel.getScreenName(), "gbuffer");
+        super(mttComponent, srcModel.getScreen(), "gbuffer");
 
         this.device = device;
 

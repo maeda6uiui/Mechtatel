@@ -77,7 +77,7 @@ public class VkMttQuad extends VkMttComponent {
             boolean fill) {
         super(
                 mttComponent,
-                "",
+                null,
                 fill ? "primitive_fill" : "primitive"
         );
 

@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 import com.github.maeda6uiui.mechtatel.core.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.IVkMttScreenForVkMttTexture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
@@ -65,11 +65,11 @@ public class VkMttTexturedQuad extends VkMttComponent {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            IVkMttScreenForVkMttTexture screen,
+            VkMttScreen screen,
             URI textureResource,
             boolean generateMipmaps,
             List<MttVertexUV> vertices) {
-        super(mttComponent, screen.getScreenName(), "gbuffer");
+        super(mttComponent, screen, "gbuffer");
 
         this.device = device;
 
@@ -92,7 +92,7 @@ public class VkMttTexturedQuad extends VkMttComponent {
             VkQueue graphicsQueue,
             VkMttTexturedQuad srcQuad,
             List<MttVertexUV> vertices) {
-        super(mttComponent, srcQuad.getScreenName(), "gbuffer");
+        super(mttComponent, srcQuad.getScreen(), "gbuffer");
 
         this.device = device;
 
@@ -107,10 +107,9 @@ public class VkMttTexturedQuad extends VkMttComponent {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            String screenName,
             VkMttTexture texture,
             List<MttVertexUV> vertices) {
-        super(mttComponent, screenName, "gbuffer");
+        super(mttComponent, texture.getScreenForVkComponent(), "gbuffer");
 
         this.device = device;
 

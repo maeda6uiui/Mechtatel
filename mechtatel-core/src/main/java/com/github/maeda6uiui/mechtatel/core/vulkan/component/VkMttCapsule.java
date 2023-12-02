@@ -64,7 +64,7 @@ public class VkMttCapsule extends VkMttComponent {
             int numVDivs,
             int numHDivs,
             Vector4fc color) {
-        super(mttComponent, "", "primitive");
+        super(mttComponent, null, "primitive");
 
         this.device = device;
 

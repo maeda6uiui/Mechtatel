@@ -4,7 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.component.IMttComponentForVkMttCompo
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.IVkMttScreenForVkMttTexture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -46,9 +46,9 @@ public class VkMttTexturedQuadSingleTextureSet extends VkMttComponent {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            IVkMttScreenForVkMttTexture screen,
+            VkMttScreen screen,
             URI textureResource) {
-        super(mttComponent, screen.getScreenName(), "gbuffer");
+        super(mttComponent, screen, "gbuffer");
 
         this.device = device;
         this.commandPool = commandPool;
@@ -72,9 +72,8 @@ public class VkMttTexturedQuadSingleTextureSet extends VkMttComponent {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            String screenName,
             VkMttTexture texture) {
-        super(mttComponent, screenName, "gbuffer");
+        super(mttComponent, texture.getScreenForVkComponent(), "gbuffer");
 
         this.device = device;
         this.commandPool = commandPool;

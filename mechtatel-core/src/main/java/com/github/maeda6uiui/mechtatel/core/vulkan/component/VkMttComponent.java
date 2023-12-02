@@ -1,6 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
 import com.github.maeda6uiui.mechtatel.core.component.IMttComponentForVkMttComponent;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.IVkMttScreenForVkMttComponent;
 import org.joml.Matrix4fc;
 import org.lwjgl.vulkan.VkCommandBuffer;
 
@@ -11,13 +12,15 @@ import org.lwjgl.vulkan.VkCommandBuffer;
  */
 public class VkMttComponent implements Comparable<VkMttComponent> {
     private IMttComponentForVkMttComponent mttComponent;
-
-    private String screenName;
+    private IVkMttScreenForVkMttComponent screen;
     private String naborName;
 
-    public VkMttComponent(IMttComponentForVkMttComponent mttComponent, String screenName, String naborName) {
+    public VkMttComponent(
+            IMttComponentForVkMttComponent mttComponent,
+            IVkMttScreenForVkMttComponent screen,
+            String naborName) {
         this.mttComponent = mttComponent;
-        this.screenName = screenName;
+        this.screen = screen;
         this.naborName = naborName;
     }
 
@@ -26,8 +29,8 @@ public class VkMttComponent implements Comparable<VkMttComponent> {
         return Integer.compare(this.mttComponent.getDrawOrder(), that.mttComponent.getDrawOrder());
     }
 
-    public String getScreenName() {
-        return screenName;
+    public IVkMttScreenForVkMttComponent getScreen() {
+        return screen;
     }
 
     public String getNaborName() {

@@ -37,7 +37,7 @@ public class VkMttLineSet extends VkMttComponent {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue) {
-        super(mttComponent, "", "primitive");
+        super(mttComponent, null, "primitive");
 
         this.device = device;
         this.commandPool = commandPool;

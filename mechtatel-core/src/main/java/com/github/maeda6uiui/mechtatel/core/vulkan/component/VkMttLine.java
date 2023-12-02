@@ -42,7 +42,7 @@ public class VkMttLine extends VkMttComponent {
             VkQueue graphicsQueue,
             MttVertex v1,
             MttVertex v2) {
-        super(mttComponent, "", "primitive");
+        super(mttComponent, null, "primitive");
 
         this.device = device;
 

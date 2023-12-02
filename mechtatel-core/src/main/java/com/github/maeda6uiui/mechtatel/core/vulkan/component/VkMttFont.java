@@ -43,7 +43,7 @@ public class VkMttFont extends VkMttComponent {
             boolean antiAlias,
             Color fontColor,
             String requiredChars) {
-        super(mttComponent, screen.getScreenName(), "gbuffer");
+        super(mttComponent, screen, "gbuffer");
 
         this.device = device;
 
@@ -57,10 +57,10 @@ public class VkMttFont extends VkMttComponent {
                 requiredChars
         );
         vkQuadSet = new VkMttTexturedQuadSingleTextureSet(
+                mttComponent,
                 device,
                 commandPool,
                 graphicsQueue,
-                screen.getScreenName(),
                 texture
         );
     }

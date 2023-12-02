@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 
+import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
@@ -18,7 +19,7 @@ import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
-import java.io.IOException;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -472,7 +473,7 @@ public class PostProcessingNaborChain {
         return lastPPNabor.getColorImageView();
     }
 
-    public void save(String srcImageFormat, String outputFilepath) throws IOException {
-        lastPPNabor.save(commandPool, graphicsQueue, 0, srcImageFormat, outputFilepath);
+    public BufferedImage createBufferedImage(int imageIndex, PixelFormat pixelFormat) {
+        return lastPPNabor.createBufferedImage(commandPool, graphicsQueue, imageIndex, pixelFormat);
     }
 }

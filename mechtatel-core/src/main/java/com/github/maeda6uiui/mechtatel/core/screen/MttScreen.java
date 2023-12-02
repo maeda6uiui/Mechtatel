@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.screen;
 
+import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.SamplerAddressMode;
 import com.github.maeda6uiui.mechtatel.core.SamplerFilterMode;
 import com.github.maeda6uiui.mechtatel.core.SamplerMipmapMode;
@@ -14,6 +15,7 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplForScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
+import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.ParallelLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.SpotlightNabor;
@@ -21,10 +23,15 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Screen
@@ -185,6 +192,9 @@ public class MttScreen {
     }
 
     public void draw() {
+        var vkComponents = new ArrayList<VkMttComponent>();
+        components.forEach(v -> v.getVulkanComponent().ifPresent(vkComponents::add));
+
         vulkanImpl.draw(
                 screen,
                 backgroundColor,
@@ -198,7 +208,7 @@ public class MttScreen {
                 spotlightAmbientColor,
                 shadowMappingSettings,
                 simpleBlurInfo,
-                components
+                vkComponents
         );
     }
 
@@ -206,6 +216,42 @@ public class MttScreen {
         if (vulkanImpl != null) {
             screen.recreate(vulkanImpl.getSwapchainImageFormat(), vulkanImpl.getSwapchainExtent());
         }
+    }
+
+    /**
+     * Creates a buffered image.
+     * Note that in most cases depth image is not available and may lead to error.
+     *
+     * @param imageType   Underlying image type to create an image from
+     * @param pixelFormat Pixel format of the underlying image
+     * @return Buffered image
+     */
+    public BufferedImage createBufferedImage(ScreenImageType imageType, PixelFormat pixelFormat) {
+        return switch (imageType) {
+            case COLOR -> screen.createBufferedImage(0, pixelFormat);
+            case DEPTH -> screen.createBufferedImage(1, pixelFormat);
+        };
+    }
+
+    /**
+     * Saves an underlying pixels to an image file.
+     * Note that in most cases depth image is not available and may lead to error.
+     *
+     * @param imageType   Underlying image type to create an image from
+     * @param pixelFormat Pixel format of the underlying image
+     * @param outputFile  Output file
+     * @throws IOException If it fails to write to the file specified
+     */
+    public void save(
+            ScreenImageType imageType,
+            PixelFormat pixelFormat,
+            Path outputFile) throws IOException {
+        BufferedImage bufferedImage = this.createBufferedImage(imageType, pixelFormat);
+
+        String[] splits = outputFile.toString().split(Pattern.quote("."));
+        String formatName = splits[splits.length - 1];
+
+        ImageIO.write(bufferedImage, formatName, outputFile.toFile());
     }
 
     public VkMttScreen getVulkanScreen() {

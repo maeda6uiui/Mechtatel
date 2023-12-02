@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
+import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
@@ -8,18 +9,14 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -961,14 +958,11 @@ public abstract class Nabor {
         }
     }
 
-    public void save(
-            long commandPool, VkQueue graphicsQueue,
-            int imageIndex, String srcImageFormat, String outputFilepath) throws IOException {
-        final String[] supportedSrcImageFormats = new String[]{"rgba", "bgra"};
-        if (Arrays.asList(supportedSrcImageFormats).contains(srcImageFormat) == false) {
-            throw new IllegalArgumentException("Supported source image format is rgba and bgra");
-        }
-
+    public BufferedImage createBufferedImage(
+            long commandPool,
+            VkQueue graphicsQueue,
+            int imageIndex,
+            PixelFormat pixelFormat) {
         ByteBuffer pixels = this.createByteBufferFromImage(commandPool, graphicsQueue, imageIndex);
 
         var image = new BufferedImage(extent.width(), extent.height(), BufferedImage.TYPE_3BYTE_BGR);
@@ -979,12 +973,12 @@ public abstract class Nabor {
                 int g = 0;
                 int b = 0;
                 int a = 0;
-                if (srcImageFormat.equals("rgba")) {
+                if (pixelFormat == PixelFormat.RGBA) {
                     r = Byte.toUnsignedInt(pixels.get(pos));
                     g = Byte.toUnsignedInt(pixels.get(pos + 1));
                     b = Byte.toUnsignedInt(pixels.get(pos + 2));
                     a = Byte.toUnsignedInt(pixels.get(pos + 3));
-                } else if (srcImageFormat.equals("bgra")) {
+                } else if (pixelFormat == PixelFormat.BGRA) {
                     b = Byte.toUnsignedInt(pixels.get(pos));
                     g = Byte.toUnsignedInt(pixels.get(pos + 1));
                     r = Byte.toUnsignedInt(pixels.get(pos + 2));
@@ -998,9 +992,6 @@ public abstract class Nabor {
             }
         }
 
-        String[] splits = outputFilepath.split(Pattern.quote("."));
-        String formatName = splits[splits.length - 1];
-
-        ImageIO.write(image, formatName, new File(outputFilepath));
+        return image;
     }
 }

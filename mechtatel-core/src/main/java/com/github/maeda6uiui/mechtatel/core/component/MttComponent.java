@@ -70,7 +70,7 @@ public class MttComponent implements IMttComponentForVkMttComponent {
         this.vkComponent = vkComponent;
     }
 
-    protected Optional<VkMttComponent> getVulkanComponent() {
+    public Optional<VkMttComponent> getVulkanComponent() {
         return Optional.ofNullable(vkComponent);
     }
 

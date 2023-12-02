@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.screen;
 
+import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
@@ -25,7 +26,7 @@ import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
-import java.io.IOException;
+import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -898,13 +899,13 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         return new VkMttTexture(device, dstScreen, imageView);
     }
 
-    public void save(String srcImageFormat, String outputFilepath) throws IOException {
+    public BufferedImage createBufferedImage(int imageIndex, PixelFormat pixelFormat) {
         if (ppNaborChain != null) {
-            ppNaborChain.save(srcImageFormat, outputFilepath);
+            return ppNaborChain.createBufferedImage(imageIndex, pixelFormat);
         } else if (shadowMappingNabor != null) {
-            shadowMappingNabor.save(commandPool, graphicsQueue, 0, srcImageFormat, outputFilepath);
+            return shadowMappingNabor.createBufferedImage(commandPool, graphicsQueue, imageIndex, pixelFormat);
         } else {
-            mergeScenesFillNabor.save(commandPool, graphicsQueue, 0, srcImageFormat, outputFilepath);
+            return mergeScenesFillNabor.createBufferedImage(commandPool, graphicsQueue, imageIndex, pixelFormat);
         }
     }
 

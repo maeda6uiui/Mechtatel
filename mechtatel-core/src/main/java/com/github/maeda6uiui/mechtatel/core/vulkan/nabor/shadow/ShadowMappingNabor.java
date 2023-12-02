@@ -1,12 +1,13 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow;
 
+import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNabor;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkExtent2D;
 import org.lwjgl.vulkan.VkQueue;
 
-import java.io.IOException;
+import java.awt.image.BufferedImage;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -351,9 +352,11 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     }
 
     @Override
-    public void save(
-            long commandPool, VkQueue graphicsQueue,
-            int imageIndex, String srcImageFormat, String outputFilepath) throws IOException {
-        pass2.save(commandPool, graphicsQueue, imageIndex, srcImageFormat, outputFilepath);
+    public BufferedImage createBufferedImage(
+            long commandPool,
+            VkQueue graphicsQueue,
+            int imageIndex,
+            PixelFormat pixelFormat) {
+        return pass2.createBufferedImage(commandPool, graphicsQueue, imageIndex, pixelFormat);
     }
 }

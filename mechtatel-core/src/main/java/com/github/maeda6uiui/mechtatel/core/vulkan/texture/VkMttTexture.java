@@ -3,7 +3,9 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.texture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.ImageViewCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.IVkMttScreenForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.IVkMttScreenForVkMttTexture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.PointerBuffer;
@@ -65,6 +67,7 @@ public class VkMttTexture {
     private VkDevice device;
 
     private IVkMttScreenForVkMttTexture screen;
+    private IVkMttScreenForVkMttComponent screenForVkComponent;
     private int allocationIndex;
     private boolean externalImage;
 
@@ -335,7 +338,7 @@ public class VkMttTexture {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            IVkMttScreenForVkMttTexture screen,
+            VkMttScreen screen,
             URI textureResource,
             boolean generateMipmaps) {
         allocationIndex = allocateTextureIndex();
@@ -355,6 +358,7 @@ public class VkMttTexture {
 
         screen.updateTextureDescriptorSets(allocationIndex, textureImageView);
         this.screen = screen;
+        this.screenForVkComponent = screen;
 
         externalImage = false;
     }
@@ -363,7 +367,7 @@ public class VkMttTexture {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            IVkMttScreenForVkMttTexture screen,
+            VkMttScreen screen,
             ByteBuffer pixels,
             int width,
             int height,
@@ -384,11 +388,12 @@ public class VkMttTexture {
 
         screen.updateTextureDescriptorSets(allocationIndex, textureImageView);
         this.screen = screen;
+        this.screenForVkComponent = screen;
 
         externalImage = false;
     }
 
-    public VkMttTexture(VkDevice device, IVkMttScreenForVkMttTexture screen, long imageView) {
+    public VkMttTexture(VkDevice device, VkMttScreen screen, long imageView) {
         allocationIndex = allocateTextureIndex();
         if (allocationIndex < 0) {
             String msg = String.format("Cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
@@ -400,6 +405,7 @@ public class VkMttTexture {
 
         screen.updateTextureDescriptorSets(allocationIndex, textureImageView);
         this.screen = screen;
+        this.screenForVkComponent = screen;
 
         externalImage = true;
     }
@@ -421,5 +427,9 @@ public class VkMttTexture {
 
     public long getTextureImageView() {
         return textureImageView;
+    }
+
+    public IVkMttScreenForVkMttComponent getScreenForVkComponent() {
+        return screenForVkComponent;
     }
 }

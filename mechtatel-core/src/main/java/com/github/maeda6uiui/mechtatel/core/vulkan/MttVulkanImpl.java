@@ -254,7 +254,8 @@ public class MttVulkanImpl implements IMttVulkanImplForScreen {
                     imagesInFlight,
                     commandBuffers,
                     dq.graphicsQueue(),
-                    dq.presentQueue());
+                    dq.presentQueue()
+            );
             currentFrame = (currentFrame + 1) % maxNumFramesInFlight;
 
             vkDeviceWaitIdle(dq.device());

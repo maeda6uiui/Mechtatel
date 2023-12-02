@@ -21,6 +21,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,11 +31,91 @@ import java.util.Map;
  * @author maeda6uiui
  */
 public class MttScreen {
-    private VkMttScreen screen;
+    public static class MttScreenCreateInfo {
+        public int depthImageWidth;
+        public int depthImageHeight;
+        public int screenWidth;
+        public int screenHeight;
+        public SamplerFilterMode samplerFilter;
+        public SamplerMipmapMode samplerMipmapMode;
+        public SamplerAddressMode samplerAddressMode;
+        public boolean shouldChangeExtentOnRecreate;
+        public boolean useShadowMapping;
+        public Map<String, FlexibleNaborInfo> flexibleNaborInfos;
+        public List<String> ppNaborNames;
 
-    private boolean shouldAutoUpdateCameraAspect;
+        public MttScreenCreateInfo() {
+            depthImageWidth = 1024;
+            depthImageHeight = 1024;
+            screenWidth = 1280;
+            screenHeight = 720;
+            samplerFilter = SamplerFilterMode.NEAREST;
+            samplerMipmapMode = SamplerMipmapMode.NEAREST;
+            samplerAddressMode = SamplerAddressMode.REPEAT;
+            shouldChangeExtentOnRecreate = true;
+            useShadowMapping = false;
+            flexibleNaborInfos = new HashMap<>();
+            ppNaborNames = new ArrayList<>();
+        }
+
+        public MttScreenCreateInfo setDepthImageWidth(int depthImageWidth) {
+            this.depthImageWidth = depthImageWidth;
+            return this;
+        }
+
+        public MttScreenCreateInfo setDepthImageHeight(int depthImageHeight) {
+            this.depthImageHeight = depthImageHeight;
+            return this;
+        }
+
+        public MttScreenCreateInfo setScreenWidth(int screenWidth) {
+            this.screenWidth = screenWidth;
+            return this;
+        }
+
+        public MttScreenCreateInfo setScreenHeight(int screenHeight) {
+            this.screenHeight = screenHeight;
+            return this;
+        }
+
+        public MttScreenCreateInfo setSamplerFilter(SamplerFilterMode samplerFilter) {
+            this.samplerFilter = samplerFilter;
+            return this;
+        }
+
+        public MttScreenCreateInfo setSamplerMipmapMode(SamplerMipmapMode samplerMipmapMode) {
+            this.samplerMipmapMode = samplerMipmapMode;
+            return this;
+        }
+
+        public MttScreenCreateInfo setSamplerAddressMode(SamplerAddressMode samplerAddressMode) {
+            this.samplerAddressMode = samplerAddressMode;
+            return this;
+        }
+
+        public MttScreenCreateInfo setShouldChangeExtentOnRecreate(boolean shouldChangeExtentOnRecreate) {
+            this.shouldChangeExtentOnRecreate = shouldChangeExtentOnRecreate;
+            return this;
+        }
+
+        public MttScreenCreateInfo setUseShadowMapping(boolean useShadowMapping) {
+            this.useShadowMapping = useShadowMapping;
+            return this;
+        }
+
+        public MttScreenCreateInfo setFlexibleNaborInfos(Map<String, FlexibleNaborInfo> flexibleNaborInfos) {
+            this.flexibleNaborInfos = flexibleNaborInfos;
+            return this;
+        }
+
+        public MttScreenCreateInfo setPpNaborNames(List<String> ppNaborNames) {
+            this.ppNaborNames = ppNaborNames;
+            return this;
+        }
+    }
 
     private IMttVulkanImplForScreen vulkanImpl;
+    private VkMttScreen screen;
 
     private Vector4f backgroundColor;
     private Camera camera;
@@ -48,33 +129,34 @@ public class MttScreen {
     private ShadowMappingSettings shadowMappingSettings;
     private SimpleBlurInfo simpleBlurInfo;
 
-    public MttScreen(
-            MttVulkanImpl vulkanImpl,
-            int depthImageWidth,
-            int depthImageHeight,
-            int screenWidth,
-            int screenHeight,
-            SamplerFilterMode samplerFilter,
-            SamplerMipmapMode samplerMipmapMode,
-            SamplerAddressMode samplerAddressMode,
-            boolean shouldChangeExtentOnRecreate,
-            boolean useShadowMapping,
-            Map<String, FlexibleNaborInfo> flexibleNaborInfos,
-            List<String> ppNaborNames) {
-        screen = vulkanImpl.createScreen(
-                screenName,
-                depthImageWidth,
-                depthImageHeight,
-                screenWidth,
-                screenHeight,
-                samplerFilter,
-                samplerMipmapMode,
-                samplerAddressMode,
-                shouldChangeExtentOnRecreate,
-                useShadowMapping,
-                flexibleNaborInfos,
-                (ppNaborNames != null && ppNaborNames.size() != 0) ? ppNaborNames : null
+    private boolean shouldAutoUpdateCameraAspect;
+
+    public MttScreen(MttVulkanImpl vulkanImpl, MttScreenCreateInfo createInfo) {
+        var dq = vulkanImpl.getDeviceAndQueues();
+        screen = new VkMttScreen(
+                dq.device(),
+                vulkanImpl.getCommandPool(),
+                dq.graphicsQueue(),
+                vulkanImpl.getDepthImageFormat(),
+                createInfo.depthImageWidth,
+                createInfo.depthImageHeight,
+                vulkanImpl.getDepthImageAspect(),
+                vulkanImpl.getSwapchainImageFormat(),
+                vulkanImpl.getAlbedoMSAASamples(),
+                VkScreenCreationUtils.getISamplerFilter(createInfo.samplerFilter),
+                VkScreenCreationUtils.getISamplerMipmapMode(createInfo.samplerMipmapMode),
+                VkScreenCreationUtils.getISamplerAddressMode(createInfo.samplerAddressMode),
+                VkScreenCreationUtils.createExtent(
+                        vulkanImpl.getSwapchainExtent(),
+                        createInfo.screenWidth,
+                        createInfo.screenHeight
+                ),
+                createInfo.shouldChangeExtentOnRecreate,
+                createInfo.useShadowMapping,
+                createInfo.flexibleNaborInfos,
+                createInfo.ppNaborNames
         );
+
         shouldAutoUpdateCameraAspect = true;
 
         this.vulkanImpl = vulkanImpl;
@@ -112,6 +194,10 @@ public class MttScreen {
                 shadowMappingSettings,
                 simpleBlurInfo
         );
+    }
+
+    public VkMttScreen getVulkanScreen() {
+        return screen;
     }
 
     public int getScreenWidth() {

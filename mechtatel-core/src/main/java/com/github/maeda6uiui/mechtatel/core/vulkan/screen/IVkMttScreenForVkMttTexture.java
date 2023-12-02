@@ -9,6 +9,4 @@ public interface IVkMttScreenForVkMttTexture {
     void updateTextureDescriptorSets(int allocationIndex, long textureImageView);
 
     void resetTextureDescriptorSets(int allocationIndex);
-
-    String getScreenName();
 }

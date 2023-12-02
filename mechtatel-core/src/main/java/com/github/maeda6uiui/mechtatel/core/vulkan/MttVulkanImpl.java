@@ -1,11 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import com.github.maeda6uiui.mechtatel.core.SamplerAddressMode;
-import com.github.maeda6uiui.mechtatel.core.SamplerFilterMode;
-import com.github.maeda6uiui.mechtatel.core.SamplerMipmapMode;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
-import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
@@ -61,15 +57,12 @@ public class MttVulkanImpl
     private int depthImageAspect;
 
     private TextureOperationNabor textureOperationNabor;
-    private Map<String, TextureOperationNabor.TextureOperationInfo> textureOperationInfos;
     private PresentNabor presentNabor;
 
     private int maxNumFramesInFlight;
     private List<Frame> inFlightFrames;
     private Map<Integer, Frame> imagesInFlight;
     private int currentFrame;
-
-    private Map<String, VkMttScreen> screens;
 
     private QuadDrawer quadDrawer;
 
@@ -89,14 +82,6 @@ public class MttVulkanImpl
         }
     }
 
-    /**
-     * Recreates resources that must be updated when framebuffer size has changed.
-     * Call this method in the application's main loop to keep it in sync with Vulkan's procedure.
-     * e.g. Set a flag to {@code true} in the callback invoked on framebuffer resize,
-     * and then call this method in the main loop if the flag is set to {@code true}.
-     *
-     * @param window Window handle
-     */
     public void recreateResourcesOnResize(long window) {
         vkDeviceWaitIdle(dq.device());
 
@@ -121,10 +106,6 @@ public class MttVulkanImpl
                 swapchain.getSwapchainImageFormat(),
                 swapchain.getSwapchainExtent());
         textureOperationNabor.cleanupUserDefImages();
-        textureOperationInfos.clear();
-
-        screens.values().forEach(screen -> screen.recreate(
-                swapchain.getSwapchainImageFormat(), swapchain.getSwapchainExtent()));
 
         imagesInFlight.clear();
     }
@@ -224,89 +205,6 @@ public class MttVulkanImpl
         vkDestroyDevice(dq.device(), null);
 
         MttVulkanInstance.get().ifPresent(v -> vkDestroySurfaceKHR(v.getVkInstance(), surface, null));
-    }
-
-    public VkMttScreen createScreen(
-            String screenName,
-            int depthImageWidth,
-            int depthImageHeight,
-            int screenWidth,
-            int screenHeight,
-            SamplerFilterMode samplerFilter,
-            SamplerMipmapMode samplerMipmapMode,
-            SamplerAddressMode samplerAddressMode,
-            boolean shouldChangeExtentOnRecreate,
-            boolean useShadowMapping,
-            Map<String, FlexibleNaborInfo> flexibleNaborInfos,
-            List<String> ppNaborNames) {
-        VkExtent2D extent = VkExtent2D.create();
-        if (screenWidth < 0) {
-            extent.width(swapchain.getSwapchainExtent().width());
-        } else {
-            extent.width(screenWidth);
-        }
-        if (screenHeight < 0) {
-            extent.height(swapchain.getSwapchainExtent().height());
-        } else {
-            extent.height(screenHeight);
-        }
-
-        int iSamplerFilter;
-        switch (samplerFilter) {
-            case NEAREST -> iSamplerFilter = VK_FILTER_NEAREST;
-            case LINEAR -> iSamplerFilter = VK_FILTER_LINEAR;
-            default -> throw new IllegalArgumentException("Unsupported sampler filter specified: " + samplerFilter);
-        }
-
-        int iSamplerMipmapMode;
-        switch (samplerMipmapMode) {
-            case NEAREST -> iSamplerMipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
-            case LINEAR -> iSamplerMipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-            default -> throw new IllegalArgumentException(
-                    "Unsupported sampler mipmap mode specified: " + samplerMipmapMode);
-        }
-
-        int iSamplerAddressMode;
-        switch (samplerAddressMode) {
-            case REPEAT -> iSamplerAddressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-            case MIRRORED_REPEAT -> iSamplerAddressMode = VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
-            case CLAMP_TO_EDGE -> iSamplerAddressMode = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-            case CLAMP_TO_BORDER -> iSamplerAddressMode = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-            default -> throw new IllegalArgumentException(
-                    "Unsupported sampler address mode specified: " + samplerAddressMode);
-        }
-
-        var screen = new VkMttScreen(
-                dq.device(),
-                commandPool,
-                dq.graphicsQueue(),
-                depthImageFormat,
-                depthImageWidth,
-                depthImageHeight,
-                depthImageAspect,
-                swapchain.getSwapchainImageFormat(),
-                albedoMSAASamples,
-                iSamplerFilter,
-                iSamplerMipmapMode,
-                iSamplerAddressMode,
-                extent,
-                shouldChangeExtentOnRecreate,
-                useShadowMapping,
-                flexibleNaborInfos,
-                ppNaborNames
-        );
-        screens.put(screenName, screen);
-
-        return screen;
-    }
-
-    public boolean removeScreen(String screenName) {
-        if (screens.containsKey(screenName)) {
-            screens.remove(screenName);
-            return true;
-        }
-
-        return false;
     }
 
     public void runTextureOperations(String operationName) {
@@ -460,10 +358,12 @@ public class MttVulkanImpl
         return depthImageAspect;
     }
 
+    @Override
     public VkExtent2D getSwapchainExtent() {
         return swapchain.getSwapchainExtent();
     }
 
+    @Override
     public int getSwapchainImageFormat() {
         return swapchain.getSwapchainImageFormat();
     }

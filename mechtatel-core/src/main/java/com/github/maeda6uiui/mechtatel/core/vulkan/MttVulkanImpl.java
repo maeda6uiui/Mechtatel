@@ -8,7 +8,6 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
-import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.CommandPoolCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.LogicalDeviceCreator;
@@ -20,8 +19,6 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
-import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.TextureOperationParametersUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -55,10 +52,8 @@ public class MttVulkanImpl implements IMttVulkanImplForScreen {
     private int depthImageFormat;
     private int depthImageAspect;
 
-    private TextureOperationNabor textureOperationNabor;
-    private Map<String, TextureOperationNabor.TextureOperationInfo> textureOperationInfos;
-
     private PresentNabor presentNabor;
+    private TextureOperationNabor textureOperationNabor;
 
     private int maxNumFramesInFlight;
     private List<Frame> inFlightFrames;
@@ -107,7 +102,6 @@ public class MttVulkanImpl implements IMttVulkanImplForScreen {
                 swapchain.getSwapchainImageFormat(),
                 swapchain.getSwapchainExtent());
         textureOperationNabor.cleanupUserDefImages();
-        textureOperationInfos.clear();
 
         imagesInFlight.clear();
     }
@@ -175,8 +169,8 @@ public class MttVulkanImpl implements IMttVulkanImplForScreen {
                 swapchain.getSwapchainExtent(),
                 commandPool,
                 dq.graphicsQueue(),
-                1);
-        textureOperationInfos = new HashMap<>();
+                1
+        );
 
         maxNumFramesInFlight = vulkanSettings.maxNumFramesInFlight;
         inFlightFrames = SyncObjectsCreator.createSyncObjects(dq.device(), maxNumFramesInFlight);
@@ -206,56 +200,6 @@ public class MttVulkanImpl implements IMttVulkanImplForScreen {
         vkDestroyCommandPool(dq.device(), commandPool, null);
         vkDestroyDevice(dq.device(), null);
         MttVulkanInstance.get().ifPresent(v -> vkDestroySurfaceKHR(v.getVkInstance(), surface, null));
-    }
-
-    public void runTextureOperations(String name, TextureOperationParameters parameters) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
-            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
-            renderPassInfo.renderPass(textureOperationNabor.getRenderPass());
-            renderPassInfo.framebuffer(textureOperationNabor.getFramebuffer(0));
-            VkRect2D renderArea = VkRect2D.calloc(stack);
-            renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
-            renderArea.extent(textureOperationNabor.getExtent());
-            renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.calloc(1, stack);
-            clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
-            renderPassInfo.pClearValues(clearValues);
-
-            var textureOperationInfo = textureOperationInfos.get(name);
-
-            long parametersUBOMemory = textureOperationNabor.getUniformBufferMemory(0);
-            var parametersUBO = new TextureOperationParametersUBO(parameters);
-            parametersUBO.update(dq.device(), parametersUBOMemory);
-
-            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(dq.device(), commandPool);
-
-            vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-            {
-                vkCmdBindPipeline(
-                        commandBuffer,
-                        VK_PIPELINE_BIND_POINT_GRAPHICS,
-                        textureOperationNabor.getGraphicsPipeline(0));
-
-                textureOperationNabor.bindColorImages(
-                        commandBuffer,
-                        textureOperationInfo.srcColorImageViewA(),
-                        textureOperationInfo.srcColorImageViewB()
-                );
-                textureOperationNabor.bindDepthImages(
-                        commandBuffer,
-                        textureOperationInfo.srcDepthImageViewA(),
-                        textureOperationInfo.srcDepthImageViewB()
-                );
-
-                quadDrawer.draw(commandBuffer);
-            }
-            vkCmdEndRenderPass(commandBuffer);
-
-            CommandBufferUtils.endSingleTimeCommands(dq.device(), commandPool, commandBuffer, dq.graphicsQueue());
-
-            textureOperationNabor.copyColorImage(commandPool, dq.graphicsQueue(), textureOperationInfo.dstImage());
-        }
     }
 
     public void presentToFrontScreen(VkMttScreen screen) {
@@ -377,44 +321,5 @@ public class MttVulkanImpl implements IMttVulkanImplForScreen {
 
     public int getAlbedoMSAASamples() {
         return albedoMSAASamples;
-    }
-
-    public VkMttTexture createTextureOperation(
-            String name,
-            VkMttTexture firstColorTexture,
-            VkMttTexture firstDepthTexture,
-            VkMttTexture secondColorTexture,
-            VkMttTexture secondDepthTexture,
-            VkMttScreen dstScreen) {
-        long dstImage;
-        long dstImageView;
-        if (textureOperationInfos.containsKey(name)) {
-            TextureOperationNabor.TextureOperationInfo textureOperationInfo = textureOperationInfos.get(name);
-            dstImage = textureOperationInfo.dstImage();
-            dstImageView = textureOperationInfo.dstImageView();
-        } else {
-            VkExtent2D extent = textureOperationNabor.getExtent();
-            dstImage = textureOperationNabor.createUserDefImage(
-                    extent.width(),
-                    extent.height(),
-                    1,
-                    VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    swapchain.getSwapchainImageFormat(),
-                    VK_IMAGE_ASPECT_COLOR_BIT);
-            dstImageView = textureOperationNabor.lookUpUserDefImageView(dstImage);
-        }
-
-        var textureOperationInfo = new TextureOperationNabor.TextureOperationInfo(
-                firstColorTexture.getTextureImageView(),
-                secondColorTexture.getTextureImageView(),
-                firstDepthTexture.getTextureImageView(),
-                secondDepthTexture.getTextureImageView(),
-                dstImage,
-                dstImageView
-        );
-        textureOperationInfos.put(name, textureOperationInfo);
-
-        return new VkMttTexture(dq.device(), dstScreen, dstImageView);
     }
 }

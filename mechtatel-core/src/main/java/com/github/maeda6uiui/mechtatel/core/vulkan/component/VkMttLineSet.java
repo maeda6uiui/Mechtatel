@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
+import com.github.maeda6uiui.mechtatel.core.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import org.joml.Vector3fc;
@@ -31,7 +32,13 @@ public class VkMttLineSet extends VkMttComponent {
     private long vertexBufferMemory;
     private boolean bufferCreated;
 
-    public VkMttLineSet(VkDevice device, long commandPool, VkQueue graphicsQueue) {
+    public VkMttLineSet(
+            IMttComponentForVkMttComponent mttComponent,
+            VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue) {
+        super(mttComponent, "", "primitive");
+
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
@@ -39,8 +46,6 @@ public class VkMttLineSet extends VkMttComponent {
         vertices = new ArrayList<>();
 
         bufferCreated = false;
-
-        this.setComponentType("primitive");
     }
 
     public void add(MttVertex v1, MttVertex v2) {

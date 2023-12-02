@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
+import com.github.maeda6uiui.mechtatel.core.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
@@ -41,11 +42,14 @@ public class VkMttTexturedQuadSingleTextureSet extends VkMttComponent {
     private boolean isExternalTexture;
 
     public VkMttTexturedQuadSingleTextureSet(
+            IMttComponentForVkMttComponent mttComponent,
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
             IVkMttScreenForVkMttTexture screen,
             URI textureResource) {
+        super(mttComponent, screen.getScreenName(), "gbuffer");
+
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
@@ -61,17 +65,17 @@ public class VkMttTexturedQuadSingleTextureSet extends VkMttComponent {
                 false);
         bufferCreated = false;
         isExternalTexture = false;
-
-        this.setComponentType("gbuffer");
-        this.setScreenName(screen.getScreenName());
     }
 
     public VkMttTexturedQuadSingleTextureSet(
+            IMttComponentForVkMttComponent mttComponent,
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
             String screenName,
             VkMttTexture texture) {
+        super(mttComponent, screenName, "gbuffer");
+
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
@@ -82,9 +86,6 @@ public class VkMttTexturedQuadSingleTextureSet extends VkMttComponent {
 
         bufferCreated = false;
         isExternalTexture = true;
-
-        this.setComponentType("gbuffer");
-        this.setScreenName(screenName);
     }
 
     public void add(MttVertexUV v1, MttVertexUV v2, MttVertexUV v3, MttVertexUV v4) {

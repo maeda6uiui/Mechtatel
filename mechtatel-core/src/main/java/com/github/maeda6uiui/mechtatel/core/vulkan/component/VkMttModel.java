@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
+import com.github.maeda6uiui.mechtatel.core.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.IVkMttScreenForVkMttTexture;
@@ -92,11 +93,14 @@ public class VkMttModel extends VkMttComponent {
     }
 
     public VkMttModel(
+            IMttComponentForVkMttComponent mttComponent,
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
             IVkMttScreenForVkMttTexture screen,
             URI modelResource) throws IOException {
+        super(mttComponent, screen.getScreenName(), "gbuffer");
+
         this.device = device;
 
         isDuplicatedModel = false;
@@ -109,17 +113,16 @@ public class VkMttModel extends VkMttComponent {
         for (int i = 0; i < model.meshes.size(); i++) {
             drawMeshIndices.add(i);
         }
-
-        this.setComponentType("gbuffer");
-        this.setScreenName(screen.getScreenName());
-        this.setCastShadow(true);
     }
 
     public VkMttModel(
+            IMttComponentForVkMttComponent mttComponent,
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
             VkMttModel srcModel) {
+        super(mttComponent, srcModel.getScreenName(), "gbuffer");
+
         this.device = device;
 
         isDuplicatedModel = true;
@@ -134,10 +137,6 @@ public class VkMttModel extends VkMttComponent {
 
         textures = srcModel.textures;
         externalTextureFlags = srcModel.externalTextureFlags;
-
-        this.setComponentType("gbuffer");
-        this.setScreenName(srcModel.getScreenName());
-        this.setCastShadow(true);
     }
 
     @Override
@@ -145,7 +144,7 @@ public class VkMttModel extends VkMttComponent {
         //Textures
         if (!isDuplicatedModel) {
             textures.forEach((idx, texture) -> {
-                if (externalTextureFlags.get(idx) == false) {
+                if (!externalTextureFlags.get(idx)) {
                     texture.cleanup();
                 }
             });

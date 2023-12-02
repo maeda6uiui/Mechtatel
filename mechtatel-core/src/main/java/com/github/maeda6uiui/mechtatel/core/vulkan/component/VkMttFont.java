@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
+import com.github.maeda6uiui.mechtatel.core.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
 import com.github.maeda6uiui.mechtatel.core.text.TextUtil;
@@ -33,6 +34,7 @@ public class VkMttFont extends VkMttComponent {
     private int imageHeight;
 
     public VkMttFont(
+            IMttComponentForVkMttComponent mttComponent,
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -41,6 +43,8 @@ public class VkMttFont extends VkMttComponent {
             boolean antiAlias,
             Color fontColor,
             String requiredChars) {
+        super(mttComponent, screen.getScreenName(), "gbuffer");
+
         this.device = device;
 
         texture = this.createFontTexture(
@@ -59,11 +63,6 @@ public class VkMttFont extends VkMttComponent {
                 screen.getScreenName(),
                 texture
         );
-        vkQuadSet.setScreenName(screen.getScreenName());
-        vkQuadSet.setTwoDComponent(true);
-
-        this.setComponentType("gbuffer");
-        this.setScreenName(screen.getScreenName());
     }
 
     private VkMttTexture createFontTexture(

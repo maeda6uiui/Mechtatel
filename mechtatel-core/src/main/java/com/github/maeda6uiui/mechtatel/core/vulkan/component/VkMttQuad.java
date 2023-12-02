@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
+import com.github.maeda6uiui.mechtatel.core.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import org.lwjgl.system.MemoryStack;
@@ -68,20 +69,21 @@ public class VkMttQuad extends VkMttComponent {
     }
 
     public VkMttQuad(
+            IMttComponentForVkMttComponent mttComponent,
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
             List<MttVertex> vertices,
             boolean fill) {
+        super(
+                mttComponent,
+                "",
+                fill ? "primitive_fill" : "primitive"
+        );
+
         this.device = device;
 
         this.createBuffers(commandPool, graphicsQueue, vertices, fill);
-
-        if (fill) {
-            this.setComponentType("primitive_fill");
-        } else {
-            this.setComponentType("primitive");
-        }
     }
 
     @Override

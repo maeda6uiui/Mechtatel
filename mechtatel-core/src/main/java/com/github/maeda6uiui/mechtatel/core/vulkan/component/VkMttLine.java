@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
+import com.github.maeda6uiui.mechtatel.core.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import org.lwjgl.system.MemoryStack;
@@ -35,11 +36,14 @@ public class VkMttLine extends VkMttComponent {
     }
 
     public VkMttLine(
+            IMttComponentForVkMttComponent mttComponent,
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
             MttVertex v1,
             MttVertex v2) {
+        super(mttComponent, "", "primitive");
+
         this.device = device;
 
         var vertices = new ArrayList<MttVertex>();
@@ -47,8 +51,6 @@ public class VkMttLine extends VkMttComponent {
         vertices.add(v2);
 
         this.createBuffer(commandPool, graphicsQueue, vertices);
-
-        this.setComponentType("primitive");
     }
 
     @Override

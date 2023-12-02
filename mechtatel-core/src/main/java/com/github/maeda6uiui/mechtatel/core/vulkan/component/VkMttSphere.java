@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
+import com.github.maeda6uiui.mechtatel.core.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.util.VertexUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
@@ -53,6 +54,7 @@ public class VkMttSphere extends VkMttComponent {
     }
 
     public VkMttSphere(
+            IMttComponentForVkMttComponent mttComponent,
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -61,6 +63,8 @@ public class VkMttSphere extends VkMttComponent {
             int numVDivs,
             int numHDivs,
             Vector4fc color) {
+        super(mttComponent, "", "primitive");
+
         this.device = device;
 
         List<MttVertex> vertices = VertexUtils.createSphereVertices(center, radius, numVDivs, numHDivs, color);
@@ -69,8 +73,6 @@ public class VkMttSphere extends VkMttComponent {
         numIndices = indices.size();
 
         this.createBuffers(commandPool, graphicsQueue, vertices, indices);
-
-        this.setComponentType("primitive");
     }
 
     @Override

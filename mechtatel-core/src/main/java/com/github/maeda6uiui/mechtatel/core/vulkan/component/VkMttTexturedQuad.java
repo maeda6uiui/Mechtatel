@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
+import com.github.maeda6uiui.mechtatel.core.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.IVkMttScreenForVkMttTexture;
@@ -60,6 +61,7 @@ public class VkMttTexturedQuad extends VkMttComponent {
     }
 
     public VkMttTexturedQuad(
+            IMttComponentForVkMttComponent mttComponent,
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -67,6 +69,8 @@ public class VkMttTexturedQuad extends VkMttComponent {
             URI textureResource,
             boolean generateMipmaps,
             List<MttVertexUV> vertices) {
+        super(mttComponent, screen.getScreenName(), "gbuffer");
+
         this.device = device;
 
         isExternalTexture = false;
@@ -79,44 +83,41 @@ public class VkMttTexturedQuad extends VkMttComponent {
                 textureResource,
                 generateMipmaps);
         this.createBuffers(commandPool, graphicsQueue, vertices);
-
-        this.setComponentType("gbuffer");
-        this.setScreenName(screen.getScreenName());
     }
 
     public VkMttTexturedQuad(
+            IMttComponentForVkMttComponent mttComponent,
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
             VkMttTexturedQuad srcQuad,
             List<MttVertexUV> vertices) {
+        super(mttComponent, srcQuad.getScreenName(), "gbuffer");
+
         this.device = device;
 
         isExternalTexture = true;
 
         texture = srcQuad.texture;
         this.createBuffers(commandPool, graphicsQueue, vertices);
-
-        this.setComponentType("gbuffer");
-        this.setScreenName(srcQuad.getScreenName());
     }
 
     public VkMttTexturedQuad(
+            IMttComponentForVkMttComponent mttComponent,
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
             String screenName,
             VkMttTexture texture,
             List<MttVertexUV> vertices) {
+        super(mttComponent, screenName, "gbuffer");
+
         this.device = device;
 
         isExternalTexture = true;
 
         this.texture = texture;
         this.createBuffers(commandPool, graphicsQueue, vertices);
-
-        this.setComponentType("gbuffer");
-        this.setScreenName(screenName);
     }
 
     public void replaceTexture(VkMttTexture newTexture) {

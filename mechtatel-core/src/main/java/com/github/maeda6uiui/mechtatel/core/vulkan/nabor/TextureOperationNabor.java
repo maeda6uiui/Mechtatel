@@ -1,6 +1,5 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
-import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.TextureOperationParametersUBO;
@@ -23,31 +22,13 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class TextureOperationNabor extends Nabor {
-    public static class TextureOperationInfo {
-        public long srcColorImageViewA;
-        public long srcColorImageViewB;
-        public long srcDepthImageViewA;
-        public long srcDepthImageViewB;
-        public long dstImage;
-        public long dstImageView;
-        public TextureOperationParameters parameters;
-
-        public TextureOperationInfo(
-                long srcColorImageViewA,
-                long srcColorImageViewB,
-                long srcDepthImageViewA,
-                long srcDepthImageViewB,
-                long dstImage,
-                long dstImageView,
-                TextureOperationParameters parameters) {
-            this.srcColorImageViewA = srcColorImageViewA;
-            this.srcColorImageViewB = srcColorImageViewB;
-            this.srcDepthImageViewA = srcDepthImageViewA;
-            this.srcDepthImageViewB = srcDepthImageViewB;
-            this.dstImage = dstImage;
-            this.dstImageView = dstImageView;
-            this.parameters = parameters;
-        }
+    public record TextureOperationInfo(
+            long srcColorImageViewA,
+            long srcDepthImageViewA,
+            long srcColorImageViewB,
+            long srcDepthImageViewB,
+            long dstImage,
+            long dstImageView) {
     }
 
     public TextureOperationNabor(VkDevice device) {

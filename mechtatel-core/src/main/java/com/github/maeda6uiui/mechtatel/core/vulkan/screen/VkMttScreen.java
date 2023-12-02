@@ -7,6 +7,7 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
+import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
@@ -15,6 +16,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PrimitiveNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNaborChain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow.ShadowMappingNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import jakarta.validation.constraints.NotNull;
@@ -883,6 +885,17 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
 
     public long getDepthImageView() {
         return mergeScenesFillNabor.getDepthImageView();
+    }
+
+    public VkMttTexture texturize(ScreenImageType imageType, VkMttScreen dstScreen) {
+        long imageView;
+        switch (imageType) {
+            case COLOR -> imageView = this.getColorImageView();
+            case DEPTH -> imageView = this.getDepthImageView();
+            default -> throw new IllegalArgumentException("Unsupported image type specified: " + imageType);
+        }
+
+        return new VkMttTexture(device, dstScreen, imageView);
     }
 
     public void save(String srcImageFormat, String outputFilepath) throws IOException {

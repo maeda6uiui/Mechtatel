@@ -293,8 +293,7 @@ public class MttVulkanImpl
                 shouldChangeExtentOnRecreate,
                 useShadowMapping,
                 flexibleNaborInfos,
-                ppNaborNames,
-                screenName
+                ppNaborNames
         );
         screens.put(screenName, screen);
 

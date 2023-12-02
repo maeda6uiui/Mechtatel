@@ -50,7 +50,6 @@ public class MttScreen {
 
     public MttScreen(
             MttVulkanImpl vulkanImpl,
-            String screenName,
             int depthImageWidth,
             int depthImageHeight,
             int screenWidth,

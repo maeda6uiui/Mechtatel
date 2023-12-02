@@ -36,12 +36,10 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class VkMttScreen implements IVkMttScreenForVkMttTexture {
+public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenForVkMttComponent {
     private VkDevice device;
     private long commandPool;
     private VkQueue graphicsQueue;
-
-    private String screenName;
 
     private GBufferNabor gBufferNabor;
     private PrimitiveNabor primitiveNabor;
@@ -99,13 +97,10 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
             boolean shouldChangeExtentOnRecreate,
             boolean useShadowMapping,
             Map<String, FlexibleNaborInfo> flexibleNaborInfos,
-            List<String> ppNaborNames,
-            String screenName) {
+            List<String> ppNaborNames) {
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
-
-        this.screenName = screenName;
 
         this.depthImageFormat = depthImageFormat;
         this.depthImageWidth = depthImageWidth;
@@ -440,11 +435,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
         return gBufferNabor.getExtent(0).height();
     }
 
-    @Override
-    public String getScreenName() {
-        return screenName;
-    }
-
     public GBufferNabor getgBufferNabor() {
         return gBufferNabor;
     }
@@ -490,7 +480,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
                         null);
 
                 for (var component : components) {
-                    if (!component.getScreenName().equals(screenName)) {
+                    if (component.getScreen() != this) {
                         continue;
                     }
                     if (!component.getNaborName().equals("gbuffer")) {
@@ -555,7 +545,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture {
                         null);
 
                 for (var component : components) {
-                    if (!component.getScreenName().equals(screenName)) {
+                    if (component.getScreen() != this) {
                         continue;
                     }
                     if (!component.getNaborName().equals("gbuffer")) {

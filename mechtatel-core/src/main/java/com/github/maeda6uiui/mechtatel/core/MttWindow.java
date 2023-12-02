@@ -59,9 +59,7 @@ public class MttWindow
     private boolean mustRecreate;
     private boolean validWindow;
 
-    private MttScreen defaultScreen;
     private List<MttScreen> screens;
-
     private List<MttGuiComponent> guiComponents;
     private Map<String, MttAnimation> animations;
 
@@ -132,7 +130,7 @@ public class MttWindow
         glfwSetMouseButtonCallback(handle, this::mouseButtonCallback);
         glfwSetCursorPosCallback(handle, this::cursorPositionCallback);
 
-        defaultScreen = new MttScreen(
+        MttScreen defaultScreen = new MttScreen(
                 vulkanImpl,
                 new MttScreen.MttScreenCreateInfo()
                         .setDepthImageWidth(2048)
@@ -146,6 +144,7 @@ public class MttWindow
                         .setUseShadowMapping(false)
         );
         screens = new ArrayList<>();
+        screens.add(defaultScreen);
 
         guiComponents = new ArrayList<>();
         animations = new HashMap<>();

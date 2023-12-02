@@ -5,8 +5,6 @@ import com.github.maeda6uiui.mechtatel.core.SamplerAddressMode;
 import com.github.maeda6uiui.mechtatel.core.SamplerFilterMode;
 import com.github.maeda6uiui.mechtatel.core.SamplerMipmapMode;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex;
-import com.github.maeda6uiui.mechtatel.core.component.MttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
@@ -15,7 +13,6 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.CommandPoolCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.LogicalDeviceCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.SurfaceCreator;
@@ -30,18 +27,15 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.TextureOperationParametersUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
 import org.joml.Vector3f;
-import org.joml.Vector3fc;
 import org.joml.Vector4f;
-import org.joml.Vector4fc;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
-import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.IntBuffer;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
 import static org.lwjgl.glfw.GLFW.glfwWaitEvents;
@@ -76,8 +70,6 @@ public class MttVulkanImpl
     private int currentFrame;
 
     private Map<String, VkMttScreen> screens;
-    private List<VkMttComponent> components;
-    private List<VkMttTexture> textures;
 
     private QuadDrawer quadDrawer;
 
@@ -208,17 +200,12 @@ public class MttVulkanImpl
         imagesInFlight = new HashMap<>(swapchain.getNumSwapchainImages());
 
         screens = new HashMap<>();
-        components = new ArrayList<>();
-        textures = new ArrayList<>();
 
         quadDrawer = new QuadDrawer(dq.device(), commandPool, dq.graphicsQueue());
     }
 
     public void cleanup() {
         quadDrawer.cleanup();
-
-        components.forEach(VkMttComponent::cleanup);
-        textures.forEach(VkMttTexture::cleanup);
 
         inFlightFrames.forEach(frame -> {
             vkDestroySemaphore(dq.device(), frame.renderFinishedSemaphore(), null);
@@ -458,180 +445,12 @@ public class MttVulkanImpl
         );
     }
 
-    @Override
-    public boolean removeComponent(VkMttComponent component) {
-        return components.remove(component);
+    public LogicalDeviceCreator.DeviceAndQueues getDeviceAndQueues() {
+        return dq;
     }
 
-    public void sortComponents() {
-        Collections.sort(components);
-    }
-
-    public VkMttModel createModel(String screenName, URI modelResource) throws IOException {
-        VkMttScreen screen = screens.get(screenName);
-
-        var model = new VkMttModel(
-                dq.device(),
-                commandPool,
-                dq.graphicsQueue(),
-                screen,
-                modelResource);
-        components.add(model);
-
-        return model;
-    }
-
-    public VkMttModel duplicateModel(VkMttModel srcModel) {
-        var model = new VkMttModel(dq.device(), commandPool, dq.graphicsQueue(), srcModel);
-        components.add(model);
-
-        return model;
-    }
-
-    public VkMttLine createLine(MttVertex v1, MttVertex v2) {
-        var line = new VkMttLine(dq.device(), commandPool, dq.graphicsQueue(), v1, v2);
-        components.add(line);
-
-        return line;
-    }
-
-    public VkMttLineSet createLineSet() {
-        var lineSet = new VkMttLineSet(dq.device(), commandPool, dq.graphicsQueue());
-        components.add(lineSet);
-
-        return lineSet;
-    }
-
-    public VkMttSphere createSphere(
-            Vector3fc center,
-            float radius,
-            int numVDivs,
-            int numHDivs,
-            Vector4fc color) {
-        var sphere = new VkMttSphere(dq.device(), commandPool, dq.graphicsQueue(), center, radius, numVDivs, numHDivs, color);
-        components.add(sphere);
-
-        return sphere;
-    }
-
-    public VkMttCapsule createCapsule(
-            Vector3fc center,
-            float length,
-            float radius,
-            int numVDivs,
-            int numHDivs,
-            Vector4fc color) {
-        var capsule = new VkMttCapsule(dq.device(), commandPool, dq.graphicsQueue(), center, length, radius, numVDivs, numHDivs, color);
-        components.add(capsule);
-
-        return capsule;
-    }
-
-    public VkMttQuad createQuad(List<MttVertex> vertices, boolean fill) {
-        var filledQuad = new VkMttQuad(dq.device(), commandPool, dq.graphicsQueue(), vertices, fill);
-        components.add(filledQuad);
-
-        return filledQuad;
-    }
-
-    public VkMttTexturedQuad createTexturedQuad(
-            String screenName, URI textureResource, boolean generateMipmaps, List<MttVertexUV> vertices) {
-        VkMttScreen screen = screens.get(screenName);
-
-        var texturedQuad = new VkMttTexturedQuad(
-                dq.device(),
-                commandPool,
-                dq.graphicsQueue(),
-                screen,
-                textureResource,
-                generateMipmaps,
-                vertices);
-        components.add(texturedQuad);
-
-        return texturedQuad;
-    }
-
-    public VkMttTexturedQuad createTexturedQuad(String screenName, VkMttTexture texture, List<MttVertexUV> vertices) {
-        var texturedQuad = new VkMttTexturedQuad(
-                dq.device(),
-                commandPool,
-                dq.graphicsQueue(),
-                screenName,
-                texture,
-                vertices);
-        components.add(texturedQuad);
-
-        return texturedQuad;
-    }
-
-    public VkMttTexturedQuad duplicateTexturedQuad(VkMttTexturedQuad srcQuad, List<MttVertexUV> vertices) {
-        var texturedQuad = new VkMttTexturedQuad(
-                dq.device(),
-                commandPool,
-                dq.graphicsQueue(),
-                srcQuad,
-                vertices);
-        components.add(texturedQuad);
-
-        return texturedQuad;
-    }
-
-    public VkMttTexturedQuadSingleTextureSet createTexturedQuadSingleTextureSet(String screenName, VkMttTexture texture) {
-        var texturedQuadSet = new VkMttTexturedQuadSingleTextureSet(
-                dq.device(), commandPool, dq.graphicsQueue(), screenName, texture);
-        components.add(texturedQuadSet);
-
-        return texturedQuadSet;
-    }
-
-    public VkMttTexturedQuadSingleTextureSet createTexturedQuadSingleTextureSet(
-            String screenName, URI textureResource) {
-        VkMttScreen screen = screens.get(screenName);
-
-        var texturedQuadSet = new VkMttTexturedQuadSingleTextureSet(
-                dq.device(),
-                commandPool,
-                dq.graphicsQueue(),
-                screen,
-                textureResource);
-        components.add(texturedQuadSet);
-
-        return texturedQuadSet;
-    }
-
-    public VkMttFont createFont(
-            String screenName, Font font, boolean antiAlias, Color fontColor, String requiredChars) {
-        VkMttScreen screen = screens.get(screenName);
-
-        var mttFont = new VkMttFont(
-                dq.device(),
-                commandPool,
-                dq.graphicsQueue(),
-                screen,
-                font,
-                antiAlias,
-                fontColor,
-                requiredChars);
-        components.add(mttFont);
-
-        return mttFont;
-    }
-
-    @Override
-    public VkMttTexture createTexture(String screenName, URI textureResource, boolean generateMipmaps) {
-        VkMttScreen screen = screens.get(screenName);
-
-        var texture = new VkMttTexture(
-                dq.device(),
-                commandPool,
-                dq.graphicsQueue(),
-                screen,
-                textureResource,
-                generateMipmaps
-        );
-        textures.add(texture);
-
-        return texture;
+    public long getCommandPool() {
+        return commandPool;
     }
 
     @Override
@@ -656,11 +475,6 @@ public class MttVulkanImpl
         textures.add(texture);
 
         return texture;
-    }
-
-    @Override
-    public boolean removeTexture(VkMttTexture texture) {
-        return textures.remove(texture);
     }
 
     public void saveScreenshot(String screenName, String srcImageFormat, String outputFilepath) throws IOException {

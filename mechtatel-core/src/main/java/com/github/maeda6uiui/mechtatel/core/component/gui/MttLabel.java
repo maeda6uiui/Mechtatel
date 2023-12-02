@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Vector2f;
 
@@ -81,8 +82,8 @@ public class MttLabel extends MttGuiComponent {
     private MttQuad2D frame;
     private MttFont font;
 
-    public MttLabel(MttVulkanImpl vulkanImpl, MttLabelCreateInfo createInfo) {
-        super(vulkanImpl, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
+    public MttLabel(MttVulkanImpl vulkanImpl, MttScreen screen, MttLabelCreateInfo createInfo) {
+        super(createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         frame = new MttQuad2D(
                 vulkanImpl,
@@ -95,7 +96,7 @@ public class MttLabel extends MttGuiComponent {
 
         font = new MttFont(
                 vulkanImpl,
-                "default",
+                screen,
                 new Font(createInfo.fontName, createInfo.fontStyle, createInfo.fontSize),
                 true,
                 createInfo.fontColor,

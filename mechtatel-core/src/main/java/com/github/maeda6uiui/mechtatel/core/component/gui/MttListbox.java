@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -25,6 +26,7 @@ public class MttListbox extends MttGuiComponent {
 
         public MttListboxItem(
                 MttVulkanImpl vulkanImpl,
+                MttScreen screen,
                 float x,
                 float y,
                 float width,
@@ -38,10 +40,11 @@ public class MttListbox extends MttGuiComponent {
                 int selectedFontStyle,
                 int selectedFontSize,
                 Color selectedFontColor) {
-            super(vulkanImpl, x, y, width, height);
+            super(x, y, width, height);
 
             nonSelectedFont = new MttFont(
-                    vulkanImpl, "default",
+                    vulkanImpl,
+                    screen,
                     new Font(nonSelectedFontName, nonSelectedFontStyle, nonSelectedFontSize),
                     true,
                     nonSelectedFontColor,
@@ -51,7 +54,8 @@ public class MttListbox extends MttGuiComponent {
             nonSelectedFont.createBuffers();
 
             selectedFont = new MttFont(
-                    vulkanImpl, "default",
+                    vulkanImpl,
+                    screen,
                     new Font(selectedFontName, selectedFontStyle, selectedFontSize),
                     true,
                     selectedFontColor,
@@ -219,8 +223,8 @@ public class MttListbox extends MttGuiComponent {
     private int numDisplayedItems;
     private float scrollAmountPerItem;
 
-    public MttListbox(MttVulkanImpl vulkanImpl, MttListboxCreateInfo createInfo) {
-        super(vulkanImpl, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
+    public MttListbox(MttVulkanImpl vulkanImpl, MttScreen screen, MttListboxCreateInfo createInfo) {
+        super(createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         frame = new MttQuad2D(
                 vulkanImpl,
@@ -249,6 +253,7 @@ public class MttListbox extends MttGuiComponent {
         for (int i = 0; i < createInfo.itemTexts.size(); i++) {
             var item = new MttListboxItem(
                     vulkanImpl,
+                    screen,
                     createInfo.x,
                     createInfo.y + itemHeight * i,
                     createInfo.width - createInfo.scrollbarWidth,
@@ -270,9 +275,6 @@ public class MttListbox extends MttGuiComponent {
             } else {
                 numDisplayedItems++;
             }
-
-            var callbacks = new MttListboxItemDefaultCallbacks(i);
-            item.setCallbacks(callbacks);
         }
 
         if (numDisplayedItems == items.size()) {

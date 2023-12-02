@@ -5,6 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.component.MttLine2D;
 import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.KeyInterpreter;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
 import com.github.maeda6uiui.mechtatel.core.text.TextUtil;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
@@ -170,8 +171,8 @@ public class MttTextarea extends MttGuiComponent {
 
     private boolean visible;
 
-    public MttTextarea(MttVulkanImpl vulkanImpl, MttTextareaCreateInfo createInfo) {
-        super(vulkanImpl, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
+    public MttTextarea(MttVulkanImpl vulkanImpl, MttScreen screen, MttTextareaCreateInfo createInfo) {
+        super(createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         frame = new MttQuad2D(
                 vulkanImpl,
@@ -200,7 +201,7 @@ public class MttTextarea extends MttGuiComponent {
 
         font = new MttFont(
                 vulkanImpl,
-                "default",
+                screen,
                 new Font(createInfo.fontName, createInfo.fontStyle, createInfo.fontSize),
                 true,
                 createInfo.fontColor,

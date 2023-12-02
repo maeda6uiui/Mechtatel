@@ -70,7 +70,7 @@ public class MttVerticalScrollbar extends MttGuiComponent {
     private boolean grabbed;
 
     public MttVerticalScrollbar(MttVulkanImpl vulkanImpl, MttVerticalScrollbarCreateInfo createInfo) {
-        super(vulkanImpl, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
+        super(createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         frame = new MttQuad2D(
                 vulkanImpl,
@@ -90,7 +90,6 @@ public class MttVerticalScrollbar extends MttGuiComponent {
         );
 
         frame.setDrawOrder(1);
-        vulkanImpl.sortComponents();
 
         grabTopLeft = new Vector2f(createInfo.x, createInfo.y);
         grabBottomRight = new Vector2f(createInfo.x + createInfo.width, createInfo.y + createInfo.grabHeight);

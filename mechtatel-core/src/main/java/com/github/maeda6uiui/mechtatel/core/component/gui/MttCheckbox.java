@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.component.MttLine2DSet;
 import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Vector2f;
 
@@ -125,8 +126,8 @@ public class MttCheckbox extends MttGuiComponent {
 
     private boolean selected;
 
-    public MttCheckbox(MttVulkanImpl vulkanImpl, MttCheckboxCreateInfo createInfo) {
-        super(vulkanImpl, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
+    public MttCheckbox(MttVulkanImpl vulkanImpl, MttScreen screen, MttCheckboxCreateInfo createInfo) {
+        super(createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         checkboxTopLeft = new Vector2f(createInfo.boxX, createInfo.boxY);
         checkboxBottomRight = new Vector2f(
@@ -157,7 +158,7 @@ public class MttCheckbox extends MttGuiComponent {
 
         font = new MttFont(
                 vulkanImpl,
-                "default",
+                screen,
                 new Font(createInfo.fontName, createInfo.fontStyle, createInfo.fontSize),
                 true,
                 createInfo.fontColor,

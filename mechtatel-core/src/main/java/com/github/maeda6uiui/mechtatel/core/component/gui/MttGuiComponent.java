@@ -2,7 +2,6 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttComponent;
 import com.github.maeda6uiui.mechtatel.core.util.UniversalCounter;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 
 import java.util.Map;
 
@@ -24,13 +23,16 @@ public class MttGuiComponent extends MttComponent {
     private MttGuiComponentCallbacks callbacks;
     private boolean cursorOn;
 
-    public MttGuiComponent(
-            MttVulkanImpl vulkanImpl,
-            float x,
-            float y,
-            float width,
-            float height) {
-        super(vulkanImpl);
+    protected static MttComponentCreateInfo generateCreateInfo() {
+        return new MttComponentCreateInfo()
+                .setVisible(true)
+                .setTwoDComponent(true)
+                .setCastShadow(false)
+                .setDrawOrder(0);
+    }
+
+    public MttGuiComponent(float x, float y, float width, float height) {
+        super(generateCreateInfo());
 
         guiComponentID = UniversalCounter.get();
         focusedGUIComponentID = guiComponentID;

@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttFont;
@@ -24,7 +25,7 @@ public class MttFont extends MttComponent {
 
     public MttFont(
             MttVulkanImpl vulkanImpl,
-            String screenName,
+            MttScreen screen,
             Font font,
             boolean antiAlias,
             Color fontColor,
@@ -38,7 +39,18 @@ public class MttFont extends MttComponent {
                         .setDrawOrder(0)
         );
 
-        vkMttFont = vulkanImpl.createFont(screenName, font, antiAlias, fontColor, requiredChars);
+        var dq = vulkanImpl.getDeviceAndQueues();
+        vkMttFont = new VkMttFont(
+                this,
+                dq.device(),
+                vulkanImpl.getCommandPool(),
+                dq.graphicsQueue(),
+                screen.getVulkanScreen(),
+                font,
+                antiAlias,
+                fontColor,
+                requiredChars
+        );
         this.associateVulkanComponent(vkMttFont);
     }
 

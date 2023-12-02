@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
@@ -19,7 +20,7 @@ public class MttModel extends MttComponent {
     private URI modelResource;
     private VkMttModel vkModel;
 
-    public MttModel(MttVulkanImpl vulkanImpl, String screenName, URI modelResource) throws IOException {
+    public MttModel(MttVulkanImpl vulkanImpl, MttScreen screen, URI modelResource) throws IOException {
         super(
                 vulkanImpl,
                 new MttComponentCreateInfo()
@@ -30,7 +31,15 @@ public class MttModel extends MttComponent {
         );
 
         this.modelResource = modelResource;
-        vkModel = vulkanImpl.createModel(screenName, modelResource);
+
+        var dq = vulkanImpl.getDeviceAndQueues();
+        vkModel = new VkMttModel(
+                this, dq.device(),
+                vulkanImpl.getCommandPool(),
+                dq.graphicsQueue(),
+                screen.getVulkanScreen(),
+                modelResource
+        );
         this.associateVulkanComponent(vkModel);
     }
 
@@ -45,7 +54,14 @@ public class MttModel extends MttComponent {
         );
 
         this.modelResource = srcModel.modelResource;
-        vkModel = vulkanImpl.duplicateModel(srcModel.vkModel);
+
+        var dq = vulkanImpl.getDeviceAndQueues();
+        vkModel = new VkMttModel(
+                this, dq.device(),
+                vulkanImpl.getCommandPool(),
+                dq.graphicsQueue(),
+                srcModel.vkModel
+        );
         this.associateVulkanComponent(vkModel);
     }
 

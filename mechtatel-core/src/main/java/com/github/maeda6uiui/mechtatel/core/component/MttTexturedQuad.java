@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttTexturedQuad;
@@ -28,7 +29,7 @@ public class MttTexturedQuad extends MttComponent {
 
     public MttTexturedQuad(
             MttVulkanImpl vulkanImpl,
-            String screenName,
+            MttScreen screen,
             URI textureResource,
             boolean generateMipmaps,
             MttVertexUV v1,
@@ -41,28 +42,17 @@ public class MttTexturedQuad extends MttComponent {
             throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
         }
 
-        vkTexturedQuad = vulkanImpl.createTexturedQuad(
-                screenName,
+        var dq = vulkanImpl.getDeviceAndQueues();
+        vkTexturedQuad = new VkMttTexturedQuad(
+                this,
+                dq.device(),
+                vulkanImpl.getCommandPool(),
+                dq.graphicsQueue(),
+                screen.getVulkanScreen(),
                 textureResource,
                 generateMipmaps,
-                Arrays.asList(v1, v2, v3, v4));
-        this.associateVulkanComponent(vkTexturedQuad);
-    }
-
-    public MttTexturedQuad(
-            MttVulkanImpl vulkanImpl,
-            String screenName,
-            MttTexture texture,
-            MttVertexUV v1,
-            MttVertexUV v2,
-            MttVertexUV v3,
-            MttVertexUV v4) {
-        super(vulkanImpl, generateCreateInfo());
-
-        vkTexturedQuad = vulkanImpl.createTexturedQuad(
-                screenName,
-                texture.getVulkanTexture(),
-                Arrays.asList(v1, v2, v3, v4));
+                Arrays.asList(v1, v2, v3, v4)
+        );
         this.associateVulkanComponent(vkTexturedQuad);
     }
 
@@ -75,9 +65,36 @@ public class MttTexturedQuad extends MttComponent {
             MttVertexUV v4) {
         super(vulkanImpl, generateCreateInfo());
 
-        vkTexturedQuad = vulkanImpl.duplicateTexturedQuad(
+        var dq = vulkanImpl.getDeviceAndQueues();
+        vkTexturedQuad = new VkMttTexturedQuad(
+                this,
+                dq.device(),
+                vulkanImpl.getCommandPool(),
+                dq.graphicsQueue(),
                 srcQuad.vkTexturedQuad,
-                Arrays.asList(v1, v2, v3, v4));
+                Arrays.asList(v1, v2, v3, v4)
+        );
+        this.associateVulkanComponent(vkTexturedQuad);
+    }
+
+    public MttTexturedQuad(
+            MttVulkanImpl vulkanImpl,
+            MttTexture texture,
+            MttVertexUV v1,
+            MttVertexUV v2,
+            MttVertexUV v3,
+            MttVertexUV v4) {
+        super(vulkanImpl, generateCreateInfo());
+
+        var dq = vulkanImpl.getDeviceAndQueues();
+        vkTexturedQuad = new VkMttTexturedQuad(
+                this,
+                dq.device(),
+                vulkanImpl.getCommandPool(),
+                dq.graphicsQueue(),
+                texture.getVulkanTexture(),
+                Arrays.asList(v1, v2, v3, v4)
+        );
         this.associateVulkanComponent(vkTexturedQuad);
     }
 

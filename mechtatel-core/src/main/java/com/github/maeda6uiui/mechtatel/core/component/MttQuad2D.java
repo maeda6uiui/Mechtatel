@@ -36,7 +36,9 @@ public class MttQuad2D extends MttComponent {
         vertices.add(vv3);
         vertices.add(vv4);
 
-        vkQuad = vulkanImpl.createQuad(vertices, fill);
+        var dq = vulkanImpl.getDeviceAndQueues();
+        vkQuad = new VkMttQuad(
+                this, dq.device(), vulkanImpl.getCommandPool(), dq.graphicsQueue(), vertices, fill);
         this.associateVulkanComponent(vkQuad);
     }
 

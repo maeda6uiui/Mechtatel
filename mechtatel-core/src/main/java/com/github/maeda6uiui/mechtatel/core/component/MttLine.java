@@ -21,7 +21,8 @@ public class MttLine extends MttComponent {
                         .setDrawOrder(0)
         );
 
-        vkLine = vulkanImpl.createLine(v1, v2);
+        var dq = vulkanImpl.getDeviceAndQueues();
+        vkLine = new VkMttLine(this, dq.device(), vulkanImpl.getCommandPool(), dq.graphicsQueue(), v1, v2);
         this.associateVulkanComponent(vkLine);
     }
 }

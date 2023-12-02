@@ -20,12 +20,13 @@ public class MttLineSet extends MttComponent {
                 vulkanImpl,
                 new MttComponentCreateInfo()
                         .setVisible(true)
-                        .setTwoDComponent(true)
+                        .setTwoDComponent(false)
                         .setCastShadow(false)
                         .setDrawOrder(0)
         );
 
-        vkLineSet = vulkanImpl.createLineSet();
+        var dq = vulkanImpl.getDeviceAndQueues();
+        vkLineSet = new VkMttLineSet(this, dq.device(), vulkanImpl.getCommandPool(), dq.graphicsQueue());
         this.associateVulkanComponent(vkLineSet);
     }
 

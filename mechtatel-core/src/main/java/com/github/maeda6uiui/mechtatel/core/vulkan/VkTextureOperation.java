@@ -22,17 +22,17 @@ public class VkTextureOperation {
     private long commandPool;
     private VkQueue graphicsQueue;
     private TextureOperationNabor textureOperationNabor;
-    private QuadDrawer quadDrawer;
 
-    private TextureOperationNabor.TextureOperationInfo textureOperationInfo;
     private VkMttTexture resultTexture;
+    private TextureOperationNabor.TextureOperationInfo textureOperationInfo;
+
+    private QuadDrawer quadDrawer;
 
     public VkTextureOperation(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
             TextureOperationNabor textureOperationNabor,
-            QuadDrawer quadDrawer,
             int imageFormat,
             VkMttTexture firstColorTexture,
             VkMttTexture firstDepthTexture,
@@ -43,7 +43,6 @@ public class VkTextureOperation {
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
         this.textureOperationNabor = textureOperationNabor;
-        this.quadDrawer = quadDrawer;
 
         VkExtent2D extent = textureOperationNabor.getExtent();
         long dstImage = textureOperationNabor.createUserDefImage(
@@ -57,6 +56,7 @@ public class VkTextureOperation {
         );
         long dstImageView = textureOperationNabor.lookUpUserDefImageView(dstImage);
 
+        resultTexture = new VkMttTexture(device, dstScreen, dstImageView);
         textureOperationInfo = new TextureOperationNabor.TextureOperationInfo(
                 firstColorTexture.getTextureImageView(),
                 secondColorTexture.getTextureImageView(),
@@ -66,11 +66,15 @@ public class VkTextureOperation {
                 dstImageView
         );
 
-        resultTexture = new VkMttTexture(device, dstScreen, dstImageView);
+        quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
     }
 
     public void cleanup() {
         resultTexture.cleanup();
+    }
+
+    public VkMttTexture getResultTexture() {
+        return resultTexture;
     }
 
     public void run(TextureOperationParameters parameters) {

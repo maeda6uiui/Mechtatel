@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
+import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 
@@ -34,16 +35,16 @@ public class MttComponentSet<T extends MttComponent> {
         components.clear();
     }
 
-    public void setMat(Matrix4fc mat) {
-        components.forEach(c -> c.setMat(mat));
-    }
-
     public void setVisible(boolean visible) {
         components.forEach(c -> c.setVisible(visible));
     }
 
     public void applyMat(Matrix4fc right) {
         components.forEach(c -> c.applyMat(right));
+    }
+
+    public void setMat(Matrix4f mat) {
+        components.forEach(c -> c.setMat(mat));
     }
 
     public MttComponentSet translate(Vector3fc v) {

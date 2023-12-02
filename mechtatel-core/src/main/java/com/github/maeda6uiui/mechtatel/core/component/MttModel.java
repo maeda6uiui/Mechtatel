@@ -20,7 +20,14 @@ public class MttModel extends MttComponent {
     private VkMttModel vkModel;
 
     public MttModel(MttVulkanImpl vulkanImpl, String screenName, URI modelResource) throws IOException {
-        super(vulkanImpl);
+        super(
+                vulkanImpl,
+                new MttComponentCreateInfo()
+                        .setVisible(true)
+                        .setTwoDComponent(false)
+                        .setCastShadow(true)
+                        .setDrawOrder(0)
+        );
 
         this.modelResource = modelResource;
         vkModel = vulkanImpl.createModel(screenName, modelResource);
@@ -28,7 +35,14 @@ public class MttModel extends MttComponent {
     }
 
     public MttModel(MttVulkanImpl vulkanImpl, MttModel srcModel) {
-        super(vulkanImpl);
+        super(
+                vulkanImpl,
+                new MttComponentCreateInfo()
+                        .setVisible(true)
+                        .setTwoDComponent(false)
+                        .setCastShadow(true)
+                        .setDrawOrder(0)
+        );
 
         this.modelResource = srcModel.modelResource;
         vkModel = vulkanImpl.duplicateModel(srcModel.vkModel);

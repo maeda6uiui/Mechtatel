@@ -8,8 +8,6 @@ import org.joml.Matrix4fc;
  * @author maeda6uiui
  */
 public interface IMttComponentForVkMttComponent {
-    String getTag();
-
     Matrix4fc getMat();
 
     boolean isVisible();

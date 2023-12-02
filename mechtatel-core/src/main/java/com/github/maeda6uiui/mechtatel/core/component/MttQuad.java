@@ -21,6 +21,14 @@ public class MttQuad extends MttComponent {
         this.associateVulkanComponent(vkQuad);
     }
 
+    private static MttComponentCreateInfo generateCreateInfo(boolean fill) {
+        return new MttComponentCreateInfo()
+                .setVisible(true)
+                .setTwoDComponent(false)
+                .setCastShadow(fill)
+                .setDrawOrder(0);
+    }
+
     public MttQuad(
             MttVulkanImpl vulkanImpl,
             MttVertex v1,
@@ -28,7 +36,7 @@ public class MttQuad extends MttComponent {
             MttVertex v3,
             MttVertex v4,
             boolean fill) {
-        super(vulkanImpl);
+        super(vulkanImpl, generateCreateInfo(fill));
 
         this.setup(vulkanImpl, Arrays.asList(v1, v2, v3, v4), fill);
     }
@@ -41,7 +49,7 @@ public class MttQuad extends MttComponent {
             Vector3fc p4,
             boolean fill,
             Vector4fc color) {
-        super(vulkanImpl);
+        super(vulkanImpl, generateCreateInfo(fill));
 
         var v1 = new MttVertex(p1, color);
         var v2 = new MttVertex(p2, color);

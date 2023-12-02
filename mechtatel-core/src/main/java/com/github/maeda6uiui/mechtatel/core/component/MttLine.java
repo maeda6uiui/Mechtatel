@@ -12,7 +12,14 @@ public class MttLine extends MttComponent {
     private VkMttLine vkLine;
 
     public MttLine(MttVulkanImpl vulkanImpl, MttVertex v1, MttVertex v2) {
-        super(vulkanImpl);
+        super(
+                vulkanImpl,
+                new MttComponentCreateInfo()
+                        .setVisible(true)
+                        .setTwoDComponent(false)
+                        .setCastShadow(false)
+                        .setDrawOrder(0)
+        );
 
         vkLine = vulkanImpl.createLine(v1, v2);
         this.associateVulkanComponent(vkLine);

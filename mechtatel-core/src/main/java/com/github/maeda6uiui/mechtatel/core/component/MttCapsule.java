@@ -21,7 +21,14 @@ public class MttCapsule extends MttComponent {
             int numVDivs,
             int numHDivs,
             Vector4fc color) {
-        super(vulkanImpl);
+        super(
+                vulkanImpl,
+                new MttComponentCreateInfo()
+                        .setVisible(true)
+                        .setTwoDComponent(false)
+                        .setCastShadow(false)
+                        .setDrawOrder(0)
+        );
 
         vkCapsule = vulkanImpl.createCapsule(center, length, radius, numVDivs, numHDivs, color);
         this.associateVulkanComponent(vkCapsule);

@@ -37,8 +37,15 @@ public class MttQuad2D extends MttComponent {
         vertices.add(vv4);
 
         vkQuad = vulkanImpl.createQuad(vertices, fill);
-        vkQuad.setTwoDComponent(true);
         this.associateVulkanComponent(vkQuad);
+    }
+
+    private static MttComponentCreateInfo generateCreateInfo() {
+        return new MttComponentCreateInfo()
+                .setVisible(true)
+                .setTwoDComponent(true)
+                .setCastShadow(false)
+                .setDrawOrder(0);
     }
 
     public MttQuad2D(
@@ -49,7 +56,7 @@ public class MttQuad2D extends MttComponent {
             MttVertex2D v4,
             float z,
             boolean fill) {
-        super(vulkanImpl);
+        super(vulkanImpl, generateCreateInfo());
 
         this.setup(vulkanImpl, v1, v2, v3, v4, z, fill);
     }
@@ -63,7 +70,7 @@ public class MttQuad2D extends MttComponent {
             float z,
             boolean fill,
             Vector4fc color) {
-        super(vulkanImpl);
+        super(vulkanImpl, generateCreateInfo());
 
         var v1 = new MttVertex2D(new Vector2f(p1.x(), p1.y()), color);
         var v2 = new MttVertex2D(new Vector2f(p2.x(), p2.y()), color);
@@ -79,7 +86,7 @@ public class MttQuad2D extends MttComponent {
             float z,
             boolean fill,
             Vector4fc color) {
-        super(vulkanImpl);
+        super(vulkanImpl, generateCreateInfo());
 
         var v1 = new MttVertex2D(new Vector2f(topLeft.x(), topLeft.y()), color);
         var v2 = new MttVertex2D(new Vector2f(topLeft.x(), bottomRight.y()), color);

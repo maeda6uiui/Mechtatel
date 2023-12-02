@@ -20,7 +20,14 @@ public class MttSphere extends MttComponent {
             int numVDivs,
             int numHDivs,
             Vector4fc color) {
-        super(vulkanImpl);
+        super(
+                vulkanImpl,
+                new MttComponentCreateInfo()
+                        .setVisible(true)
+                        .setTwoDComponent(false)
+                        .setCastShadow(false)
+                        .setDrawOrder(0)
+        );
 
         vkSphere = vulkanImpl.createSphere(center, radius, numVDivs, numHDivs, color);
         this.associateVulkanComponent(vkSphere);

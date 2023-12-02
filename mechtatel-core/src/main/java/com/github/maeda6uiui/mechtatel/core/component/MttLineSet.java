@@ -16,7 +16,14 @@ public class MttLineSet extends MttComponent {
     private VkMttLineSet vkLineSet;
 
     public MttLineSet(MttVulkanImpl vulkanImpl) {
-        super(vulkanImpl);
+        super(
+                vulkanImpl,
+                new MttComponentCreateInfo()
+                        .setVisible(true)
+                        .setTwoDComponent(true)
+                        .setCastShadow(false)
+                        .setDrawOrder(0)
+        );
 
         vkLineSet = vulkanImpl.createLineSet();
         this.associateVulkanComponent(vkLineSet);

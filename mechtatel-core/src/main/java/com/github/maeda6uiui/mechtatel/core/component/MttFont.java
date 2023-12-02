@@ -29,10 +29,16 @@ public class MttFont extends MttComponent {
             boolean antiAlias,
             Color fontColor,
             String requiredChars) {
-        super(vulkanImpl);
+        super(
+                vulkanImpl,
+                new MttComponentCreateInfo()
+                        .setVisible(true)
+                        .setTwoDComponent(true)
+                        .setCastShadow(false)
+                        .setDrawOrder(0)
+        );
 
         vkMttFont = vulkanImpl.createFont(screenName, font, antiAlias, fontColor, requiredChars);
-        vkMttFont.setTwoDComponent(true);
         this.associateVulkanComponent(vkMttFont);
     }
 

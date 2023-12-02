@@ -41,7 +41,14 @@ public class MttBox extends MttComponent {
     }
 
     public MttBox(MttVulkanImpl vulkanImpl, float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
-        super(vulkanImpl);
+        super(
+                vulkanImpl,
+                new MttComponentCreateInfo()
+                        .setVisible(true)
+                        .setTwoDComponent(false)
+                        .setCastShadow(false)
+                        .setDrawOrder(0)
+        );
 
         lineSet = new MttLineSet(vulkanImpl);
         this.setupLineSet(xHalfExtent, yHalfExtent, zHalfExtent, color);

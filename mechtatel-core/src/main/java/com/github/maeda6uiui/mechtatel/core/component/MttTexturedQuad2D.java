@@ -64,7 +64,6 @@ public class MttTexturedQuad2D extends MttComponent {
         }
 
         vkTexturedQuad = vulkanImpl.createTexturedQuad(screenName, textureResource, false, vertices);
-        vkTexturedQuad.setTwoDComponent(true);
         this.associateVulkanComponent(vkTexturedQuad);
     }
 
@@ -74,7 +73,6 @@ public class MttTexturedQuad2D extends MttComponent {
             MttTexture texture,
             List<MttVertexUV> vertices) {
         vkTexturedQuad = vulkanImpl.createTexturedQuad(screenName, texture.getVulkanTexture(), vertices);
-        vkTexturedQuad.setTwoDComponent(true);
         this.associateVulkanComponent(vkTexturedQuad);
     }
 
@@ -83,8 +81,15 @@ public class MttTexturedQuad2D extends MttComponent {
             MttTexturedQuad2D srcQuad,
             List<MttVertexUV> vertices) {
         vkTexturedQuad = vulkanImpl.duplicateTexturedQuad(srcQuad.vkTexturedQuad, vertices);
-        vkTexturedQuad.setTwoDComponent(true);
         this.associateVulkanComponent(vkTexturedQuad);
+    }
+
+    private static MttComponentCreateInfo generateCreateInfo() {
+        return new MttComponentCreateInfo()
+                .setVisible(true)
+                .setTwoDComponent(true)
+                .setCastShadow(false)
+                .setDrawOrder(0);
     }
 
     public MttTexturedQuad2D(
@@ -96,7 +101,7 @@ public class MttTexturedQuad2D extends MttComponent {
             MttVertex2DUV v3,
             MttVertex2DUV v4,
             float z) throws FileNotFoundException {
-        super(vulkanImpl);
+        super(vulkanImpl, generateCreateInfo());
 
         var vertices = this.createVertices(v1, v2, v3, v4, z);
         this.create(vulkanImpl, screenName, textureResource, vertices);
@@ -109,7 +114,7 @@ public class MttTexturedQuad2D extends MttComponent {
             Vector2fc topLeft,
             Vector2fc bottomRight,
             float z) throws FileNotFoundException {
-        super(vulkanImpl);
+        super(vulkanImpl, generateCreateInfo());
 
         var vertices = this.createVertices(topLeft, bottomRight, z);
         this.create(vulkanImpl, screenName, textureResource, vertices);
@@ -124,7 +129,7 @@ public class MttTexturedQuad2D extends MttComponent {
             MttVertex2DUV v3,
             MttVertex2DUV v4,
             float z) {
-        super(vulkanImpl);
+        super(vulkanImpl, generateCreateInfo());
 
         var vertices = this.createVertices(v1, v2, v3, v4, z);
         this.create(vulkanImpl, screenName, texture, vertices);
@@ -137,7 +142,7 @@ public class MttTexturedQuad2D extends MttComponent {
             Vector2fc topLeft,
             Vector2fc bottomRight,
             float z) {
-        super(vulkanImpl);
+        super(vulkanImpl, generateCreateInfo());
 
         var vertices = this.createVertices(topLeft, bottomRight, z);
         this.create(vulkanImpl, screenName, texture, vertices);
@@ -151,7 +156,7 @@ public class MttTexturedQuad2D extends MttComponent {
             MttVertex2DUV v3,
             MttVertex2DUV v4,
             float z) {
-        super(vulkanImpl);
+        super(vulkanImpl, generateCreateInfo());
 
         var vertices = this.createVertices(v1, v2, v3, v4, z);
         this.duplicate(vulkanImpl, srcQuad, vertices);
@@ -163,7 +168,7 @@ public class MttTexturedQuad2D extends MttComponent {
             Vector2fc topLeft,
             Vector2fc bottomRight,
             float z) {
-        super(vulkanImpl);
+        super(vulkanImpl, generateCreateInfo());
 
         var vertices = this.createVertices(topLeft, bottomRight, z);
         this.duplicate(vulkanImpl, srcQuad, vertices);

@@ -1,6 +1,5 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
-import com.github.maeda6uiui.mechtatel.core.util.UniversalCounter;
 import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplForComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent;
 import org.joml.Matrix4f;
@@ -13,7 +12,40 @@ import org.joml.Vector3fc;
  * @author maeda6uiui
  */
 public class MttComponent implements IMttComponentForVkMttComponent {
-    private String tag;
+    public static class MttComponentCreateInfo {
+        public boolean visible;
+        public boolean twoDComponent;
+        public boolean castShadow;
+        public int drawOrder;
+
+        public MttComponentCreateInfo() {
+            visible = true;
+            twoDComponent = false;
+            castShadow = false;
+            drawOrder = 0;
+        }
+
+        public MttComponentCreateInfo setVisible(boolean visible) {
+            this.visible = visible;
+            return this;
+        }
+
+        public MttComponentCreateInfo setTwoDComponent(boolean twoDComponent) {
+            this.twoDComponent = twoDComponent;
+            return this;
+        }
+
+        public MttComponentCreateInfo setCastShadow(boolean castShadow) {
+            this.castShadow = castShadow;
+            return this;
+        }
+
+        public MttComponentCreateInfo setDrawOrder(int drawOrder) {
+            this.drawOrder = drawOrder;
+            return this;
+        }
+    }
+
     private Matrix4f mat;
     private boolean visible;
     private boolean twoDComponent;
@@ -23,18 +55,16 @@ public class MttComponent implements IMttComponentForVkMttComponent {
     private IMttVulkanImplForComponent vulkanImpl;
     private VkMttComponent vkComponent;
 
-    private void initialize() {
-        tag = "Component_" + UniversalCounter.get();
-        mat = new Matrix4f().identity();
-        visible = true;
-        twoDComponent = false;
-        castShadow = false;
-        drawOrder = 0;
+    private void setInitialProperties(MttComponentCreateInfo createInfo) {
+        visible = createInfo.visible;
+        twoDComponent = createInfo.twoDComponent;
+        castShadow = createInfo.castShadow;
+        drawOrder = createInfo.drawOrder;
     }
 
-    public MttComponent(IMttVulkanImplForComponent vulkanImpl) {
-        this.initialize();
+    public MttComponent(IMttVulkanImplForComponent vulkanImpl, MttComponentCreateInfo createInfo) {
         this.vulkanImpl = vulkanImpl;
+        this.setInitialProperties(createInfo);
     }
 
     protected void associateVulkanComponent(VkMttComponent vkComponent) {
@@ -45,40 +75,13 @@ public class MttComponent implements IMttComponentForVkMttComponent {
         return vkComponent;
     }
 
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
+    @Override
     public Matrix4fc getMat() {
         return mat;
     }
 
     public void setMat(Matrix4f mat) {
         this.mat = mat;
-    }
-
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
-    public boolean isVisible() {
-        return visible;
-    }
-
-    public int getDrawOrder() {
-        return drawOrder;
-    }
-
-    public void setDrawOrder(int drawOrder) {
-        this.drawOrder = drawOrder;
-    }
-
-    public boolean isTwoDComponent() {
-        return twoDComponent;
     }
 
     public void applyMat(Matrix4fc right) {
@@ -89,6 +92,30 @@ public class MttComponent implements IMttComponentForVkMttComponent {
         mat = new Matrix4f().identity();
     }
 
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return visible;
+    }
+
+    @Override
+    public int getDrawOrder() {
+        return drawOrder;
+    }
+
+    public void setDrawOrder(int drawOrder) {
+        this.drawOrder = drawOrder;
+    }
+
+    @Override
+    public boolean isTwoDComponent() {
+        return twoDComponent;
+    }
+
+    @Override
     public boolean shouldCastShadow() {
         return castShadow;
     }

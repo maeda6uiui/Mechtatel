@@ -21,9 +21,17 @@ import java.nio.file.Paths;
 public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
     private VkMttTexturedQuadSingleTextureSet vkTexturedQuadSet;
 
+    private static MttComponentCreateInfo generateCreateInfo() {
+        return new MttComponentCreateInfo()
+                .setVisible(true)
+                .setTwoDComponent(true)
+                .setCastShadow(false)
+                .setDrawOrder(0);
+    }
+
     public MttTexturedQuad2DSingleTextureSet(
             MttVulkanImpl vulkanImpl, String screenName, URI textureResource) throws FileNotFoundException {
-        super(vulkanImpl);
+        super(vulkanImpl, generateCreateInfo());
 
         if (!Files.exists(Paths.get(textureResource))) {
             throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
@@ -37,7 +45,7 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
             MttVulkanImpl vulkanImpl,
             String screenName,
             MttTexture texture) {
-        super(vulkanImpl);
+        super(vulkanImpl, generateCreateInfo());
 
         vkTexturedQuadSet = vulkanImpl.createTexturedQuadSingleTextureSet(screenName, texture.getVulkanTexture());
         this.associateVulkanComponent(vkTexturedQuadSet);

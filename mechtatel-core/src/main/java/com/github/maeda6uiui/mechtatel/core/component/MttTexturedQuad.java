@@ -18,6 +18,14 @@ import java.util.Arrays;
 public class MttTexturedQuad extends MttComponent {
     private VkMttTexturedQuad vkTexturedQuad;
 
+    private static MttComponentCreateInfo generateCreateInfo() {
+        return new MttComponentCreateInfo()
+                .setVisible(true)
+                .setTwoDComponent(false)
+                .setCastShadow(true)
+                .setDrawOrder(0);
+    }
+
     public MttTexturedQuad(
             MttVulkanImpl vulkanImpl,
             String screenName,
@@ -27,7 +35,7 @@ public class MttTexturedQuad extends MttComponent {
             MttVertexUV v2,
             MttVertexUV v3,
             MttVertexUV v4) throws FileNotFoundException {
-        super(vulkanImpl);
+        super(vulkanImpl, generateCreateInfo());
 
         if (!Files.exists(Paths.get(textureResource))) {
             throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
@@ -49,7 +57,7 @@ public class MttTexturedQuad extends MttComponent {
             MttVertexUV v2,
             MttVertexUV v3,
             MttVertexUV v4) {
-        super(vulkanImpl);
+        super(vulkanImpl, generateCreateInfo());
 
         vkTexturedQuad = vulkanImpl.createTexturedQuad(
                 screenName,
@@ -65,7 +73,7 @@ public class MttTexturedQuad extends MttComponent {
             MttVertexUV v2,
             MttVertexUV v3,
             MttVertexUV v4) {
-        super(vulkanImpl);
+        super(vulkanImpl, generateCreateInfo());
 
         vkTexturedQuad = vulkanImpl.duplicateTexturedQuad(
                 srcQuad.vkTexturedQuad,

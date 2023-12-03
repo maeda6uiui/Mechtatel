@@ -53,10 +53,10 @@ public class MttScreen {
         public List<String> ppNaborNames;
 
         public MttScreenCreateInfo() {
-            depthImageWidth = 1024;
-            depthImageHeight = 1024;
-            screenWidth = 1280;
-            screenHeight = 720;
+            depthImageWidth = 2048;
+            depthImageHeight = 2048;
+            screenWidth = -1;
+            screenHeight = -1;
             samplerFilter = SamplerFilterMode.NEAREST;
             samplerMipmapMode = SamplerMipmapMode.NEAREST;
             samplerAddressMode = SamplerAddressMode.REPEAT;

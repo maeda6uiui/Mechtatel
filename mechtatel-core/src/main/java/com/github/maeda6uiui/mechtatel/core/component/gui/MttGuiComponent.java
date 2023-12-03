@@ -45,6 +45,8 @@ public class MttGuiComponent extends MttComponent {
 
         callbacks = new MttGuiComponentCallbacks();
         cursorOn = false;
+
+        screen.addGuiComponents(this);
     }
 
     public void setCallbacks(MttGuiComponentCallbacks callbacks) {

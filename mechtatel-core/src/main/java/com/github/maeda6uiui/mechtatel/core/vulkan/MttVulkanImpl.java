@@ -40,7 +40,7 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class MttVulkanImpl implements IMttVulkanImplForScreen {
+public class MttVulkanImpl {
     private long surface;
     private VkPhysicalDevice physicalDevice;
 
@@ -259,7 +259,6 @@ public class MttVulkanImpl implements IMttVulkanImplForScreen {
         }
     }
 
-    @Override
     public void draw(
             VkMttScreen screen,
             Vector4f backgroundColor,
@@ -306,12 +305,10 @@ public class MttVulkanImpl implements IMttVulkanImplForScreen {
         return depthImageAspect;
     }
 
-    @Override
     public VkExtent2D getSwapchainExtent() {
         return swapchain.getSwapchainExtent();
     }
 
-    @Override
     public int getSwapchainImageFormat() {
         return swapchain.getSwapchainImageFormat();
     }

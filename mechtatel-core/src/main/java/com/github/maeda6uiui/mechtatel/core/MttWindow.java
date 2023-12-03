@@ -2,8 +2,7 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.animation.AnimationInfo;
 import com.github.maeda6uiui.mechtatel.core.animation.MttAnimation;
-import com.github.maeda6uiui.mechtatel.core.component.*;
-import com.github.maeda6uiui.mechtatel.core.component.gui.*;
+import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
@@ -11,13 +10,9 @@ import com.github.maeda6uiui.mechtatel.core.sound.MttSound;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import jakarta.validation.constraints.NotNull;
-import org.joml.Vector2fc;
-import org.joml.Vector3fc;
-import org.joml.Vector4fc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -55,7 +50,6 @@ public class MttWindow {
 
     private MttScreen defaultScreen;
     private List<MttScreen> screens;
-    private List<MttGuiComponent> guiComponents;
     private List<TextureOperation> textureOperations;
     private Map<String, MttAnimation> animations;
 
@@ -130,7 +124,6 @@ public class MttWindow {
         screens = new ArrayList<>();
         screens.add(defaultScreen);
 
-        guiComponents = new ArrayList<>();
         textureOperations = new ArrayList<>();
         animations = new HashMap<>();
 
@@ -159,17 +152,18 @@ public class MttWindow {
         }
 
         Map<String, Integer> keyboardPressingCounts = keyboard.getPressingCounts();
-        guiComponents.forEach(guiComponent -> {
-            guiComponent.update(
-                    this.getCursorPosX(),
-                    this.getCursorPosY(),
-                    this.getWidth(),
-                    this.getHeight(),
-                    this.getMousePressingCount("BUTTON_LEFT"),
-                    this.getMousePressingCount("BUTTON_MIDDLE"),
-                    this.getMousePressingCount("BUTTON_RIGHT"),
-                    keyboardPressingCounts
-            );
+        screens.forEach(screen -> {
+            screen.getGuiComponents().forEach(c -> {
+                c.update(
+                        this.getCursorPosX(),
+                        this.getCursorPosY(),
+                        this.getWidth(),
+                        this.getHeight(),
+                        this.getMousePressingCount("BUTTON_LEFT"),
+                        this.getMousePressingCount("BUTTON_MIDDLE"),
+                        this.getMousePressingCount("BUTTON_RIGHT"),
+                        keyboardPressingCounts);
+            });
         });
 
         animations.values().forEach(MttAnimation::update);
@@ -356,215 +350,6 @@ public class MttWindow {
     public void deleteAllTextureOperations() {
         textureOperations.forEach(TextureOperation::cleanup);
         textureOperations.clear();
-    }
-
-    public MttModel createModel(MttScreen screen, @NotNull URL modelResource) throws URISyntaxException, IOException {
-        return new MttModel(vulkanImpl, screen, modelResource.toURI());
-    }
-
-    public MttModel duplicateModel(MttModel srcModel) {
-        return new MttModel(vulkanImpl, srcModel);
-    }
-
-    public MttLine createLine(MttVertex v1, MttVertex v2) {
-        return new MttLine(vulkanImpl, v1, v2);
-    }
-
-    public MttLineSet createLineSet() {
-        return new MttLineSet(vulkanImpl);
-    }
-
-    public MttSphere createSphere(Vector3fc center, float radius, int numVDivs, int numHDivs, Vector4fc color) {
-        return new MttSphere(vulkanImpl, center, radius, numVDivs, numHDivs, color);
-    }
-
-    public MttCapsule createCapsule(Vector3fc center, float length, float radius, int numVDivs, int numHDivs, Vector4fc color) {
-        return new MttCapsule(vulkanImpl, center, length, radius, numVDivs, numHDivs, color);
-    }
-
-    public MttLine2D createLine2D(MttVertex2D p1, MttVertex2D p2, float z) {
-        return new MttLine2D(vulkanImpl, p1, p2, z);
-    }
-
-    public MttLine2DSet createLine2DSet() {
-        return new MttLine2DSet(vulkanImpl);
-    }
-
-    public MttQuad createQuad(MttVertex v1, MttVertex v2, MttVertex v3, MttVertex v4, boolean fill) {
-        return new MttQuad(vulkanImpl, v1, v2, v3, v4, fill);
-    }
-
-    public MttQuad createQuad(Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, boolean fill, Vector4fc color) {
-        return new MttQuad(vulkanImpl, p1, p2, p3, p4, fill, color);
-    }
-
-    public MttQuad2D createQuad2D(
-            MttVertex2D v1, MttVertex2D v2, MttVertex2D v3, MttVertex2D v4, float z, boolean fill) {
-        return new MttQuad2D(vulkanImpl, v1, v2, v3, v4, z, fill);
-    }
-
-    public MttQuad2D createQuad2D(
-            Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4, float z, boolean fill, Vector4fc color) {
-        return new MttQuad2D(vulkanImpl, p1, p2, p3, p4, z, fill, color);
-    }
-
-    public MttQuad2D createQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, boolean fill, Vector4fc color) {
-        return new MttQuad2D(vulkanImpl, topLeft, bottomRight, z, fill, color);
-    }
-
-    public MttTexturedQuad createTexturedQuad(
-            MttScreen screen,
-            @NotNull URL textureResource,
-            boolean generateMipmaps,
-            MttVertexUV v1,
-            MttVertexUV v2,
-            MttVertexUV v3,
-            MttVertexUV v4) throws URISyntaxException, FileNotFoundException {
-        return new MttTexturedQuad(
-                vulkanImpl,
-                screen,
-                textureResource.toURI(),
-                generateMipmaps,
-                v1, v2, v3, v4
-        );
-    }
-
-    public MttTexturedQuad createTexturedQuad(
-            MttTexture texture,
-            MttVertexUV v1, MttVertexUV v2, MttVertexUV v3, MttVertexUV v4) {
-        return new MttTexturedQuad(
-                vulkanImpl, texture, v1, v2, v3, v4
-        );
-    }
-
-    public MttTexturedQuad duplicateTexturedQuad(
-            MttTexturedQuad srcQuad,
-            MttVertexUV v1, MttVertexUV v2, MttVertexUV v3, MttVertexUV v4) {
-        return new MttTexturedQuad(
-                vulkanImpl, srcQuad, v1, v2, v3, v4
-        );
-    }
-
-    public MttTexturedQuad2D createTexturedQuad2D(
-            MttScreen screen, @NotNull URL textureResource,
-            MttVertex2DUV v1, MttVertex2DUV v2, MttVertex2DUV v3, MttVertex2DUV v4, float z)
-            throws URISyntaxException, FileNotFoundException {
-        return new MttTexturedQuad2D(
-                vulkanImpl, screen, textureResource.toURI(), v1, v2, v3, v4, z);
-    }
-
-    public MttTexturedQuad2D createTexturedQuad2D(
-            MttScreen screen, @NotNull URL textureResource,
-            Vector2fc topLeft, Vector2fc bottomRight, float z) throws URISyntaxException, FileNotFoundException {
-        return new MttTexturedQuad2D(
-                vulkanImpl, screen, textureResource.toURI(), topLeft, bottomRight, z);
-    }
-
-    public MttTexturedQuad2D createTexturedQuad2D(
-            MttTexture texture,
-            MttVertex2DUV v1, MttVertex2DUV v2, MttVertex2DUV v3, MttVertex2DUV v4, float z) {
-        return new MttTexturedQuad2D(vulkanImpl, texture, v1, v2, v3, v4, z);
-    }
-
-    public MttTexturedQuad2D createTexturedQuad2D(
-            MttTexture texture,
-            Vector2fc topLeft, Vector2fc bottomRight, float z) {
-        return new MttTexturedQuad2D(vulkanImpl, texture, topLeft, bottomRight, z);
-    }
-
-    public MttTexturedQuad2D duplicateTexturedQuad2D(
-            MttTexturedQuad2D srcQuad,
-            MttVertex2DUV v1, MttVertex2DUV v2, MttVertex2DUV v3, MttVertex2DUV v4, float z) {
-        return new MttTexturedQuad2D(vulkanImpl, srcQuad, v1, v2, v3, v4, z);
-    }
-
-    public MttTexturedQuad2D duplicateTexturedQuad2D(
-            MttTexturedQuad2D srcQuad, Vector2fc topLeft, Vector2fc bottomRight, float z) {
-        return new MttTexturedQuad2D(vulkanImpl, srcQuad, topLeft, bottomRight, z);
-    }
-
-    public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(
-            MttScreen screen, @NotNull URL textureResource) throws URISyntaxException, FileNotFoundException {
-        return new MttTexturedQuad2DSingleTextureSet(
-                vulkanImpl, screen, textureResource.toURI());
-    }
-
-    public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(MttTexture texture) {
-        return new MttTexturedQuad2DSingleTextureSet(vulkanImpl, texture);
-    }
-
-    public MttBox createBox(float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
-        return new MttBox(vulkanImpl, xHalfExtent, yHalfExtent, zHalfExtent, color);
-    }
-
-    public MttBox createBox(float halfExtent, Vector4fc color) {
-        return this.createBox(halfExtent, halfExtent, halfExtent, color);
-    }
-
-    public MttFont createFont(
-            MttScreen screen, Font font, boolean antiAlias, Color fontColor, String requiredChars) {
-        return new MttFont(vulkanImpl, screen, font, antiAlias, fontColor, requiredChars);
-    }
-
-    public MttButton createButton(MttScreen screen, MttButton.MttButtonCreateInfo createInfo) {
-        var mttButton = new MttButton(vulkanImpl, screen, createInfo);
-        guiComponents.add(mttButton);
-
-        return mttButton;
-    }
-
-    public MttCheckBox createCheckBox(MttScreen screen, MttCheckBox.MttCheckBoxCreateInfo createInfo) {
-        var mttCheckbox = new MttCheckBox(vulkanImpl, screen, createInfo);
-        guiComponents.add(mttCheckbox);
-
-        return mttCheckbox;
-    }
-
-    public MttVerticalScrollBar createVerticalScrollBar(MttVerticalScrollBar.MttVerticalScrollBarCreateInfo createInfo) {
-        var mttScrollbar = new MttVerticalScrollBar(vulkanImpl, createInfo);
-        guiComponents.add(mttScrollbar);
-
-        return mttScrollbar;
-    }
-
-    public MttHorizontalScrollBar createHorizontalScrollBar(
-            MttHorizontalScrollBar.MttHorizontalScrollBarCreateInfo createInfo) {
-        var mttScrollbar = new MttHorizontalScrollBar(vulkanImpl, createInfo);
-        guiComponents.add(mttScrollbar);
-
-        return mttScrollbar;
-    }
-
-    public MttListBox createListBox(MttScreen screen, MttListBox.MttListBoxCreateInfo createInfo) {
-        var mttListbox = new MttListBox(vulkanImpl, screen, createInfo);
-        guiComponents.add(mttListbox);
-
-        return mttListbox;
-    }
-
-    public MttLabel createLabel(MttScreen screen, MttLabel.MttLabelCreateInfo createInfo) {
-        var mttLabel = new MttLabel(vulkanImpl, screen, createInfo);
-        guiComponents.add(mttLabel);
-
-        return mttLabel;
-    }
-
-    public MttTextField createTextField(MttScreen screen, MttTextField.MttTextFieldCreateInfo createInfo) {
-        var mttTextbox = new MttTextField(vulkanImpl, screen, createInfo);
-        guiComponents.add(mttTextbox);
-
-        return mttTextbox;
-    }
-
-    public MttTextArea createTextArea(MttScreen screen, MttTextArea.MttTextAreaCreateInfo createInfo) {
-        var mttTextarea = new MttTextArea(vulkanImpl, screen, createInfo);
-        guiComponents.add(mttTextarea);
-
-        return mttTextarea;
-    }
-
-    public boolean removeGuiComponent(MttGuiComponent guiComponent) {
-        return guiComponents.remove(guiComponent);
     }
 
     public MttSound createSound(@NotNull URL soundResource, boolean loop, boolean relative) throws URISyntaxException, IOException {

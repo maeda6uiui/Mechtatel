@@ -59,6 +59,8 @@ public class ScrollbarTest extends Mechtatel {
 
     @Override
     public void update(MttWindow window) {
-        window.present(window.getDefaultScreen());
+        MttScreen defaultScreen = window.getDefaultScreen();
+        defaultScreen.draw();
+        window.present(defaultScreen);
     }
 }

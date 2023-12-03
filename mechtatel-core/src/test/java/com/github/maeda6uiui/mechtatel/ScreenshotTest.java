@@ -90,6 +90,7 @@ public class ScreenshotTest extends Mechtatel {
                 window.getKeyboardPressingCount("RIGHT")
         );
 
+        mainScreen.draw();
         window.present(mainScreen);
 
         if (window.getKeyboardPressingCount("ENTER") == 1) {

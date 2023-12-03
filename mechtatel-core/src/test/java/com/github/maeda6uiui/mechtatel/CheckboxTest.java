@@ -69,6 +69,7 @@ public class CheckboxTest extends Mechtatel {
                         .setCheckboxColor(Color.GREEN)
         );
 
+        defaultScreen.draw();
         window.present(defaultScreen);
     }
 }

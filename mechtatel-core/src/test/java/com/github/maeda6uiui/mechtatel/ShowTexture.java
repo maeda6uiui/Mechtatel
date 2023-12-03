@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector2f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,8 @@ public class ShowTexture extends Mechtatel {
 
     @Override
     public void update(MttWindow window) {
-        window.present(window.getDefaultScreen());
+        MttScreen defaultScreen = window.getDefaultScreen();
+        defaultScreen.draw();
+        window.present(defaultScreen);
     }
 }

@@ -87,6 +87,7 @@ public class CameraModeTest extends Mechtatel {
             defaultScreen.getCamera().setCameraMode(CameraMode.PERSPECTIVE);
         }
 
+        defaultScreen.draw();
         window.present(defaultScreen);
     }
 }

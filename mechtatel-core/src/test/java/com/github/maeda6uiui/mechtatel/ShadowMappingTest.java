@@ -138,6 +138,7 @@ public class ShadowMappingTest extends Mechtatel {
             cube.setMat(mat);
         }
 
+        mainScreen.draw();
         window.present(mainScreen);
     }
 }

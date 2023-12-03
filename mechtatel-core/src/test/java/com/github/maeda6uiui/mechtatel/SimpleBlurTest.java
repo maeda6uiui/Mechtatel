@@ -77,6 +77,7 @@ public class SimpleBlurTest extends Mechtatel {
                 window.getKeyboardPressingCount("RIGHT")
         );
 
+        mainScreen.draw();
         window.present(mainScreen);
     }
 }

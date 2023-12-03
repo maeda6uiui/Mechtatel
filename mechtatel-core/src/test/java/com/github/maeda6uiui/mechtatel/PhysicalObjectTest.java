@@ -143,6 +143,7 @@ public class PhysicalObjectTest extends Mechtatel {
         }
         physicalObjects.forEach(PhysicalObject::syncComponents);
 
+        mainScreen.draw();
         window.present(mainScreen);
 
         if (window.getKeyboardPressingCount("F1") == 1) {

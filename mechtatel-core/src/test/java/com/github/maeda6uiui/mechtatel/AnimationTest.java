@@ -88,6 +88,8 @@ public class AnimationTest extends Mechtatel {
             animation.stopAllAnimations();
         }
 
-        window.present(window.getDefaultScreen());
+        MttScreen defaultScreen = window.getDefaultScreen();
+        defaultScreen.draw();
+        window.present(defaultScreen);
     }
 }

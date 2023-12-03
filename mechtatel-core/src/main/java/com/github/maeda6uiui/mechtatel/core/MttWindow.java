@@ -53,6 +53,7 @@ public class MttWindow {
     private boolean mustRecreate;
     private boolean validWindow;
 
+    private MttScreen defaultScreen;
     private List<MttScreen> screens;
     private List<MttGuiComponent> guiComponents;
     private Map<String, MttAnimation> animations;
@@ -124,19 +125,7 @@ public class MttWindow {
         glfwSetMouseButtonCallback(handle, this::mouseButtonCallback);
         glfwSetCursorPosCallback(handle, this::cursorPositionCallback);
 
-        MttScreen defaultScreen = new MttScreen(
-                vulkanImpl,
-                new MttScreen.MttScreenCreateInfo()
-                        .setDepthImageWidth(2048)
-                        .setDepthImageHeight(2048)
-                        .setScreenWidth(-1)
-                        .setScreenHeight(-1)
-                        .setSamplerFilter(SamplerFilterMode.NEAREST)
-                        .setSamplerMipmapMode(SamplerMipmapMode.NEAREST)
-                        .setSamplerAddressMode(SamplerAddressMode.REPEAT)
-                        .setShouldChangeExtentOnRecreate(true)
-                        .setUseShadowMapping(false)
-        );
+        defaultScreen = new MttScreen(vulkanImpl, new MttScreen.MttScreenCreateInfo());
         screens = new ArrayList<>();
         screens.add(defaultScreen);
 
@@ -214,10 +203,8 @@ public class MttWindow {
     public void cleanup() {
         mtt.dispose(this);
 
-        guiComponents.forEach(MttComponent::cleanup);
         screens.forEach(MttScreen::cleanup);
         vulkanImpl.cleanup();
-
         sounds3D.forEach(MttSound::cleanup);
 
         glfwFreeCallbacks(handle);
@@ -302,6 +289,26 @@ public class MttWindow {
 
     public boolean isValidWindow() {
         return validWindow;
+    }
+
+    public MttScreen getDefaultScreen() {
+        return defaultScreen;
+    }
+
+    public MttScreen createScreen(MttScreen.MttScreenCreateInfo createInfo) {
+        MttScreen screen = new MttScreen(vulkanImpl, createInfo);
+        screens.add(screen);
+
+        return screen;
+    }
+
+    public boolean removeScreen(MttScreen screen) {
+        if (screen == defaultScreen) {
+            logger.warn("You cannot remove default screen");
+            return false;
+        }
+
+        return screens.remove(screen);
     }
 
     public MttModel createModel(MttScreen screen, @NotNull URL modelResource) throws URISyntaxException, IOException {

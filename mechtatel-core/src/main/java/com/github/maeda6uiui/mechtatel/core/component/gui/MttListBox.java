@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -26,7 +26,7 @@ public class MttListBox extends MttGuiComponent {
 
         public MttListBoxItem(
                 MttVulkanImpl vulkanImpl,
-                MttScreen screen,
+                IMttScreenForMttComponent screen,
                 float x,
                 float y,
                 float width,
@@ -40,7 +40,7 @@ public class MttListBox extends MttGuiComponent {
                 int selectedFontStyle,
                 int selectedFontSize,
                 Color selectedFontColor) {
-            super(x, y, width, height);
+            super(screen, x, y, width, height);
 
             nonSelectedFont = new MttFont(
                     vulkanImpl,
@@ -223,11 +223,12 @@ public class MttListBox extends MttGuiComponent {
     private int numDisplayedItems;
     private float scrollAmountPerItem;
 
-    public MttListBox(MttVulkanImpl vulkanImpl, MttScreen screen, MttListBoxCreateInfo createInfo) {
-        super(createInfo.x, createInfo.y, createInfo.width, createInfo.height);
+    public MttListBox(MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen, MttListBoxCreateInfo createInfo) {
+        super(screen, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         frame = new MttQuad2D(
                 vulkanImpl,
+                screen,
                 new Vector2f(createInfo.x, createInfo.y),
                 new Vector2f(createInfo.x + createInfo.width, createInfo.y + createInfo.height),
                 0.0f,

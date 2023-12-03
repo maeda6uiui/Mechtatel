@@ -1,6 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttComponent;
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.util.UniversalCounter;
 
 import java.util.Map;
@@ -31,8 +32,8 @@ public class MttGuiComponent extends MttComponent {
                 .setDrawOrder(0);
     }
 
-    public MttGuiComponent(float x, float y, float width, float height) {
-        super(generateCreateInfo());
+    public MttGuiComponent(IMttScreenForMttComponent screen, float x, float y, float width, float height) {
+        super(screen, generateCreateInfo());
 
         guiComponentID = UniversalCounter.get();
         focusedGUIComponentID = guiComponentID;

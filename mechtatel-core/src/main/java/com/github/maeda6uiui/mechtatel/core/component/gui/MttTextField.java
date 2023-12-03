@@ -5,7 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.component.MttLine2D;
 import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
 import com.github.maeda6uiui.mechtatel.core.component.MttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.KeyInterpreter;
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Matrix4f;
@@ -160,11 +160,12 @@ public class MttTextField extends MttGuiComponent {
 
     private boolean visible;
 
-    public MttTextField(MttVulkanImpl vulkanImpl, MttScreen screen, MttTextFieldCreateInfo createInfo) {
-        super(createInfo.x, createInfo.y, createInfo.width, createInfo.height);
+    public MttTextField(MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen, MttTextFieldCreateInfo createInfo) {
+        super(screen, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         frame = new MttQuad2D(
                 vulkanImpl,
+                screen,
                 new Vector2f(createInfo.x, createInfo.y),
                 new Vector2f(createInfo.x + createInfo.width, createInfo.y + createInfo.height),
                 0.0f,
@@ -174,6 +175,7 @@ public class MttTextField extends MttGuiComponent {
 
         caret = new MttLine2D(
                 vulkanImpl,
+                screen,
                 new MttVertex2D(
                         new Vector2f(createInfo.x + createInfo.caretMarginX, createInfo.y + createInfo.caretMarginY),
                         convertJavaColorToJOMLVector4f(createInfo.caretColor)

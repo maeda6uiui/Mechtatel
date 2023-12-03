@@ -1,6 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -69,11 +70,13 @@ public class MttVerticalScrollBar extends MttGuiComponent {
     private float prevFCursorY;
     private boolean grabbed;
 
-    public MttVerticalScrollBar(MttVulkanImpl vulkanImpl, MttVerticalScrollBarCreateInfo createInfo) {
-        super(createInfo.x, createInfo.y, createInfo.width, createInfo.height);
+    public MttVerticalScrollBar(
+            MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen, MttVerticalScrollBarCreateInfo createInfo) {
+        super(screen, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         frame = new MttQuad2D(
                 vulkanImpl,
+                screen,
                 new Vector2f(createInfo.x, createInfo.y),
                 new Vector2f(createInfo.x + createInfo.width, createInfo.y + createInfo.height),
                 0.0f,
@@ -82,6 +85,7 @@ public class MttVerticalScrollBar extends MttGuiComponent {
         );
         grabFrame = new MttQuad2D(
                 vulkanImpl,
+                screen,
                 new Vector2f(createInfo.x, createInfo.y),
                 new Vector2f(createInfo.x + createInfo.width, createInfo.y + createInfo.grabHeight),
                 0.01f,

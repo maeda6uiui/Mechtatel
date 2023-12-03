@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.component.gui;
 import com.github.maeda6uiui.mechtatel.core.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.component.MttLine2DSet;
 import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Vector2f;
 
@@ -126,8 +126,8 @@ public class MttCheckBox extends MttGuiComponent {
 
     private boolean selected;
 
-    public MttCheckBox(MttVulkanImpl vulkanImpl, MttScreen screen, MttCheckBoxCreateInfo createInfo) {
-        super(createInfo.x, createInfo.y, createInfo.width, createInfo.height);
+    public MttCheckBox(MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen, MttCheckBoxCreateInfo createInfo) {
+        super(screen, createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         checkboxTopLeft = new Vector2f(createInfo.boxX, createInfo.boxY);
         checkboxBottomRight = new Vector2f(
@@ -135,13 +135,14 @@ public class MttCheckBox extends MttGuiComponent {
 
         checkboxFrame = new MttQuad2D(
                 vulkanImpl,
+                screen,
                 checkboxTopLeft,
                 checkboxBottomRight,
                 0.0f,
                 false,
                 convertJavaColorToJOMLVector4f(createInfo.checkboxColor)
         );
-        checkboxCross = new MttLine2DSet(vulkanImpl);
+        checkboxCross = new MttLine2DSet(vulkanImpl, screen);
         checkboxCross.add(
                 checkboxTopLeft,
                 checkboxBottomRight,

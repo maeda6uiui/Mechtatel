@@ -1,9 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.screen;
 
-import com.github.maeda6uiui.mechtatel.core.PixelFormat;
-import com.github.maeda6uiui.mechtatel.core.SamplerAddressMode;
-import com.github.maeda6uiui.mechtatel.core.SamplerFilterMode;
-import com.github.maeda6uiui.mechtatel.core.SamplerMipmapMode;
+import com.github.maeda6uiui.mechtatel.core.*;
 import com.github.maeda6uiui.mechtatel.core.animation.AnimationInfo;
 import com.github.maeda6uiui.mechtatel.core.animation.MttAnimation;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
@@ -146,6 +143,8 @@ public class MttScreen implements IMttScreenForMttComponent {
 
     private List<MttComponent> components;
     private List<MttGuiComponent> guiComponents;
+    private List<TextureOperation> textureOperations;
+
     private Map<String, MttAnimation> animations;
 
     public MttScreen(MttVulkanImpl vulkanImpl, MttScreenCreateInfo createInfo) {
@@ -193,11 +192,13 @@ public class MttScreen implements IMttScreenForMttComponent {
 
         components = new ArrayList<>();
         guiComponents = new ArrayList<>();
+        textureOperations = new ArrayList<>();
         animations = new HashMap<>();
     }
 
     public void cleanup() {
         components.forEach(MttComponent::cleanup);
+        textureOperations.forEach(TextureOperation::cleanup);
         screen.cleanup();
     }
 
@@ -455,6 +456,38 @@ public class MttScreen implements IMttScreenForMttComponent {
     public MttTexture createTexture(@NotNull URL textureResource, boolean generateMipmaps)
             throws URISyntaxException, FileNotFoundException {
         return new MttTexture(vulkanImpl, this, textureResource.toURI(), generateMipmaps);
+    }
+
+    public TextureOperation createTextureOperation(
+            MttTexture firstColorTexture,
+            MttTexture firstDepthTexture,
+            MttTexture secondColorTexture,
+            MttTexture secondDepthTexture) {
+        var textureOperation = new TextureOperation(
+                vulkanImpl,
+                firstColorTexture,
+                firstDepthTexture,
+                secondColorTexture,
+                secondDepthTexture,
+                this
+        );
+        textureOperations.add(textureOperation);
+
+        return textureOperation;
+    }
+
+    public boolean deleteTextureOperation(TextureOperation textureOperation) {
+        if (!textureOperations.contains(textureOperation)) {
+            return false;
+        }
+
+        textureOperation.cleanup();
+        return textureOperations.remove(textureOperation);
+    }
+
+    public void deleteAllTextureOperations() {
+        textureOperations.forEach(TextureOperation::cleanup);
+        textureOperations.clear();
     }
 
     //Animation ==========

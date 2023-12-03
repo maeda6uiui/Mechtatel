@@ -5,7 +5,6 @@ import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.sound.MttSound;
-import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -46,7 +45,6 @@ public class MttWindow {
 
     private MttScreen defaultScreen;
     private List<MttScreen> screens;
-    private List<TextureOperation> textureOperations;
 
     private List<MttSound> sounds3D;
 
@@ -118,8 +116,6 @@ public class MttWindow {
         defaultScreen = new MttScreen(vulkanImpl, new MttScreen.MttScreenCreateInfo());
         screens = new ArrayList<>();
         screens.add(defaultScreen);
-
-        textureOperations = new ArrayList<>();
 
         sounds3D = new ArrayList<>();
 
@@ -194,7 +190,6 @@ public class MttWindow {
         mtt.dispose(this);
 
         screens.forEach(MttScreen::cleanup);
-        textureOperations.forEach(TextureOperation::cleanup);
         vulkanImpl.cleanup();
         sounds3D.forEach(MttSound::cleanup);
 
@@ -310,39 +305,6 @@ public class MttWindow {
                 .forEach(MttScreen::cleanup);
         screens.clear();
         screens.add(defaultScreen);
-    }
-
-    public TextureOperation createTextureOperation(
-            MttTexture firstColorTexture,
-            MttTexture firstDepthTexture,
-            MttTexture secondColorTexture,
-            MttTexture secondDepthTexture,
-            MttScreen dstScreen) {
-        var textureOperation = new TextureOperation(
-                vulkanImpl,
-                firstColorTexture,
-                firstDepthTexture,
-                secondColorTexture,
-                secondDepthTexture,
-                dstScreen
-        );
-        textureOperations.add(textureOperation);
-
-        return textureOperation;
-    }
-
-    public boolean deleteTextureOperation(TextureOperation textureOperation) {
-        if (!textureOperations.contains(textureOperation)) {
-            return false;
-        }
-
-        textureOperation.cleanup();
-        return textureOperations.remove(textureOperation);
-    }
-
-    public void deleteAllTextureOperations() {
-        textureOperations.forEach(TextureOperation::cleanup);
-        textureOperations.clear();
     }
 
     public MttSound createSound(@NotNull URL soundResource, boolean loop, boolean relative) throws URISyntaxException, IOException {

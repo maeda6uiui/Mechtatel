@@ -104,7 +104,7 @@ public class MttAnimation {
     }
 
     public void cleanup() {
-        models.forEach((k, v) -> v.cleanup());
+        models.values().forEach(MttModel::cleanup);
     }
 
     public void startAnimation(String animationName) {

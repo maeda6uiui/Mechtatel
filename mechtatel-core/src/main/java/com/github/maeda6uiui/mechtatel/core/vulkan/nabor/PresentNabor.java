@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttVertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2DUV;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 

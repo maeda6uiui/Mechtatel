@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttVertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass2InfoUBO;

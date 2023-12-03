@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.screen.component;
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttFont;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttFont;
 import org.joml.Vector2fc;
 
 import java.awt.*;

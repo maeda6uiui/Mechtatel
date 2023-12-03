@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan.component;
+package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;

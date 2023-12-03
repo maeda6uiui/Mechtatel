@@ -4,7 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttModel;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttModel;
 
 import java.io.IOException;
 import java.net.URI;

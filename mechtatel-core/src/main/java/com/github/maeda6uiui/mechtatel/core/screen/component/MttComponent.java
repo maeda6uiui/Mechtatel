@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3fc;

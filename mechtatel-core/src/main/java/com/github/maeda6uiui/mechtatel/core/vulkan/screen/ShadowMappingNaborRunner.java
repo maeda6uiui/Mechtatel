@@ -6,7 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.shadow.Pass1Info;
 import com.github.maeda6uiui.mechtatel.core.shadow.Pass2Info;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowInfo;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
-import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNabor;

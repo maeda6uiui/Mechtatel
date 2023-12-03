@@ -1,31 +1,41 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan.component;
+package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
+import com.github.maeda6uiui.mechtatel.core.util.VertexUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
+import org.joml.Vector3fc;
+import org.joml.Vector4fc;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkQueue;
 
 import java.nio.LongBuffer;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Line
+ * Sphere
  *
  * @author maeda6uiui
  */
-public class VkMttLine extends VkMttComponent {
+public class VkMttSphere extends VkMttComponent {
     private VkDevice device;
 
     private long vertexBuffer;
     private long vertexBufferMemory;
+    private long indexBuffer;
+    private long indexBufferMemory;
 
-    private void createBuffer(long commandPool, VkQueue graphicsQueue, List<MttVertex> vertices) {
+    private int numIndices;
+
+    private void createBuffers(
+            long commandPool,
+            VkQueue graphicsQueue,
+            List<MttVertex> vertices,
+            List<Integer> indices) {
         BufferCreator.BufferInfo bufferInfo = BufferCreator.createVertexBuffer3D(
                 device,
                 commandPool,
@@ -33,30 +43,45 @@ public class VkMttLine extends VkMttComponent {
                 vertices);
         vertexBuffer = bufferInfo.buffer;
         vertexBufferMemory = bufferInfo.bufferMemory;
+
+        bufferInfo = BufferCreator.createIndexBuffer(
+                device,
+                commandPool,
+                graphicsQueue,
+                indices);
+        indexBuffer = bufferInfo.buffer;
+        indexBufferMemory = bufferInfo.bufferMemory;
     }
 
-    public VkMttLine(
+    public VkMttSphere(
             IMttComponentForVkMttComponent mttComponent,
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            MttVertex v1,
-            MttVertex v2) {
+            Vector3fc center,
+            float radius,
+            int numVDivs,
+            int numHDivs,
+            Vector4fc color) {
         super(mttComponent, null, "primitive");
 
         this.device = device;
 
-        var vertices = new ArrayList<MttVertex>();
-        vertices.add(v1);
-        vertices.add(v2);
+        List<MttVertex> vertices = VertexUtils.createSphereVertices(center, radius, numVDivs, numHDivs, color);
+        List<Integer> indices = VertexUtils.createSphereIndices(numVDivs, numHDivs);
 
-        this.createBuffer(commandPool, graphicsQueue, vertices);
+        numIndices = indices.size();
+
+        this.createBuffers(commandPool, graphicsQueue, vertices, indices);
     }
 
     @Override
     public void cleanup() {
         vkDestroyBuffer(device, vertexBuffer, null);
         vkFreeMemory(device, vertexBufferMemory, null);
+
+        vkDestroyBuffer(device, indexBuffer, null);
+        vkFreeMemory(device, indexBufferMemory, null);
     }
 
     @Override
@@ -70,10 +95,13 @@ public class VkMttLine extends VkMttComponent {
             LongBuffer offsets = stack.longs(0);
             vkCmdBindVertexBuffers(commandBuffer, 0, lVertexBuffers, offsets);
 
-            vkCmdDraw(
+            vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+
+            vkCmdDrawIndexed(
                     commandBuffer,
-                    2,
+                    numIndices,
                     1,
+                    0,
                     0,
                     0);
         }

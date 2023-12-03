@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core;
 
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 
@@ -23,8 +24,7 @@ public class SkyboxTextureCreator {
     private MttTexture texPz;
 
     public SkyboxTextureCreator(
-            IMttWindowForSkyboxTextureCreator window,
-            String screenName,
+            MttScreen screen,
             URL textureDirUrl,
             String textureExtension,
             boolean generateMipmaps) throws URISyntaxException, IOException {
@@ -36,12 +36,12 @@ public class SkyboxTextureCreator {
         URL texPyResource = textureDir.resolve(String.format("py.%s", textureExtension)).toUri().toURL();
         URL texPzResource = textureDir.resolve(String.format("pz.%s", textureExtension)).toUri().toURL();
 
-        texNx = window.createTexture(screenName, texNxResource, generateMipmaps);
-        texNy = window.createTexture(screenName, texNyResource, generateMipmaps);
-        texNz = window.createTexture(screenName, texNzResource, generateMipmaps);
-        texPx = window.createTexture(screenName, texPxResource, generateMipmaps);
-        texPy = window.createTexture(screenName, texPyResource, generateMipmaps);
-        texPz = window.createTexture(screenName, texPzResource, generateMipmaps);
+        texNx = screen.createTexture(texNxResource, generateMipmaps);
+        texNy = screen.createTexture(texNyResource, generateMipmaps);
+        texNz = screen.createTexture(texNzResource, generateMipmaps);
+        texPx = screen.createTexture(texPxResource, generateMipmaps);
+        texPy = screen.createTexture(texPyResource, generateMipmaps);
+        texPz = screen.createTexture(texPzResource, generateMipmaps);
     }
 
     public void apply(MttModel model) {

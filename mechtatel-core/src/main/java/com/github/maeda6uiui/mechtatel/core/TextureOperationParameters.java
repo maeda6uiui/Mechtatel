@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.texture;
+package com.github.maeda6uiui.mechtatel.core;
 
 import org.joml.Vector4f;
 

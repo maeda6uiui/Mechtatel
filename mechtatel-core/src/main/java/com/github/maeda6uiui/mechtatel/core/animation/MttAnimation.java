@@ -1,8 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.animation;
 
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttComponentSet;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -72,13 +72,16 @@ public class MttAnimation {
     }
 
     public MttAnimation(
-            MttVulkanImpl vulkanImpl, AnimationInfo animationInfo, Map<String, MttModel> srcModels) {
+            MttVulkanImpl vulkanImpl,
+            MttScreen screen,
+            AnimationInfo animationInfo,
+            Map<String, MttModel> srcModels) {
         this.animationInfo = animationInfo;
 
         //Duplicate models
         models = new HashMap<>();
         srcModels.forEach((modelName, srcModel) -> {
-            MttModel model = new MttModel(vulkanImpl, srcModel);
+            MttModel model = new MttModel(vulkanImpl, screen, srcModel);
             models.put(modelName, model);
         });
 

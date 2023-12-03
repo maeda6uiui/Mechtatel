@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
-import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
+import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

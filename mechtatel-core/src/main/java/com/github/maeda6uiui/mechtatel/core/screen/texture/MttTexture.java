@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.texture;
+package com.github.maeda6uiui.mechtatel.core.screen.texture;
 
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;

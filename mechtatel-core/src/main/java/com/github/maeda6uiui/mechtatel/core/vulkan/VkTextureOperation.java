@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
-import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
+import com.github.maeda6uiui.mechtatel.core.TextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;

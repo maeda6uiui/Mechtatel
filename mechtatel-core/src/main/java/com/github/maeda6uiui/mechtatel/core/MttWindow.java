@@ -56,6 +56,7 @@ public class MttWindow {
     private MttScreen defaultScreen;
     private List<MttScreen> screens;
     private List<MttGuiComponent> guiComponents;
+    private List<TextureOperation> textureOperations;
     private Map<String, MttAnimation> animations;
 
     private List<MttSound> sounds3D;
@@ -130,6 +131,7 @@ public class MttWindow {
         screens.add(defaultScreen);
 
         guiComponents = new ArrayList<>();
+        textureOperations = new ArrayList<>();
         animations = new HashMap<>();
 
         sounds3D = new ArrayList<>();
@@ -297,7 +299,7 @@ public class MttWindow {
     }
 
     public MttScreen createScreen(MttScreen.MttScreenCreateInfo createInfo) {
-        MttScreen screen = new MttScreen(vulkanImpl, createInfo);
+        var screen = new MttScreen(vulkanImpl, createInfo);
         screens.add(screen);
 
         return screen;
@@ -309,7 +311,50 @@ public class MttWindow {
             return false;
         }
 
+        screen.cleanup();
         return screens.remove(screen);
+    }
+
+    public void removeAllScreens() {
+        screens
+                .stream()
+                .filter(screen -> screen != defaultScreen)
+                .forEach(MttScreen::cleanup);
+        screens.clear();
+        screens.add(defaultScreen);
+    }
+
+    public TextureOperation createTextureOperation(
+            MttTexture firstColorTexture,
+            MttTexture firstDepthTexture,
+            MttTexture secondColorTexture,
+            MttTexture secondDepthTexture,
+            MttScreen dstScreen) {
+        var textureOperation = new TextureOperation(
+                vulkanImpl,
+                firstColorTexture,
+                firstDepthTexture,
+                secondColorTexture,
+                secondDepthTexture,
+                dstScreen
+        );
+        textureOperations.add(textureOperation);
+
+        return textureOperation;
+    }
+
+    public boolean removeTextureOperation(TextureOperation textureOperation) {
+        if (!textureOperations.contains(textureOperation)) {
+            return false;
+        }
+
+        textureOperation.cleanup();
+        return textureOperations.remove(textureOperation);
+    }
+
+    public void removeAllTextureOperations() {
+        textureOperations.forEach(TextureOperation::cleanup);
+        textureOperations.clear();
     }
 
     public MttModel createModel(MttScreen screen, @NotNull URL modelResource) throws URISyntaxException, IOException {

@@ -1,8 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.screen;
 
 import com.github.maeda6uiui.mechtatel.core.*;
-import com.github.maeda6uiui.mechtatel.core.animation.AnimationInfo;
-import com.github.maeda6uiui.mechtatel.core.animation.MttAnimation;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
@@ -10,6 +8,8 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
+import com.github.maeda6uiui.mechtatel.core.screen.animation.AnimationInfo;
+import com.github.maeda6uiui.mechtatel.core.screen.animation.MttAnimation;
 import com.github.maeda6uiui.mechtatel.core.screen.component.*;
 import com.github.maeda6uiui.mechtatel.core.screen.component.gui.*;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;

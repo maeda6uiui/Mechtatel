@@ -17,7 +17,7 @@ module com.github.maeda6uiui.mechtatel.core {
     requires jakarta.validation;
 
     exports com.github.maeda6uiui.mechtatel.core;
-    exports com.github.maeda6uiui.mechtatel.core.animation;
+    exports com.github.maeda6uiui.mechtatel.core.screen.animation;
     exports com.github.maeda6uiui.mechtatel.core.camera;
     exports com.github.maeda6uiui.mechtatel.core.screen.component;
     exports com.github.maeda6uiui.mechtatel.core.screen.component.gui;

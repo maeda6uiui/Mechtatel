@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.animation;
+package com.github.maeda6uiui.mechtatel.core.screen.animation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

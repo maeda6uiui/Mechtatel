@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.animation.AnimationInfo;
 import com.github.maeda6uiui.mechtatel.core.animation.MttAnimation;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;

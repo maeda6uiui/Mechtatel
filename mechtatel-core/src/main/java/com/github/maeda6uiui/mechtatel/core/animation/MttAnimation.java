@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.animation;
 
-import com.github.maeda6uiui.mechtatel.core.component.MttComponentSet;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttComponentSet;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Vector3f;

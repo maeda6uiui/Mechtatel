@@ -1,10 +1,10 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex2D;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2D;
 import org.lwjgl.vulkan.VkVertexInputAttributeDescription;
 import org.lwjgl.vulkan.VkVertexInputBindingDescription;
 
-import static com.github.maeda6uiui.mechtatel.core.component.MttVertex2D.OFFSETOF_COLOR;
+import static com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2D.OFFSETOF_COLOR;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**

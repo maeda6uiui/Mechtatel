@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2DUV;
 import org.lwjgl.vulkan.VkVertexInputAttributeDescription;
 import org.lwjgl.vulkan.VkVertexInputBindingDescription;
 

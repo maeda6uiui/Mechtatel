@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.util;
 
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;

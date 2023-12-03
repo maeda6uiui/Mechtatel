@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.component;
 
-import com.github.maeda6uiui.mechtatel.core.component.IMttComponentForVkMttComponent;
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex;
+import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;

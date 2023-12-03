@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.util;
 
 import com.github.dabasan.jxm.bd1.BD1Buffer;
 import com.github.dabasan.jxm.bd1.BD1Manipulator;
-import com.github.maeda6uiui.mechtatel.core.component.MttVertexUV;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
 import org.joml.*;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;

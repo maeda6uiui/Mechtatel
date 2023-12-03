@@ -19,8 +19,8 @@ module com.github.maeda6uiui.mechtatel.core {
     exports com.github.maeda6uiui.mechtatel.core;
     exports com.github.maeda6uiui.mechtatel.core.animation;
     exports com.github.maeda6uiui.mechtatel.core.camera;
-    exports com.github.maeda6uiui.mechtatel.core.component;
-    exports com.github.maeda6uiui.mechtatel.core.component.gui;
+    exports com.github.maeda6uiui.mechtatel.core.screen.component;
+    exports com.github.maeda6uiui.mechtatel.core.screen.component.gui;
     exports com.github.maeda6uiui.mechtatel.core.nabor;
     exports com.github.maeda6uiui.mechtatel.core.physics;
     exports com.github.maeda6uiui.mechtatel.core.postprocessing.blur;

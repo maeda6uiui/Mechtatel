@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.drawer;
 
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import org.joml.Vector2f;
 import org.joml.Vector4f;

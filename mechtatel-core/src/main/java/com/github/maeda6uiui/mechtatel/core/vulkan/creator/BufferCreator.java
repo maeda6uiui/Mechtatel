@@ -1,9 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.creator;
 
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex;
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex2D;
-import com.github.maeda6uiui.mechtatel.core.component.MttVertex2DUV;
-import com.github.maeda6uiui.mechtatel.core.component.MttVertexUV;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2D;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.util.MemcpyUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.MemoryUtils;
 import org.lwjgl.PointerBuffer;

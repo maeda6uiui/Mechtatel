@@ -520,6 +520,10 @@ public class MttScreen implements IMttScreenForMttComponent {
         components.clear();
     }
 
+    public List<MttComponent> getComponents() {
+        return components;
+    }
+
     public MttModel createModel(@NotNull URL modelResource) throws URISyntaxException, IOException {
         return new MttModel(vulkanImpl, this, modelResource.toURI());
     }
@@ -670,6 +674,15 @@ public class MttScreen implements IMttScreenForMttComponent {
     @Override
     public void addGuiComponents(MttGuiComponent... cs) {
         guiComponents.addAll(Arrays.asList(cs));
+    }
+
+    public boolean deleteGuiComponent(MttGuiComponent guiComponent) {
+        if (!guiComponents.contains(guiComponent)) {
+            return false;
+        }
+
+        guiComponent.cleanup();
+        return guiComponents.remove(guiComponent);
     }
 
     public List<MttGuiComponent> getGuiComponents() {

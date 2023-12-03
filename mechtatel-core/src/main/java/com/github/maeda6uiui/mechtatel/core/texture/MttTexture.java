@@ -53,7 +53,7 @@ public class MttTexture {
         isOwner = true;
     }
 
-    public MttTexture(MttVulkanImpl vulkanImpl, VkMttTexture texture) {
+    public MttTexture(VkMttTexture texture) {
         this.texture = texture;
         isOwner = false;
     }

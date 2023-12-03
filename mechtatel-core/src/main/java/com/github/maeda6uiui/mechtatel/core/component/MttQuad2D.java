@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttQuad;
 import org.joml.Vector2f;
@@ -52,19 +53,21 @@ public class MttQuad2D extends MttComponent {
 
     public MttQuad2D(
             MttVulkanImpl vulkanImpl,
+            MttScreen screen,
             MttVertex2D v1,
             MttVertex2D v2,
             MttVertex2D v3,
             MttVertex2D v4,
             float z,
             boolean fill) {
-        super(generateCreateInfo());
+        super(screen, generateCreateInfo());
 
         this.setup(vulkanImpl, v1, v2, v3, v4, z, fill);
     }
 
     public MttQuad2D(
             MttVulkanImpl vulkanImpl,
+            MttScreen screen,
             Vector2fc p1,
             Vector2fc p2,
             Vector2fc p3,
@@ -72,7 +75,7 @@ public class MttQuad2D extends MttComponent {
             float z,
             boolean fill,
             Vector4fc color) {
-        super(generateCreateInfo());
+        super(screen, generateCreateInfo());
 
         var v1 = new MttVertex2D(new Vector2f(p1.x(), p1.y()), color);
         var v2 = new MttVertex2D(new Vector2f(p2.x(), p2.y()), color);
@@ -83,12 +86,13 @@ public class MttQuad2D extends MttComponent {
 
     public MttQuad2D(
             MttVulkanImpl vulkanImpl,
+            MttScreen screen,
             Vector2fc topLeft,
             Vector2fc bottomRight,
             float z,
             boolean fill,
             Vector4fc color) {
-        super(generateCreateInfo());
+        super(screen, generateCreateInfo());
 
         var v1 = new MttVertex2D(new Vector2f(topLeft.x(), topLeft.y()), color);
         var v2 = new MttVertex2D(new Vector2f(topLeft.x(), bottomRight.y()), color);

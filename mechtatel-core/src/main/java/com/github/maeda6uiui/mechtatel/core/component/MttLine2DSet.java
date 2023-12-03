@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttLineSet;
 import org.joml.Vector2fc;
@@ -14,8 +15,9 @@ import org.joml.Vector4fc;
 public class MttLine2DSet extends MttComponent {
     private VkMttLineSet vkLineSet;
 
-    public MttLine2DSet(MttVulkanImpl vulkanImpl) {
+    public MttLine2DSet(MttVulkanImpl vulkanImpl, MttScreen screen) {
         super(
+                screen,
                 new MttComponentCreateInfo()
                         .setVisible(true)
                         .setTwoDComponent(true)

@@ -269,7 +269,7 @@ public class MttScreen {
 
         ImageIO.write(bufferedImage, formatName, outputFile.toFile());
     }
-
+    
     public VkMttScreen getVulkanScreen() {
         return screen;
     }

@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttQuad;
 import org.joml.Vector3fc;
@@ -33,25 +34,27 @@ public class MttQuad extends MttComponent {
 
     public MttQuad(
             MttVulkanImpl vulkanImpl,
+            MttScreen screen,
             MttVertex v1,
             MttVertex v2,
             MttVertex v3,
             MttVertex v4,
             boolean fill) {
-        super(generateCreateInfo(fill));
+        super(screen, generateCreateInfo(fill));
 
         this.setup(vulkanImpl, Arrays.asList(v1, v2, v3, v4), fill);
     }
 
     public MttQuad(
             MttVulkanImpl vulkanImpl,
+            MttScreen screen,
             Vector3fc p1,
             Vector3fc p2,
             Vector3fc p3,
             Vector3fc p4,
             boolean fill,
             Vector4fc color) {
-        super(generateCreateInfo(fill));
+        super(screen, generateCreateInfo(fill));
 
         var v1 = new MttVertex(p1, color);
         var v2 = new MttVertex(p2, color);

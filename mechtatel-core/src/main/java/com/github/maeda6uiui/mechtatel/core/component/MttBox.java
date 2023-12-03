@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Vector3f;
 import org.joml.Vector4fc;
@@ -43,8 +44,15 @@ public class MttBox extends MttComponent {
         lineSet.createBuffer();
     }
 
-    public MttBox(MttVulkanImpl vulkanImpl, float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
+    public MttBox(
+            MttVulkanImpl vulkanImpl,
+            MttScreen screen,
+            float xHalfExtent,
+            float yHalfExtent,
+            float zHalfExtent,
+            Vector4fc color) {
         super(
+                screen,
                 new MttComponentCreateInfo()
                         .setVisible(true)
                         .setTwoDComponent(false)
@@ -52,13 +60,13 @@ public class MttBox extends MttComponent {
                         .setDrawOrder(0)
         );
 
-        lineSet = new MttLineSet(vulkanImpl);
+        lineSet = new MttLineSet(vulkanImpl, screen);
         this.setupLineSet(xHalfExtent, yHalfExtent, zHalfExtent, color);
 
         lineSet.getVulkanComponent().ifPresent(this::associateVulkanComponent);
     }
 
-    public MttBox(MttVulkanImpl vulkanImpl, float halfExtent, Vector4fc color) {
-        this(vulkanImpl, halfExtent, halfExtent, halfExtent, color);
+    public MttBox(MttVulkanImpl vulkanImpl, MttScreen screen, float halfExtent, Vector4fc color) {
+        this(vulkanImpl, screen, halfExtent, halfExtent, halfExtent, color);
     }
 }

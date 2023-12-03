@@ -32,7 +32,7 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
 
     public MttTexturedQuad2DSingleTextureSet(
             MttVulkanImpl vulkanImpl, MttScreen screen, URI textureResource) throws FileNotFoundException {
-        super(generateCreateInfo());
+        super(screen, generateCreateInfo());
 
         if (!Files.exists(Paths.get(textureResource))) {
             throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
@@ -50,8 +50,8 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
         this.associateVulkanComponent(vkTexturedQuadSet);
     }
 
-    public MttTexturedQuad2DSingleTextureSet(MttVulkanImpl vulkanImpl, MttTexture texture) {
-        super(generateCreateInfo());
+    public MttTexturedQuad2DSingleTextureSet(MttVulkanImpl vulkanImpl, MttScreen screen, MttTexture texture) {
+        super(screen, generateCreateInfo());
 
         var dq = vulkanImpl.getDeviceAndQueues();
         vkTexturedQuadSet = new VkMttTexturedQuadSingleTextureSet(

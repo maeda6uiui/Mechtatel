@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
@@ -62,8 +63,15 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
         drawOrder = createInfo.drawOrder;
     }
 
-    public MttComponent(MttComponentCreateInfo createInfo) {
+    public MttComponent(MttScreen screen, MttComponentCreateInfo createInfo) {
         this.setInitialProperties(createInfo);
+        screen.addComponents(this);
+    }
+
+    public void cleanup() {
+        if (vkComponent != null) {
+            vkComponent.cleanup();
+        }
     }
 
     @Override
@@ -156,11 +164,5 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
     public MttComponent rescale(Vector3fc scale) {
         mat = mat.scale(scale);
         return this;
-    }
-
-    public void cleanup() {
-        if (vkComponent != null) {
-            vkComponent.cleanup();
-        }
     }
 }

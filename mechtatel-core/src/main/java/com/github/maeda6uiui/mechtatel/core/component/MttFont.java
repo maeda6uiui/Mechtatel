@@ -31,6 +31,7 @@ public class MttFont extends MttComponent {
             Color fontColor,
             String requiredChars) {
         super(
+                screen,
                 new MttComponentCreateInfo()
                         .setVisible(true)
                         .setTwoDComponent(true)

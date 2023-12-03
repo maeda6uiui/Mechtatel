@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttSphere;
 import org.joml.Vector3fc;
@@ -15,12 +16,14 @@ public class MttSphere extends MttComponent {
 
     public MttSphere(
             MttVulkanImpl vulkanImpl,
+            MttScreen screen,
             Vector3fc center,
             float radius,
             int numVDivs,
             int numHDivs,
             Vector4fc color) {
         super(
+                screen,
                 new MttComponentCreateInfo()
                         .setVisible(true)
                         .setTwoDComponent(false)

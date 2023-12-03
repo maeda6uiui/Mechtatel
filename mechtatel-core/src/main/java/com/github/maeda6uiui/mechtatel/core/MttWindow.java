@@ -155,6 +155,8 @@ public class MttWindow {
                         keyboardPressingCounts);
             });
             screen.getAnimations().values().forEach(MttAnimation::update);
+
+            screen.removeGarbageComponents();
         });
 
         mtt.update(this);

@@ -515,6 +515,10 @@ public class MttScreen implements IMttScreenForMttComponent {
         return components.remove(component);
     }
 
+    public void removeGarbageComponents() {
+        components.removeIf(c -> !c.isValid());
+    }
+
     public void deleteAllComponents() {
         components.forEach(MttComponent::cleanup);
         components.clear();

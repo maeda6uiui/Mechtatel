@@ -202,34 +202,6 @@ public class MttScreen implements IMttScreenForMttComponent {
         screen.cleanup();
     }
 
-    @Override
-    public void addComponents(MttComponent... cs) {
-        components.addAll(Arrays.asList(cs));
-    }
-
-    public boolean deleteComponent(MttComponent component) {
-        if (!components.contains(component)) {
-            return false;
-        }
-
-        component.cleanup();
-        return components.remove(component);
-    }
-
-    public void deleteAllComponents() {
-        components.forEach(MttComponent::cleanup);
-        components.clear();
-    }
-
-    @Override
-    public void addGuiComponents(MttGuiComponent... cs) {
-        guiComponents.addAll(Arrays.asList(cs));
-    }
-
-    public List<MttGuiComponent> getGuiComponents() {
-        return guiComponents;
-    }
-
     public void draw() {
         var vkComponents = new ArrayList<VkMttComponent>();
         components.forEach(v -> v.getVulkanComponent().ifPresent(vkComponents::add));
@@ -509,7 +481,45 @@ public class MttScreen implements IMttScreenForMttComponent {
         return animations;
     }
 
+    public boolean deleteAnimation(String tag) {
+        if (!animations.containsKey(tag)) {
+            return false;
+        }
+
+        MttAnimation animation = animations.remove(tag);
+        if (animation != null) {
+            animation.cleanup();
+            return true;
+        }
+
+        return false;
+    }
+
+    public void deleteAllAnimations() {
+        animations.values().forEach(MttAnimation::cleanup);
+        animations.clear();
+    }
+
     //Components ==========
+    @Override
+    public void addComponents(MttComponent... cs) {
+        components.addAll(Arrays.asList(cs));
+    }
+
+    public boolean deleteComponent(MttComponent component) {
+        if (!components.contains(component)) {
+            return false;
+        }
+
+        component.cleanup();
+        return components.remove(component);
+    }
+
+    public void deleteAllComponents() {
+        components.forEach(MttComponent::cleanup);
+        components.clear();
+    }
+
     public MttModel createModel(@NotNull URL modelResource) throws URISyntaxException, IOException {
         return new MttModel(vulkanImpl, this, modelResource.toURI());
     }
@@ -657,6 +667,15 @@ public class MttScreen implements IMttScreenForMttComponent {
     }
 
     //GUI components ==========
+    @Override
+    public void addGuiComponents(MttGuiComponent... cs) {
+        guiComponents.addAll(Arrays.asList(cs));
+    }
+
+    public List<MttGuiComponent> getGuiComponents() {
+        return guiComponents;
+    }
+
     public MttButton createButton(MttButton.MttButtonCreateInfo createInfo) {
         return new MttButton(vulkanImpl, this, createInfo);
     }

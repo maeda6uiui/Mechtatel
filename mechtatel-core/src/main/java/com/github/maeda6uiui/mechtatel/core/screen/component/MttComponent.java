@@ -56,6 +56,8 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
 
     private VkMttComponent vkComponent;
 
+    private boolean valid;
+
     private void setInitialProperties(MttComponentCreateInfo createInfo) {
         visible = createInfo.visible;
         twoDComponent = createInfo.twoDComponent;
@@ -66,11 +68,14 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
     public MttComponent(IMttScreenForMttComponent screen, MttComponentCreateInfo createInfo) {
         this.setInitialProperties(createInfo);
         screen.addComponents(this);
+
+        valid = true;
     }
 
     public void cleanup() {
-        if (vkComponent != null) {
+        if (valid && vkComponent != null) {
             vkComponent.cleanup();
+            valid = false;
         }
     }
 
@@ -85,6 +90,10 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
 
     public Optional<VkMttComponent> getVulkanComponent() {
         return Optional.ofNullable(vkComponent);
+    }
+
+    public boolean isValid() {
+        return valid;
     }
 
     @Override

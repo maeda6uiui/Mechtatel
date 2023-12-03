@@ -146,6 +146,7 @@ public class MttWindow {
         if (mustRecreate) {
             vulkanImpl.recreateResourcesOnResize(handle);
             screens.forEach(screen -> {
+                screen.recreate();
                 if (screen.shouldAutoUpdateCameraAspect()) {
                     screen.getCamera().getPerspectiveCameraInfo().aspect = (float) width / (float) height;
                 }

@@ -13,6 +13,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.VkTextureOperation;
 public class TextureOperation {
     private VkTextureOperation vkTextureOperation;
     private MttTexture resultTexture;
+    private TextureOperationParameters parameters;
 
     public TextureOperation(
             MttVulkanImpl vulkanImpl,
@@ -36,17 +37,27 @@ public class TextureOperation {
         );
 
         resultTexture = new MttTexture(vulkanImpl, vkTextureOperation.getResultTexture());
+
+        parameters = new TextureOperationParameters();
     }
 
     public void cleanup() {
         vkTextureOperation.cleanup();
     }
 
+    public void run() {
+        vkTextureOperation.run(parameters);
+    }
+
     public MttTexture getResultTexture() {
         return resultTexture;
     }
 
-    public void run(TextureOperationParameters parameters) {
-        vkTextureOperation.run(parameters);
+    public void setParameters(TextureOperationParameters parameters) {
+        this.parameters = parameters;
+    }
+
+    public TextureOperationParameters getParameters() {
+        return parameters;
     }
 }

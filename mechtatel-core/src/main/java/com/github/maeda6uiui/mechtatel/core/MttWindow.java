@@ -459,21 +459,21 @@ public class MttWindow {
         return mttButton;
     }
 
-    public MttCheckBox createCheckbox(MttScreen screen, MttCheckBox.MttCheckBoxCreateInfo createInfo) {
+    public MttCheckBox createCheckBox(MttScreen screen, MttCheckBox.MttCheckBoxCreateInfo createInfo) {
         var mttCheckbox = new MttCheckBox(vulkanImpl, screen, createInfo);
         guiComponents.add(mttCheckbox);
 
         return mttCheckbox;
     }
 
-    public MttVerticalScrollBar createVerticalScrollbar(MttVerticalScrollBar.MttVerticalScrollBarCreateInfo createInfo) {
+    public MttVerticalScrollBar createVerticalScrollBar(MttVerticalScrollBar.MttVerticalScrollBarCreateInfo createInfo) {
         var mttScrollbar = new MttVerticalScrollBar(vulkanImpl, createInfo);
         guiComponents.add(mttScrollbar);
 
         return mttScrollbar;
     }
 
-    public MttHorizontalScrollBar createHorizontalScrollbar(
+    public MttHorizontalScrollBar createHorizontalScrollBar(
             MttHorizontalScrollBar.MttHorizontalScrollBarCreateInfo createInfo) {
         var mttScrollbar = new MttHorizontalScrollBar(vulkanImpl, createInfo);
         guiComponents.add(mttScrollbar);
@@ -481,7 +481,7 @@ public class MttWindow {
         return mttScrollbar;
     }
 
-    public MttListBox createListbox(MttScreen screen, MttListBox.MttListBoxCreateInfo createInfo) {
+    public MttListBox createListBox(MttScreen screen, MttListBox.MttListBoxCreateInfo createInfo) {
         var mttListbox = new MttListBox(vulkanImpl, screen, createInfo);
         guiComponents.add(mttListbox);
 
@@ -495,14 +495,14 @@ public class MttWindow {
         return mttLabel;
     }
 
-    public MttTextField createTextbox(MttScreen screen, MttTextField.MttTextFieldCreateInfo createInfo) {
+    public MttTextField createTextField(MttScreen screen, MttTextField.MttTextFieldCreateInfo createInfo) {
         var mttTextbox = new MttTextField(vulkanImpl, screen, createInfo);
         guiComponents.add(mttTextbox);
 
         return mttTextbox;
     }
 
-    public MttTextArea createTextarea(MttScreen screen, MttTextArea.MttTextAreaCreateInfo createInfo) {
+    public MttTextArea createTextArea(MttScreen screen, MttTextArea.MttTextAreaCreateInfo createInfo) {
         var mttTextarea = new MttTextArea(vulkanImpl, screen, createInfo);
         guiComponents.add(mttTextarea);
 

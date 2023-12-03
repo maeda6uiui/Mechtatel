@@ -1,5 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core;
 
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+
 /**
  * Provides an interface of {@link Mechtatel} to {@link MttWindow}
  *
@@ -14,17 +16,17 @@ interface IMechtatelForMttWindow {
 
     void update(MttWindow window);
 
-    void preDraw(MttWindow window, String screenName);
+    void preDraw(MttWindow window, MttScreen screen);
 
-    void postDraw(MttWindow window, String screenName);
+    void postDraw(MttWindow window, MttScreen screen);
 
-    void preTextureOperation(MttWindow window, String operationName);
+    void preTextureOperation(MttWindow window, TextureOperation textureOperation);
 
-    void postTextureOperation(MttWindow window, String operationName);
+    void postTextureOperation(MttWindow window, TextureOperation textureOperation);
 
-    void preDeferredDraw(MttWindow window, String screenName);
+    void preDeferredDraw(MttWindow window, MttScreen screen);
 
-    void postDeferredDraw(MttWindow window, String screenName);
+    void postDeferredDraw(MttWindow window, MttScreen screen);
 
     void prePresent(MttWindow window);
 

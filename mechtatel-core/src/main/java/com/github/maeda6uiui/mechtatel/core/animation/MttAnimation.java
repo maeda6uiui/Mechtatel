@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.animation;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttComponentSet;
 import com.github.maeda6uiui.mechtatel.core.component.MttModel;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -36,7 +37,7 @@ public class MttAnimation {
     private Map<String, AnimationPlayInfo> animationPlayInfos;
 
     public MttAnimation(
-            MttVulkanImpl vulkanImpl, String screenName, AnimationInfo animationInfo) throws IOException {
+            MttVulkanImpl vulkanImpl, MttScreen screen, AnimationInfo animationInfo) throws IOException {
         this.animationInfo = animationInfo;
 
         //Load models
@@ -48,7 +49,7 @@ public class MttAnimation {
             AnimationInfo.Model animModel = entry.getValue();
 
             Path modelFile = animationDirectory.resolve(animModel.filename);
-            MttModel model = new MttModel(vulkanImpl, screenName, modelFile.toUri());
+            MttModel model = new MttModel(vulkanImpl, screen, modelFile.toUri());
             models.put(modelName, model);
         }
 

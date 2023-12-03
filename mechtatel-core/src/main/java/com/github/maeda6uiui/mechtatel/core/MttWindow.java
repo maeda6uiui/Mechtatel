@@ -1,8 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core;
 
-import com.github.maeda6uiui.mechtatel.core.animation.AnimationInfo;
 import com.github.maeda6uiui.mechtatel.core.animation.MttAnimation;
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
@@ -13,12 +11,10 @@ import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +47,6 @@ public class MttWindow {
     private MttScreen defaultScreen;
     private List<MttScreen> screens;
     private List<TextureOperation> textureOperations;
-    private Map<String, MttAnimation> animations;
 
     private List<MttSound> sounds3D;
 
@@ -125,7 +120,6 @@ public class MttWindow {
         screens.add(defaultScreen);
 
         textureOperations = new ArrayList<>();
-        animations = new HashMap<>();
 
         sounds3D = new ArrayList<>();
 
@@ -164,9 +158,8 @@ public class MttWindow {
                         this.getMousePressingCount("BUTTON_RIGHT"),
                         keyboardPressingCounts);
             });
+            screen.getAnimations().values().forEach(MttAnimation::update);
         });
-
-        animations.values().forEach(MttAnimation::update);
 
         mtt.update(this);
     }
@@ -375,25 +368,5 @@ public class MttWindow {
         }
 
         return false;
-    }
-
-    public MttTexture createTexture(
-            MttScreen screen, @NotNull URL textureResource, boolean generateMipmaps)
-            throws URISyntaxException, FileNotFoundException {
-        return new MttTexture(vulkanImpl, screen, textureResource.toURI(), generateMipmaps);
-    }
-
-    public MttAnimation createAnimation(String tag, MttScreen screen, AnimationInfo animationInfo) throws IOException {
-        var animation = new MttAnimation(vulkanImpl, screen, animationInfo);
-        animations.put(tag, animation);
-
-        return animation;
-    }
-
-    public MttAnimation createAnimation(String tag, AnimationInfo animationInfo, Map<String, MttModel> srcModels) {
-        var animation = new MttAnimation(vulkanImpl, animationInfo, srcModels);
-        animations.put(tag, animation);
-
-        return animation;
     }
 }

@@ -4,8 +4,9 @@ import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.SamplerAddressMode;
 import com.github.maeda6uiui.mechtatel.core.SamplerFilterMode;
 import com.github.maeda6uiui.mechtatel.core.SamplerMipmapMode;
+import com.github.maeda6uiui.mechtatel.core.animation.AnimationInfo;
+import com.github.maeda6uiui.mechtatel.core.animation.MttAnimation;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
-import com.github.maeda6uiui.mechtatel.core.component.*;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
@@ -17,11 +18,11 @@ import com.github.maeda6uiui.mechtatel.core.screen.component.gui.*;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.ParallelLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.SpotlightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
 import jakarta.validation.constraints.NotNull;
 import org.joml.*;
 
@@ -145,6 +146,7 @@ public class MttScreen implements IMttScreenForMttComponent {
 
     private List<MttComponent> components;
     private List<MttGuiComponent> guiComponents;
+    private Map<String, MttAnimation> animations;
 
     public MttScreen(MttVulkanImpl vulkanImpl, MttScreenCreateInfo createInfo) {
         var dq = vulkanImpl.getDeviceAndQueues();
@@ -191,6 +193,7 @@ public class MttScreen implements IMttScreenForMttComponent {
 
         components = new ArrayList<>();
         guiComponents = new ArrayList<>();
+        animations = new HashMap<>();
     }
 
     public void cleanup() {
@@ -446,6 +449,31 @@ public class MttScreen implements IMttScreenForMttComponent {
 
     public boolean removeSpotlight(Spotlight spotlight) {
         return spotlights.remove(spotlight);
+    }
+
+    //Texture ==========
+    public MttTexture createTexture(@NotNull URL textureResource, boolean generateMipmaps)
+            throws URISyntaxException, FileNotFoundException {
+        return new MttTexture(vulkanImpl, this, textureResource.toURI(), generateMipmaps);
+    }
+
+    //Animation ==========
+    public MttAnimation createAnimation(String tag, AnimationInfo animationInfo) throws IOException {
+        var animation = new MttAnimation(vulkanImpl, this, animationInfo);
+        animations.put(tag, animation);
+
+        return animation;
+    }
+
+    public MttAnimation createAnimation(String tag, AnimationInfo animationInfo, Map<String, MttModel> srcModels) {
+        var animation = new MttAnimation(vulkanImpl, this, animationInfo, srcModels);
+        animations.put(tag, animation);
+
+        return animation;
+    }
+
+    public Map<String, MttAnimation> getAnimations() {
+        return animations;
     }
 
     //Components ==========

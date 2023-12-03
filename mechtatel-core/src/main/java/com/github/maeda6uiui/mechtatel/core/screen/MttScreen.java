@@ -188,6 +188,7 @@ public class MttScreen {
     }
 
     public void cleanup() {
+        components.forEach(MttComponent::cleanup);
         screen.cleanup();
     }
 

@@ -6,18 +6,14 @@ import com.github.maeda6uiui.mechtatel.core.component.*;
 import com.github.maeda6uiui.mechtatel.core.component.gui.*;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
-import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.sound.MttSound;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
-import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
-import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 import jakarta.validation.constraints.NotNull;
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
-import org.lwjgl.system.MemoryStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,8 +36,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
  *
  * @author maeda6uiui
  */
-public class MttWindow
-        implements IMttWindowForDrawPath, IMttWindowForScreenCreator, IMttWindowForSkyboxTextureCreator {
+public class MttWindow {
     private static final Logger logger = LoggerFactory.getLogger(MttWindow.class);
 
     private IMechtatelForMttWindow mtt;
@@ -191,37 +185,39 @@ public class MttWindow
         mtt.update(this);
     }
 
-    public void draw() {
-        for (var screenName : screenDrawOrder) {
-            mtt.preDraw(this, screenName);
-
-            MttScreen screen = screens.get(screenName);
+    public void draw(
+            List<MttScreen> firstPhaseScreens,
+            List<TextureOperation> textureOperations,
+            List<MttScreen> secondPhaseScreens,
+            MttScreen presentScreen) {
+        firstPhaseScreens.forEach(screen -> {
+            mtt.preDraw(this, screen);
             screen.draw();
-
-            mtt.postDraw(this, screenName);
-        }
-        for (var textureOperationName : textureOperationOrder) {
-            mtt.preTextureOperation(this, textureOperationName);
-            vulkanImpl.runTextureOperations(textureOperationName);
-            mtt.postTextureOperation(this, textureOperationName);
-        }
-        for (var screenName : deferredScreenDrawOrder) {
-            mtt.preDeferredDraw(this, screenName);
-
-            MttScreen screen = screens.get(screenName);
+            mtt.postDraw(this, screen);
+        });
+        textureOperations.forEach(op -> {
+            mtt.preTextureOperation(this, op);
+            op.run();
+            mtt.postTextureOperation(this, op);
+        });
+        secondPhaseScreens.forEach(screen -> {
+            mtt.preDeferredDraw(this, screen);
             screen.draw();
-
-            mtt.postDeferredDraw(this, screenName);
-        }
+            mtt.postDeferredDraw(this, screen);
+        });
 
         mtt.prePresent(this);
-        vulkanImpl.presentToFrontScreen(presentScreenName);
+        vulkanImpl.presentToFrontScreen(presentScreen.getVulkanScreen());
         mtt.postPresent(this);
     }
 
     public void cleanup() {
         mtt.dispose(this);
+
+        guiComponents.forEach(MttComponent::cleanup);
+        screens.forEach(MttScreen::cleanup);
         vulkanImpl.cleanup();
+
         sounds3D.forEach(MttSound::cleanup);
 
         glfwFreeCallbacks(handle);
@@ -308,12 +304,8 @@ public class MttWindow
         return validWindow;
     }
 
-    public void sortComponents() {
-        vulkanImpl.sortComponents();
-    }
-
-    public MttModel createModel(String screenName, @NotNull URL modelResource) throws URISyntaxException, IOException {
-        return new MttModel(vulkanImpl, screenName, modelResource.toURI());
+    public MttModel createModel(MttScreen screen, @NotNull URL modelResource) throws URISyntaxException, IOException {
+        return new MttModel(vulkanImpl, screen, modelResource.toURI());
     }
 
     public MttModel duplicateModel(MttModel srcModel) {
@@ -367,7 +359,7 @@ public class MttWindow
     }
 
     public MttTexturedQuad createTexturedQuad(
-            String screenName,
+            MttScreen screen,
             @NotNull URL textureResource,
             boolean generateMipmaps,
             MttVertexUV v1,
@@ -376,75 +368,54 @@ public class MttWindow
             MttVertexUV v4) throws URISyntaxException, FileNotFoundException {
         return new MttTexturedQuad(
                 vulkanImpl,
-                screenName,
+                screen,
                 textureResource.toURI(),
                 generateMipmaps,
-                v1,
-                v2,
-                v3,
-                v4
+                v1, v2, v3, v4
         );
     }
 
     public MttTexturedQuad createTexturedQuad(
-            String screenName,
             MttTexture texture,
-            MttVertexUV v1,
-            MttVertexUV v2,
-            MttVertexUV v3,
-            MttVertexUV v4) {
+            MttVertexUV v1, MttVertexUV v2, MttVertexUV v3, MttVertexUV v4) {
         return new MttTexturedQuad(
-                vulkanImpl,
-                screenName,
-                texture,
-                v1,
-                v2,
-                v3,
-                v4
+                vulkanImpl, texture, v1, v2, v3, v4
         );
     }
 
     public MttTexturedQuad duplicateTexturedQuad(
             MttTexturedQuad srcQuad,
-            MttVertexUV v1,
-            MttVertexUV v2,
-            MttVertexUV v3,
-            MttVertexUV v4) {
+            MttVertexUV v1, MttVertexUV v2, MttVertexUV v3, MttVertexUV v4) {
         return new MttTexturedQuad(
-                vulkanImpl,
-                srcQuad,
-                v1,
-                v2,
-                v3,
-                v4
+                vulkanImpl, srcQuad, v1, v2, v3, v4
         );
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
-            String screenName, @NotNull URL textureResource,
+            MttScreen screen, @NotNull URL textureResource,
             MttVertex2DUV v1, MttVertex2DUV v2, MttVertex2DUV v3, MttVertex2DUV v4, float z)
             throws URISyntaxException, FileNotFoundException {
         return new MttTexturedQuad2D(
-                vulkanImpl, screenName, textureResource.toURI(), v1, v2, v3, v4, z);
+                vulkanImpl, screen, textureResource.toURI(), v1, v2, v3, v4, z);
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
-            String screenName, @NotNull URL textureResource,
+            MttScreen screen, @NotNull URL textureResource,
             Vector2fc topLeft, Vector2fc bottomRight, float z) throws URISyntaxException, FileNotFoundException {
         return new MttTexturedQuad2D(
-                vulkanImpl, screenName, textureResource.toURI(), topLeft, bottomRight, z);
+                vulkanImpl, screen, textureResource.toURI(), topLeft, bottomRight, z);
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
-            String screenName, MttTexture texture,
+            MttTexture texture,
             MttVertex2DUV v1, MttVertex2DUV v2, MttVertex2DUV v3, MttVertex2DUV v4, float z) {
-        return new MttTexturedQuad2D(vulkanImpl, screenName, texture, v1, v2, v3, v4, z);
+        return new MttTexturedQuad2D(vulkanImpl, texture, v1, v2, v3, v4, z);
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
-            String screenName, MttTexture texture,
+            MttTexture texture,
             Vector2fc topLeft, Vector2fc bottomRight, float z) {
-        return new MttTexturedQuad2D(vulkanImpl, screenName, texture, topLeft, bottomRight, z);
+        return new MttTexturedQuad2D(vulkanImpl, texture, topLeft, bottomRight, z);
     }
 
     public MttTexturedQuad2D duplicateTexturedQuad2D(
@@ -459,13 +430,13 @@ public class MttWindow
     }
 
     public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(
-            String screenName, @NotNull URL textureResource) throws URISyntaxException, FileNotFoundException {
+            MttScreen screen, @NotNull URL textureResource) throws URISyntaxException, FileNotFoundException {
         return new MttTexturedQuad2DSingleTextureSet(
-                vulkanImpl, screenName, textureResource.toURI());
+                vulkanImpl, screen, textureResource.toURI());
     }
 
-    public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(String screenName, MttTexture texture) {
-        return new MttTexturedQuad2DSingleTextureSet(vulkanImpl, screenName, texture);
+    public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(MttTexture texture) {
+        return new MttTexturedQuad2DSingleTextureSet(vulkanImpl, texture);
     }
 
     public MttBox createBox(float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
@@ -477,19 +448,19 @@ public class MttWindow
     }
 
     public MttFont createFont(
-            String screenName, Font font, boolean antiAlias, Color fontColor, String requiredChars) {
-        return new MttFont(vulkanImpl, screenName, font, antiAlias, fontColor, requiredChars);
+            MttScreen screen, Font font, boolean antiAlias, Color fontColor, String requiredChars) {
+        return new MttFont(vulkanImpl, screen, font, antiAlias, fontColor, requiredChars);
     }
 
-    public MttButton createButton(MttButton.MttButtonCreateInfo createInfo) {
-        var mttButton = new MttButton(vulkanImpl, createInfo);
+    public MttButton createButton(MttScreen screen, MttButton.MttButtonCreateInfo createInfo) {
+        var mttButton = new MttButton(vulkanImpl, screen, createInfo);
         guiComponents.add(mttButton);
 
         return mttButton;
     }
 
-    public MttCheckBox createCheckbox(MttCheckBox.MttCheckBoxCreateInfo createInfo) {
-        var mttCheckbox = new MttCheckBox(vulkanImpl, createInfo);
+    public MttCheckBox createCheckbox(MttScreen screen, MttCheckBox.MttCheckBoxCreateInfo createInfo) {
+        var mttCheckbox = new MttCheckBox(vulkanImpl, screen, createInfo);
         guiComponents.add(mttCheckbox);
 
         return mttCheckbox;
@@ -510,29 +481,29 @@ public class MttWindow
         return mttScrollbar;
     }
 
-    public MttListBox createListbox(MttListBox.MttListBoxCreateInfo createInfo) {
-        var mttListbox = new MttListBox(vulkanImpl, createInfo);
+    public MttListBox createListbox(MttScreen screen, MttListBox.MttListBoxCreateInfo createInfo) {
+        var mttListbox = new MttListBox(vulkanImpl, screen, createInfo);
         guiComponents.add(mttListbox);
 
         return mttListbox;
     }
 
-    public MttLabel createLabel(MttLabel.MttLabelCreateInfo createInfo) {
-        var mttLabel = new MttLabel(vulkanImpl, createInfo);
+    public MttLabel createLabel(MttScreen screen, MttLabel.MttLabelCreateInfo createInfo) {
+        var mttLabel = new MttLabel(vulkanImpl, screen, createInfo);
         guiComponents.add(mttLabel);
 
         return mttLabel;
     }
 
-    public MttTextField createTextbox(MttTextField.MttTextFieldCreateInfo createInfo) {
-        var mttTextbox = new MttTextField(vulkanImpl, createInfo);
+    public MttTextField createTextbox(MttScreen screen, MttTextField.MttTextFieldCreateInfo createInfo) {
+        var mttTextbox = new MttTextField(vulkanImpl, screen, createInfo);
         guiComponents.add(mttTextbox);
 
         return mttTextbox;
     }
 
-    public MttTextArea createTextarea(MttTextArea.MttTextAreaCreateInfo createInfo) {
-        var mttTextarea = new MttTextArea(vulkanImpl, createInfo);
+    public MttTextArea createTextarea(MttScreen screen, MttTextArea.MttTextAreaCreateInfo createInfo) {
+        var mttTextarea = new MttTextArea(vulkanImpl, screen, createInfo);
         guiComponents.add(mttTextarea);
 
         return mttTextarea;
@@ -568,127 +539,13 @@ public class MttWindow
     }
 
     public MttTexture createTexture(
-            String screenName, @NotNull URL textureResource, boolean generateMipmaps)
+            MttScreen screen, @NotNull URL textureResource, boolean generateMipmaps)
             throws URISyntaxException, FileNotFoundException {
-        return new MttTexture(vulkanImpl, screenName, textureResource.toURI(), generateMipmaps);
+        return new MttTexture(vulkanImpl, screen, textureResource.toURI(), generateMipmaps);
     }
 
-    public MttTexture texturizeColorOfScreen(String srcScreenName, String dstScreenName) {
-        return new MttTexture(vulkanImpl, srcScreenName, dstScreenName, "color");
-    }
-
-    public MttTexture texturizeDepthOfScreen(String srcScreenName, String dstScreenName) {
-        return new MttTexture(vulkanImpl, srcScreenName, dstScreenName, "depth");
-    }
-
-    public void saveScreenshot(String screenName, String srcImageFormat, String outputFilepath) throws IOException {
-        vulkanImpl.saveScreenshot(screenName, srcImageFormat, outputFilepath);
-    }
-
-    public MttScreen createScreen(
-            String screenName,
-            int depthImageWidth,
-            int depthImageHeight,
-            int screenWidth,
-            int screenHeight,
-            SamplerFilterMode samplerFilter,
-            SamplerMipmapMode samplerMipmapMode,
-            SamplerAddressMode samplerAddressMode,
-            boolean shouldChangeExtentOnRecreate,
-            boolean useShadowMapping,
-            Map<String, FlexibleNaborInfo> flexibleNaborInfos,
-            List<String> ppNaborNames) {
-        if (screens.containsKey(screenName)) {
-            screens.get(screenName).cleanup();
-            screens.remove(screenName);
-        }
-
-        var screen = new MttScreen(
-                vulkanImpl,
-                screenName,
-                depthImageWidth,
-                depthImageHeight,
-                screenWidth,
-                screenHeight,
-                samplerFilter,
-                samplerMipmapMode,
-                samplerAddressMode,
-                shouldChangeExtentOnRecreate,
-                useShadowMapping,
-                flexibleNaborInfos,
-                ppNaborNames
-        );
-
-        //Set initial aspect according to the framebuffer size
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer width = stack.ints(0);
-            IntBuffer height = stack.ints(0);
-            glfwGetFramebufferSize(handle, width, height);
-
-            screen.getCamera().getPerspectiveCameraInfo().aspect = (float) width.get(0) / (float) height.get(0);
-        }
-
-        screens.put(screenName, screen);
-
-        return screen;
-    }
-
-    public boolean removeScreen(String screenName) {
-        screenDrawOrder.remove(screenName);
-        screens.remove(screenName);
-
-        return vulkanImpl.removeScreen(screenName);
-    }
-
-    public MttScreen getScreen(String screenName) {
-        return screens.get(screenName);
-    }
-
-    public Map<String, MttScreen> getScreens() {
-        return new HashMap<>(screens);
-    }
-
-    public void setScreenDrawOrder(List<String> screenDrawOrder) {
-        this.screenDrawOrder = screenDrawOrder;
-    }
-
-    public MttTexture createTextureOperation(
-            String operationName,
-            MttTexture firstColorTexture,
-            MttTexture secondColorTexture,
-            MttTexture firstDepthTexture,
-            MttTexture secondDepthTexture,
-            String dstScreenName,
-            TextureOperationParameters parameters) {
-        VkMttTexture vulkanTexture = vulkanImpl.createTextureOperation(
-                operationName,
-                firstColorTexture.getVulkanTexture(),
-                secondColorTexture.getVulkanTexture(),
-                firstDepthTexture.getVulkanTexture(),
-                secondDepthTexture.getVulkanTexture(),
-                dstScreenName,
-                parameters);
-        return new MttTexture(vulkanImpl, vulkanTexture);
-    }
-
-    public boolean updateTextureOperationParameters(String operationName, TextureOperationParameters parameters) {
-        return vulkanImpl.updateTextureOperationParameters(operationName, parameters);
-    }
-
-    public void setTextureOperationOrder(List<String> textureOperationOrder) {
-        this.textureOperationOrder = textureOperationOrder;
-    }
-
-    public void setDeferredScreenDrawOrder(List<String> deferredScreenDrawOrder) {
-        this.deferredScreenDrawOrder = deferredScreenDrawOrder;
-    }
-
-    public void setPresentScreenName(String presentScreenName) {
-        this.presentScreenName = presentScreenName;
-    }
-
-    public MttAnimation createAnimation(String tag, String screenName, AnimationInfo animationInfo) throws IOException {
-        var animation = new MttAnimation(vulkanImpl, screenName, animationInfo);
+    public MttAnimation createAnimation(String tag, MttScreen screen, AnimationInfo animationInfo) throws IOException {
+        var animation = new MttAnimation(vulkanImpl, screen, animationInfo);
         animations.put(tag, animation);
 
         return animation;

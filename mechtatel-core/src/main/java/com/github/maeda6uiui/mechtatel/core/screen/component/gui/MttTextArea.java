@@ -1,11 +1,11 @@
 package com.github.maeda6uiui.mechtatel.core.screen.component.gui;
 
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.KeyInterpreter;
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttLine2D;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttQuad2D;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2D;
-import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.KeyInterpreter;
-import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
 import com.github.maeda6uiui.mechtatel.core.text.TextUtil;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
@@ -228,6 +228,15 @@ public class MttTextArea extends MttGuiComponent {
         repeatDelayFrames = Math.round(createInfo.repeatDelay / createInfo.secondsPerFrame);
 
         visible = true;
+    }
+
+    @Override
+    public void cleanup() {
+        super.cleanup();
+
+        frame.cleanup();
+        caret.cleanup();
+        font.cleanup();
     }
 
     public List<String> getLines() {

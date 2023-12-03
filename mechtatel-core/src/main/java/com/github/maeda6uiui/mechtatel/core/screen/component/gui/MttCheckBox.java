@@ -1,9 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.screen.component.gui;
 
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttLine2DSet;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttQuad2D;
-import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Vector2f;
 
@@ -170,6 +170,15 @@ public class MttCheckBox extends MttGuiComponent {
 
         selected = false;
         checkboxCross.setVisible(false);
+    }
+
+    @Override
+    public void cleanup() {
+        super.cleanup();
+
+        checkboxFrame.cleanup();
+        checkboxCross.cleanup();
+        font.cleanup();
     }
 
     @Override

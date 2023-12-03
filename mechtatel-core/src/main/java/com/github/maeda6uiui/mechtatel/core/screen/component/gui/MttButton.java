@@ -1,9 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.screen.component.gui;
 
 
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttQuad2D;
-import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Vector2f;
 
@@ -106,6 +106,14 @@ public class MttButton extends MttGuiComponent {
         );
         font.prepare(createInfo.text, new Vector2f(createInfo.x, createInfo.y));
         font.createBuffers();
+    }
+
+    @Override
+    public void cleanup() {
+        super.cleanup();
+
+        frame.cleanup();
+        font.cleanup();
     }
 
     @Override

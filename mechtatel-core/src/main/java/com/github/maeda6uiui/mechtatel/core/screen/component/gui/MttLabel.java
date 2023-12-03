@@ -1,8 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.screen.component.gui;
 
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttQuad2D;
-import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Vector2f;
 
@@ -103,6 +103,14 @@ public class MttLabel extends MttGuiComponent {
                 createInfo.fontColor,
                 createInfo.requiredChars
         );
+    }
+
+    @Override
+    public void cleanup() {
+        super.cleanup();
+
+        frame.cleanup();
+        font.cleanup();
     }
 
     public void prepare(String text) {

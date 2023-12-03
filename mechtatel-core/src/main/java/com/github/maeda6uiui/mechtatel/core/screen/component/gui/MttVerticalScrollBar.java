@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.screen.component.gui;
 
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttQuad2D;
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttQuad2D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -100,6 +100,14 @@ public class MttVerticalScrollBar extends MttGuiComponent {
 
         prevFCursorY = 0.0f;
         grabbed = false;
+    }
+
+    @Override
+    public void cleanup() {
+        super.cleanup();
+
+        frame.cleanup();
+        grabFrame.cleanup();
     }
 
     @Override

@@ -75,8 +75,8 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
     public void cleanup() {
         if (valid && vkComponent != null) {
             vkComponent.cleanup();
-            valid = false;
         }
+        valid = false;
     }
 
     @Override

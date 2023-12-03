@@ -78,10 +78,10 @@ public class MttComponentSet<T extends MttComponent> {
     }
 
     public void reset() {
-        components.forEach(c -> c.reset());
+        components.forEach(MttComponent::reset);
     }
 
     public void cleanup() {
-        components.forEach(c -> c.cleanup());
+        components.forEach(MttComponent::cleanup);
     }
 }

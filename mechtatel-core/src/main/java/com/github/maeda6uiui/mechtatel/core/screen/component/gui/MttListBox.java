@@ -1,8 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.screen.component.gui;
 
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttQuad2D;
-import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -64,6 +64,14 @@ public class MttListBox extends MttGuiComponent {
             selectedFont.prepare(text, new Vector2f(x, y));
             selectedFont.createBuffers();
             selectedFont.setVisible(false);
+        }
+
+        @Override
+        public void cleanup() {
+            super.cleanup();
+
+            nonSelectedFont.cleanup();
+            selectedFont.cleanup();
         }
 
         public void changeToSelectedFont() {
@@ -238,6 +246,7 @@ public class MttListBox extends MttGuiComponent {
 
         scrollbar = new MttVerticalScrollBar(
                 vulkanImpl,
+                screen,
                 new MttVerticalScrollBar.MttVerticalScrollBarCreateInfo()
                         .setX(createInfo.x + createInfo.width - createInfo.scrollbarWidth)
                         .setY(createInfo.y)
@@ -283,6 +292,15 @@ public class MttListBox extends MttGuiComponent {
         } else {
             scrollAmountPerItem = 1.0f / (items.size() - numDisplayedItems);
         }
+    }
+
+    @Override
+    public void cleanup() {
+        super.cleanup();
+
+        frame.cleanup();
+        scrollbar.cleanup();
+        items.forEach(MttListBoxItem::cleanup);
     }
 
     @Override

@@ -179,10 +179,6 @@ public class MttVulkanImpl implements IMttVulkanImplForScreen {
         quadDrawer = new QuadDrawer(dq.device(), commandPool, dq.graphicsQueue());
     }
 
-    /**
-     * Cleans up Vulkan-relating resources.
-     * Resources retained by the user side must be cleaned up before calling this method.
-     */
     public void cleanup() {
         quadDrawer.cleanup();
 

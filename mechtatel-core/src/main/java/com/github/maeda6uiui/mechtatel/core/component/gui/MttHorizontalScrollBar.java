@@ -1,7 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component.gui;
 
 import com.github.maeda6uiui.mechtatel.core.component.MttQuad2D;
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -70,7 +69,7 @@ public class MttHorizontalScrollBar extends MttGuiComponent {
     private float prevFCursorX;
     private boolean grabbed;
 
-    public MttHorizontalScrollBar(MttVulkanImpl vulkanImpl, MttScreen screen, MttHorizontalScrollBarCreateInfo createInfo) {
+    public MttHorizontalScrollBar(MttVulkanImpl vulkanImpl, MttHorizontalScrollBarCreateInfo createInfo) {
         super(createInfo.x, createInfo.y, createInfo.width, createInfo.height);
 
         frame = new MttQuad2D(

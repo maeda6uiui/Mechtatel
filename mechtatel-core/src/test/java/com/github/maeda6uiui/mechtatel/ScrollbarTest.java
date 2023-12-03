@@ -3,8 +3,9 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttHorizontalScrollbar;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttVerticalScrollbar;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.component.gui.MttHorizontalScrollBar;
+import com.github.maeda6uiui.mechtatel.core.screen.component.gui.MttVerticalScrollBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +30,10 @@ public class ScrollbarTest extends Mechtatel {
 
     @Override
     public void init(MttWindow window) {
-        var vScrollbar = window.createVerticalScrollbar(
-                new MttVerticalScrollbar.MttVerticalScrollbarCreateInfo()
+        MttScreen defaultScreen = window.getDefaultScreen();
+
+        var vScrollbar = defaultScreen.createVerticalScrollBar(
+                new MttVerticalScrollBar.MttVerticalScrollBarCreateInfo()
                         .setX(-0.9f)
                         .setY(-0.9f)
                         .setWidth(0.1f)
@@ -41,8 +44,8 @@ public class ScrollbarTest extends Mechtatel {
         );
         vScrollbar.setScrollAmount(0.5f);
 
-        var hScrollbar = window.createHorizontalScrollbar(
-                new MttHorizontalScrollbar.MttHorizontalScrollbarCreateInfo()
+        var hScrollbar = defaultScreen.createHorizontalScrollBar(
+                new MttHorizontalScrollBar.MttHorizontalScrollBarCreateInfo()
                         .setX(-0.7f)
                         .setY(-0.9f)
                         .setWidth(1.2f)
@@ -52,5 +55,10 @@ public class ScrollbarTest extends Mechtatel {
                         .setGrabFrameColor(Color.GRAY)
         );
         hScrollbar.setScrollAmount(0.5f);
+    }
+
+    @Override
+    public void update(MttWindow window) {
+        window.present(window.getDefaultScreen());
     }
 }

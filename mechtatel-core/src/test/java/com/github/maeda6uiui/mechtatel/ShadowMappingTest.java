@@ -1,8 +1,11 @@
 package com.github.maeda6uiui.mechtatel;
 
-import com.github.maeda6uiui.mechtatel.core.*;
+import com.github.maeda6uiui.mechtatel.core.Mechtatel;
+import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -12,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,21 +37,20 @@ public class ShadowMappingTest extends Mechtatel {
                 );
     }
 
+    private MttScreen mainScreen;
     private FreeCamera camera;
-    private MttModel plane;
-    private MttModel teapot;
+
     private List<MttModel> cubes;
     private List<Vector3f> cubePositions;
     private List<Float> cubeRotations;
 
     @Override
     public void init(MttWindow window) {
-        var screenCreator = new ScreenCreator(window, "main");
-        screenCreator.addPostProcessingNabor("parallel_light");
-        screenCreator.addPostProcessingNabor("fog");
-        screenCreator.setUseShadowMapping(true);
-        var mainScreen = screenCreator.create();
-
+        mainScreen = window.createScreen(
+                new MttScreen.MttScreenCreateInfo()
+                        .setUseShadowMapping(true)
+                        .setPpNaborNames(Arrays.asList("parallel_light", "fog"))
+        );
         mainScreen.createParallelLight();
         mainScreen.getFog().setStart(10.0f);
         mainScreen.getFog().setEnd(20.0f);
@@ -58,29 +61,21 @@ public class ShadowMappingTest extends Mechtatel {
 
         camera = new FreeCamera(mainScreen.getCamera());
 
-        var drawPath = new DrawPath(window);
-        drawPath.addToScreenDrawOrder("main");
-        drawPath.setPresentScreenName("main");
-        drawPath.apply();
-
         cubes = new ArrayList<>();
         cubePositions = new ArrayList<>();
         cubeRotations = new ArrayList<>();
         try {
-            plane = window.createModel(
-                    "main",
+            MttModel plane = mainScreen.createModel(
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj"))
             );
             plane.rescale(new Vector3f(2.0f, 1.0f, 2.0f));
 
-            teapot = window.createModel(
-                    "main",
+            MttModel teapot = mainScreen.createModel(
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Teapot/teapot.obj"))
             );
             teapot.rescale(new Vector3f(2.0f, 2.0f, 2.0f));
 
-            var cube = window.createModel(
-                    "main",
+            var cube = mainScreen.createModel(
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
             );
             cube.translate(new Vector3f(6.0f, 2.0f, 0.0f));
@@ -91,16 +86,6 @@ public class ShadowMappingTest extends Mechtatel {
             logger.error("Error", e);
             window.close();
         }
-    }
-
-    @Override
-    public void dispose(MttWindow window) {
-
-    }
-
-    @Override
-    public void reshape(MttWindow window, int width, int height) {
-
     }
 
     @Override
@@ -120,7 +105,7 @@ public class ShadowMappingTest extends Mechtatel {
 
         if (window.getKeyboardPressingCount("ENTER") == 1) {
             var srcCube = cubes.get(0);
-            var dupCube = window.duplicateModel(srcCube);
+            var dupCube = window.getDefaultScreen().duplicateModel(srcCube);
 
             dupCube.translate(new Vector3f(6.0f, 2.0f, 0.0f));
             cubes.add(dupCube);
@@ -152,5 +137,7 @@ public class ShadowMappingTest extends Mechtatel {
             var mat = translateMat.mul(rotZMat).mul(rotYMat).mul(rotXMat);
             cube.setMat(mat);
         }
+
+        window.present(mainScreen);
     }
 }

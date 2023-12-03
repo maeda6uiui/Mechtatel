@@ -1,10 +1,14 @@
 package com.github.maeda6uiui.mechtatel;
 
-import com.github.maeda6uiui.mechtatel.core.*;
+import com.github.maeda6uiui.mechtatel.core.Mechtatel;
+import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.MttWindow;
+import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +18,8 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class FlexibleNaborTest extends Mechtatel {
@@ -34,17 +40,10 @@ public class FlexibleNaborTest extends Mechtatel {
     }
 
     private MttScreen mainScreen;
-    private MttModel plane;
-    private MttModel teapot;
-    private MttModel cube;
     private FreeCamera camera;
 
     @Override
     public void init(MttWindow window) {
-        var screenCreator = new ScreenCreator(window, "main");
-        screenCreator.setUseShadowMapping(true);
-        screenCreator.addPostProcessingNabor("sepia");
-
         URL fragShaderResource;
         try {
             fragShaderResource = Paths.get("./Mechtatel/Addon/maeda6uiui/Shader/sepia.frag").toUri().toURL();
@@ -56,45 +55,36 @@ public class FlexibleNaborTest extends Mechtatel {
         }
 
         var naborInfo = new FlexibleNaborInfo(
-                Objects.requireNonNull(this.getClass().getResource(
-                        "/Standard/Shader/PostProcessing/post_processing.vert")),
+                Objects.requireNonNull(
+                        this.getClass().getResource("/Standard/Shader/PostProcessing/post_processing.vert")),
                 fragShaderResource
         );
         naborInfo.setLightingType("parallel_light");
-        screenCreator.addFlexibleNaborInfo("sepia", naborInfo);
 
-        mainScreen = screenCreator.create();
-
+        mainScreen = window.createScreen(
+                new MttScreen.MttScreenCreateInfo()
+                        .setUseShadowMapping(true)
+                        .setPpNaborNames(List.of("sepia"))
+                        .setFlexibleNaborInfos(Map.of("sepia", naborInfo))
+        );
         mainScreen.createParallelLight();
         mainScreen.getFog().setStart(10.0f);
         mainScreen.getFog().setEnd(20.0f);
 
-        var drawPath = new DrawPath(window);
-        drawPath.addToScreenDrawOrder("main");
-        drawPath.setPresentScreenName("main");
-        drawPath.apply();
-
         try {
-            plane = window.createModel(
-                    "main",
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj"))
-            );
-            teapot = window.createModel(
-                    "main",
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Teapot/teapot.obj"))
-            );
-            cube = window.createModel(
-                    "main",
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
-            );
+            mainScreen.createModel(
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj")));
+            mainScreen.createModel(
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj")));
+            MttModel cube = mainScreen.createModel(
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj")));
+            cube.translate(new Vector3f(0.0f, 3.0f, 0.0f));
         } catch (URISyntaxException | IOException e) {
             logger.error("Error", e);
             window.close();
 
             return;
         }
-
-        cube.translate(new Vector3f(0.0f, 3.0f, 0.0f));
 
         camera = new FreeCamera(mainScreen.getCamera());
     }
@@ -113,13 +103,16 @@ public class FlexibleNaborTest extends Mechtatel {
                 window.getKeyboardPressingCount("LEFT"),
                 window.getKeyboardPressingCount("RIGHT")
         );
-    }
 
-    @Override
-    public void postPresent(MttWindow window) {
+        window.present(mainScreen);
+
         if (window.getKeyboardPressingCount("ENTER") == 1) {
             try {
-                window.saveScreenshot("main", "bgra", "screenshot.png");
+                mainScreen.save(
+                        ScreenImageType.COLOR,
+                        PixelFormat.BGRA,
+                        Paths.get("./screenshot.png")
+                );
             } catch (IOException e) {
                 logger.error("Error", e);
                 window.close();

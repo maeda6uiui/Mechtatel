@@ -1,8 +1,8 @@
 package com.github.maeda6uiui.mechtatel;
 
-import com.github.maeda6uiui.mechtatel.core.*;
-import com.github.maeda6uiui.mechtatel.core.component.MttTexturedQuad2D;
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.Mechtatel;
+import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import org.joml.Vector2f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,29 +28,23 @@ public class ShowTexture extends Mechtatel {
                 );
     }
 
-    private MttScreen mainScreen;
-    private MttTexturedQuad2D texturedQuad;
-
     @Override
     public void init(MttWindow window) {
-        var mainScreenCreator = new ScreenCreator(window, "main");
-        mainScreen = mainScreenCreator.create();
-
-        var drawPath = new DrawPath(window);
-        drawPath.addToScreenDrawOrder("main");
-        drawPath.setPresentScreenName("main");
-        drawPath.apply();
-
         try {
-            texturedQuad = window.createTexturedQuad2D(
-                    "main",
+            window.getDefaultScreen().createTexturedQuad2D(
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Texture/checker.png")),
                     new Vector2f(-1.0f, -1.0f),
                     new Vector2f(1.0f, 1.0f),
-                    0.0f);
+                    0.0f
+            );
         } catch (URISyntaxException | FileNotFoundException e) {
             logger.error("Error", e);
             window.close();
         }
+    }
+
+    @Override
+    public void update(MttWindow window) {
+        window.present(window.getDefaultScreen());
     }
 }

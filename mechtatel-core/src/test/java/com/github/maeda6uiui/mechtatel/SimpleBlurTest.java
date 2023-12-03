@@ -1,8 +1,9 @@
 package com.github.maeda6uiui.mechtatel;
 
-import com.github.maeda6uiui.mechtatel.core.*;
+import com.github.maeda6uiui.mechtatel.core.Mechtatel;
+import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Objects;
 
 public class SimpleBlurTest extends Mechtatel {
@@ -30,23 +32,17 @@ public class SimpleBlurTest extends Mechtatel {
     }
 
     private MttScreen mainScreen;
-    private MttModel mainModel;
     private FreeCamera camera;
 
     @Override
     public void init(MttWindow window) {
-        var mainScreenCreator = new ScreenCreator(window, "main");
-        mainScreenCreator.addPostProcessingNabor("simple_blur");
-        mainScreen = mainScreenCreator.create();
-
-        var drawPath = new DrawPath(window);
-        drawPath.addToScreenDrawOrder("main");
-        drawPath.setPresentScreenName("main");
-        drawPath.apply();
+        mainScreen = window.createScreen(
+                new MttScreen.MttScreenCreateInfo()
+                        .setPpNaborNames(List.of("simple_blur"))
+        );
 
         try {
-            mainModel = window.createModel(
-                    "main",
+            mainScreen.createModel(
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
             );
         } catch (URISyntaxException | IOException e) {
@@ -80,5 +76,7 @@ public class SimpleBlurTest extends Mechtatel {
                 window.getKeyboardPressingCount("LEFT"),
                 window.getKeyboardPressingCount("RIGHT")
         );
+
+        window.present(mainScreen);
     }
 }

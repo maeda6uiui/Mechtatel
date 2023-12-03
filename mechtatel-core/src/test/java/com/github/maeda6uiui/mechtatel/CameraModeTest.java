@@ -5,8 +5,8 @@ import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.CameraMode;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +36,12 @@ public class CameraModeTest extends Mechtatel {
 
     @Override
     public void init(MttWindow window) {
-        MttScreen defaultScreen = window.getScreen("default");
+        MttScreen defaultScreen = window.getDefaultScreen();
         camera = new FreeCamera(defaultScreen.getCamera());
 
         MttModel srcCube;
         try {
-            srcCube = window.createModel(
-                    "default",
+            srcCube = defaultScreen.createModel(
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
             );
             srcCube.setVisible(false);
@@ -57,7 +56,7 @@ public class CameraModeTest extends Mechtatel {
         for (int i = 0; i <= 10; i++) {
             float x = -25.0f;
             for (int j = 0; j <= 10; j++) {
-                MttModel cube = window.duplicateModel(srcCube);
+                MttModel cube = defaultScreen.duplicateModel(srcCube);
                 cube.translate(new Vector3f(x, 0.0f, z));
 
                 x += 5.0f;
@@ -81,11 +80,13 @@ public class CameraModeTest extends Mechtatel {
                 window.getKeyboardPressingCount("RIGHT")
         );
 
-        MttScreen defaultScreen = window.getScreen("default");
+        MttScreen defaultScreen = window.getDefaultScreen();
         if (window.getKeyboardPressingCount("F1") == 1) {
             defaultScreen.getCamera().setCameraMode(CameraMode.ORTHOGRAPHIC);
         } else if (window.getKeyboardPressingCount("F2") == 1) {
             defaultScreen.getCamera().setCameraMode(CameraMode.PERSPECTIVE);
         }
+
+        window.present(defaultScreen);
     }
 }

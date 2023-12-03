@@ -1,9 +1,13 @@
 package com.github.maeda6uiui.mechtatel;
 
-import com.github.maeda6uiui.mechtatel.core.*;
+import com.github.maeda6uiui.mechtatel.core.Mechtatel;
+import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.MttWindow;
+import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel;
-import com.github.maeda6uiui.mechtatel.core.component.MttSphere;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.slf4j.Logger;
@@ -11,6 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class ScreenshotTest extends Mechtatel {
@@ -30,40 +36,31 @@ public class ScreenshotTest extends Mechtatel {
                 );
     }
 
+    private MttScreen mainScreen;
     private FreeCamera camera;
-
-    private MttModel plane;
-    private MttModel cube;
-    private MttSphere sphere;
 
     @Override
     public void init(MttWindow window) {
-        var screenCreator = new ScreenCreator(window, "main");
-        screenCreator.addPostProcessingNabor("parallel_light");
-        screenCreator.addPostProcessingNabor("fog");
-        screenCreator.setUseShadowMapping(true);
-        var mainScreen = screenCreator.create();
-
+        mainScreen = window.createScreen(
+                new MttScreen.MttScreenCreateInfo()
+                        .setUseShadowMapping(true)
+                        .setPpNaborNames(Arrays.asList("parallel_light", "fog"))
+        );
         mainScreen.createParallelLight();
         mainScreen.getFog().setStart(10.0f);
         mainScreen.getFog().setEnd(20.0f);
 
         camera = new FreeCamera(mainScreen.getCamera());
 
-        var drawPath = new DrawPath(window);
-        drawPath.addToScreenDrawOrder("main");
-        drawPath.setPresentScreenName("main");
-        drawPath.apply();
-
         try {
-            plane = window.createModel(
-                    "main",
+            mainScreen.createModel(
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj"))
             );
-            cube = window.createModel(
-                    "main",
+
+            MttModel cube = mainScreen.createModel(
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
             );
+            cube.translate(new Vector3f(0.0f, 1.0f, 0.0f));
         } catch (URISyntaxException | IOException e) {
             logger.error("Error", e);
             window.close();
@@ -71,22 +68,11 @@ public class ScreenshotTest extends Mechtatel {
             return;
         }
 
-        cube.translate(new Vector3f(0.0f, 1.0f, 0.0f));
-
-        sphere = window.createSphere(
+        mainScreen.createSphere(
                 new Vector3f(5.0f, 2.0f, 0.0f),
-                2.0f, 32, 32, new Vector4f(1.0f, 0.0f, 1.0f, 1.0f)
+                2.0f, 32, 32,
+                new Vector4f(1.0f, 0.0f, 1.0f, 1.0f)
         );
-    }
-
-    @Override
-    public void dispose(MttWindow window) {
-
-    }
-
-    @Override
-    public void reshape(MttWindow window, int width, int height) {
-
     }
 
     @Override
@@ -103,13 +89,12 @@ public class ScreenshotTest extends Mechtatel {
                 window.getKeyboardPressingCount("LEFT"),
                 window.getKeyboardPressingCount("RIGHT")
         );
-    }
 
-    @Override
-    public void postPresent(MttWindow window) {
+        window.present(mainScreen);
+
         if (window.getKeyboardPressingCount("ENTER") == 1) {
             try {
-                window.saveScreenshot("main", "bgra", "screenshot.png");
+                mainScreen.save(ScreenImageType.COLOR, PixelFormat.BGRA, Paths.get("./screenshot.png"));
             } catch (IOException e) {
                 logger.error("Error", e);
                 window.close();

@@ -1,12 +1,16 @@
 package com.github.maeda6uiui.mechtatel;
 
-import com.github.maeda6uiui.mechtatel.core.*;
+import com.github.maeda6uiui.mechtatel.core.Mechtatel;
+import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.MttWindow;
+import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalBox;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalMesh;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObject;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import com.jme3.bullet.objects.PhysicsBody;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
@@ -14,10 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.nio.file.Paths;
+import java.util.*;
 
 public class PhysicalObjectTest extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(PhysicalObjectTest.class);
@@ -48,17 +50,14 @@ public class PhysicalObjectTest extends Mechtatel {
 
     @Override
     public void init(MttWindow window) {
-        var mainScreenCreator = new ScreenCreator(window, "main");
-        mainScreenCreator.addPostProcessingNabor("spotlight");
-        mainScreenCreator.addPostProcessingNabor("fog");
-        mainScreenCreator.setUseShadowMapping(true);
-        mainScreen = mainScreenCreator.create();
-
+        mainScreen = window.createScreen(
+                new MttScreen.MttScreenCreateInfo()
+                        .setUseShadowMapping(true)
+                        .setPpNaborNames(Arrays.asList("spotlight", "fog"))
+        );
         mainScreen.getFog().setStart(10.0f);
         mainScreen.getFog().setEnd(20.0f);
-
         mainScreen.getShadowMappingSettings().setBiasCoefficient(0.003f);
-
         mainScreen.setSpotlightAmbientColor(new Vector3f(0.0f, 0.0f, 0.0f));
 
         var spotlightR = mainScreen.createSpotlight();
@@ -76,19 +75,12 @@ public class PhysicalObjectTest extends Mechtatel {
         spotlightB.setDirection(new Vector3f(1.0f, -1.0f, 0.0f));
         spotlightB.setDiffuseColor(new Vector3f(0.0f, 0.0f, 1.0f));
 
-        var drawPath = new DrawPath(window);
-        drawPath.addToScreenDrawOrder("main");
-        drawPath.setPresentScreenName("main");
-        drawPath.apply();
-
         try {
-            level = window.createModel(
-                    "main",
+            level = mainScreen.createModel(
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj"))
             );
 
-            box = window.createModel(
-                    "main",
+            box = mainScreen.createModel(
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
             );
             box.setVisible(false);
@@ -99,14 +91,14 @@ public class PhysicalObjectTest extends Mechtatel {
             return;
         }
 
+        var phLevel = new PhysicalMesh(level, PhysicsBody.massForStatic);
+        phLevel.getBody().setRestitution(0.7f);
+        phLevel.getBody().setFriction(0.5f);
+
         camera = new FreeCamera(mainScreen.getCamera());
 
         random = new Random();
         screenshotCount = 0;
-
-        var phLevel = new PhysicalMesh(level, PhysicsBody.massForStatic);
-        phLevel.getBody().setRestitution(0.7f);
-        phLevel.getBody().setFriction(0.5f);
 
         physicalObjects = new ArrayList<>();
     }
@@ -134,16 +126,14 @@ public class PhysicalObjectTest extends Mechtatel {
         z *= signZ;
 
         if (window.getKeyboardPressingCount("1") == 1) {
+            var dupBox = mainScreen.duplicateModel(box);
+            dupBox.rescale(new Vector3f(0.5f, 0.5f, 0.5f));
+
             var phBox = new PhysicalBox(0.5f, 1.0f);
             phBox.getBody().setRestitution(0.7f);
             phBox.getBody().setFriction(0.5f);
             phBox.setLocation(new Vector3f(x, 10.0f, z));
-
-            var dupBox = window.duplicateModel(box);
-            dupBox.rescale(new Vector3f(0.5f, 0.5f, 0.5f));
-
             phBox.addComponent(dupBox);
-
             physicalObjects.add(phBox);
         }
 
@@ -151,18 +141,17 @@ public class PhysicalObjectTest extends Mechtatel {
             physicalObjects.forEach(PhysicalObject::cleanup);
             physicalObjects.clear();
         }
-
         physicalObjects.forEach(PhysicalObject::syncComponents);
-    }
 
-    @Override
-    public void postPresent(MttWindow window) {
+        window.present(mainScreen);
+
         if (window.getKeyboardPressingCount("F1") == 1) {
             try {
-                window.saveScreenshot(
-                        "main",
-                        "bgra",
-                        String.format("screenshot_%d.jpg", screenshotCount));
+                mainScreen.save(
+                        ScreenImageType.COLOR,
+                        PixelFormat.BGRA,
+                        Paths.get(String.format("screenshot_%d.png", screenshotCount))
+                );
                 screenshotCount++;
             } catch (IOException e) {
                 logger.error("Error", e);

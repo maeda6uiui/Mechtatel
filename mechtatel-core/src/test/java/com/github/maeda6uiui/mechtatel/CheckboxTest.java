@@ -3,7 +3,8 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttCheckbox;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.component.gui.MttCheckBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +29,9 @@ public class CheckboxTest extends Mechtatel {
 
     @Override
     public void init(MttWindow window) {
-        window.createCheckbox(
-                new MttCheckbox.MttCheckboxCreateInfo()
+        MttScreen defaultScreen = window.getDefaultScreen();
+        defaultScreen.createCheckBox(
+                new MttCheckBox.MttCheckBoxCreateInfo()
                         .setX(-0.9f)
                         .setY(-0.9f)
                         .setWidth(0.9f)
@@ -47,8 +49,8 @@ public class CheckboxTest extends Mechtatel {
                         .setFontColor(Color.GREEN)
                         .setCheckboxColor(Color.WHITE)
         );
-        window.createCheckbox(
-                new MttCheckbox.MttCheckboxCreateInfo()
+        defaultScreen.createCheckBox(
+                new MttCheckBox.MttCheckBoxCreateInfo()
                         .setX(-0.9f)
                         .setY(-0.75f)
                         .setWidth(0.9f)
@@ -66,5 +68,7 @@ public class CheckboxTest extends Mechtatel {
                         .setFontColor(Color.ORANGE)
                         .setCheckboxColor(Color.GREEN)
         );
+
+        window.present(defaultScreen);
     }
 }

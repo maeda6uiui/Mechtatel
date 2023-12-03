@@ -3,10 +3,10 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
-import com.github.maeda6uiui.mechtatel.core.animation.AnimationInfo;
-import com.github.maeda6uiui.mechtatel.core.animation.MttAnimation;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.animation.AnimationInfo;
+import com.github.maeda6uiui.mechtatel.core.screen.animation.MttAnimation;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +37,12 @@ public class AnimationTest extends Mechtatel {
 
     @Override
     public void init(MttWindow window) {
+        MttScreen defaultScreen = window.getDefaultScreen();
         try {
             var animationInfo = new AnimationInfo(
                     Objects.requireNonNull(
                             this.getClass().getResource("/Standard/Model/Cube/sample_animations.json")));
-            animation = window.createAnimation("cubes", "default", animationInfo);
+            animation = defaultScreen.createAnimation("cubes", animationInfo);
         } catch (URISyntaxException | IOException e) {
             logger.error("Error", e);
             window.close();
@@ -49,17 +50,14 @@ public class AnimationTest extends Mechtatel {
             return;
         }
 
-        System.out.println("model_names=");
-        animation.getModels().keySet().forEach(System.out::println);
+        logger.info("Model names:");
+        animation.getModels().keySet().forEach(v -> logger.info("- {}", v));
+        logger.info("Animation names:");
+        animation.getModelSets().keySet().forEach(v -> logger.info("- {}", v));
 
-        System.out.println("animation_names=");
-        animation.getModelSets().keySet().forEach(System.out::println);
+        defaultScreen.createLineSet().addAxes(10.0f).createBuffer();
 
-        MttScreen defaultScreen = window.getScreen("default");
         defaultScreen.getCamera().setEye(new Vector3f(10.0f, 10.0f, 10.0f));
-
-        window.createLineSet().addAxes(10.0f).createBuffer();
-
         camera = new FreeCamera(defaultScreen.getCamera());
     }
 
@@ -89,5 +87,7 @@ public class AnimationTest extends Mechtatel {
         } else if (window.getKeyboardPressingCount("5") == 1) {
             animation.stopAllAnimations();
         }
+
+        window.present(window.getDefaultScreen());
     }
 }

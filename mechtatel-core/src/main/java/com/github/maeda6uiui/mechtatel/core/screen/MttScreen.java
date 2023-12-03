@@ -27,10 +27,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -190,6 +187,24 @@ public class MttScreen {
     public void cleanup() {
         components.forEach(MttComponent::cleanup);
         screen.cleanup();
+    }
+
+    public void addComponents(MttComponent... cs) {
+        components.addAll(Arrays.asList(cs));
+    }
+
+    public boolean deleteComponent(MttComponent component) {
+        if (!components.contains(component)) {
+            return false;
+        }
+
+        component.cleanup();
+        return components.remove(component);
+    }
+
+    public void deleteAllComponents() {
+        components.forEach(MttComponent::cleanup);
+        components.clear();
     }
 
     public void draw() {

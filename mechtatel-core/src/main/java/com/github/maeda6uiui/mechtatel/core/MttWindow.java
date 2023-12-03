@@ -162,30 +162,8 @@ public class MttWindow {
         mtt.update(this);
     }
 
-    public void draw(
-            List<MttScreen> firstPhaseScreens,
-            List<TextureOperation> textureOperations,
-            List<MttScreen> secondPhaseScreens,
-            MttScreen presentScreen) {
-        firstPhaseScreens.forEach(screen -> {
-            mtt.preDraw(this, screen);
-            screen.draw();
-            mtt.postDraw(this, screen);
-        });
-        textureOperations.forEach(op -> {
-            mtt.preTextureOperation(this, op);
-            op.run();
-            mtt.postTextureOperation(this, op);
-        });
-        secondPhaseScreens.forEach(screen -> {
-            mtt.preDeferredDraw(this, screen);
-            screen.draw();
-            mtt.postDeferredDraw(this, screen);
-        });
-
-        mtt.prePresent(this);
-        vulkanImpl.presentToFrontScreen(presentScreen.getVulkanScreen());
-        mtt.postPresent(this);
+    public void present(MttScreen screen) {
+        vulkanImpl.presentToFrontScreen(screen.getVulkanScreen());
     }
 
     public void cleanup() {

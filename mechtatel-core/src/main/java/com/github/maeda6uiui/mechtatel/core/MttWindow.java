@@ -207,6 +207,7 @@ public class MttWindow {
         mtt.dispose(this);
 
         screens.forEach(MttScreen::cleanup);
+        textureOperations.forEach(TextureOperation::cleanup);
         vulkanImpl.cleanup();
         sounds3D.forEach(MttSound::cleanup);
 

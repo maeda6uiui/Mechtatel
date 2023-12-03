@@ -71,6 +71,7 @@ public class VkTextureOperation {
 
     public void cleanup() {
         resultTexture.cleanup();
+        quadDrawer.cleanup();
     }
 
     public VkMttTexture getResultTexture() {

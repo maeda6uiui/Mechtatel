@@ -305,9 +305,9 @@ public class MttWindow {
         return screen;
     }
 
-    public boolean removeScreen(MttScreen screen) {
+    public boolean deleteScreen(MttScreen screen) {
         if (screen == defaultScreen) {
-            logger.warn("You cannot remove default screen");
+            logger.warn("You cannot delete default screen");
             return false;
         }
 
@@ -315,7 +315,7 @@ public class MttWindow {
         return screens.remove(screen);
     }
 
-    public void removeAllScreens() {
+    public void deleteAllScreens() {
         screens
                 .stream()
                 .filter(screen -> screen != defaultScreen)
@@ -343,7 +343,7 @@ public class MttWindow {
         return textureOperation;
     }
 
-    public boolean removeTextureOperation(TextureOperation textureOperation) {
+    public boolean deleteTextureOperation(TextureOperation textureOperation) {
         if (!textureOperations.contains(textureOperation)) {
             return false;
         }
@@ -352,7 +352,7 @@ public class MttWindow {
         return textureOperations.remove(textureOperation);
     }
 
-    public void removeAllTextureOperations() {
+    public void deleteAllTextureOperations() {
         textureOperations.forEach(TextureOperation::cleanup);
         textureOperations.clear();
     }

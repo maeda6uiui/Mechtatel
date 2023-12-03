@@ -10,7 +10,7 @@ import org.lwjgl.vulkan.VkCommandBuffer;
  *
  * @author maeda6uiui
  */
-public class VkMttComponent implements Comparable<VkMttComponent> {
+public class VkMttComponent {
     private IMttComponentForVkMttComponent mttComponent;
     private IVkMttScreenForVkMttComponent screen;
     private String naborName;
@@ -22,11 +22,6 @@ public class VkMttComponent implements Comparable<VkMttComponent> {
         this.mttComponent = mttComponent;
         this.screen = screen;
         this.naborName = naborName;
-    }
-
-    @Override
-    public int compareTo(VkMttComponent that) {
-        return Integer.compare(this.mttComponent.getDrawOrder(), that.mttComponent.getDrawOrder());
     }
 
     public IVkMttScreenForVkMttComponent getScreen() {

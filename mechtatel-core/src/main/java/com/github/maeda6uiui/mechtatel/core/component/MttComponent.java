@@ -12,7 +12,7 @@ import java.util.Optional;
  *
  * @author maeda6uiui
  */
-public class MttComponent implements IMttComponentForVkMttComponent {
+public class MttComponent implements IMttComponentForVkMttComponent, Comparable<MttComponent> {
     public static class MttComponentCreateInfo {
         public boolean visible;
         public boolean twoDComponent;
@@ -64,6 +64,11 @@ public class MttComponent implements IMttComponentForVkMttComponent {
 
     public MttComponent(MttComponentCreateInfo createInfo) {
         this.setInitialProperties(createInfo);
+    }
+
+    @Override
+    public int compareTo(MttComponent that) {
+        return Integer.compare(this.drawOrder, that.drawOrder);
     }
 
     protected void associateVulkanComponent(VkMttComponent vkComponent) {

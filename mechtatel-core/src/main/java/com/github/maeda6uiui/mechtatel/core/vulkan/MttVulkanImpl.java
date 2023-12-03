@@ -323,4 +323,8 @@ public class MttVulkanImpl implements IMttVulkanImplForScreen {
     public int getAlbedoMSAASamples() {
         return albedoMSAASamples;
     }
+
+    public TextureOperationNabor getTextureOperationNabor() {
+        return textureOperationNabor;
+    }
 }

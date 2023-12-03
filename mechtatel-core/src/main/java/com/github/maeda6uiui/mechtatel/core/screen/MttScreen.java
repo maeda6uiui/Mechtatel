@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
  *
  * @author maeda6uiui
  */
-public class MttScreen {
+public class MttScreen implements IMttScreenForMttComponent {
     public static class MttScreenCreateInfo {
         public int depthImageWidth;
         public int depthImageHeight;
@@ -189,6 +189,7 @@ public class MttScreen {
         screen.cleanup();
     }
 
+    @Override
     public void addComponents(MttComponent... cs) {
         components.addAll(Arrays.asList(cs));
     }
@@ -269,7 +270,8 @@ public class MttScreen {
 
         ImageIO.write(bufferedImage, formatName, outputFile.toFile());
     }
-    
+
+    @Override
     public VkMttScreen getVulkanScreen() {
         return screen;
     }

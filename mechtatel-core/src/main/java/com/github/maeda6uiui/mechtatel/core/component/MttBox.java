@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import org.joml.Vector3f;
 import org.joml.Vector4fc;
@@ -46,7 +46,7 @@ public class MttBox extends MttComponent {
 
     public MttBox(
             MttVulkanImpl vulkanImpl,
-            MttScreen screen,
+            IMttScreenForMttComponent screen,
             float xHalfExtent,
             float yHalfExtent,
             float zHalfExtent,
@@ -66,7 +66,7 @@ public class MttBox extends MttComponent {
         lineSet.getVulkanComponent().ifPresent(this::associateVulkanComponent);
     }
 
-    public MttBox(MttVulkanImpl vulkanImpl, MttScreen screen, float halfExtent, Vector4fc color) {
+    public MttBox(MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen, float halfExtent, Vector4fc color) {
         this(vulkanImpl, screen, halfExtent, halfExtent, halfExtent, color);
     }
 }

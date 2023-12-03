@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttCapsule;
 import org.joml.Vector3fc;
@@ -16,7 +16,7 @@ public class MttCapsule extends MttComponent {
 
     public MttCapsule(
             MttVulkanImpl vulkanImpl,
-            MttScreen screen,
+            IMttScreenForMttComponent screen,
             Vector3fc center,
             float length,
             float radius,

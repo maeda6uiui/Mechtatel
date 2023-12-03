@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttTexturedQuad;
@@ -29,7 +29,7 @@ public class MttTexturedQuad extends MttComponent {
 
     public MttTexturedQuad(
             MttVulkanImpl vulkanImpl,
-            MttScreen screen,
+            IMttScreenForMttComponent screen,
             URI textureResource,
             boolean generateMipmaps,
             MttVertexUV v1,
@@ -58,7 +58,7 @@ public class MttTexturedQuad extends MttComponent {
 
     public MttTexturedQuad(
             MttVulkanImpl vulkanImpl,
-            MttScreen screen,
+            IMttScreenForMttComponent screen,
             MttTexturedQuad srcQuad,
             MttVertexUV v1,
             MttVertexUV v2,
@@ -80,7 +80,7 @@ public class MttTexturedQuad extends MttComponent {
 
     public MttTexturedQuad(
             MttVulkanImpl vulkanImpl,
-            MttScreen screen,
+            IMttScreenForMttComponent screen,
             MttTexture texture,
             MttVertexUV v1,
             MttVertexUV v2,

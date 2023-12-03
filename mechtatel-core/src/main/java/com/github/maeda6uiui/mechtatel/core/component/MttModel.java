@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
@@ -20,7 +20,7 @@ public class MttModel extends MttComponent {
     private URI modelResource;
     private VkMttModel vkModel;
 
-    public MttModel(MttVulkanImpl vulkanImpl, MttScreen screen, URI modelResource) throws IOException {
+    public MttModel(MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen, URI modelResource) throws IOException {
         super(
                 screen,
                 new MttComponentCreateInfo()
@@ -43,7 +43,7 @@ public class MttModel extends MttComponent {
         this.associateVulkanComponent(vkModel);
     }
 
-    public MttModel(MttVulkanImpl vulkanImpl, MttScreen screen, MttModel srcModel) {
+    public MttModel(MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen, MttModel srcModel) {
         super(
                 screen,
                 new MttComponentCreateInfo()

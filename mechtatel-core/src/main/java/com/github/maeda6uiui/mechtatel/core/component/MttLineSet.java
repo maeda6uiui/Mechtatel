@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttLineSet;
 import org.joml.Vector3f;
@@ -16,7 +16,7 @@ import org.joml.Vector4fc;
 public class MttLineSet extends MttComponent {
     private VkMttLineSet vkLineSet;
 
-    public MttLineSet(MttVulkanImpl vulkanImpl, MttScreen screen) {
+    public MttLineSet(MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen) {
         super(
                 screen,
                 new MttComponentCreateInfo()

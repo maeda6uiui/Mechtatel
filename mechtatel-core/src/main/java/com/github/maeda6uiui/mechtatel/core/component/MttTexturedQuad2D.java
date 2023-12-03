@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttTexturedQuad;
@@ -57,7 +57,7 @@ public class MttTexturedQuad2D extends MttComponent {
 
     private void create(
             MttVulkanImpl vulkanImpl,
-            MttScreen screen,
+            IMttScreenForMttComponent screen,
             URI textureResource,
             List<MttVertexUV> vertices) throws FileNotFoundException {
         if (!Files.exists(Paths.get(textureResource))) {
@@ -120,7 +120,7 @@ public class MttTexturedQuad2D extends MttComponent {
 
     public MttTexturedQuad2D(
             MttVulkanImpl vulkanImpl,
-            MttScreen screen,
+            IMttScreenForMttComponent screen,
             URI textureResource,
             MttVertex2DUV v1,
             MttVertex2DUV v2,
@@ -135,7 +135,7 @@ public class MttTexturedQuad2D extends MttComponent {
 
     public MttTexturedQuad2D(
             MttVulkanImpl vulkanImpl,
-            MttScreen screen,
+            IMttScreenForMttComponent screen,
             URI textureResource,
             Vector2fc topLeft,
             Vector2fc bottomRight,
@@ -148,7 +148,7 @@ public class MttTexturedQuad2D extends MttComponent {
 
     public MttTexturedQuad2D(
             MttVulkanImpl vulkanImpl,
-            MttScreen screen,
+            IMttScreenForMttComponent screen,
             MttTexture texture,
             MttVertex2DUV v1,
             MttVertex2DUV v2,
@@ -163,7 +163,7 @@ public class MttTexturedQuad2D extends MttComponent {
 
     public MttTexturedQuad2D(
             MttVulkanImpl vulkanImpl,
-            MttScreen screen,
+            IMttScreenForMttComponent screen,
             MttTexture texture,
             Vector2fc topLeft,
             Vector2fc bottomRight,
@@ -176,7 +176,7 @@ public class MttTexturedQuad2D extends MttComponent {
 
     public MttTexturedQuad2D(
             MttVulkanImpl vulkanImpl,
-            MttScreen screen,
+            IMttScreenForMttComponent screen,
             MttTexturedQuad2D srcQuad,
             MttVertex2DUV v1,
             MttVertex2DUV v2,
@@ -191,7 +191,7 @@ public class MttTexturedQuad2D extends MttComponent {
 
     public MttTexturedQuad2D(
             MttVulkanImpl vulkanImpl,
-            MttScreen screen,
+            IMttScreenForMttComponent screen,
             MttTexturedQuad2D srcQuad,
             Vector2fc topLeft,
             Vector2fc bottomRight,

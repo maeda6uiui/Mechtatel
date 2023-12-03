@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttQuad;
 import org.joml.Vector2f;
@@ -53,7 +53,7 @@ public class MttQuad2D extends MttComponent {
 
     public MttQuad2D(
             MttVulkanImpl vulkanImpl,
-            MttScreen screen,
+            IMttScreenForMttComponent screen,
             MttVertex2D v1,
             MttVertex2D v2,
             MttVertex2D v3,
@@ -67,7 +67,7 @@ public class MttQuad2D extends MttComponent {
 
     public MttQuad2D(
             MttVulkanImpl vulkanImpl,
-            MttScreen screen,
+            IMttScreenForMttComponent screen,
             Vector2fc p1,
             Vector2fc p2,
             Vector2fc p3,
@@ -86,7 +86,7 @@ public class MttQuad2D extends MttComponent {
 
     public MttQuad2D(
             MttVulkanImpl vulkanImpl,
-            MttScreen screen,
+            IMttScreenForMttComponent screen,
             Vector2fc topLeft,
             Vector2fc bottomRight,
             float z,

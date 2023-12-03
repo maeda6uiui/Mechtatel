@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttTexturedQuadSingleTextureSet;
@@ -31,7 +31,7 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
     }
 
     public MttTexturedQuad2DSingleTextureSet(
-            MttVulkanImpl vulkanImpl, MttScreen screen, URI textureResource) throws FileNotFoundException {
+            MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen, URI textureResource) throws FileNotFoundException {
         super(screen, generateCreateInfo());
 
         if (!Files.exists(Paths.get(textureResource))) {
@@ -50,7 +50,7 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
         this.associateVulkanComponent(vkTexturedQuadSet);
     }
 
-    public MttTexturedQuad2DSingleTextureSet(MttVulkanImpl vulkanImpl, MttScreen screen, MttTexture texture) {
+    public MttTexturedQuad2DSingleTextureSet(MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen, MttTexture texture) {
         super(screen, generateCreateInfo());
 
         var dq = vulkanImpl.getDeviceAndQueues();

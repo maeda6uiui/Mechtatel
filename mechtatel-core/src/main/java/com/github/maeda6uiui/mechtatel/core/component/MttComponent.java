@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.component;
 
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.component.VkMttComponent;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
@@ -63,7 +63,7 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
         drawOrder = createInfo.drawOrder;
     }
 
-    public MttComponent(MttScreen screen, MttComponentCreateInfo createInfo) {
+    public MttComponent(IMttScreenForMttComponent screen, MttComponentCreateInfo createInfo) {
         this.setInitialProperties(createInfo);
         screen.addComponents(this);
     }

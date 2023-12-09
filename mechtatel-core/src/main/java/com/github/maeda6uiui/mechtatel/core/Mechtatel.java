@@ -191,46 +191,6 @@ public class Mechtatel implements IMechtatelForMttWindow {
 
     }
 
-    @Override
-    public void preDraw(MttWindow window, String screenName) {
-
-    }
-
-    @Override
-    public void postDraw(MttWindow window, String screenName) {
-
-    }
-
-    @Override
-    public void preTextureOperation(MttWindow window, String operationName) {
-
-    }
-
-    @Override
-    public void postTextureOperation(MttWindow window, String operationName) {
-
-    }
-
-    @Override
-    public void preDeferredDraw(MttWindow window, String screenName) {
-
-    }
-
-    @Override
-    public void postDeferredDraw(MttWindow window, String screenName) {
-
-    }
-
-    @Override
-    public void prePresent(MttWindow window) {
-
-    }
-
-    @Override
-    public void postPresent(MttWindow window) {
-
-    }
-
     public int getFPS() {
         return fps;
     }

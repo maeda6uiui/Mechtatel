@@ -145,10 +145,7 @@ public class Mechtatel implements IMechtatelForMttWindow {
 
                 PhysicalObjects.get().ifPresent(v -> v.updatePhysicsSpace((float) elapsedTime));
 
-                windows.forEach(window -> {
-                    window.update();
-                    window.draw();
-                });
+                windows.forEach(MttWindow::update);
                 if (!newWindowsQueue.isEmpty()) {
                     windows.addAll(newWindowsQueue);
                     newWindowsQueue.clear();

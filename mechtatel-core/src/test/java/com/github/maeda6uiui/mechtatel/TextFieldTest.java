@@ -11,10 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 
-public class TextboxTest extends Mechtatel {
-    private static final Logger logger = LoggerFactory.getLogger(TextboxTest.class);
+public class TextFieldTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(TextFieldTest.class);
 
-    public TextboxTest(MttSettings settings) {
+    public TextFieldTest(MttSettings settings) {
         super(settings);
         this.run();
     }
@@ -23,19 +23,19 @@ public class TextboxTest extends Mechtatel {
         MttSettings
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
-                        TextboxTest::new,
+                        TextFieldTest::new,
                         () -> logger.error("Failed to load settings")
                 );
     }
 
-    private MttTextField textbox;
+    private MttTextField textField;
 
     @Override
     public void init(MttWindow window) {
         var keyInterpreter = new JISKeyInterpreter();
 
         MttScreen defaultScreen = window.getDefaultScreen();
-        textbox = defaultScreen.createTextField(
+        textField = defaultScreen.createTextField(
                 new MttTextField.MttTextFieldCreateInfo()
                         .setX(-0.9f)
                         .setY(-0.9f)
@@ -60,9 +60,9 @@ public class TextboxTest extends Mechtatel {
     @Override
     public void update(MttWindow window) {
         if (window.getKeyboardPressingCount("F1") == 1) {
-            logger.info(textbox.getText());
+            logger.info(textField.getText());
         } else if (window.getKeyboardPressingCount("F2") == 1) {
-            textbox.clear();
+            textField.clear();
         }
     }
 }

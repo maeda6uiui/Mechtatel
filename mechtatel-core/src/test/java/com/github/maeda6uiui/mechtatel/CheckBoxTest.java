@@ -10,10 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 
-public class CheckboxTest extends Mechtatel {
-    private static final Logger logger = LoggerFactory.getLogger(CheckboxTest.class);
+public class CheckBoxTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(CheckBoxTest.class);
 
-    public CheckboxTest(MttSettings settings) {
+    public CheckBoxTest(MttSettings settings) {
         super(settings);
         this.run();
     }
@@ -22,7 +22,7 @@ public class CheckboxTest extends Mechtatel {
         MttSettings
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
-                        CheckboxTest::new,
+                        CheckBoxTest::new,
                         () -> logger.error("Failed to load settings")
                 );
     }

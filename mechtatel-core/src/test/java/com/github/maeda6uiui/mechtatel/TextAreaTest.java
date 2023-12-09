@@ -11,10 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 
-public class TextareaTest extends Mechtatel {
-    private static final Logger logger = LoggerFactory.getLogger(TextareaTest.class);
+public class TextAreaTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(TextAreaTest.class);
 
-    public TextareaTest(MttSettings settings) {
+    public TextAreaTest(MttSettings settings) {
         super(settings);
         this.run();
     }
@@ -23,19 +23,19 @@ public class TextareaTest extends Mechtatel {
         MttSettings
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
-                        TextareaTest::new,
+                        TextAreaTest::new,
                         () -> logger.error("Failed to load settings")
                 );
     }
 
-    private MttTextArea textarea;
+    private MttTextArea textArea;
 
     @Override
     public void init(MttWindow window) {
         var keyInterpreter = new JISKeyInterpreter();
 
         MttScreen defaultScreen = window.getDefaultScreen();
-        textarea = defaultScreen.createTextArea(
+        textArea = defaultScreen.createTextArea(
                 new MttTextArea.MttTextAreaCreateInfo()
                         .setX(-0.9f)
                         .setY(-0.9f)
@@ -61,11 +61,11 @@ public class TextareaTest extends Mechtatel {
     @Override
     public void update(MttWindow window) {
         if (window.getKeyboardPressingCount("F1") == 1) {
-            logger.info(textarea.getText());
+            logger.info(textArea.getText());
         } else if (window.getKeyboardPressingCount("F2") == 1) {
-            logger.info(textarea.getLines().toString());
+            logger.info(textArea.getLines().toString());
         } else if (window.getKeyboardPressingCount("F3") == 1) {
-            textarea.clear();
+            textArea.clear();
         }
     }
 }

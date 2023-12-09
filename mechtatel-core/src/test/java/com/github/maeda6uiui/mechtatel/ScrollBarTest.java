@@ -11,10 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 
-public class ScrollbarTest extends Mechtatel {
-    private static final Logger logger = LoggerFactory.getLogger(ScrollbarTest.class);
+public class ScrollBarTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(ScrollBarTest.class);
 
-    public ScrollbarTest(MttSettings settings) {
+    public ScrollBarTest(MttSettings settings) {
         super(settings);
         this.run();
     }
@@ -23,7 +23,7 @@ public class ScrollbarTest extends Mechtatel {
         MttSettings
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
-                        ScrollbarTest::new,
+                        ScrollBarTest::new,
                         () -> logger.error("Failed to load settings")
                 );
     }

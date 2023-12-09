@@ -105,7 +105,7 @@ public class ShadowMappingTest extends Mechtatel {
 
         if (window.getKeyboardPressingCount("ENTER") == 1) {
             var srcCube = cubes.get(0);
-            var dupCube = window.getDefaultScreen().duplicateModel(srcCube);
+            var dupCube = mainScreen.duplicateModel(srcCube);
 
             dupCube.translate(new Vector3f(6.0f, 2.0f, 0.0f));
             cubes.add(dupCube);

@@ -68,7 +68,11 @@ public class CheckBoxTest extends Mechtatel {
                         .setFontColor(Color.ORANGE)
                         .setCheckboxColor(Color.GREEN)
         );
+    }
 
+    @Override
+    public void update(MttWindow window) {
+        MttScreen defaultScreen = window.getDefaultScreen();
         defaultScreen.draw();
         window.present(defaultScreen);
     }

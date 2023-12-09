@@ -3,8 +3,9 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttTextbox;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.JISKeyInterpreter;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.component.gui.MttTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,13 +28,15 @@ public class TextboxTest extends Mechtatel {
                 );
     }
 
-    private MttTextbox textbox;
+    private MttTextField textbox;
 
     @Override
     public void init(MttWindow window) {
         var keyInterpreter = new JISKeyInterpreter();
-        textbox = window.createTextbox(
-                new MttTextbox.MttTextboxCreateInfo()
+
+        MttScreen defaultScreen = window.getDefaultScreen();
+        textbox = defaultScreen.createTextField(
+                new MttTextField.MttTextFieldCreateInfo()
                         .setX(-0.9f)
                         .setY(-0.9f)
                         .setWidth(0.9f)
@@ -50,14 +53,14 @@ public class TextboxTest extends Mechtatel {
                         .setSecondsPerFrame(this.getSecondsPerFrame())
                         .setRepeatDelay(0.5f)
                         .setKeyInterpreter(keyInterpreter)
-                        .setSupportedCharacters(MttTextbox.DEFAULT_SUPPORTED_CHARACTERS)
+                        .setSupportedCharacters(MttTextField.DEFAULT_SUPPORTED_CHARACTERS)
         );
     }
 
     @Override
     public void update(MttWindow window) {
         if (window.getKeyboardPressingCount("F1") == 1) {
-            System.out.println(textbox.getText());
+            logger.info(textbox.getText());
         } else if (window.getKeyboardPressingCount("F2") == 1) {
             textbox.clear();
         }

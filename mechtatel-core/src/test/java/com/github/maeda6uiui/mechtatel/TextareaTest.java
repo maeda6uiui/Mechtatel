@@ -3,8 +3,9 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
-import com.github.maeda6uiui.mechtatel.core.component.gui.MttTextarea;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.JISKeyInterpreter;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.component.gui.MttTextArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,13 +28,15 @@ public class TextareaTest extends Mechtatel {
                 );
     }
 
-    private MttTextarea textarea;
+    private MttTextArea textarea;
 
     @Override
     public void init(MttWindow window) {
         var keyInterpreter = new JISKeyInterpreter();
-        textarea = window.createTextarea(
-                new MttTextarea.MttTextareaCreateInfo()
+
+        MttScreen defaultScreen = window.getDefaultScreen();
+        textarea = defaultScreen.createTextArea(
+                new MttTextArea.MttTextAreaCreateInfo()
                         .setX(-0.9f)
                         .setY(-0.9f)
                         .setWidth(0.9f)
@@ -51,16 +54,16 @@ public class TextareaTest extends Mechtatel {
                         .setSecondsPerFrame(this.getSecondsPerFrame())
                         .setRepeatDelay(0.5f)
                         .setKeyInterpreter(keyInterpreter)
-                        .setSupportedCharacters(MttTextarea.DEFAULT_SUPPORTED_CHARACTERS)
+                        .setSupportedCharacters(MttTextArea.DEFAULT_SUPPORTED_CHARACTERS)
         );
     }
 
     @Override
     public void update(MttWindow window) {
         if (window.getKeyboardPressingCount("F1") == 1) {
-            System.out.println(textarea.getText());
+            logger.info(textarea.getText());
         } else if (window.getKeyboardPressingCount("F2") == 1) {
-            System.out.println(textarea.getLines());
+            logger.info(textarea.getLines().toString());
         } else if (window.getKeyboardPressingCount("F3") == 1) {
             textarea.clear();
         }

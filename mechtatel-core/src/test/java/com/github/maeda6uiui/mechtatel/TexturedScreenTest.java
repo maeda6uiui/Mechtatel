@@ -1,10 +1,13 @@
 package com.github.maeda6uiui.mechtatel;
 
-import com.github.maeda6uiui.mechtatel.core.*;
+import com.github.maeda6uiui.mechtatel.core.Mechtatel;
+import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
-import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
+import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
+import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -13,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Objects;
 
 public class TexturedScreenTest extends Mechtatel {
@@ -37,49 +41,41 @@ public class TexturedScreenTest extends Mechtatel {
     private FreeCamera camera;
 
     private MttScreen secondaryScreen;
-    private MttModel secondaryCube;
     private Vector3f secondaryCameraPosition;
 
     @Override
     public void init(MttWindow window) {
-        var primaryScreenCreator = new ScreenCreator(window, "primary");
-        primaryScreen = primaryScreenCreator.create();
+        primaryScreen = window.createScreen(new MttScreen.MttScreenCreateInfo());
         primaryScreen.setBackgroundColor(new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
         primaryScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
-
         camera = new FreeCamera(primaryScreen.getCamera());
 
-        var secondaryScreenCreator = new ScreenCreator(window, "secondary");
-        secondaryScreenCreator.addPostProcessingNabor("parallel_light");
-        secondaryScreenCreator.setDepthImageSize(1024, 1024);
-        secondaryScreenCreator.setScreenSize(512, 512);
-        secondaryScreenCreator.setShouldChangeExtentOnRecreate(false);
-        secondaryScreen = secondaryScreenCreator.create();
+        secondaryScreen = window.createScreen(
+                new MttScreen.MttScreenCreateInfo()
+                        .setPpNaborNames(List.of("parallel_light"))
+                        .setDepthImageWidth(1024)
+                        .setDepthImageHeight(1024)
+                        .setScreenWidth(512)
+                        .setScreenHeight(512)
+                        .setShouldChangeExtentOnRecreate(false)
+        );
         secondaryScreen.setBackgroundColor(new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
         secondaryScreen.createParallelLight();
-
         secondaryCameraPosition = new Vector3f(1.2f, 1.2f, 1.2f);
         secondaryScreen.getCamera().setEye(secondaryCameraPosition);
 
-        var drawPath = new DrawPath(window);
-        drawPath.addToScreenDrawOrder("secondary");
-        drawPath.addToScreenDrawOrder("primary");
-        drawPath.setPresentScreenName("primary");
-        drawPath.apply();
-
         try {
-            primaryCube = window.createModel(
-                    "primary",
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
-            );
-            secondaryCube = window.createModel(
-                    "secondary",
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
-            );
+            primaryCube = primaryScreen.createModel(
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj")));
+            secondaryScreen.createModel(
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj")));
         } catch (URISyntaxException | IOException e) {
             logger.error("Error", e);
             window.close();
         }
+
+        MttTexture secondaryDrawResult = secondaryScreen.texturize(ScreenImageType.COLOR, primaryScreen);
+        primaryCube.replaceTexture(0, secondaryDrawResult);
     }
 
     @Override
@@ -100,7 +96,8 @@ public class TexturedScreenTest extends Mechtatel {
         secondaryCameraPosition = new Matrix4f().rotateY(0.01f).transformPosition(secondaryCameraPosition);
         secondaryScreen.getCamera().setEye(secondaryCameraPosition);
 
-        MttTexture secondaryDrawResult = window.texturizeColorOfScreen("secondary", "primary");
-        primaryCube.replaceTexture(0, secondaryDrawResult);
+        secondaryScreen.draw();
+        primaryScreen.draw();
+        window.present(primaryScreen);
     }
 }

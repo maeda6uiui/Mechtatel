@@ -2,11 +2,11 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.*;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
-import com.github.maeda6uiui.mechtatel.core.component.MttModel;
-import com.github.maeda6uiui.mechtatel.core.component.MttTexturedQuad2D;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
-import com.github.maeda6uiui.mechtatel.core.texture.MttTexture;
-import com.github.maeda6uiui.mechtatel.core.texture.TextureOperationParameters;
+import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttTexturedQuad2D;
+import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import org.joml.Vector2f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,68 +35,42 @@ public class SkyboxTest extends Mechtatel {
     private MttScreen skyboxScreen;
     private MttScreen mainScreen;
     private MttScreen finalScreen;
-
-    private MttTexture skyboxColorTexture;
-    private MttTexture skyboxDepthTexture;
-    private MttTexture mainColorTexture;
-    private MttTexture mainDepthTexture;
-    private MttTexture finalTexture;
-
     private MttTexturedQuad2D texturedQuad;
-
-    private MttModel skyboxModel;
-    private MttModel mainModel;
-
     private FreeCamera camera;
 
     @Override
     public void init(MttWindow window) {
-        var skyboxScreenCreator = new ScreenCreator(window, "skybox");
-        skyboxScreenCreator.setDepthImageSize(1024, 1024);
-        skyboxScreenCreator.setSamplerAddressMode(SamplerAddressMode.CLAMP_TO_EDGE);
-        skyboxScreen = skyboxScreenCreator.create();
+        skyboxScreen = window.createScreen(
+                new MttScreen.MttScreenCreateInfo()
+                        .setDepthImageWidth(1024)
+                        .setDepthImageHeight(1024)
+                        .setSamplerAddressMode(SamplerAddressMode.CLAMP_TO_EDGE)
+        );
         skyboxScreen.getCamera().setZNear(500.0f);
         skyboxScreen.getCamera().setZFar(2000.0f);
 
-        var mainScreenCreator = new ScreenCreator(window, "main");
-        mainScreen = mainScreenCreator.create();
-
-        var finalScreenCreator = new ScreenCreator(window, "final");
-        finalScreen = finalScreenCreator.create();
-
-        var drawPath = new DrawPath(window);
-        drawPath.addToScreenDrawOrder("skybox");
-        drawPath.addToScreenDrawOrder("main");
-        drawPath.addToTextureOperationOrder("merge_by_depth");
-        drawPath.addToDeferredScreenDrawOrder("final");
-        drawPath.setPresentScreenName("final");
-        drawPath.apply();
+        mainScreen = window.createScreen(new MttScreen.MttScreenCreateInfo());
+        finalScreen = window.createScreen(new MttScreen.MttScreenCreateInfo());
 
         try {
-            texturedQuad = window.createTexturedQuad2D(
-                    "final",
+            texturedQuad = finalScreen.createTexturedQuad2D(
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Texture/checker.png")),
                     new Vector2f(-1.0f, -1.0f),
                     new Vector2f(1.0f, 1.0f),
                     0.0f
             );
 
-            skyboxModel = window.createModel(
-                    "skybox",
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Skybox/skybox.obj"))
-            );
-            mainModel = window.createModel(
-                    "main",
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
-            );
+            MttModel skyboxModel = skyboxScreen.createModel(
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Skybox/skybox.obj")));
+            mainScreen.createModel(
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj")));
 
-            var skyboxTextureCreator = new SkyboxTextureCreator(
-                    window,
-                    "skybox",
+            new SkyboxTextureCreator(
+                    skyboxScreen,
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Skybox/Hill")),
                     "png",
-                    false);
-            skyboxTextureCreator.apply(skyboxModel);
+                    false
+            ).apply(skyboxModel);
         } catch (URISyntaxException | IOException e) {
             logger.error("Error", e);
             window.close();
@@ -104,7 +78,7 @@ public class SkyboxTest extends Mechtatel {
             return;
         }
 
-        window.createLineSet().addPositiveAxes(10.0f).createBuffer();
+        mainScreen.createLineSet().addPositiveAxes(10.0f).createBuffer();
 
         camera = new FreeCamera(mainScreen.getCamera());
     }
@@ -125,44 +99,34 @@ public class SkyboxTest extends Mechtatel {
         );
         skyboxScreen.syncCamera(mainScreen.getCamera());
 
-        skyboxColorTexture = window.texturizeColorOfScreen("skybox", "final");
-        skyboxDepthTexture = window.texturizeDepthOfScreen("skybox", "final");
-        mainColorTexture = window.texturizeColorOfScreen("main", "final");
-        mainDepthTexture = window.texturizeDepthOfScreen("main", "final");
+        MttTexture skyboxColorTexture = skyboxScreen.texturize(ScreenImageType.COLOR, finalScreen);
+        MttTexture skyboxDepthTexture = skyboxScreen.texturize(ScreenImageType.DEPTH, finalScreen);
+        MttTexture mainColorTexture = mainScreen.texturize(ScreenImageType.COLOR, finalScreen);
+        MttTexture mainDepthTexture = mainScreen.texturize(ScreenImageType.DEPTH, finalScreen);
 
         var textureOperationParameters = new TextureOperationParameters();
         textureOperationParameters.setOperationType(TextureOperationParameters.TEXTURE_OPERATION_MERGE_BY_DEPTH);
         textureOperationParameters.setFirstTextureFixedDepth(0.99999f);
 
-        finalTexture = window.createTextureOperation(
-                "merge_by_depth",
+        TextureOperation opMergeByDepth = finalScreen.createTextureOperation(
                 skyboxColorTexture,
-                mainColorTexture,
                 skyboxDepthTexture,
-                mainDepthTexture,
-                "final",
-                textureOperationParameters
+                mainColorTexture,
+                mainDepthTexture
         );
-        texturedQuad.replaceTexture(finalTexture);
-    }
+        opMergeByDepth.setParameters(textureOperationParameters);
+        texturedQuad.replaceTexture(opMergeByDepth.getResultTexture());
 
-    @Override
-    public void postPresent(MttWindow window) {
-        if (window.getKeyboardPressingCount("ENTER") == 1) {
-            try {
-                window.saveScreenshot("final", "bgra", "screenshot.jpg");
-            } catch (IOException e) {
-                logger.error("Error", e);
-                window.close();
-
-                return;
-            }
-        }
+        skyboxScreen.draw();
+        mainScreen.draw();
+        opMergeByDepth.run();
+        finalScreen.draw();
+        window.present(finalScreen);
 
         skyboxColorTexture.cleanup();
         skyboxDepthTexture.cleanup();
         mainColorTexture.cleanup();
         mainDepthTexture.cleanup();
-        finalTexture.cleanup();
+        finalScreen.deleteTextureOperation(opMergeByDepth);
     }
 }

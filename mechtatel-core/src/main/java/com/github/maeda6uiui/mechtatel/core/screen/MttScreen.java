@@ -425,6 +425,10 @@ public class MttScreen implements IMttScreenForMttComponent {
     }
 
     //Texture ==========
+    public MttTexture texturize(ScreenImageType imageType, MttScreen dstScreen) {
+        return new MttTexture(screen.texturize(imageType, dstScreen.getVulkanScreen()));
+    }
+
     public MttTexture createTexture(@NotNull URL textureResource, boolean generateMipmaps)
             throws URISyntaxException, FileNotFoundException {
         return new MttTexture(vulkanImpl, this, textureResource.toURI(), generateMipmaps);

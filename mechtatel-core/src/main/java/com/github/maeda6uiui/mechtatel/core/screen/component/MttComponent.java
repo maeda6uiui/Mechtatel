@@ -59,6 +59,7 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
     private boolean valid;
 
     private void setInitialProperties(MttComponentCreateInfo createInfo) {
+        mat = new Matrix4f().identity();
         visible = createInfo.visible;
         twoDComponent = createInfo.twoDComponent;
         castShadow = createInfo.castShadow;

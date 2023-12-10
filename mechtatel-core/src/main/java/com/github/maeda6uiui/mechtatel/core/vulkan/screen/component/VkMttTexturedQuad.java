@@ -4,7 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkM
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
-import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;

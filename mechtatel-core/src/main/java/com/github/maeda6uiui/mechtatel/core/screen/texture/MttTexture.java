@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.screen.texture;
 
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
-import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 
 import java.io.FileNotFoundException;
 import java.net.URI;

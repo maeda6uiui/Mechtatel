@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan.texture;
+package com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.ImageViewCreator;

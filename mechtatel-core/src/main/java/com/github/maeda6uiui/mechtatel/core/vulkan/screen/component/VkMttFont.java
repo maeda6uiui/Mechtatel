@@ -5,7 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
 import com.github.maeda6uiui.mechtatel.core.text.TextUtil;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
-import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 import org.joml.Vector4f;

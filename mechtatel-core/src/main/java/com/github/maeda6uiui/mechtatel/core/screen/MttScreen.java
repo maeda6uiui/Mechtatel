@@ -20,7 +20,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLig
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.SpotlightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
-import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import jakarta.validation.constraints.NotNull;
 import org.joml.*;
 

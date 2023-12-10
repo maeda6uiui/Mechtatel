@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core;
 
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
@@ -143,7 +144,7 @@ public class MttWindow {
             mtt.recreate(this, width, height);
         }
 
-        Map<String, Integer> keyboardPressingCounts = keyboard.getPressingCounts();
+        Map<KeyCode, Integer> keyboardPressingCounts = keyboard.getPressingCounts();
         screens.forEach(screen -> {
             screen.getGuiComponents().forEach(c -> {
                 c.update(
@@ -154,7 +155,8 @@ public class MttWindow {
                         this.getMousePressingCount("BUTTON_LEFT"),
                         this.getMousePressingCount("BUTTON_MIDDLE"),
                         this.getMousePressingCount("BUTTON_RIGHT"),
-                        keyboardPressingCounts);
+                        keyboardPressingCounts
+                );
             });
             screen.getAnimations().values().forEach(MttAnimation::update);
 
@@ -212,12 +214,12 @@ public class MttWindow {
         return title;
     }
 
-    public int getKeyboardPressingCount(String key) {
-        return keyboard.getPressingCount(key);
+    public int getKeyboardPressingCount(KeyCode keyCode) {
+        return keyboard.getPressingCount(keyCode);
     }
 
-    public int getKeyboardReleasingCount(String key) {
-        return keyboard.getReleasingCount(key);
+    public int getKeyboardReleasingCount(KeyCode keyCode) {
+        return keyboard.getReleasingCount(keyCode);
     }
 
     public int getMousePressingCount(String key) {

@@ -22,6 +22,7 @@ public class MttTexture {
 
     private VkMttTexture texture;
     private boolean isOwner;
+    private boolean isValid;
 
     public static void setImageFormat(ImageFormat imageFormat) {
         switch (imageFormat) {
@@ -51,20 +52,27 @@ public class MttTexture {
         );
 
         isOwner = true;
+        isValid = true;
     }
 
     public MttTexture(VkMttTexture texture) {
         this.texture = texture;
         isOwner = false;
+        isValid = true;
     }
 
     public void cleanup() {
-        if (isOwner) {
+        if (isOwner && isValid) {
             texture.cleanup();
         }
+        isValid = false;
     }
 
     public VkMttTexture getVulkanTexture() {
         return texture;
+    }
+
+    public boolean isValid() {
+        return isValid;
     }
 }

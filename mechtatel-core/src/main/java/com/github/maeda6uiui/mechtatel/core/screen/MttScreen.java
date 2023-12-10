@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  *
  * @author maeda6uiui
  */
-public class MttScreen implements IMttScreenForMttComponent {
+public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTexture {
     public static class MttScreenCreateInfo {
         public int depthImageWidth;
         public int depthImageHeight;
@@ -144,6 +144,7 @@ public class MttScreen implements IMttScreenForMttComponent {
     private List<MttComponent> components;
     private List<MttGuiComponent> guiComponents;
     private List<TextureOperation> textureOperations;
+    private List<MttTexture> textures;
 
     private Map<String, MttAnimation> animations;
 
@@ -193,12 +194,14 @@ public class MttScreen implements IMttScreenForMttComponent {
         components = new ArrayList<>();
         guiComponents = new ArrayList<>();
         textureOperations = new ArrayList<>();
+        textures = new ArrayList<>();
         animations = new HashMap<>();
     }
 
     public void cleanup() {
         components.forEach(MttComponent::cleanup);
         textureOperations.forEach(TextureOperation::cleanup);
+        textures.forEach(MttTexture::cleanup);
         screen.cleanup();
     }
 
@@ -425,6 +428,29 @@ public class MttScreen implements IMttScreenForMttComponent {
     }
 
     //Texture ==========
+    @Override
+    public void addTexture(MttTexture texture) {
+        textures.add(texture);
+    }
+
+    public boolean deleteTexture(MttTexture texture) {
+        if (!textures.contains(texture)) {
+            return false;
+        }
+
+        texture.cleanup();
+        return textures.remove(texture);
+    }
+
+    public void deleteAllTextures() {
+        textures.forEach(MttTexture::cleanup);
+        textures.clear();
+    }
+
+    public void removeGarbageTextures() {
+        textures.removeIf(t -> !t.isValid());
+    }
+
     public MttTexture texturize(ScreenImageType imageType, MttScreen dstScreen) {
         return new MttTexture(screen.texturize(imageType, dstScreen.getVulkanScreen()));
     }

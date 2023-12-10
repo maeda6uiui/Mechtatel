@@ -157,6 +157,7 @@ public class MttWindow {
             screen.getAnimations().values().forEach(MttAnimation::update);
 
             screen.removeGarbageComponents();
+            screen.removeGarbageTextures();
         });
 
         mtt.update(this);

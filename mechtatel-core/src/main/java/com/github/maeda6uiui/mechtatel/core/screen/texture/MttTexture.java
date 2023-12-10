@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.screen.texture;
 
-import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 
@@ -34,7 +34,7 @@ public class MttTexture {
 
     public MttTexture(
             MttVulkanImpl vulkanImpl,
-            MttScreen screen,
+            IMttScreenForMttTexture screen,
             URI textureResource,
             boolean generateMipmaps) throws FileNotFoundException {
         if (!Files.exists(Paths.get(textureResource))) {
@@ -53,12 +53,16 @@ public class MttTexture {
 
         isOwner = true;
         isValid = true;
+
+        screen.addTexture(this);
     }
 
-    public MttTexture(VkMttTexture texture) {
+    public MttTexture(IMttScreenForMttTexture screen, VkMttTexture texture) {
         this.texture = texture;
         isOwner = false;
         isValid = true;
+
+        screen.addTexture(this);
     }
 
     public void cleanup() {

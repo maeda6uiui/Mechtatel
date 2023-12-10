@@ -5,6 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
@@ -92,22 +93,22 @@ public class FlexibleNaborTest extends Mechtatel {
     @Override
     public void update(MttWindow window) {
         camera.translate(
-                window.getKeyboardPressingCount("W"),
-                window.getKeyboardPressingCount("S"),
-                window.getKeyboardPressingCount("A"),
-                window.getKeyboardPressingCount("D")
+                window.getKeyboardPressingCount(KeyCode.W),
+                window.getKeyboardPressingCount(KeyCode.S),
+                window.getKeyboardPressingCount(KeyCode.A),
+                window.getKeyboardPressingCount(KeyCode.D)
         );
         camera.rotate(
-                window.getKeyboardPressingCount("UP"),
-                window.getKeyboardPressingCount("DOWN"),
-                window.getKeyboardPressingCount("LEFT"),
-                window.getKeyboardPressingCount("RIGHT")
+                window.getKeyboardPressingCount(KeyCode.UP),
+                window.getKeyboardPressingCount(KeyCode.DOWN),
+                window.getKeyboardPressingCount(KeyCode.LEFT),
+                window.getKeyboardPressingCount(KeyCode.RIGHT)
         );
 
         mainScreen.draw();
         window.present(mainScreen);
 
-        if (window.getKeyboardPressingCount("ENTER") == 1) {
+        if (window.getKeyboardPressingCount(KeyCode.ENTER) == 1) {
             try {
                 mainScreen.save(
                         ScreenImageType.COLOR,

@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter.JISKeyInterpreter;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.component.gui.MttTextField;
@@ -59,9 +60,9 @@ public class TextFieldTest extends Mechtatel {
 
     @Override
     public void update(MttWindow window) {
-        if (window.getKeyboardPressingCount("F1") == 1) {
+        if (window.getKeyboardPressingCount(KeyCode.F1) == 1) {
             logger.info(textField.getText());
-        } else if (window.getKeyboardPressingCount("F2") == 1) {
+        } else if (window.getKeyboardPressingCount(KeyCode.F2) == 1) {
             textField.clear();
         }
 

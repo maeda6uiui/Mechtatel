@@ -4,6 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.animation.AnimationInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.animation.MttAnimation;
@@ -64,27 +65,27 @@ public class AnimationTest extends Mechtatel {
     @Override
     public void update(MttWindow window) {
         camera.translate(
-                window.getKeyboardPressingCount("W"),
-                window.getKeyboardPressingCount("S"),
-                window.getKeyboardPressingCount("A"),
-                window.getKeyboardPressingCount("D")
+                window.getKeyboardPressingCount(KeyCode.W),
+                window.getKeyboardPressingCount(KeyCode.S),
+                window.getKeyboardPressingCount(KeyCode.A),
+                window.getKeyboardPressingCount(KeyCode.D)
         );
         camera.rotate(
-                window.getKeyboardPressingCount("UP"),
-                window.getKeyboardPressingCount("DOWN"),
-                window.getKeyboardPressingCount("LEFT"),
-                window.getKeyboardPressingCount("RIGHT")
+                window.getKeyboardPressingCount(KeyCode.UP),
+                window.getKeyboardPressingCount(KeyCode.DOWN),
+                window.getKeyboardPressingCount(KeyCode.LEFT),
+                window.getKeyboardPressingCount(KeyCode.RIGHT)
         );
 
-        if (window.getKeyboardPressingCount("1") == 1) {
+        if (window.getKeyboardPressingCount(KeyCode.KEY_1) == 1) {
             animation.startAnimation("up_and_down_with_rotation");
-        } else if (window.getKeyboardPressingCount("2") == 1) {
+        } else if (window.getKeyboardPressingCount(KeyCode.KEY_2) == 1) {
             animation.stopAnimation("up_and_down_with_rotation");
-        } else if (window.getKeyboardPressingCount("3") == 1) {
+        } else if (window.getKeyboardPressingCount(KeyCode.KEY_3) == 1) {
             animation.startAnimation("right_and_left_with_rotation");
-        } else if (window.getKeyboardPressingCount("4") == 1) {
+        } else if (window.getKeyboardPressingCount(KeyCode.KEY_4) == 1) {
             animation.stopAnimation("right_and_left_with_rotation");
-        } else if (window.getKeyboardPressingCount("5") == 1) {
+        } else if (window.getKeyboardPressingCount(KeyCode.KEY_5) == 1) {
             animation.stopAllAnimations();
         }
 

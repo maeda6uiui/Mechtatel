@@ -5,6 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalBox;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalMesh;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObject;
@@ -105,16 +106,16 @@ public class PhysicalObjectTest extends Mechtatel {
     @Override
     public void update(MttWindow window) {
         camera.translate(
-                window.getKeyboardPressingCount("W"),
-                window.getKeyboardPressingCount("S"),
-                window.getKeyboardPressingCount("A"),
-                window.getKeyboardPressingCount("D")
+                window.getKeyboardPressingCount(KeyCode.W),
+                window.getKeyboardPressingCount(KeyCode.S),
+                window.getKeyboardPressingCount(KeyCode.A),
+                window.getKeyboardPressingCount(KeyCode.D)
         );
         camera.rotate(
-                window.getKeyboardPressingCount("UP"),
-                window.getKeyboardPressingCount("DOWN"),
-                window.getKeyboardPressingCount("LEFT"),
-                window.getKeyboardPressingCount("RIGHT")
+                window.getKeyboardPressingCount(KeyCode.UP),
+                window.getKeyboardPressingCount(KeyCode.DOWN),
+                window.getKeyboardPressingCount(KeyCode.LEFT),
+                window.getKeyboardPressingCount(KeyCode.RIGHT)
         );
 
         float x = random.nextFloat();
@@ -124,7 +125,7 @@ public class PhysicalObjectTest extends Mechtatel {
         x *= signX;
         z *= signZ;
 
-        if (window.getKeyboardPressingCount("1") == 1) {
+        if (window.getKeyboardPressingCount(KeyCode.KEY_1) == 1) {
             var dupBox = mainScreen.duplicateModel(box);
             dupBox.rescale(new Vector3f(0.5f, 0.5f, 0.5f));
 
@@ -136,7 +137,7 @@ public class PhysicalObjectTest extends Mechtatel {
             physicalObjects.add(phBox);
         }
 
-        if (window.getKeyboardPressingCount("C") == 1) {
+        if (window.getKeyboardPressingCount(KeyCode.C) == 1) {
             physicalObjects.forEach(PhysicalObject::cleanup);
             physicalObjects.clear();
         }
@@ -145,7 +146,7 @@ public class PhysicalObjectTest extends Mechtatel {
         mainScreen.draw();
         window.present(mainScreen);
 
-        if (window.getKeyboardPressingCount("F1") == 1) {
+        if (window.getKeyboardPressingCount(KeyCode.F1) == 1) {
             try {
                 mainScreen.save(
                         ScreenImageType.COLOR,
@@ -153,7 +154,8 @@ public class PhysicalObjectTest extends Mechtatel {
                         Paths.get(String.format("screenshot_%d.png", screenshotCount))
                 );
                 screenshotCount++;
-            } catch (IOException e) {
+            } catch (
+                    IOException e) {
                 logger.error("Error", e);
                 window.close();
             }

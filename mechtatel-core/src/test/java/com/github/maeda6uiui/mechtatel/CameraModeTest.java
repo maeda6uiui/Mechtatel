@@ -5,6 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.CameraMode;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import org.joml.Vector3f;
@@ -68,22 +69,22 @@ public class CameraModeTest extends Mechtatel {
     @Override
     public void update(MttWindow window) {
         camera.translate(
-                window.getKeyboardPressingCount("W"),
-                window.getKeyboardPressingCount("S"),
-                window.getKeyboardPressingCount("A"),
-                window.getKeyboardPressingCount("D")
+                window.getKeyboardPressingCount(KeyCode.W),
+                window.getKeyboardPressingCount(KeyCode.S),
+                window.getKeyboardPressingCount(KeyCode.A),
+                window.getKeyboardPressingCount(KeyCode.D)
         );
         camera.rotate(
-                window.getKeyboardPressingCount("UP"),
-                window.getKeyboardPressingCount("DOWN"),
-                window.getKeyboardPressingCount("LEFT"),
-                window.getKeyboardPressingCount("RIGHT")
+                window.getKeyboardPressingCount(KeyCode.UP),
+                window.getKeyboardPressingCount(KeyCode.DOWN),
+                window.getKeyboardPressingCount(KeyCode.LEFT),
+                window.getKeyboardPressingCount(KeyCode.RIGHT)
         );
 
         MttScreen defaultScreen = window.getDefaultScreen();
-        if (window.getKeyboardPressingCount("F1") == 1) {
+        if (window.getKeyboardPressingCount(KeyCode.F1) == 1) {
             defaultScreen.getCamera().setCameraMode(CameraMode.ORTHOGRAPHIC);
-        } else if (window.getKeyboardPressingCount("F2") == 1) {
+        } else if (window.getKeyboardPressingCount(KeyCode.F2) == 1) {
             defaultScreen.getCamera().setCameraMode(CameraMode.PERSPECTIVE);
         }
 

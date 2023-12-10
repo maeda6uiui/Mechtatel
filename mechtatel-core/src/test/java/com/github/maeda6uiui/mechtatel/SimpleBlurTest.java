@@ -4,6 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.slf4j.Logger;
@@ -65,16 +66,16 @@ public class SimpleBlurTest extends Mechtatel {
         mainScreen.setSimpleBlurInfo(simpleBlurInfo);
 
         camera.translate(
-                window.getKeyboardPressingCount("W"),
-                window.getKeyboardPressingCount("S"),
-                window.getKeyboardPressingCount("A"),
-                window.getKeyboardPressingCount("D")
+                window.getKeyboardPressingCount(KeyCode.W),
+                window.getKeyboardPressingCount(KeyCode.S),
+                window.getKeyboardPressingCount(KeyCode.A),
+                window.getKeyboardPressingCount(KeyCode.D)
         );
         camera.rotate(
-                window.getKeyboardPressingCount("UP"),
-                window.getKeyboardPressingCount("DOWN"),
-                window.getKeyboardPressingCount("LEFT"),
-                window.getKeyboardPressingCount("RIGHT")
+                window.getKeyboardPressingCount(KeyCode.UP),
+                window.getKeyboardPressingCount(KeyCode.DOWN),
+                window.getKeyboardPressingCount(KeyCode.LEFT),
+                window.getKeyboardPressingCount(KeyCode.RIGHT)
         );
 
         mainScreen.draw();

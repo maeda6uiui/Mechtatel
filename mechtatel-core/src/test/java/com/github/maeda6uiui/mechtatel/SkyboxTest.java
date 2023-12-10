@@ -35,6 +35,7 @@ public class SkyboxTest extends Mechtatel {
     private MttScreen skyboxScreen;
     private MttScreen mainScreen;
     private MttScreen finalScreen;
+    private TextureOperation opMergeByDepth;
     private MttTexturedQuad2D texturedQuad;
     private FreeCamera camera;
 
@@ -80,6 +81,24 @@ public class SkyboxTest extends Mechtatel {
 
         mainScreen.createLineSet().addPositiveAxes(10.0f).createBuffer();
 
+        MttTexture skyboxColorTexture = skyboxScreen.texturize(ScreenImageType.COLOR, finalScreen);
+        MttTexture skyboxDepthTexture = skyboxScreen.texturize(ScreenImageType.DEPTH, finalScreen);
+        MttTexture mainColorTexture = mainScreen.texturize(ScreenImageType.COLOR, finalScreen);
+        MttTexture mainDepthTexture = mainScreen.texturize(ScreenImageType.DEPTH, finalScreen);
+
+        var textureOperationParameters = new TextureOperationParameters();
+        textureOperationParameters.setOperationType(TextureOperationParameters.TEXTURE_OPERATION_MERGE_BY_DEPTH);
+        textureOperationParameters.setFirstTextureFixedDepth(0.99999f);
+
+        opMergeByDepth = finalScreen.createTextureOperation(
+                skyboxColorTexture,
+                skyboxDepthTexture,
+                mainColorTexture,
+                mainDepthTexture
+        );
+        opMergeByDepth.setParameters(textureOperationParameters);
+        texturedQuad.replaceTexture(opMergeByDepth.getResultTexture());
+
         camera = new FreeCamera(mainScreen.getCamera());
     }
 
@@ -99,34 +118,10 @@ public class SkyboxTest extends Mechtatel {
         );
         skyboxScreen.syncCamera(mainScreen.getCamera());
 
-        MttTexture skyboxColorTexture = skyboxScreen.texturize(ScreenImageType.COLOR, finalScreen);
-        MttTexture skyboxDepthTexture = skyboxScreen.texturize(ScreenImageType.DEPTH, finalScreen);
-        MttTexture mainColorTexture = mainScreen.texturize(ScreenImageType.COLOR, finalScreen);
-        MttTexture mainDepthTexture = mainScreen.texturize(ScreenImageType.DEPTH, finalScreen);
-
-        var textureOperationParameters = new TextureOperationParameters();
-        textureOperationParameters.setOperationType(TextureOperationParameters.TEXTURE_OPERATION_MERGE_BY_DEPTH);
-        textureOperationParameters.setFirstTextureFixedDepth(0.99999f);
-
-        TextureOperation opMergeByDepth = finalScreen.createTextureOperation(
-                skyboxColorTexture,
-                skyboxDepthTexture,
-                mainColorTexture,
-                mainDepthTexture
-        );
-        opMergeByDepth.setParameters(textureOperationParameters);
-        texturedQuad.replaceTexture(opMergeByDepth.getResultTexture());
-
         skyboxScreen.draw();
         mainScreen.draw();
         opMergeByDepth.run();
         finalScreen.draw();
         window.present(finalScreen);
-
-        skyboxColorTexture.cleanup();
-        skyboxDepthTexture.cleanup();
-        mainColorTexture.cleanup();
-        mainDepthTexture.cleanup();
-        finalScreen.deleteTextureOperation(opMergeByDepth);
     }
 }

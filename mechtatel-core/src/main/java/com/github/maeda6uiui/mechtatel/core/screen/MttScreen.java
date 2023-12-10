@@ -20,6 +20,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLig
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.SpotlightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
+import com.github.maeda6uiui.mechtatel.core.vulkan.texture.VkMttTexture;
 import jakarta.validation.constraints.NotNull;
 import org.joml.*;
 
@@ -452,7 +453,8 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     public MttTexture texturize(ScreenImageType imageType, MttScreen dstScreen) {
-        return new MttTexture(screen.texturize(imageType, dstScreen.getVulkanScreen()));
+        VkMttTexture texture = screen.texturize(imageType, dstScreen.getVulkanScreen());
+        return new MttTexture(dstScreen, texture);
     }
 
     public MttTexture createTexture(@NotNull URL textureResource, boolean generateMipmaps)

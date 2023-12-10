@@ -57,7 +57,7 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
 
     private VkMttComponent vkComponent;
 
-    private boolean valid;
+    private boolean isValid;
 
     private void setInitialProperties(MttComponentCreateInfo createInfo) {
         mat = new Matrix4f().identity();
@@ -71,14 +71,14 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
         this.setInitialProperties(createInfo);
         screen.addComponent(this);
 
-        valid = true;
+        isValid = true;
     }
 
     public void cleanup() {
-        if (valid && vkComponent != null) {
+        if (isValid && vkComponent != null) {
             vkComponent.cleanup();
         }
-        valid = false;
+        isValid = false;
     }
 
     @Override
@@ -95,7 +95,7 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
     }
 
     public boolean isValid() {
-        return valid;
+        return isValid;
     }
 
     @Override

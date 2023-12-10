@@ -111,7 +111,7 @@ public class MttGuiComponent extends MttComponent {
             focusedGUIComponentID = guiComponentID;
         }
         if (focusedGUIComponentID == guiComponentID) {
-            if (keyboardPressingCounts.get("ESCAPE") == 1) {
+            if (keyboardPressingCounts.get(KeyCode.ESCAPE) == 1) {
                 focusedGUIComponentID = -1;
             }
         }

@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
+import com.github.maeda6uiui.mechtatel.core.input.mouse.MouseCode;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.animation.MttAnimation;
 import com.github.maeda6uiui.mechtatel.core.sound.MttSound;
@@ -152,9 +153,9 @@ public class MttWindow {
                         this.getCursorPosY(),
                         this.getWidth(),
                         this.getHeight(),
-                        this.getMousePressingCount("BUTTON_LEFT"),
-                        this.getMousePressingCount("BUTTON_MIDDLE"),
-                        this.getMousePressingCount("BUTTON_RIGHT"),
+                        this.getMousePressingCount(MouseCode.LEFT),
+                        this.getMousePressingCount(MouseCode.MIDDLE),
+                        this.getMousePressingCount(MouseCode.RIGHT),
                         keyboardPressingCounts
                 );
             });
@@ -222,12 +223,12 @@ public class MttWindow {
         return keyboard.getReleasingCount(keyCode);
     }
 
-    public int getMousePressingCount(String key) {
-        return mouse.getPressingCount(key);
+    public int getMousePressingCount(MouseCode mouseCode) {
+        return mouse.getPressingCount(mouseCode);
     }
 
-    public int getMouseReleasingCount(String key) {
-        return mouse.getReleasingCount(key);
+    public int getMouseReleasingCount(MouseCode mouseCode) {
+        return mouse.getReleasingCount(mouseCode);
     }
 
     public int getCursorPosX() {

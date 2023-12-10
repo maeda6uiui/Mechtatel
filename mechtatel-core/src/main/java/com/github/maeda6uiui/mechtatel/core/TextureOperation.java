@@ -15,6 +15,12 @@ public class TextureOperation {
     private MttTexture resultTexture;
     private TextureOperationParameters parameters;
 
+    private MttTexture firstColorTexture;
+    private MttTexture firstDepthTexture;
+    private MttTexture secondColorTexture;
+    private MttTexture secondDepthTexture;
+
+    private boolean textureCleanupDelegation;
     private boolean isValid;
 
     public TextureOperation(
@@ -23,7 +29,8 @@ public class TextureOperation {
             MttTexture firstDepthTexture,
             MttTexture secondColorTexture,
             MttTexture secondDepthTexture,
-            MttScreen dstScreen) {
+            MttScreen dstScreen,
+            boolean textureCleanupDelegation) {
         var dq = vulkanImpl.getDeviceAndQueues();
         vkTextureOperation = new VkTextureOperation(
                 dq.device(),
@@ -40,6 +47,12 @@ public class TextureOperation {
         resultTexture = new MttTexture(dstScreen, vkTextureOperation.getResultTexture());
         parameters = new TextureOperationParameters();
 
+        this.firstColorTexture = firstColorTexture;
+        this.firstDepthTexture = firstDepthTexture;
+        this.secondColorTexture = secondColorTexture;
+        this.secondDepthTexture = secondDepthTexture;
+
+        this.textureCleanupDelegation = textureCleanupDelegation;
         isValid = true;
     }
 
@@ -47,6 +60,13 @@ public class TextureOperation {
         if (isValid) {
             vkTextureOperation.cleanup();
             resultTexture.cleanup();
+
+            if (textureCleanupDelegation) {
+                firstColorTexture.cleanup();
+                firstDepthTexture.cleanup();
+                secondColorTexture.cleanup();
+                secondDepthTexture.cleanup();
+            }
         }
         isValid = false;
     }

@@ -64,5 +64,9 @@ public class TextFieldTest extends Mechtatel {
         } else if (window.getKeyboardPressingCount("F2") == 1) {
             textField.clear();
         }
+
+        MttScreen defaultScreen = window.getDefaultScreen();
+        defaultScreen.draw();
+        window.present(defaultScreen);
     }
 }

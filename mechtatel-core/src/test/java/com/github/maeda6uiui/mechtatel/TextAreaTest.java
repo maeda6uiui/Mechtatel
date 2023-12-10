@@ -67,5 +67,9 @@ public class TextAreaTest extends Mechtatel {
         } else if (window.getKeyboardPressingCount("F3") == 1) {
             textArea.clear();
         }
+
+        MttScreen defaultScreen = window.getDefaultScreen();
+        defaultScreen.draw();
+        window.present(defaultScreen);
     }
 }

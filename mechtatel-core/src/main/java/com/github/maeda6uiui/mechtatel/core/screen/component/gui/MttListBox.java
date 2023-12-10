@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.screen.component.gui;
 
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttFont;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttQuad2D;
@@ -312,7 +313,7 @@ public class MttListBox extends MttGuiComponent {
             int lButtonPressingCount,
             int mButtonPressingCount,
             int rButtonPressingCount,
-            Map<String, Integer> keyboardPressingCounts) {
+            Map<KeyCode, Integer> keyboardPressingCounts) {
         super.update(
                 cursorX, cursorY, windowWidth, windowHeight,
                 lButtonPressingCount, mButtonPressingCount, rButtonPressingCount, keyboardPressingCounts);

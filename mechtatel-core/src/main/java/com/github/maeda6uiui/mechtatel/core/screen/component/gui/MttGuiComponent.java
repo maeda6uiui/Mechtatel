@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.screen.component.gui;
 
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttComponent;
 import com.github.maeda6uiui.mechtatel.core.util.UniversalCounter;
@@ -85,7 +86,7 @@ public class MttGuiComponent extends MttComponent {
             int lButtonPressingCount,
             int mButtonPressingCount,
             int rButtonPressingCount,
-            Map<String, Integer> keyboardPressingCounts) {
+            Map<KeyCode, Integer> keyboardPressingCounts) {
         float fCursorX = (float) cursorX / (float) windowWidth * 2.0f - 1.0f;
         float fCursorY = (float) cursorY / (float) windowHeight * 2.0f - 1.0f;
 

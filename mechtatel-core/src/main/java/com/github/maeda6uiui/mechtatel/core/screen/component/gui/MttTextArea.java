@@ -15,6 +15,7 @@ import org.joml.Vector2f;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -29,17 +30,19 @@ import static org.lwjgl.glfw.GLFW.glfwGetTime;
 public class MttTextArea extends MttGuiComponent {
     public static final String DEFAULT_SUPPORTED_CHARACTERS
             = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~ ";
-    private static final List<String> SPECIAL_KEYS;
+    private static final List<KeyCode> SPECIAL_KEYS;
 
     static {
         SPECIAL_KEYS = new ArrayList<>();
-        SPECIAL_KEYS.add("BACKSPACE");
-        SPECIAL_KEYS.add("DELETE");
-        SPECIAL_KEYS.add("RIGHT");
-        SPECIAL_KEYS.add("LEFT");
-        SPECIAL_KEYS.add("UP");
-        SPECIAL_KEYS.add("DOWN");
-        SPECIAL_KEYS.add("ENTER");
+        SPECIAL_KEYS.addAll(Arrays.asList(
+                KeyCode.BACKSPACE,
+                KeyCode.DELETE,
+                KeyCode.RIGHT,
+                KeyCode.LEFT,
+                KeyCode.UP,
+                KeyCode.DOWN,
+                KeyCode.ENTER
+        ));
     }
 
     public static class MttTextAreaCreateInfo {
@@ -311,7 +314,7 @@ public class MttTextArea extends MttGuiComponent {
         }
 
         String inputKey = keyInterpreter.getInputLetter(keyboardPressingCounts, SPECIAL_KEYS, repeatDelayFrames);
-        if (inputKey.equals("")) {
+        if (inputKey.isEmpty()) {
             return;
         }
 
@@ -319,9 +322,9 @@ public class MttTextArea extends MttGuiComponent {
 
         String caretPrecedingText = "";
         String caretSucceedingText = "";
-        if (!caretLine.equals("")) {
+        if (!caretLine.isEmpty()) {
             caretPrecedingText = caretLine.substring(0, caretColumn);
-            caretSucceedingText = caretLine.substring(caretColumn, caretLine.length());
+            caretSucceedingText = caretLine.substring(caretColumn);
         }
 
         String precedingLine = "";
@@ -333,14 +336,14 @@ public class MttTextArea extends MttGuiComponent {
             succeedingLine = lines.get(caretRow + 1);
         }
 
-        if (inputKey.equals("ENTER")) {
+        if (inputKey.equals(KeyCode.ENTER.name())) {
             lines.set(caretRow, caretPrecedingText);
             lines.add(caretRow + 1, caretSucceedingText);
 
             caretRow++;
             caretColumn = 0;
-        } else if (inputKey.equals("BACKSPACE")) {
-            if (caretPrecedingText.equals("")) {
+        } else if (inputKey.equals(KeyCode.BACKSPACE.name())) {
+            if (caretPrecedingText.isEmpty()) {
                 if (caretRow != 0) {
                     String newPreceedingLine = precedingLine + caretSucceedingText;
                     lines.set(caretRow - 1, newPreceedingLine);
@@ -357,8 +360,8 @@ public class MttTextArea extends MttGuiComponent {
 
                 caretColumn--;
             }
-        } else if (inputKey.equals("DELETE")) {
-            if (caretSucceedingText.equals("")) {
+        } else if (inputKey.equals(KeyCode.DELETE.name())) {
+            if (caretSucceedingText.isEmpty()) {
                 if (caretRow != lines.size() - 1) {
                     String newCaretLine = caretPrecedingText + succeedingLine;
                     lines.set(caretRow, newCaretLine);
@@ -366,12 +369,12 @@ public class MttTextArea extends MttGuiComponent {
                     lines.remove(caretRow + 1);
                 }
             } else {
-                caretSucceedingText = caretSucceedingText.substring(1, caretSucceedingText.length());
+                caretSucceedingText = caretSucceedingText.substring(1);
 
                 String newCaretLine = caretPrecedingText + caretSucceedingText;
                 lines.set(caretRow, newCaretLine);
             }
-        } else if (inputKey.equals("RIGHT")) {
+        } else if (inputKey.equals(KeyCode.RIGHT.name())) {
             if (caretColumn == caretLine.length()) {
                 if (caretRow != lines.size() - 1) {
                     caretRow++;
@@ -380,7 +383,7 @@ public class MttTextArea extends MttGuiComponent {
             } else {
                 caretColumn++;
             }
-        } else if (inputKey.equals("LEFT")) {
+        } else if (inputKey.equals(KeyCode.LEFT.name())) {
             if (caretColumn == 0) {
                 if (caretRow != 0) {
                     caretColumn = lines.get(caretRow - 1).length();
@@ -389,7 +392,7 @@ public class MttTextArea extends MttGuiComponent {
             } else {
                 caretColumn--;
             }
-        } else if (inputKey.equals("UP")) {
+        } else if (inputKey.equals(KeyCode.UP.name())) {
             if (caretRow != 0) {
                 if (caretColumn > precedingLine.length()) {
                     caretColumn = precedingLine.length();
@@ -397,7 +400,7 @@ public class MttTextArea extends MttGuiComponent {
 
                 caretRow--;
             }
-        } else if (inputKey.equals("DOWN")) {
+        } else if (inputKey.equals(KeyCode.DOWN.name())) {
             if (caretRow != lines.size() - 1) {
                 if (caretColumn > succeedingLine.length()) {
                     caretColumn = succeedingLine.length();
@@ -427,7 +430,7 @@ public class MttTextArea extends MttGuiComponent {
             String line = lines.get(i);
 
             int lineHeight;
-            if (line.equals("")) {
+            if (line.isEmpty()) {
                 lineHeight = glyphs.get(' ').height;
             } else {
                 lineHeight = TextUtil.getHeight(line, glyphs);
@@ -474,7 +477,7 @@ public class MttTextArea extends MttGuiComponent {
             } else {
                 var sb = new StringBuilder();
                 for (var line : lines) {
-                    if (line.equals("")) {
+                    if (line.isEmpty()) {
                         sb.append(" ");
                     } else {
                         sb.append(line);

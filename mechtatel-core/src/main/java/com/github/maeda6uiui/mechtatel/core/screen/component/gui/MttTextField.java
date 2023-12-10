@@ -14,6 +14,7 @@ import org.joml.Vector2f;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -28,14 +29,16 @@ import static org.lwjgl.glfw.GLFW.glfwGetTime;
 public class MttTextField extends MttGuiComponent {
     public static final String DEFAULT_SUPPORTED_CHARACTERS
             = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~ ";
-    private static final List<String> SPECIAL_KEYS;
+    private static final List<KeyCode> SPECIAL_KEYS;
 
     static {
         SPECIAL_KEYS = new ArrayList<>();
-        SPECIAL_KEYS.add("BACKSPACE");
-        SPECIAL_KEYS.add("DELETE");
-        SPECIAL_KEYS.add("RIGHT");
-        SPECIAL_KEYS.add("LEFT");
+        SPECIAL_KEYS.addAll(Arrays.asList(
+                KeyCode.BACKSPACE,
+                KeyCode.DELETE,
+                KeyCode.RIGHT,
+                KeyCode.LEFT
+        ));
     }
 
     public static class MttTextFieldCreateInfo {
@@ -278,31 +281,31 @@ public class MttTextField extends MttGuiComponent {
         }
 
         String inputKey = keyInterpreter.getInputLetter(keyboardPressingCounts, SPECIAL_KEYS, repeatDelayFrames);
-        if (inputKey.equals("")) {
+        if (inputKey.isEmpty()) {
             return;
         }
 
         String caretPrecedingText = "";
         String caretSucceedingText = "";
-        if (!text.equals("")) {
+        if (!text.isEmpty()) {
             caretPrecedingText = text.substring(0, caretColumn);
-            caretSucceedingText = text.substring(caretColumn, text.length());
+            caretSucceedingText = text.substring(caretColumn);
         }
 
-        if (inputKey.equals("BACKSPACE")) {
-            if (!caretPrecedingText.equals("")) {
+        if (inputKey.equals(KeyCode.BACKSPACE.name())) {
+            if (!caretPrecedingText.isEmpty()) {
                 caretPrecedingText = caretPrecedingText.substring(0, caretPrecedingText.length() - 1);
                 caretColumn--;
             }
-        } else if (inputKey.equals("DELETE")) {
-            if (!caretSucceedingText.equals("")) {
-                caretSucceedingText = caretSucceedingText.substring(1, caretSucceedingText.length());
+        } else if (inputKey.equals(KeyCode.DELETE.name())) {
+            if (!caretSucceedingText.isEmpty()) {
+                caretSucceedingText = caretSucceedingText.substring(1);
             }
-        } else if (inputKey.equals("RIGHT")) {
+        } else if (inputKey.equals(KeyCode.RIGHT.name())) {
             if (caretColumn < text.length()) {
                 caretColumn++;
             }
-        } else if (inputKey.equals("LEFT")) {
+        } else if (inputKey.equals(KeyCode.LEFT.name())) {
             if (caretColumn > 0) {
                 caretColumn--;
             }
@@ -324,7 +327,7 @@ public class MttTextField extends MttGuiComponent {
         caret.setMat(new Matrix4f().translate(caretTranslateX, 0.0f, 0.0f));
 
         if (!text.equals(prevText)) {
-            if (text.equals("")) {
+            if (text.isEmpty()) {
                 font.clear();
             } else {
                 font.prepare(text, new Vector2f(this.getX(), this.getY()));

@@ -13,4 +13,6 @@ interface IMechtatelForMttWindow {
     void reshape(MttWindow window, int width, int height);
 
     void update(MttWindow window);
+
+    void recreate(MttWindow window, int width, int height);
 }

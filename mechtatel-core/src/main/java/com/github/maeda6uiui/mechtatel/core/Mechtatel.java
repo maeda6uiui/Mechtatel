@@ -191,6 +191,11 @@ public class Mechtatel implements IMechtatelForMttWindow {
 
     }
 
+    @Override
+    public void recreate(MttWindow window, int width, int height) {
+
+    }
+
     public int getFPS() {
         return fps;
     }

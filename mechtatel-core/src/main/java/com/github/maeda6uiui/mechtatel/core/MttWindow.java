@@ -139,6 +139,8 @@ public class MttWindow {
 
             mustRecreate = false;
             logger.debug("Window ({}) recreated", Long.toHexString(handle));
+
+            mtt.recreate(this, width, height);
         }
 
         Map<String, Integer> keyboardPressingCounts = keyboard.getPressingCounts();

@@ -59,8 +59,8 @@ public class VkTextureOperation {
         resultTexture = new VkMttTexture(device, dstScreen, dstImageView);
         textureOperationInfo = new TextureOperationNabor.TextureOperationInfo(
                 firstColorTexture.getTextureImageView(),
-                secondColorTexture.getTextureImageView(),
                 firstDepthTexture.getTextureImageView(),
+                secondColorTexture.getTextureImageView(),
                 secondDepthTexture.getTextureImageView(),
                 dstImage,
                 dstImageView

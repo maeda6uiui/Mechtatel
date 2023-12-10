@@ -36,7 +36,7 @@ public class TextureOperation {
                 dstScreen.getVulkanScreen()
         );
 
-        resultTexture = new MttTexture(vkTextureOperation.getResultTexture());
+        resultTexture = new MttTexture(dstScreen, vkTextureOperation.getResultTexture());
 
         parameters = new TextureOperationParameters();
     }

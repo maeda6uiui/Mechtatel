@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter;
 
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,7 +16,10 @@ public class JISKeyInterpreter extends KeyInterpreter {
     }
 
     @Override
-    public String getInputLetter(Map<KeyCode, Integer> keyboardPressingCounts, int repeatDelayFrames) {
+    public String getInputLetter(
+            Map<KeyCode, Integer> keyboardPressingCounts,
+            List<KeyCode> specialKeys,
+            int repeatDelayFrames) {
         KeyCode minPressingKey = this.getMinPressingKey(keyboardPressingCounts);
         if (minPressingKey == KeyCode.UNKNOWN) {
             return "";
@@ -26,11 +30,15 @@ public class JISKeyInterpreter extends KeyInterpreter {
             return "";
         }
 
+        if (specialKeys.contains(minPressingKey)) {
+            return minPressingKey.name();
+        }
+
         //Check what letter should be output
         boolean shiftPressed = keyboardPressingCounts.get(KeyCode.LEFT_SHIFT) > 0
                 || keyboardPressingCounts.get(KeyCode.RIGHT_SHIFT) > 0;
 
-        String outputLetter = "";
+        String outputLetter;
         if (shiftPressed) {
             outputLetter = switch (minPressingKey) {
                 case SPACE -> " ";

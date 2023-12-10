@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.input.keyboard.interpreter;
 
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,5 +27,9 @@ public abstract class KeyInterpreter {
         return minPressingKey;
     }
 
-    public abstract String getInputLetter(Map<KeyCode, Integer> keyboardPressingCounts, int repeatDelayFrames);
+    public abstract String getInputLetter(
+            Map<KeyCode, Integer> keyboardPressingCounts,
+            List<KeyCode> specialKeys,
+            int repeatDelayFrames
+    );
 }

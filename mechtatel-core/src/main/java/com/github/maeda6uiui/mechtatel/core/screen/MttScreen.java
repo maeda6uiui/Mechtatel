@@ -496,6 +496,10 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         textureOperations.clear();
     }
 
+    public void removeGarbageTextureOperations() {
+        textureOperations.removeIf(op -> !op.isValid());
+    }
+
     //Animation ==========
     public MttAnimation createAnimation(String tag, AnimationInfo animationInfo) throws IOException {
         var animation = new MttAnimation(vulkanImpl, this, animationInfo);

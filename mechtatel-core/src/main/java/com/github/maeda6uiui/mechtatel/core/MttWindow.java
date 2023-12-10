@@ -160,6 +160,7 @@ public class MttWindow {
 
             screen.removeGarbageComponents();
             screen.removeGarbageTextures();
+            screen.removeGarbageTextureOperations();
         });
 
         mtt.update(this);

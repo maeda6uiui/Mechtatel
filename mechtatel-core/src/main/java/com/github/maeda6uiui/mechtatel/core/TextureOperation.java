@@ -15,6 +15,8 @@ public class TextureOperation {
     private MttTexture resultTexture;
     private TextureOperationParameters parameters;
 
+    private boolean isValid;
+
     public TextureOperation(
             MttVulkanImpl vulkanImpl,
             MttTexture firstColorTexture,
@@ -35,15 +37,18 @@ public class TextureOperation {
                 secondDepthTexture.getVulkanTexture(),
                 dstScreen.getVulkanScreen()
         );
-
         resultTexture = new MttTexture(dstScreen, vkTextureOperation.getResultTexture());
-
         parameters = new TextureOperationParameters();
+
+        isValid = true;
     }
 
     public void cleanup() {
-        vkTextureOperation.cleanup();
-        resultTexture.cleanup();
+        if (isValid) {
+            vkTextureOperation.cleanup();
+            resultTexture.cleanup();
+        }
+        isValid = false;
     }
 
     public void run() {
@@ -60,5 +65,9 @@ public class TextureOperation {
 
     public TextureOperationParameters getParameters() {
         return parameters;
+    }
+
+    public boolean isValid() {
+        return isValid;
     }
 }

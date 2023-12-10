@@ -12,378 +12,129 @@ import static org.lwjgl.glfw.GLFW.*;
  */
 class MacroStringConverter {
     public static String convertMacroToString(int macro) {
-        String ret;
-
-        switch (macro) {
-            case GLFW_KEY_UNKNOWN:
-                ret = "UNKNOWN";
-                break;
-            case GLFW_KEY_SPACE:
-                ret = "SPACE";
-                break;
-            case GLFW_KEY_APOSTROPHE:
-                ret = "APOSTROPHE";
-                break;
-            case GLFW_KEY_COMMA:
-                ret = "COMMA";
-                break;
-            case GLFW_KEY_MINUS:
-                ret = "MINUS";
-                break;
-            case GLFW_KEY_PERIOD:
-                ret = "PERIOD";
-                break;
-            case GLFW_KEY_SLASH:
-                ret = "SLASH";
-                break;
-            case GLFW_KEY_0:
-                ret = "0";
-                break;
-            case GLFW_KEY_1:
-                ret = "1";
-                break;
-            case GLFW_KEY_2:
-                ret = "2";
-                break;
-            case GLFW_KEY_3:
-                ret = "3";
-                break;
-            case GLFW_KEY_4:
-                ret = "4";
-                break;
-            case GLFW_KEY_5:
-                ret = "5";
-                break;
-            case GLFW_KEY_6:
-                ret = "6";
-                break;
-            case GLFW_KEY_7:
-                ret = "7";
-                break;
-            case GLFW_KEY_8:
-                ret = "8";
-                break;
-            case GLFW_KEY_9:
-                ret = "9";
-                break;
-            case GLFW_KEY_SEMICOLON:
-                ret = "SEMICOLON";
-                break;
-            case GLFW_KEY_EQUAL:
-                ret = "EQUAL";
-                break;
-            case GLFW_KEY_A:
-                ret = "A";
-                break;
-            case GLFW_KEY_B:
-                ret = "B";
-                break;
-            case GLFW_KEY_C:
-                ret = "C";
-                break;
-            case GLFW_KEY_D:
-                ret = "D";
-                break;
-            case GLFW_KEY_E:
-                ret = "E";
-                break;
-            case GLFW_KEY_F:
-                ret = "F";
-                break;
-            case GLFW_KEY_G:
-                ret = "G";
-                break;
-            case GLFW_KEY_H:
-                ret = "H";
-                break;
-            case GLFW_KEY_I:
-                ret = "I";
-                break;
-            case GLFW_KEY_J:
-                ret = "J";
-                break;
-            case GLFW_KEY_K:
-                ret = "K";
-                break;
-            case GLFW_KEY_L:
-                ret = "L";
-                break;
-            case GLFW_KEY_M:
-                ret = "M";
-                break;
-            case GLFW_KEY_N:
-                ret = "N";
-                break;
-            case GLFW_KEY_O:
-                ret = "O";
-                break;
-            case GLFW_KEY_P:
-                ret = "P";
-                break;
-            case GLFW_KEY_Q:
-                ret = "Q";
-                break;
-            case GLFW_KEY_R:
-                ret = "R";
-                break;
-            case GLFW_KEY_S:
-                ret = "S";
-                break;
-            case GLFW_KEY_T:
-                ret = "T";
-                break;
-            case GLFW_KEY_U:
-                ret = "U";
-                break;
-            case GLFW_KEY_V:
-                ret = "V";
-                break;
-            case GLFW_KEY_W:
-                ret = "W";
-                break;
-            case GLFW_KEY_X:
-                ret = "X";
-                break;
-            case GLFW_KEY_Y:
-                ret = "Y";
-                break;
-            case GLFW_KEY_Z:
-                ret = "Z";
-                break;
-            case GLFW_KEY_LEFT_BRACKET:
-                ret = "LEFT_BRACKET";
-                break;
-            case GLFW_KEY_BACKSLASH:
-                ret = "BACKSLASH";
-                break;
-            case GLFW_KEY_RIGHT_BRACKET:
-                ret = "RIGHT_BRACKET";
-                break;
-            case GLFW_KEY_GRAVE_ACCENT:
-                ret = "GRAVE_ACCENT";
-                break;
-            case GLFW_KEY_WORLD_1:
-                ret = "WORLD_1";
-                break;
-            case GLFW_KEY_WORLD_2:
-                ret = "WORLD_2";
-                break;
-            case GLFW_KEY_ESCAPE:
-                ret = "ESCAPE";
-                break;
-            case GLFW_KEY_ENTER:
-                ret = "ENTER";
-                break;
-            case GLFW_KEY_TAB:
-                ret = "TAB";
-                break;
-            case GLFW_KEY_BACKSPACE:
-                ret = "BACKSPACE";
-                break;
-            case GLFW_KEY_INSERT:
-                ret = "INSERT";
-                break;
-            case GLFW_KEY_DELETE:
-                ret = "DELETE";
-                break;
-            case GLFW_KEY_RIGHT:
-                ret = "RIGHT";
-                break;
-            case GLFW_KEY_LEFT:
-                ret = "LEFT";
-                break;
-            case GLFW_KEY_DOWN:
-                ret = "DOWN";
-                break;
-            case GLFW_KEY_UP:
-                ret = "UP";
-                break;
-            case GLFW_KEY_PAGE_UP:
-                ret = "PAGE_UP";
-                break;
-            case GLFW_KEY_PAGE_DOWN:
-                ret = "PAGE_DOWN";
-                break;
-            case GLFW_KEY_HOME:
-                ret = "HOME";
-                break;
-            case GLFW_KEY_END:
-                ret = "END";
-                break;
-            case GLFW_KEY_CAPS_LOCK:
-                ret = "CAPS_LOCK";
-                break;
-            case GLFW_KEY_SCROLL_LOCK:
-                ret = "SCROLL_LOCK";
-                break;
-            case GLFW_KEY_NUM_LOCK:
-                ret = "NUM_LOCK";
-                break;
-            case GLFW_KEY_PRINT_SCREEN:
-                ret = "PRINT_SCREEN";
-                break;
-            case GLFW_KEY_PAUSE:
-                ret = "PAUSE";
-                break;
-            case GLFW_KEY_F1:
-                ret = "F1";
-                break;
-            case GLFW_KEY_F2:
-                ret = "F2";
-                break;
-            case GLFW_KEY_F3:
-                ret = "F3";
-                break;
-            case GLFW_KEY_F4:
-                ret = "F4";
-                break;
-            case GLFW_KEY_F5:
-                ret = "F5";
-                break;
-            case GLFW_KEY_F6:
-                ret = "F6";
-                break;
-            case GLFW_KEY_F7:
-                ret = "F7";
-                break;
-            case GLFW_KEY_F8:
-                ret = "F8";
-                break;
-            case GLFW_KEY_F9:
-                ret = "F9";
-                break;
-            case GLFW_KEY_F10:
-                ret = "F10";
-                break;
-            case GLFW_KEY_F11:
-                ret = "F11";
-                break;
-            case GLFW_KEY_F12:
-                ret = "F12";
-                break;
-            case GLFW_KEY_F13:
-                ret = "F13";
-                break;
-            case GLFW_KEY_F14:
-                ret = "F14";
-                break;
-            case GLFW_KEY_F15:
-                ret = "F15";
-                break;
-            case GLFW_KEY_F16:
-                ret = "F16";
-                break;
-            case GLFW_KEY_F17:
-                ret = "F17";
-                break;
-            case GLFW_KEY_F18:
-                ret = "F18";
-                break;
-            case GLFW_KEY_F19:
-                ret = "F19";
-                break;
-            case GLFW_KEY_F20:
-                ret = "F20";
-                break;
-            case GLFW_KEY_F21:
-                ret = "F21";
-                break;
-            case GLFW_KEY_F22:
-                ret = "F22";
-                break;
-            case GLFW_KEY_F23:
-                ret = "F23";
-                break;
-            case GLFW_KEY_F24:
-                ret = "F24";
-                break;
-            case GLFW_KEY_F25:
-                ret = "F25";
-                break;
-            case GLFW_KEY_KP_0:
-                ret = "KP_0";
-                break;
-            case GLFW_KEY_KP_1:
-                ret = "KP_1";
-                break;
-            case GLFW_KEY_KP_2:
-                ret = "KP_2";
-                break;
-            case GLFW_KEY_KP_3:
-                ret = "KP_3";
-                break;
-            case GLFW_KEY_KP_4:
-                ret = "KP_4";
-                break;
-            case GLFW_KEY_KP_5:
-                ret = "KP_5";
-                break;
-            case GLFW_KEY_KP_6:
-                ret = "KP_6";
-                break;
-            case GLFW_KEY_KP_7:
-                ret = "KP_7";
-                break;
-            case GLFW_KEY_KP_8:
-                ret = "KP_8";
-                break;
-            case GLFW_KEY_KP_9:
-                ret = "KP_9";
-                break;
-            case GLFW_KEY_KP_DECIMAL:
-                ret = "KP_DECIMAL";
-                break;
-            case GLFW_KEY_KP_DIVIDE:
-                ret = "KP_DIVIDE";
-                break;
-            case GLFW_KEY_KP_MULTIPLY:
-                ret = "KP_MULTIPLY";
-                break;
-            case GLFW_KEY_KP_SUBTRACT:
-                ret = "KP_SUBTRACT";
-                break;
-            case GLFW_KEY_KP_ADD:
-                ret = "KP_ADD";
-                break;
-            case GLFW_KEY_KP_ENTER:
-                ret = "KP_ENTER";
-                break;
-            case GLFW_KEY_KP_EQUAL:
-                ret = "KP_EQUAL";
-                break;
-            case GLFW_KEY_LEFT_SHIFT:
-                ret = "LEFT_SHIFT";
-                break;
-            case GLFW_KEY_LEFT_CONTROL:
-                ret = "LEFT_CONTROL";
-                break;
-            case GLFW_KEY_LEFT_ALT:
-                ret = "LEFT_ALT";
-                break;
-            case GLFW_KEY_LEFT_SUPER:
-                ret = "LEFT_SUPER";
-                break;
-            case GLFW_KEY_RIGHT_SHIFT:
-                ret = "RIGHT_SHIFT";
-                break;
-            case GLFW_KEY_RIGHT_CONTROL:
-                ret = "RIGHT_CONTROL";
-                break;
-            case GLFW_KEY_RIGHT_ALT:
-                ret = "RIGHT_ALT";
-                break;
-            case GLFW_KEY_RIGHT_SUPER:
-                ret = "RIGHT_SUPER";
-                break;
-            case GLFW_KEY_MENU:
-                ret = "MENU";
-                break;
-            default:
-                ret = "UNKNOWN";
-                break;
-        }
-
-        return ret;
+        return switch (macro) {
+            case GLFW_KEY_SPACE -> "SPACE";
+            case GLFW_KEY_APOSTROPHE -> "APOSTROPHE";
+            case GLFW_KEY_COMMA -> "COMMA";
+            case GLFW_KEY_MINUS -> "MINUS";
+            case GLFW_KEY_PERIOD -> "PERIOD";
+            case GLFW_KEY_SLASH -> "SLASH";
+            case GLFW_KEY_0 -> "0";
+            case GLFW_KEY_1 -> "1";
+            case GLFW_KEY_2 -> "2";
+            case GLFW_KEY_3 -> "3";
+            case GLFW_KEY_4 -> "4";
+            case GLFW_KEY_5 -> "5";
+            case GLFW_KEY_6 -> "6";
+            case GLFW_KEY_7 -> "7";
+            case GLFW_KEY_8 -> "8";
+            case GLFW_KEY_9 -> "9";
+            case GLFW_KEY_SEMICOLON -> "SEMICOLON";
+            case GLFW_KEY_EQUAL -> "EQUAL";
+            case GLFW_KEY_A -> "A";
+            case GLFW_KEY_B -> "B";
+            case GLFW_KEY_C -> "C";
+            case GLFW_KEY_D -> "D";
+            case GLFW_KEY_E -> "E";
+            case GLFW_KEY_F -> "F";
+            case GLFW_KEY_G -> "G";
+            case GLFW_KEY_H -> "H";
+            case GLFW_KEY_I -> "I";
+            case GLFW_KEY_J -> "J";
+            case GLFW_KEY_K -> "K";
+            case GLFW_KEY_L -> "L";
+            case GLFW_KEY_M -> "M";
+            case GLFW_KEY_N -> "N";
+            case GLFW_KEY_O -> "O";
+            case GLFW_KEY_P -> "P";
+            case GLFW_KEY_Q -> "Q";
+            case GLFW_KEY_R -> "R";
+            case GLFW_KEY_S -> "S";
+            case GLFW_KEY_T -> "T";
+            case GLFW_KEY_U -> "U";
+            case GLFW_KEY_V -> "V";
+            case GLFW_KEY_W -> "W";
+            case GLFW_KEY_X -> "X";
+            case GLFW_KEY_Y -> "Y";
+            case GLFW_KEY_Z -> "Z";
+            case GLFW_KEY_LEFT_BRACKET -> "LEFT_BRACKET";
+            case GLFW_KEY_BACKSLASH -> "BACKSLASH";
+            case GLFW_KEY_RIGHT_BRACKET -> "RIGHT_BRACKET";
+            case GLFW_KEY_GRAVE_ACCENT -> "GRAVE_ACCENT";
+            case GLFW_KEY_WORLD_1 -> "WORLD_1";
+            case GLFW_KEY_WORLD_2 -> "WORLD_2";
+            case GLFW_KEY_ESCAPE -> "ESCAPE";
+            case GLFW_KEY_ENTER -> "ENTER";
+            case GLFW_KEY_TAB -> "TAB";
+            case GLFW_KEY_BACKSPACE -> "BACKSPACE";
+            case GLFW_KEY_INSERT -> "INSERT";
+            case GLFW_KEY_DELETE -> "DELETE";
+            case GLFW_KEY_RIGHT -> "RIGHT";
+            case GLFW_KEY_LEFT -> "LEFT";
+            case GLFW_KEY_DOWN -> "DOWN";
+            case GLFW_KEY_UP -> "UP";
+            case GLFW_KEY_PAGE_UP -> "PAGE_UP";
+            case GLFW_KEY_PAGE_DOWN -> "PAGE_DOWN";
+            case GLFW_KEY_HOME -> "HOME";
+            case GLFW_KEY_END -> "END";
+            case GLFW_KEY_CAPS_LOCK -> "CAPS_LOCK";
+            case GLFW_KEY_SCROLL_LOCK -> "SCROLL_LOCK";
+            case GLFW_KEY_NUM_LOCK -> "NUM_LOCK";
+            case GLFW_KEY_PRINT_SCREEN -> "PRINT_SCREEN";
+            case GLFW_KEY_PAUSE -> "PAUSE";
+            case GLFW_KEY_F1 -> "F1";
+            case GLFW_KEY_F2 -> "F2";
+            case GLFW_KEY_F3 -> "F3";
+            case GLFW_KEY_F4 -> "F4";
+            case GLFW_KEY_F5 -> "F5";
+            case GLFW_KEY_F6 -> "F6";
+            case GLFW_KEY_F7 -> "F7";
+            case GLFW_KEY_F8 -> "F8";
+            case GLFW_KEY_F9 -> "F9";
+            case GLFW_KEY_F10 -> "F10";
+            case GLFW_KEY_F11 -> "F11";
+            case GLFW_KEY_F12 -> "F12";
+            case GLFW_KEY_F13 -> "F13";
+            case GLFW_KEY_F14 -> "F14";
+            case GLFW_KEY_F15 -> "F15";
+            case GLFW_KEY_F16 -> "F16";
+            case GLFW_KEY_F17 -> "F17";
+            case GLFW_KEY_F18 -> "F18";
+            case GLFW_KEY_F19 -> "F19";
+            case GLFW_KEY_F20 -> "F20";
+            case GLFW_KEY_F21 -> "F21";
+            case GLFW_KEY_F22 -> "F22";
+            case GLFW_KEY_F23 -> "F23";
+            case GLFW_KEY_F24 -> "F24";
+            case GLFW_KEY_F25 -> "F25";
+            case GLFW_KEY_KP_0 -> "KP_0";
+            case GLFW_KEY_KP_1 -> "KP_1";
+            case GLFW_KEY_KP_2 -> "KP_2";
+            case GLFW_KEY_KP_3 -> "KP_3";
+            case GLFW_KEY_KP_4 -> "KP_4";
+            case GLFW_KEY_KP_5 -> "KP_5";
+            case GLFW_KEY_KP_6 -> "KP_6";
+            case GLFW_KEY_KP_7 -> "KP_7";
+            case GLFW_KEY_KP_8 -> "KP_8";
+            case GLFW_KEY_KP_9 -> "KP_9";
+            case GLFW_KEY_KP_DECIMAL -> "KP_DECIMAL";
+            case GLFW_KEY_KP_DIVIDE -> "KP_DIVIDE";
+            case GLFW_KEY_KP_MULTIPLY -> "KP_MULTIPLY";
+            case GLFW_KEY_KP_SUBTRACT -> "KP_SUBTRACT";
+            case GLFW_KEY_KP_ADD -> "KP_ADD";
+            case GLFW_KEY_KP_ENTER -> "KP_ENTER";
+            case GLFW_KEY_KP_EQUAL -> "KP_EQUAL";
+            case GLFW_KEY_LEFT_SHIFT -> "LEFT_SHIFT";
+            case GLFW_KEY_LEFT_CONTROL -> "LEFT_CONTROL";
+            case GLFW_KEY_LEFT_ALT -> "LEFT_ALT";
+            case GLFW_KEY_LEFT_SUPER -> "LEFT_SUPER";
+            case GLFW_KEY_RIGHT_SHIFT -> "RIGHT_SHIFT";
+            case GLFW_KEY_RIGHT_CONTROL -> "RIGHT_CONTROL";
+            case GLFW_KEY_RIGHT_ALT -> "RIGHT_ALT";
+            case GLFW_KEY_RIGHT_SUPER -> "RIGHT_SUPER";
+            case GLFW_KEY_MENU -> "MENU";
+            default -> "UNKNOWN";
+        };
     }
 
     public static List<String> getAllMacroStrings() {

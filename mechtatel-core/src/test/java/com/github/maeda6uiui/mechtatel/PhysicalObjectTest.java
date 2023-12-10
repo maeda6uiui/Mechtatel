@@ -42,11 +42,10 @@ public class PhysicalObjectTest extends Mechtatel {
     private MttModel level;
     private MttModel box;
     private FreeCamera camera;
+    private List<PhysicalObject> physicalObjects;
 
     private Random random;
     private int screenshotCount;
-
-    private List<PhysicalObject> physicalObjects;
 
     @Override
     public void init(MttWindow window) {
@@ -97,10 +96,10 @@ public class PhysicalObjectTest extends Mechtatel {
 
         camera = new FreeCamera(mainScreen.getCamera());
 
+        physicalObjects = new ArrayList<>();
+
         random = new Random();
         screenshotCount = 0;
-
-        physicalObjects = new ArrayList<>();
     }
 
     @Override

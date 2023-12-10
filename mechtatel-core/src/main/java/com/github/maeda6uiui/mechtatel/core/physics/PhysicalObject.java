@@ -88,6 +88,10 @@ public class PhysicalObject {
         Matrix4f rotationMat = this.getRotationMatrix();
         var transformMat = new Matrix4f().translate(location).mul(rotationMat);
 
-        components.forEach(component -> component.setMat(transformMat));
+        components.forEach(component -> {
+            Vector3f scale = component.getMatScale();
+            var transformMatWithScale = transformMat.scale(scale);
+            component.setMat(transformMatWithScale);
+        });
     }
 }

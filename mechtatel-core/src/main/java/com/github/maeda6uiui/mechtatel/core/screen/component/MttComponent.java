@@ -4,6 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
+import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 import java.util.Optional;
@@ -112,6 +113,10 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
 
     public void reset() {
         mat = new Matrix4f().identity();
+    }
+
+    public Vector3f getMatScale() {
+        return mat.getScale(new Vector3f());
     }
 
     public void setVisible(boolean visible) {

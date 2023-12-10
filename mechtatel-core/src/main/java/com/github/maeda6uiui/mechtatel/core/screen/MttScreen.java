@@ -32,8 +32,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -534,8 +536,8 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     //Components ==========
     @Override
-    public void addComponents(MttComponent... cs) {
-        components.addAll(Arrays.asList(cs));
+    public void addComponent(MttComponent c) {
+        components.add(c);
     }
 
     public boolean deleteComponent(MttComponent component) {
@@ -708,8 +710,8 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     //GUI components ==========
     @Override
-    public void addGuiComponents(MttGuiComponent... cs) {
-        guiComponents.addAll(Arrays.asList(cs));
+    public void addGuiComponent(MttGuiComponent c) {
+        guiComponents.add(c);
     }
 
     public boolean deleteGuiComponent(MttGuiComponent guiComponent) {

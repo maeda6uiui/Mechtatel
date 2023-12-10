@@ -10,9 +10,9 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
  * @author maeda6uiui
  */
 public interface IMttScreenForMttComponent {
-    void addComponents(MttComponent... cs);
+    void addComponent(MttComponent c);
 
-    void addGuiComponents(MttGuiComponent... cs);
+    void addGuiComponent(MttGuiComponent c);
 
     VkMttScreen getVulkanScreen();
 }

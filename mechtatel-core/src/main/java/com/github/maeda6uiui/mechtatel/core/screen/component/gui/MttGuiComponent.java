@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.screen.component.gui;
 
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttComponent;
 import com.github.maeda6uiui.mechtatel.core.util.UniversalCounter;
 
 import java.util.Map;
@@ -46,7 +46,7 @@ public class MttGuiComponent extends MttComponent {
         callbacks = new MttGuiComponentCallbacks();
         cursorOn = false;
 
-        screen.addGuiComponents(this);
+        screen.addGuiComponent(this);
     }
 
     public void setCallbacks(MttGuiComponentCallbacks callbacks) {

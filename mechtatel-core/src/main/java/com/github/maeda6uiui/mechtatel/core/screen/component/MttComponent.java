@@ -69,7 +69,7 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
 
     public MttComponent(IMttScreenForMttComponent screen, MttComponentCreateInfo createInfo) {
         this.setInitialProperties(createInfo);
-        screen.addComponents(this);
+        screen.addComponent(this);
 
         valid = true;
     }

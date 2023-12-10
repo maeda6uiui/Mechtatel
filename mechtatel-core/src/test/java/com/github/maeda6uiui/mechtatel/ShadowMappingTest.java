@@ -123,19 +123,17 @@ public class ShadowMappingTest extends Mechtatel {
             var newCubePosition = posRotMat.transformPosition(cubePosition);
             cubePositions.set(i, newCubePosition);
 
-            var translateMat = new Matrix4f().translate(newCubePosition);
-
             //Rotation
             final float CUBE_ROT_ANGLE = (float) Math.toRadians(0.5f);
-            var newCubeRotation = cubeRotation + CUBE_ROT_ANGLE;
+            float newCubeRotation = cubeRotation + CUBE_ROT_ANGLE;
             cubeRotations.set(i, newCubeRotation);
 
-            var rotXMat = new Matrix4f().rotateX(newCubeRotation);
-            var rotYMat = new Matrix4f().rotateY(newCubeRotation);
-            var rotZMat = new Matrix4f().rotateZ(newCubeRotation);
-
-            var mat = translateMat.mul(rotZMat).mul(rotYMat).mul(rotXMat);
-            cube.setMat(mat);
+            var transformMat = new Matrix4f()
+                    .translate(newCubePosition)
+                    .rotateX(newCubeRotation)
+                    .rotateY(newCubeRotation)
+                    .rotateZ(newCubeRotation);
+            cube.setMat(transformMat);
         }
 
         mainScreen.draw();

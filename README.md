@@ -29,12 +29,11 @@ Thank you!
 
 ## Currently working on
 
-- Use enum to inquire keyboard and mouse inputs
+- Add test code to handle multiple windows
 
 ## Todo
 
-- Add test code to handle multiple windows
-- Integrate ImGui for rich UI implementation
+- Integrate [ImGui](https://github.com/ocornut/imgui) for rich UI implementation
 - Implement functionality to run `mechtatel-core` via YAML definitions<br>i.e. Load and manipulate resources according to the procedure defined in a YAML file
 
 ## 進捗報告(Progress report)

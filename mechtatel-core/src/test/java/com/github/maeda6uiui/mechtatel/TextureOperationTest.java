@@ -68,24 +68,16 @@ public class TextureOperationTest extends Mechtatel {
             return;
         }
 
-        MttTexture firstColorTexture = firstScreen.texturize(ScreenImageType.COLOR, finalScreen);
-        MttTexture firstDepthTexture = firstScreen.texturize(ScreenImageType.DEPTH, finalScreen);
-        MttTexture secondColorTexture = secondScreen.texturize(ScreenImageType.COLOR, finalScreen);
-        MttTexture secondDepthTexture = secondScreen.texturize(ScreenImageType.DEPTH, finalScreen);
-        opTest = finalScreen.createTextureOperation(
-                firstColorTexture,
-                firstDepthTexture,
-                secondColorTexture,
-                secondDepthTexture
-        );
-
-        var textureOperationParameters = new TextureOperationParameters();
-        textureOperationParameters.setOperationType(TextureOperationParameters.TEXTURE_OPERATION_ADD);
-        opTest.setParameters(textureOperationParameters);
-
-        texturedQuad.replaceTexture(opTest.getResultTexture());
-
         camera = new FreeCamera(firstScreen.getCamera());
+
+        this.createTextureOperation();
+    }
+
+    @Override
+    public void recreate(MttWindow window, int width, int height) {
+        //Texture operations must be recreated on resource recreation accompanied by window resize,
+        //as some resources such as underlying textures of a screen are destroyed and no longer valid.
+        this.createTextureOperation();
     }
 
     @Override
@@ -108,5 +100,29 @@ public class TextureOperationTest extends Mechtatel {
         opTest.run();
         finalScreen.draw();
         window.present(finalScreen);
+    }
+
+    private void createTextureOperation() {
+        if (opTest != null) {
+            opTest.cleanup();
+        }
+
+        MttTexture firstColorTexture = firstScreen.texturize(ScreenImageType.COLOR, finalScreen);
+        MttTexture firstDepthTexture = firstScreen.texturize(ScreenImageType.DEPTH, finalScreen);
+        MttTexture secondColorTexture = secondScreen.texturize(ScreenImageType.COLOR, finalScreen);
+        MttTexture secondDepthTexture = secondScreen.texturize(ScreenImageType.DEPTH, finalScreen);
+
+        var textureOperationParameters = new TextureOperationParameters();
+        textureOperationParameters.setOperationType(TextureOperationParameters.TEXTURE_OPERATION_ADD);
+
+        opTest = finalScreen.createTextureOperation(
+                firstColorTexture,
+                firstDepthTexture,
+                secondColorTexture,
+                secondDepthTexture,
+                true
+        );
+        opTest.setParameters(textureOperationParameters);
+        texturedQuad.replaceTexture(opTest.getResultTexture());
     }
 }

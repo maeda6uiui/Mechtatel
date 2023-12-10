@@ -21,7 +21,6 @@ public class MttTexture {
     }
 
     private VkMttTexture texture;
-    private boolean isOwner;
     private boolean isValid;
 
     public static void setImageFormat(ImageFormat imageFormat) {
@@ -51,7 +50,6 @@ public class MttTexture {
                 generateMipmaps
         );
 
-        isOwner = true;
         isValid = true;
 
         screen.addTexture(this);
@@ -59,14 +57,13 @@ public class MttTexture {
 
     public MttTexture(IMttScreenForMttTexture screen, VkMttTexture texture) {
         this.texture = texture;
-        isOwner = false;
         isValid = true;
 
         screen.addTexture(this);
     }
 
     public void cleanup() {
-        if (isOwner && isValid) {
+        if (isValid) {
             texture.cleanup();
         }
         isValid = false;

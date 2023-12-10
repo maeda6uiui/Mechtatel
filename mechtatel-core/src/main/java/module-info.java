@@ -21,6 +21,8 @@ module com.github.maeda6uiui.mechtatel.core {
     exports com.github.maeda6uiui.mechtatel.core.camera;
     exports com.github.maeda6uiui.mechtatel.core.screen.component;
     exports com.github.maeda6uiui.mechtatel.core.screen.component.gui;
+    exports com.github.maeda6uiui.mechtatel.core.input.keyboard;
+    exports com.github.maeda6uiui.mechtatel.core.input.mouse;
     exports com.github.maeda6uiui.mechtatel.core.nabor;
     exports com.github.maeda6uiui.mechtatel.core.physics;
     exports com.github.maeda6uiui.mechtatel.core.postprocessing.blur;

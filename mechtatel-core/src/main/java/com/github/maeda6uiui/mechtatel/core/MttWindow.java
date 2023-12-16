@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -30,6 +31,8 @@ import static org.lwjgl.system.MemoryUtil.NULL;
  */
 public class MttWindow {
     private static final Logger logger = LoggerFactory.getLogger(MttWindow.class);
+
+    private String uniqueID;
 
     private IMechtatelForMttWindow mtt;
     private MttVulkanImpl vulkanImpl;
@@ -92,6 +95,8 @@ public class MttWindow {
             int width,
             int height,
             String title) {
+        uniqueID = UUID.randomUUID().toString();
+
         handle = glfwCreateWindow(width, height, title, NULL, NULL);
         if (handle == NULL) {
             throw new RuntimeException("Failed to create a window");
@@ -201,6 +206,10 @@ public class MttWindow {
 
     public boolean shouldClose() {
         return glfwWindowShouldClose(handle);
+    }
+
+    public String getUniqueID() {
+        return uniqueID;
     }
 
     public int getWidth() {

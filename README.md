@@ -29,14 +29,18 @@ Thank you!
 
 ## Currently working on
 
-- Add test code to handle multiple windows
-
 ## Todo
 
 - Integrate [ImGui](https://github.com/ocornut/imgui) for rich UI implementation
 - Implement functionality to run `mechtatel-core` via YAML definitions<br>i.e. Load and manipulate resources according to the procedure defined in a YAML file
 
 ## 進捗報告(Progress report)
+
+### 2023-12-16
+
+複数のウィンドウを表示できるようになりました。
+
+![複数ウィンドウの表示](./Image/multiple_windows.png)
 
 ### 2023-11-24
 

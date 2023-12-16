@@ -178,14 +178,14 @@ public class Mechtatel implements IMechtatelForMttWindow {
     /**
      * Called after the Mechtatel engine is initialized and the initial window is created.
      */
-    void onInit() {
+    public void onInit() {
 
     }
 
     /**
      * Called when the Mechtatel engine exits (right before the call to {@link org.lwjgl.glfw.GLFW#glfwTerminate()}).
      */
-    void onTerminate() {
+    public void onTerminate() {
 
     }
 

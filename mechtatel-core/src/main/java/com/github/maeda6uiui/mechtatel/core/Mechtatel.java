@@ -30,6 +30,8 @@ import static org.lwjgl.openal.ALC10.*;
 public class Mechtatel implements IMechtatelForMttWindow {
     private final Logger logger = LoggerFactory.getLogger(Mechtatel.class);
 
+    private boolean mechtatelReady;
+
     private int fps;
     private float secondsPerFrame;
 
@@ -114,11 +116,14 @@ public class Mechtatel implements IMechtatelForMttWindow {
         );
         logger.info("Starting the Mechtatel engine...");
 
+        mechtatelReady = true;
         try {
             this.initMechtatel(settings);
         } catch (RuntimeException e) {
             logger.error("Fatal error", e);
+
             glfwTerminate();
+            mechtatelReady = false;
 
             return;
         }
@@ -127,6 +132,11 @@ public class Mechtatel implements IMechtatelForMttWindow {
     }
 
     public void run() {
+        if (!mechtatelReady) {
+            logger.error("Mechtatel engine is not ready to be run");
+            return;
+        }
+
         double lastTime = 0.0;
         glfwSetTime(0.0);
 

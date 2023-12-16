@@ -99,6 +99,8 @@ public class Mechtatel implements IMechtatelForMttWindow {
 
         initialWindow = new MttWindow(this, settings);
         windows.add(initialWindow);
+
+        this.onInit();
     }
 
     public Mechtatel(MttSettings settings) {
@@ -160,6 +162,8 @@ public class Mechtatel implements IMechtatelForMttWindow {
         logger.info("Exiting the Mechtatel engine...");
 
         MttVulkanInstance.get().ifPresent(MttVulkanInstance::cleanup);
+
+        this.onTerminate();
         glfwTerminate();
     }
 
@@ -169,6 +173,20 @@ public class Mechtatel implements IMechtatelForMttWindow {
 
     public void registerWindow(MttWindow window) {
         newWindowsQueue.add(window);
+    }
+
+    /**
+     * Called after the Mechtatel engine is initialized and the initial window is created.
+     */
+    void onInit() {
+
+    }
+
+    /**
+     * Called when the Mechtatel engine exits (right before the call to {@link org.lwjgl.glfw.GLFW#glfwTerminate()}).
+     */
+    void onTerminate() {
+
     }
 
     @Override

@@ -46,7 +46,7 @@ public class ShadowMappingTest extends Mechtatel {
     private List<Float> cubeRotations;
 
     @Override
-    public void init(MttWindow window) {
+    public void onCreate(MttWindow window) {
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
                         .setUseShadowMapping(true)
@@ -90,7 +90,7 @@ public class ShadowMappingTest extends Mechtatel {
     }
 
     @Override
-    public void update(MttWindow window) {
+    public void onUpdate(MttWindow window) {
         camera.translate(
                 window.getKeyboardPressingCount(KeyCode.W),
                 window.getKeyboardPressingCount(KeyCode.S),

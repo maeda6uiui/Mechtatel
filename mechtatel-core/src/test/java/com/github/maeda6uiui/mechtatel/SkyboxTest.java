@@ -41,7 +41,7 @@ public class SkyboxTest extends Mechtatel {
     private FreeCamera camera;
 
     @Override
-    public void init(MttWindow window) {
+    public void onCreate(MttWindow window) {
         skyboxScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
                         .setDepthImageWidth(1024)
@@ -87,14 +87,14 @@ public class SkyboxTest extends Mechtatel {
     }
 
     @Override
-    public void recreate(MttWindow window, int width, int height) {
+    public void onRecreate(MttWindow window, int width, int height) {
         //Texture operations must be recreated on resource recreation accompanied by window resize,
         //as some resources such as underlying textures of a screen are destroyed and no longer valid.
         this.createTextureOperation();
     }
 
     @Override
-    public void update(MttWindow window) {
+    public void onUpdate(MttWindow window) {
         camera.translate(
                 window.getKeyboardPressingCount(KeyCode.W),
                 window.getKeyboardPressingCount(KeyCode.S),

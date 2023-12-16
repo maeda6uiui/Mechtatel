@@ -36,7 +36,7 @@ public class SimpleBlurTest extends Mechtatel {
     private FreeCamera camera;
 
     @Override
-    public void init(MttWindow window) {
+    public void onCreate(MttWindow window) {
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
                         .setPpNaborNames(List.of("simple_blur"))
@@ -57,7 +57,7 @@ public class SimpleBlurTest extends Mechtatel {
     }
 
     @Override
-    public void update(MttWindow window) {
+    public void onUpdate(MttWindow window) {
         var simpleBlurInfo = new SimpleBlurInfo();
         simpleBlurInfo.setTextureWidth(mainScreen.getScreenWidth());
         simpleBlurInfo.setTextureHeight(mainScreen.getScreenHeight());

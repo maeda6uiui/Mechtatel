@@ -41,7 +41,7 @@ public class TextureOperationTest extends Mechtatel {
     private FreeCamera camera;
 
     @Override
-    public void init(MttWindow window) {
+    public void onCreate(MttWindow window) {
         firstScreen = window.createScreen(new MttScreen.MttScreenCreateInfo());
         firstScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
 
@@ -75,14 +75,14 @@ public class TextureOperationTest extends Mechtatel {
     }
 
     @Override
-    public void recreate(MttWindow window, int width, int height) {
+    public void onRecreate(MttWindow window, int width, int height) {
         //Texture operations must be recreated on resource recreation accompanied by window resize,
         //as some resources such as underlying textures of a screen are destroyed and no longer valid.
         this.createTextureOperation();
     }
 
     @Override
-    public void update(MttWindow window) {
+    public void onUpdate(MttWindow window) {
         camera.translate(
                 window.getKeyboardPressingCount(KeyCode.W),
                 window.getKeyboardPressingCount(KeyCode.S),

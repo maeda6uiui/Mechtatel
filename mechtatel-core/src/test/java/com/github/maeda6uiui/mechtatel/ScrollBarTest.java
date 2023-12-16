@@ -29,7 +29,7 @@ public class ScrollBarTest extends Mechtatel {
     }
 
     @Override
-    public void init(MttWindow window) {
+    public void onCreate(MttWindow window) {
         MttScreen defaultScreen = window.getDefaultScreen();
 
         var vScrollbar = defaultScreen.createVerticalScrollBar(
@@ -58,7 +58,7 @@ public class ScrollBarTest extends Mechtatel {
     }
 
     @Override
-    public void update(MttWindow window) {
+    public void onUpdate(MttWindow window) {
         MttScreen defaultScreen = window.getDefaultScreen();
         defaultScreen.draw();
         window.present(defaultScreen);

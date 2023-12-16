@@ -26,17 +26,17 @@ public class SetLogLevelTest extends Mechtatel {
     }
 
     @Override
-    public void init(MttWindow window) {
+    public void onCreate(MttWindow window) {
         logger.debug("init");
     }
 
     @Override
-    public void reshape(MttWindow window, int width, int height) {
+    public void onReshape(MttWindow window, int width, int height) {
         logger.debug("width={} height={}", width, height);
     }
 
     @Override
-    public void dispose(MttWindow window) {
+    public void onDispose(MttWindow window) {
         logger.debug("dispose");
     }
 }

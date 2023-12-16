@@ -41,7 +41,7 @@ public class ScreenshotTest extends Mechtatel {
     private FreeCamera camera;
 
     @Override
-    public void init(MttWindow window) {
+    public void onCreate(MttWindow window) {
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
                         .setUseShadowMapping(true)
@@ -77,7 +77,7 @@ public class ScreenshotTest extends Mechtatel {
     }
 
     @Override
-    public void update(MttWindow window) {
+    public void onUpdate(MttWindow window) {
         camera.translate(
                 window.getKeyboardPressingCount(KeyCode.W),
                 window.getKeyboardPressingCount(KeyCode.S),

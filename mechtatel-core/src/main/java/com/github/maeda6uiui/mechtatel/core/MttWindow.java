@@ -51,7 +51,7 @@ public class MttWindow {
     private List<MttSound> sounds3D;
 
     private void framebufferResizeCallback(long window, int width, int height) {
-        mtt.reshape(this, width, height);
+        mtt.onReshape(this, width, height);
 
         this.width = width;
         this.height = height;
@@ -123,7 +123,7 @@ public class MttWindow {
 
         logger.debug("Window ({}) successfully created", Long.toHexString(handle));
 
-        mtt.init(this);
+        mtt.onCreate(this);
     }
 
     public void update() {
@@ -142,7 +142,7 @@ public class MttWindow {
             mustRecreate = false;
             logger.debug("Window ({}) recreated", Long.toHexString(handle));
 
-            mtt.recreate(this, width, height);
+            mtt.onRecreate(this, width, height);
         }
 
         Map<KeyCode, Integer> keyboardPressingCounts = keyboard.getPressingCounts();
@@ -166,7 +166,7 @@ public class MttWindow {
             screen.removeGarbageTextureOperations();
         });
 
-        mtt.update(this);
+        mtt.onUpdate(this);
     }
 
     public void present(MttScreen screen) {
@@ -174,7 +174,7 @@ public class MttWindow {
     }
 
     public void cleanup() {
-        mtt.dispose(this);
+        mtt.onDispose(this);
 
         screens.forEach(MttScreen::cleanup);
         vulkanImpl.cleanup();

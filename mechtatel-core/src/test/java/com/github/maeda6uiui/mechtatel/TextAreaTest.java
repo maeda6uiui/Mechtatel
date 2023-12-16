@@ -32,7 +32,7 @@ public class TextAreaTest extends Mechtatel {
     private MttTextArea textArea;
 
     @Override
-    public void init(MttWindow window) {
+    public void onCreate(MttWindow window) {
         var keyInterpreter = new JISKeyInterpreter();
 
         MttScreen defaultScreen = window.getDefaultScreen();
@@ -60,7 +60,7 @@ public class TextAreaTest extends Mechtatel {
     }
 
     @Override
-    public void update(MttWindow window) {
+    public void onUpdate(MttWindow window) {
         if (window.getKeyboardPressingCount(KeyCode.F1) == 1) {
             logger.info(textArea.getText());
         } else if (window.getKeyboardPressingCount(KeyCode.F2) == 1) {

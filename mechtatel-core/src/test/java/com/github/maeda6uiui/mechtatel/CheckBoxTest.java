@@ -28,7 +28,7 @@ public class CheckBoxTest extends Mechtatel {
     }
 
     @Override
-    public void init(MttWindow window) {
+    public void onCreate(MttWindow window) {
         MttScreen defaultScreen = window.getDefaultScreen();
         defaultScreen.createCheckBox(
                 new MttCheckBox.MttCheckBoxCreateInfo()
@@ -71,7 +71,7 @@ public class CheckBoxTest extends Mechtatel {
     }
 
     @Override
-    public void update(MttWindow window) {
+    public void onUpdate(MttWindow window) {
         MttScreen defaultScreen = window.getDefaultScreen();
         defaultScreen.draw();
         window.present(defaultScreen);

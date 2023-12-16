@@ -30,7 +30,7 @@ public class ShowTexture extends Mechtatel {
     }
 
     @Override
-    public void init(MttWindow window) {
+    public void onCreate(MttWindow window) {
         try {
             window.getDefaultScreen().createTexturedQuad2D(
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Texture/checker.png")),
@@ -45,7 +45,7 @@ public class ShowTexture extends Mechtatel {
     }
 
     @Override
-    public void update(MttWindow window) {
+    public void onUpdate(MttWindow window) {
         MttScreen defaultScreen = window.getDefaultScreen();
         defaultScreen.draw();
         window.present(defaultScreen);

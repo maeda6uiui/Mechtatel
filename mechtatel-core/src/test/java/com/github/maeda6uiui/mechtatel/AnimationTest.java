@@ -37,7 +37,7 @@ public class AnimationTest extends Mechtatel {
     private FreeCamera camera;
 
     @Override
-    public void init(MttWindow window) {
+    public void onCreate(MttWindow window) {
         MttScreen defaultScreen = window.getDefaultScreen();
         try {
             var animationInfo = new AnimationInfo(
@@ -63,7 +63,7 @@ public class AnimationTest extends Mechtatel {
     }
 
     @Override
-    public void update(MttWindow window) {
+    public void onUpdate(MttWindow window) {
         camera.translate(
                 window.getKeyboardPressingCount(KeyCode.W),
                 window.getKeyboardPressingCount(KeyCode.S),

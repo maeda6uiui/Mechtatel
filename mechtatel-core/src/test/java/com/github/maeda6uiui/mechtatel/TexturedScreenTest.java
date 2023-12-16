@@ -45,7 +45,7 @@ public class TexturedScreenTest extends Mechtatel {
     private Vector3f secondaryCameraPosition;
 
     @Override
-    public void init(MttWindow window) {
+    public void onCreate(MttWindow window) {
         primaryScreen = window.createScreen(new MttScreen.MttScreenCreateInfo());
         primaryScreen.setBackgroundColor(new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
         primaryScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
@@ -80,7 +80,7 @@ public class TexturedScreenTest extends Mechtatel {
     }
 
     @Override
-    public void update(MttWindow window) {
+    public void onUpdate(MttWindow window) {
         camera.translate(
                 window.getKeyboardPressingCount(KeyCode.W),
                 window.getKeyboardPressingCount(KeyCode.S),

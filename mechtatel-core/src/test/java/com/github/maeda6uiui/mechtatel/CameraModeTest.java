@@ -36,7 +36,7 @@ public class CameraModeTest extends Mechtatel {
     private FreeCamera camera;
 
     @Override
-    public void init(MttWindow window) {
+    public void onCreate(MttWindow window) {
         MttScreen defaultScreen = window.getDefaultScreen();
         camera = new FreeCamera(defaultScreen.getCamera());
 
@@ -67,7 +67,7 @@ public class CameraModeTest extends Mechtatel {
     }
 
     @Override
-    public void update(MttWindow window) {
+    public void onUpdate(MttWindow window) {
         camera.translate(
                 window.getKeyboardPressingCount(KeyCode.W),
                 window.getKeyboardPressingCount(KeyCode.S),

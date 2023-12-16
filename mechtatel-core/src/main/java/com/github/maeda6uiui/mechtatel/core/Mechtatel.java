@@ -172,27 +172,27 @@ public class Mechtatel implements IMechtatelForMttWindow {
     }
 
     @Override
-    public void init(MttWindow window) {
+    public void onCreate(MttWindow window) {
 
     }
 
     @Override
-    public void dispose(MttWindow window) {
+    public void onDispose(MttWindow window) {
 
     }
 
     @Override
-    public void reshape(MttWindow window, int width, int height) {
+    public void onReshape(MttWindow window, int width, int height) {
 
     }
 
     @Override
-    public void update(MttWindow window) {
+    public void onUpdate(MttWindow window) {
 
     }
 
     @Override
-    public void recreate(MttWindow window, int width, int height) {
+    public void onRecreate(MttWindow window, int width, int height) {
 
     }
 

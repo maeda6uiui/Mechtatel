@@ -175,6 +175,10 @@ public class Mechtatel implements IMechtatelForMttWindow {
         newWindowsQueue.add(window);
     }
 
+    public void closeAllWindows() {
+        windows.forEach(MttWindow::close);
+    }
+
     /**
      * Called after the Mechtatel engine is initialized and the initial window is created.
      */

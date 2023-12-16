@@ -6,6 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,12 +47,13 @@ public class MultipleWindowsTest extends Mechtatel {
                 return;
             }
 
-            model.translate(position).rotX(rotation.x).rotY(rotation.y).rotZ(rotation.z);
+            var mat = new Matrix4f().translate(position).rotateX(rotation.x).rotateY(rotation.y).rotateZ(rotation.z);
+            model.setMat(mat);
         }
     }
 
-    private static final float POSITION_UPDATE_DELTA = 0.05f;
-    private static final float ROTATION_UPDATE_DELTA = 0.05f;
+    private static final float POSITION_UPDATE_DELTA = 0.01f;
+    private static final float ROTATION_UPDATE_DELTA = 0.01f;
 
     private Map<String, ModelProperties> modelPropsMap;
 
@@ -61,18 +63,23 @@ public class MultipleWindowsTest extends Mechtatel {
                 Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj")));
 
         var random = new Random();
-        var modelPosition = new Vector3f(5.0f, 0.0f, 0.0f);
-        modelPosition.rotateY(random.nextFloat() * (float) Math.PI * 2.0f);
+        var modelPosition = new Vector3f(4.0f, 0.0f, 0.0f);
+        modelPosition.rotateY(random.nextFloat((float) Math.PI * 2.0f));
 
-        var modelRotation = new Vector3f(0.0f, 0.0f, 0.0f);
+        var modelRotation = new Vector3f(
+                random.nextFloat((float) Math.PI * 2.0f),
+                random.nextFloat((float) Math.PI * 2.0f),
+                random.nextFloat((float) Math.PI * 2.0f)
+        );
 
         var modelProps = new ModelProperties();
         modelProps.model = model;
         modelProps.position = modelPosition;
         modelProps.rotation = modelRotation;
         modelProps.apply();
-
         modelPropsMap.put(window.getUniqueID(), modelProps);
+
+        defaultScreen.createLineSet().addAxes(10.0f).createBuffer();
     }
 
     @Override
@@ -85,12 +92,12 @@ public class MultipleWindowsTest extends Mechtatel {
             var window = new MttWindow(this, settings, 640, 480, "Window " + i);
             windows.add(window);
         }
-        windows.add(this.getInitialWindow());
         windows.forEach(this::registerWindow);
 
         //Create resources
         modelPropsMap = new HashMap<>();
         try {
+            this.createResources(this.getInitialWindow());
             for (var window : windows) {
                 this.createResources(window);
             }
@@ -109,6 +116,7 @@ public class MultipleWindowsTest extends Mechtatel {
         });
 
         MttScreen defaultScreen = window.getDefaultScreen();
+        defaultScreen.draw();
         window.present(defaultScreen);
 
         if (window.getKeyboardPressingCount(KeyCode.ESCAPE) == 1) {

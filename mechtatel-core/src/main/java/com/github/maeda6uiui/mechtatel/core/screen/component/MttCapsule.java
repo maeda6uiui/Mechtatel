@@ -34,8 +34,13 @@ public class MttCapsule extends MttComponent {
 
         var dq = vulkanImpl.getDeviceAndQueues();
         vkCapsule = new VkMttCapsule(
-                this, dq.device(), vulkanImpl.getCommandPool(), dq.graphicsQueue(),
-                center, length, radius, numVDivs, numHDivs, color);
+                this,
+                dq.device(),
+                vulkanImpl.getCommandPool(),
+                dq.graphicsQueue(),
+                screen.getVulkanScreen(),
+                center, length, radius, numVDivs, numHDivs, color
+        );
         this.associateVulkanComponent(vkCapsule);
     }
 }

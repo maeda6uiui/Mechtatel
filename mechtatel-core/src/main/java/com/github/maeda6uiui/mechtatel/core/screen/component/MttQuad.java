@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttQuad;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
@@ -17,10 +18,17 @@ import java.util.List;
 public class MttQuad extends MttComponent {
     private VkMttQuad vkQuad;
 
-    private void setup(MttVulkanImpl vulkanImpl, List<MttVertex> vertices, boolean fill) {
+    private void setup(MttVulkanImpl vulkanImpl, VkMttScreen vulkanScreen, List<MttVertex> vertices, boolean fill) {
         var dq = vulkanImpl.getDeviceAndQueues();
         vkQuad = new VkMttQuad(
-                this, dq.device(), vulkanImpl.getCommandPool(), dq.graphicsQueue(), vertices, fill);
+                this,
+                dq.device(),
+                vulkanImpl.getCommandPool(),
+                dq.graphicsQueue(),
+                vulkanScreen,
+                vertices,
+                fill
+        );
         this.associateVulkanComponent(vkQuad);
     }
 
@@ -42,7 +50,7 @@ public class MttQuad extends MttComponent {
             boolean fill) {
         super(screen, generateCreateInfo(fill));
 
-        this.setup(vulkanImpl, Arrays.asList(v1, v2, v3, v4), fill);
+        this.setup(vulkanImpl, screen.getVulkanScreen(), Arrays.asList(v1, v2, v3, v4), fill);
     }
 
     public MttQuad(
@@ -60,6 +68,6 @@ public class MttQuad extends MttComponent {
         var v2 = new MttVertex(p2, color);
         var v3 = new MttVertex(p3, color);
         var v4 = new MttVertex(p4, color);
-        this.setup(vulkanImpl, Arrays.asList(v1, v2, v3, v4), fill);
+        this.setup(vulkanImpl, screen.getVulkanScreen(), Arrays.asList(v1, v2, v3, v4), fill);
     }
 }

@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
@@ -73,11 +74,12 @@ public class VkMttQuad extends VkMttComponent {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
+            VkMttScreen screen,
             List<MttVertex> vertices,
             boolean fill) {
         super(
                 mttComponent,
-                null,
+                screen,
                 fill ? "primitive_fill" : "primitive"
         );
 

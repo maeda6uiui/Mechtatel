@@ -27,7 +27,14 @@ public class MttLine2D extends MttComponent {
 
         var v1 = new MttVertex(new Vector3f(p1.pos.x(), p1.pos.y(), z), p1.color);
         var v2 = new MttVertex(new Vector3f(p2.pos.x(), p2.pos.y(), z), p2.color);
-        vkLine = new VkMttLine(this, dq.device(), vulkanImpl.getCommandPool(), dq.graphicsQueue(), v1, v2);
+        vkLine = new VkMttLine(
+                this,
+                dq.device(),
+                vulkanImpl.getCommandPool(),
+                dq.graphicsQueue(),
+                screen.getVulkanScreen(),
+                v1, v2
+        );
         this.associateVulkanComponent(vkLine);
     }
 }

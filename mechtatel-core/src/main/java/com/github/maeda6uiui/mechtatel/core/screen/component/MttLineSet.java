@@ -27,7 +27,13 @@ public class MttLineSet extends MttComponent {
         );
 
         var dq = vulkanImpl.getDeviceAndQueues();
-        vkLineSet = new VkMttLineSet(this, dq.device(), vulkanImpl.getCommandPool(), dq.graphicsQueue());
+        vkLineSet = new VkMttLineSet(
+                this,
+                dq.device(),
+                vulkanImpl.getCommandPool(),
+                dq.graphicsQueue(),
+                screen.getVulkanScreen()
+        );
         this.associateVulkanComponent(vkLineSet);
     }
 

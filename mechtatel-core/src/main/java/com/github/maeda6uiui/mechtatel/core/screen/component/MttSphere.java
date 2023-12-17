@@ -33,7 +33,11 @@ public class MttSphere extends MttComponent {
 
         var dq = vulkanImpl.getDeviceAndQueues();
         vkSphere = new VkMttSphere(
-                this, dq.device(), vulkanImpl.getCommandPool(), dq.graphicsQueue(),
+                this,
+                dq.device(),
+                vulkanImpl.getCommandPool(),
+                dq.graphicsQueue(),
+                screen.getVulkanScreen(),
                 center, radius, numVDivs, numHDivs, color
         );
         this.associateVulkanComponent(vkSphere);

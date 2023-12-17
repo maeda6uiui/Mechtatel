@@ -4,6 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkM
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.util.VertexUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
 import org.lwjgl.system.MemoryStack;
@@ -58,12 +59,13 @@ public class VkMttSphere extends VkMttComponent {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
+            VkMttScreen screen,
             Vector3fc center,
             float radius,
             int numVDivs,
             int numHDivs,
             Vector4fc color) {
-        super(mttComponent, null, "primitive");
+        super(mttComponent, screen, "primitive");
 
         this.device = device;
 

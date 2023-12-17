@@ -23,7 +23,14 @@ public class MttLine extends MttComponent {
         );
 
         var dq = vulkanImpl.getDeviceAndQueues();
-        vkLine = new VkMttLine(this, dq.device(), vulkanImpl.getCommandPool(), dq.graphicsQueue(), v1, v2);
+        vkLine = new VkMttLine(
+                this,
+                dq.device(),
+                vulkanImpl.getCommandPool(),
+                dq.graphicsQueue(),
+                screen.getVulkanScreen(),
+                v1, v2
+        );
         this.associateVulkanComponent(vkLine);
     }
 }

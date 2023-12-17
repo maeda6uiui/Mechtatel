@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttQuad;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
@@ -20,6 +21,7 @@ public class MttQuad2D extends MttComponent {
 
     private void setup(
             MttVulkanImpl vulkanImpl,
+            VkMttScreen vulkanScreen,
             MttVertex2D v1,
             MttVertex2D v2,
             MttVertex2D v3,
@@ -39,7 +41,14 @@ public class MttQuad2D extends MttComponent {
 
         var dq = vulkanImpl.getDeviceAndQueues();
         vkQuad = new VkMttQuad(
-                this, dq.device(), vulkanImpl.getCommandPool(), dq.graphicsQueue(), vertices, fill);
+                this,
+                dq.device(),
+                vulkanImpl.getCommandPool(),
+                dq.graphicsQueue(),
+                vulkanScreen,
+                vertices,
+                fill
+        );
         this.associateVulkanComponent(vkQuad);
     }
 
@@ -62,7 +71,7 @@ public class MttQuad2D extends MttComponent {
             boolean fill) {
         super(screen, generateCreateInfo());
 
-        this.setup(vulkanImpl, v1, v2, v3, v4, z, fill);
+        this.setup(vulkanImpl, screen.getVulkanScreen(), v1, v2, v3, v4, z, fill);
     }
 
     public MttQuad2D(
@@ -81,7 +90,7 @@ public class MttQuad2D extends MttComponent {
         var v2 = new MttVertex2D(new Vector2f(p2.x(), p2.y()), color);
         var v3 = new MttVertex2D(new Vector2f(p3.x(), p3.y()), color);
         var v4 = new MttVertex2D(new Vector2f(p4.x(), p4.y()), color);
-        this.setup(vulkanImpl, v1, v2, v3, v4, z, fill);
+        this.setup(vulkanImpl, screen.getVulkanScreen(), v1, v2, v3, v4, z, fill);
     }
 
     public MttQuad2D(
@@ -98,6 +107,6 @@ public class MttQuad2D extends MttComponent {
         var v2 = new MttVertex2D(new Vector2f(topLeft.x(), bottomRight.y()), color);
         var v3 = new MttVertex2D(new Vector2f(bottomRight.x(), bottomRight.y()), color);
         var v4 = new MttVertex2D(new Vector2f(bottomRight.x(), topLeft.y()), color);
-        this.setup(vulkanImpl, v1, v2, v3, v4, z, fill);
+        this.setup(vulkanImpl, screen.getVulkanScreen(), v1, v2, v3, v4, z, fill);
     }
 }

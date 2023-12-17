@@ -24,7 +24,7 @@ public class TextureOperationParametersUBO extends UBO {
     public TextureOperationParametersUBO(TextureOperationParameters parameters) {
         firstTextureFactor = parameters.getFirstTextureFactor();
         secondTextureFactor = parameters.getSecondTextureFactor();
-        operationType = parameters.getOperationType();
+        operationType = parameters.getOperationType().ordinal();
         firstTextureFixedDepth = parameters.getFirstTextureFixedDepth();
         secondTextureFixedDepth = parameters.getSecondTextureFixedDepth();
     }

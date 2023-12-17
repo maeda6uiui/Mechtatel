@@ -114,7 +114,7 @@ public class TextureOperationTest extends Mechtatel {
         MttTexture secondDepthTexture = secondScreen.texturize(ScreenImageType.DEPTH, finalScreen);
 
         var textureOperationParameters = new TextureOperationParameters();
-        textureOperationParameters.setOperationType(TextureOperationParameters.TEXTURE_OPERATION_ADD);
+        textureOperationParameters.setOperationType(TextureOperationParameters.OperationType.ADD);
 
         opTest = finalScreen.createTextureOperation(
                 firstColorTexture,

@@ -8,22 +8,24 @@ import org.joml.Vector4f;
  * @author maeda6uiui
  */
 public class TextureOperationParameters {
-    public static final int TEXTURE_OPERATION_ADD = 0;
-    public static final int TEXTURE_OPERATION_SUB = 1;
-    public static final int TEXTURE_OPERATION_MUL = 2;
-    public static final int TEXTURE_OPERATION_DIV = 3;
-    public static final int TEXTURE_OPERATION_MERGE_BY_DEPTH = 4;
+    public enum OperationType {
+        ADD,
+        SUB,
+        MUL,
+        DIV,
+        MERGE_BY_DEPTH
+    }
 
     private Vector4f firstTextureFactor;
     private Vector4f secondTextureFactor;
-    private int operationType;
+    private OperationType operationType;
     private float firstTextureFixedDepth;
     private float secondTextureFixedDepth;
 
     public TextureOperationParameters() {
         firstTextureFactor = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
         secondTextureFactor = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
-        operationType = TEXTURE_OPERATION_ADD;
+        operationType = OperationType.ADD;
         firstTextureFixedDepth = -1.0f;
         secondTextureFixedDepth = -1.0f;
     }
@@ -44,11 +46,11 @@ public class TextureOperationParameters {
         this.secondTextureFactor = secondTextureFactor;
     }
 
-    public int getOperationType() {
+    public OperationType getOperationType() {
         return operationType;
     }
 
-    public void setOperationType(int operationType) {
+    public void setOperationType(OperationType operationType) {
         this.operationType = operationType;
     }
 

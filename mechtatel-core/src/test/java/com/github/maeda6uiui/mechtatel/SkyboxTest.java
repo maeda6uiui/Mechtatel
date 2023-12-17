@@ -127,7 +127,7 @@ public class SkyboxTest extends Mechtatel {
         MttTexture mainDepthTexture = mainScreen.texturize(ScreenImageType.DEPTH, finalScreen);
 
         var textureOperationParameters = new TextureOperationParameters();
-        textureOperationParameters.setOperationType(TextureOperationParameters.TEXTURE_OPERATION_MERGE_BY_DEPTH);
+        textureOperationParameters.setOperationType(TextureOperationParameters.OperationType.MERGE_BY_DEPTH);
         textureOperationParameters.setFirstTextureFixedDepth(0.99999f);
 
         opMergeByDepth = finalScreen.createTextureOperation(

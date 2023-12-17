@@ -628,24 +628,29 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                         null);
 
                 for (var component : components) {
-                    if (component.getNaborName().equals("primitive")) {
-                        ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
-                        component.getMat().get(pcBuffer);
-                        if (component.isTwoDComponent()) {
-                            pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
-                        } else {
-                            pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
-                        }
-
-                        vkCmdPushConstants(
-                                commandBuffer,
-                                primitiveNabor.getPipelineLayout(0),
-                                VK_SHADER_STAGE_VERTEX_BIT,
-                                0,
-                                pcBuffer);
-
-                        component.draw(commandBuffer, primitiveNabor.getPipelineLayout(0));
+                    if (component.getScreen() != this) {
+                        continue;
                     }
+                    if (!component.getNaborName().equals("primitive")) {
+                        continue;
+                    }
+
+                    ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
+                    component.getMat().get(pcBuffer);
+                    if (component.isTwoDComponent()) {
+                        pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
+                    } else {
+                        pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
+                    }
+
+                    vkCmdPushConstants(
+                            commandBuffer,
+                            primitiveNabor.getPipelineLayout(0),
+                            VK_SHADER_STAGE_VERTEX_BIT,
+                            0,
+                            pcBuffer);
+
+                    component.draw(commandBuffer, primitiveNabor.getPipelineLayout(0));
                 }
             }
             vkCmdEndRenderPass(commandBuffer);
@@ -698,24 +703,29 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                         null);
 
                 for (var component : components) {
-                    if (component.getNaborName().equals("primitive_fill")) {
-                        ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
-                        component.getMat().get(pcBuffer);
-                        if (component.isTwoDComponent()) {
-                            pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
-                        } else {
-                            pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
-                        }
-
-                        vkCmdPushConstants(
-                                commandBuffer,
-                                primitiveFillNabor.getPipelineLayout(0),
-                                VK_SHADER_STAGE_VERTEX_BIT,
-                                0,
-                                pcBuffer);
-
-                        component.draw(commandBuffer, primitiveFillNabor.getPipelineLayout(0));
+                    if (component.getScreen() != this) {
+                        continue;
                     }
+                    if (!component.getNaborName().equals("primitive_fill")) {
+                        continue;
+                    }
+
+                    ByteBuffer pcBuffer = stack.calloc(1 * 16 * Float.BYTES + 1 * 1 * Integer.BYTES);
+                    component.getMat().get(pcBuffer);
+                    if (component.isTwoDComponent()) {
+                        pcBuffer.putInt(1 * 16 * Float.BYTES, 1);
+                    } else {
+                        pcBuffer.putInt(1 * 16 * Float.BYTES, 0);
+                    }
+
+                    vkCmdPushConstants(
+                            commandBuffer,
+                            primitiveFillNabor.getPipelineLayout(0),
+                            VK_SHADER_STAGE_VERTEX_BIT,
+                            0,
+                            pcBuffer);
+
+                    component.draw(commandBuffer, primitiveFillNabor.getPipelineLayout(0));
                 }
             }
             vkCmdEndRenderPass(commandBuffer);

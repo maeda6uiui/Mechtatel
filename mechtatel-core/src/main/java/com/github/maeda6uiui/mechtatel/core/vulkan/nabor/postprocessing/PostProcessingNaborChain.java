@@ -64,41 +64,31 @@ public class PostProcessingNaborChain {
         this.flexibleNaborInfos = flexibleNaborInfos;
 
         for (var naborName : naborNames) {
-            PostProcessingNabor ppNabor = null;
-            switch (naborName) {
-                case "fog":
-                    ppNabor = new FogNabor(device);
-                    break;
-                case "parallel_light":
-                    ppNabor = new ParallelLightNabor(device);
-                    break;
-                case "point_light":
-                    ppNabor = new PointLightNabor(device);
-                    break;
-                case "spotlight":
-                    ppNabor = new SpotlightNabor(device);
-                    break;
-                case "simple_blur":
-                    ppNabor = new SimpleBlurNabor(device);
-                    break;
-            }
+            PostProcessingNabor ppNabor;
 
-            for (var entry : flexibleNaborInfos.entrySet()) {
-                String flexibleNaborName = entry.getKey();
-                if (flexibleNaborName.equals(naborName)) {
-                    FlexibleNaborInfo flexibleNaborInfo = flexibleNaborInfos.get(flexibleNaborName);
-
-                    ppNabor = new FlexibleNabor(
-                            device,
-                            flexibleNaborInfo.getVertShaderResource(),
-                            flexibleNaborInfo.getFragShaderResource(),
-                            flexibleNaborInfo.getUniformResources()
-                    );
-                }
-            }
-
-            if (ppNabor == null) {
-                throw new IllegalArgumentException("Unsupported nabor specified: " + naborName);
+            FlexibleNaborInfo flexibleNaborInfo = flexibleNaborInfos
+                    .entrySet()
+                    .stream()
+                    .filter(v -> v.getKey().equals(naborName))
+                    .map(Map.Entry::getValue)
+                    .findFirst()
+                    .orElse(null);
+            if (flexibleNaborInfo != null) {
+                ppNabor = new FlexibleNabor(
+                        device,
+                        flexibleNaborInfo.getVertShaderResource(),
+                        flexibleNaborInfo.getFragShaderResource(),
+                        flexibleNaborInfo.getUniformResourceTypes()
+                );
+            } else {
+                ppNabor = switch (naborName) {
+                    case "fog" -> new FogNabor(device);
+                    case "parallel_light" -> new ParallelLightNabor(device);
+                    case "point_light" -> new PointLightNabor(device);
+                    case "spotlight" -> new SpotlightNabor(device);
+                    case "simple_blur" -> new SimpleBlurNabor(device);
+                    default -> throw new IllegalArgumentException("Unknown nabor name specified: " + naborName);
+                };
             }
 
             if (vertShaderModulesStorage.containsKey(naborName)) {
@@ -126,7 +116,8 @@ public class PostProcessingNaborChain {
                         extent,
                         commandPool,
                         graphicsQueue,
-                        1);
+                        1
+                );
             }
 
             ppNabors.put(naborName, ppNabor);
@@ -258,42 +249,35 @@ public class PostProcessingNaborChain {
             List<Spotlight> spotlights,
             Vector3f spotlightAmbientColor,
             SimpleBlurInfo simpleBlurInfo) {
-        List<String> uniformResources = flexibleNaborInfo.getUniformResources();
-        int numUniformResources = uniformResources.size();
-
-        for (int i = 0; i < numUniformResources; i++) {
-            String uniformResource = uniformResources.get(i);
+        List<FlexibleNaborInfo.UniformResourceType> uniformResourceTypes = flexibleNaborInfo.getUniformResourceTypes();
+        for (int i = 0; i < uniformResourceTypes.size(); i++) {
             long uboMemory = ppNabor.getUniformBufferMemory(i);
 
-            switch (uniformResource) {
-                case "camera": {
+            var uniformResourceType = uniformResourceTypes.get(i);
+            switch (uniformResourceType) {
+                case CAMERA -> {
                     var cameraUBO = new CameraUBO(camera);
                     cameraUBO.update(device, uboMemory);
                 }
-                break;
-                case "fog": {
+                case FOG -> {
                     var fogUBO = new FogUBO(fog);
                     fogUBO.update(device, uboMemory);
                 }
-                break;
-                case "lighting_info": {
-                    String lightingType = flexibleNaborInfo.getLightingType();
+                case LIGHTING_INFO -> {
                     var lightingInfo = new LightingInfo();
-
-                    if (lightingType.equals("none")) {
-                        lightingInfo.setNumLights(0);
-                        lightingInfo.setAmbientColor(new Vector3f(0.0f, 0.0f, 0.0f));
-                    } else if (lightingType.equals("parallel_light")) {
-                        lightingInfo.setNumLights(parallelLights.size());
-                        lightingInfo.setAmbientColor(parallelLightAmbientColor);
-                    } else if (lightingType.equals("point_light")) {
-                        lightingInfo.setNumLights(pointLights.size());
-                        lightingInfo.setAmbientColor(pointLightAmbientColor);
-                    } else if (lightingType.equals("spotlight")) {
-                        lightingInfo.setNumLights(spotlights.size());
-                        lightingInfo.setAmbientColor(spotlightAmbientColor);
-                    } else {
-                        throw new RuntimeException("Unsupported lighting type specified: " + lightingType);
+                    switch (flexibleNaborInfo.getLightingType()) {
+                        case PARALLEL -> {
+                            lightingInfo.setNumLights(parallelLights.size());
+                            lightingInfo.setAmbientColor(parallelLightAmbientColor);
+                        }
+                        case POINT -> {
+                            lightingInfo.setNumLights(pointLights.size());
+                            lightingInfo.setAmbientColor(pointLightAmbientColor);
+                        }
+                        case SPOT -> {
+                            lightingInfo.setNumLights(spotlights.size());
+                            lightingInfo.setAmbientColor(spotlightAmbientColor);
+                        }
                     }
 
                     lightingInfo.setLightingClampMin(flexibleNaborInfo.getLightingClampMin());
@@ -302,35 +286,28 @@ public class PostProcessingNaborChain {
                     var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
                     lightingInfoUBO.update(device, uboMemory);
                 }
-                break;
-                case "parallel_light": {
+                case PARALLEL_LIGHT -> {
                     for (int j = 0; j < parallelLights.size(); j++) {
                         var lightUBO = new ParallelLightUBO(parallelLights.get(j));
                         lightUBO.update(device, uboMemory, j);
                     }
                 }
-                break;
-                case "point_light": {
+                case POINT_LIGHT -> {
                     for (int j = 0; j < pointLights.size(); j++) {
                         var lightUBO = new PointLightUBO(pointLights.get(j));
                         lightUBO.update(device, uboMemory, j);
                     }
                 }
-                break;
-                case "simple_blur": {
+                case SIMPLE_BLUR -> {
                     var blurInfoUBO = new SimpleBlurInfoUBO(simpleBlurInfo);
                     blurInfoUBO.update(device, uboMemory);
                 }
-                break;
-                case "spotlight": {
+                case SPOTLIGHT -> {
                     for (int j = 0; j < spotlights.size(); j++) {
                         var lightUBO = new SpotlightUBO(spotlights.get(j));
                         lightUBO.update(device, uboMemory, j);
                     }
                 }
-                break;
-                default:
-                    throw new RuntimeException("Unsupported uniform resource specified: " + uniformResource);
             }
         }
     }

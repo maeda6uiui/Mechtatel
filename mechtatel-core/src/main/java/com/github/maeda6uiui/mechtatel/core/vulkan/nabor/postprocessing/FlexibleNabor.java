@@ -1,11 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 
+import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.*;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass1InfoUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass2InfoUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.ShadowInfoUBO;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
@@ -27,50 +25,32 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class FlexibleNabor extends PostProcessingNabor {
-    private List<String> uniformResources;
+    private List<FlexibleNaborInfo.UniformResourceType> uniformResourceTypes;
 
     public FlexibleNabor(
             VkDevice device,
             URL vertShaderResource,
             URL fragShaderResource,
-            List<String> uniformResources) {
+            List<FlexibleNaborInfo.UniformResourceType> uniformResourceTypes) {
         super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
 
-        this.uniformResources = uniformResources;
+        this.uniformResourceTypes = uniformResourceTypes;
     }
 
     @Override
     protected void createUniformBuffers(int descriptorCount) {
         VkDevice device = this.getDevice();
 
-        for (String uniformResource : uniformResources) {
-            int size;
-            switch (uniformResource) {
-                case "camera":
-                    size = CameraUBO.SIZEOF;
-                    break;
-                case "fog":
-                    size = FogUBO.SIZEOF;
-                    break;
-                case "lighting_info":
-                    size = LightingInfoUBO.SIZEOF;
-                    break;
-                case "parallel_light":
-                    size = ParallelLightUBO.SIZEOF;
-                    break;
-                case "point_light":
-                    size = PointLightUBO.SIZEOF;
-                    break;
-                case "simple_blur":
-                    size = SimpleBlurInfoUBO.SIZEOF;
-                    break;
-                case "spotlight":
-                    size = SpotlightUBO.SIZEOF;
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unsupported uniform resource specified: " + uniformResource);
-            }
-
+        for (var uniformResourceType : uniformResourceTypes) {
+            int size = switch (uniformResourceType) {
+                case CAMERA -> CameraUBO.SIZEOF;
+                case FOG -> FogUBO.SIZEOF;
+                case LIGHTING_INFO -> LightingInfoUBO.SIZEOF;
+                case PARALLEL_LIGHT -> ParallelLightUBO.SIZEOF;
+                case POINT_LIGHT -> PointLightUBO.SIZEOF;
+                case SIMPLE_BLUR -> SimpleBlurInfoUBO.SIZEOF;
+                case SPOTLIGHT -> SpotlightUBO.SIZEOF;
+            };
             var uboInfos = BufferCreator.createUBOBuffers(device, descriptorCount, size);
             for (var uboInfo : uboInfos) {
                 this.getUniformBuffers().add(uboInfo.buffer);
@@ -84,10 +64,11 @@ public class FlexibleNabor extends PostProcessingNabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            int numUniformResources = uniformResources.size();
-            VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.calloc(numUniformResources, stack);
+            int numUniformResourceTypes = uniformResourceTypes.size();
+            VkDescriptorSetLayoutBinding.Buffer uboBindings
+                    = VkDescriptorSetLayoutBinding.calloc(numUniformResourceTypes, stack);
 
-            for (int i = 0; i < numUniformResources; i++) {
+            for (int i = 0; i < numUniformResourceTypes; i++) {
                 VkDescriptorSetLayoutBinding uboLayoutBinding = uboBindings.get(i);
                 uboLayoutBinding.binding(i);
                 uboLayoutBinding.descriptorCount(1);
@@ -117,10 +98,10 @@ public class FlexibleNabor extends PostProcessingNabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            int numUniformResources = uniformResources.size();
-            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.calloc(numUniformResources, stack);
+            int numUniformResourceTypes = uniformResourceTypes.size();
+            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.calloc(numUniformResourceTypes, stack);
 
-            for (int i = 0; i < numUniformResources; i++) {
+            for (int i = 0; i < numUniformResourceTypes; i++) {
                 VkDescriptorPoolSize uboPoolSize = uboPoolSizes.get(i);
                 uboPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
                 uboPoolSize.descriptorCount(descriptorCount);
@@ -150,48 +131,22 @@ public class FlexibleNabor extends PostProcessingNabor {
 
             VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.calloc(1, stack);
 
-            int numUniformResources = uniformResources.size();
-            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.calloc(numUniformResources, stack);
+            int numUniformResourceTypes = uniformResourceTypes.size();
+            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.calloc(numUniformResourceTypes, stack);
 
-            for (int i = 0; i < numUniformResources; i++) {
+            for (int i = 0; i < numUniformResourceTypes; i++) {
                 VkDescriptorBufferInfo uboInfo = uboInfos.get(i);
                 uboInfo.buffer(this.getUniformBuffer(i));
                 uboInfo.offset(0);
 
-                String uniformResource = uniformResources.get(i);
-                switch (uniformResource) {
-                    case "camera":
-                        uboInfo.range(CameraUBO.SIZEOF);
-                        break;
-                    case "fog":
-                        uboInfo.range(FogUBO.SIZEOF);
-                        break;
-                    case "lighting_info":
-                        uboInfo.range(LightingInfoUBO.SIZEOF);
-                        break;
-                    case "parallel_light":
-                        uboInfo.range(ParallelLightUBO.SIZEOF);
-                        break;
-                    case "point_light":
-                        uboInfo.range(PointLightUBO.SIZEOF);
-                        break;
-                    case "simple_blur":
-                        uboInfo.range(SimpleBlurInfoUBO.SIZEOF);
-                        break;
-                    case "spotlight":
-                        uboInfo.range(SpotlightUBO.SIZEOF);
-                        break;
-                    case "shadow_pass_1":
-                        uboInfo.range(Pass1InfoUBO.SIZEOF);
-                        break;
-                    case "shadow_pass_2":
-                        uboInfo.range(Pass2InfoUBO.SIZEOF);
-                        break;
-                    case "shadow_info":
-                        uboInfo.range(ShadowInfoUBO.SIZEOF);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unsupported uniform resource specified: " + uniformResource);
+                switch (uniformResourceTypes.get(i)) {
+                    case CAMERA -> uboInfo.range(CameraUBO.SIZEOF);
+                    case FOG -> uboInfo.range(FogUBO.SIZEOF);
+                    case LIGHTING_INFO -> uboInfo.range(LightingInfoUBO.SIZEOF);
+                    case PARALLEL_LIGHT -> uboInfo.range(ParallelLightUBO.SIZEOF);
+                    case POINT_LIGHT -> uboInfo.range(PointLightUBO.SIZEOF);
+                    case SIMPLE_BLUR -> uboInfo.range(SimpleBlurInfoUBO.SIZEOF);
+                    case SPOTLIGHT -> uboInfo.range(SpotlightUBO.SIZEOF);
                 }
             }
 
@@ -200,7 +155,7 @@ public class FlexibleNabor extends PostProcessingNabor {
             uboDescriptorWrite.dstBinding(0);
             uboDescriptorWrite.dstArrayElement(0);
             uboDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            uboDescriptorWrite.descriptorCount(numUniformResources);
+            uboDescriptorWrite.descriptorCount(numUniformResourceTypes);
             uboDescriptorWrite.pBufferInfo(uboInfos);
 
             List<Long> descriptorSets = this.getDescriptorSets();

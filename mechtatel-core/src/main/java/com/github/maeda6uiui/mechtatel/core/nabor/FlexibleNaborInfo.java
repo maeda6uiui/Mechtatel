@@ -13,19 +13,35 @@ import java.util.List;
  * @author maeda6uiui
  */
 public class FlexibleNaborInfo {
+    public enum LightingType {
+        PARALLEL,
+        POINT,
+        SPOT
+    }
+
+    public enum UniformResourceType {
+        CAMERA,
+        FOG,
+        LIGHTING_INFO,
+        PARALLEL_LIGHT,
+        POINT_LIGHT,
+        SIMPLE_BLUR,
+        SPOTLIGHT
+    }
+
     private URL vertShaderResource;
     private URL fragShaderResource;
-    private List<String> uniformResources;
-    private String lightingType;
+    private List<UniformResourceType> uniformResourceTypes;
+    private LightingType lightingType;
     private Vector3f lightingClampMin;
     private Vector3f lightingClampMax;
 
     public FlexibleNaborInfo(@NotNull URL vertShaderResource, @NotNull URL fragShaderResource) {
         this.vertShaderResource = vertShaderResource;
         this.fragShaderResource = fragShaderResource;
-        uniformResources = new ArrayList<>();
-        uniformResources.add("camera");
-        lightingType = "parallel_light";
+        uniformResourceTypes = new ArrayList<>();
+        uniformResourceTypes.add(UniformResourceType.CAMERA);
+        lightingType = LightingType.PARALLEL;
         lightingClampMin = new Vector3f(0.0f, 0.0f, 0.0f);
         lightingClampMax = new Vector3f(1.0f, 1.0f, 1.0f);
     }
@@ -38,19 +54,19 @@ public class FlexibleNaborInfo {
         return fragShaderResource;
     }
 
-    public List<String> getUniformResources() {
-        return uniformResources;
+    public List<UniformResourceType> getUniformResourceTypes() {
+        return uniformResourceTypes;
     }
 
-    public void setUniformResources(List<String> uniformResources) {
-        this.uniformResources = uniformResources;
+    public void setUniformResourceTypes(List<UniformResourceType> uniformResourceTypes) {
+        this.uniformResourceTypes = uniformResourceTypes;
     }
 
-    public String getLightingType() {
+    public LightingType getLightingType() {
         return lightingType;
     }
 
-    public void setLightingType(String lightingType) {
+    public void setLightingType(LightingType lightingType) {
         this.lightingType = lightingType;
     }
 

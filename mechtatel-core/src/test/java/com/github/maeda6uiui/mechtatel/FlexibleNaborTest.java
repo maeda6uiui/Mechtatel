@@ -60,7 +60,7 @@ public class FlexibleNaborTest extends Mechtatel {
                         this.getClass().getResource("/Standard/Shader/PostProcessing/post_processing.vert")),
                 fragShaderResource
         );
-        naborInfo.setLightingType("parallel_light");
+        naborInfo.setLightingType(FlexibleNaborInfo.LightingType.PARALLEL);
 
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()

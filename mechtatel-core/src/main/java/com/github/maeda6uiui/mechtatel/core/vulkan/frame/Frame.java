@@ -57,6 +57,7 @@ public class Frame {
             int vkResult = vkAcquireNextImageKHR(
                     device, swapchain, UINT64_MAX, this.imageAvailableSemaphore(), VK_NULL_HANDLE, pImageIndex);
             if (vkResult == VK_ERROR_OUT_OF_DATE_KHR) {
+                //Todo: Notify the window to recreate resources
                 return;
             } else if (vkResult != VK_SUCCESS) {
                 throw new RuntimeException("Cannot get image");
@@ -92,7 +93,10 @@ public class Frame {
             presentInfo.pImageIndices(pImageIndex);
 
             vkResult = vkQueuePresentKHR(presentQueue, presentInfo);
-            if (!(vkResult == VK_SUCCESS || vkResult == VK_ERROR_OUT_OF_DATE_KHR || vkResult == VK_SUBOPTIMAL_KHR)) {
+            if (vkResult == VK_ERROR_OUT_OF_DATE_KHR || vkResult == VK_SUBOPTIMAL_KHR) {
+                //Todo: Notify the window to recreate resources
+                return;
+            } else if (vkResult != VK_SUCCESS) {
                 throw new RuntimeException("Failed to present a swapchain image");
             }
         }

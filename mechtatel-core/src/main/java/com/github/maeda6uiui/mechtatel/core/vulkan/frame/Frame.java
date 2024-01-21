@@ -57,7 +57,6 @@ public class Frame {
             int vkResult = vkAcquireNextImageKHR(
                     device, swapchain, UINT64_MAX, this.imageAvailableSemaphore(), VK_NULL_HANDLE, pImageIndex);
             if (vkResult == VK_ERROR_OUT_OF_DATE_KHR) {
-                //Todo: Notify the window to recreate resources
                 return;
             } else if (vkResult != VK_SUCCESS) {
                 throw new RuntimeException("Cannot get image");
@@ -81,7 +80,8 @@ public class Frame {
 
             vkResetFences(device, fence);
 
-            if (vkQueueSubmit(graphicsQueue, submitInfo, fence) != VK_SUCCESS) {
+            vkResult = vkQueueSubmit(graphicsQueue, submitInfo, fence);
+            if (vkResult != VK_SUCCESS) {
                 throw new RuntimeException("Failed to submit a draw command buffer");
             }
 
@@ -94,7 +94,6 @@ public class Frame {
 
             vkResult = vkQueuePresentKHR(presentQueue, presentInfo);
             if (vkResult == VK_ERROR_OUT_OF_DATE_KHR || vkResult == VK_SUBOPTIMAL_KHR) {
-                //Todo: Notify the window to recreate resources
                 return;
             } else if (vkResult != VK_SUCCESS) {
                 throw new RuntimeException("Failed to present a swapchain image");

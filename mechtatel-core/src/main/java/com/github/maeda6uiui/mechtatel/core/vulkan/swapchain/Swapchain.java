@@ -201,10 +201,25 @@ public class Swapchain {
     public void cleanup() {
         vkDestroySwapchainKHR(device, swapchain, null);
         swapchainImageViews.forEach(imageView -> vkDestroyImageView(device, imageView, null));
-
         if (swapchainFramebuffers != null) {
             swapchainFramebuffers.forEach(framebuffer -> vkDestroyFramebuffer(device, framebuffer, null));
         }
+    }
+
+    public void recreate(
+            long surface,
+            int graphicsFamilyIndex,
+            int presentFamilyIndex,
+            int width,
+            int height) {
+        swapchainImageViews.forEach(imageView -> vkDestroyImageView(device, imageView, null));
+        if (swapchainFramebuffers != null) {
+            swapchainFramebuffers.forEach(framebuffer -> vkDestroyFramebuffer(device, framebuffer, null));
+        }
+
+        long currentSwapchain = swapchain;
+        this.createSwapchain(surface, graphicsFamilyIndex, presentFamilyIndex, width, height);
+        vkDestroySwapchainKHR(device, currentSwapchain, null);
     }
 
     public long getSwapchain() {

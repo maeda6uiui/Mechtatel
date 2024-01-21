@@ -80,9 +80,11 @@ public class MttVulkanImpl {
 
     public void recreateResourcesOnResize(long window) {
         vkDeviceWaitIdle(dq.device());
+        swapchain.cleanup();
 
         VkExtent2D framebufferSize = this.getFramebufferSize(window);
-        swapchain.recreate(
+        swapchain = new Swapchain(
+                dq.device(),
                 surface,
                 dq.graphicsFamilyIndex(),
                 dq.presentFamilyIndex(),

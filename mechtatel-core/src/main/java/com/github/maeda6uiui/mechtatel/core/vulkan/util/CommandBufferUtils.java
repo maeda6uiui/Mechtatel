@@ -15,22 +15,23 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class CommandBufferUtils {
-    public static List<VkCommandBuffer> createCommandBuffers(VkDevice device, long commandPool, int numSwapchainImages) {
+    public static List<VkCommandBuffer> createCommandBuffers(
+            VkDevice device, long commandPool, int numCommandBuffers) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            var commandBuffers = new ArrayList<VkCommandBuffer>(numSwapchainImages);
+            var commandBuffers = new ArrayList<VkCommandBuffer>(numCommandBuffers);
 
             VkCommandBufferAllocateInfo allocInfo = VkCommandBufferAllocateInfo.calloc(stack);
             allocInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO);
             allocInfo.level(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
             allocInfo.commandPool(commandPool);
-            allocInfo.commandBufferCount(numSwapchainImages);
+            allocInfo.commandBufferCount(numCommandBuffers);
 
-            PointerBuffer pCommandBuffers = stack.mallocPointer(numSwapchainImages);
+            PointerBuffer pCommandBuffers = stack.mallocPointer(numCommandBuffers);
             if (vkAllocateCommandBuffers(device, allocInfo, pCommandBuffers) != VK_SUCCESS) {
                 throw new RuntimeException("Failed to allocate command buffers");
             }
 
-            for (int i = 0; i < numSwapchainImages; i++) {
+            for (int i = 0; i < numCommandBuffers; i++) {
                 commandBuffers.add(new VkCommandBuffer(pCommandBuffers.get(i), device));
             }
 

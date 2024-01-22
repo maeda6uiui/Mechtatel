@@ -39,6 +39,11 @@ public class CommandBufferUtils {
         }
     }
 
+    public static VkCommandBuffer createCommandBuffer(VkDevice device, long commandPool) {
+        List<VkCommandBuffer> commandBuffers = createCommandBuffers(device, commandPool, 1);
+        return commandBuffers.get(0);
+    }
+
     public static VkCommandBuffer beginSingleTimeCommands(VkDevice device, long commandPool) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkCommandBufferAllocateInfo allocInfo = VkCommandBufferAllocateInfo.calloc(stack);

@@ -58,7 +58,7 @@ public class MttWindow {
 
         this.width = width;
         this.height = height;
-        //mustRecreate = true;
+        mustRecreate = true;
     }
 
     private void keyCallback(long window, int key, int scancode, int action, int mods) {

@@ -14,6 +14,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.creator.SurfaceCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.SyncObjectsCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
+import com.github.maeda6uiui.mechtatel.core.vulkan.frame.PresentResult;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
@@ -197,7 +198,7 @@ public class MttVulkanImpl {
         MttVulkanInstance.get().ifPresent(v -> vkDestroySurfaceKHR(v.getVkInstance(), surface, null));
     }
 
-    public void presentToFrontScreen(VkMttScreen screen) {
+    public boolean presentToFrontScreen(VkMttScreen screen) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.calloc(stack);
             beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
@@ -245,17 +246,30 @@ public class MttVulkanImpl {
             }
 
             Frame thisFrame = inFlightFrames.get(currentFrame);
-            thisFrame.present(
+            PresentResult presentResult = thisFrame.present(
                     swapchain.getSwapchain(),
                     imagesInFlight,
                     commandBuffers,
                     dq.graphicsQueue(),
                     dq.presentQueue()
             );
-            currentFrame = (currentFrame + 1) % maxNumFramesInFlight;
+
+            boolean mustRecreate;
+            mustRecreate = presentResult == PresentResult.ACQUIRE_NEXT_IMAGE_OUT_OF_DATE
+                    || presentResult == PresentResult.ACQUIRE_NEXT_IMAGE_SUBOPTIMAL
+                    || presentResult == PresentResult.QUEUE_PRESENT_OUT_OF_DATE
+                    || presentResult == PresentResult.QUEUE_PRESENT_SUBOPTIMAL;
+
+            if (presentResult == PresentResult.SUCCESS
+                    || presentResult == PresentResult.QUEUE_PRESENT_OUT_OF_DATE
+                    || presentResult == PresentResult.QUEUE_PRESENT_SUBOPTIMAL) {
+                currentFrame = (currentFrame + 1) % maxNumFramesInFlight;
+            }
 
             vkDeviceWaitIdle(dq.device());
             vkFreeCommandBuffers(dq.device(), commandPool, PointerBufferUtils.asPointerBuffer(commandBuffers));
+
+            return mustRecreate;
         }
     }
 

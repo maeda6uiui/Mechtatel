@@ -180,6 +180,8 @@ public class MttVulkanImpl {
     }
 
     public void cleanup() {
+        vkDeviceWaitIdle(dq.device());
+
         quadDrawer.cleanup();
 
         inFlightFrames.forEach(frame -> {

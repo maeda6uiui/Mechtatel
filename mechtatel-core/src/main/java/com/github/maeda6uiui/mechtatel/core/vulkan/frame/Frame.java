@@ -44,7 +44,7 @@ public class Frame {
         return fence;
     }
 
-    public void present(
+    public PresentResult present(
             long swapchain,
             Map<Integer, Frame> imagesInFlight,
             List<VkCommandBuffer> commandBuffers,
@@ -57,9 +57,11 @@ public class Frame {
             int vkResult = vkAcquireNextImageKHR(
                     device, swapchain, UINT64_MAX, this.imageAvailableSemaphore(), VK_NULL_HANDLE, pImageIndex);
             if (vkResult == VK_ERROR_OUT_OF_DATE_KHR) {
-                return;
+                return PresentResult.ACQUIRE_NEXT_IMAGE_OUT_OF_DATE;
+            } else if (vkResult == VK_SUBOPTIMAL_KHR) {
+                return PresentResult.ACQUIRE_NEXT_IMAGE_SUBOPTIMAL;
             } else if (vkResult != VK_SUCCESS) {
-                throw new RuntimeException("Cannot get image");
+                throw new RuntimeException("Cannot get image: " + vkResult);
             }
 
             final int imageIndex = pImageIndex.get(0);
@@ -82,7 +84,7 @@ public class Frame {
 
             vkResult = vkQueueSubmit(graphicsQueue, submitInfo, fence);
             if (vkResult != VK_SUCCESS) {
-                throw new RuntimeException("Failed to submit a draw command buffer");
+                throw new RuntimeException("Failed to submit a draw command buffer: " + vkResult);
             }
 
             VkPresentInfoKHR presentInfo = VkPresentInfoKHR.calloc(stack);
@@ -93,11 +95,15 @@ public class Frame {
             presentInfo.pImageIndices(pImageIndex);
 
             vkResult = vkQueuePresentKHR(presentQueue, presentInfo);
-            if (vkResult == VK_ERROR_OUT_OF_DATE_KHR || vkResult == VK_SUBOPTIMAL_KHR) {
-                return;
+            if (vkResult == VK_ERROR_OUT_OF_DATE_KHR) {
+                return PresentResult.QUEUE_PRESENT_OUT_OF_DATE;
+            } else if (vkResult == VK_SUBOPTIMAL_KHR) {
+                return PresentResult.QUEUE_PRESENT_SUBOPTIMAL;
             } else if (vkResult != VK_SUCCESS) {
-                throw new RuntimeException("Failed to present a swapchain image");
+                throw new RuntimeException("Failed to present a swapchain image: " + vkResult);
             }
+
+            return PresentResult.SUCCESS;
         }
     }
 }

@@ -202,7 +202,6 @@ public class MttVulkanImpl {
     public boolean presentToFrontScreen(VkMttScreen screen) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             //Get next image index
-            vkWaitForFences(dq.device(), acquireImageIndexFence, true, UINT64_MAX);
             vkResetFences(dq.device(), acquireImageIndexFence);
 
             IntBuffer pImageIndex = stack.mallocInt(1);
@@ -219,7 +218,6 @@ public class MttVulkanImpl {
             vkWaitForFences(dq.device(), acquireImageIndexFence, true, UINT64_MAX);
 
             //Rendering
-            vkWaitForFences(dq.device(), renderingFence, true, UINT64_MAX);
             vkResetFences(dq.device(), renderingFence);
 
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);

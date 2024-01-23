@@ -18,7 +18,6 @@
         "preferableGraphicsFamilyIndex": -1,
         "preferablePresentFamilyIndex": -1,
         "albedoMSAASamples": 2,
-        "maxNumFramesInFlight": 2,
         "appInfo": {
             "name": "Mechtatel",
             "majorVersion": 0,

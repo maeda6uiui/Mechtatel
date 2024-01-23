@@ -111,7 +111,6 @@ public class MttSettings {
         public int preferableGraphicsFamilyIndex;
         public int preferablePresentFamilyIndex;
         public int albedoMSAASamples;
-        public int maxNumFramesInFlight;
         public AppInfo appInfo;
 
         public VulkanSettings() {
@@ -120,7 +119,6 @@ public class MttSettings {
             preferableGraphicsFamilyIndex = -1;
             preferablePresentFamilyIndex = -1;
             albedoMSAASamples = 2;
-            maxNumFramesInFlight = 2;
             appInfo = new AppInfo();
         }
 
@@ -132,7 +130,6 @@ public class MttSettings {
                     ", preferableGraphicsFamilyIndex=" + preferableGraphicsFamilyIndex +
                     ", preferablePresentFamilyIndex=" + preferablePresentFamilyIndex +
                     ", albedoMSAASamples=" + albedoMSAASamples +
-                    ", maxNumFramesInFlight=" + maxNumFramesInFlight +
                     ", appInfo=" + appInfo +
                     '}';
         }

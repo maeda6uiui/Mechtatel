@@ -86,7 +86,7 @@ public class CommandBufferUtils {
     }
 
     /**
-     * Submit commands to a queue.
+     * Submits commands to a queue.
      * This method does not wait for the command execution to complete,
      * and does not free the command buffer used.
      *

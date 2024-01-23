@@ -27,6 +27,7 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.nio.IntBuffer;
+import java.nio.LongBuffer;
 import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
@@ -184,6 +185,32 @@ public class MttVulkanImpl {
 
     public boolean presentToFrontScreen(VkMttScreen screen) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
+            //Get next image index
+            VkFenceCreateInfo fenceInfo = VkFenceCreateInfo.calloc(stack);
+            fenceInfo.sType(VK_STRUCTURE_TYPE_FENCE_CREATE_INFO);
+            fenceInfo.flags(VK_FENCE_CREATE_SIGNALED_BIT);
+
+            LongBuffer pFence = stack.mallocLong(1);
+            vkCreateFence(dq.device(), fenceInfo, null, pFence);
+            long fence = pFence.get(0);
+
+            vkResetFences(dq.device(), fence);
+
+            IntBuffer pImageIndex = stack.mallocInt(1);
+            int vkResult = vkAcquireNextImageKHR(
+                    dq.device(), swapchain.getSwapchain(), UINT64_MAX, VK_NULL_HANDLE, fence, pImageIndex);
+            if (vkResult == VK_ERROR_OUT_OF_DATE_KHR) {
+                vkDestroyFence(dq.device(), fence, null);
+                return true;
+            } else if (vkResult != VK_SUCCESS) {
+                throw new RuntimeException("Cannot get image: " + vkResult);
+            }
+
+            int imageIndex = pImageIndex.get(0);
+
+            vkWaitForFences(dq.device(), fence, true, UINT64_MAX);
+            vkDestroyFence(dq.device(), fence, null);
+
             //Rendering
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
@@ -195,7 +222,7 @@ public class MttVulkanImpl {
             VkClearValue.Buffer clearValues = VkClearValue.calloc(1, stack);
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
             renderPassInfo.pClearValues(clearValues);
-            renderPassInfo.framebuffer(swapchain.getSwapchainFramebuffer(0));
+            renderPassInfo.framebuffer(swapchain.getSwapchainFramebuffer(imageIndex));
 
             VkCommandBuffer renderingCommandBuffer = CommandBufferUtils.beginSingleTimeCommands(dq.device(), commandPool);
             vkCmdBeginRenderPass(renderingCommandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
@@ -206,22 +233,14 @@ public class MttVulkanImpl {
                         presentNabor.getGraphicsPipeline(0));
 
                 long colorImageView = screen.getColorImageView();
-                presentNabor.bindBackScreen(renderingCommandBuffer, 0, colorImageView);
+                presentNabor.bindBackScreen(renderingCommandBuffer, imageIndex, colorImageView);
                 quadDrawer.draw(renderingCommandBuffer);
             }
             vkCmdEndRenderPass(renderingCommandBuffer);
-            CommandBufferUtils.endSingleTimeCommands(dq.device(), commandPool, renderingCommandBuffer, dq.graphicsQueue());
+            CommandBufferUtils.endSingleTimeCommands(
+                    dq.device(), commandPool, renderingCommandBuffer, dq.graphicsQueue());
 
             //Presentation
-            IntBuffer pImageIndex = stack.mallocInt(1);
-            int vkResult = vkAcquireNextImageKHR(
-                    dq.device(), swapchain.getSwapchain(), UINT64_MAX, VK_NULL_HANDLE, VK_NULL_HANDLE, pImageIndex);
-            if (vkResult == VK_ERROR_OUT_OF_DATE_KHR) {
-                return true;
-            } else if (vkResult != VK_SUCCESS) {
-                throw new RuntimeException("Cannot get image: " + vkResult);
-            }
-
             VkPresentInfoKHR presentInfo = VkPresentInfoKHR.calloc(stack);
             presentInfo.sType(VK_STRUCTURE_TYPE_PRESENT_INFO_KHR);
             presentInfo.swapchainCount(1);

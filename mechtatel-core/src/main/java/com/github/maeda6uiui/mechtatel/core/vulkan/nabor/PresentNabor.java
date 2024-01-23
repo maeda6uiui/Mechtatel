@@ -294,7 +294,7 @@ public class PresentNabor extends Nabor {
         }
     }
 
-    public void bindBackScreen(VkCommandBuffer commandBuffer, int commandBufferIndex, long imageView) {
+    public void bindBackScreen(VkCommandBuffer commandBuffer, int imageIndex, long imageView) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
@@ -311,7 +311,7 @@ public class PresentNabor extends Nabor {
             samplerDescriptorWrite.descriptorCount(1);
             samplerDescriptorWrite.pImageInfo(imageInfo);
 
-            long descriptorSet = this.getDescriptorSets().get(commandBufferIndex);
+            long descriptorSet = this.getDescriptorSets().get(imageIndex);
             samplerDescriptorWrite.dstSet(descriptorSet);
 
             vkUpdateDescriptorSets(device, samplerDescriptorWrite, null);

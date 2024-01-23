@@ -265,6 +265,8 @@ public class MttVulkanImpl {
                 throw new RuntimeException("Failed to present a swapchain image: " + vkResult);
             }
 
+            vkQueueWaitIdle(dq.presentQueue());
+
             return mustRecreate;
         }
     }

@@ -70,7 +70,7 @@ public class CommandBufferUtils {
             VkDevice device,
             long commandPool,
             VkCommandBuffer commandBuffer,
-            VkQueue graphicsQueue) {
+            VkQueue queue) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             vkEndCommandBuffer(commandBuffer);
 
@@ -78,8 +78,8 @@ public class CommandBufferUtils {
             submitInfo.sType(VK_STRUCTURE_TYPE_SUBMIT_INFO);
             submitInfo.pCommandBuffers(stack.pointers(commandBuffer));
 
-            vkQueueSubmit(graphicsQueue, submitInfo, VK_NULL_HANDLE);
-            vkQueueWaitIdle(graphicsQueue);
+            vkQueueSubmit(queue, submitInfo, VK_NULL_HANDLE);
+            vkQueueWaitIdle(queue);
 
             vkFreeCommandBuffers(device, commandPool, commandBuffer);
         }

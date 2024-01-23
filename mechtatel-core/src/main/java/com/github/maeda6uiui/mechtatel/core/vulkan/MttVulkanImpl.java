@@ -58,6 +58,7 @@ public class MttVulkanImpl {
     private PresentNabor presentNabor;
     private TextureOperationNabor textureOperationNabor;
     private QuadDrawer quadDrawer;
+    private long presentationFence;
 
     private VkExtent2D getFramebufferSize(long window) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -167,6 +168,16 @@ public class MttVulkanImpl {
         );
 
         quadDrawer = new QuadDrawer(dq.device(), commandPool, dq.graphicsQueue());
+
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkFenceCreateInfo fenceInfo = VkFenceCreateInfo.calloc(stack);
+            fenceInfo.sType(VK_STRUCTURE_TYPE_FENCE_CREATE_INFO);
+            fenceInfo.flags(VK_FENCE_CREATE_SIGNALED_BIT);
+
+            LongBuffer pFence = stack.mallocLong(1);
+            vkCreateFence(dq.device(), fenceInfo, null, pFence);
+            presentationFence = pFence.get(0);
+        }
     }
 
     public void cleanup() {
@@ -177,6 +188,7 @@ public class MttVulkanImpl {
         swapchain.cleanup();
         textureOperationNabor.cleanup(false);
         presentNabor.cleanup(false);
+        vkDestroyFence(dq.device(), presentationFence, null);
 
         vkDestroyCommandPool(dq.device(), commandPool, null);
         vkDestroyDevice(dq.device(), null);
@@ -186,21 +198,13 @@ public class MttVulkanImpl {
     public boolean presentToFrontScreen(VkMttScreen screen) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             //Get next image index
-            VkFenceCreateInfo fenceInfo = VkFenceCreateInfo.calloc(stack);
-            fenceInfo.sType(VK_STRUCTURE_TYPE_FENCE_CREATE_INFO);
-            fenceInfo.flags(VK_FENCE_CREATE_SIGNALED_BIT);
-
-            LongBuffer pFence = stack.mallocLong(1);
-            vkCreateFence(dq.device(), fenceInfo, null, pFence);
-            long fence = pFence.get(0);
-
-            vkResetFences(dq.device(), fence);
+            vkWaitForFences(dq.device(), presentationFence, true, UINT64_MAX);
+            vkResetFences(dq.device(), presentationFence);
 
             IntBuffer pImageIndex = stack.mallocInt(1);
             int vkResult = vkAcquireNextImageKHR(
-                    dq.device(), swapchain.getSwapchain(), UINT64_MAX, VK_NULL_HANDLE, fence, pImageIndex);
+                    dq.device(), swapchain.getSwapchain(), UINT64_MAX, VK_NULL_HANDLE, presentationFence, pImageIndex);
             if (vkResult == VK_ERROR_OUT_OF_DATE_KHR) {
-                vkDestroyFence(dq.device(), fence, null);
                 return true;
             } else if (vkResult != VK_SUCCESS) {
                 throw new RuntimeException("Cannot get image: " + vkResult);
@@ -208,8 +212,7 @@ public class MttVulkanImpl {
 
             int imageIndex = pImageIndex.get(0);
 
-            vkWaitForFences(dq.device(), fence, true, UINT64_MAX);
-            vkDestroyFence(dq.device(), fence, null);
+            vkWaitForFences(dq.device(), presentationFence, true, UINT64_MAX);
 
             //Rendering
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);

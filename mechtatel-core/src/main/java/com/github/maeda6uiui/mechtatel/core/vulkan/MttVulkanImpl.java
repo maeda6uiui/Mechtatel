@@ -11,29 +11,28 @@ import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.CommandPoolCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.LogicalDeviceCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.SurfaceCreator;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.SyncObjectsCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
-import com.github.maeda6uiui.mechtatel.core.vulkan.frame.Frame;
-import com.github.maeda6uiui.mechtatel.core.vulkan.frame.PresentResult;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.*;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.MultisamplingUtils;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.PhysicalDevicePicker;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.nio.IntBuffer;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
 import static org.lwjgl.glfw.GLFW.glfwWaitEvents;
 import static org.lwjgl.vulkan.KHRSurface.vkDestroySurfaceKHR;
+import static org.lwjgl.vulkan.KHRSwapchain.*;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
@@ -42,6 +41,8 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class MttVulkanImpl {
+    private static final long UINT64_MAX = 0xFFFFFFFFFFFFFFFFL;
+
     private long surface;
     private VkPhysicalDevice physicalDevice;
 
@@ -55,12 +56,6 @@ public class MttVulkanImpl {
 
     private PresentNabor presentNabor;
     private TextureOperationNabor textureOperationNabor;
-
-    private int maxNumFramesInFlight;
-    private List<Frame> inFlightFrames;
-    private Map<Integer, Frame> imagesInFlight;
-    private int currentFrame;
-
     private QuadDrawer quadDrawer;
 
     private VkExtent2D getFramebufferSize(long window) {
@@ -102,8 +97,6 @@ public class MttVulkanImpl {
                 swapchain.getSwapchainImageFormat(),
                 swapchain.getSwapchainExtent());
         textureOperationNabor.cleanupUserDefImages();
-
-        imagesInFlight.clear();
     }
 
     public MttVulkanImpl(long window, MttSettings.VulkanSettings vulkanSettings) {
@@ -172,10 +165,6 @@ public class MttVulkanImpl {
                 1
         );
 
-        maxNumFramesInFlight = vulkanSettings.maxNumFramesInFlight;
-        inFlightFrames = SyncObjectsCreator.createSyncObjects(dq.device(), maxNumFramesInFlight);
-        imagesInFlight = new HashMap<>(swapchain.getNumSwapchainImages());
-
         quadDrawer = new QuadDrawer(dq.device(), commandPool, dq.graphicsQueue());
     }
 
@@ -183,13 +172,6 @@ public class MttVulkanImpl {
         vkDeviceWaitIdle(dq.device());
 
         quadDrawer.cleanup();
-
-        inFlightFrames.forEach(frame -> {
-            vkDestroySemaphore(dq.device(), frame.renderFinishedSemaphore(), null);
-            vkDestroySemaphore(dq.device(), frame.imageAvailableSemaphore(), null);
-            vkDestroyFence(dq.device(), frame.fence(), null);
-        });
-        imagesInFlight.clear();
 
         swapchain.cleanup();
         textureOperationNabor.cleanup(false);
@@ -202,10 +184,7 @@ public class MttVulkanImpl {
 
     public boolean presentToFrontScreen(VkMttScreen screen) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkCommandBufferBeginInfo beginInfo = VkCommandBufferBeginInfo.calloc(stack);
-            beginInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
-            beginInfo.flags(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
-
+            //Rendering
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
             renderPassInfo.renderPass(presentNabor.getRenderPass());
@@ -216,60 +195,46 @@ public class MttVulkanImpl {
             VkClearValue.Buffer clearValues = VkClearValue.calloc(1, stack);
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
             renderPassInfo.pClearValues(clearValues);
+            renderPassInfo.framebuffer(swapchain.getSwapchainFramebuffer(0));
 
-            long colorImageView = screen.getColorImageView();
+            VkCommandBuffer renderingCommandBuffer = CommandBufferUtils.beginSingleTimeCommands(dq.device(), commandPool);
+            vkCmdBeginRenderPass(renderingCommandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+            {
+                vkCmdBindPipeline(
+                        renderingCommandBuffer,
+                        VK_PIPELINE_BIND_POINT_GRAPHICS,
+                        presentNabor.getGraphicsPipeline(0));
 
-            var commandBuffers = CommandBufferUtils.createCommandBuffers(
-                    dq.device(), commandPool, swapchain.getNumSwapchainImages());
+                long colorImageView = screen.getColorImageView();
+                presentNabor.bindBackScreen(renderingCommandBuffer, 0, colorImageView);
+                quadDrawer.draw(renderingCommandBuffer);
+            }
+            vkCmdEndRenderPass(renderingCommandBuffer);
+            CommandBufferUtils.endSingleTimeCommands(dq.device(), commandPool, renderingCommandBuffer, dq.graphicsQueue());
 
-            for (int i = 0; i < commandBuffers.size(); i++) {
-                VkCommandBuffer commandBuffer = commandBuffers.get(i);
-                if (vkBeginCommandBuffer(commandBuffer, beginInfo) != VK_SUCCESS) {
-                    throw new RuntimeException("Failed to begin recording a command buffer");
-                }
-
-                renderPassInfo.framebuffer(swapchain.getSwapchainFramebuffer(i));
-
-                vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-                {
-                    vkCmdBindPipeline(
-                            commandBuffer,
-                            VK_PIPELINE_BIND_POINT_GRAPHICS,
-                            presentNabor.getGraphicsPipeline(0));
-
-                    presentNabor.bindBackScreen(commandBuffer, i, colorImageView);
-                    quadDrawer.draw(commandBuffer);
-                }
-                vkCmdEndRenderPass(commandBuffer);
-
-                if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-                    throw new RuntimeException("Failed to record a command buffer");
-                }
+            //Presentation
+            IntBuffer pImageIndex = stack.mallocInt(1);
+            int vkResult = vkAcquireNextImageKHR(
+                    dq.device(), swapchain.getSwapchain(), UINT64_MAX, VK_NULL_HANDLE, VK_NULL_HANDLE, pImageIndex);
+            if (vkResult == VK_ERROR_OUT_OF_DATE_KHR) {
+                return true;
+            } else if (vkResult != VK_SUCCESS) {
+                throw new RuntimeException("Cannot get image: " + vkResult);
             }
 
-            Frame thisFrame = inFlightFrames.get(currentFrame);
-            PresentResult presentResult = thisFrame.present(
-                    swapchain.getSwapchain(),
-                    imagesInFlight,
-                    commandBuffers,
-                    dq.graphicsQueue(),
-                    dq.presentQueue()
-            );
+            VkPresentInfoKHR presentInfo = VkPresentInfoKHR.calloc(stack);
+            presentInfo.sType(VK_STRUCTURE_TYPE_PRESENT_INFO_KHR);
+            presentInfo.swapchainCount(1);
+            presentInfo.pSwapchains(stack.longs(swapchain.getSwapchain()));
+            presentInfo.pImageIndices(pImageIndex);
 
-            boolean mustRecreate;
-            mustRecreate = presentResult == PresentResult.ACQUIRE_NEXT_IMAGE_OUT_OF_DATE
-                    || presentResult == PresentResult.ACQUIRE_NEXT_IMAGE_SUBOPTIMAL
-                    || presentResult == PresentResult.QUEUE_PRESENT_OUT_OF_DATE
-                    || presentResult == PresentResult.QUEUE_PRESENT_SUBOPTIMAL;
-
-            if (presentResult == PresentResult.SUCCESS
-                    || presentResult == PresentResult.QUEUE_PRESENT_OUT_OF_DATE
-                    || presentResult == PresentResult.QUEUE_PRESENT_SUBOPTIMAL) {
-                currentFrame = (currentFrame + 1) % maxNumFramesInFlight;
+            boolean mustRecreate = false;
+            vkResult = vkQueuePresentKHR(dq.presentQueue(), presentInfo);
+            if (vkResult == VK_ERROR_OUT_OF_DATE_KHR || vkResult == VK_SUBOPTIMAL_KHR) {
+                mustRecreate = true;
+            } else if (vkResult != VK_SUCCESS) {
+                throw new RuntimeException("Failed to present a swapchain image: " + vkResult);
             }
-
-            vkDeviceWaitIdle(dq.device());
-            vkFreeCommandBuffers(dq.device(), commandPool, PointerBufferUtils.asPointerBuffer(commandBuffers));
 
             return mustRecreate;
         }

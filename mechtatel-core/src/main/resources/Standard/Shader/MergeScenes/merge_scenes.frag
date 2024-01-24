@@ -8,7 +8,7 @@ layout(set=0,binding=1) uniform texture2D depthTextures[MAX_NUM_TEXTURES];
 layout(set=0,binding=2) uniform texture2D positionTextures[MAX_NUM_TEXTURES];
 layout(set=0,binding=3) uniform texture2D normalTextures[MAX_NUM_TEXTURES];
 layout(set=1,binding=0) uniform sampler textureSampler;
-layout(set=2,binding=0) uniform int MergeScenesInfoUBO{
+layout(set=2,binding=0) uniform MergeScenesInfoUBO{
     int numTextures;
 }mergeScenesInfo;
 

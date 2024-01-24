@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.MergeScenesInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -481,7 +482,7 @@ public class MergeScenesNabor extends Nabor {
             VkDescriptorBufferInfo mergeScenesInfoUBOInfo = uboInfos.get(0);
             mergeScenesInfoUBOInfo.buffer(this.getUniformBuffer(0));
             mergeScenesInfoUBOInfo.offset(0);
-            mergeScenesInfoUBOInfo.range(SIZEOF_INT);
+            mergeScenesInfoUBOInfo.range(MergeScenesInfoUBO.SIZEOF);
 
             VkWriteDescriptorSet uboDescriptorWrite = descriptorWrites.get(2);
             uboDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);

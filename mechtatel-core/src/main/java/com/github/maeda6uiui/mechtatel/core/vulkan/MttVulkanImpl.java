@@ -59,7 +59,6 @@ public class MttVulkanImpl {
     private TextureOperationNabor textureOperationNabor;
     private QuadDrawer quadDrawer;
     private long acquireImageIndexFence;
-    private long renderingFence;
 
     private VkExtent2D getFramebufferSize(long window) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -178,8 +177,6 @@ public class MttVulkanImpl {
             LongBuffer pFence = stack.mallocLong(1);
             vkCreateFence(dq.device(), fenceInfo, null, pFence);
             acquireImageIndexFence = pFence.get(0);
-            vkCreateFence(dq.device(), fenceInfo, null, pFence);
-            renderingFence = pFence.get(0);
         }
     }
 
@@ -192,7 +189,6 @@ public class MttVulkanImpl {
         textureOperationNabor.cleanup(false);
         presentNabor.cleanup(false);
         vkDestroyFence(dq.device(), acquireImageIndexFence, null);
-        vkDestroyFence(dq.device(), renderingFence, null);
 
         vkDestroyCommandPool(dq.device(), commandPool, null);
         vkDestroyDevice(dq.device(), null);
@@ -218,8 +214,6 @@ public class MttVulkanImpl {
             vkWaitForFences(dq.device(), acquireImageIndexFence, true, UINT64_MAX);
 
             //Rendering
-            vkResetFences(dq.device(), renderingFence);
-
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
             renderPassInfo.renderPass(presentNabor.getRenderPass());
@@ -245,10 +239,8 @@ public class MttVulkanImpl {
                 quadDrawer.draw(renderingCommandBuffer);
             }
             vkCmdEndRenderPass(renderingCommandBuffer);
-            CommandBufferUtils.endSingleTimeCommands(renderingCommandBuffer, dq.graphicsQueue(), renderingFence);
-
-            vkWaitForFences(dq.device(), renderingFence, true, UINT64_MAX);
-            vkFreeCommandBuffers(dq.device(), commandPool, renderingCommandBuffer);
+            CommandBufferUtils.endSingleTimeCommands(
+                    dq.device(), commandPool, renderingCommandBuffer, dq.graphicsQueue());
 
             //Presentation
             VkPresentInfoKHR presentInfo = VkPresentInfoKHR.calloc(stack);
@@ -264,8 +256,6 @@ public class MttVulkanImpl {
             } else if (vkResult != VK_SUCCESS) {
                 throw new RuntimeException("Failed to present a swapchain image: " + vkResult);
             }
-
-            vkQueueWaitIdle(dq.presentQueue());
 
             return mustRecreate;
         }

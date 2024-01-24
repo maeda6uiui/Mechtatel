@@ -84,25 +84,4 @@ public class CommandBufferUtils {
             vkFreeCommandBuffers(device, commandPool, commandBuffer);
         }
     }
-
-    /**
-     * Submits commands to a queue.
-     * This method does not wait for the command execution to complete,
-     * and does not free the command buffer used.
-     *
-     * @param commandBuffer Command buffer
-     * @param queue         Queue
-     * @param fence         Fence to signal when command execution completes
-     */
-    public static void endSingleTimeCommands(VkCommandBuffer commandBuffer, VkQueue queue, long fence) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            vkEndCommandBuffer(commandBuffer);
-
-            VkSubmitInfo.Buffer submitInfo = VkSubmitInfo.calloc(1, stack);
-            submitInfo.sType(VK_STRUCTURE_TYPE_SUBMIT_INFO);
-            submitInfo.pCommandBuffers(stack.pointers(commandBuffer));
-
-            vkQueueSubmit(queue, submitInfo, fence);
-        }
-    }
 }

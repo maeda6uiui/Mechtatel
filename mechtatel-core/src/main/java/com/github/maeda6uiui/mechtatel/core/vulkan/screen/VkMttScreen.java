@@ -28,10 +28,7 @@ import org.lwjgl.vulkan.*;
 
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -767,10 +764,22 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 primitiveNabor.transitionPositionImage(commandPool, graphicsQueue);
                 primitiveNabor.transitionNormalImage(commandPool, graphicsQueue);
 
-                mergeScenesNabor.bindAlbedoImages(commandBuffer, gBufferNabor.getAlbedoImageView(), primitiveNabor.getAlbedoImageView());
-                mergeScenesNabor.bindDepthImages(commandBuffer, gBufferNabor.getDepthImageView(), primitiveNabor.getDepthImageView());
-                mergeScenesNabor.bindPositionImages(commandBuffer, gBufferNabor.getPositionImageView(), primitiveNabor.getPositionImageView());
-                mergeScenesNabor.bindNormalImages(commandBuffer, gBufferNabor.getNormalImageView(), primitiveNabor.getNormalImageView());
+                mergeScenesNabor.bindAlbedoImages(
+                        commandBuffer,
+                        Arrays.asList(gBufferNabor.getAlbedoImageView(), primitiveNabor.getAlbedoImageView())
+                );
+                mergeScenesNabor.bindDepthImages(
+                        commandBuffer,
+                        Arrays.asList(gBufferNabor.getDepthImageView(), primitiveNabor.getDepthImageView())
+                );
+                mergeScenesNabor.bindPositionImages(
+                        commandBuffer,
+                        Arrays.asList(gBufferNabor.getPositionImageView(), primitiveNabor.getPositionImageView())
+                );
+                mergeScenesNabor.bindNormalImages(
+                        commandBuffer,
+                        Arrays.asList(gBufferNabor.getNormalImageView(), primitiveNabor.getNormalImageView())
+                );
 
                 quadDrawer.draw(commandBuffer);
             }
@@ -813,10 +822,22 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 primitiveFillNabor.transitionPositionImage(commandPool, graphicsQueue);
                 primitiveFillNabor.transitionNormalImage(commandPool, graphicsQueue);
 
-                mergeScenesFillNabor.bindAlbedoImages(commandBuffer, mergeScenesNabor.getAlbedoImageView(), primitiveFillNabor.getAlbedoImageView());
-                mergeScenesFillNabor.bindDepthImages(commandBuffer, mergeScenesNabor.getDepthImageView(), primitiveFillNabor.getDepthImageView());
-                mergeScenesFillNabor.bindPositionImages(commandBuffer, mergeScenesNabor.getPositionImageView(), primitiveFillNabor.getPositionImageView());
-                mergeScenesFillNabor.bindNormalImages(commandBuffer, mergeScenesNabor.getNormalImageView(), primitiveFillNabor.getNormalImageView());
+                mergeScenesFillNabor.bindAlbedoImages(
+                        commandBuffer,
+                        Arrays.asList(mergeScenesNabor.getAlbedoImageView(), primitiveFillNabor.getAlbedoImageView())
+                );
+                mergeScenesFillNabor.bindDepthImages(
+                        commandBuffer,
+                        Arrays.asList(mergeScenesNabor.getDepthImageView(), primitiveFillNabor.getDepthImageView())
+                );
+                mergeScenesFillNabor.bindPositionImages(
+                        commandBuffer,
+                        Arrays.asList(mergeScenesNabor.getPositionImageView(), primitiveFillNabor.getPositionImageView())
+                );
+                mergeScenesFillNabor.bindNormalImages(
+                        commandBuffer,
+                        Arrays.asList(mergeScenesNabor.getNormalImageView(), primitiveFillNabor.getNormalImageView())
+                );
 
                 quadDrawer.draw(commandBuffer);
             }

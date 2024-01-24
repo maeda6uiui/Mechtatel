@@ -8,7 +8,6 @@ import org.lwjgl.vulkan.*;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
@@ -728,31 +727,19 @@ public class MergeScenesNabor extends Nabor {
         }
     }
 
-    public void bindAlbedoImages(VkCommandBuffer commandBuffer, long albedoImageViewA, long albedoImageViewB) {
-        var arrImageViews = new Long[]{albedoImageViewA, albedoImageViewB};
-        var imageViews = Arrays.asList(arrImageViews);
-
+    public void bindAlbedoImages(VkCommandBuffer commandBuffer, List<Long> imageViews) {
         this.bindImages(commandBuffer, 0, ALBEDO_ATTACHMENT_INDEX, imageViews);
     }
 
-    public void bindDepthImages(VkCommandBuffer commandBuffer, long depthImageViewA, long depthImageViewB) {
-        var arrImageViews = new Long[]{depthImageViewA, depthImageViewB};
-        var imageViews = Arrays.asList(arrImageViews);
-
+    public void bindDepthImages(VkCommandBuffer commandBuffer, List<Long> imageViews) {
         this.bindImages(commandBuffer, 0, DEPTH_ATTACHMENT_INDEX, imageViews);
     }
 
-    public void bindPositionImages(VkCommandBuffer commandBuffer, long positionImageViewA, long positionImageViewB) {
-        var arrImageViews = new Long[]{positionImageViewA, positionImageViewB};
-        var imageViews = Arrays.asList(arrImageViews);
-
+    public void bindPositionImages(VkCommandBuffer commandBuffer, List<Long> imageViews) {
         this.bindImages(commandBuffer, 0, POSITION_ATTACHMENT_INDEX, imageViews);
     }
 
-    public void bindNormalImages(VkCommandBuffer commandBuffer, long normalImageViewA, long normalImageViewB) {
-        var arrImageViews = new Long[]{normalImageViewA, normalImageViewB};
-        var imageViews = Arrays.asList(arrImageViews);
-
+    public void bindNormalImages(VkCommandBuffer commandBuffer, List<Long> imageViews) {
         this.bindImages(commandBuffer, 0, NORMAL_ATTACHMENT_INDEX, imageViews);
     }
 }

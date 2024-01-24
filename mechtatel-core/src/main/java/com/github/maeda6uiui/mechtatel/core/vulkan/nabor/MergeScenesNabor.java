@@ -445,8 +445,8 @@ public class MergeScenesNabor extends Nabor {
             VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.calloc(setCount, stack);
 
             //=== set 0 ===
-            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.calloc(2 * 4, stack);
-            for (int i = 0; i < 2 * 4; i++) {
+            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.calloc(MAX_NUM_TEXTURES * 4, stack);
+            for (int i = 0; i < MAX_NUM_TEXTURES * 4; i++) {
                 VkDescriptorImageInfo imageInfo = imageInfos.get(i);
                 imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
                 imageInfo.imageView(this.getDummyImageView());
@@ -457,7 +457,7 @@ public class MergeScenesNabor extends Nabor {
             imageDescriptorWrite.dstBinding(0);
             imageDescriptorWrite.dstArrayElement(0);
             imageDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            imageDescriptorWrite.descriptorCount(2 * 4);
+            imageDescriptorWrite.descriptorCount(MAX_NUM_TEXTURES * 4);
             imageDescriptorWrite.pImageInfo(imageInfos);
 
             //=== set 1 ===

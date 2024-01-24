@@ -21,7 +21,7 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class MergeScenesNabor extends Nabor {
-    public static final int MAX_NUM_TEXTURES = 8;
+    public static final int MAX_NUM_SCENES = 8;
 
     private int depthImageFormat;
     private int positionImageFormat;
@@ -258,28 +258,28 @@ public class MergeScenesNabor extends Nabor {
 
             VkDescriptorSetLayoutBinding albedoImageLayoutBinding = imageBindings.get(0);
             albedoImageLayoutBinding.binding(0);
-            albedoImageLayoutBinding.descriptorCount(MAX_NUM_TEXTURES);
+            albedoImageLayoutBinding.descriptorCount(MAX_NUM_SCENES);
             albedoImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             albedoImageLayoutBinding.pImmutableSamplers(null);
             albedoImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             VkDescriptorSetLayoutBinding depthImageLayoutBinding = imageBindings.get(1);
             depthImageLayoutBinding.binding(1);
-            depthImageLayoutBinding.descriptorCount(MAX_NUM_TEXTURES);
+            depthImageLayoutBinding.descriptorCount(MAX_NUM_SCENES);
             depthImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             depthImageLayoutBinding.pImmutableSamplers(null);
             depthImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             VkDescriptorSetLayoutBinding positionImageLayoutBinding = imageBindings.get(2);
             positionImageLayoutBinding.binding(2);
-            positionImageLayoutBinding.descriptorCount(MAX_NUM_TEXTURES);
+            positionImageLayoutBinding.descriptorCount(MAX_NUM_SCENES);
             positionImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             positionImageLayoutBinding.pImmutableSamplers(null);
             positionImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             VkDescriptorSetLayoutBinding normalImageLayoutBinding = imageBindings.get(3);
             normalImageLayoutBinding.binding(3);
-            normalImageLayoutBinding.descriptorCount(MAX_NUM_TEXTURES);
+            normalImageLayoutBinding.descriptorCount(MAX_NUM_SCENES);
             normalImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             normalImageLayoutBinding.pImmutableSamplers(null);
             normalImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
@@ -344,19 +344,19 @@ public class MergeScenesNabor extends Nabor {
 
             VkDescriptorPoolSize albedoImagePoolSize = imagePoolSizes.get(0);
             albedoImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            albedoImagePoolSize.descriptorCount(descriptorCount * MAX_NUM_TEXTURES);
+            albedoImagePoolSize.descriptorCount(descriptorCount * MAX_NUM_SCENES);
 
             VkDescriptorPoolSize depthImagePoolSize = imagePoolSizes.get(1);
             depthImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            depthImagePoolSize.descriptorCount(descriptorCount * MAX_NUM_TEXTURES);
+            depthImagePoolSize.descriptorCount(descriptorCount * MAX_NUM_SCENES);
 
             VkDescriptorPoolSize positionImagePoolSize = imagePoolSizes.get(2);
             positionImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            positionImagePoolSize.descriptorCount(descriptorCount * MAX_NUM_TEXTURES);
+            positionImagePoolSize.descriptorCount(descriptorCount * MAX_NUM_SCENES);
 
             VkDescriptorPoolSize normalImagePoolSize = imagePoolSizes.get(3);
             normalImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            normalImagePoolSize.descriptorCount(descriptorCount * MAX_NUM_TEXTURES);
+            normalImagePoolSize.descriptorCount(descriptorCount * MAX_NUM_SCENES);
 
             //=== set 1 ===
             VkDescriptorPoolSize.Buffer samplerPoolSizes = VkDescriptorPoolSize.calloc(1, stack);
@@ -446,8 +446,8 @@ public class MergeScenesNabor extends Nabor {
             VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.calloc(setCount, stack);
 
             //=== set 0 ===
-            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.calloc(MAX_NUM_TEXTURES * 4, stack);
-            for (int i = 0; i < MAX_NUM_TEXTURES * 4; i++) {
+            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.calloc(MAX_NUM_SCENES * 4, stack);
+            for (int i = 0; i < MAX_NUM_SCENES * 4; i++) {
                 VkDescriptorImageInfo imageInfo = imageInfos.get(i);
                 imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
                 imageInfo.imageView(this.getDummyImageView());
@@ -458,7 +458,7 @@ public class MergeScenesNabor extends Nabor {
             imageDescriptorWrite.dstBinding(0);
             imageDescriptorWrite.dstArrayElement(0);
             imageDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            imageDescriptorWrite.descriptorCount(MAX_NUM_TEXTURES * 4);
+            imageDescriptorWrite.descriptorCount(MAX_NUM_SCENES * 4);
             imageDescriptorWrite.pImageInfo(imageInfos);
 
             //=== set 1 ===

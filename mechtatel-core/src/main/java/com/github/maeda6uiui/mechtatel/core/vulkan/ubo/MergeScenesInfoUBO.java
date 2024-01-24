@@ -12,15 +12,15 @@ import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_
 public class MergeScenesInfoUBO extends UBO {
     public static final int SIZEOF = SIZEOF_INT;
 
-    private int numTextures;
+    private int numScenes;
 
-    public MergeScenesInfoUBO(int numTextures) {
-        this.numTextures = numTextures;
+    public MergeScenesInfoUBO(int numScenes) {
+        this.numScenes = numScenes;
     }
 
     @Override
     protected void memcpy(ByteBuffer buffer) {
-        buffer.putInt(0, numTextures);
+        buffer.putInt(0, numScenes);
         buffer.rewind();
     }
 

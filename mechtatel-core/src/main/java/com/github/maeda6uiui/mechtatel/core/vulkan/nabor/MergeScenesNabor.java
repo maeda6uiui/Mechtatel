@@ -134,10 +134,10 @@ public class MergeScenesNabor extends Nabor {
     protected void createUniformBuffers(int descriptorCount) {
         VkDevice device = this.getDevice();
 
-        var numTexturesUBOInfos = BufferCreator.createUBOBuffers(device, descriptorCount, SIZEOF_INT);
-        for (var numTexturesUBOInfo : numTexturesUBOInfos) {
-            this.getUniformBuffers().add(numTexturesUBOInfo.buffer);
-            this.getUniformBufferMemories().add(numTexturesUBOInfo.bufferMemory);
+        var mergeScenesInfoUBOInfos = BufferCreator.createUBOBuffers(device, descriptorCount, SIZEOF_INT);
+        for (var mergeScenesInfoUBOInfo : mergeScenesInfoUBOInfos) {
+            this.getUniformBuffers().add(mergeScenesInfoUBOInfo.buffer);
+            this.getUniformBufferMemories().add(mergeScenesInfoUBOInfo.bufferMemory);
         }
     }
 
@@ -296,12 +296,12 @@ public class MergeScenesNabor extends Nabor {
             //=== set 2 ===
             VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
 
-            VkDescriptorSetLayoutBinding numTexturesUBOLayoutBinding = uboBindings.get(0);
-            numTexturesUBOLayoutBinding.binding(0);
-            numTexturesUBOLayoutBinding.descriptorCount(1);
-            numTexturesUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            numTexturesUBOLayoutBinding.pImmutableSamplers(null);
-            numTexturesUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+            VkDescriptorSetLayoutBinding mergeScenesInfoUBOLayoutBinding = uboBindings.get(0);
+            mergeScenesInfoUBOLayoutBinding.binding(0);
+            mergeScenesInfoUBOLayoutBinding.descriptorCount(1);
+            mergeScenesInfoUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            mergeScenesInfoUBOLayoutBinding.pImmutableSamplers(null);
+            mergeScenesInfoUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //Create descriptor set layouts
             VkDescriptorSetLayoutCreateInfo.Buffer layoutInfos = VkDescriptorSetLayoutCreateInfo.calloc(3, stack);
@@ -367,9 +367,9 @@ public class MergeScenesNabor extends Nabor {
             //=== set 2 ===
             VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.calloc(1, stack);
 
-            VkDescriptorPoolSize numTexturesUBOPoolSize = uboPoolSizes.get(0);
-            numTexturesUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            numTexturesUBOPoolSize.descriptorCount(descriptorCount);
+            VkDescriptorPoolSize mergeScenesInfoUBOPoolSize = uboPoolSizes.get(0);
+            mergeScenesInfoUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            mergeScenesInfoUBOPoolSize.descriptorCount(descriptorCount);
 
             //Create descriptor pools
             VkDescriptorPoolCreateInfo.Buffer poolInfos = VkDescriptorPoolCreateInfo.calloc(3, stack);
@@ -478,10 +478,10 @@ public class MergeScenesNabor extends Nabor {
             //=== set 2 ===
             VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.calloc(1, stack);
 
-            VkDescriptorBufferInfo numTexturesUBOInfo = uboInfos.get(0);
-            numTexturesUBOInfo.buffer(this.getUniformBuffer(0));
-            numTexturesUBOInfo.offset(0);
-            numTexturesUBOInfo.range(SIZEOF_INT);
+            VkDescriptorBufferInfo mergeScenesInfoUBOInfo = uboInfos.get(0);
+            mergeScenesInfoUBOInfo.buffer(this.getUniformBuffer(0));
+            mergeScenesInfoUBOInfo.offset(0);
+            mergeScenesInfoUBOInfo.range(SIZEOF_INT);
 
             VkWriteDescriptorSet uboDescriptorWrite = descriptorWrites.get(2);
             uboDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);

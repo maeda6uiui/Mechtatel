@@ -16,7 +16,7 @@ import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Nabor to merge two scenes by comparing the depths
+ * Nabor to merge scenes by comparing the depths
  *
  * @author maeda6uiui
  */

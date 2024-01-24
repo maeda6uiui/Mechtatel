@@ -23,6 +23,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import jakarta.validation.constraints.NotNull;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
@@ -30,6 +31,7 @@ import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.util.*;
 
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_INT;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
@@ -46,7 +48,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
     private PrimitiveNabor primitiveNabor;
     private PrimitiveNabor primitiveFillNabor;
     private MergeScenesNabor mergeScenesNabor;
-    private MergeScenesNabor mergeScenesFillNabor;
 
     private static Map<String, List<Long>> vertShaderModulesStorage = new HashMap<>();
     private static Map<String, List<Long>> fragShaderModulesStorage = new HashMap<>();
@@ -273,45 +274,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             fragShaderModulesStorage.put("merge_scenes", fragShaderModules);
         }
 
-        //Merge-Scenes-Fill nabor
-        mergeScenesFillNabor = new MergeScenesNabor(
-                device,
-                VK_FORMAT_R16G16B16A16_SFLOAT,
-                VK_FORMAT_R16G16B16A16_SFLOAT,
-                VK_FORMAT_R16G16B16A16_SFLOAT);
-        if (vertShaderModulesStorage.containsKey("merge_scenes_fill")) {
-            var vertShaderModules = vertShaderModulesStorage.get("merge_scenes_fill");
-            var fragShaderModules = fragShaderModulesStorage.get("merge_scenes_fill");
-
-            mergeScenesFillNabor.compile(
-                    colorImageFormat,
-                    samplerFilter,
-                    samplerMipmapMode,
-                    samplerAddressMode,
-                    extent,
-                    commandPool,
-                    graphicsQueue,
-                    1,
-                    vertShaderModules,
-                    fragShaderModules
-            );
-        } else {
-            mergeScenesFillNabor.compile(
-                    colorImageFormat,
-                    samplerFilter,
-                    samplerMipmapMode,
-                    samplerAddressMode,
-                    extent,
-                    commandPool,
-                    graphicsQueue,
-                    1);
-
-            var vertShaderModules = mergeScenesFillNabor.getVertShaderModules();
-            var fragShaderModules = mergeScenesFillNabor.getFragShaderModules();
-            vertShaderModulesStorage.put("merge_scenes_fill", vertShaderModules);
-            fragShaderModulesStorage.put("merge_scenes_fill", fragShaderModules);
-        }
-
         if (!ppNaborNames.isEmpty()) {
             ppNaborChain = new PostProcessingNaborChain(
                     device,
@@ -379,7 +341,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             primitiveNabor.recreate(colorImageFormat, extent);
             primitiveFillNabor.recreate(colorImageFormat, extent);
             mergeScenesNabor.recreate(colorImageFormat, extent);
-            mergeScenesFillNabor.recreate(colorImageFormat, extent);
 
             if (ppNaborChain != null) {
                 ppNaborChain.recreate(colorImageFormat, extent);
@@ -396,7 +357,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             primitiveNabor.recreate(colorImageFormat, initialExtent);
             primitiveFillNabor.recreate(colorImageFormat, initialExtent);
             mergeScenesNabor.recreate(colorImageFormat, initialExtent);
-            mergeScenesFillNabor.recreate(colorImageFormat, initialExtent);
 
             if (ppNaborChain != null) {
                 ppNaborChain.recreate(colorImageFormat, initialExtent);
@@ -414,7 +374,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         primitiveNabor.cleanup(false);
         primitiveFillNabor.cleanup(false);
         mergeScenesNabor.cleanup(false);
-        mergeScenesFillNabor.cleanup(false);
 
         if (ppNaborChain != null) {
             ppNaborChain.cleanup();
@@ -733,6 +692,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
 
     private void runMergeScenesNabor() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
+            final int NUM_SCENES_TO_MERGE = 3;
+
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
             renderPassInfo.renderPass(mergeScenesNabor.getRenderPass());
@@ -747,6 +708,17 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             clearValues.get(2).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             clearValues.get(3).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             renderPassInfo.pClearValues(clearValues);
+
+            long ubMemory = mergeScenesNabor.getUniformBufferMemory(0);
+
+            PointerBuffer ubData = stack.mallocPointer(1);
+            vkMapMemory(device, ubMemory, 0, SIZEOF_INT, 0, ubData);
+            {
+                ByteBuffer buffer = ubData.getByteBuffer(0, SIZEOF_INT);
+                buffer.putInt(0, NUM_SCENES_TO_MERGE);
+                buffer.rewind();
+            }
+            vkUnmapMemory(device, ubMemory);
 
             VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
 
@@ -764,79 +736,42 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 primitiveNabor.transitionPositionImage(commandPool, graphicsQueue);
                 primitiveNabor.transitionNormalImage(commandPool, graphicsQueue);
 
-                mergeScenesNabor.bindAlbedoImages(
-                        commandBuffer,
-                        Arrays.asList(gBufferNabor.getAlbedoImageView(), primitiveNabor.getAlbedoImageView())
-                );
-                mergeScenesNabor.bindDepthImages(
-                        commandBuffer,
-                        Arrays.asList(gBufferNabor.getDepthImageView(), primitiveNabor.getDepthImageView())
-                );
-                mergeScenesNabor.bindPositionImages(
-                        commandBuffer,
-                        Arrays.asList(gBufferNabor.getPositionImageView(), primitiveNabor.getPositionImageView())
-                );
-                mergeScenesNabor.bindNormalImages(
-                        commandBuffer,
-                        Arrays.asList(gBufferNabor.getNormalImageView(), primitiveNabor.getNormalImageView())
-                );
-
-                quadDrawer.draw(commandBuffer);
-            }
-            vkCmdEndRenderPass(commandBuffer);
-
-            CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
-        }
-    }
-
-    private void runMergeScenesFillNabor() {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
-            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
-            renderPassInfo.renderPass(mergeScenesFillNabor.getRenderPass());
-            renderPassInfo.framebuffer(mergeScenesFillNabor.getFramebuffer(0));
-            VkRect2D renderArea = VkRect2D.calloc(stack);
-            renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
-            renderArea.extent(mergeScenesFillNabor.getExtent());
-            renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.calloc(4, stack);
-            clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
-            clearValues.get(1).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
-            clearValues.get(2).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
-            clearValues.get(3).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
-            renderPassInfo.pClearValues(clearValues);
-
-            VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
-
-            vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-            {
-                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mergeScenesFillNabor.getGraphicsPipeline(0));
-
-                mergeScenesNabor.transitionAlbedoImage(commandPool, graphicsQueue);
-                mergeScenesNabor.transitionDepthImage(commandPool, graphicsQueue);
-                mergeScenesNabor.transitionPositionImage(commandPool, graphicsQueue);
-                mergeScenesNabor.transitionNormalImage(commandPool, graphicsQueue);
-
                 primitiveFillNabor.transitionAlbedoImage(commandPool, graphicsQueue);
                 primitiveFillNabor.transitionDepthImage(commandPool, graphicsQueue);
                 primitiveFillNabor.transitionPositionImage(commandPool, graphicsQueue);
                 primitiveFillNabor.transitionNormalImage(commandPool, graphicsQueue);
 
-                mergeScenesFillNabor.bindAlbedoImages(
+                mergeScenesNabor.bindAlbedoImages(
                         commandBuffer,
-                        Arrays.asList(mergeScenesNabor.getAlbedoImageView(), primitiveFillNabor.getAlbedoImageView())
+                        Arrays.asList(
+                                gBufferNabor.getAlbedoImageView(),
+                                primitiveNabor.getAlbedoImageView(),
+                                primitiveFillNabor.getAlbedoImageView()
+                        )
                 );
-                mergeScenesFillNabor.bindDepthImages(
+                mergeScenesNabor.bindDepthImages(
                         commandBuffer,
-                        Arrays.asList(mergeScenesNabor.getDepthImageView(), primitiveFillNabor.getDepthImageView())
+                        Arrays.asList(
+                                gBufferNabor.getDepthImageView(),
+                                primitiveNabor.getDepthImageView(),
+                                primitiveFillNabor.getDepthImageView()
+                        )
                 );
-                mergeScenesFillNabor.bindPositionImages(
+                mergeScenesNabor.bindPositionImages(
                         commandBuffer,
-                        Arrays.asList(mergeScenesNabor.getPositionImageView(), primitiveFillNabor.getPositionImageView())
+                        Arrays.asList(
+                                gBufferNabor.getPositionImageView(),
+                                primitiveNabor.getPositionImageView(),
+                                primitiveFillNabor.getPositionImageView()
+                        )
                 );
-                mergeScenesFillNabor.bindNormalImages(
+                mergeScenesNabor.bindNormalImages(
                         commandBuffer,
-                        Arrays.asList(mergeScenesNabor.getNormalImageView(), primitiveFillNabor.getNormalImageView())
+                        Arrays.asList(
+                                gBufferNabor.getNormalImageView(),
+                                primitiveNabor.getNormalImageView(),
+                                primitiveFillNabor.getNormalImageView()
+                        )
                 );
 
                 quadDrawer.draw(commandBuffer);
@@ -864,19 +799,18 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         this.runPrimitiveNabor(backgroundColor, camera, components);
         this.runPrimitiveFillNabor(backgroundColor, camera, components);
         this.runMergeScenesNabor();
-        this.runMergeScenesFillNabor();
 
-        mergeScenesFillNabor.transitionAlbedoImage(commandPool, graphicsQueue);
-        mergeScenesFillNabor.transitionDepthImage(commandPool, graphicsQueue);
-        mergeScenesFillNabor.transitionPositionImage(commandPool, graphicsQueue);
-        mergeScenesFillNabor.transitionNormalImage(commandPool, graphicsQueue);
+        mergeScenesNabor.transitionAlbedoImage(commandPool, graphicsQueue);
+        mergeScenesNabor.transitionDepthImage(commandPool, graphicsQueue);
+        mergeScenesNabor.transitionPositionImage(commandPool, graphicsQueue);
+        mergeScenesNabor.transitionNormalImage(commandPool, graphicsQueue);
 
         if (shadowMappingNabor != null) {
             ShadowMappingNaborRunner.runShadowMappingNabor(
                     device,
                     commandPool,
                     graphicsQueue,
-                    mergeScenesFillNabor,
+                    mergeScenesNabor,
                     null,
                     shadowMappingNabor,
                     parallelLights,
@@ -899,7 +833,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                     spotlights,
                     spotlightAmbientColor,
                     simpleBlurInfo,
-                    mergeScenesFillNabor,
+                    mergeScenesNabor,
                     shadowMappingNabor
             );
         }
@@ -911,12 +845,12 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         } else if (shadowMappingNabor != null) {
             return shadowMappingNabor.getColorImageView();
         } else {
-            return mergeScenesFillNabor.getAlbedoImageView();
+            return mergeScenesNabor.getAlbedoImageView();
         }
     }
 
     public long getDepthImageView() {
-        return mergeScenesFillNabor.getDepthImageView();
+        return mergeScenesNabor.getDepthImageView();
     }
 
     public VkMttTexture texturize(ScreenImageType imageType, VkMttScreen dstScreen) {
@@ -936,7 +870,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         } else if (shadowMappingNabor != null) {
             return shadowMappingNabor.createBufferedImage(commandPool, graphicsQueue, imageIndex, pixelFormat);
         } else {
-            return mergeScenesFillNabor.createBufferedImage(commandPool, graphicsQueue, imageIndex, pixelFormat);
+            return mergeScenesNabor.createBufferedImage(commandPool, graphicsQueue, imageIndex, pixelFormat);
         }
     }
 

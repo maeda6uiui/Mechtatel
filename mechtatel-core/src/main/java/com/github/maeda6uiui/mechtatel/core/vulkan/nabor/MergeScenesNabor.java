@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
+import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
@@ -10,6 +11,7 @@ import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_INT;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
@@ -18,6 +20,8 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class MergeScenesNabor extends Nabor {
+    public static final int MAX_NUM_TEXTURES = 8;
+
     private int depthImageFormat;
     private int positionImageFormat;
     private int normalImageFormat;
@@ -124,6 +128,17 @@ public class MergeScenesNabor extends Nabor {
     @Override
     public void cleanup(boolean reserveForRecreation) {
         super.cleanup(reserveForRecreation);
+    }
+
+    @Override
+    protected void createUniformBuffers(int descriptorCount) {
+        VkDevice device = this.getDevice();
+
+        var numTexturesUBOInfos = BufferCreator.createUBOBuffers(device, descriptorCount, SIZEOF_INT);
+        for (var numTexturesUBOInfo : numTexturesUBOInfos) {
+            this.getUniformBuffers().add(numTexturesUBOInfo.buffer);
+            this.getUniformBufferMemories().add(numTexturesUBOInfo.bufferMemory);
+        }
     }
 
     @Override
@@ -242,28 +257,28 @@ public class MergeScenesNabor extends Nabor {
 
             VkDescriptorSetLayoutBinding albedoImageLayoutBinding = imageBindings.get(0);
             albedoImageLayoutBinding.binding(0);
-            albedoImageLayoutBinding.descriptorCount(2);
+            albedoImageLayoutBinding.descriptorCount(MAX_NUM_TEXTURES);
             albedoImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             albedoImageLayoutBinding.pImmutableSamplers(null);
             albedoImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             VkDescriptorSetLayoutBinding depthImageLayoutBinding = imageBindings.get(1);
             depthImageLayoutBinding.binding(1);
-            depthImageLayoutBinding.descriptorCount(2);
+            depthImageLayoutBinding.descriptorCount(MAX_NUM_TEXTURES);
             depthImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             depthImageLayoutBinding.pImmutableSamplers(null);
             depthImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             VkDescriptorSetLayoutBinding positionImageLayoutBinding = imageBindings.get(2);
             positionImageLayoutBinding.binding(2);
-            positionImageLayoutBinding.descriptorCount(2);
+            positionImageLayoutBinding.descriptorCount(MAX_NUM_TEXTURES);
             positionImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             positionImageLayoutBinding.pImmutableSamplers(null);
             positionImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             VkDescriptorSetLayoutBinding normalImageLayoutBinding = imageBindings.get(3);
             normalImageLayoutBinding.binding(3);
-            normalImageLayoutBinding.descriptorCount(2);
+            normalImageLayoutBinding.descriptorCount(MAX_NUM_TEXTURES);
             normalImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             normalImageLayoutBinding.pImmutableSamplers(null);
             normalImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
@@ -278,8 +293,18 @@ public class MergeScenesNabor extends Nabor {
             samplerLayoutBinding.pImmutableSamplers(null);
             samplerLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
+            //=== set 2 ===
+            VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
+
+            VkDescriptorSetLayoutBinding numTexturesUBOLayoutBinding = uboBindings.get(0);
+            numTexturesUBOLayoutBinding.binding(0);
+            numTexturesUBOLayoutBinding.descriptorCount(1);
+            numTexturesUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            numTexturesUBOLayoutBinding.pImmutableSamplers(null);
+            numTexturesUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+
             //Create descriptor set layouts
-            VkDescriptorSetLayoutCreateInfo.Buffer layoutInfos = VkDescriptorSetLayoutCreateInfo.calloc(2, stack);
+            VkDescriptorSetLayoutCreateInfo.Buffer layoutInfos = VkDescriptorSetLayoutCreateInfo.calloc(3, stack);
 
             //=== set 0 ===
             VkDescriptorSetLayoutCreateInfo imageLayoutInfo = layoutInfos.get(0);
@@ -291,7 +316,12 @@ public class MergeScenesNabor extends Nabor {
             samplerLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
             samplerLayoutInfo.pBindings(samplerBindings);
 
-            for (int i = 0; i < 2; i++) {
+            //=== set 2 ===
+            VkDescriptorSetLayoutCreateInfo uboLayoutInfo = layoutInfos.get(2);
+            uboLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            uboLayoutInfo.pBindings(uboBindings);
+
+            for (int i = 0; i < 3; i++) {
                 LongBuffer pDescriptorSetLayout = stack.mallocLong(1);
                 if (vkCreateDescriptorSetLayout(device, layoutInfos.get(i), null, pDescriptorSetLayout) != VK_SUCCESS) {
                     throw new RuntimeException("Failed to create a descriptor set layout");
@@ -334,8 +364,15 @@ public class MergeScenesNabor extends Nabor {
             samplerPoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLER);
             samplerPoolSize.descriptorCount(descriptorCount);
 
+            //=== set 2 ===
+            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.calloc(1, stack);
+
+            VkDescriptorPoolSize uboPoolSize = uboPoolSizes.get(0);
+            uboPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            uboPoolSize.descriptorCount(descriptorCount);
+
             //Create descriptor pools
-            VkDescriptorPoolCreateInfo.Buffer poolInfos = VkDescriptorPoolCreateInfo.calloc(2, stack);
+            VkDescriptorPoolCreateInfo.Buffer poolInfos = VkDescriptorPoolCreateInfo.calloc(3, stack);
 
             //=== set 0 ===
             VkDescriptorPoolCreateInfo imagePoolInfo = poolInfos.get(0);
@@ -349,7 +386,13 @@ public class MergeScenesNabor extends Nabor {
             samplerPoolInfo.pPoolSizes(samplerPoolSizes);
             samplerPoolInfo.maxSets(descriptorCount);
 
-            for (int i = 0; i < 2; i++) {
+            //=== set 2 ===
+            VkDescriptorPoolCreateInfo uboPoolInfo = poolInfos.get(2);
+            uboPoolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
+            uboPoolInfo.pPoolSizes(uboPoolSizes);
+            uboPoolInfo.maxSets(descriptorCount);
+
+            for (int i = 0; i < 3; i++) {
                 LongBuffer pDescriptorPool = stack.mallocLong(1);
                 if (vkCreateDescriptorPool(device, poolInfos.get(i), null, pDescriptorPool) != VK_SUCCESS) {
                     throw new RuntimeException("Failed to create a descriptor pool");
@@ -432,9 +475,26 @@ public class MergeScenesNabor extends Nabor {
             samplerDescriptorWrite.descriptorCount(1);
             samplerDescriptorWrite.pImageInfo(samplerInfos);
 
+            //=== set 2 ===
+            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.calloc(1, stack);
+
+            VkDescriptorBufferInfo numTexturesUBOInfo = uboInfos.get(0);
+            numTexturesUBOInfo.buffer(this.getUniformBuffer(0));
+            numTexturesUBOInfo.offset(0);
+            numTexturesUBOInfo.range(SIZEOF_INT);
+
+            VkWriteDescriptorSet uboDescriptorWrite = descriptorWrites.get(2);
+            uboDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            uboDescriptorWrite.dstBinding(0);
+            uboDescriptorWrite.dstArrayElement(0);
+            uboDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            uboDescriptorWrite.descriptorCount(1);
+            uboDescriptorWrite.pBufferInfo(uboInfos);
+
             for (int i = 0; i < descriptorCount; i++) {
                 imageDescriptorWrite.dstSet(descriptorSets.get(i));
                 samplerDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount));
+                uboDescriptorWrite.dstSet(descriptorSets.get(i + descriptorCount * 2));
 
                 vkUpdateDescriptorSets(device, descriptorWrites, null);
             }

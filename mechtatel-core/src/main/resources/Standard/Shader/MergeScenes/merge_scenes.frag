@@ -1,11 +1,14 @@
 #version 450
 #extension GL_ARB_separate_shader_objects:enable
 
-layout(set=0,binding=0) uniform texture2D albedoTextures[2];
-layout(set=0,binding=1) uniform texture2D depthTextures[2];
-layout(set=0,binding=2) uniform texture2D positionTextures[2];
-layout(set=0,binding=3) uniform texture2D normalTextures[2];
+const int MAX_NUM_TEXTURES=8;
+
+layout(set=0,binding=0) uniform texture2D albedoTextures[MAX_NUM_TEXTURES];
+layout(set=0,binding=1) uniform texture2D depthTextures[MAX_NUM_TEXTURES];
+layout(set=0,binding=2) uniform texture2D positionTextures[MAX_NUM_TEXTURES];
+layout(set=0,binding=3) uniform texture2D normalTextures[MAX_NUM_TEXTURES];
 layout(set=1,binding=0) uniform sampler textureSampler;
+layout(set=2,binding=0) uniform int numTextures;
 
 layout(location=0) in vec2 fragTexCoords;
 
@@ -15,18 +18,36 @@ layout(location=2) out vec3 outPosition;
 layout(location=3) out vec3 outNormal;
 
 void main(){
-    vec4 albedoA=texture(sampler2D(albedoTextures[0],textureSampler),fragTexCoords);
-    float depthA=texture(sampler2D(depthTextures[0],textureSampler),fragTexCoords).r;
-    vec3 positionA=texture(sampler2D(positionTextures[0],textureSampler),fragTexCoords).rgb;
-    vec3 normalA=texture(sampler2D(normalTextures[0],textureSampler),fragTexCoords).rgb;
+    vec4 curAlbedo=vec4(0.0);
+    float curDepth=1.0;
+    vec3 curPosition=vec3(0.0);
+    vec3 curNormal=vec3(0.0);
 
-    vec4 albedoB=texture(sampler2D(albedoTextures[1],textureSampler),fragTexCoords);
-    float depthB=texture(sampler2D(depthTextures[1],textureSampler),fragTexCoords).r;
-    vec3 positionB=texture(sampler2D(positionTextures[1],textureSampler),fragTexCoords).rgb;
-    vec3 normalB=texture(sampler2D(normalTextures[1],textureSampler),fragTexCoords).rgb;
+    for(int i=0;i<numTextures;i++){
+        vec4 albedo=texture(sampler2D(albedoTextures[i],textureSampler),fragTexCoords);
+        float depth=texture(sampler2D(depthTextures[i],textureSampler),fragTexCoords).r;
+        vec3 position=texture(sampler2D(positionTextures[i],textureSampler),fragTexCoords).rgb;
+        vec3 normal=texture(sampler2D(normalTextures[i],textureSampler),fragTexCoords).rgb;
 
-    outAlbedo=(depthA<depthB)?albedoA:albedoB;
-    outDepth=(depthA<depthB)?depthA:depthB;
-    outPosition=(depthA<depthB)?positionA:positionB;
-    outNormal=(depthA<depthB)?normalA:normalB;
+        if(i==0){
+            curAlbedo=albedo;
+            curDepth=depth;
+            curPosition=position;
+            curNormal=normal;
+        }else{
+            //Overwrite the values if the depth of this pixel 
+            //is shallower than the current depth retained
+            curAlbedo=(depth<curDepth)?albedo:curAlbedo;
+            curPosition=(depth<curDepth)?position:curPosition;
+            curNormal=(depth<curDepth)?normal:curNormal;
+
+            //Update current depth
+            curDepth=(depth<curDepth)?depth:curDepth;
+        }
+    }
+
+    outAlbedo=curAlbedo;
+    outDepth=curDepth;
+    outPosition=curPosition;
+    outNormal=curNormal;
 }

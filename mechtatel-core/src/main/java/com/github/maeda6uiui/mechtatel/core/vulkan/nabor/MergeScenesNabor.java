@@ -343,19 +343,19 @@ public class MergeScenesNabor extends Nabor {
 
             VkDescriptorPoolSize albedoImagePoolSize = imagePoolSizes.get(0);
             albedoImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            albedoImagePoolSize.descriptorCount(descriptorCount * 2);
+            albedoImagePoolSize.descriptorCount(descriptorCount * MAX_NUM_TEXTURES);
 
             VkDescriptorPoolSize depthImagePoolSize = imagePoolSizes.get(1);
             depthImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            depthImagePoolSize.descriptorCount(descriptorCount * 2);
+            depthImagePoolSize.descriptorCount(descriptorCount * MAX_NUM_TEXTURES);
 
             VkDescriptorPoolSize positionImagePoolSize = imagePoolSizes.get(2);
             positionImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            positionImagePoolSize.descriptorCount(descriptorCount * 2);
+            positionImagePoolSize.descriptorCount(descriptorCount * MAX_NUM_TEXTURES);
 
             VkDescriptorPoolSize normalImagePoolSize = imagePoolSizes.get(3);
             normalImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            normalImagePoolSize.descriptorCount(descriptorCount * 2);
+            normalImagePoolSize.descriptorCount(descriptorCount * MAX_NUM_TEXTURES);
 
             //=== set 1 ===
             VkDescriptorPoolSize.Buffer samplerPoolSizes = VkDescriptorPoolSize.calloc(1, stack);
@@ -367,9 +367,9 @@ public class MergeScenesNabor extends Nabor {
             //=== set 2 ===
             VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.calloc(1, stack);
 
-            VkDescriptorPoolSize uboPoolSize = uboPoolSizes.get(0);
-            uboPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            uboPoolSize.descriptorCount(descriptorCount);
+            VkDescriptorPoolSize numTexturesUBOPoolSize = uboPoolSizes.get(0);
+            numTexturesUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            numTexturesUBOPoolSize.descriptorCount(descriptorCount);
 
             //Create descriptor pools
             VkDescriptorPoolCreateInfo.Buffer poolInfos = VkDescriptorPoolCreateInfo.calloc(3, stack);

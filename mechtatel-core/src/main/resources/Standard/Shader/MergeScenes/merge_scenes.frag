@@ -8,7 +8,9 @@ layout(set=0,binding=1) uniform texture2D depthTextures[MAX_NUM_TEXTURES];
 layout(set=0,binding=2) uniform texture2D positionTextures[MAX_NUM_TEXTURES];
 layout(set=0,binding=3) uniform texture2D normalTextures[MAX_NUM_TEXTURES];
 layout(set=1,binding=0) uniform sampler textureSampler;
-layout(set=2,binding=0) uniform int numTextures;
+layout(set=2,binding=0) uniform int MergeScenesInfoUBO{
+    int numTextures;
+}mergeScenesInfo;
 
 layout(location=0) in vec2 fragTexCoords;
 
@@ -23,7 +25,7 @@ void main(){
     vec3 curPosition=vec3(0.0);
     vec3 curNormal=vec3(0.0);
 
-    for(int i=0;i<numTextures;i++){
+    for(int i=0;i<mergeScenesInfo.numTextures;i++){
         vec4 albedo=texture(sampler2D(albedoTextures[i],textureSampler),fragTexCoords);
         float depth=texture(sampler2D(depthTextures[i],textureSampler),fragTexCoords).r;
         vec3 position=texture(sampler2D(positionTextures[i],textureSampler),fragTexCoords).rgb;

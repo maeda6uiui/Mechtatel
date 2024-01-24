@@ -23,7 +23,6 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import jakarta.validation.constraints.NotNull;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
@@ -31,7 +30,6 @@ import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.util.*;
 
-import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_INT;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
@@ -709,6 +707,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             clearValues.get(3).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             renderPassInfo.pClearValues(clearValues);
 
+            //Todo: Add MergeScenesInfoUBO and update relating code accordingly
+            /*
             long ubMemory = mergeScenesNabor.getUniformBufferMemory(0);
 
             PointerBuffer ubData = stack.mallocPointer(1);
@@ -719,6 +719,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 buffer.rewind();
             }
             vkUnmapMemory(device, ubMemory);
+            */
 
             VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
 

@@ -19,6 +19,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow.ShadowMappingNab
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.MergeScenesInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import jakarta.validation.constraints.NotNull;
 import org.joml.Vector3f;
@@ -38,6 +39,14 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenForVkMttComponent {
+    //Number of scenes to merge to create an interim image
+    //before proceeding to post-processing procedures
+    //Currently, scenes from the following three nabors are merged:
+    // - GBufferNabor
+    // - PrimitiveNabor
+    // - PrimitiveNabor (fill)
+    private static final int NUM_SCENES_TO_MERGE = 3;
+
     private VkDevice device;
     private long commandPool;
     private VkQueue graphicsQueue;
@@ -690,8 +699,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
 
     private void runMergeScenesNabor() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            final int NUM_SCENES_TO_MERGE = 3;
-
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
             renderPassInfo.renderPass(mergeScenesNabor.getRenderPass());
@@ -707,19 +714,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             clearValues.get(3).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             renderPassInfo.pClearValues(clearValues);
 
-            //Todo: Add MergeScenesInfoUBO and update relating code accordingly
-            /*
-            long ubMemory = mergeScenesNabor.getUniformBufferMemory(0);
-
-            PointerBuffer ubData = stack.mallocPointer(1);
-            vkMapMemory(device, ubMemory, 0, SIZEOF_INT, 0, ubData);
-            {
-                ByteBuffer buffer = ubData.getByteBuffer(0, SIZEOF_INT);
-                buffer.putInt(0, NUM_SCENES_TO_MERGE);
-                buffer.rewind();
-            }
-            vkUnmapMemory(device, ubMemory);
-            */
+            long mergeScenesInfoUBOMemory = mergeScenesNabor.getUniformBufferMemory(0);
+            var mergeScenesInfoUBO = new MergeScenesInfoUBO(NUM_SCENES_TO_MERGE);
+            mergeScenesInfoUBO.update(device, mergeScenesInfoUBOMemory);
 
             VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
 

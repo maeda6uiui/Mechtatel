@@ -23,10 +23,10 @@ public class MergeScenesNabor extends Nabor {
     private int positionImageFormat;
     private int normalImageFormat;
 
-    private int albedoAttachmentIndex;
-    private int depthAttachmentIndex;
-    private int positionAttachmentIndex;
-    private int normalAttachmentIndex;
+    private static final int ALBEDO_ATTACHMENT_INDEX = 0;
+    private static final int DEPTH_ATTACHMENT_INDEX = 1;
+    private static final int POSITION_ATTACHMENT_INDEX = 2;
+    private static final int NORMAL_ATTACHMENT_INDEX = 3;
 
     public MergeScenesNabor(
             VkDevice device,
@@ -48,7 +48,7 @@ public class MergeScenesNabor extends Nabor {
 
     public void transitionAlbedoImage(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long albedoImage = this.getImage(albedoAttachmentIndex);
+        long albedoImage = this.getImage(ALBEDO_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -62,12 +62,12 @@ public class MergeScenesNabor extends Nabor {
     }
 
     public long getAlbedoImageView() {
-        return this.getImageView(albedoAttachmentIndex);
+        return this.getImageView(ALBEDO_ATTACHMENT_INDEX);
     }
 
     public void transitionDepthImage(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long depthImage = this.getImage(depthAttachmentIndex);
+        long depthImage = this.getImage(DEPTH_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -81,12 +81,12 @@ public class MergeScenesNabor extends Nabor {
     }
 
     public long getDepthImageView() {
-        return this.getImageView(depthAttachmentIndex);
+        return this.getImageView(DEPTH_ATTACHMENT_INDEX);
     }
 
     public void transitionPositionImage(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long positionImage = this.getImage(positionAttachmentIndex);
+        long positionImage = this.getImage(POSITION_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -100,12 +100,12 @@ public class MergeScenesNabor extends Nabor {
     }
 
     public long getPositionImageView() {
-        return this.getImageView(positionAttachmentIndex);
+        return this.getImageView(POSITION_ATTACHMENT_INDEX);
     }
 
     public void transitionNormalImage(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long normalImage = this.getImage(normalAttachmentIndex);
+        long normalImage = this.getImage(NORMAL_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -119,7 +119,7 @@ public class MergeScenesNabor extends Nabor {
     }
 
     public long getNormalImageView() {
-        return this.getImageView(normalAttachmentIndex);
+        return this.getImageView(NORMAL_ATTACHMENT_INDEX);
     }
 
     @Override
@@ -137,9 +137,7 @@ public class MergeScenesNabor extends Nabor {
             VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(4, stack);
 
             //Albedo attachment
-            albedoAttachmentIndex = 0;
-
-            VkAttachmentDescription albedoAttachment = attachments.get(albedoAttachmentIndex);
+            VkAttachmentDescription albedoAttachment = attachments.get(ALBEDO_ATTACHMENT_INDEX);
             albedoAttachment.format(colorImageFormat);
             albedoAttachment.samples(msaaSamples);
             albedoAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -149,16 +147,14 @@ public class MergeScenesNabor extends Nabor {
             albedoAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             albedoAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference albedoAttachmentRef = attachmentRefs.get(albedoAttachmentIndex);
-            albedoAttachmentRef.attachment(albedoAttachmentIndex);
+            VkAttachmentReference albedoAttachmentRef = attachmentRefs.get(ALBEDO_ATTACHMENT_INDEX);
+            albedoAttachmentRef.attachment(ALBEDO_ATTACHMENT_INDEX);
             albedoAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             //Depth attachment
             //In this nabor, depth is supposed to be passed in a normal color format (colorImageFormat).
             //Therefore, there is no depth attachment in this render pass.
-            depthAttachmentIndex = 1;
-
-            VkAttachmentDescription depthAttachment = attachments.get(depthAttachmentIndex);
+            VkAttachmentDescription depthAttachment = attachments.get(DEPTH_ATTACHMENT_INDEX);
             depthAttachment.format(depthImageFormat);
             depthAttachment.samples(msaaSamples);
             depthAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -168,14 +164,12 @@ public class MergeScenesNabor extends Nabor {
             depthAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             depthAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference depthAttachmentRef = attachmentRefs.get(depthAttachmentIndex);
-            depthAttachmentRef.attachment(depthAttachmentIndex);
+            VkAttachmentReference depthAttachmentRef = attachmentRefs.get(DEPTH_ATTACHMENT_INDEX);
+            depthAttachmentRef.attachment(DEPTH_ATTACHMENT_INDEX);
             depthAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             //Position attachment
-            positionAttachmentIndex = 2;
-
-            VkAttachmentDescription positionAttachment = attachments.get(positionAttachmentIndex);
+            VkAttachmentDescription positionAttachment = attachments.get(POSITION_ATTACHMENT_INDEX);
             positionAttachment.format(positionImageFormat);
             positionAttachment.samples(msaaSamples);
             positionAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -185,14 +179,12 @@ public class MergeScenesNabor extends Nabor {
             positionAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             positionAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference positionAttachmentRef = attachmentRefs.get(positionAttachmentIndex);
-            positionAttachmentRef.attachment(positionAttachmentIndex);
+            VkAttachmentReference positionAttachmentRef = attachmentRefs.get(POSITION_ATTACHMENT_INDEX);
+            positionAttachmentRef.attachment(POSITION_ATTACHMENT_INDEX);
             positionAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             //Normal attachment
-            normalAttachmentIndex = 3;
-
-            VkAttachmentDescription normalAttachment = attachments.get(normalAttachmentIndex);
+            VkAttachmentDescription normalAttachment = attachments.get(NORMAL_ATTACHMENT_INDEX);
             normalAttachment.format(normalImageFormat);
             normalAttachment.samples(msaaSamples);
             normalAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -202,15 +194,15 @@ public class MergeScenesNabor extends Nabor {
             normalAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             normalAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference normalAttachmentRef = attachmentRefs.get(normalAttachmentIndex);
-            normalAttachmentRef.attachment(normalAttachmentIndex);
+            VkAttachmentReference normalAttachmentRef = attachmentRefs.get(NORMAL_ATTACHMENT_INDEX);
+            normalAttachmentRef.attachment(NORMAL_ATTACHMENT_INDEX);
             normalAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             VkAttachmentReference.Buffer colorAttachmentRefs = VkAttachmentReference.calloc(4, stack);
-            colorAttachmentRefs.put(0, albedoAttachmentRef);
-            colorAttachmentRefs.put(1, depthAttachmentRef);
-            colorAttachmentRefs.put(2, positionAttachmentRef);
-            colorAttachmentRefs.put(3, normalAttachmentRef);
+            colorAttachmentRefs.put(ALBEDO_ATTACHMENT_INDEX, albedoAttachmentRef);
+            colorAttachmentRefs.put(DEPTH_ATTACHMENT_INDEX, depthAttachmentRef);
+            colorAttachmentRefs.put(POSITION_ATTACHMENT_INDEX, positionAttachmentRef);
+            colorAttachmentRefs.put(NORMAL_ATTACHMENT_INDEX, normalAttachmentRef);
 
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.calloc(1, stack);
             subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
@@ -740,27 +732,27 @@ public class MergeScenesNabor extends Nabor {
         var arrImageViews = new Long[]{albedoImageViewA, albedoImageViewB};
         var imageViews = Arrays.asList(arrImageViews);
 
-        this.bindImages(commandBuffer, 0, albedoAttachmentIndex, imageViews);
+        this.bindImages(commandBuffer, 0, ALBEDO_ATTACHMENT_INDEX, imageViews);
     }
 
     public void bindDepthImages(VkCommandBuffer commandBuffer, long depthImageViewA, long depthImageViewB) {
         var arrImageViews = new Long[]{depthImageViewA, depthImageViewB};
         var imageViews = Arrays.asList(arrImageViews);
 
-        this.bindImages(commandBuffer, 0, depthAttachmentIndex, imageViews);
+        this.bindImages(commandBuffer, 0, DEPTH_ATTACHMENT_INDEX, imageViews);
     }
 
     public void bindPositionImages(VkCommandBuffer commandBuffer, long positionImageViewA, long positionImageViewB) {
         var arrImageViews = new Long[]{positionImageViewA, positionImageViewB};
         var imageViews = Arrays.asList(arrImageViews);
 
-        this.bindImages(commandBuffer, 0, positionAttachmentIndex, imageViews);
+        this.bindImages(commandBuffer, 0, POSITION_ATTACHMENT_INDEX, imageViews);
     }
 
     public void bindNormalImages(VkCommandBuffer commandBuffer, long normalImageViewA, long normalImageViewB) {
         var arrImageViews = new Long[]{normalImageViewA, normalImageViewB};
         var imageViews = Arrays.asList(arrImageViews);
 
-        this.bindImages(commandBuffer, 0, normalAttachmentIndex, imageViews);
+        this.bindImages(commandBuffer, 0, NORMAL_ATTACHMENT_INDEX, imageViews);
     }
 }

@@ -3,7 +3,7 @@
         "title": "Mechtatel",
         "width": 1280,
         "height": 720,
-        "resizable": true
+        "resizable": false
     },
     "system": {
         "fps": 60

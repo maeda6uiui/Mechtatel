@@ -50,7 +50,7 @@ public class MergeScenesNabor extends Nabor {
         this.normalImageFormat = normalImageFormat;
     }
 
-    public void transitionAlbedoImage(long commandPool, VkQueue graphicsQueue) {
+    public void transitionAlbedoImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long albedoImage = this.getImage(ALBEDO_ATTACHMENT_INDEX);
 
@@ -69,7 +69,7 @@ public class MergeScenesNabor extends Nabor {
         return this.getImageView(ALBEDO_ATTACHMENT_INDEX);
     }
 
-    public void transitionDepthImage(long commandPool, VkQueue graphicsQueue) {
+    public void transitionDepthImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long depthImage = this.getImage(DEPTH_ATTACHMENT_INDEX);
 
@@ -88,7 +88,7 @@ public class MergeScenesNabor extends Nabor {
         return this.getImageView(DEPTH_ATTACHMENT_INDEX);
     }
 
-    public void transitionPositionImage(long commandPool, VkQueue graphicsQueue) {
+    public void transitionPositionImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long positionImage = this.getImage(POSITION_ATTACHMENT_INDEX);
 
@@ -107,7 +107,7 @@ public class MergeScenesNabor extends Nabor {
         return this.getImageView(POSITION_ATTACHMENT_INDEX);
     }
 
-    public void transitionNormalImage(long commandPool, VkQueue graphicsQueue) {
+    public void transitionNormalImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long normalImage = this.getImage(NORMAL_ATTACHMENT_INDEX);
 

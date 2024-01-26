@@ -60,7 +60,7 @@ public class PrimitiveNabor extends Nabor {
         this.fill = fill;
     }
 
-    public void transitionDepthImage(long commandPool, VkQueue graphicsQueue) {
+    public void transitionDepthImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long depthImage = this.getImage(depthAttachmentIndex);
 
@@ -79,7 +79,7 @@ public class PrimitiveNabor extends Nabor {
         return this.getImageView(depthAttachmentIndex);
     }
 
-    public void transitionAlbedoImage(long commandPool, VkQueue graphicsQueue) {
+    public void transitionAlbedoImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long albedoResolveImage = this.getImage(albedoAttachmentIndex);
 
@@ -98,7 +98,7 @@ public class PrimitiveNabor extends Nabor {
         return this.getImageView(albedoAttachmentIndex);
     }
 
-    public void transitionPositionImage(long commandPool, VkQueue graphicsQueue) {
+    public void transitionPositionImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long positionImage = this.getImage(positionAttachmentIndex);
 
@@ -117,7 +117,7 @@ public class PrimitiveNabor extends Nabor {
         return this.getImageView(positionAttachmentIndex);
     }
 
-    public void transitionNormalImage(long commandPool, VkQueue graphicsQueue) {
+    public void transitionNormalImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long normalImage = this.getImage(normalAttachmentIndex);
 

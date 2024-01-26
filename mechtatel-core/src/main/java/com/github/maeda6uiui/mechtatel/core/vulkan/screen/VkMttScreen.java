@@ -729,15 +729,15 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 gBufferNabor.transitionPositionImageLayout(commandPool, graphicsQueue);
                 gBufferNabor.transitionNormalImageLayout(commandPool, graphicsQueue);
 
-                primitiveNabor.transitionAlbedoImage(commandPool, graphicsQueue);
-                primitiveNabor.transitionDepthImage(commandPool, graphicsQueue);
-                primitiveNabor.transitionPositionImage(commandPool, graphicsQueue);
-                primitiveNabor.transitionNormalImage(commandPool, graphicsQueue);
+                primitiveNabor.transitionAlbedoImageLayout(commandPool, graphicsQueue);
+                primitiveNabor.transitionDepthImageLayout(commandPool, graphicsQueue);
+                primitiveNabor.transitionPositionImageLayout(commandPool, graphicsQueue);
+                primitiveNabor.transitionNormalImageLayout(commandPool, graphicsQueue);
 
-                primitiveFillNabor.transitionAlbedoImage(commandPool, graphicsQueue);
-                primitiveFillNabor.transitionDepthImage(commandPool, graphicsQueue);
-                primitiveFillNabor.transitionPositionImage(commandPool, graphicsQueue);
-                primitiveFillNabor.transitionNormalImage(commandPool, graphicsQueue);
+                primitiveFillNabor.transitionAlbedoImageLayout(commandPool, graphicsQueue);
+                primitiveFillNabor.transitionDepthImageLayout(commandPool, graphicsQueue);
+                primitiveFillNabor.transitionPositionImageLayout(commandPool, graphicsQueue);
+                primitiveFillNabor.transitionNormalImageLayout(commandPool, graphicsQueue);
 
                 mergeScenesNabor.bindAlbedoImages(
                         commandBuffer,
@@ -798,10 +798,10 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         this.runPrimitiveFillNabor(backgroundColor, camera, components);
         this.runMergeScenesNabor();
 
-        mergeScenesNabor.transitionAlbedoImage(commandPool, graphicsQueue);
-        mergeScenesNabor.transitionDepthImage(commandPool, graphicsQueue);
-        mergeScenesNabor.transitionPositionImage(commandPool, graphicsQueue);
-        mergeScenesNabor.transitionNormalImage(commandPool, graphicsQueue);
+        mergeScenesNabor.transitionAlbedoImageLayout(commandPool, graphicsQueue);
+        mergeScenesNabor.transitionDepthImageLayout(commandPool, graphicsQueue);
+        mergeScenesNabor.transitionPositionImageLayout(commandPool, graphicsQueue);
+        mergeScenesNabor.transitionNormalImageLayout(commandPool, graphicsQueue);
 
         if (shadowMappingNabor != null) {
             ShadowMappingNaborRunner.runShadowMappingNabor(

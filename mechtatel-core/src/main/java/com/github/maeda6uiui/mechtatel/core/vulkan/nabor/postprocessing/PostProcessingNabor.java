@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -63,30 +63,30 @@ public abstract class PostProcessingNabor extends Nabor {
             VkDevice device = this.getDevice();
 
             //=== set 1 ===
-            VkDescriptorSetLayoutBinding.Buffer imageBindings = VkDescriptorSetLayoutBinding.calloc(4, stack);
+            VkDescriptorSetLayoutBinding.Buffer imageLayoutBindings = VkDescriptorSetLayoutBinding.calloc(4, stack);
 
-            VkDescriptorSetLayoutBinding albedoImageLayoutBinding = imageBindings.get(0);
+            VkDescriptorSetLayoutBinding albedoImageLayoutBinding = imageLayoutBindings.get(0);
             albedoImageLayoutBinding.binding(0);
             albedoImageLayoutBinding.descriptorCount(1);
             albedoImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             albedoImageLayoutBinding.pImmutableSamplers(null);
             albedoImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            VkDescriptorSetLayoutBinding depthImageLayoutBinding = imageBindings.get(1);
+            VkDescriptorSetLayoutBinding depthImageLayoutBinding = imageLayoutBindings.get(1);
             depthImageLayoutBinding.binding(1);
             depthImageLayoutBinding.descriptorCount(1);
             depthImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             depthImageLayoutBinding.pImmutableSamplers(null);
             depthImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            VkDescriptorSetLayoutBinding positionImageLayoutBinding = imageBindings.get(2);
+            VkDescriptorSetLayoutBinding positionImageLayoutBinding = imageLayoutBindings.get(2);
             positionImageLayoutBinding.binding(2);
             positionImageLayoutBinding.descriptorCount(1);
             positionImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             positionImageLayoutBinding.pImmutableSamplers(null);
             positionImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            VkDescriptorSetLayoutBinding normalImageLayoutBinding = imageBindings.get(3);
+            VkDescriptorSetLayoutBinding normalImageLayoutBinding = imageLayoutBindings.get(3);
             normalImageLayoutBinding.binding(3);
             normalImageLayoutBinding.descriptorCount(1);
             normalImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
@@ -94,9 +94,9 @@ public abstract class PostProcessingNabor extends Nabor {
             normalImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 2 ===
-            VkDescriptorSetLayoutBinding.Buffer samplerBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
+            VkDescriptorSetLayoutBinding.Buffer samplerLayoutBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
 
-            VkDescriptorSetLayoutBinding samplerLayoutBinding = samplerBindings.get(0);
+            VkDescriptorSetLayoutBinding samplerLayoutBinding = samplerLayoutBindings.get(0);
             samplerLayoutBinding.binding(0);
             samplerLayoutBinding.descriptorCount(1);
             samplerLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLER);
@@ -104,21 +104,21 @@ public abstract class PostProcessingNabor extends Nabor {
             samplerLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //Create descriptor set layouts
-            VkDescriptorSetLayoutCreateInfo.Buffer layoutInfos = VkDescriptorSetLayoutCreateInfo.calloc(2, stack);
+            VkDescriptorSetLayoutCreateInfo.Buffer layoutCreateInfos = VkDescriptorSetLayoutCreateInfo.calloc(2, stack);
 
             //=== set 1 ===
-            VkDescriptorSetLayoutCreateInfo imageLayoutInfo = layoutInfos.get(0);
-            imageLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
-            imageLayoutInfo.pBindings(imageBindings);
+            VkDescriptorSetLayoutCreateInfo imageLayoutCreateInfo = layoutCreateInfos.get(0);
+            imageLayoutCreateInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            imageLayoutCreateInfo.pBindings(imageLayoutBindings);
 
             //=== set 2 ===
-            VkDescriptorSetLayoutCreateInfo samplerLayoutInfo = layoutInfos.get(1);
-            samplerLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
-            samplerLayoutInfo.pBindings(samplerBindings);
+            VkDescriptorSetLayoutCreateInfo samplerLayoutCreateInfo = layoutCreateInfos.get(1);
+            samplerLayoutCreateInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            samplerLayoutCreateInfo.pBindings(samplerLayoutBindings);
 
             for (int i = 0; i < 2; i++) {
                 LongBuffer pDescriptorSetLayout = stack.mallocLong(1);
-                if (vkCreateDescriptorSetLayout(device, layoutInfos.get(i), null, pDescriptorSetLayout) != VK_SUCCESS) {
+                if (vkCreateDescriptorSetLayout(device, layoutCreateInfos.get(i), null, pDescriptorSetLayout) != VK_SUCCESS) {
                     throw new RuntimeException("Failed to create a descriptor set layout");
                 }
 

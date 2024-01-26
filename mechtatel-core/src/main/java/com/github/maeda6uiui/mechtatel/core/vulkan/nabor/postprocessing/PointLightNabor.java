@@ -61,37 +61,37 @@ public class PointLightNabor extends PostProcessingNabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.calloc(3, stack);
+            VkDescriptorSetLayoutBinding.Buffer uboLayoutBindings = VkDescriptorSetLayoutBinding.calloc(3, stack);
 
-            VkDescriptorSetLayoutBinding cameraUBOLayoutBinding = uboBindings.get(0);
+            VkDescriptorSetLayoutBinding cameraUBOLayoutBinding = uboLayoutBindings.get(0);
             cameraUBOLayoutBinding.binding(0);
             cameraUBOLayoutBinding.descriptorCount(1);
             cameraUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             cameraUBOLayoutBinding.pImmutableSamplers(null);
             cameraUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            VkDescriptorSetLayoutBinding lightingInfoUBOLayoutBinding = uboBindings.get(1);
+            VkDescriptorSetLayoutBinding lightingInfoUBOLayoutBinding = uboLayoutBindings.get(1);
             lightingInfoUBOLayoutBinding.binding(1);
             lightingInfoUBOLayoutBinding.descriptorCount(1);
             lightingInfoUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             lightingInfoUBOLayoutBinding.pImmutableSamplers(null);
             lightingInfoUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            VkDescriptorSetLayoutBinding lightUBOLayoutBinding = uboBindings.get(2);
+            VkDescriptorSetLayoutBinding lightUBOLayoutBinding = uboLayoutBindings.get(2);
             lightUBOLayoutBinding.binding(2);
             lightUBOLayoutBinding.descriptorCount(1);
             lightUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             lightUBOLayoutBinding.pImmutableSamplers(null);
             lightUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            VkDescriptorSetLayoutCreateInfo.Buffer layoutInfos = VkDescriptorSetLayoutCreateInfo.calloc(1, stack);
+            VkDescriptorSetLayoutCreateInfo.Buffer layoutCreateInfos = VkDescriptorSetLayoutCreateInfo.calloc(1, stack);
 
-            VkDescriptorSetLayoutCreateInfo uboLayoutInfo = layoutInfos.get(0);
-            uboLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
-            uboLayoutInfo.pBindings(uboBindings);
+            VkDescriptorSetLayoutCreateInfo uboLayoutCreateInfo = layoutCreateInfos.get(0);
+            uboLayoutCreateInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            uboLayoutCreateInfo.pBindings(uboLayoutBindings);
 
             LongBuffer pDescriptorSetLayout = stack.mallocLong(1);
-            if (vkCreateDescriptorSetLayout(device, layoutInfos.get(0), null, pDescriptorSetLayout) != VK_SUCCESS) {
+            if (vkCreateDescriptorSetLayout(device, layoutCreateInfos.get(0), null, pDescriptorSetLayout) != VK_SUCCESS) {
                 throw new RuntimeException("Failed to create a descriptor set layout");
             }
 

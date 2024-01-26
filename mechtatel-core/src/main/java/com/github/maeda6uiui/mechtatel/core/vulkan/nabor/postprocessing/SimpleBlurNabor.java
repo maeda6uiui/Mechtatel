@@ -43,23 +43,23 @@ public class SimpleBlurNabor extends PostProcessingNabor {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
 
-            VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
+            VkDescriptorSetLayoutBinding.Buffer uboLayoutBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
 
-            VkDescriptorSetLayoutBinding blurInfoUBOLayoutBinding = uboBindings.get(0);
+            VkDescriptorSetLayoutBinding blurInfoUBOLayoutBinding = uboLayoutBindings.get(0);
             blurInfoUBOLayoutBinding.binding(0);
             blurInfoUBOLayoutBinding.descriptorCount(1);
             blurInfoUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             blurInfoUBOLayoutBinding.pImmutableSamplers(null);
             blurInfoUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            VkDescriptorSetLayoutCreateInfo.Buffer layoutInfos = VkDescriptorSetLayoutCreateInfo.calloc(1, stack);
+            VkDescriptorSetLayoutCreateInfo.Buffer layoutCreateInfos = VkDescriptorSetLayoutCreateInfo.calloc(1, stack);
 
-            VkDescriptorSetLayoutCreateInfo uboLayoutInfo = layoutInfos.get(0);
-            uboLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
-            uboLayoutInfo.pBindings(uboBindings);
+            VkDescriptorSetLayoutCreateInfo uboLayoutCreateInfo = layoutCreateInfos.get(0);
+            uboLayoutCreateInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            uboLayoutCreateInfo.pBindings(uboLayoutBindings);
 
             LongBuffer pDescriptorSetLayout = stack.mallocLong(1);
-            if (vkCreateDescriptorSetLayout(device, layoutInfos.get(0), null, pDescriptorSetLayout) != VK_SUCCESS) {
+            if (vkCreateDescriptorSetLayout(device, layoutCreateInfos.get(0), null, pDescriptorSetLayout) != VK_SUCCESS) {
                 throw new RuntimeException("Failed to create a descriptor set layout");
             }
 

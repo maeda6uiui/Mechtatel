@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.TextureOperationParametersUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
@@ -136,9 +136,9 @@ public class TextureOperationNabor extends Nabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
+            VkDescriptorSetLayoutBinding.Buffer uboLayoutBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
 
-            VkDescriptorSetLayoutBinding parametersUBOLayoutBinding = uboBindings.get(0);
+            VkDescriptorSetLayoutBinding parametersUBOLayoutBinding = uboLayoutBindings.get(0);
             parametersUBOLayoutBinding.binding(0);
             parametersUBOLayoutBinding.descriptorCount(1);
             parametersUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
@@ -146,16 +146,16 @@ public class TextureOperationNabor extends Nabor {
             parametersUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 1 ===
-            VkDescriptorSetLayoutBinding.Buffer imageBindings = VkDescriptorSetLayoutBinding.calloc(2, stack);
+            VkDescriptorSetLayoutBinding.Buffer imageLayoutBindings = VkDescriptorSetLayoutBinding.calloc(2, stack);
 
-            VkDescriptorSetLayoutBinding colorImageLayoutBinding = imageBindings.get(0);
+            VkDescriptorSetLayoutBinding colorImageLayoutBinding = imageLayoutBindings.get(0);
             colorImageLayoutBinding.binding(0);
             colorImageLayoutBinding.descriptorCount(2);
             colorImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             colorImageLayoutBinding.pImmutableSamplers(null);
             colorImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
-            VkDescriptorSetLayoutBinding depthImageLayoutBinding = imageBindings.get(1);
+            VkDescriptorSetLayoutBinding depthImageLayoutBinding = imageLayoutBindings.get(1);
             depthImageLayoutBinding.binding(1);
             depthImageLayoutBinding.descriptorCount(2);
             depthImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
@@ -163,9 +163,9 @@ public class TextureOperationNabor extends Nabor {
             depthImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 2 ===
-            VkDescriptorSetLayoutBinding.Buffer samplerBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
+            VkDescriptorSetLayoutBinding.Buffer samplerLayoutBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
 
-            VkDescriptorSetLayoutBinding samplerLayoutBinding = samplerBindings.get(0);
+            VkDescriptorSetLayoutBinding samplerLayoutBinding = samplerLayoutBindings.get(0);
             samplerLayoutBinding.binding(0);
             samplerLayoutBinding.descriptorCount(1);
             samplerLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLER);
@@ -173,26 +173,26 @@ public class TextureOperationNabor extends Nabor {
             samplerLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //Create descriptor set layouts
-            VkDescriptorSetLayoutCreateInfo.Buffer layoutInfos = VkDescriptorSetLayoutCreateInfo.calloc(3, stack);
+            VkDescriptorSetLayoutCreateInfo.Buffer layoutCreateInfos = VkDescriptorSetLayoutCreateInfo.calloc(3, stack);
 
             //=== set 0 ===
-            VkDescriptorSetLayoutCreateInfo uboLayoutInfo = layoutInfos.get(0);
-            uboLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
-            uboLayoutInfo.pBindings(uboBindings);
+            VkDescriptorSetLayoutCreateInfo uboLayoutCreateInfo = layoutCreateInfos.get(0);
+            uboLayoutCreateInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            uboLayoutCreateInfo.pBindings(uboLayoutBindings);
 
             //=== set 1 ===
-            VkDescriptorSetLayoutCreateInfo imageLayoutInfo = layoutInfos.get(1);
-            imageLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
-            imageLayoutInfo.pBindings(imageBindings);
+            VkDescriptorSetLayoutCreateInfo imageLayoutCreateInfo = layoutCreateInfos.get(1);
+            imageLayoutCreateInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            imageLayoutCreateInfo.pBindings(imageLayoutBindings);
 
             //=== set 2 ===
-            VkDescriptorSetLayoutCreateInfo samplerLayoutInfo = layoutInfos.get(2);
-            samplerLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
-            samplerLayoutInfo.pBindings(samplerBindings);
+            VkDescriptorSetLayoutCreateInfo samplerLayoutCreateInfo = layoutCreateInfos.get(2);
+            samplerLayoutCreateInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            samplerLayoutCreateInfo.pBindings(samplerLayoutBindings);
 
             for (int i = 0; i < 3; i++) {
                 LongBuffer pDescriptorSetLayout = stack.mallocLong(1);
-                if (vkCreateDescriptorSetLayout(device, layoutInfos.get(i), null, pDescriptorSetLayout) != VK_SUCCESS) {
+                if (vkCreateDescriptorSetLayout(device, layoutCreateInfos.get(i), null, pDescriptorSetLayout) != VK_SUCCESS) {
                     throw new RuntimeException("Failed to create a descriptor set layout");
                 }
 

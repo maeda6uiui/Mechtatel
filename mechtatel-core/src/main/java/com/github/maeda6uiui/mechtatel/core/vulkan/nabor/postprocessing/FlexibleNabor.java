@@ -65,11 +65,11 @@ public class FlexibleNabor extends PostProcessingNabor {
             VkDevice device = this.getDevice();
 
             int numUniformResourceTypes = uniformResourceTypes.size();
-            VkDescriptorSetLayoutBinding.Buffer uboBindings
+            VkDescriptorSetLayoutBinding.Buffer uboLayoutBindings
                     = VkDescriptorSetLayoutBinding.calloc(numUniformResourceTypes, stack);
 
             for (int i = 0; i < numUniformResourceTypes; i++) {
-                VkDescriptorSetLayoutBinding uboLayoutBinding = uboBindings.get(i);
+                VkDescriptorSetLayoutBinding uboLayoutBinding = uboLayoutBindings.get(i);
                 uboLayoutBinding.binding(i);
                 uboLayoutBinding.descriptorCount(1);
                 uboLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
@@ -77,14 +77,14 @@ public class FlexibleNabor extends PostProcessingNabor {
                 uboLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
             }
 
-            VkDescriptorSetLayoutCreateInfo.Buffer layoutInfos = VkDescriptorSetLayoutCreateInfo.calloc(1, stack);
+            VkDescriptorSetLayoutCreateInfo.Buffer layoutCreateInfos = VkDescriptorSetLayoutCreateInfo.calloc(1, stack);
 
-            VkDescriptorSetLayoutCreateInfo uboLayoutInfo = layoutInfos.get(0);
-            uboLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
-            uboLayoutInfo.pBindings(uboBindings);
+            VkDescriptorSetLayoutCreateInfo uboLayoutCreateInfo = layoutCreateInfos.get(0);
+            uboLayoutCreateInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            uboLayoutCreateInfo.pBindings(uboLayoutBindings);
 
             LongBuffer pDescriptorSetLayout = stack.mallocLong(1);
-            if (vkCreateDescriptorSetLayout(device, layoutInfos.get(0), null, pDescriptorSetLayout) != VK_SUCCESS) {
+            if (vkCreateDescriptorSetLayout(device, layoutCreateInfos.get(0), null, pDescriptorSetLayout) != VK_SUCCESS) {
                 throw new RuntimeException("Failed to create a descriptor set layout");
             }
 

@@ -1,8 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
@@ -236,9 +236,9 @@ class PropertiesNabor extends Nabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorSetLayoutBinding.Buffer uboBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
+            VkDescriptorSetLayoutBinding.Buffer uboLayoutBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
 
-            VkDescriptorSetLayoutBinding cameraUBOLayoutBinding = uboBindings.get(0);
+            VkDescriptorSetLayoutBinding cameraUBOLayoutBinding = uboLayoutBindings.get(0);
             cameraUBOLayoutBinding.binding(0);
             cameraUBOLayoutBinding.descriptorCount(1);
             cameraUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
@@ -246,15 +246,15 @@ class PropertiesNabor extends Nabor {
             cameraUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
 
             //Create descriptor set layouts
-            VkDescriptorSetLayoutCreateInfo.Buffer layoutInfos = VkDescriptorSetLayoutCreateInfo.calloc(3, stack);
+            VkDescriptorSetLayoutCreateInfo.Buffer layoutCreateInfos = VkDescriptorSetLayoutCreateInfo.calloc(3, stack);
 
             //=== set 0 ===
-            VkDescriptorSetLayoutCreateInfo uboLayoutInfo = layoutInfos.get(0);
-            uboLayoutInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
-            uboLayoutInfo.pBindings(uboBindings);
+            VkDescriptorSetLayoutCreateInfo uboLayoutCreateInfo = layoutCreateInfos.get(0);
+            uboLayoutCreateInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            uboLayoutCreateInfo.pBindings(uboLayoutBindings);
 
             LongBuffer pDescriptorSetLayout = stack.mallocLong(1);
-            if (vkCreateDescriptorSetLayout(device, layoutInfos.get(0), null, pDescriptorSetLayout) != VK_SUCCESS) {
+            if (vkCreateDescriptorSetLayout(device, layoutCreateInfos.get(0), null, pDescriptorSetLayout) != VK_SUCCESS) {
                 throw new RuntimeException("Failed to create a descriptor set layout");
             }
 

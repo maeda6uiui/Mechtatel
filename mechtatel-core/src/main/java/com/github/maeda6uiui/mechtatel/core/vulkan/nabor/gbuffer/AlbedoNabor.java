@@ -1,8 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
@@ -22,9 +22,9 @@ class AlbedoNabor extends Nabor {
     private int depthImageFormat;
     private int depthImageAspect;
 
-    private int depthAttachmentIndex;
-    private int albedoAttachmentIndex;
-    private int albedoResolveAttachmentIndex;
+    private static final int DEPTH_ATTACHMENT_INDEX = 0;
+    private static final int ALBEDO_ATTACHMENT_INDEX = 1;
+    private static final int ALBEDO_RESOLVE_ATTACHMENT_INDEX = 2;
 
     public AlbedoNabor(VkDevice device, int msaaSamples, int depthImageFormat) {
         super(
@@ -44,7 +44,7 @@ class AlbedoNabor extends Nabor {
 
     public void transitionDepthImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long depthImage = this.getImage(depthAttachmentIndex);
+        long depthImage = this.getImage(DEPTH_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -58,12 +58,12 @@ class AlbedoNabor extends Nabor {
     }
 
     public long getDepthImageView() {
-        return this.getImageView(depthAttachmentIndex);
+        return this.getImageView(DEPTH_ATTACHMENT_INDEX);
     }
 
     public void transitionAlbedoResolveImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long albedoResolveImage = this.getImage(albedoResolveAttachmentIndex);
+        long albedoResolveImage = this.getImage(ALBEDO_RESOLVE_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -77,7 +77,7 @@ class AlbedoNabor extends Nabor {
     }
 
     public long getAlbedoResolveImageView() {
-        return this.getImageView(albedoResolveAttachmentIndex);
+        return this.getImageView(ALBEDO_RESOLVE_ATTACHMENT_INDEX);
     }
 
     @Override
@@ -107,9 +107,7 @@ class AlbedoNabor extends Nabor {
             VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(3, stack);
 
             //Depth-stencil attachment
-            depthAttachmentIndex = 0;
-
-            VkAttachmentDescription depthAttachment = attachments.get(depthAttachmentIndex);
+            VkAttachmentDescription depthAttachment = attachments.get(DEPTH_ATTACHMENT_INDEX);
             depthAttachment.format(depthImageFormat);
             depthAttachment.samples(msaaSamples);
             depthAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -119,14 +117,12 @@ class AlbedoNabor extends Nabor {
             depthAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             depthAttachment.finalLayout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference depthAttachmentRef = attachmentRefs.get(depthAttachmentIndex);
-            depthAttachmentRef.attachment(depthAttachmentIndex);
+            VkAttachmentReference depthAttachmentRef = attachmentRefs.get(DEPTH_ATTACHMENT_INDEX);
+            depthAttachmentRef.attachment(DEPTH_ATTACHMENT_INDEX);
             depthAttachmentRef.layout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
             //Albedo attachment
-            albedoAttachmentIndex = 1;
-
-            VkAttachmentDescription albedoAttachment = attachments.get(albedoAttachmentIndex);
+            VkAttachmentDescription albedoAttachment = attachments.get(ALBEDO_ATTACHMENT_INDEX);
             albedoAttachment.format(colorImageFormat);
             albedoAttachment.samples(msaaSamples);
             albedoAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -136,14 +132,12 @@ class AlbedoNabor extends Nabor {
             albedoAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             albedoAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference albedoAttachmentRef = attachmentRefs.get(albedoAttachmentIndex);
-            albedoAttachmentRef.attachment(albedoAttachmentIndex);
+            VkAttachmentReference albedoAttachmentRef = attachmentRefs.get(ALBEDO_ATTACHMENT_INDEX);
+            albedoAttachmentRef.attachment(ALBEDO_ATTACHMENT_INDEX);
             albedoAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             //Albedo resolve attachment
-            albedoResolveAttachmentIndex = 2;
-
-            VkAttachmentDescription albedoResolveAttachment = attachments.get(albedoResolveAttachmentIndex);
+            VkAttachmentDescription albedoResolveAttachment = attachments.get(ALBEDO_RESOLVE_ATTACHMENT_INDEX);
             albedoResolveAttachment.format(colorImageFormat);
             albedoResolveAttachment.samples(VK_SAMPLE_COUNT_1_BIT);
             albedoResolveAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
@@ -153,8 +147,8 @@ class AlbedoNabor extends Nabor {
             albedoResolveAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             albedoResolveAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference albedoResolveAttachmentRef = attachmentRefs.get(albedoResolveAttachmentIndex);
-            albedoResolveAttachmentRef.attachment(albedoResolveAttachmentIndex);
+            VkAttachmentReference albedoResolveAttachmentRef = attachmentRefs.get(ALBEDO_RESOLVE_ATTACHMENT_INDEX);
+            albedoResolveAttachmentRef.attachment(ALBEDO_RESOLVE_ATTACHMENT_INDEX);
             albedoResolveAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.calloc(1, stack);

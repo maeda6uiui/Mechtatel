@@ -29,12 +29,20 @@ Thank you!
 
 ## Currently working on
 
+- Integrate [ImGui](https://github.com/ocornut/imgui) for rich UI implementation
+
 ## Todo
 
-- Integrate [ImGui](https://github.com/ocornut/imgui) for rich UI implementation
 - Implement functionality to run `mechtatel-core` via YAML definitions<br>i.e. Load and manipulate resources according to the procedure defined in a YAML file
 
 ## 進捗報告(Progress report)
+
+### 2024-01-27
+
+自分の使っているUbuntu環境でMechtatelのウィンドウをリサイズするとJVMがクラッシュするという問題があり、色々調べて試してみたものの結局解決方法はわかりませんでした。
+ウィンドウをリサイズしなければこの問題は起きないので、設定を変更してデフォルトでウィンドウのリサイズを無効化しました。
+この件についてはGitHubの[Issue](https://github.com/maeda6uiui/Mechtatel/issues/1)を作成してあります。
+これ以上調査しても無限に時間を溶かすだけのような気がしたので、この件については一旦ここで区切りとさせてもらいます。
 
 ### 2023-12-16
 

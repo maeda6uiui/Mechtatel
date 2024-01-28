@@ -6,8 +6,14 @@ import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.MouseCode;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.animation.MttAnimation;
+import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.sound.MttSound;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
+import imgui.ImFontAtlas;
+import imgui.ImGui;
+import imgui.ImGuiIO;
+import imgui.internal.ImGuiContext;
+import imgui.type.ImInt;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +43,9 @@ public class MttWindow {
 
     private IMechtatelForMttWindow mtt;
     private MttVulkanImpl vulkanImpl;
+
+    private ImGuiContext imGuiContext;
+    private MttTexture imguiFontTexture;
 
     private long handle;
     private int width;
@@ -126,6 +136,16 @@ public class MttWindow {
 
         sounds3D = new ArrayList<>();
 
+        imGuiContext = ImGui.createContext();
+        ImGui.setCurrentContext(imGuiContext);
+        ImGuiIO io = ImGui.getIO();
+        io.setIniFilename(null);
+        io.setDisplaySize(width, height);
+
+        ImFontAtlas fontAtlas = io.getFonts();
+        ByteBuffer fontBuffer = fontAtlas.getTexDataAsRGBA32(new ImInt(width), new ImInt(height));
+        imguiFontTexture = new MttTexture(vulkanImpl, defaultScreen, fontBuffer, width, height);
+
         logger.debug("Window ({}) successfully created", Long.toHexString(handle));
 
         mtt.onCreate(this);
@@ -149,6 +169,11 @@ public class MttWindow {
 
             mtt.onRecreate(this, width, height);
         }
+
+        ImGui.setCurrentContext(imGuiContext);
+        ImGui.newFrame();
+        ImGui.begin("Hello");
+        ImGui.end();
 
         Map<KeyCode, Integer> keyboardPressingCounts = keyboard.getPressingCounts();
         screens.forEach(screen -> {
@@ -187,6 +212,8 @@ public class MttWindow {
 
         glfwFreeCallbacks(handle);
         glfwDestroyWindow(handle);
+
+        ImGui.destroyContext(imGuiContext);
 
         validWindow = false;
         logger.debug("Window ({}) cleaned up", Long.toHexString(handle));

@@ -51,6 +51,18 @@ public class Mechtatel implements IMechtatelForMttWindow {
             glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
         }
 
+        String imguiLibFilename;
+        switch (PlatformInfo.PLATFORM) {
+            case "windows" -> imguiLibFilename = "imgui-java64.dll";
+            case "linux" -> imguiLibFilename = "libimgui-java64.so";
+            case "macos" -> imguiLibFilename = "libimgui-java64.dylib";
+            default -> throw new IllegalArgumentException(
+                    "ImGui is not supported on this platform: " + PlatformInfo.PLATFORM);
+        }
+        String imguiLibFilepath = Objects.requireNonNull(
+                this.getClass().getResource("/Bin/" + imguiLibFilename)).getFile();
+        System.load(imguiLibFilepath);
+
         long alcDevice = alcOpenDevice((ByteBuffer) null);
         if (alcDevice == 0) {
             throw new RuntimeException("Failed to open default OpenAL device");

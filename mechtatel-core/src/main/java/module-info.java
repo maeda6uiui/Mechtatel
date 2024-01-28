@@ -14,6 +14,7 @@ module com.github.maeda6uiui.mechtatel.core {
     requires org.lwjgl.stb;
     requires org.lwjgl.assimp;
     requires org.lwjgl.openal;
+    requires imgui.binding;
     requires jakarta.validation;
 
     exports com.github.maeda6uiui.mechtatel.core;

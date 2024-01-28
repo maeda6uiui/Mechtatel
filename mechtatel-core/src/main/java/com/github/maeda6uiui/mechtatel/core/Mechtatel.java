@@ -40,10 +40,12 @@ public class Mechtatel implements IMechtatelForMttWindow {
     private List<MttWindow> newWindowsQueue;
 
     private void initMechtatel(MttSettings settings) {
+        //Initialize GLFW
         if (!glfwInit()) {
             throw new RuntimeException("Failed to initialize GLFW");
         }
 
+        //Set window hints
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         if (settings.windowSettings.resizable) {
             glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
@@ -51,6 +53,7 @@ public class Mechtatel implements IMechtatelForMttWindow {
             glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
         }
 
+        //Load ImGui library
         String imguiLibFilename;
         switch (PlatformInfo.PLATFORM) {
             case "windows" -> imguiLibFilename = "imgui-java64.dll";
@@ -63,6 +66,7 @@ public class Mechtatel implements IMechtatelForMttWindow {
                 this.getClass().getResource("/Bin/" + imguiLibFilename)).getFile();
         System.load(imguiLibFilepath);
 
+        //Set up OpenAL
         long alcDevice = alcOpenDevice((ByteBuffer) null);
         if (alcDevice == 0) {
             throw new RuntimeException("Failed to open default OpenAL device");
@@ -77,14 +81,18 @@ public class Mechtatel implements IMechtatelForMttWindow {
         alcMakeContextCurrent(alcContext);
         AL.createCapabilities(deviceCaps);
 
+        //Set up Libbulletjme
         NativeLibraryLoader.loadLibbulletjme(
                 true,
                 new File(Objects.requireNonNull(this.getClass().getResource("/Bin")).getFile()),
                 "Release",
                 "Sp"
         );
+        PhysicalObjects.init(PhysicsSpace.BroadphaseType.DBVT);
 
+        //Set up for Vulkan
         if (settings.renderingSettings.engine == RenderingEngine.VULKAN) {
+            //Load shaderc library
             String shadercLibFilename;
             switch (PlatformInfo.PLATFORM) {
                 case "windows" -> shadercLibFilename = "shaderc_shared.dll";
@@ -98,22 +106,27 @@ public class Mechtatel implements IMechtatelForMttWindow {
                     this.getClass().getResource("/Bin/" + shadercLibFilename)).getFile();
             System.load(shadercLibFilepath);
 
+            //Create vulkan instance
             MttVulkanInstance.create(settings.vulkanSettings, false);
         }
 
+        //Set image format
         MttTexture.setImageFormat(settings.renderingSettings.imageFormat);
 
-        PhysicalObjects.init(PhysicsSpace.BroadphaseType.DBVT);
-
+        //Set frames per second and calculate seconds per frame
         fps = settings.systemSettings.fps;
         secondsPerFrame = 1.0f / fps;
 
+        //Create list for windows
         windows = new ArrayList<>();
+        //Create list to use as a queue for new windows
         newWindowsQueue = new ArrayList<>();
 
+        //Create initial window
         initialWindow = new MttWindow(this, settings);
         windows.add(initialWindow);
 
+        //Call onInit handler
         this.onInit();
     }
 
@@ -154,10 +167,14 @@ public class Mechtatel implements IMechtatelForMttWindow {
 
         logger.info("Starting the main loop...");
 
+        //Continue until all windows are closed
         while (!windows.isEmpty()) {
             double currentTime = glfwGetTime();
             double elapsedTime = currentTime - lastTime;
+
+            //Update windows if seconds per frame is elapsed
             if (elapsedTime >= secondsPerFrame) {
+                //Clean up and remove windows that are flagged as closed
                 Iterator<MttWindow> it = windows.iterator();
                 while (it.hasNext()) {
                     MttWindow window = it.next();
@@ -167,14 +184,19 @@ public class Mechtatel implements IMechtatelForMttWindow {
                     }
                 }
 
+                //Update physics simulation
                 PhysicalObjects.get().ifPresent(v -> v.updatePhysicsSpace((float) elapsedTime));
 
+                //Call update handler for each window
                 windows.forEach(MttWindow::update);
+
+                //Add window to queue if window creation is requested
                 if (!newWindowsQueue.isEmpty()) {
                     windows.addAll(newWindowsQueue);
                     newWindowsQueue.clear();
                 }
 
+                //Set current time for the next frame
                 lastTime = glfwGetTime();
             }
 

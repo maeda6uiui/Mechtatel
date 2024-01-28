@@ -105,8 +105,10 @@ public class MttWindow {
             int width,
             int height,
             String title) {
+        //Get unique ID for this window
         uniqueID = UUID.randomUUID().toString();
 
+        //Create window
         handle = glfwCreateWindow(width, height, title, NULL, NULL);
         if (handle == NULL) {
             throw new RuntimeException("Failed to create a window");
@@ -116,26 +118,36 @@ public class MttWindow {
         this.height = height;
         this.title = title;
 
+        //Set interface of Mechtatel
         this.mtt = mtt;
+
+        //Set up Vulkan implementation
         vulkanImpl = new MttVulkanImpl(handle, settings.vulkanSettings);
 
+        //Set up keyboard and mouse
         keyboard = new Keyboard();
         mouse = new Mouse();
         fixCursorFlag = false;
+
+        //Set flags
         mustRecreate = false;
         validWindow = true;
 
+        //Set callbacks
         glfwSetFramebufferSizeCallback(handle, this::framebufferResizeCallback);
         glfwSetKeyCallback(handle, this::keyCallback);
         glfwSetMouseButtonCallback(handle, this::mouseButtonCallback);
         glfwSetCursorPosCallback(handle, this::cursorPositionCallback);
 
+        //Create default screen
         defaultScreen = new MttScreen(vulkanImpl, new MttScreen.MttScreenCreateInfo());
         screens = new ArrayList<>();
         screens.add(defaultScreen);
 
+        //Create list for 3D sounds
         sounds3D = new ArrayList<>();
 
+        //Set up ImGui
         imguiContext = ImGui.createContext();
         ImGui.setCurrentContext(imguiContext);
         ImGuiIO io = ImGui.getIO();
@@ -146,8 +158,10 @@ public class MttWindow {
         ByteBuffer fontBuffer = fontAtlas.getTexDataAsRGBA32(new ImInt(width), new ImInt(height));
         imguiFontTexture = new MttTexture(vulkanImpl, defaultScreen, fontBuffer, width, height);
 
+        //Output debug log
         logger.debug("Window ({}) successfully created", Long.toHexString(handle));
 
+        //Call onCreate handler
         mtt.onCreate(this);
     }
 

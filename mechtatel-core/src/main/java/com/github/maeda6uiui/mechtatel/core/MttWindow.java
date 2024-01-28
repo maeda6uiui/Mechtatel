@@ -44,7 +44,7 @@ public class MttWindow {
     private IMechtatelForMttWindow mtt;
     private MttVulkanImpl vulkanImpl;
 
-    private ImGuiContext imGuiContext;
+    private ImGuiContext imguiContext;
     private MttTexture imguiFontTexture;
 
     private long handle;
@@ -136,8 +136,8 @@ public class MttWindow {
 
         sounds3D = new ArrayList<>();
 
-        imGuiContext = ImGui.createContext();
-        ImGui.setCurrentContext(imGuiContext);
+        imguiContext = ImGui.createContext();
+        ImGui.setCurrentContext(imguiContext);
         ImGuiIO io = ImGui.getIO();
         io.setIniFilename(null);
         io.setDisplaySize(width, height);
@@ -170,7 +170,7 @@ public class MttWindow {
             mtt.onRecreate(this, width, height);
         }
 
-        ImGui.setCurrentContext(imGuiContext);
+        ImGui.setCurrentContext(imguiContext);
         ImGui.newFrame();
         ImGui.begin("Hello");
         ImGui.end();
@@ -213,7 +213,7 @@ public class MttWindow {
         glfwFreeCallbacks(handle);
         glfwDestroyWindow(handle);
 
-        ImGui.destroyContext(imGuiContext);
+        ImGui.destroyContext(imguiContext);
 
         validWindow = false;
         logger.debug("Window ({}) cleaned up", Long.toHexString(handle));

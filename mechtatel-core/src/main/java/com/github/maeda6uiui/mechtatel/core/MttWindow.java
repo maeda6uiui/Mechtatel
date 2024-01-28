@@ -12,6 +12,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import imgui.ImFontAtlas;
 import imgui.ImGui;
 import imgui.ImGuiIO;
+import imgui.flag.ImGuiKey;
 import imgui.internal.ImGuiContext;
 import imgui.type.ImInt;
 import jakarta.validation.constraints.NotNull;
@@ -71,16 +72,6 @@ public class MttWindow {
         mustRecreate = true;
     }
 
-    private void keyCallback(long window, int key, int scancode, int action, int mods) {
-        boolean pressingFlag = action == GLFW_PRESS || action == GLFW_REPEAT;
-        keyboard.setPressingFlag(key, pressingFlag);
-    }
-
-    private void mouseButtonCallback(long window, int button, int action, int mods) {
-        boolean pressingFlag = action == GLFW_PRESS;
-        mouse.setPressingFlag(button, pressingFlag);
-    }
-
     private void cursorPositionCallback(long window, double xpos, double ypos) {
         mouse.setCursorPos((int) xpos, (int) ypos);
 
@@ -134,9 +125,8 @@ public class MttWindow {
         validWindow = true;
 
         //Set callbacks
+        //Key and mouse callbacks are set later on
         glfwSetFramebufferSizeCallback(handle, this::framebufferResizeCallback);
-        glfwSetKeyCallback(handle, this::keyCallback);
-        glfwSetMouseButtonCallback(handle, this::mouseButtonCallback);
         glfwSetCursorPosCallback(handle, this::cursorPositionCallback);
 
         //Create default screen
@@ -147,16 +137,78 @@ public class MttWindow {
         //Create list for 3D sounds
         sounds3D = new ArrayList<>();
 
-        //Set up ImGui
+        //Set up ImGui =====
+        //Create context and make it current
         imguiContext = ImGui.createContext();
         ImGui.setCurrentContext(imguiContext);
+
+        //Get IO
         ImGuiIO io = ImGui.getIO();
+
+        //Not create ini file
         io.setIniFilename(null);
+        //Set window size
         io.setDisplaySize(width, height);
 
+        //Create texture for ImGui fonts
         ImFontAtlas fontAtlas = io.getFonts();
         ByteBuffer fontBuffer = fontAtlas.getTexDataAsRGBA32(new ImInt(width), new ImInt(height));
         imguiFontTexture = new MttTexture(vulkanImpl, defaultScreen, fontBuffer, width, height);
+
+        //Set key map
+        io.setKeyMap(ImGuiKey.Tab, GLFW_KEY_TAB);
+        io.setKeyMap(ImGuiKey.LeftArrow, GLFW_KEY_LEFT);
+        io.setKeyMap(ImGuiKey.RightArrow, GLFW_KEY_RIGHT);
+        io.setKeyMap(ImGuiKey.UpArrow, GLFW_KEY_UP);
+        io.setKeyMap(ImGuiKey.DownArrow, GLFW_KEY_DOWN);
+        io.setKeyMap(ImGuiKey.PageUp, GLFW_KEY_PAGE_UP);
+        io.setKeyMap(ImGuiKey.PageDown, GLFW_KEY_PAGE_DOWN);
+        io.setKeyMap(ImGuiKey.Home, GLFW_KEY_HOME);
+        io.setKeyMap(ImGuiKey.End, GLFW_KEY_END);
+        io.setKeyMap(ImGuiKey.Insert, GLFW_KEY_INSERT);
+        io.setKeyMap(ImGuiKey.Delete, GLFW_KEY_DELETE);
+        io.setKeyMap(ImGuiKey.Backspace, GLFW_KEY_BACKSPACE);
+        io.setKeyMap(ImGuiKey.Space, GLFW_KEY_SPACE);
+        io.setKeyMap(ImGuiKey.Enter, GLFW_KEY_ENTER);
+        io.setKeyMap(ImGuiKey.Escape, GLFW_KEY_ESCAPE);
+        io.setKeyMap(ImGuiKey.KeyPadEnter, GLFW_KEY_KP_ENTER);
+
+        //Set key callback
+        glfwSetKeyCallback(handle, (handle, key, scancode, action, mods) -> {
+            boolean pressingFlag = action == GLFW_PRESS || action == GLFW_REPEAT;
+            keyboard.setPressingFlag(key, pressingFlag);
+
+            if (action == GLFW_PRESS) {
+                io.setKeysDown(key, true);
+            } else if (action == GLFW_RELEASE) {
+                io.setKeysDown(key, false);
+            }
+            io.setKeyCtrl(io.getKeysDown(GLFW_KEY_LEFT_CONTROL) || io.getKeysDown(GLFW_KEY_RIGHT_CONTROL));
+            io.setKeyShift(io.getKeysDown(GLFW_KEY_LEFT_SHIFT) || io.getKeysDown(GLFW_KEY_RIGHT_SHIFT));
+            io.setKeyAlt(io.getKeysDown(GLFW_KEY_LEFT_ALT) || io.getKeysDown(GLFW_KEY_RIGHT_ALT));
+            io.setKeySuper(io.getKeysDown(GLFW_KEY_LEFT_SUPER) || io.getKeysDown(GLFW_KEY_RIGHT_SUPER));
+        });
+
+        //Set mouse callback
+        glfwSetMouseButtonCallback(handle, (handle, button, action, mods) -> {
+            boolean pressingFlag = action == GLFW_PRESS;
+            mouse.setPressingFlag(button, pressingFlag);
+
+            if (action == GLFW_PRESS) {
+                io.setMouseDown(button, true);
+            } else if (action == GLFW_RELEASE) {
+                io.setMouseDown(button, false);
+            }
+        });
+
+        //Set char callback
+        glfwSetCharCallback(handle, (handle, c) -> {
+            if (!io.getWantCaptureKeyboard()) {
+                return;
+            }
+            io.addInputCharacter(c);
+        });
+        //==========
 
         //Output debug log
         logger.debug("Window ({}) successfully created", Long.toHexString(handle));

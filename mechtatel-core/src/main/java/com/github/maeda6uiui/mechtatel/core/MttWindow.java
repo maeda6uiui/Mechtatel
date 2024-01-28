@@ -230,6 +230,10 @@ public class MttWindow {
                 }
             });
 
+            ImGui.setCurrentContext(imguiContext);
+            ImGuiIO io = ImGui.getIO();
+            io.setDisplaySize(width, height);
+
             mustRecreate = false;
             logger.debug("Window ({}) recreated", Long.toHexString(handle));
 

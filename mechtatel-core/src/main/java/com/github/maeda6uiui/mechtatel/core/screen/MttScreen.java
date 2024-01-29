@@ -254,6 +254,14 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     /**
+     * Requests the screen to render ImGui components.
+     * ImGui context for this operation must be made current before calling this method.
+     */
+    public void requestImGuiRendering() {
+        screen.setImDrawData(ImGui.getDrawData());
+    }
+
+    /**
      * Creates a buffered image.
      * Note that in most cases depth image is not available and may lead to error.
      *

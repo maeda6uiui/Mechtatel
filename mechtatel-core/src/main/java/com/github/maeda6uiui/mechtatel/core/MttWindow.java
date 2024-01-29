@@ -152,8 +152,10 @@ public class MttWindow {
 
         //Create texture for ImGui fonts
         ImFontAtlas fontAtlas = io.getFonts();
-        ByteBuffer fontBuffer = fontAtlas.getTexDataAsRGBA32(new ImInt(width), new ImInt(height));
-        imguiFontTexture = new MttTexture(vulkanImpl, defaultScreen, fontBuffer, width, height);
+        var fontTexWidth = new ImInt();
+        var fontTexHeight = new ImInt();
+        ByteBuffer fontBuffer = fontAtlas.getTexDataAsRGBA32(fontTexWidth, fontTexHeight);
+        imguiFontTexture = new MttTexture(vulkanImpl, defaultScreen, fontBuffer, fontTexWidth.get(), fontTexHeight.get());
 
         //Set key map
         io.setKeyMap(ImGuiKey.Tab, GLFW_KEY_TAB);

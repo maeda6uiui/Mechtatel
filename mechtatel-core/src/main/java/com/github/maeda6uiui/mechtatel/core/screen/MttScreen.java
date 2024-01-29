@@ -11,7 +11,6 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.screen.animation.AnimationInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.animation.MttAnimation;
 import com.github.maeda6uiui.mechtatel.core.screen.component.*;
-import com.github.maeda6uiui.mechtatel.core.screen.component.gui.*;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
@@ -145,7 +144,6 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     private boolean shouldAutoUpdateCameraAspect;
 
     private List<MttComponent> components;
-    private List<MttGuiComponent> guiComponents;
     private List<TextureOperation> textureOperations;
     private List<MttTexture> textures;
 
@@ -195,7 +193,6 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         spotlights = new ArrayList<>();
 
         components = new ArrayList<>();
-        guiComponents = new ArrayList<>();
         textureOperations = new ArrayList<>();
         textures = new ArrayList<>();
         animations = new HashMap<>();
@@ -712,66 +709,5 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     public MttFont createFont(Font font, boolean antiAlias, Color fontColor, String requiredChars) {
         return new MttFont(vulkanImpl, this, font, antiAlias, fontColor, requiredChars);
-    }
-
-    //GUI components ==========
-    @Override
-    public void addGuiComponent(MttGuiComponent c) {
-        guiComponents.add(c);
-    }
-
-    public boolean deleteGuiComponent(MttGuiComponent guiComponent) {
-        if (!guiComponents.contains(guiComponent)) {
-            return false;
-        }
-
-        guiComponent.cleanup();
-        return guiComponents.remove(guiComponent);
-    }
-
-    public List<MttGuiComponent> getGuiComponents() {
-        return guiComponents;
-    }
-
-    public MttButton createButton(MttButton.MttButtonCreateInfo createInfo) {
-        return new MttButton(vulkanImpl, this, createInfo);
-    }
-
-    public MttCheckBox createCheckBox(MttCheckBox.MttCheckBoxCreateInfo createInfo) {
-        return new MttCheckBox(vulkanImpl, this, createInfo);
-    }
-
-    public MttVerticalScrollBar createVerticalScrollBar(MttVerticalScrollBar.MttVerticalScrollBarCreateInfo createInfo) {
-        return new MttVerticalScrollBar(vulkanImpl, this, createInfo);
-    }
-
-    public MttHorizontalScrollBar createHorizontalScrollBar(
-            MttHorizontalScrollBar.MttHorizontalScrollBarCreateInfo createInfo) {
-        return new MttHorizontalScrollBar(vulkanImpl, this, createInfo);
-    }
-
-    public MttListBox createListBox(MttListBox.MttListBoxCreateInfo createInfo) {
-        return new MttListBox(vulkanImpl, this, createInfo);
-    }
-
-    public MttLabel createLabel(MttLabel.MttLabelCreateInfo createInfo) {
-        return new MttLabel(vulkanImpl, this, createInfo);
-    }
-
-    public MttTextField createTextField(MttTextField.MttTextFieldCreateInfo createInfo) {
-        return new MttTextField(vulkanImpl, this, createInfo);
-    }
-
-    public MttTextArea createTextArea(MttTextArea.MttTextAreaCreateInfo createInfo) {
-        return new MttTextArea(vulkanImpl, this, createInfo);
-    }
-
-    public boolean removeGuiComponent(MttGuiComponent guiComponent) {
-        if (!guiComponents.contains(guiComponent)) {
-            return false;
-        }
-
-        guiComponent.cleanup();
-        return guiComponents.remove(guiComponent);
     }
 }

@@ -25,7 +25,6 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
@@ -247,22 +246,8 @@ public class MttWindow {
         ImGui.begin("Hello");
         ImGui.end();
 
-        Map<KeyCode, Integer> keyboardPressingCounts = keyboard.getPressingCounts();
         screens.forEach(screen -> {
-            screen.getGuiComponents().forEach(c -> {
-                c.update(
-                        this.getCursorPosX(),
-                        this.getCursorPosY(),
-                        this.getWidth(),
-                        this.getHeight(),
-                        this.getMousePressingCount(MouseCode.LEFT),
-                        this.getMousePressingCount(MouseCode.MIDDLE),
-                        this.getMousePressingCount(MouseCode.RIGHT),
-                        keyboardPressingCounts
-                );
-            });
             screen.getAnimations().values().forEach(MttAnimation::update);
-
             screen.removeGarbageComponents();
             screen.removeGarbageTextures();
             screen.removeGarbageTextureOperations();

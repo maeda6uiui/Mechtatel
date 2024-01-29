@@ -6,15 +6,12 @@ import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.MouseCode;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.animation.MttAnimation;
-import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.sound.MttSound;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
-import imgui.ImFontAtlas;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.flag.ImGuiKey;
 import imgui.internal.ImGuiContext;
-import imgui.type.ImInt;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -45,7 +41,6 @@ public class MttWindow {
     private MttVulkanImpl vulkanImpl;
 
     private ImGuiContext imguiContext;
-    private MttTexture imguiFontTexture;
 
     private long handle;
     private int width;
@@ -148,13 +143,6 @@ public class MttWindow {
         io.setIniFilename(null);
         //Set window size
         io.setDisplaySize(width, height);
-
-        //Create texture for ImGui fonts
-        ImFontAtlas fontAtlas = io.getFonts();
-        var fontTexWidth = new ImInt();
-        var fontTexHeight = new ImInt();
-        ByteBuffer fontBuffer = fontAtlas.getTexDataAsRGBA32(fontTexWidth, fontTexHeight);
-        imguiFontTexture = new MttTexture(vulkanImpl, defaultScreen, fontBuffer, fontTexWidth.get(), fontTexHeight.get());
 
         //Set key map
         io.setKeyMap(ImGuiKey.Tab, GLFW_KEY_TAB);

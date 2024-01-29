@@ -20,6 +20,10 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.Spotligh
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
+import imgui.ImFontAtlas;
+import imgui.ImGui;
+import imgui.ImGuiIO;
+import imgui.type.ImInt;
 import jakarta.validation.constraints.NotNull;
 import org.joml.*;
 
@@ -30,6 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -230,6 +235,22 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         if (vulkanImpl != null) {
             screen.recreate(vulkanImpl.getSwapchainImageFormat(), vulkanImpl.getSwapchainExtent());
         }
+    }
+
+    /**
+     * Creates a texture for ImGui fonts.
+     * ImGui context for this operation must be made current before calling this method.
+     *
+     * @return Texture for ImGui fonts
+     */
+    public MttTexture createImGuiFontTexture() {
+        ImGuiIO io = ImGui.getIO();
+        ImFontAtlas fontAtlas = io.getFonts();
+        var fontTexWidth = new ImInt();
+        var fontTexHeight = new ImInt();
+        ByteBuffer fontBuffer = fontAtlas.getTexDataAsRGBA32(fontTexWidth, fontTexHeight);
+
+        return new MttTexture(vulkanImpl, this, fontBuffer, fontTexWidth.get(), fontTexHeight.get());
     }
 
     /**

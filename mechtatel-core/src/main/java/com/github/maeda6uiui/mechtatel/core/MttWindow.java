@@ -241,11 +241,6 @@ public class MttWindow {
             mtt.onRecreate(this, width, height);
         }
 
-        ImGui.setCurrentContext(imguiContext);
-        ImGui.newFrame();
-        ImGui.begin("Hello");
-        ImGui.end();
-
         screens.forEach(screen -> {
             screen.getAnimations().values().forEach(MttAnimation::update);
             screen.removeGarbageComponents();
@@ -274,6 +269,10 @@ public class MttWindow {
 
         validWindow = false;
         logger.debug("Window ({}) cleaned up", Long.toHexString(handle));
+    }
+
+    public void makeImGuiContextCurrent() {
+        ImGui.setCurrentContext(imguiContext);
     }
 
     public void close() {

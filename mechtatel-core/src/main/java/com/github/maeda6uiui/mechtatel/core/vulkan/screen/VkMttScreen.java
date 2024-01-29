@@ -544,7 +544,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         }
     }
 
-    private void renderImGuiComponents(VkCommandBuffer commandBuffer) {
+    private void drawImGuiComponents(VkCommandBuffer commandBuffer) {
         if (imDrawData == null) {
             return;
         }
@@ -559,7 +559,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
         this.runAlbedoNabor(commandBuffer, backgroundColor, camera, components);
         this.runPropertiesNabor(commandBuffer, camera, components);
-        this.renderImGuiComponents(commandBuffer);
+        this.drawImGuiComponents(commandBuffer);
         CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
     }
 

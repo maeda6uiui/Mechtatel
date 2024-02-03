@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
@@ -51,14 +52,18 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
         }
     }
 
+    //Properties
     private Matrix4f mat;
     private boolean visible;
     private boolean twoDComponent;
     private boolean castShadow;
     private int drawOrder;
 
+    //Vulkan resources
     private List<VkMttComponent> vkComponents;
+    private List<VkMttTexture> vkTextures;
 
+    //Flags
     private boolean isValid;
 
     private void setInitialProperties(MttComponentCreateInfo createInfo) {
@@ -74,6 +79,7 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
         screen.addComponent(this);
 
         vkComponents = new ArrayList<>();
+        vkTextures = new ArrayList<>();
 
         isValid = true;
     }
@@ -81,6 +87,7 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
     public void cleanup() {
         if (isValid) {
             vkComponents.forEach(VkMttComponent::cleanup);
+            vkTextures.forEach(VkMttTexture::cleanup);
         }
         isValid = false;
     }
@@ -100,6 +107,18 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
 
     public List<VkMttComponent> getVulkanComponents() {
         return vkComponents;
+    }
+
+    protected void associateVulkanTextures(VkMttTexture... ts) {
+        this.vkTextures.addAll(Arrays.asList(ts));
+    }
+
+    protected void associateVulkanTextures(List<VkMttTexture> ts) {
+        this.vkTextures.addAll(ts);
+    }
+
+    public List<VkMttTexture> getVulkanTextures() {
+        return vkTextures;
     }
 
     public boolean isValid() {

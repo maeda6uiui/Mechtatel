@@ -3,9 +3,9 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
@@ -115,7 +115,7 @@ public class VkMttTexturedQuadSingleTextureSet extends VkMttComponent {
     }
 
     public void createBuffers() {
-        BufferCreator.BufferInfo bufferInfo = BufferCreator.createVertexBuffer3DUV(
+        BufferUtils.BufferInfo bufferInfo = BufferUtils.createVertexBuffer3DUV(
                 device,
                 commandPool,
                 graphicsQueue,
@@ -134,7 +134,7 @@ public class VkMttTexturedQuadSingleTextureSet extends VkMttComponent {
             indices.add(i);
         }
 
-        bufferInfo = BufferCreator.createIndexBuffer(
+        bufferInfo = BufferUtils.createIndexBuffer(
                 device,
                 commandPool,
                 graphicsQueue,

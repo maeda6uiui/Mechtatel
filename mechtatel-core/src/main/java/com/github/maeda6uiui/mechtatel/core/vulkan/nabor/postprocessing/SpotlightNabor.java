@@ -1,9 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.LightingInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.SpotlightUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
@@ -34,21 +34,21 @@ public class SpotlightNabor extends PostProcessingNabor {
     protected void createUniformBuffers(int descriptorCount) {
         VkDevice device = this.getDevice();
 
-        var cameraUBOInfos = BufferCreator.createUBOBuffers(
+        var cameraUBOInfos = BufferUtils.createUBOBuffers(
                 device, descriptorCount, CameraUBO.SIZEOF);
         for (var cameraUBOInfo : cameraUBOInfos) {
             this.getUniformBuffers().add(cameraUBOInfo.buffer);
             this.getUniformBufferMemories().add(cameraUBOInfo.bufferMemory);
         }
 
-        var lightingInfoUBOInfos = BufferCreator.createUBOBuffers(
+        var lightingInfoUBOInfos = BufferUtils.createUBOBuffers(
                 device, descriptorCount, LightingInfoUBO.SIZEOF);
         for (var lightingInfoUBOInfo : lightingInfoUBOInfos) {
             this.getUniformBuffers().add(lightingInfoUBOInfo.buffer);
             this.getUniformBufferMemories().add(lightingInfoUBOInfo.bufferMemory);
         }
 
-        var lightUBOInfos = BufferCreator.createUBOBuffers(
+        var lightUBOInfos = BufferUtils.createUBOBuffers(
                 device, descriptorCount, SpotlightUBO.SIZEOF * MAX_NUM_LIGHTS);
         for (var lightUBOInfo : lightUBOInfos) {
             this.getUniformBuffers().add(lightUBOInfo.buffer);

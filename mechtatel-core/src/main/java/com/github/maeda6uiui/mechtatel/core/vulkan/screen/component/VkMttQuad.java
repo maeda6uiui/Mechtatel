@@ -2,8 +2,8 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
@@ -39,7 +39,7 @@ public class VkMttQuad extends VkMttComponent {
             throw new RuntimeException("Number of vertices must be 4");
         }
 
-        BufferCreator.BufferInfo bufferInfo = BufferCreator.createVertexBuffer3D(
+        BufferUtils.BufferInfo bufferInfo = BufferUtils.createVertexBuffer3D(
                 device, commandPool, graphicsQueue, vertices);
         vertexBuffer = bufferInfo.buffer;
         vertexBufferMemory = bufferInfo.bufferMemory;
@@ -64,7 +64,7 @@ public class VkMttQuad extends VkMttComponent {
         }
         indexCount = indices.size();
 
-        bufferInfo = BufferCreator.createIndexBuffer(device, commandPool, graphicsQueue, indices);
+        bufferInfo = BufferUtils.createIndexBuffer(device, commandPool, graphicsQueue, indices);
         indexBuffer = bufferInfo.buffer;
         indexBufferMemory = bufferInfo.bufferMemory;
     }

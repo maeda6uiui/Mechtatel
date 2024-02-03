@@ -1,8 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.MergeScenesInfoUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -135,7 +135,7 @@ public class MergeScenesNabor extends Nabor {
     protected void createUniformBuffers(int descriptorCount) {
         VkDevice device = this.getDevice();
 
-        var mergeScenesInfoUBOInfos = BufferCreator.createUBOBuffers(device, descriptorCount, SIZEOF_INT);
+        var mergeScenesInfoUBOInfos = BufferUtils.createUBOBuffers(device, descriptorCount, SIZEOF_INT);
         for (var mergeScenesInfoUBOInfo : mergeScenesInfoUBOInfos) {
             this.getUniformBuffers().add(mergeScenesInfoUBOInfo.buffer);
             this.getUniformBufferMemories().add(mergeScenesInfoUBOInfo.bufferMemory);

@@ -1,11 +1,10 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan.creator;
+package com.github.maeda6uiui.mechtatel.core.vulkan.util;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.util.MemcpyUtils;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.MemoryUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -17,11 +16,11 @@ import java.util.List;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Creates buffers
+ * Utility methods relating to buffers
  *
  * @author maeda6uiui
  */
-public class BufferCreator {
+public class BufferUtils {
     public static class BufferInfo {
         public long buffer;
         public long bufferMemory;

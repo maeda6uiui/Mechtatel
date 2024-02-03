@@ -2,8 +2,8 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
@@ -27,7 +27,7 @@ public class VkMttLine extends VkMttComponent {
     private long vertexBufferMemory;
 
     private void createBuffer(long commandPool, VkQueue graphicsQueue, List<MttVertex> vertices) {
-        BufferCreator.BufferInfo bufferInfo = BufferCreator.createVertexBuffer3D(
+        BufferUtils.BufferInfo bufferInfo = BufferUtils.createVertexBuffer3D(
                 device,
                 commandPool,
                 graphicsQueue,

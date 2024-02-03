@@ -1,8 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.FogUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
@@ -31,14 +31,14 @@ public class FogNabor extends PostProcessingNabor {
     protected void createUniformBuffers(int descriptorCount) {
         VkDevice device = this.getDevice();
 
-        var cameraUBOInfos = BufferCreator.createUBOBuffers(
+        var cameraUBOInfos = BufferUtils.createUBOBuffers(
                 device, descriptorCount, CameraUBO.SIZEOF);
         for (var cameraUBOInfo : cameraUBOInfos) {
             this.getUniformBuffers().add(cameraUBOInfo.buffer);
             this.getUniformBufferMemories().add(cameraUBOInfo.bufferMemory);
         }
 
-        var fogUBOInfos = BufferCreator.createUBOBuffers(
+        var fogUBOInfos = BufferUtils.createUBOBuffers(
                 device, descriptorCount, FogUBO.SIZEOF);
         for (var fogUBOInfo : fogUBOInfos) {
             this.getUniformBuffers().add(fogUBOInfo.buffer);

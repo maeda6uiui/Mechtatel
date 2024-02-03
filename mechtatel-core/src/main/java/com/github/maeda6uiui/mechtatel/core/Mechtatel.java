@@ -102,7 +102,7 @@ public class Mechtatel implements IMechtatelForMttWindow {
         initialWindow = new MttWindow(this, settings);
         windows.add(initialWindow);
 
-        this.onInit();
+        this.onInit(initialWindow);
     }
 
     public Mechtatel(MttSettings settings) {
@@ -191,8 +191,10 @@ public class Mechtatel implements IMechtatelForMttWindow {
 
     /**
      * Called after the Mechtatel engine is initialized and the initial window is created.
+     *
+     * @param initialWindow Initial window
      */
-    public void onInit() {
+    public void onInit(MttWindow initialWindow) {
 
     }
 

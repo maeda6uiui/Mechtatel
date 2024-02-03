@@ -311,7 +311,6 @@ public class BufferUtils {
             long commandPool,
             VkQueue graphicsQueue,
             long vertexBuffer,
-            long dstOffset,
             List<MttVertexUV> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             long bufferSize = MttVertexUV.SIZEOF * vertices.size();
@@ -336,7 +335,7 @@ public class BufferUtils {
             }
             vkUnmapMemory(device, stagingBufferMemory);
 
-            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize, 0, dstOffset);
+            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize, 0, 0);
 
             vkDestroyBuffer(device, stagingBuffer, null);
             vkFreeMemory(device, stagingBufferMemory, null);
@@ -399,7 +398,6 @@ public class BufferUtils {
             long commandPool,
             VkQueue graphicsQueue,
             long indexBuffer,
-            long dstOffset,
             List<Integer> indices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             long bufferSize = Integer.BYTES * indices.size();
@@ -424,7 +422,7 @@ public class BufferUtils {
             }
             vkUnmapMemory(device, stagingBufferMemory);
 
-            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, indexBuffer, bufferSize, 0, dstOffset);
+            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, indexBuffer, bufferSize, 0, 0);
 
             vkDestroyBuffer(device, stagingBuffer, null);
             vkFreeMemory(device, stagingBufferMemory, null);

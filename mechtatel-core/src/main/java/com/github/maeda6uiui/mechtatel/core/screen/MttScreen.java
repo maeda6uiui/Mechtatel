@@ -212,7 +212,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     public void draw() {
         var vkComponents = new ArrayList<VkMttComponent>();
-        components.forEach(v -> v.getVulkanComponent().ifPresent(vkComponents::add));
+        components.forEach(v -> vkComponents.addAll(v.getVulkanComponents()));
 
         vulkanImpl.draw(
                 screen,

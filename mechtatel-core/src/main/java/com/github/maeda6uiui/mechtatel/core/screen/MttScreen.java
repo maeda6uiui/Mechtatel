@@ -23,6 +23,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import imgui.ImFontAtlas;
 import imgui.ImGui;
 import imgui.ImGuiIO;
+import imgui.internal.ImGuiContext;
 import imgui.type.ImInt;
 import jakarta.validation.constraints.NotNull;
 import org.joml.*;
@@ -134,6 +135,8 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     private MttVulkanImpl vulkanImpl;
     private VkMttScreen screen;
 
+    private ImGuiContext imguiContext;
+
     private Vector4f backgroundColor;
     private Camera camera;
     private Fog fog;
@@ -154,7 +157,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     private Map<String, MttAnimation> animations;
 
-    public MttScreen(MttVulkanImpl vulkanImpl, MttScreenCreateInfo createInfo) {
+    public MttScreen(MttVulkanImpl vulkanImpl, ImGuiContext imguiContext, MttScreenCreateInfo createInfo) {
         var dq = vulkanImpl.getDeviceAndQueues();
         screen = new VkMttScreen(
                 dq.device(),
@@ -183,6 +186,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         shouldAutoUpdateCameraAspect = true;
 
         this.vulkanImpl = vulkanImpl;
+        this.imguiContext = imguiContext;
 
         backgroundColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
         parallelLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
@@ -584,6 +588,10 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     public List<MttComponent> getComponents() {
         return components;
+    }
+
+    public MttImGui createImGui() {
+        return new MttImGui(vulkanImpl, this, imguiContext);
     }
 
     public MttModel createModel(@NotNull URL modelResource) throws URISyntaxException, IOException {

@@ -123,11 +123,6 @@ public class MttWindow {
         glfwSetFramebufferSizeCallback(handle, this::framebufferResizeCallback);
         glfwSetCursorPosCallback(handle, this::cursorPositionCallback);
 
-        //Create default screen
-        defaultScreen = new MttScreen(vulkanImpl, new MttScreen.MttScreenCreateInfo());
-        screens = new ArrayList<>();
-        screens.add(defaultScreen);
-
         //Create list for 3D sounds
         sounds3D = new ArrayList<>();
 
@@ -198,6 +193,11 @@ public class MttWindow {
             io.addInputCharacter(c);
         });
         //==========
+
+        //Create default screen
+        defaultScreen = new MttScreen(vulkanImpl, imguiContext, new MttScreen.MttScreenCreateInfo());
+        screens = new ArrayList<>();
+        screens.add(defaultScreen);
 
         //Output debug log
         logger.debug("Window ({}) successfully created", Long.toHexString(handle));
@@ -349,7 +349,7 @@ public class MttWindow {
     }
 
     public MttScreen createScreen(MttScreen.MttScreenCreateInfo createInfo) {
-        var screen = new MttScreen(vulkanImpl, createInfo);
+        var screen = new MttScreen(vulkanImpl, imguiContext, createInfo);
         screens.add(screen);
 
         return screen;

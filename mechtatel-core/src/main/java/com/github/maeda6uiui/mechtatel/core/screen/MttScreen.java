@@ -269,7 +269,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     /**
-     * Saves an underlying pixels to an image file.
+     * Saves underlying pixels to an image file.
      * Note that in most cases depth image is not available and may lead to error.
      *
      * @param imageType   Underlying image type to create an image from

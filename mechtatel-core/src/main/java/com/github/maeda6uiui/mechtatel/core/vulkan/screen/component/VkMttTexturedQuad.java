@@ -42,7 +42,7 @@ public class VkMttTexturedQuad extends VkMttComponent {
             throw new RuntimeException("Number of vertices must be 4");
         }
 
-        BufferUtils.BufferInfo bufferInfo = BufferUtils.createVertexBuffer3DUV(
+        BufferUtils.BufferInfo bufferInfo = BufferUtils.createVertexBufferUV(
                 device, commandPool, graphicsQueue, vertices);
         vertexBuffer = bufferInfo.buffer;
         vertexBufferMemory = bufferInfo.bufferMemory;

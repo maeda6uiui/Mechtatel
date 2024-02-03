@@ -204,7 +204,7 @@ public class BufferUtils {
         }
     }
 
-    public static BufferInfo createVertexBuffer3D(
+    public static BufferInfo createVertexBuffer(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -255,7 +255,7 @@ public class BufferUtils {
         }
     }
 
-    public static BufferInfo createVertexBuffer3DUV(
+    public static BufferInfo createVertexBufferUV(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -306,7 +306,7 @@ public class BufferUtils {
         }
     }
 
-    public static void updateVertexBuffer3DUV(
+    public static void updateVertexBufferUV(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,

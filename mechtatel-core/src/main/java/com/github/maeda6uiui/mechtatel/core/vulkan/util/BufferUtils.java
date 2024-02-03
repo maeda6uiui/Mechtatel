@@ -9,6 +9,7 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,6 +100,37 @@ public class BufferUtils {
             vkQueueWaitIdle(graphicsQueue);
 
             vkFreeCommandBuffers(device, commandPool, pCommandBuffer);
+        }
+    }
+
+    public static void updateBuffer(
+            VkDevice device, long commandPool, VkQueue graphicsQueue, long buffer, ByteBuffer data) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            long bufferSize = data.capacity();
+
+            LongBuffer pBuffer = stack.mallocLong(1);
+            LongBuffer pBufferMemory = stack.mallocLong(1);
+            createBuffer(
+                    device,
+                    bufferSize,
+                    VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                    pBuffer,
+                    pBufferMemory);
+            long stagingBuffer = pBuffer.get(0);
+            long stagingBufferMemory = pBufferMemory.get(0);
+
+            PointerBuffer ptr = stack.mallocPointer(1);
+            vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, ptr);
+            {
+                ptr.put(data);
+                ptr.rewind();
+            }
+            vkUnmapMemory(device, stagingBufferMemory);
+            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, buffer, bufferSize, 0, 0);
+
+            vkDestroyBuffer(device, stagingBuffer, null);
+            vkFreeMemory(device, stagingBufferMemory, null);
         }
     }
 

@@ -81,4 +81,16 @@ public class MttImGui extends MttComponent {
         );
         this.associateVulkanComponents(vkImGui);
     }
+
+    /**
+     * Declares ImGui controls.
+     * UI declaration has to be supplied every frame via this method.
+     *
+     * @param fImGuiDeclaration Runnable that declares ImGui controls
+     */
+    public void declare(Runnable fImGuiDeclaration) {
+        ImGui.setCurrentContext(context);
+        fImGuiDeclaration.run();
+        vkImGui.setDrawData(ImGui.getDrawData());
+    }
 }

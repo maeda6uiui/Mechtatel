@@ -40,6 +40,6 @@ public class MttSphere extends MttComponent {
                 screen.getVulkanScreen(),
                 center, radius, numVDivs, numHDivs, color
         );
-        this.associateVulkanComponent(vkSphere);
+        this.associateVulkanComponents(vkSphere);
     }
 }

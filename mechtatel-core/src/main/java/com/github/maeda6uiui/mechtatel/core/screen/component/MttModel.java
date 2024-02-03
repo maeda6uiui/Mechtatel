@@ -40,7 +40,7 @@ public class MttModel extends MttComponent {
                 screen.getVulkanScreen(),
                 modelResource
         );
-        this.associateVulkanComponent(vkModel);
+        this.associateVulkanComponents(vkModel);
     }
 
     public MttModel(MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen, MttModel srcModel) {
@@ -62,7 +62,7 @@ public class MttModel extends MttComponent {
                 dq.graphicsQueue(),
                 srcModel.vkModel
         );
-        this.associateVulkanComponent(vkModel);
+        this.associateVulkanComponents(vkModel);
     }
 
     public URI getModelResource() {

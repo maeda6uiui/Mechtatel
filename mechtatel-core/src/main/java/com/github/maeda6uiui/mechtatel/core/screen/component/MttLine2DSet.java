@@ -33,7 +33,7 @@ public class MttLine2DSet extends MttComponent {
                 dq.graphicsQueue(),
                 screen.getVulkanScreen()
         );
-        this.associateVulkanComponent(vkLineSet);
+        this.associateVulkanComponents(vkLineSet);
     }
 
     public MttLine2DSet add(MttVertex2D p1, MttVertex2D p2, float z) {

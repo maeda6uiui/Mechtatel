@@ -75,7 +75,7 @@ public class MttTexturedQuad2D extends MttComponent {
                 false,
                 vertices
         );
-        this.associateVulkanComponent(vkTexturedQuad);
+        this.associateVulkanComponents(vkTexturedQuad);
     }
 
     private void create(
@@ -91,7 +91,7 @@ public class MttTexturedQuad2D extends MttComponent {
                 texture.getVulkanTexture(),
                 vertices
         );
-        this.associateVulkanComponent(vkTexturedQuad);
+        this.associateVulkanComponents(vkTexturedQuad);
     }
 
     private void duplicate(
@@ -107,7 +107,7 @@ public class MttTexturedQuad2D extends MttComponent {
                 srcQuad.vkTexturedQuad,
                 vertices
         );
-        this.associateVulkanComponent(vkTexturedQuad);
+        this.associateVulkanComponents(vkTexturedQuad);
     }
 
     private static MttComponentCreateInfo generateCreateInfo() {

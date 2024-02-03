@@ -31,6 +31,6 @@ public class MttLine extends MttComponent {
                 screen.getVulkanScreen(),
                 v1, v2
         );
-        this.associateVulkanComponent(vkLine);
+        this.associateVulkanComponents(vkLine);
     }
 }

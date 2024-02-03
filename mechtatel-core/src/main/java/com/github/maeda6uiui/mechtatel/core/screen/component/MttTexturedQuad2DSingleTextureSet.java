@@ -47,7 +47,7 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
                 screen.getVulkanScreen(),
                 textureResource
         );
-        this.associateVulkanComponent(vkTexturedQuadSet);
+        this.associateVulkanComponents(vkTexturedQuadSet);
     }
 
     public MttTexturedQuad2DSingleTextureSet(MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen, MttTexture texture) {
@@ -61,7 +61,7 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
                 dq.graphicsQueue(),
                 texture.getVulkanTexture()
         );
-        this.associateVulkanComponent(vkTexturedQuadSet);
+        this.associateVulkanComponents(vkTexturedQuadSet);
     }
 
     public MttTexturedQuad2DSingleTextureSet add(

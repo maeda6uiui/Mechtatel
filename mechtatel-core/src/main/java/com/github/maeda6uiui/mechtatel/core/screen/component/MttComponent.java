@@ -7,7 +7,9 @@ import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Component
@@ -55,7 +57,7 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
     private boolean castShadow;
     private int drawOrder;
 
-    private VkMttComponent vkComponent;
+    private List<VkMttComponent> vkComponents;
 
     private boolean isValid;
 
@@ -71,12 +73,14 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
         this.setInitialProperties(createInfo);
         screen.addComponent(this);
 
+        vkComponents = new ArrayList<>();
+
         isValid = true;
     }
 
     public void cleanup() {
-        if (isValid && vkComponent != null) {
-            vkComponent.cleanup();
+        if (isValid) {
+            vkComponents.forEach(VkMttComponent::cleanup);
         }
         isValid = false;
     }
@@ -86,12 +90,16 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
         return Integer.compare(this.drawOrder, that.drawOrder);
     }
 
-    protected void associateVulkanComponent(VkMttComponent vkComponent) {
-        this.vkComponent = vkComponent;
+    protected void associateVulkanComponents(VkMttComponent... cs) {
+        this.vkComponents.addAll(Arrays.asList(cs));
     }
 
-    public Optional<VkMttComponent> getVulkanComponent() {
-        return Optional.ofNullable(vkComponent);
+    protected void associateVulkanComponents(List<VkMttComponent> cs) {
+        this.vkComponents.addAll(cs);
+    }
+
+    public List<VkMttComponent> getVulkanComponents() {
+        return vkComponents;
     }
 
     public boolean isValid() {

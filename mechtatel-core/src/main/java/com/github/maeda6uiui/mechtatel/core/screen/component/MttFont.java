@@ -51,7 +51,7 @@ public class MttFont extends MttComponent {
                 fontColor,
                 requiredChars
         );
-        this.associateVulkanComponent(vkMttFont);
+        this.associateVulkanComponents(vkMttFont);
     }
 
     public void clear() {

@@ -53,7 +53,7 @@ public class MttTexturedQuad extends MttComponent {
                 generateMipmaps,
                 Arrays.asList(v1, v2, v3, v4)
         );
-        this.associateVulkanComponent(vkTexturedQuad);
+        this.associateVulkanComponents(vkTexturedQuad);
     }
 
     public MttTexturedQuad(
@@ -75,7 +75,7 @@ public class MttTexturedQuad extends MttComponent {
                 srcQuad.vkTexturedQuad,
                 Arrays.asList(v1, v2, v3, v4)
         );
-        this.associateVulkanComponent(vkTexturedQuad);
+        this.associateVulkanComponents(vkTexturedQuad);
     }
 
     public MttTexturedQuad(
@@ -97,7 +97,7 @@ public class MttTexturedQuad extends MttComponent {
                 texture.getVulkanTexture(),
                 Arrays.asList(v1, v2, v3, v4)
         );
-        this.associateVulkanComponent(vkTexturedQuad);
+        this.associateVulkanComponents(vkTexturedQuad);
     }
 
     public void replaceTexture(MttTexture newTexture) {

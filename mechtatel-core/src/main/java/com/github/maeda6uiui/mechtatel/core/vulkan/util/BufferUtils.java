@@ -54,7 +54,15 @@ public class BufferUtils {
         }
     }
 
-    private static void copyBuffer(VkDevice device, long commandPool, VkQueue graphicsQueue, long srcBuffer, long dstBuffer, long size) {
+    private static void copyBuffer(
+            VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue,
+            long srcBuffer,
+            long dstBuffer,
+            long size,
+            long srcOffset,
+            long dstOffset) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkCommandBufferAllocateInfo allocInfo = VkCommandBufferAllocateInfo.calloc(stack);
             allocInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO);
@@ -74,6 +82,8 @@ public class BufferUtils {
             {
                 VkBufferCopy.Buffer copyRegion = VkBufferCopy.calloc(1, stack);
                 copyRegion.size(size);
+                copyRegion.srcOffset(srcOffset);
+                copyRegion.dstOffset(dstOffset);
                 vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, copyRegion);
             }
             vkEndCommandBuffer(commandBuffer);
@@ -130,7 +140,7 @@ public class BufferUtils {
             long vertexBuffer = pBuffer.get(0);
             long vertexBufferMemory = pBufferMemory.get(0);
 
-            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize);
+            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize, 0, 0);
 
             vkDestroyBuffer(device, stagingBuffer, null);
             vkFreeMemory(device, stagingBufferMemory, null);
@@ -181,7 +191,7 @@ public class BufferUtils {
             long vertexBuffer = pBuffer.get(0);
             long vertexBufferMemory = pBufferMemory.get(0);
 
-            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize);
+            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize, 0, 0);
 
             vkDestroyBuffer(device, stagingBuffer, null);
             vkFreeMemory(device, stagingBufferMemory, null);
@@ -232,7 +242,7 @@ public class BufferUtils {
             long vertexBuffer = pBuffer.get(0);
             long vertexBufferMemory = pBufferMemory.get(0);
 
-            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize);
+            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize, 0, 0);
 
             vkDestroyBuffer(device, stagingBuffer, null);
             vkFreeMemory(device, stagingBufferMemory, null);
@@ -283,7 +293,7 @@ public class BufferUtils {
             long vertexBuffer = pBuffer.get(0);
             long vertexBufferMemory = pBufferMemory.get(0);
 
-            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize);
+            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize, 0, 0);
 
             vkDestroyBuffer(device, stagingBuffer, null);
             vkFreeMemory(device, stagingBufferMemory, null);
@@ -325,7 +335,7 @@ public class BufferUtils {
             }
             vkUnmapMemory(device, stagingBufferMemory);
 
-            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize);
+            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize, 0, 0);
 
             vkDestroyBuffer(device, stagingBuffer, null);
             vkFreeMemory(device, stagingBufferMemory, null);
@@ -370,7 +380,7 @@ public class BufferUtils {
             long indexBuffer = pBuffer.get(0);
             long indexBufferMemory = pBufferMemory.get(0);
 
-            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, indexBuffer, bufferSize);
+            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, indexBuffer, bufferSize, 0, 0);
 
             vkDestroyBuffer(device, stagingBuffer, null);
             vkFreeMemory(device, stagingBufferMemory, null);
@@ -412,7 +422,7 @@ public class BufferUtils {
             }
             vkUnmapMemory(device, stagingBufferMemory);
 
-            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, indexBuffer, bufferSize);
+            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, indexBuffer, bufferSize, 0, 0);
 
             vkDestroyBuffer(device, stagingBuffer, null);
             vkFreeMemory(device, stagingBufferMemory, null);

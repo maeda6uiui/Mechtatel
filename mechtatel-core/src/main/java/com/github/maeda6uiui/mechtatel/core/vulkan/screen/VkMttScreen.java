@@ -21,7 +21,6 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.MergeScenesInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
-import imgui.ImDrawData;
 import jakarta.validation.constraints.NotNull;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -71,8 +70,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
     private int initialWidth;
     private int initialHeight;
     private boolean shouldChangeExtentOnRecreate;
-
-    private ImDrawData imDrawData;
 
     private QuadDrawer quadDrawer;
 
@@ -393,10 +390,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         }
     }
 
-    public void setImDrawData(ImDrawData imDrawData) {
-        this.imDrawData = imDrawData;
-    }
-
     public int getScreenWidth() {
         return gBufferNabor.getExtent(0).width();
     }
@@ -544,14 +537,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         }
     }
 
-    private void drawImGuiComponents(VkCommandBuffer commandBuffer) {
-        if (imDrawData == null) {
-            return;
-        }
-
-        imDrawData = null;
-    }
-
     private void runGBufferNabor(
             Vector4f backgroundColor,
             Camera camera,
@@ -559,7 +544,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
         this.runAlbedoNabor(commandBuffer, backgroundColor, camera, components);
         this.runPropertiesNabor(commandBuffer, camera, components);
-        this.drawImGuiComponents(commandBuffer);
         CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
     }
 

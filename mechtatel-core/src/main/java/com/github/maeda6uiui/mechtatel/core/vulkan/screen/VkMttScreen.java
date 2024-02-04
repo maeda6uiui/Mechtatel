@@ -34,7 +34,7 @@ import java.util.*;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Screen
+ * Vulkan implementation of screen
  *
  * @author maeda6uiui
  */

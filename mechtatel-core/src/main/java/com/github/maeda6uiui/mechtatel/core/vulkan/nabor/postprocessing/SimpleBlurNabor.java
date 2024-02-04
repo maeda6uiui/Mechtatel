@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.SimpleBlurInfoUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
@@ -30,7 +30,7 @@ public class SimpleBlurNabor extends PostProcessingNabor {
     protected void createUniformBuffers(int descriptorCount) {
         VkDevice device = this.getDevice();
 
-        var uboInfos = BufferCreator.createUBOBuffers(
+        var uboInfos = BufferUtils.createUBOBuffers(
                 device, descriptorCount, SimpleBlurInfoUBO.SIZEOF);
         for (var uboInfo : uboInfos) {
             this.getUniformBuffers().add(uboInfo.buffer);

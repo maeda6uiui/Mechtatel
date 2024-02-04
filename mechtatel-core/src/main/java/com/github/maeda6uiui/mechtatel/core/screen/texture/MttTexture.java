@@ -6,6 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 
 import java.io.FileNotFoundException;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -48,6 +49,29 @@ public class MttTexture {
                 screen.getVulkanScreen(),
                 textureResource,
                 generateMipmaps
+        );
+
+        isValid = true;
+
+        screen.addTexture(this);
+    }
+
+    public MttTexture(
+            MttVulkanImpl vulkanImpl,
+            IMttScreenForMttTexture screen,
+            ByteBuffer pixels,
+            int width,
+            int height) {
+        var dq = vulkanImpl.getDeviceAndQueues();
+        texture = new VkMttTexture(
+                dq.device(),
+                vulkanImpl.getCommandPool(),
+                dq.graphicsQueue(),
+                screen.getVulkanScreen(),
+                pixels,
+                width,
+                height,
+                false
         );
 
         isValid = true;

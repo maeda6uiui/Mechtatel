@@ -34,7 +34,7 @@ public class MttLineSet extends MttComponent {
                 dq.graphicsQueue(),
                 screen.getVulkanScreen()
         );
-        this.associateVulkanComponent(vkLineSet);
+        this.associateVulkanComponents(vkLineSet);
     }
 
     public MttLineSet add(MttVertex v1, MttVertex v2) {

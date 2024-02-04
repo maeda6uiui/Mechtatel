@@ -11,7 +11,6 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.screen.animation.AnimationInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.animation.MttAnimation;
 import com.github.maeda6uiui.mechtatel.core.screen.component.*;
-import com.github.maeda6uiui.mechtatel.core.screen.component.gui.*;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
@@ -21,6 +20,11 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.Spotligh
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
+import imgui.ImFontAtlas;
+import imgui.ImGui;
+import imgui.ImGuiIO;
+import imgui.internal.ImGuiContext;
+import imgui.type.ImInt;
 import jakarta.validation.constraints.NotNull;
 import org.joml.*;
 
@@ -31,6 +35,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -130,6 +135,8 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     private MttVulkanImpl vulkanImpl;
     private VkMttScreen screen;
 
+    private ImGuiContext imguiContext;
+
     private Vector4f backgroundColor;
     private Camera camera;
     private Fog fog;
@@ -145,13 +152,12 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     private boolean shouldAutoUpdateCameraAspect;
 
     private List<MttComponent> components;
-    private List<MttGuiComponent> guiComponents;
     private List<TextureOperation> textureOperations;
     private List<MttTexture> textures;
 
     private Map<String, MttAnimation> animations;
 
-    public MttScreen(MttVulkanImpl vulkanImpl, MttScreenCreateInfo createInfo) {
+    public MttScreen(MttVulkanImpl vulkanImpl, ImGuiContext imguiContext, MttScreenCreateInfo createInfo) {
         var dq = vulkanImpl.getDeviceAndQueues();
         screen = new VkMttScreen(
                 dq.device(),
@@ -180,6 +186,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         shouldAutoUpdateCameraAspect = true;
 
         this.vulkanImpl = vulkanImpl;
+        this.imguiContext = imguiContext;
 
         backgroundColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
         parallelLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
@@ -195,7 +202,6 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         spotlights = new ArrayList<>();
 
         components = new ArrayList<>();
-        guiComponents = new ArrayList<>();
         textureOperations = new ArrayList<>();
         textures = new ArrayList<>();
         animations = new HashMap<>();
@@ -210,7 +216,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     public void draw() {
         var vkComponents = new ArrayList<VkMttComponent>();
-        components.forEach(v -> v.getVulkanComponent().ifPresent(vkComponents::add));
+        components.forEach(v -> vkComponents.addAll(v.getVulkanComponents()));
 
         vulkanImpl.draw(
                 screen,
@@ -236,6 +242,22 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     /**
+     * Creates a texture for ImGui fonts.
+     * ImGui context for this operation must be made current before calling this method.
+     *
+     * @return Texture for ImGui fonts
+     */
+    public MttTexture createImGuiFontTexture() {
+        ImGuiIO io = ImGui.getIO();
+        ImFontAtlas fontAtlas = io.getFonts();
+        var fontTexWidth = new ImInt();
+        var fontTexHeight = new ImInt();
+        ByteBuffer fontBuffer = fontAtlas.getTexDataAsRGBA32(fontTexWidth, fontTexHeight);
+
+        return new MttTexture(vulkanImpl, this, fontBuffer, fontTexWidth.get(), fontTexHeight.get());
+    }
+
+    /**
      * Creates a buffered image.
      * Note that in most cases depth image is not available and may lead to error.
      *
@@ -251,7 +273,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     /**
-     * Saves an underlying pixels to an image file.
+     * Saves underlying pixels to an image file.
      * Note that in most cases depth image is not available and may lead to error.
      *
      * @param imageType   Underlying image type to create an image from
@@ -568,6 +590,10 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         return components;
     }
 
+    public MttImGui createImGui() {
+        return new MttImGui(vulkanImpl, this, imguiContext);
+    }
+
     public MttModel createModel(@NotNull URL modelResource) throws URISyntaxException, IOException {
         return new MttModel(vulkanImpl, this, modelResource.toURI());
     }
@@ -712,66 +738,5 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     public MttFont createFont(Font font, boolean antiAlias, Color fontColor, String requiredChars) {
         return new MttFont(vulkanImpl, this, font, antiAlias, fontColor, requiredChars);
-    }
-
-    //GUI components ==========
-    @Override
-    public void addGuiComponent(MttGuiComponent c) {
-        guiComponents.add(c);
-    }
-
-    public boolean deleteGuiComponent(MttGuiComponent guiComponent) {
-        if (!guiComponents.contains(guiComponent)) {
-            return false;
-        }
-
-        guiComponent.cleanup();
-        return guiComponents.remove(guiComponent);
-    }
-
-    public List<MttGuiComponent> getGuiComponents() {
-        return guiComponents;
-    }
-
-    public MttButton createButton(MttButton.MttButtonCreateInfo createInfo) {
-        return new MttButton(vulkanImpl, this, createInfo);
-    }
-
-    public MttCheckBox createCheckBox(MttCheckBox.MttCheckBoxCreateInfo createInfo) {
-        return new MttCheckBox(vulkanImpl, this, createInfo);
-    }
-
-    public MttVerticalScrollBar createVerticalScrollBar(MttVerticalScrollBar.MttVerticalScrollBarCreateInfo createInfo) {
-        return new MttVerticalScrollBar(vulkanImpl, this, createInfo);
-    }
-
-    public MttHorizontalScrollBar createHorizontalScrollBar(
-            MttHorizontalScrollBar.MttHorizontalScrollBarCreateInfo createInfo) {
-        return new MttHorizontalScrollBar(vulkanImpl, this, createInfo);
-    }
-
-    public MttListBox createListBox(MttListBox.MttListBoxCreateInfo createInfo) {
-        return new MttListBox(vulkanImpl, this, createInfo);
-    }
-
-    public MttLabel createLabel(MttLabel.MttLabelCreateInfo createInfo) {
-        return new MttLabel(vulkanImpl, this, createInfo);
-    }
-
-    public MttTextField createTextField(MttTextField.MttTextFieldCreateInfo createInfo) {
-        return new MttTextField(vulkanImpl, this, createInfo);
-    }
-
-    public MttTextArea createTextArea(MttTextArea.MttTextAreaCreateInfo createInfo) {
-        return new MttTextArea(vulkanImpl, this, createInfo);
-    }
-
-    public boolean removeGuiComponent(MttGuiComponent guiComponent) {
-        if (!guiComponents.contains(guiComponent)) {
-            return false;
-        }
-
-        guiComponent.cleanup();
-        return guiComponents.remove(guiComponent);
     }
 }

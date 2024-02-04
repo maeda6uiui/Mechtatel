@@ -1,9 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
@@ -89,7 +89,7 @@ class AlbedoNabor extends Nabor {
     protected void createUniformBuffers(int descriptorCount) {
         VkDevice device = this.getDevice();
 
-        var cameraUBOInfos = BufferCreator.createUBOBuffers(
+        var cameraUBOInfos = BufferUtils.createUBOBuffers(
                 device, descriptorCount, CameraUBO.SIZEOF);
         for (var cameraUBOInfo : cameraUBOInfos) {
             this.getUniformBuffers().add(cameraUBOInfo.buffer);

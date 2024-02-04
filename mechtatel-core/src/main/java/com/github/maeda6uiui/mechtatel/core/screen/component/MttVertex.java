@@ -2,7 +2,10 @@ package com.github.maeda6uiui.mechtatel.core.screen.component;
 
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
+import org.joml.Vector4f;
 import org.joml.Vector4fc;
+
+import java.nio.ByteBuffer;
 
 /**
  * 3D vertex
@@ -19,6 +22,21 @@ public class MttVertex {
     public Vector4fc color;
     public Vector3fc normal;
 
+    public void putToByteBuffer(ByteBuffer buffer) {
+        buffer.putFloat(pos.x());
+        buffer.putFloat(pos.y());
+        buffer.putFloat(pos.z());
+
+        buffer.putFloat(color.x());
+        buffer.putFloat(color.y());
+        buffer.putFloat(color.z());
+        buffer.putFloat(color.w());
+
+        buffer.putFloat(normal.x());
+        buffer.putFloat(normal.y());
+        buffer.putFloat(normal.z());
+    }
+
     public MttVertex(Vector3fc pos, Vector4fc color, Vector3fc normal) {
         this.pos = pos;
         this.color = color;
@@ -29,5 +47,11 @@ public class MttVertex {
         this.pos = pos;
         this.color = color;
         this.normal = new Vector3f(0.0f, 1.0f, 0.0f);
+    }
+
+    public MttVertex() {
+        pos = new Vector3f();
+        color = new Vector4f();
+        normal = new Vector3f(0.0f, 1.0f, 0.0f);
     }
 }

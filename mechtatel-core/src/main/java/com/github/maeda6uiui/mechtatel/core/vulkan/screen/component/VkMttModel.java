@@ -2,9 +2,9 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
@@ -80,13 +80,13 @@ public class VkMttModel extends VkMttComponent {
         indexBufferMemories = new HashMap<>();
         for (int i = 0; i < numMeshes; i++) {
             //Create a vertex buffer and a vertex buffer memory
-            BufferCreator.BufferInfo bufferInfo = BufferCreator.createVertexBuffer3DUV(
+            BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromVerticesUV(
                     device, commandPool, graphicsQueue, model.meshes.get(i).vertices);
             vertexBuffers.put(i, bufferInfo.buffer);
             vertexBufferMemories.put(i, bufferInfo.bufferMemory);
 
             //Create an index buffer and an index buffer memory
-            bufferInfo = BufferCreator.createIndexBuffer(device, commandPool, graphicsQueue, model.meshes.get(i).indices);
+            bufferInfo = BufferUtils.createIndexBuffer(device, commandPool, graphicsQueue, model.meshes.get(i).indices);
             indexBuffers.put(i, bufferInfo.buffer);
             indexBufferMemories.put(i, bufferInfo.bufferMemory);
         }

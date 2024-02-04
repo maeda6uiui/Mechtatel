@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.drawer;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2DUV;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
@@ -33,7 +33,7 @@ public class QuadDrawer {
             throw new IllegalArgumentException("Number of the vertices must be 4");
         }
 
-        BufferCreator.BufferInfo bufferInfo = BufferCreator.createVertexBuffer2DUV(
+        BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromVertices2DUV(
                 device, commandPool, graphicsQueue, Arrays.asList(vertices));
         vertexBuffer = bufferInfo.buffer;
         vertexBufferMemory = bufferInfo.bufferMemory;
@@ -46,7 +46,7 @@ public class QuadDrawer {
         indices.add(3);
         indices.add(0);
 
-        bufferInfo = BufferCreator.createIndexBuffer(device, commandPool, graphicsQueue, indices);
+        bufferInfo = BufferUtils.createIndexBuffer(device, commandPool, graphicsQueue, indices);
         indexBuffer = bufferInfo.buffer;
         indexBufferMemory = bufferInfo.bufferMemory;
     }

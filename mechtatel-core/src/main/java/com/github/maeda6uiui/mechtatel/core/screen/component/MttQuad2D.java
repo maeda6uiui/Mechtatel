@@ -49,7 +49,7 @@ public class MttQuad2D extends MttComponent {
                 vertices,
                 fill
         );
-        this.associateVulkanComponent(vkQuad);
+        this.associateVulkanComponents(vkQuad);
     }
 
     private static MttComponentCreateInfo generateCreateInfo() {

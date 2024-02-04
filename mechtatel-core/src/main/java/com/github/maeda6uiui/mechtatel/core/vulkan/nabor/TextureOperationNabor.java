@@ -1,8 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.TextureOperationParametersUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
@@ -69,7 +69,7 @@ public class TextureOperationNabor extends Nabor {
     protected void createUniformBuffers(int descriptorCount) {
         VkDevice device = this.getDevice();
 
-        var parametersUBOInfos = BufferCreator.createUBOBuffers(
+        var parametersUBOInfos = BufferUtils.createUBOBuffers(
                 device, descriptorCount, TextureOperationParametersUBO.SIZEOF);
         for (var parametersUBOInfo : parametersUBOInfos) {
             this.getUniformBuffers().add(parametersUBOInfo.buffer);

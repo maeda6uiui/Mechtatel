@@ -1,10 +1,10 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass2InfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.ShadowInfoUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -91,14 +91,14 @@ class Pass2Nabor extends Nabor {
     protected void createUniformBuffers(int descriptorCount) {
         VkDevice device = this.getDevice();
 
-        var pass2InfoUBOInfos = BufferCreator.createUBOBuffers(
+        var pass2InfoUBOInfos = BufferUtils.createUBOBuffers(
                 device, descriptorCount, Pass2InfoUBO.SIZEOF);
         for (var pass2InfoUBOInfo : pass2InfoUBOInfos) {
             this.getUniformBuffers().add(pass2InfoUBOInfo.buffer);
             this.getUniformBufferMemories().add(pass2InfoUBOInfo.bufferMemory);
         }
 
-        var shadowInfoUBOInfos = BufferCreator.createUBOBuffers(
+        var shadowInfoUBOInfos = BufferUtils.createUBOBuffers(
                 device, descriptorCount, ShadowInfoUBO.SIZEOF * MAX_NUM_SHADOW_MAPS);
         for (var shadowInfoUBOInfo : shadowInfoUBOInfos) {
             this.getUniformBuffers().add(shadowInfoUBOInfo.buffer);

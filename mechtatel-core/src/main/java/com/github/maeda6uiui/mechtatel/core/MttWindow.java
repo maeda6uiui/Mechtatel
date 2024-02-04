@@ -8,6 +8,10 @@ import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.animation.MttAnimation;
 import com.github.maeda6uiui.mechtatel.core.sound.MttSound;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
+import imgui.ImGui;
+import imgui.ImGuiIO;
+import imgui.flag.ImGuiKey;
+import imgui.internal.ImGuiContext;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +21,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
@@ -36,6 +39,8 @@ public class MttWindow {
 
     private IMechtatelForMttWindow mtt;
     private MttVulkanImpl vulkanImpl;
+
+    private ImGuiContext imguiContext;
 
     private long handle;
     private int width;
@@ -59,16 +64,6 @@ public class MttWindow {
         this.width = width;
         this.height = height;
         mustRecreate = true;
-    }
-
-    private void keyCallback(long window, int key, int scancode, int action, int mods) {
-        boolean pressingFlag = action == GLFW_PRESS || action == GLFW_REPEAT;
-        keyboard.setPressingFlag(key, pressingFlag);
-    }
-
-    private void mouseButtonCallback(long window, int button, int action, int mods) {
-        boolean pressingFlag = action == GLFW_PRESS;
-        mouse.setPressingFlag(button, pressingFlag);
     }
 
     private void cursorPositionCallback(long window, double xpos, double ypos) {
@@ -95,8 +90,10 @@ public class MttWindow {
             int width,
             int height,
             String title) {
+        //Get unique ID for this window
         uniqueID = UUID.randomUUID().toString();
 
+        //Create window
         handle = glfwCreateWindow(width, height, title, NULL, NULL);
         if (handle == NULL) {
             throw new RuntimeException("Failed to create a window");
@@ -106,28 +103,106 @@ public class MttWindow {
         this.height = height;
         this.title = title;
 
+        //Set interface of Mechtatel
         this.mtt = mtt;
+
+        //Set up Vulkan implementation
         vulkanImpl = new MttVulkanImpl(handle, settings.vulkanSettings);
 
+        //Set up keyboard and mouse
         keyboard = new Keyboard();
         mouse = new Mouse();
         fixCursorFlag = false;
+
+        //Set flags
         mustRecreate = false;
         validWindow = true;
 
+        //Set callbacks
+        //Key and mouse callbacks are set later on
         glfwSetFramebufferSizeCallback(handle, this::framebufferResizeCallback);
-        glfwSetKeyCallback(handle, this::keyCallback);
-        glfwSetMouseButtonCallback(handle, this::mouseButtonCallback);
         glfwSetCursorPosCallback(handle, this::cursorPositionCallback);
 
-        defaultScreen = new MttScreen(vulkanImpl, new MttScreen.MttScreenCreateInfo());
+        //Create list for 3D sounds
+        sounds3D = new ArrayList<>();
+
+        //Set up ImGui =====
+        //Create context and make it current
+        imguiContext = ImGui.createContext();
+        ImGui.setCurrentContext(imguiContext);
+
+        //Get IO
+        ImGuiIO io = ImGui.getIO();
+
+        //Not create ini file
+        io.setIniFilename(null);
+        //Set window size
+        io.setDisplaySize(width, height);
+
+        //Set key map
+        io.setKeyMap(ImGuiKey.Tab, GLFW_KEY_TAB);
+        io.setKeyMap(ImGuiKey.LeftArrow, GLFW_KEY_LEFT);
+        io.setKeyMap(ImGuiKey.RightArrow, GLFW_KEY_RIGHT);
+        io.setKeyMap(ImGuiKey.UpArrow, GLFW_KEY_UP);
+        io.setKeyMap(ImGuiKey.DownArrow, GLFW_KEY_DOWN);
+        io.setKeyMap(ImGuiKey.PageUp, GLFW_KEY_PAGE_UP);
+        io.setKeyMap(ImGuiKey.PageDown, GLFW_KEY_PAGE_DOWN);
+        io.setKeyMap(ImGuiKey.Home, GLFW_KEY_HOME);
+        io.setKeyMap(ImGuiKey.End, GLFW_KEY_END);
+        io.setKeyMap(ImGuiKey.Insert, GLFW_KEY_INSERT);
+        io.setKeyMap(ImGuiKey.Delete, GLFW_KEY_DELETE);
+        io.setKeyMap(ImGuiKey.Backspace, GLFW_KEY_BACKSPACE);
+        io.setKeyMap(ImGuiKey.Space, GLFW_KEY_SPACE);
+        io.setKeyMap(ImGuiKey.Enter, GLFW_KEY_ENTER);
+        io.setKeyMap(ImGuiKey.Escape, GLFW_KEY_ESCAPE);
+        io.setKeyMap(ImGuiKey.KeyPadEnter, GLFW_KEY_KP_ENTER);
+
+        //Set key callback
+        glfwSetKeyCallback(handle, (handle, key, scancode, action, mods) -> {
+            boolean pressingFlag = action == GLFW_PRESS || action == GLFW_REPEAT;
+            keyboard.setPressingFlag(key, pressingFlag);
+
+            if (action == GLFW_PRESS) {
+                io.setKeysDown(key, true);
+            } else if (action == GLFW_RELEASE) {
+                io.setKeysDown(key, false);
+            }
+            io.setKeyCtrl(io.getKeysDown(GLFW_KEY_LEFT_CONTROL) || io.getKeysDown(GLFW_KEY_RIGHT_CONTROL));
+            io.setKeyShift(io.getKeysDown(GLFW_KEY_LEFT_SHIFT) || io.getKeysDown(GLFW_KEY_RIGHT_SHIFT));
+            io.setKeyAlt(io.getKeysDown(GLFW_KEY_LEFT_ALT) || io.getKeysDown(GLFW_KEY_RIGHT_ALT));
+            io.setKeySuper(io.getKeysDown(GLFW_KEY_LEFT_SUPER) || io.getKeysDown(GLFW_KEY_RIGHT_SUPER));
+        });
+
+        //Set mouse callback
+        glfwSetMouseButtonCallback(handle, (handle, button, action, mods) -> {
+            boolean pressingFlag = action == GLFW_PRESS;
+            mouse.setPressingFlag(button, pressingFlag);
+
+            if (action == GLFW_PRESS) {
+                io.setMouseDown(button, true);
+            } else if (action == GLFW_RELEASE) {
+                io.setMouseDown(button, false);
+            }
+        });
+
+        //Set char callback
+        glfwSetCharCallback(handle, (handle, c) -> {
+            if (!io.getWantCaptureKeyboard()) {
+                return;
+            }
+            io.addInputCharacter(c);
+        });
+        //==========
+
+        //Create default screen
+        defaultScreen = new MttScreen(vulkanImpl, imguiContext, new MttScreen.MttScreenCreateInfo());
         screens = new ArrayList<>();
         screens.add(defaultScreen);
 
-        sounds3D = new ArrayList<>();
-
+        //Output debug log
         logger.debug("Window ({}) successfully created", Long.toHexString(handle));
 
+        //Call onCreate handler
         mtt.onCreate(this);
     }
 
@@ -144,28 +219,18 @@ public class MttWindow {
                 }
             });
 
+            ImGui.setCurrentContext(imguiContext);
+            ImGuiIO io = ImGui.getIO();
+            io.setDisplaySize(width, height);
+
             mustRecreate = false;
             logger.debug("Window ({}) recreated", Long.toHexString(handle));
 
             mtt.onRecreate(this, width, height);
         }
 
-        Map<KeyCode, Integer> keyboardPressingCounts = keyboard.getPressingCounts();
         screens.forEach(screen -> {
-            screen.getGuiComponents().forEach(c -> {
-                c.update(
-                        this.getCursorPosX(),
-                        this.getCursorPosY(),
-                        this.getWidth(),
-                        this.getHeight(),
-                        this.getMousePressingCount(MouseCode.LEFT),
-                        this.getMousePressingCount(MouseCode.MIDDLE),
-                        this.getMousePressingCount(MouseCode.RIGHT),
-                        keyboardPressingCounts
-                );
-            });
             screen.getAnimations().values().forEach(MttAnimation::update);
-
             screen.removeGarbageComponents();
             screen.removeGarbageTextures();
             screen.removeGarbageTextureOperations();
@@ -187,6 +252,8 @@ public class MttWindow {
 
         glfwFreeCallbacks(handle);
         glfwDestroyWindow(handle);
+
+        ImGui.destroyContext(imguiContext);
 
         validWindow = false;
         logger.debug("Window ({}) cleaned up", Long.toHexString(handle));
@@ -278,7 +345,7 @@ public class MttWindow {
     }
 
     public MttScreen createScreen(MttScreen.MttScreenCreateInfo createInfo) {
-        var screen = new MttScreen(vulkanImpl, createInfo);
+        var screen = new MttScreen(vulkanImpl, imguiContext, createInfo);
         screens.add(screen);
 
         return screen;

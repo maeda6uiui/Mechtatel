@@ -3,8 +3,8 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.util.VertexUtils;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
 import org.lwjgl.system.MemoryStack;
@@ -37,7 +37,7 @@ public class VkMttCapsule extends VkMttComponent {
             VkQueue graphicsQueue,
             List<MttVertex> vertices,
             List<Integer> indices) {
-        BufferCreator.BufferInfo bufferInfo = BufferCreator.createVertexBuffer3D(
+        BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromVertices(
                 device,
                 commandPool,
                 graphicsQueue,
@@ -45,7 +45,7 @@ public class VkMttCapsule extends VkMttComponent {
         vertexBuffer = bufferInfo.buffer;
         vertexBufferMemory = bufferInfo.bufferMemory;
 
-        bufferInfo = BufferCreator.createIndexBuffer(
+        bufferInfo = BufferUtils.createIndexBuffer(
                 device,
                 commandPool,
                 graphicsQueue,

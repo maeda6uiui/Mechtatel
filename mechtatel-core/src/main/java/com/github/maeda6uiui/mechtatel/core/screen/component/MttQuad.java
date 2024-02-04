@@ -29,7 +29,7 @@ public class MttQuad extends MttComponent {
                 vertices,
                 fill
         );
-        this.associateVulkanComponent(vkQuad);
+        this.associateVulkanComponents(vkQuad);
     }
 
     private static MttComponentCreateInfo generateCreateInfo(boolean fill) {

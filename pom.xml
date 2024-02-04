@@ -29,6 +29,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <lwjgl.version>3.3.3</lwjgl.version>
+        <imgui.java.version>1.86.11</imgui.java.version>
     </properties>
 
     <profiles>
@@ -43,6 +44,7 @@
             </activation>
             <properties>
                 <lwjgl.natives>natives-linux</lwjgl.natives>
+                <imgui.natives>imgui-java-natives-linux</imgui.natives>
             </properties>
         </profile>
         <profile>
@@ -55,6 +57,7 @@
             </activation>
             <properties>
                 <lwjgl.natives>natives-macos</lwjgl.natives>
+                <imgui.natives>imgui-java-natives-macos</imgui.natives>
             </properties>
             <dependencies>
                 <dependency>
@@ -74,6 +77,7 @@
             </activation>
             <properties>
                 <lwjgl.natives>natives-windows</lwjgl.natives>
+                <imgui.natives>imgui-java-natives-windows</imgui.natives>
             </properties>
         </profile>
     </profiles>

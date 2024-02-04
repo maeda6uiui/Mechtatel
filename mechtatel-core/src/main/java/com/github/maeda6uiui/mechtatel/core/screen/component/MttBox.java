@@ -62,8 +62,7 @@ public class MttBox extends MttComponent {
 
         lineSet = new MttLineSet(vulkanImpl, screen);
         this.setupLineSet(xHalfExtent, yHalfExtent, zHalfExtent, color);
-
-        lineSet.getVulkanComponent().ifPresent(this::associateVulkanComponent);
+        this.associateVulkanComponents(lineSet.getVulkanComponents());
     }
 
     public MttBox(MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen, float halfExtent, Vector4fc color) {

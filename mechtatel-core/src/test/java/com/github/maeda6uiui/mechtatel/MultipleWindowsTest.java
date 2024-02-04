@@ -83,7 +83,7 @@ public class MultipleWindowsTest extends Mechtatel {
     }
 
     @Override
-    public void onInit() {
+    public void onInit(MttWindow initialWindow) {
         //Create windows
         MttSettings settings = MttSettings.get().orElse(new MttSettings());
 
@@ -97,7 +97,7 @@ public class MultipleWindowsTest extends Mechtatel {
         //Create resources
         modelPropsMap = new HashMap<>();
         try {
-            this.createResources(this.getInitialWindow());
+            this.createResources(initialWindow);
             for (var window : windows) {
                 this.createResources(window);
             }

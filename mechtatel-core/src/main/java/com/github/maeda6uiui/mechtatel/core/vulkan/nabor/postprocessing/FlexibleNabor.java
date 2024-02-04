@@ -1,9 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 
 import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.*;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
@@ -51,7 +51,7 @@ public class FlexibleNabor extends PostProcessingNabor {
                 case SIMPLE_BLUR -> SimpleBlurInfoUBO.SIZEOF;
                 case SPOTLIGHT -> SpotlightUBO.SIZEOF;
             };
-            var uboInfos = BufferCreator.createUBOBuffers(device, descriptorCount, size);
+            var uboInfos = BufferUtils.createUBOBuffers(device, descriptorCount, size);
             for (var uboInfo : uboInfos) {
                 this.getUniformBuffers().add(uboInfo.buffer);
                 this.getUniformBufferMemories().add(uboInfo.bufferMemory);

@@ -1,9 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.creator.BufferCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass1InfoUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -37,7 +37,7 @@ class Pass1Nabor extends Nabor {
     protected void createUniformBuffers(int descriptorCount) {
         VkDevice device = this.getDevice();
 
-        var pass1InfoUBOInfos = BufferCreator.createUBOBuffers(
+        var pass1InfoUBOInfos = BufferUtils.createUBOBuffers(
                 device, descriptorCount, Pass1InfoUBO.SIZEOF);
         for (var pass1InfoUBOInfo : pass1InfoUBOInfos) {
             this.getUniformBuffers().add(pass1InfoUBOInfo.buffer);

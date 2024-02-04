@@ -41,6 +41,6 @@ public class MttCapsule extends MttComponent {
                 screen.getVulkanScreen(),
                 center, length, radius, numVDivs, numHDivs, color
         );
-        this.associateVulkanComponent(vkCapsule);
+        this.associateVulkanComponents(vkCapsule);
     }
 }

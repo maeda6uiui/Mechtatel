@@ -1,7 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
@@ -13,7 +12,8 @@ import org.lwjgl.vulkan.VkQueue;
 
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -30,11 +30,11 @@ public class VkMttImGui extends VkMttComponent {
     private VkMttTexture texture;
     private ImDrawData drawData;
 
-    private long vertexBuffer;
-    private long vertexBufferMemory;
-    private long indexBuffer;
-    private long indexBufferMemory;
-    private boolean bufferCreated;
+    private Map<Integer, Long> vertexBuffers;
+    private Map<Integer, Long> vertexBufferMemories;
+    private Map<Integer, Long> indexBuffers;
+    private Map<Integer, Long> indexBufferMemories;
+
     private boolean isExternalTexture;
 
     public VkMttImGui(
@@ -53,38 +53,22 @@ public class VkMttImGui extends VkMttComponent {
         this.texture = texture;
         isExternalTexture = true;
 
-        //Create empty vertex buffer
-        BufferUtils.BufferInfo bufferInfo = BufferUtils.createVertexBufferUV(
-                device, commandPool, graphicsQueue, List.of(new MttVertexUV())
-        );
-        vertexBuffer = bufferInfo.buffer;
-        vertexBufferMemory = bufferInfo.bufferMemory;
-
-        //Create empty index buffer
-        bufferInfo = BufferUtils.createIndexBuffer(
-                device, commandPool, graphicsQueue, List.of(0)
-        );
-        indexBuffer = bufferInfo.buffer;
-        indexBufferMemory = bufferInfo.bufferMemory;
-
-        bufferCreated = true;
+        vertexBuffers = new HashMap<>();
+        vertexBufferMemories = new HashMap<>();
+        indexBuffers = new HashMap<>();
+        indexBufferMemories = new HashMap<>();
     }
 
     @Override
     public void cleanup() {
-        if (bufferCreated) {
-            if (!isExternalTexture) {
-                texture.cleanup();
-            }
-
-            vkDestroyBuffer(device, vertexBuffer, null);
-            vkDestroyBuffer(device, indexBuffer, null);
-
-            vkFreeMemory(device, vertexBufferMemory, null);
-            vkFreeMemory(device, indexBufferMemory, null);
-
-            bufferCreated = false;
+        if (!isExternalTexture) {
+            texture.cleanup();
         }
+
+        vertexBuffers.values().forEach(v -> vkDestroyBuffer(device, v, null));
+        vertexBufferMemories.values().forEach(v -> vkFreeMemory(device, v, null));
+        indexBuffers.values().forEach(v -> vkDestroyBuffer(device, v, null));
+        indexBufferMemories.values().forEach(v -> vkFreeMemory(device, v, null));
     }
 
     /**
@@ -98,9 +82,72 @@ public class VkMttImGui extends VkMttComponent {
         this.drawData = drawData;
     }
 
+    private void recordCommands(VkCommandBuffer commandBuffer) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            int numLists = drawData.getCmdListsCount();
+            for (int i = 0; i < numLists; i++) {
+                //Get vertex buffer if already exists
+                long vertexBuffer;
+                if (vertexBuffers.containsKey(i)) {
+                    vertexBuffer = vertexBuffers.get(i);
+                }
+                //Otherwise create new one
+                else {
+                    BufferUtils.BufferInfo bufferInfo = BufferUtils.createByteBuffer(
+                            device,
+                            commandPool,
+                            graphicsQueue,
+                            drawData.getCmdListVtxBufferData(i)
+                    );
+                    vertexBuffer = bufferInfo.buffer;
+
+                    vertexBuffers.put(i, bufferInfo.buffer);
+                    vertexBufferMemories.put(i, bufferInfo.bufferMemory);
+                }
+
+                //Get index buffer if already exists
+                long indexBuffer;
+                if (indexBuffers.containsKey(i)) {
+                    indexBuffer = indexBuffers.get(i);
+                }
+                //Otherwise create new one
+                else {
+                    BufferUtils.BufferInfo bufferInfo = BufferUtils.createByteBuffer(
+                            device,
+                            commandPool,
+                            graphicsQueue,
+                            drawData.getCmdListIdxBufferData(i)
+                    );
+                    indexBuffer = bufferInfo.buffer;
+
+                    indexBuffers.put(i, bufferInfo.buffer);
+                    indexBufferMemories.put(i, bufferInfo.bufferMemory);
+                }
+
+                //Bind vertex buffer
+                LongBuffer lVertexBuffers = stack.longs(vertexBuffer);
+                LongBuffer offsets = stack.longs(0);
+                vkCmdBindVertexBuffers(commandBuffer, 0, lVertexBuffers, offsets);
+
+                //Bind index buffer
+                vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+
+                //Record commands
+                int numCmds = drawData.getCmdListCmdBufferSize(i);
+                for (int j = 0; j < numCmds; j++) {
+                    int elemCount = drawData.getCmdListCmdBufferElemCount(i, j);
+                    int idxBufferOffset = drawData.getCmdListCmdBufferIdxOffset(i, j);
+                    int firstIndex = idxBufferOffset * ImDrawData.SIZEOF_IM_DRAW_IDX;
+
+                    vkCmdDrawIndexed(commandBuffer, elemCount, 1, firstIndex, 0, 0);
+                }
+            }
+        }
+    }
+
     @Override
     public void draw(VkCommandBuffer commandBuffer, long pipelineLayout) {
-        if (!this.isVisible() || texture == null || !bufferCreated || drawData == null) {
+        if (!this.isVisible() || texture == null || drawData == null) {
             return;
         }
 
@@ -117,92 +164,30 @@ public class VkMttImGui extends VkMttComponent {
                     1 * 16 * Float.BYTES + 1 * Integer.BYTES,
                     textureAllocationIndexBuffer);
 
-            int numLists = drawData.getCmdListsCount();
-            for (int i = 0; i < numLists; i++) {
-                //Update vertex and index buffers
-                BufferUtils.updateBuffer(
-                        device,
-                        commandPool,
-                        graphicsQueue,
-                        vertexBuffer,
-                        drawData.getCmdListVtxBufferData(i)
-                );
-                BufferUtils.updateBuffer(
-                        device,
-                        commandPool,
-                        graphicsQueue,
-                        indexBuffer,
-                        drawData.getCmdListIdxBufferData(i)
-                );
-
-                //Record commands
-                int numCmds = drawData.getCmdListCmdBufferSize(i);
-                for (int j = 0; j < numCmds; j++) {
-                    //Bind vertex buffer
-                    LongBuffer lVertexBuffers = stack.longs(vertexBuffer);
-                    LongBuffer offsets = stack.longs(0);
-                    vkCmdBindVertexBuffers(commandBuffer, 0, lVertexBuffers, offsets);
-
-                    //Bind index buffer
-                    vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
-
-                    //Draw
-                    int elemCount = drawData.getCmdListCmdBufferElemCount(i, j);
-                    int idxBufferOffset = drawData.getCmdListCmdBufferIdxOffset(i, j);
-                    int firstIndex = idxBufferOffset * ImDrawData.SIZEOF_IM_DRAW_IDX;
-
-                    vkCmdDrawIndexed(commandBuffer, elemCount, 1, firstIndex, 0, 0);
-                }
-            }
+            //Record commands
+            this.recordCommands(commandBuffer);
         }
-
-        drawData = null;
     }
 
     @Override
     public void transfer(VkCommandBuffer commandBuffer) {
-        if (!this.isVisible() || !bufferCreated || drawData == null) {
+        if (!this.isVisible() || drawData == null) {
             return;
         }
 
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            int numLists = drawData.getCmdListsCount();
-            for (int i = 0; i < numLists; i++) {
-                //Update vertex and index buffers
-                BufferUtils.updateBuffer(
-                        device,
-                        commandPool,
-                        graphicsQueue,
-                        vertexBuffer,
-                        drawData.getCmdListVtxBufferData(i)
-                );
-                BufferUtils.updateBuffer(
-                        device,
-                        commandPool,
-                        graphicsQueue,
-                        indexBuffer,
-                        drawData.getCmdListIdxBufferData(i)
-                );
+        this.recordCommands(commandBuffer);
+    }
 
-                //Record commands
-                int numCmds = drawData.getCmdListCmdBufferSize(i);
-                for (int j = 0; j < numCmds; j++) {
-                    //Bind vertex buffer
-                    LongBuffer lVertexBuffers = stack.longs(vertexBuffer);
-                    LongBuffer offsets = stack.longs(0);
-                    vkCmdBindVertexBuffers(commandBuffer, 0, lVertexBuffers, offsets);
+    @Override
+    public void cleanupLocally() {
+        vertexBuffers.values().forEach(v -> vkDestroyBuffer(device, v, null));
+        vertexBufferMemories.values().forEach(v -> vkFreeMemory(device, v, null));
+        indexBuffers.values().forEach(v -> vkDestroyBuffer(device, v, null));
+        indexBufferMemories.values().forEach(v -> vkFreeMemory(device, v, null));
 
-                    //Bind index buffer
-                    vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
-
-                    //Draw
-                    int elemCount = drawData.getCmdListCmdBufferElemCount(i, j);
-                    int idxBufferOffset = drawData.getCmdListCmdBufferIdxOffset(i, j);
-                    int firstIndex = idxBufferOffset * ImDrawData.SIZEOF_IM_DRAW_IDX;
-
-                    vkCmdDrawIndexed(commandBuffer, elemCount, 1, firstIndex, 0, 0);
-                }
-            }
-        }
+        vertexBuffers.clear();
+        vertexBufferMemories.clear();
+        indexBuffers.clear();
+        indexBufferMemories.clear();
     }
 }

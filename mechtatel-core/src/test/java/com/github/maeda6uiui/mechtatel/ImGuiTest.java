@@ -35,6 +35,8 @@ public class ImGuiTest extends Mechtatel {
 
     @Override
     public void onUpdate(MttWindow window) {
-
+        MttScreen defaultScreen = window.getDefaultScreen();
+        defaultScreen.draw();
+        window.present(defaultScreen);
     }
 }

@@ -259,10 +259,6 @@ public class MttWindow {
         logger.debug("Window ({}) cleaned up", Long.toHexString(handle));
     }
 
-    public void makeImGuiContextCurrent() {
-        ImGui.setCurrentContext(imguiContext);
-    }
-
     public void close() {
         glfwSetWindowShouldClose(handle, true);
     }

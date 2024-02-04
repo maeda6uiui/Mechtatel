@@ -189,5 +189,7 @@ public class VkMttImGui extends VkMttComponent {
         vertexBufferMemories.clear();
         indexBuffers.clear();
         indexBufferMemories.clear();
+
+        drawData = null;
     }
 }

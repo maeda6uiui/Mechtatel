@@ -35,6 +35,11 @@ Thank you!
 
 - Implement functionality to run `mechtatel-core` via YAML definitions<br>i.e. Load and manipulate resources according to the procedure defined in a YAML file
 
+## Special thanks to
+
+- [Vulkan Tutorial](https://vulkan-tutorial.com/)
+- [Vulkan-Tutorial-Java](https://github.com/Naitsirc98/Vulkan-Tutorial-Java)
+
 ## 進捗報告(Progress report)
 
 ### 2024-01-27

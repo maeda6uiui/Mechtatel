@@ -137,17 +137,17 @@ public class BufferUtils {
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                     pBuffer,
                     pBufferMemory);
-            long vertexBuffer = pBuffer.get(0);
-            long vertexBufferMemory = pBufferMemory.get(0);
+            long buffer = pBuffer.get(0);
+            long bufferMemory = pBufferMemory.get(0);
 
-            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize, 0, 0);
+            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, buffer, bufferSize, 0, 0);
 
             vkDestroyBuffer(device, stagingBuffer, null);
             vkFreeMemory(device, stagingBufferMemory, null);
 
             var ret = new BufferInfo();
-            ret.buffer = vertexBuffer;
-            ret.bufferMemory = vertexBufferMemory;
+            ret.buffer = buffer;
+            ret.bufferMemory = bufferMemory;
 
             return ret;
         }

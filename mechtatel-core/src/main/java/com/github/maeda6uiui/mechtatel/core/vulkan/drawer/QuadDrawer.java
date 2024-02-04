@@ -33,7 +33,7 @@ public class QuadDrawer {
             throw new IllegalArgumentException("Number of the vertices must be 4");
         }
 
-        BufferUtils.BufferInfo bufferInfo = BufferUtils.createVertexBuffer2DUV(
+        BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromVertices2DUV(
                 device, commandPool, graphicsQueue, Arrays.asList(vertices));
         vertexBuffer = bufferInfo.buffer;
         vertexBufferMemory = bufferInfo.bufferMemory;

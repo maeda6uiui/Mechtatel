@@ -4,7 +4,6 @@ import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
-import com.github.maeda6uiui.mechtatel.core.util.MemcpyUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -62,9 +61,7 @@ public class BufferUtils {
             VkQueue graphicsQueue,
             long srcBuffer,
             long dstBuffer,
-            long size,
-            long srcOffset,
-            long dstOffset) {
+            long size) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkCommandBufferAllocateInfo allocInfo = VkCommandBufferAllocateInfo.calloc(stack);
             allocInfo.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO);
@@ -84,8 +81,6 @@ public class BufferUtils {
             {
                 VkBufferCopy.Buffer copyRegion = VkBufferCopy.calloc(1, stack);
                 copyRegion.size(size);
-                copyRegion.srcOffset(srcOffset);
-                copyRegion.dstOffset(dstOffset);
                 vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, copyRegion);
             }
             vkEndCommandBuffer(commandBuffer);
@@ -104,11 +99,8 @@ public class BufferUtils {
         }
     }
 
-    public static BufferInfo createByteBuffer(
-            VkDevice device, long commandPool, VkQueue graphicsQueue, ByteBuffer data) {
+    private static BufferInfo createStagingBuffer(VkDevice device, int bufferSize) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            long bufferSize = data.capacity();
-
             LongBuffer pBuffer = stack.mallocLong(1);
             LongBuffer pBufferMemory = stack.mallocLong(1);
             createBuffer(
@@ -121,239 +113,148 @@ public class BufferUtils {
             long stagingBuffer = pBuffer.get(0);
             long stagingBufferMemory = pBufferMemory.get(0);
 
-            PointerBuffer pb = stack.mallocPointer(1);
-            vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, pb);
-            {
-                ByteBuffer buffer = pb.getByteBuffer(0, (int) bufferSize);
-                buffer.put(data);
-                buffer.flip();
-            }
-            vkUnmapMemory(device, stagingBufferMemory);
-
-            createBuffer(
-                    device,
-                    bufferSize,
-                    VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pBuffer,
-                    pBufferMemory);
-            long buffer = pBuffer.get(0);
-            long bufferMemory = pBufferMemory.get(0);
-
-            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, buffer, bufferSize, 0, 0);
-
-            vkDestroyBuffer(device, stagingBuffer, null);
-            vkFreeMemory(device, stagingBufferMemory, null);
-
             var ret = new BufferInfo();
-            ret.buffer = buffer;
-            ret.bufferMemory = bufferMemory;
+            ret.buffer = stagingBuffer;
+            ret.bufferMemory = stagingBufferMemory;
 
             return ret;
         }
     }
 
-    public static BufferInfo createVertexBuffer2D(
+    public static BufferInfo createBufferFromByteBuffer(
+            VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue,
+            ByteBuffer dataBuffer,
+            int usage) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            //Staging buffer
+            int bufferSize = dataBuffer.capacity();
+            BufferInfo stagingBufferInfo = createStagingBuffer(device, bufferSize);
+
+            PointerBuffer pb = stack.mallocPointer(1);
+            vkMapMemory(device, stagingBufferInfo.bufferMemory, 0, bufferSize, 0, pb);
+            {
+                ByteBuffer buffer = pb.getByteBuffer(0, bufferSize);
+                buffer.put(dataBuffer);
+                buffer.flip();
+            }
+            vkUnmapMemory(device, stagingBufferInfo.bufferMemory);
+
+            //Destination buffer
+            LongBuffer pBuffer = stack.mallocLong(1);
+            LongBuffer pBufferMemory = stack.mallocLong(1);
+
+            createBuffer(
+                    device,
+                    bufferSize,
+                    usage,
+                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                    pBuffer,
+                    pBufferMemory
+            );
+            copyBuffer(
+                    device,
+                    commandPool,
+                    graphicsQueue,
+                    stagingBufferInfo.buffer,
+                    pBuffer.get(0),
+                    bufferSize
+            );
+
+            //Destroy staging buffer
+            vkDestroyBuffer(device, stagingBufferInfo.buffer, null);
+            vkFreeMemory(device, stagingBufferInfo.bufferMemory, null);
+
+            var ret = new BufferInfo();
+            ret.buffer = pBuffer.get(0);
+            ret.bufferMemory = pBufferMemory.get(0);
+
+            return ret;
+        }
+    }
+
+    public static BufferInfo createBufferFromVertices2D(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
             List<MttVertex2D> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            long bufferSize = MttVertex2D.SIZEOF * vertices.size();
+            int bufferSize = MttVertex2D.SIZEOF * vertices.size();
+            ByteBuffer dataBuffer = stack.malloc(bufferSize);
+            vertices.forEach(v -> v.putToByteBuffer(dataBuffer));
+            dataBuffer.flip();
 
-            LongBuffer pBuffer = stack.mallocLong(1);
-            LongBuffer pBufferMemory = stack.mallocLong(1);
-            createBuffer(
+            return createBufferFromByteBuffer(
                     device,
-                    bufferSize,
-                    VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                    pBuffer,
-                    pBufferMemory);
-            long stagingBuffer = pBuffer.get(0);
-            long stagingBufferMemory = pBufferMemory.get(0);
-
-            PointerBuffer data = stack.mallocPointer(1);
-
-            vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, data);
-            {
-                MemcpyUtils.memcpyVertex2D(data.getByteBuffer(0, (int) bufferSize), vertices);
-            }
-            vkUnmapMemory(device, stagingBufferMemory);
-
-            createBuffer(
-                    device,
-                    bufferSize,
-                    VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pBuffer,
-                    pBufferMemory);
-            long vertexBuffer = pBuffer.get(0);
-            long vertexBufferMemory = pBufferMemory.get(0);
-
-            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize, 0, 0);
-
-            vkDestroyBuffer(device, stagingBuffer, null);
-            vkFreeMemory(device, stagingBufferMemory, null);
-
-            var ret = new BufferInfo();
-            ret.buffer = vertexBuffer;
-            ret.bufferMemory = vertexBufferMemory;
-
-            return ret;
+                    commandPool,
+                    graphicsQueue,
+                    dataBuffer,
+                    VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
+            );
         }
     }
 
-    public static BufferInfo createVertexBuffer2DUV(
+    public static BufferInfo createBufferFromVertices2DUV(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
             List<MttVertex2DUV> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            long bufferSize = MttVertex2DUV.SIZEOF * vertices.size();
+            int bufferSize = MttVertex2DUV.SIZEOF * vertices.size();
+            ByteBuffer dataBuffer = stack.malloc(bufferSize);
+            vertices.forEach(v -> v.putToByteBuffer(dataBuffer));
+            dataBuffer.flip();
 
-            LongBuffer pBuffer = stack.mallocLong(1);
-            LongBuffer pBufferMemory = stack.mallocLong(1);
-            createBuffer(
+            return createBufferFromByteBuffer(
                     device,
-                    bufferSize,
-                    VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                    pBuffer,
-                    pBufferMemory);
-            long stagingBuffer = pBuffer.get(0);
-            long stagingBufferMemory = pBufferMemory.get(0);
-
-            PointerBuffer data = stack.mallocPointer(1);
-
-            vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, data);
-            {
-                MemcpyUtils.memcpyVertex2DUV(data.getByteBuffer(0, (int) bufferSize), vertices);
-            }
-            vkUnmapMemory(device, stagingBufferMemory);
-
-            createBuffer(
-                    device,
-                    bufferSize,
-                    VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pBuffer,
-                    pBufferMemory);
-            long vertexBuffer = pBuffer.get(0);
-            long vertexBufferMemory = pBufferMemory.get(0);
-
-            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize, 0, 0);
-
-            vkDestroyBuffer(device, stagingBuffer, null);
-            vkFreeMemory(device, stagingBufferMemory, null);
-
-            var ret = new BufferInfo();
-            ret.buffer = vertexBuffer;
-            ret.bufferMemory = vertexBufferMemory;
-
-            return ret;
+                    commandPool,
+                    graphicsQueue,
+                    dataBuffer,
+                    VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
+            );
         }
     }
 
-    public static BufferInfo createVertexBuffer(
+    public static BufferInfo createBufferFromVertices(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
             List<MttVertex> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            long bufferSize = MttVertex.SIZEOF * vertices.size();
+            int bufferSize = MttVertex.SIZEOF * vertices.size();
+            ByteBuffer dataBuffer = stack.malloc(bufferSize);
+            vertices.forEach(v -> v.putToByteBuffer(dataBuffer));
+            dataBuffer.flip();
 
-            LongBuffer pBuffer = stack.mallocLong(1);
-            LongBuffer pBufferMemory = stack.mallocLong(1);
-            createBuffer(
+            return createBufferFromByteBuffer(
                     device,
-                    bufferSize,
-                    VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                    pBuffer,
-                    pBufferMemory);
-            long stagingBuffer = pBuffer.get(0);
-            long stagingBufferMemory = pBufferMemory.get(0);
-
-            PointerBuffer data = stack.mallocPointer(1);
-
-            vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, data);
-            {
-                MemcpyUtils.memcpyVertex(data.getByteBuffer(0, (int) bufferSize), vertices);
-            }
-            vkUnmapMemory(device, stagingBufferMemory);
-
-            createBuffer(
-                    device,
-                    bufferSize,
-                    VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pBuffer,
-                    pBufferMemory);
-            long vertexBuffer = pBuffer.get(0);
-            long vertexBufferMemory = pBufferMemory.get(0);
-
-            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize, 0, 0);
-
-            vkDestroyBuffer(device, stagingBuffer, null);
-            vkFreeMemory(device, stagingBufferMemory, null);
-
-            var ret = new BufferInfo();
-            ret.buffer = vertexBuffer;
-            ret.bufferMemory = vertexBufferMemory;
-
-            return ret;
+                    commandPool,
+                    graphicsQueue,
+                    dataBuffer,
+                    VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
+            );
         }
     }
 
-    public static BufferInfo createVertexBufferUV(
+    public static BufferInfo createBufferFromVerticesUV(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
             List<MttVertexUV> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            long bufferSize = MttVertexUV.SIZEOF * vertices.size();
+            int bufferSize = MttVertexUV.SIZEOF * vertices.size();
+            ByteBuffer dataBuffer = stack.malloc(bufferSize);
+            vertices.forEach(v -> v.putToByteBuffer(dataBuffer));
+            dataBuffer.flip();
 
-            LongBuffer pBuffer = stack.mallocLong(1);
-            LongBuffer pBufferMemory = stack.mallocLong(1);
-            createBuffer(
+            return createBufferFromByteBuffer(
                     device,
-                    bufferSize,
-                    VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                    pBuffer,
-                    pBufferMemory);
-            long stagingBuffer = pBuffer.get(0);
-            long stagingBufferMemory = pBufferMemory.get(0);
-
-            PointerBuffer data = stack.mallocPointer(1);
-
-            vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, data);
-            {
-                MemcpyUtils.memcpyVertexUV(data.getByteBuffer(0, (int) bufferSize), vertices);
-            }
-            vkUnmapMemory(device, stagingBufferMemory);
-
-            createBuffer(
-                    device,
-                    bufferSize,
-                    VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pBuffer,
-                    pBufferMemory);
-            long vertexBuffer = pBuffer.get(0);
-            long vertexBufferMemory = pBufferMemory.get(0);
-
-            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, vertexBuffer, bufferSize, 0, 0);
-
-            vkDestroyBuffer(device, stagingBuffer, null);
-            vkFreeMemory(device, stagingBufferMemory, null);
-
-            var ret = new BufferInfo();
-            ret.buffer = vertexBuffer;
-            ret.bufferMemory = vertexBufferMemory;
-
-            return ret;
+                    commandPool,
+                    graphicsQueue,
+                    dataBuffer,
+                    VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
+            );
         }
     }
 
@@ -363,48 +264,18 @@ public class BufferUtils {
             VkQueue graphicsQueue,
             List<Integer> indices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            long bufferSize = Integer.BYTES * indices.size();
+            int bufferSize = Integer.BYTES * indices.size();
+            ByteBuffer dataBuffer = stack.malloc(bufferSize);
+            indices.forEach(dataBuffer::putInt);
+            dataBuffer.flip();
 
-            LongBuffer pBuffer = stack.mallocLong(1);
-            LongBuffer pBufferMemory = stack.mallocLong(1);
-            createBuffer(
+            return createBufferFromByteBuffer(
                     device,
-                    bufferSize,
-                    VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                    pBuffer,
-                    pBufferMemory);
-            long stagingBuffer = pBuffer.get(0);
-            long stagingBufferMemory = pBufferMemory.get(0);
-
-            PointerBuffer data = stack.mallocPointer(1);
-
-            vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, data);
-            {
-                MemcpyUtils.memcpyIntegers(data.getByteBuffer(0, (int) bufferSize), indices);
-            }
-            vkUnmapMemory(device, stagingBufferMemory);
-
-            createBuffer(
-                    device,
-                    bufferSize,
-                    VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pBuffer,
-                    pBufferMemory);
-            long indexBuffer = pBuffer.get(0);
-            long indexBufferMemory = pBufferMemory.get(0);
-
-            copyBuffer(device, commandPool, graphicsQueue, stagingBuffer, indexBuffer, bufferSize, 0, 0);
-
-            vkDestroyBuffer(device, stagingBuffer, null);
-            vkFreeMemory(device, stagingBufferMemory, null);
-
-            var ret = new BufferInfo();
-            ret.buffer = indexBuffer;
-            ret.bufferMemory = indexBufferMemory;
-
-            return ret;
+                    commandPool,
+                    graphicsQueue,
+                    dataBuffer,
+                    VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT
+            );
         }
     }
 

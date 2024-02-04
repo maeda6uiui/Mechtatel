@@ -37,7 +37,7 @@ public class VkMttSphere extends VkMttComponent {
             VkQueue graphicsQueue,
             List<MttVertex> vertices,
             List<Integer> indices) {
-        BufferUtils.BufferInfo bufferInfo = BufferUtils.createVertexBuffer(
+        BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromVertices(
                 device,
                 commandPool,
                 graphicsQueue,

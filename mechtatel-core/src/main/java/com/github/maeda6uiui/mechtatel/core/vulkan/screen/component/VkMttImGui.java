@@ -93,11 +93,12 @@ public class VkMttImGui extends VkMttComponent {
                 }
                 //Otherwise create new one
                 else {
-                    BufferUtils.BufferInfo bufferInfo = BufferUtils.createByteBuffer(
+                    BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromByteBuffer(
                             device,
                             commandPool,
                             graphicsQueue,
-                            drawData.getCmdListVtxBufferData(i)
+                            drawData.getCmdListVtxBufferData(i),
+                            VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
                     );
                     vertexBuffer = bufferInfo.buffer;
 
@@ -112,11 +113,12 @@ public class VkMttImGui extends VkMttComponent {
                 }
                 //Otherwise create new one
                 else {
-                    BufferUtils.BufferInfo bufferInfo = BufferUtils.createByteBuffer(
+                    BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromByteBuffer(
                             device,
                             commandPool,
                             graphicsQueue,
-                            drawData.getCmdListIdxBufferData(i)
+                            drawData.getCmdListIdxBufferData(i),
+                            VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT
                     );
                     indexBuffer = bufferInfo.buffer;
 

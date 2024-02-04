@@ -835,6 +835,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                     shadowMappingNabor
             );
         }
+
+        components.forEach(VkMttComponent::cleanupLocally);
     }
 
     public long getColorImageView() {

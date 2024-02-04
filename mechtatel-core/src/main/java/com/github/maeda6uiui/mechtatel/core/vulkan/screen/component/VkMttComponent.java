@@ -64,7 +64,7 @@ public class VkMttComponent {
      * This method is meant to be used for destroying and freeing one-time resources
      * after commands are submitted to a graphics queue.
      */
-    protected void cleanupLocally() {
+    public void cleanupLocally() {
 
     }
 

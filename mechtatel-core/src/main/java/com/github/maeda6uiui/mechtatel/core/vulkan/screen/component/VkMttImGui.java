@@ -1,6 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
@@ -12,7 +13,7 @@ import org.lwjgl.vulkan.VkQueue;
 
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
-import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -54,14 +55,14 @@ public class VkMttImGui extends VkMttComponent {
 
         //Create empty vertex buffer
         BufferUtils.BufferInfo bufferInfo = BufferUtils.createVertexBufferUV(
-                device, commandPool, graphicsQueue, new ArrayList<>()
+                device, commandPool, graphicsQueue, List.of(new MttVertexUV())
         );
         vertexBuffer = bufferInfo.buffer;
         vertexBufferMemory = bufferInfo.bufferMemory;
 
         //Create empty index buffer
         bufferInfo = BufferUtils.createIndexBuffer(
-                device, commandPool, graphicsQueue, new ArrayList<>()
+                device, commandPool, graphicsQueue, List.of(0)
         );
         indexBuffer = bufferInfo.buffer;
         indexBufferMemory = bufferInfo.bufferMemory;

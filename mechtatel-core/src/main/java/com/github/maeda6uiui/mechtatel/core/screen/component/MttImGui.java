@@ -90,7 +90,10 @@ public class MttImGui extends MttComponent {
      */
     public void declare(Runnable fImGuiDeclaration) {
         ImGui.setCurrentContext(context);
+        ImGui.newFrame();
         fImGuiDeclaration.run();
+        ImGui.endFrame();
+        ImGui.render();
         vkImGui.setDrawData(ImGui.getDrawData());
     }
 }

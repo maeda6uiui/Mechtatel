@@ -5,6 +5,8 @@ import org.joml.Vector2fc;
 import org.joml.Vector4f;
 import org.joml.Vector4fc;
 
+import java.nio.ByteBuffer;
+
 /**
  * 2D vertex
  *
@@ -17,6 +19,16 @@ public class MttVertex2D {
 
     public Vector2fc pos;
     public Vector4fc color;
+
+    public void putToByteBuffer(ByteBuffer buffer) {
+        buffer.putFloat(pos.x());
+        buffer.putFloat(pos.y());
+
+        buffer.putFloat(color.x());
+        buffer.putFloat(color.y());
+        buffer.putFloat(color.z());
+        buffer.putFloat(color.w());
+    }
 
     public MttVertex2D(Vector2fc pos, Vector4fc color) {
         this.pos = pos;

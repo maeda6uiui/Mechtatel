@@ -37,8 +37,9 @@ public class ImGuiTest extends Mechtatel {
     @Override
     public void onUpdate(MttWindow window) {
         imgui.declare(() -> {
-            ImGui.begin("Window");
-
+            if (ImGui.begin("Window")) {
+                ImGui.text("Hello, world!");
+            }
             ImGui.end();
         });
 

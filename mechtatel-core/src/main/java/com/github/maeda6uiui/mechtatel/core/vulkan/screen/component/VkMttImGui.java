@@ -161,7 +161,7 @@ public class VkMttImGui extends VkMttComponent {
 
     @Override
     public void transfer(VkCommandBuffer commandBuffer) {
-        if (!this.isVisible() || !bufferCreated) {
+        if (!this.isVisible() || !bufferCreated || drawData == null) {
             return;
         }
 

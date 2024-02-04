@@ -1,9 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.screen.component;
 
-import org.joml.Vector2fc;
-import org.joml.Vector3f;
-import org.joml.Vector3fc;
-import org.joml.Vector4fc;
+import org.joml.*;
 
 /**
  * 3D vertex with UV
@@ -34,5 +31,12 @@ public class MttVertexUV {
         this.color = color;
         this.texCoords = texCoords;
         this.normal = new Vector3f(0.0f, 1.0f, 0.0f);
+    }
+
+    public MttVertexUV() {
+        pos = new Vector3f();
+        color = new Vector4f();
+        texCoords = new Vector2f();
+        normal = new Vector3f(0.0f, 1.0f, 0.0f);
     }
 }

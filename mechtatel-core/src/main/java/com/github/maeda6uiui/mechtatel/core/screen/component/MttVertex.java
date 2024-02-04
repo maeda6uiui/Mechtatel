@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.screen.component;
 
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
+import org.joml.Vector4f;
 import org.joml.Vector4fc;
 
 /**
@@ -29,5 +30,11 @@ public class MttVertex {
         this.pos = pos;
         this.color = color;
         this.normal = new Vector3f(0.0f, 1.0f, 0.0f);
+    }
+
+    public MttVertex() {
+        pos = new Vector3f();
+        color = new Vector4f();
+        normal = new Vector3f(0.0f, 1.0f, 0.0f);
     }
 }

@@ -1,6 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.screen.component;
 
+import org.joml.Vector2f;
 import org.joml.Vector2fc;
+import org.joml.Vector4f;
 import org.joml.Vector4fc;
 
 /**
@@ -19,5 +21,10 @@ public class MttVertex2D {
     public MttVertex2D(Vector2fc pos, Vector4fc color) {
         this.pos = pos;
         this.color = color;
+    }
+
+    public MttVertex2D() {
+        pos = new Vector2f();
+        color = new Vector4f();
     }
 }

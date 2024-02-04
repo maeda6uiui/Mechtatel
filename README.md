@@ -39,6 +39,7 @@ Thank you!
 
 - [Vulkan Tutorial](https://vulkan-tutorial.com/)
 - [Vulkan-Tutorial-Java](https://github.com/Naitsirc98/Vulkan-Tutorial-Java)
+- [3D Game Development with LWJGL 3](https://ahbejarano.gitbook.io/lwjglgamedev/)
 
 ## 進捗報告(Progress report)
 

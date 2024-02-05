@@ -40,6 +40,7 @@ public class VkMttImGui extends VkMttComponent {
     private Map<Integer, Long> vertexBufferMemories;
     private Map<Integer, Long> indexBuffers;
     private Map<Integer, Long> indexBufferMemories;
+    private Map<Integer, Integer> numIndicesMap;
 
     private boolean isExternalTexture;
 
@@ -63,6 +64,7 @@ public class VkMttImGui extends VkMttComponent {
         vertexBufferMemories = new HashMap<>();
         indexBuffers = new HashMap<>();
         indexBufferMemories = new HashMap<>();
+        numIndicesMap = new HashMap<>();
     }
 
     @Override
@@ -173,6 +175,9 @@ public class VkMttImGui extends VkMttComponent {
 
                     indexBuffers.put(i, bufferInfo.buffer);
                     indexBufferMemories.put(i, bufferInfo.bufferMemory);
+
+                    int numIndices = indices.size();
+                    numIndicesMap.put(i, numIndices);
                 }
 
                 //Bind vertex buffer
@@ -181,17 +186,11 @@ public class VkMttImGui extends VkMttComponent {
                 vkCmdBindVertexBuffers(commandBuffer, 0, lVertexBuffers, offsets);
 
                 //Bind index buffer
-                vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+                vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-                //Record commands
-                int numCmds = drawData.getCmdListCmdBufferSize(i);
-                for (int j = 0; j < numCmds; j++) {
-                    int elemCount = drawData.getCmdListCmdBufferElemCount(i, j);
-                    int idxBufferOffset = drawData.getCmdListCmdBufferIdxOffset(i, j);
-                    int firstIndex = idxBufferOffset * ImDrawData.SIZEOF_IM_DRAW_IDX;
-
-                    vkCmdDrawIndexed(commandBuffer, elemCount, 1, firstIndex, 0, 0);
-                }
+                //Record command
+                int numIndices = numIndicesMap.get(i);
+                vkCmdDrawIndexed(commandBuffer, numIndices, 1, 0, 0, 0);
             }
         }
     }
@@ -240,6 +239,7 @@ public class VkMttImGui extends VkMttComponent {
         vertexBufferMemories.clear();
         indexBuffers.clear();
         indexBufferMemories.clear();
+        numIndicesMap.clear();
 
         drawData = null;
     }

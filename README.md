@@ -48,6 +48,10 @@ Thank you!
 Vertex BufferのレイアウトがImGuiとMechtatelで違うから、ImGuiの出してくるByteBufferをそのままMechtatelに投げてもちゃんと描画されないんですね。
 ImGuiの出してくるByteBufferを一度数値に戻してからMechtatelのVertex形式に変換してみます。
 
+？？？
+
+![ImGuiのウィンドウ？](./Image/imgui.png)
+
 ### 2024-02-04
 
 ImGuiを組み込む作業を進めています。

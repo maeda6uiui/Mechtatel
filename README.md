@@ -43,6 +43,11 @@ Thank you!
 
 ## 進捗報告(Progress report)
 
+### 2024-02-05
+
+Vertex BufferのレイアウトがImGuiとMechtatelで違うから、ImGuiの出してくるByteBufferをそのままMechtatelに投げてもちゃんと描画されないんですね。
+ImGuiの出してくるByteBufferを一度数値に戻してからMechtatelのVertex形式に変換してみます。
+
 ### 2024-02-04
 
 ImGuiを組み込む作業を進めています。

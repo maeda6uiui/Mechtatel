@@ -107,7 +107,7 @@ public class VkMttImGui extends VkMttComponent {
 
             var vertex = new MttVertexUV(
                     new Vector3f(posX, posY, z),
-                    new Vector4f(colR, colG, colB, colA),
+                    new Vector4f(colR / 255.0f, colG / 255.0f, colB / 255.0f, colA / 255.0f),
                     new Vector2f(texU, texV)
             );
             vertices.add(vertex);

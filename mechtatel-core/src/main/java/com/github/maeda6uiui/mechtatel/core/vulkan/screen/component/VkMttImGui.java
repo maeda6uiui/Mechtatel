@@ -90,7 +90,7 @@ public class VkMttImGui extends VkMttComponent {
 
     private List<MttVertexUV> convertImGuiVtxBufferDataToVertices(ByteBuffer vtxBufferData, float z) {
         var vertices = new ArrayList<MttVertexUV>();
-        int numVertices = vtxBufferData.capacity() / ImDrawData.SIZEOF_IM_DRAW_VERT;
+        int numVertices = vtxBufferData.remaining() / ImDrawData.SIZEOF_IM_DRAW_VERT;
         for (int i = 0; i < numVertices; i++) {
             float posX = vtxBufferData.getFloat();
             float posY = vtxBufferData.getFloat();
@@ -116,7 +116,7 @@ public class VkMttImGui extends VkMttComponent {
 
     private List<Integer> convertImGuiIdxBufferDataToIntegerList(ByteBuffer idxBufferData) {
         var indices = new ArrayList<Integer>();
-        int numIndices = idxBufferData.capacity() / ImDrawData.SIZEOF_IM_DRAW_IDX;
+        int numIndices = idxBufferData.remaining() / ImDrawData.SIZEOF_IM_DRAW_IDX;
         for (int i = 0; i < numIndices; i++) {
             int index = idxBufferData.getShort();
             indices.add(index);

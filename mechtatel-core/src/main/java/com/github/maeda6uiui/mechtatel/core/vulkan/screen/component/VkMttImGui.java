@@ -1,10 +1,14 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import imgui.ImDrawData;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
@@ -12,7 +16,9 @@ import org.lwjgl.vulkan.VkQueue;
 
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.lwjgl.vulkan.VK10.*;
@@ -82,6 +88,43 @@ public class VkMttImGui extends VkMttComponent {
         this.drawData = drawData;
     }
 
+    private List<MttVertexUV> convertImGuiVtxBufferDataToVertices(ByteBuffer vtxBufferData, float z) {
+        var vertices = new ArrayList<MttVertexUV>();
+        int numVertices = vtxBufferData.capacity() / ImDrawData.SIZEOF_IM_DRAW_VERT;
+        for (int i = 0; i < numVertices; i++) {
+            float posX = vtxBufferData.getFloat();
+            float posY = vtxBufferData.getFloat();
+            float texU = vtxBufferData.getFloat();
+            float texV = vtxBufferData.getFloat();
+            int col = vtxBufferData.getInt();
+
+            int colR = col & 0xff;
+            int colG = (col >> 8) & 0xff;
+            int colB = (col >> 16) & 0xff;
+            int colA = (col >> 24) & 0xff;
+
+            var vertex = new MttVertexUV(
+                    new Vector3f(posX, posY, z),
+                    new Vector4f(colR, colG, colB, colA),
+                    new Vector2f(texU, texV)
+            );
+            vertices.add(vertex);
+        }
+
+        return vertices;
+    }
+
+    private List<Integer> convertImGuiIdxBufferDataToIntegerList(ByteBuffer idxBufferData) {
+        var indices = new ArrayList<Integer>();
+        int numIndices = idxBufferData.capacity() / ImDrawData.SIZEOF_IM_DRAW_IDX;
+        for (int i = 0; i < numIndices; i++) {
+            int index = idxBufferData.getShort();
+            indices.add(index);
+        }
+
+        return indices;
+    }
+
     private void recordCommands(VkCommandBuffer commandBuffer) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             int numLists = drawData.getCmdListsCount();
@@ -93,12 +136,15 @@ public class VkMttImGui extends VkMttComponent {
                 }
                 //Otherwise create new one
                 else {
-                    BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromByteBuffer(
+                    List<MttVertexUV> vertices = this.convertImGuiVtxBufferDataToVertices(
+                            drawData.getCmdListVtxBufferData(i), 0.0f
+                    );
+
+                    BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromVerticesUV(
                             device,
                             commandPool,
                             graphicsQueue,
-                            drawData.getCmdListVtxBufferData(i),
-                            VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
+                            vertices
                     );
                     vertexBuffer = bufferInfo.buffer;
 
@@ -113,12 +159,15 @@ public class VkMttImGui extends VkMttComponent {
                 }
                 //Otherwise create new one
                 else {
-                    BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromByteBuffer(
+                    List<Integer> indices = this.convertImGuiIdxBufferDataToIntegerList(
+                            drawData.getCmdListIdxBufferData(i)
+                    );
+
+                    BufferUtils.BufferInfo bufferInfo = BufferUtils.createIndexBuffer(
                             device,
                             commandPool,
                             graphicsQueue,
-                            drawData.getCmdListIdxBufferData(i),
-                            VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT
+                            indices
                     );
                     indexBuffer = bufferInfo.buffer;
 

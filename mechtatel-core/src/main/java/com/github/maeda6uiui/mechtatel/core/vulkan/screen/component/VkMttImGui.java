@@ -51,7 +51,7 @@ public class VkMttImGui extends VkMttComponent {
             VkQueue graphicsQueue,
             VkMttScreen screen,
             VkMttTexture texture) {
-        super(mttComponent, screen, "gbuffer");
+        super(mttComponent, screen, "gbuffer_imgui");
 
         this.device = device;
         this.commandPool = commandPool;

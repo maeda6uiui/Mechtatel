@@ -432,8 +432,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
 
             vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
             {
-                vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gBufferNabor.getGraphicsPipeline(0, 0));
-
                 vkCmdBindDescriptorSets(
                         commandBuffer,
                         VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -446,7 +444,25 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                     if (component.getScreen() != this) {
                         continue;
                     }
-                    if (!component.getNaborName().equals("gbuffer")) {
+
+                    String naborName = component.getNaborName();
+                    if (naborName.equals("gbuffer")) {
+                        //Bind first graphics pipeline of the albedo nabor
+                        //First graphics pipeline has been set up for normal components
+                        vkCmdBindPipeline(
+                                commandBuffer,
+                                VK_PIPELINE_BIND_POINT_GRAPHICS,
+                                gBufferNabor.getGraphicsPipeline(0, 0)
+                        );
+                    } else if (naborName.equals("gbuffer_imgui")) {
+                        //Bind second graphics pipeline of the albedo nabor
+                        //Second graphics pipeline has been set up for ImGui components
+                        vkCmdBindPipeline(
+                                commandBuffer,
+                                VK_PIPELINE_BIND_POINT_GRAPHICS,
+                                gBufferNabor.getGraphicsPipeline(0, 1)
+                        );
+                    } else {
                         continue;
                     }
 

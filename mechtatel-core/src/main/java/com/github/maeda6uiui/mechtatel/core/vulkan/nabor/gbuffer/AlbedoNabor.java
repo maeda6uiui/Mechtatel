@@ -407,8 +407,7 @@ class AlbedoNabor extends Nabor {
         }
     }
 
-    @Override
-    protected void createGraphicsPipelines() {
+    private long createGraphicsPipeline(int cullMode, boolean depthTestEnable) {
         VkDevice device = this.getDevice();
         int msaaSamples = this.getMsaaSamples();
         VkExtent2D extent = this.getExtent();
@@ -471,7 +470,7 @@ class AlbedoNabor extends Nabor {
             rasterizer.rasterizerDiscardEnable(false);
             rasterizer.polygonMode(VK_POLYGON_MODE_FILL);
             rasterizer.lineWidth(1.0f);
-            rasterizer.cullMode(VK_CULL_MODE_BACK_BIT);
+            rasterizer.cullMode(cullMode);
             rasterizer.frontFace(VK_FRONT_FACE_COUNTER_CLOCKWISE);
             rasterizer.depthBiasEnable(false);
 
@@ -485,7 +484,7 @@ class AlbedoNabor extends Nabor {
             //Depth-stencil
             VkPipelineDepthStencilStateCreateInfo depthStencil = VkPipelineDepthStencilStateCreateInfo.calloc(stack);
             depthStencil.sType(VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO);
-            depthStencil.depthTestEnable(true);
+            depthStencil.depthTestEnable(depthTestEnable);
             depthStencil.depthWriteEnable(true);
             depthStencil.depthCompareOp(VK_COMPARE_OP_LESS);
             depthStencil.depthBoundsTestEnable(false);
@@ -562,13 +561,22 @@ class AlbedoNabor extends Nabor {
             pipelineInfo.basePipelineIndex(-1);
 
             LongBuffer pGraphicsPipeline = stack.mallocLong(1);
-            if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, pipelineInfo, null, pGraphicsPipeline) != VK_SUCCESS) {
+            if (vkCreateGraphicsPipelines(
+                    device, VK_NULL_HANDLE, pipelineInfo, null, pGraphicsPipeline) != VK_SUCCESS) {
                 throw new RuntimeException("Failed to create a graphics pipeline");
             }
 
-            long graphicsPipeline = pGraphicsPipeline.get(0);
-            this.getGraphicsPipelines().add(graphicsPipeline);
+            return pGraphicsPipeline.get(0);
         }
+    }
+
+    @Override
+    protected void createGraphicsPipelines() {
+        long normalGraphicsPipeline = this.createGraphicsPipeline(VK_CULL_MODE_BACK_BIT, true);
+        long imguiGraphicsPipeline = this.createGraphicsPipeline(VK_CULL_MODE_NONE, false);
+
+        this.getGraphicsPipelines().add(normalGraphicsPipeline);
+        this.getGraphicsPipelines().add(imguiGraphicsPipeline);
     }
 
     @Override

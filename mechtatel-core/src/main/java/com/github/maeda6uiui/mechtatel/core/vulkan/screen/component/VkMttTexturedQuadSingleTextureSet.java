@@ -156,11 +156,10 @@ public class VkMttTexturedQuadSingleTextureSet extends VkMttComponent {
 
     @Override
     public void cleanup() {
+        if (!isExternalTexture) {
+            texture.cleanup();
+        }
         if (bufferCreated) {
-            if (!isExternalTexture) {
-                texture.cleanup();
-            }
-
             vkDestroyBuffer(device, vertexBuffer, null);
             vkDestroyBuffer(device, indexBuffer, null);
 

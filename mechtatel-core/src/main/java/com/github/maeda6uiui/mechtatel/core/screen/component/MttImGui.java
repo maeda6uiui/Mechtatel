@@ -6,8 +6,11 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttImGui;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import imgui.ImFontAtlas;
 import imgui.ImGui;
+import imgui.ImGuiIO;
 import imgui.internal.ImGuiContext;
 import imgui.type.ImInt;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import java.nio.ByteBuffer;
 
@@ -95,5 +98,16 @@ public class MttImGui extends MttComponent {
         ImGui.endFrame();
         ImGui.render();
         vkImGui.setDrawData(ImGui.getDrawData());
+
+        //Transform this component to fit in the range of [-1, 1]
+        ImGuiIO io = ImGui.getIO();
+
+        float scaleX = 2.0f / io.getDisplaySizeX();
+        float scaleY = 2.0f / io.getDisplaySizeY();
+
+        var mat = new Matrix4f()
+                .translate(new Vector3f(-1.0f, -1.0f, 0.0f))
+                .scale(new Vector3f(scaleX, scaleY, 1.0f));
+        this.setMat(mat);
     }
 }

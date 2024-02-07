@@ -66,14 +66,6 @@ public class MttWindow {
         mustRecreate = true;
     }
 
-    private void cursorPositionCallback(long window, double xpos, double ypos) {
-        mouse.setCursorPos((int) xpos, (int) ypos);
-
-        if (fixCursorFlag) {
-            glfwSetCursorPos(window, 0, 0);
-        }
-    }
-
     public MttWindow(IMechtatelForMttWindow mtt, MttSettings settings) {
         this(
                 mtt,
@@ -118,10 +110,8 @@ public class MttWindow {
         mustRecreate = false;
         validWindow = true;
 
-        //Set callbacks
-        //Key and mouse callbacks are set later on
+        //Set framebuffer size callback
         glfwSetFramebufferSizeCallback(handle, this::framebufferResizeCallback);
-        glfwSetCursorPosCallback(handle, this::cursorPositionCallback);
 
         //Create list for 3D sounds
         sounds3D = new ArrayList<>();
@@ -183,6 +173,16 @@ public class MttWindow {
             } else if (action == GLFW_RELEASE) {
                 io.setMouseDown(button, false);
             }
+        });
+
+        //Set cursor pos callback
+        glfwSetCursorPosCallback(handle, (handle, xPos, yPos) -> {
+            mouse.setCursorPos((int) xPos, (int) yPos);
+            if (fixCursorFlag) {
+                glfwSetCursorPos(handle, 0, 0);
+            }
+
+            io.setMousePos((float) xPos, (float) yPos);
         });
 
         //Set char callback

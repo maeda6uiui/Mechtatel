@@ -115,7 +115,7 @@ public class VkMttTexturedQuadSingleTextureSet extends VkMttComponent {
     }
 
     public void createBuffers() {
-        BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromVerticesUVWithStackMemory(
+        BufferUtils.BufferInfo bufferInfo = BufferUtils.createVerticesUVBufferFromStackMemory(
                 device,
                 commandPool,
                 graphicsQueue,

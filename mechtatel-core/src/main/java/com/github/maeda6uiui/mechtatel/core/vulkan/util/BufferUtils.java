@@ -176,7 +176,7 @@ public class BufferUtils {
         }
     }
 
-    public static BufferInfo createBufferFromVertices2DWithStackMemory(
+    public static BufferInfo createVertices2DBufferFromStackMemory(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -193,7 +193,7 @@ public class BufferUtils {
         }
     }
 
-    public static BufferInfo createBufferFromVertices2DWithHeapMemory(
+    public static BufferInfo createVertices2DBufferFromHeapMemory(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -211,7 +211,7 @@ public class BufferUtils {
         return bufferInfo;
     }
 
-    public static BufferInfo createBufferFromVertices2DUVWithStackMemory(
+    public static BufferInfo createVertices2DUVBufferFromStackMemory(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -228,7 +228,7 @@ public class BufferUtils {
         }
     }
 
-    public static BufferInfo createBufferFromVertices2DUVWithHeapMemory(
+    public static BufferInfo createVertices2DUVBufferFromHeapMemory(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -246,7 +246,7 @@ public class BufferUtils {
         return bufferInfo;
     }
 
-    public static BufferInfo createBufferFromVerticesWithStackMemory(
+    public static BufferInfo createVerticesBufferFromStackMemory(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -263,7 +263,7 @@ public class BufferUtils {
         }
     }
 
-    public static BufferInfo createBufferFromVerticesWithHeapMemory(
+    public static BufferInfo createVerticesBufferFromHeapMemory(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -281,7 +281,7 @@ public class BufferUtils {
         return bufferInfo;
     }
 
-    public static BufferInfo createBufferFromVerticesUVWithStackMemory(
+    public static BufferInfo createVerticesUVBufferFromStackMemory(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -298,7 +298,7 @@ public class BufferUtils {
         }
     }
 
-    public static BufferInfo createBufferFromVerticesUVWithHeapMemory(
+    public static BufferInfo createVerticesUVBufferFromHeapMemory(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,

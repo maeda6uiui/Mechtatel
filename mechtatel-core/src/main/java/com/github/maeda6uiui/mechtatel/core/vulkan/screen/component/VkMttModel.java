@@ -80,7 +80,7 @@ public class VkMttModel extends VkMttComponent {
         indexBufferMemories = new HashMap<>();
         for (int i = 0; i < numMeshes; i++) {
             //Create a vertex buffer and a vertex buffer memory
-            BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromVerticesUVWithStackMemory(
+            BufferUtils.BufferInfo bufferInfo = BufferUtils.createVerticesUVBufferFromStackMemory(
                     device, commandPool, graphicsQueue, model.meshes.get(i).vertices);
             vertexBuffers.put(i, bufferInfo.buffer);
             vertexBufferMemories.put(i, bufferInfo.bufferMemory);

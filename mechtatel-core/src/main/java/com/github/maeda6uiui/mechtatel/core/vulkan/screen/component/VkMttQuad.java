@@ -39,7 +39,7 @@ public class VkMttQuad extends VkMttComponent {
             throw new RuntimeException("Number of vertices must be 4");
         }
 
-        BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromVerticesWithStackMemory(
+        BufferUtils.BufferInfo bufferInfo = BufferUtils.createVerticesBufferFromStackMemory(
                 device, commandPool, graphicsQueue, vertices);
         vertexBuffer = bufferInfo.buffer;
         vertexBufferMemory = bufferInfo.bufferMemory;

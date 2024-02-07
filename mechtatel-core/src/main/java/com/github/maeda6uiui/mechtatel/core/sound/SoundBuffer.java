@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.sound;
 
-import com.github.maeda6uiui.mechtatel.core.util.MttBufferUtils;
+import com.github.maeda6uiui.mechtatel.core.util.ByteBufferUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBVorbisInfo;
 
@@ -22,7 +22,7 @@ class SoundBuffer {
     private int buffer;
 
     private ShortBuffer readVorbis(URI resource, int bufferSize, STBVorbisInfo info) throws IOException {
-        ByteBuffer vorbis = MttBufferUtils.ioResourceToByteBuffer(resource, bufferSize);
+        ByteBuffer vorbis = ByteBufferUtils.ioResourceToByteBuffer(resource, bufferSize);
         IntBuffer error = BufferUtils.createIntBuffer(1);
         long decoder = stb_vorbis_open_memory(vorbis, error, null);
         if (decoder == 0) {

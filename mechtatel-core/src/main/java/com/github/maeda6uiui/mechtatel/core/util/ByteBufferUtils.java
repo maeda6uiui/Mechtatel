@@ -15,11 +15,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Buffer utilities
+ * Utility methods for ByteBuffer
  *
  * @author maeda6uiui
  */
-public class MttBufferUtils {
+public class ByteBufferUtils {
     private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
         ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
         buffer.flip();

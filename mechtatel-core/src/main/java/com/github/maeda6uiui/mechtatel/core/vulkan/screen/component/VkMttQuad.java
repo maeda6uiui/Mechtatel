@@ -39,7 +39,7 @@ public class VkMttQuad extends VkMttComponent {
             throw new RuntimeException("Number of vertices must be 4");
         }
 
-        BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromVertices(
+        BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromVerticesWithStackMemory(
                 device, commandPool, graphicsQueue, vertices);
         vertexBuffer = bufferInfo.buffer;
         vertexBufferMemory = bufferInfo.bufferMemory;
@@ -64,7 +64,7 @@ public class VkMttQuad extends VkMttComponent {
         }
         indexCount = indices.size();
 
-        bufferInfo = BufferUtils.createIndexBuffer(device, commandPool, graphicsQueue, indices);
+        bufferInfo = BufferUtils.createIndexBufferFromStackMemory(device, commandPool, graphicsQueue, indices);
         indexBuffer = bufferInfo.buffer;
         indexBufferMemory = bufferInfo.bufferMemory;
     }

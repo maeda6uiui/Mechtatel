@@ -174,7 +174,7 @@ public class BufferUtils {
         }
     }
 
-    public static BufferInfo createBufferFromVertices2D(
+    public static BufferInfo createBufferFromVertices2DWithStackMemory(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -195,7 +195,7 @@ public class BufferUtils {
         }
     }
 
-    public static BufferInfo createBufferFromVertices2DUV(
+    public static BufferInfo createBufferFromVertices2DUVWithStackMemory(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -216,7 +216,7 @@ public class BufferUtils {
         }
     }
 
-    public static BufferInfo createBufferFromVertices(
+    public static BufferInfo createBufferFromVerticesWithStackMemory(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -237,7 +237,7 @@ public class BufferUtils {
         }
     }
 
-    public static BufferInfo createBufferFromVerticesUV(
+    public static BufferInfo createBufferFromVerticesUVWithStackMemory(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
@@ -258,7 +258,7 @@ public class BufferUtils {
         }
     }
 
-    public static BufferInfo createIndexBuffer(
+    public static BufferInfo createIndexBufferFromStackMemory(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,

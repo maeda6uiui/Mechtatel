@@ -142,7 +142,7 @@ public class VkMttImGui extends VkMttComponent {
                             drawData.getCmdListVtxBufferData(i), 0.0f
                     );
 
-                    BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromVerticesUV(
+                    BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromVerticesUVWithStackMemory(
                             device,
                             commandPool,
                             graphicsQueue,
@@ -165,7 +165,7 @@ public class VkMttImGui extends VkMttComponent {
                             drawData.getCmdListIdxBufferData(i)
                     );
 
-                    BufferUtils.BufferInfo bufferInfo = BufferUtils.createIndexBuffer(
+                    BufferUtils.BufferInfo bufferInfo = BufferUtils.createIndexBufferFromStackMemory(
                             device,
                             commandPool,
                             graphicsQueue,

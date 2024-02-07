@@ -37,7 +37,7 @@ public class VkMttCapsule extends VkMttComponent {
             VkQueue graphicsQueue,
             List<MttVertex> vertices,
             List<Integer> indices) {
-        BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromVertices(
+        BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromVerticesWithStackMemory(
                 device,
                 commandPool,
                 graphicsQueue,
@@ -45,7 +45,7 @@ public class VkMttCapsule extends VkMttComponent {
         vertexBuffer = bufferInfo.buffer;
         vertexBufferMemory = bufferInfo.bufferMemory;
 
-        bufferInfo = BufferUtils.createIndexBuffer(
+        bufferInfo = BufferUtils.createIndexBufferFromStackMemory(
                 device,
                 commandPool,
                 graphicsQueue,

@@ -77,7 +77,7 @@ public class VkMttLineSet extends VkMttComponent {
     }
 
     public void createBuffer() {
-        BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromVertices(
+        BufferUtils.BufferInfo bufferInfo = BufferUtils.createBufferFromVerticesWithStackMemory(
                 device,
                 commandPool,
                 graphicsQueue,

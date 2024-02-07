@@ -148,4 +148,23 @@ public class ByteBufferUtils {
 
         return buffer;
     }
+
+    /**
+     * Converts a list of indices to a byte buffer.
+     * Buffer is created from a stack memory if stack is provided by the argument.
+     * Otherwise, it is created from a heap memory allocated by {@code malloc()},
+     * and the memory must be freed afterward.
+     *
+     * @param indices List of indices
+     * @param stack   Stack
+     * @return Byte buffer
+     */
+    public static ByteBuffer indicesToByteBuffer(List<Integer> indices, MemoryStack stack) {
+        int bufferSize = Integer.BYTES * indices.size();
+        ByteBuffer buffer = malloc(bufferSize, stack);
+        indices.forEach(buffer::putInt);
+        buffer.flip();
+
+        return buffer;
+    }
 }

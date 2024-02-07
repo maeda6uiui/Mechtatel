@@ -33,6 +33,9 @@ Thank you!
 
 ## Todo
 
+- Create buffer from heap memory when loading 3D models (currently using stack memory, which may lead to out of memory if the size of buffer it too large)
+- Create a module for each platform (e.g. `mechtatel-natives-windows`) and pack required binaries in it
+- Create a GitHub Actions workflow to deploy snapshot build to Maven Central
 - Implement functionality to run `mechtatel-core` via YAML definitions<br>i.e. Load and manipulate resources according to the procedure defined in a YAML file
 
 ## Special thanks to

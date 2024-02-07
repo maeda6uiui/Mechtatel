@@ -4,8 +4,10 @@ import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
+import com.github.maeda6uiui.mechtatel.core.util.ByteBufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.vulkan.*;
 
 import java.nio.ByteBuffer;
@@ -180,11 +182,7 @@ public class BufferUtils {
             VkQueue graphicsQueue,
             List<MttVertex2D> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            int bufferSize = MttVertex2D.SIZEOF * vertices.size();
-            ByteBuffer dataBuffer = stack.malloc(bufferSize);
-            vertices.forEach(v -> v.putToByteBuffer(dataBuffer));
-            dataBuffer.flip();
-
+            ByteBuffer dataBuffer = ByteBufferUtils.vertices2DToByteBuffer(vertices, stack);
             return createBufferFromByteBuffer(
                     device,
                     commandPool,
@@ -193,6 +191,24 @@ public class BufferUtils {
                     VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
             );
         }
+    }
+
+    public static BufferInfo createBufferFromVertices2DWithHeapMemory(
+            VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue,
+            List<MttVertex2D> vertices) {
+        ByteBuffer dataBuffer = ByteBufferUtils.vertices2DToByteBuffer(vertices, null);
+        BufferInfo bufferInfo = createBufferFromByteBuffer(
+                device,
+                commandPool,
+                graphicsQueue,
+                dataBuffer,
+                VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
+        );
+        MemoryUtil.memFree(dataBuffer);
+
+        return bufferInfo;
     }
 
     public static BufferInfo createBufferFromVertices2DUVWithStackMemory(
@@ -201,11 +217,7 @@ public class BufferUtils {
             VkQueue graphicsQueue,
             List<MttVertex2DUV> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            int bufferSize = MttVertex2DUV.SIZEOF * vertices.size();
-            ByteBuffer dataBuffer = stack.malloc(bufferSize);
-            vertices.forEach(v -> v.putToByteBuffer(dataBuffer));
-            dataBuffer.flip();
-
+            ByteBuffer dataBuffer = ByteBufferUtils.vertices2DUVToByteBuffer(vertices, stack);
             return createBufferFromByteBuffer(
                     device,
                     commandPool,
@@ -214,6 +226,24 @@ public class BufferUtils {
                     VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
             );
         }
+    }
+
+    public static BufferInfo createBufferFromVertices2DUVWithHeapMemory(
+            VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue,
+            List<MttVertex2DUV> vertices) {
+        ByteBuffer dataBuffer = ByteBufferUtils.vertices2DUVToByteBuffer(vertices, null);
+        BufferInfo bufferInfo = createBufferFromByteBuffer(
+                device,
+                commandPool,
+                graphicsQueue,
+                dataBuffer,
+                VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
+        );
+        MemoryUtil.memFree(dataBuffer);
+
+        return bufferInfo;
     }
 
     public static BufferInfo createBufferFromVerticesWithStackMemory(
@@ -222,11 +252,7 @@ public class BufferUtils {
             VkQueue graphicsQueue,
             List<MttVertex> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            int bufferSize = MttVertex.SIZEOF * vertices.size();
-            ByteBuffer dataBuffer = stack.malloc(bufferSize);
-            vertices.forEach(v -> v.putToByteBuffer(dataBuffer));
-            dataBuffer.flip();
-
+            ByteBuffer dataBuffer = ByteBufferUtils.verticesToByteBuffer(vertices, stack);
             return createBufferFromByteBuffer(
                     device,
                     commandPool,
@@ -235,6 +261,24 @@ public class BufferUtils {
                     VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
             );
         }
+    }
+
+    public static BufferInfo createBufferFromVerticesWithHeapMemory(
+            VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue,
+            List<MttVertex> vertices) {
+        ByteBuffer dataBuffer = ByteBufferUtils.verticesToByteBuffer(vertices, null);
+        BufferInfo bufferInfo = createBufferFromByteBuffer(
+                device,
+                commandPool,
+                graphicsQueue,
+                dataBuffer,
+                VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
+        );
+        MemoryUtil.memFree(dataBuffer);
+
+        return bufferInfo;
     }
 
     public static BufferInfo createBufferFromVerticesUVWithStackMemory(
@@ -243,11 +287,7 @@ public class BufferUtils {
             VkQueue graphicsQueue,
             List<MttVertexUV> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            int bufferSize = MttVertexUV.SIZEOF * vertices.size();
-            ByteBuffer dataBuffer = stack.malloc(bufferSize);
-            vertices.forEach(v -> v.putToByteBuffer(dataBuffer));
-            dataBuffer.flip();
-
+            ByteBuffer dataBuffer = ByteBufferUtils.verticesUVToByteBuffer(vertices, stack);
             return createBufferFromByteBuffer(
                     device,
                     commandPool,
@@ -258,17 +298,31 @@ public class BufferUtils {
         }
     }
 
+    public static BufferInfo createBufferFromVerticesUVWithHeapMemory(
+            VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue,
+            List<MttVertexUV> vertices) {
+        ByteBuffer dataBuffer = ByteBufferUtils.verticesUVToByteBuffer(vertices, null);
+        BufferInfo bufferInfo = createBufferFromByteBuffer(
+                device,
+                commandPool,
+                graphicsQueue,
+                dataBuffer,
+                VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
+        );
+        MemoryUtil.memFree(dataBuffer);
+
+        return bufferInfo;
+    }
+
     public static BufferInfo createIndexBufferFromStackMemory(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
             List<Integer> indices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            int bufferSize = Integer.BYTES * indices.size();
-            ByteBuffer dataBuffer = stack.malloc(bufferSize);
-            indices.forEach(dataBuffer::putInt);
-            dataBuffer.flip();
-
+            ByteBuffer dataBuffer = ByteBufferUtils.indicesToByteBuffer(indices, stack);
             return createBufferFromByteBuffer(
                     device,
                     commandPool,
@@ -277,6 +331,24 @@ public class BufferUtils {
                     VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT
             );
         }
+    }
+
+    public static BufferInfo createIndexBufferFromHeapMemory(
+            VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue,
+            List<Integer> indices) {
+        ByteBuffer dataBuffer = ByteBufferUtils.indicesToByteBuffer(indices, null);
+        BufferInfo bufferInfo = createBufferFromByteBuffer(
+                device,
+                commandPool,
+                graphicsQueue,
+                dataBuffer,
+                VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT
+        );
+        MemoryUtil.memFree(dataBuffer);
+
+        return bufferInfo;
     }
 
     public static List<BufferInfo> createUBOBuffers(VkDevice device, int numBuffers, long size) {

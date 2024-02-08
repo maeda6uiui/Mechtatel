@@ -28,8 +28,8 @@ public class Mouse {
     }
 
     private InputCounter counter;
-    private int x;
-    private int y;
+    private double x;
+    private double y;
 
     public Mouse() {
         List<String> keys = Arrays.stream(MouseCode.values()).map(Enum::name).toList();
@@ -49,16 +49,16 @@ public class Mouse {
         counter.setPressingFlag(eMouseCode.name(), pressingFlag);
     }
 
-    public void setCursorPos(int x, int y) {
+    public void setCursorPos(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public int getCursorPosX() {
+    public double getCursorPosX() {
         return x;
     }
 
-    public int getCursorPosY() {
+    public double getCursorPosY() {
         return y;
     }
 

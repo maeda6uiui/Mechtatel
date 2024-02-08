@@ -177,7 +177,7 @@ public class MttWindow {
 
         //Set cursor pos callback
         glfwSetCursorPosCallback(handle, (handle, xPos, yPos) -> {
-            mouse.setCursorPos((int) xPos, (int) yPos);
+            mouse.setCursorPos(xPos, yPos);
             if (fixCursorFlag) {
                 glfwSetCursorPos(handle, 0, 0);
             }
@@ -307,15 +307,15 @@ public class MttWindow {
         return mouse.getReleasingCount(mouseCode);
     }
 
-    public int getCursorPosX() {
+    public double getCursorPosX() {
         return mouse.getCursorPosX();
     }
 
-    public int getCursorPosY() {
+    public double getCursorPosY() {
         return mouse.getCursorPosY();
     }
 
-    public void setCursorPos(int x, int y) {
+    public void setCursorPos(double x, double y) {
         glfwSetCursorPos(handle, x, y);
     }
 

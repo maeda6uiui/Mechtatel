@@ -29,7 +29,7 @@ Thank you!
 
 ## Currently working on
 
-- Input from mouse wheel
+- Full-screen window
 
 ## Todo
 

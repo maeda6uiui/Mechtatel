@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -49,6 +50,8 @@ public class MttWindow {
 
     private Keyboard keyboard;
     private Mouse mouse;
+    private BiConsumer<Double, Double> scrollCallback;
+
     private boolean fixCursorFlag;
     private boolean mustRecreate;
     private boolean validWindow;
@@ -183,6 +186,16 @@ public class MttWindow {
             }
 
             io.setMousePos((float) xPos, (float) yPos);
+        });
+
+        //Set scroll callback
+        glfwSetScrollCallback(handle, (handle, dx, dy) -> {
+            if (scrollCallback != null) {
+                scrollCallback.accept(dx, dy);
+            }
+
+            io.setMouseWheel((float) dy);
+            io.setMouseWheelH((float) dx);
         });
 
         //Set char callback
@@ -334,6 +347,10 @@ public class MttWindow {
             case HIDDEN -> glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
             default -> throw new IllegalArgumentException("Unsupported cursor mode specified: " + cursorMode);
         }
+    }
+
+    public void setScrollCallback(BiConsumer<Double, Double> scrollCallback) {
+        this.scrollCallback = scrollCallback;
     }
 
     public boolean isValidWindow() {

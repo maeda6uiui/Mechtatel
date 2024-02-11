@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.natives.macos;
 
+import com.github.maeda6uiui.mechtatel.natives.IMttNativeLoader;
 import com.jme3.system.NativeLibraryLoader;
 
 import java.io.File;
@@ -10,17 +11,19 @@ import java.util.Objects;
  *
  * @author maeda6uiui
  */
-public class MttNativesMacOS {
-    static {
-        //Libbulletjme
+public class MttNativesMacOS implements IMttNativeLoader {
+    @Override
+    public void loadLibbulletjme() {
         NativeLibraryLoader.loadLibbulletjme(
                 true,
                 new File(Objects.requireNonNull(MttNativesMacOS.class.getResource("/Bin")).getFile()),
                 "Release",
                 "Sp"
         );
+    }
 
-        //Shaderc
+    @Override
+    public void loadShaderc() {
         String shadercLibFilepath = Objects.requireNonNull(
                 MttNativesMacOS.class.getResource("/Bin/libshaderc_shared.dylib")).getFile();
         System.load(shadercLibFilepath);

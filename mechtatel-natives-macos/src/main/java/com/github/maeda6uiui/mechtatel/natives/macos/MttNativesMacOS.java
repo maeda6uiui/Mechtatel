@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.natives;
+package com.github.maeda6uiui.mechtatel.natives.macos;
 
 import com.jme3.system.NativeLibraryLoader;
 

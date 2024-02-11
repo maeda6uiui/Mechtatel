@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.natives;
+package com.github.maeda6uiui.mechtatel.natives.windows;
 
 import com.jme3.system.NativeLibraryLoader;
 
@@ -6,23 +6,23 @@ import java.io.File;
 import java.util.Objects;
 
 /**
- * Loads native libraries for Linux
+ * Loads native libraries for Windows
  *
  * @author maeda6uiui
  */
-public class MttNativesLinux {
+public class MttNativesWindows {
     static {
         //Libbulletjme
         NativeLibraryLoader.loadLibbulletjme(
                 true,
-                new File(Objects.requireNonNull(MttNativesLinux.class.getResource("/Bin")).getFile()),
+                new File(Objects.requireNonNull(MttNativesWindows.class.getResource("/Bin")).getFile()),
                 "Release",
                 "Sp"
         );
 
         //Shaderc
         String shadercLibFilepath = Objects.requireNonNull(
-                MttNativesLinux.class.getResource("/Bin/libshaderc_shared.so")).getFile();
+                MttNativesWindows.class.getResource("/Bin/shaderc_shared.dll")).getFile();
         System.load(shadercLibFilepath);
     }
 }

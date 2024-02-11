@@ -29,11 +29,10 @@ Thank you!
 
 ## Currently working on
 
-- Full-screen window
+- Create a module for each platform (e.g. `mechtatel-natives-windows`) and pack required binaries in it
 
 ## Todo
 
-- Create a module for each platform (e.g. `mechtatel-natives-windows`) and pack required binaries in it
 - Implement functionality to run `mechtatel-core` via YAML definitions<br>i.e. Load and manipulate resources according to the procedure defined in a YAML file
 
 ## Special thanks to
@@ -43,6 +42,26 @@ Thank you!
 - [3D Game Development with LWJGL 3](https://ahbejarano.gitbook.io/lwjglgamedev/)
 
 ## 進捗報告(Progress report)
+
+### 2024-02-11
+
+全画面表示(Full Screen)とウィンドウ化された全画面表示(Windowed Full Screen)をサポートしました。
+設定ファイルから設定を変更できます。
+
+```json
+"window": {
+    "title": "Mechtatel",
+    "width": 1280,
+    "height": 720,
+    "resizable": false,
+    "fullScreen": false,
+    "windowedFullScreen": false,
+    "monitorIndex": 0
+}
+```
+
+全画面表示またはウィンドウ化された全画面表示を利用する場合は、どのモニターを利用するか(`monitorIndex`)を指定する必要があります。
+0を指定すると最初に見つかったモニター、-1を指定すると最後に見つかったモニター、それ以外の値を指定するとその他の任意のモニターを指定することができます。
 
 ### 2024-02-08
 

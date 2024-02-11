@@ -7,6 +7,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="mechtatel-core" />
+        <module name="mechtatel-natives-macos" />
+        <module name="mechtatel-natives-linux" />
+        <module name="mechtatel-natives-windows" />
         <module name="mechtatel-logging" />
       </profile>
     </annotationProcessing>

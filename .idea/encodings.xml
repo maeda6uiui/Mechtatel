@@ -5,6 +5,12 @@
     <file url="file://$PROJECT_DIR$/mechtatel-core/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/mechtatel-logging/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/mechtatel-logging/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mechtatel-natives-linux/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mechtatel-natives-linux/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mechtatel-natives-macos/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mechtatel-natives-macos/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mechtatel-natives-windows/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mechtatel-natives-windows/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
   </component>

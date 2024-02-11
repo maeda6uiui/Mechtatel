@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.screen;
 
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
-import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
+import com.github.maeda6uiui.mechtatel.core.nabor.CustomizableNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
@@ -105,7 +105,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             VkExtent2D extent,
             boolean shouldChangeExtentOnRecreate,
             boolean useShadowMapping,
-            @NotNull Map<String, FlexibleNaborInfo> flexibleNaborInfos,
+            @NotNull Map<String, CustomizableNaborInfo> customizableNaborInfos,
             @NotNull List<String> ppNaborNames) {
         this.device = device;
         this.commandPool = commandPool;
@@ -292,7 +292,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                     samplerAddressMode,
                     extent,
                     ppNaborNames,
-                    flexibleNaborInfos,
+                    customizableNaborInfos,
                     new HashMap<>(vertShaderModulesStorage),
                     new HashMap<>(fragShaderModulesStorage)
             );

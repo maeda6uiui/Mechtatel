@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.screen;
 
 import com.github.maeda6uiui.mechtatel.core.*;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
-import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
+import com.github.maeda6uiui.mechtatel.core.nabor.CustomizableNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
@@ -59,7 +59,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         public SamplerAddressMode samplerAddressMode;
         public boolean shouldChangeExtentOnRecreate;
         public boolean useShadowMapping;
-        public Map<String, FlexibleNaborInfo> flexibleNaborInfos;
+        public Map<String, CustomizableNaborInfo> customizableNaborInfos;
         public List<String> ppNaborNames;
 
         public MttScreenCreateInfo() {
@@ -72,7 +72,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
             samplerAddressMode = SamplerAddressMode.REPEAT;
             shouldChangeExtentOnRecreate = true;
             useShadowMapping = false;
-            flexibleNaborInfos = new HashMap<>();
+            customizableNaborInfos = new HashMap<>();
             ppNaborNames = new ArrayList<>();
         }
 
@@ -121,8 +121,8 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
             return this;
         }
 
-        public MttScreenCreateInfo setFlexibleNaborInfos(Map<String, FlexibleNaborInfo> flexibleNaborInfos) {
-            this.flexibleNaborInfos = flexibleNaborInfos;
+        public MttScreenCreateInfo setCustomizableNaborInfos(Map<String, CustomizableNaborInfo> customizableNaborInfos) {
+            this.customizableNaborInfos = customizableNaborInfos;
             return this;
         }
 
@@ -179,7 +179,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
                 ),
                 createInfo.shouldChangeExtentOnRecreate,
                 createInfo.useShadowMapping,
-                createInfo.flexibleNaborInfos,
+                createInfo.customizableNaborInfos,
                 createInfo.ppNaborNames
         );
 

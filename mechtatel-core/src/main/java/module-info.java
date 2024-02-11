@@ -16,7 +16,7 @@ module com.github.maeda6uiui.mechtatel.core {
     requires org.lwjgl.openal;
     requires transitive imgui.binding;
     requires jakarta.validation;
-    requires mechtatel.natives;
+    requires com.github.maeda6uiui.mechtatel.natives;
 
     exports com.github.maeda6uiui.mechtatel.core;
     exports com.github.maeda6uiui.mechtatel.core.screen.animation;

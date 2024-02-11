@@ -3,7 +3,10 @@
         "title": "Mechtatel",
         "width": 1280,
         "height": 720,
-        "resizable": false
+        "resizable": false,
+        "fullScreen": false,
+        "windowedFullScreen": false,
+        "monitorIndex": 0
     },
     "system": {
         "fps": 60

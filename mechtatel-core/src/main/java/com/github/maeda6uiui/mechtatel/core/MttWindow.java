@@ -13,6 +13,8 @@ import imgui.ImGuiIO;
 import imgui.flag.ImGuiKey;
 import imgui.internal.ImGuiContext;
 import jakarta.validation.constraints.NotNull;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.glfw.GLFWVidMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,8 +90,50 @@ public class MttWindow {
         //Get unique ID for this window
         uniqueID = UUID.randomUUID().toString();
 
+        //Get monitor if full-screen or windowed full-screen is requested
+        boolean bSpecifyMonior = settings.windowSettings.fullScreen || settings.windowSettings.windowedFullScreen;
+        long monitor = 0;
+        int actualWidth = width;
+        int actualHeight = height;
+        if (bSpecifyMonior) {
+            PointerBuffer pbMonitors = glfwGetMonitors();
+
+            var monitors = new ArrayList<Long>();
+            while (pbMonitors.hasRemaining()) {
+                monitors.add(pbMonitors.get());
+            }
+
+            int monitorIndex = settings.windowSettings.monitorIndex;
+            if (monitorIndex == -1) {
+                monitorIndex = monitors.size() - 1;
+            }
+
+            monitor = monitors.get(monitorIndex);
+            logger.debug("{} monitors found, will use monitor {} ({})",
+                    monitors.size(), monitorIndex, Long.toHexString(monitor));
+
+            //Set window hints for windowed full-screen window
+            if (settings.windowSettings.windowedFullScreen) {
+                GLFWVidMode vidMode = glfwGetVideoMode(monitor);
+                glfwWindowHint(GLFW_RED_BITS, vidMode.redBits());
+                glfwWindowHint(GLFW_GREEN_BITS, vidMode.greenBits());
+                glfwWindowHint(GLFW_BLUE_BITS, vidMode.blueBits());
+                glfwWindowHint(GLFW_REFRESH_RATE, vidMode.refreshRate());
+
+                actualWidth = vidMode.width();
+                actualHeight = vidMode.height();
+                logger.debug("Windowed full-screen window will be created with following window size: " +
+                        "width={} height={}", actualWidth, actualHeight);
+            }
+        }
+
         //Create window
-        handle = glfwCreateWindow(width, height, title, NULL, NULL);
+        if (bSpecifyMonior) {
+            handle = glfwCreateWindow(actualWidth, actualHeight, title, monitor, NULL);
+        } else {
+            handle = glfwCreateWindow(actualWidth, actualHeight, title, NULL, NULL);
+        }
+
         if (handle == NULL) {
             throw new RuntimeException("Failed to create a window");
         }

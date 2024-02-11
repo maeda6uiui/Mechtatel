@@ -29,12 +29,18 @@ public class MttSettings {
         public int width;
         public int height;
         public boolean resizable;
+        public boolean fullScreen;
+        public boolean windowedFullScreen;
+        public int monitorIndex;
 
         public WindowSettings() {
             title = "Mechtatel";
             width = 1280;
             height = 720;
             resizable = true;
+            fullScreen = false;
+            windowedFullScreen = false;
+            monitorIndex = 0;
         }
 
         @Override
@@ -44,6 +50,9 @@ public class MttSettings {
                     ", width=" + width +
                     ", height=" + height +
                     ", resizable=" + resizable +
+                    ", fullScreen=" + fullScreen +
+                    ", windowedFullScreen=" + windowedFullScreen +
+                    ", monitorIndex=" + monitorIndex +
                     '}';
         }
     }

@@ -13,6 +13,7 @@
     <modules>
         <module>mechtatel-core</module>
         <module>mechtatel-logging</module>
+        <module>mechtatel-natives</module>
         <module>mechtatel-natives-windows</module>
         <module>mechtatel-natives-linux</module>
         <module>mechtatel-natives-macos</module>

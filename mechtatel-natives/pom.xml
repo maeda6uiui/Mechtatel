@@ -9,13 +9,13 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>mechtatel-natives-macos</artifactId>
+    <artifactId>mechtatel-natives</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>com.github.maeda6uiui</groupId>
-            <artifactId>mechtatel-natives</artifactId>
-            <version>${parent.version}</version>
+            <groupId>com.github.stephengold</groupId>
+            <artifactId>Libbulletjme</artifactId>
+            <version>${libbulletjme.version}</version>
         </dependency>
     </dependencies>
 </project>

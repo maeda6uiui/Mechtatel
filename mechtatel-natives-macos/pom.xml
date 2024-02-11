@@ -10,4 +10,12 @@
     </parent>
 
     <artifactId>mechtatel-natives-macos</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.stephengold</groupId>
+            <artifactId>Libbulletjme</artifactId>
+            <version>${libbulletjme.version}</version>
+        </dependency>
+    </dependencies>
 </project>

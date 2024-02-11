@@ -11,12 +11,12 @@ import java.util.Objects;
  *
  * @author maeda6uiui
  */
-public class MttNativeLoaderMacOS implements IMttNativeLoader {
+public class MttNativeLoader implements IMttNativeLoader {
     @Override
     public void loadLibbulletjme() {
         NativeLibraryLoader.loadLibbulletjme(
                 true,
-                new File(Objects.requireNonNull(MttNativeLoaderMacOS.class.getResource("/Bin")).getFile()),
+                new File(Objects.requireNonNull(MttNativeLoader.class.getResource("/Bin")).getFile()),
                 "Release",
                 "Sp"
         );
@@ -25,7 +25,7 @@ public class MttNativeLoaderMacOS implements IMttNativeLoader {
     @Override
     public void loadShaderc() {
         String shadercLibFilepath = Objects.requireNonNull(
-                MttNativeLoaderMacOS.class.getResource("/Bin/libshaderc_shared.dylib")).getFile();
+                MttNativeLoader.class.getResource("/Bin/libshaderc_shared.dylib")).getFile();
         System.load(shadercLibFilepath);
     }
 }

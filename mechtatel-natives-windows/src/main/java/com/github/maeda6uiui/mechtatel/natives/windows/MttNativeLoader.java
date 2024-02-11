@@ -11,12 +11,12 @@ import java.util.Objects;
  *
  * @author maeda6uiui
  */
-public class MttNativeLoaderWindows implements IMttNativeLoader {
+public class MttNativeLoader implements IMttNativeLoader {
     @Override
     public void loadLibbulletjme() {
         NativeLibraryLoader.loadLibbulletjme(
                 true,
-                new File(Objects.requireNonNull(MttNativeLoaderWindows.class.getResource("/Bin")).getFile()),
+                new File(Objects.requireNonNull(MttNativeLoader.class.getResource("/Bin")).getFile()),
                 "Release",
                 "Sp"
         );
@@ -25,7 +25,7 @@ public class MttNativeLoaderWindows implements IMttNativeLoader {
     @Override
     public void loadShaderc() {
         String shadercLibFilepath = Objects.requireNonNull(
-                MttNativeLoaderWindows.class.getResource("/Bin/shaderc_shared.dll")).getFile();
+                MttNativeLoader.class.getResource("/Bin/shaderc_shared.dll")).getFile();
         System.load(shadercLibFilepath);
     }
 }

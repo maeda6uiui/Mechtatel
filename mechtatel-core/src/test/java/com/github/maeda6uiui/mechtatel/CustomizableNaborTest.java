@@ -6,7 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
-import com.github.maeda6uiui.mechtatel.core.nabor.FlexibleNaborInfo;
+import com.github.maeda6uiui.mechtatel.core.nabor.CustomizableNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
@@ -23,10 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class FlexibleNaborTest extends Mechtatel {
-    private static final Logger logger = LoggerFactory.getLogger(FlexibleNaborTest.class);
+public class CustomizableNaborTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(CustomizableNaborTest.class);
 
-    public FlexibleNaborTest(MttSettings settings) {
+    public CustomizableNaborTest(MttSettings settings) {
         super(settings);
         this.run();
     }
@@ -35,7 +35,7 @@ public class FlexibleNaborTest extends Mechtatel {
         MttSettings
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
-                        FlexibleNaborTest::new,
+                        CustomizableNaborTest::new,
                         () -> logger.error("Failed to load settings")
                 );
     }
@@ -55,18 +55,18 @@ public class FlexibleNaborTest extends Mechtatel {
             return;
         }
 
-        var naborInfo = new FlexibleNaborInfo(
+        var naborInfo = new CustomizableNaborInfo(
                 Objects.requireNonNull(
                         this.getClass().getResource("/Standard/Shader/PostProcessing/post_processing.vert")),
                 fragShaderResource
         );
-        naborInfo.setLightingType(FlexibleNaborInfo.LightingType.PARALLEL);
+        naborInfo.setLightingType(CustomizableNaborInfo.LightingType.PARALLEL);
 
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
                         .setUseShadowMapping(true)
                         .setPpNaborNames(List.of("sepia"))
-                        .setFlexibleNaborInfos(Map.of("sepia", naborInfo))
+                        .setCustomizableNaborInfos(Map.of("sepia", naborInfo))
         );
         mainScreen.createParallelLight();
         mainScreen.getFog().setStart(10.0f);

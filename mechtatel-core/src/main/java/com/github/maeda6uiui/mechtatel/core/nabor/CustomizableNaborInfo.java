@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Info for flexible nabor
+ * Info for customizable nabor
  *
  * @author maeda6uiui
  */
-public class FlexibleNaborInfo {
+public class CustomizableNaborInfo {
     public enum LightingType {
         PARALLEL,
         POINT,
@@ -36,7 +36,7 @@ public class FlexibleNaborInfo {
     private Vector3f lightingClampMin;
     private Vector3f lightingClampMax;
 
-    public FlexibleNaborInfo(@NotNull URL vertShaderResource, @NotNull URL fragShaderResource) {
+    public CustomizableNaborInfo(@NotNull URL vertShaderResource, @NotNull URL fragShaderResource) {
         this.vertShaderResource = vertShaderResource;
         this.fragShaderResource = fragShaderResource;
         uniformResourceTypes = new ArrayList<>();

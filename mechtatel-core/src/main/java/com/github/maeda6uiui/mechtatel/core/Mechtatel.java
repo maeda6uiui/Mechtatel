@@ -4,20 +4,17 @@ import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObjects;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.system.NativeLibraryLoader;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.openal.ALC10.*;
@@ -69,30 +66,10 @@ public class Mechtatel implements IMechtatelForMttWindow {
         AL.createCapabilities(deviceCaps);
 
         //Set up Libbulletjme
-        NativeLibraryLoader.loadLibbulletjme(
-                true,
-                new File(Objects.requireNonNull(this.getClass().getResource("/Bin")).getFile()),
-                "Release",
-                "Sp"
-        );
         PhysicalObjects.init(PhysicsSpace.BroadphaseType.DBVT);
 
         //Set up for Vulkan
         if (settings.renderingSettings.engine == RenderingEngine.VULKAN) {
-            //Load shaderc library
-            String shadercLibFilename;
-            switch (PlatformInfo.PLATFORM) {
-                case "windows" -> shadercLibFilename = "shaderc_shared.dll";
-                case "linux" -> shadercLibFilename = "libshaderc_shared.so";
-                case "macos" -> shadercLibFilename = "libshaderc_shared.dylib";
-                default -> throw new IllegalArgumentException(
-                        "shaderc library is not available for this platform: " + PlatformInfo.PLATFORM);
-            }
-
-            String shadercLibFilepath = Objects.requireNonNull(
-                    this.getClass().getResource("/Bin/" + shadercLibFilename)).getFile();
-            System.load(shadercLibFilepath);
-
             //Create vulkan instance
             MttVulkanInstance.create(settings.vulkanSettings, false);
         }

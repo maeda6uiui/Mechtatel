@@ -113,6 +113,12 @@
 
         <dependency>
             <groupId>com.github.maeda6uiui</groupId>
+            <artifactId>${mechtatel.natives}</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.maeda6uiui</groupId>
             <artifactId>mechtatel-logging</artifactId>
             <version>${parent.version}</version>
             <scope>test</scope>

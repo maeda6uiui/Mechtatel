@@ -49,6 +49,7 @@
             <properties>
                 <lwjgl.natives>natives-linux</lwjgl.natives>
                 <imgui.natives>imgui-java-natives-linux</imgui.natives>
+                <mechtatel.natives>mechtatel-natives-linux</mechtatel.natives>
             </properties>
         </profile>
         <profile>
@@ -62,6 +63,7 @@
             <properties>
                 <lwjgl.natives>natives-macos</lwjgl.natives>
                 <imgui.natives>imgui-java-natives-macos</imgui.natives>
+                <mechtatel.natives>mechtatel-natives-macos</mechtatel.natives>
             </properties>
             <dependencies>
                 <dependency>
@@ -82,6 +84,7 @@
             <properties>
                 <lwjgl.natives>natives-windows</lwjgl.natives>
                 <imgui.natives>imgui-java-natives-windows</imgui.natives>
+                <mechtatel.natives>mechtatel-natives-windows</mechtatel.natives>
             </properties>
         </profile>
     </profiles>

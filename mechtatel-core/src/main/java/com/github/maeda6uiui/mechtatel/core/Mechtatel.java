@@ -3,6 +3,8 @@ package com.github.maeda6uiui.mechtatel.core;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObjects;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
+import com.github.maeda6uiui.mechtatel.natives.IMttNativeLoader;
+import com.github.maeda6uiui.mechtatel.natives.MttNativeLoaderFactory;
 import com.jme3.bullet.PhysicsSpace;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
@@ -10,6 +12,7 @@ import org.lwjgl.openal.ALCCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -65,11 +68,28 @@ public class Mechtatel implements IMechtatelForMttWindow {
         alcMakeContextCurrent(alcContext);
         AL.createCapabilities(deviceCaps);
 
+        //Create native library loader
+        IMttNativeLoader nativeLoader;
+        try {
+            nativeLoader = MttNativeLoaderFactory.createNativeLoader(PlatformInfo.PLATFORM);
+        } catch (ClassNotFoundException
+                 | NoSuchMethodException
+                 | InstantiationException
+                 | IllegalAccessException
+                 | InvocationTargetException e) {
+            logger.error("Failed to create native loader", e);
+            throw new RuntimeException(e);
+        }
+
         //Set up Libbulletjme
+        nativeLoader.loadLibbulletjme();
         PhysicalObjects.init(PhysicsSpace.BroadphaseType.DBVT);
 
         //Set up for Vulkan
         if (settings.renderingSettings.engine == RenderingEngine.VULKAN) {
+            //Load shaderc
+            nativeLoader.loadShaderc();
+
             //Create vulkan instance
             MttVulkanInstance.create(settings.vulkanSettings, false);
         }

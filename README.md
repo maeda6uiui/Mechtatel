@@ -48,7 +48,7 @@ Snapshot builds are available in the Maven Snapshot Repository.
 
 Use of `mechtatel-logging` module is optional.
 It provides minimal logging functionality with Logback, which prints out logs above the INFO level to stdout.
-You can overwrite or use another logging implementation at your discretion.
+You can overwrite it or use another logging implementation at your discretion.
 
 ## Currently working on
 

@@ -4,12 +4,37 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.github.maeda6uiui</groupId>
+        <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>mechtatel-core</artifactId>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
@@ -112,18 +137,18 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.maeda6uiui</groupId>
+            <groupId>com.github.dabasan</groupId>
             <artifactId>mechtatel-natives</artifactId>
             <version>${parent.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.maeda6uiui</groupId>
+            <groupId>com.github.dabasan</groupId>
             <artifactId>${mechtatel.natives}</artifactId>
             <version>${parent.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.github.maeda6uiui</groupId>
+            <groupId>com.github.dabasan</groupId>
             <artifactId>mechtatel-logging</artifactId>
             <version>${parent.version}</version>
             <scope>test</scope>

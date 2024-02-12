@@ -27,6 +27,29 @@ It'll be my great mental support.
 
 Thank you!
 
+## Try it out
+
+Snapshot builds are available in the Maven Snapshot Repository.
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.github.dabasan</groupId>
+        <artifactId>mechtatel-core</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+        <groupId>com.github.dabasan</groupId>
+        <artifactId>mechtatel-logging</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+</dependencies>
+```
+
+Use of `mechtatel-logging` module is optional.
+It provides minimal logging functionality with Logback, which prints out logs above the INFO level to stdout.
+You can overwrite or use another logging implementation at your discretion.
+
 ## Currently working on
 
 ## Todo
@@ -40,6 +63,10 @@ Thank you!
 - [3D Game Development with LWJGL 3](https://ahbejarano.gitbook.io/lwjglgamedev/)
 
 ## 進捗報告(Progress report)
+
+### 2024-02-12
+
+Maven CentralにSNAPSHOTビルドをデプロイしました。
 
 ### 2024-02-11
 

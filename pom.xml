@@ -9,6 +9,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Mechtatel</name>
+    <description>Yet unfinished Vulkan-based game engine composed in Java</description>
     <url>https://github.com/maeda6uiui/Mechtatel</url>
     <modules>
         <module>mechtatel-core</module>
@@ -18,6 +19,37 @@
         <module>mechtatel-natives-linux</module>
         <module>mechtatel-natives-macos</module>
     </modules>
+
+    <licenses>
+        <license>
+            <name>MIT</name>
+            <url>https://github.com/maeda6uiui/Mechtatel/blob/develop/LICENSE.md</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>maeda6uiui</name>
+        </developer>
+    </developers>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+    </distributionManagement>
+
+    <scm>
+        <connection>scm:git:https://github.com/maeda6uiui/Mechtatel.git</connection>
+        <developerConnection>scm:git:https://github.com/maeda6uiui/Mechtatel.git</developerConnection>
+        <url>https://github.com/maeda6uiui/Mechtatel</url>
+    </scm>
 
     <repositories>
         <repository>

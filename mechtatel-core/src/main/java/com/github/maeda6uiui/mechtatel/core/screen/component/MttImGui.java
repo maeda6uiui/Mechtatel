@@ -86,6 +86,13 @@ public class MttImGui extends MttComponent {
     }
 
     /**
+     * Makes current the ImGui context for this component.
+     */
+    public void makeCurrent() {
+        ImGui.setCurrentContext(context);
+    }
+
+    /**
      * Declares ImGui controls.
      * UI declaration has to be supplied every frame via this method.
      *

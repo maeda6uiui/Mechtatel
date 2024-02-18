@@ -10,6 +10,7 @@ import imgui.ImGuiIO;
 import imgui.extension.imguifiledialog.ImGuiFileDialog;
 import imgui.extension.imguifiledialog.flag.ImGuiFileDialogFlags;
 import imgui.flag.ImGuiConfigFlags;
+import imgui.flag.ImGuiWindowFlags;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +68,7 @@ public class ModelViewerTest extends Mechtatel {
                                 10.0f,
                                 1,
                                 0,
-                                ImGuiFileDialogFlags.None
+                                ImGuiFileDialogFlags.DisableCreateDirectoryButton
                         );
                     }
                     ImGui.separator();
@@ -86,7 +87,13 @@ public class ModelViewerTest extends Mechtatel {
                 ImGui.endMainMenuBar();
             }
 
-            if (ImGuiFileDialog.display("browse-key", ImGuiFileDialogFlags.None, 700.0f, 400.0f, Float.MAX_VALUE, Float.MAX_VALUE)) {
+            if (ImGuiFileDialog.display(
+                    "browse-key",
+                    ImGuiWindowFlags.NoCollapse,
+                    700.0f,
+                    400.0f,
+                    Float.MAX_VALUE,
+                    Float.MAX_VALUE)) {
                 if (ImGuiFileDialog.isOk()) {
                     selections.putAll(ImGuiFileDialog.getSelection());
                 }

@@ -6,6 +6,7 @@ const int TEXTURE_OPERATION_SUB=1;
 const int TEXTURE_OPERATION_MUL=2;
 const int TEXTURE_OPERATION_DIV=3;
 const int TEXTURE_OPERATION_MERGE_BY_DEPTH=4;
+const int TEXTURE_OPERATION_INVERT=5;
 
 layout(set=0,binding=0) uniform TextureOperationParametersUBO{
     vec4 firstTextureFactor;
@@ -50,6 +51,8 @@ void main(){
         }else{
             outColor=color_2*parameters.secondTextureFactor;
         }
+    }else if(parameters.operationType==TEXTURE_OPERATION_INVERT){
+        outColor=vec4(1.0)-color_1*parameters.firstTextureFactor;
     }else{
         outColor=color_1;
     }

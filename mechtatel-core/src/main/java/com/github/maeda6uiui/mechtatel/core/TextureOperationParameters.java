@@ -13,7 +13,8 @@ public class TextureOperationParameters {
         SUB,
         MUL,
         DIV,
-        MERGE_BY_DEPTH
+        MERGE_BY_DEPTH,
+        INVERT
     }
 
     private Vector4f firstTextureFactor;

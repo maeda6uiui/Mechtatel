@@ -260,7 +260,7 @@ public class MergeScenesNabor extends Nabor {
 
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.calloc(1, stack);
             subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
-            subpass.colorAttachmentCount(4);
+            subpass.colorAttachmentCount(5);
             subpass.pColorAttachments(colorAttachmentRefs);
 
             VkSubpassDependency.Buffer dependency = VkSubpassDependency.calloc(1, stack);
@@ -644,8 +644,8 @@ public class MergeScenesNabor extends Nabor {
 
             //Color blending
             VkPipelineColorBlendAttachmentState.Buffer colorBlendAttachments
-                    = VkPipelineColorBlendAttachmentState.calloc(4, stack);
-            for (int i = 0; i < 4; i++) {
+                    = VkPipelineColorBlendAttachmentState.calloc(5, stack);
+            for (int i = 0; i < 5; i++) {
                 VkPipelineColorBlendAttachmentState colorBlendAttachment = colorBlendAttachments.get(i);
                 colorBlendAttachment.colorWriteMask(
                         VK_COLOR_COMPONENT_R_BIT |

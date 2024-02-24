@@ -519,8 +519,8 @@ public class PrimitiveNabor extends Nabor {
 
             //Color blending
             VkPipelineColorBlendAttachmentState.Buffer colorBlendAttachments
-                    = VkPipelineColorBlendAttachmentState.calloc(3, stack);
-            for (int i = 0; i < 3; i++) {
+                    = VkPipelineColorBlendAttachmentState.calloc(4, stack);
+            for (int i = 0; i < 4; i++) {
                 VkPipelineColorBlendAttachmentState colorBlendAttachment = colorBlendAttachments.get(i);
                 colorBlendAttachment.colorWriteMask(
                         VK_COLOR_COMPONENT_R_BIT |

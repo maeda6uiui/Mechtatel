@@ -22,9 +22,9 @@ class AlbedoNabor extends Nabor {
     private int depthImageFormat;
     private int depthImageAspect;
 
-    private static final int DEPTH_ATTACHMENT_INDEX = 0;
-    private static final int ALBEDO_ATTACHMENT_INDEX = 1;
-    private static final int ALBEDO_RESOLVE_ATTACHMENT_INDEX = 2;
+    public static final int DEPTH_ATTACHMENT_INDEX = 0;
+    public static final int ALBEDO_ATTACHMENT_INDEX = 1;
+    public static final int ALBEDO_RESOLVE_ATTACHMENT_INDEX = 2;
 
     public AlbedoNabor(VkDevice device, int msaaSamples, int depthImageFormat) {
         super(

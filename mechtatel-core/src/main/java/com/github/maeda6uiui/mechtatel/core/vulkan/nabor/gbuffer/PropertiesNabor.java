@@ -24,10 +24,10 @@ class PropertiesNabor extends Nabor {
 
     private int depthImageAspect;
 
-    private static final int DEPTH_ATTACHMENT_INDEX = 0;
-    private static final int POSITION_ATTACHMENT_INDEX = 1;
-    private static final int NORMAL_ATTACHMENT_INDEX = 2;
-    private static final int STENCIL_ATTACHMENT_INDEX = 3;
+    public static final int DEPTH_ATTACHMENT_INDEX = 0;
+    public static final int POSITION_ATTACHMENT_INDEX = 1;
+    public static final int NORMAL_ATTACHMENT_INDEX = 2;
+    public static final int STENCIL_ATTACHMENT_INDEX = 3;
 
     public PropertiesNabor(
             VkDevice device,

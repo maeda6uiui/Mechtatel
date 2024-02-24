@@ -825,6 +825,10 @@ public abstract class Nabor {
     }
 
     public void bindImages(VkCommandBuffer commandBuffer, int dstSet, int dstBinding, List<Long> imageViews) {
+        if (imageViews.isEmpty()) {
+            return;
+        }
+
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
             int numImageViews = imageViews.size();

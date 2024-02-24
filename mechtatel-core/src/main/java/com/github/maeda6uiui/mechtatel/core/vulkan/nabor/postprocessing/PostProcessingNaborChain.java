@@ -383,8 +383,8 @@ public class PostProcessingNaborChain {
                         if (shadowMappingNabor != null) {
                             ppNabor.bindImages(
                                     commandBuffer,
-                                    0,
                                     1,
+                                    0,
                                     Arrays.asList(
                                             shadowMappingNabor.getColorImageView(),
                                             lastMergeNabor.getDepthImageView(),
@@ -395,8 +395,8 @@ public class PostProcessingNaborChain {
                         } else {
                             ppNabor.bindImages(
                                     commandBuffer,
-                                    0,
                                     1,
+                                    0,
                                     Arrays.asList(
                                             lastMergeNabor.getAlbedoImageView(),
                                             lastMergeNabor.getDepthImageView(),
@@ -408,8 +408,8 @@ public class PostProcessingNaborChain {
                     } else {
                         ppNabor.bindImages(
                                 commandBuffer,
-                                0,
                                 1,
+                                0,
                                 Arrays.asList(
                                         previousPPNabor.getColorImageView(),
                                         lastMergeNabor.getDepthImageView(),

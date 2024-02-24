@@ -312,7 +312,7 @@ public abstract class PostProcessingNabor extends Nabor {
             VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(1, stack);
 
             //Color attachment
-            VkAttachmentDescription colorAttachment = attachments.get(0);
+            VkAttachmentDescription colorAttachment = attachments.get(COLOR_ATTACHMENT_INDEX);
             colorAttachment.format(colorImageFormat);
             colorAttachment.samples(msaaSamples);
             colorAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -322,8 +322,8 @@ public abstract class PostProcessingNabor extends Nabor {
             colorAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             colorAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference colorAttachmentRef = attachmentRefs.get(0);
-            colorAttachmentRef.attachment(0);
+            VkAttachmentReference colorAttachmentRef = attachmentRefs.get(COLOR_ATTACHMENT_INDEX);
+            colorAttachmentRef.attachment(COLOR_ATTACHMENT_INDEX);
             colorAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             VkAttachmentReference.Buffer colorAttachmentRefs = VkAttachmentReference.calloc(1, stack);

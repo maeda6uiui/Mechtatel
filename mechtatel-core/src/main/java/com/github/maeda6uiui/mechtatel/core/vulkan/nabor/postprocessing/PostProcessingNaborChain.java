@@ -20,10 +20,7 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -365,10 +362,12 @@ public class PostProcessingNaborChain {
                 renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
                 renderPassInfo.renderPass(ppNabor.getRenderPass());
                 renderPassInfo.framebuffer(ppNabor.getFramebuffer(0));
+
                 VkRect2D renderArea = VkRect2D.calloc(stack);
                 renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
                 renderArea.extent(ppNabor.getExtent());
                 renderPassInfo.renderArea(renderArea);
+
                 VkClearValue.Buffer clearValues = VkClearValue.calloc(1, stack);
                 clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
                 renderPassInfo.pClearValues(clearValues);
@@ -385,27 +384,39 @@ public class PostProcessingNaborChain {
                             ppNabor.bindImages(
                                     commandBuffer,
                                     0,
-                                    shadowMappingNabor.getColorImageView(),
-                                    lastMergeNabor.getDepthImageView(),
-                                    lastMergeNabor.getPositionImageView(),
-                                    lastMergeNabor.getNormalImageView());
+                                    1,
+                                    Arrays.asList(
+                                            shadowMappingNabor.getColorImageView(),
+                                            lastMergeNabor.getDepthImageView(),
+                                            lastMergeNabor.getPositionImageView(),
+                                            lastMergeNabor.getNormalImageView()
+                                    )
+                            );
                         } else {
                             ppNabor.bindImages(
                                     commandBuffer,
                                     0,
-                                    lastMergeNabor.getAlbedoImageView(),
-                                    lastMergeNabor.getDepthImageView(),
-                                    lastMergeNabor.getPositionImageView(),
-                                    lastMergeNabor.getNormalImageView());
+                                    1,
+                                    Arrays.asList(
+                                            lastMergeNabor.getAlbedoImageView(),
+                                            lastMergeNabor.getDepthImageView(),
+                                            lastMergeNabor.getPositionImageView(),
+                                            lastMergeNabor.getNormalImageView()
+                                    )
+                            );
                         }
                     } else {
                         ppNabor.bindImages(
                                 commandBuffer,
                                 0,
-                                previousPPNabor.getColorImageView(),
-                                lastMergeNabor.getDepthImageView(),
-                                lastMergeNabor.getPositionImageView(),
-                                lastMergeNabor.getNormalImageView());
+                                1,
+                                Arrays.asList(
+                                        previousPPNabor.getColorImageView(),
+                                        lastMergeNabor.getDepthImageView(),
+                                        lastMergeNabor.getPositionImageView(),
+                                        lastMergeNabor.getNormalImageView()
+                                )
+                        );
                     }
 
                     quadDrawer.draw(commandBuffer);

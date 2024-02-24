@@ -669,7 +669,7 @@ class PropertiesNabor extends Nabor {
                     extent.height(),
                     1,
                     msaaSamples,
-                    normalImageFormat,
+                    stencilImageFormat,
                     VK_IMAGE_TILING_OPTIMAL,
                     VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,

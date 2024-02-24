@@ -12,7 +12,6 @@ import org.lwjgl.vulkan.*;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
@@ -660,18 +659,5 @@ class Pass2Nabor extends Nabor {
             this.getImageMemories().add(colorImageMemory);
             this.getImageViews().add(colorImageView);
         }
-    }
-
-    public void bindImages(
-            VkCommandBuffer commandBuffer,
-            int dstBinding,
-            long albedoImageView,
-            long depthImageView,
-            long positionImageView,
-            long normalImageView) {
-        var arrImageViews = new Long[]{albedoImageView, depthImageView, positionImageView, normalImageView};
-        var imageViews = Arrays.asList(arrImageViews);
-
-        this.bindImages(commandBuffer, 1, dstBinding, imageViews);
     }
 }

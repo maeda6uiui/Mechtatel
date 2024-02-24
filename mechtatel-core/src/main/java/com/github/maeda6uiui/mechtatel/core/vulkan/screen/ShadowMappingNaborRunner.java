@@ -6,11 +6,11 @@ import com.github.maeda6uiui.mechtatel.core.shadow.Pass1Info;
 import com.github.maeda6uiui.mechtatel.core.shadow.Pass2Info;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowInfo;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow.ShadowMappingNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass1InfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass2InfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.ShadowInfoUBO;
@@ -21,6 +21,7 @@ import org.lwjgl.vulkan.*;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
@@ -35,7 +36,7 @@ public class ShadowMappingNaborRunner {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            PostProcessingNabor shadowMappingNabor,
+            ShadowMappingNabor shadowMappingNabor,
             Pass1Info pass1Info,
             List<VkMttComponent> components) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -103,7 +104,7 @@ public class ShadowMappingNaborRunner {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            PostProcessingNabor shadowMappingNabor,
+            ShadowMappingNabor shadowMappingNabor,
             int shadowMapIndex,
             int depthImageAspect) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -162,7 +163,7 @@ public class ShadowMappingNaborRunner {
             VkQueue graphicsQueue,
             MergeScenesNabor lastMergeNabor,
             PostProcessingNabor previousPPNabor,
-            PostProcessingNabor shadowMappingNabor,
+            ShadowMappingNabor shadowMappingNabor,
             List<ParallelLight> shadowParallelLights,
             List<Spotlight> shadowSpotlights,
             ShadowMappingSettings settings,
@@ -218,10 +219,13 @@ public class ShadowMappingNaborRunner {
                             commandBuffer,
                             1,
                             0,
-                            lastMergeNabor.getAlbedoImageView(),
-                            lastMergeNabor.getDepthImageView(),
-                            lastMergeNabor.getPositionImageView(),
-                            lastMergeNabor.getNormalImageView());
+                            Arrays.asList(
+                                    lastMergeNabor.getAlbedoImageView(),
+                                    lastMergeNabor.getDepthImageView(),
+                                    lastMergeNabor.getPositionImageView(),
+                                    lastMergeNabor.getNormalImageView()
+                            )
+                    );
                 } else {
                     previousPPNabor.transitionColorImageLayout(commandPool, graphicsQueue);
 
@@ -229,10 +233,13 @@ public class ShadowMappingNaborRunner {
                             commandBuffer,
                             1,
                             0,
-                            previousPPNabor.getColorImageView(),
-                            lastMergeNabor.getDepthImageView(),
-                            lastMergeNabor.getPositionImageView(),
-                            lastMergeNabor.getNormalImageView());
+                            Arrays.asList(
+                                    previousPPNabor.getColorImageView(),
+                                    lastMergeNabor.getDepthImageView(),
+                                    lastMergeNabor.getPositionImageView(),
+                                    lastMergeNabor.getNormalImageView()
+                            )
+                    );
                 }
 
                 int numShadowMaps = shadowParallelLights.size() + shadowSpotlights.size();
@@ -263,7 +270,7 @@ public class ShadowMappingNaborRunner {
             VkQueue graphicsQueue,
             MergeScenesNabor lastMergeNabor,
             PostProcessingNabor previousPPNabor,
-            PostProcessingNabor shadowMappingNabor,
+            ShadowMappingNabor shadowMappingNabor,
             List<ParallelLight> parallelLights,
             List<Spotlight> spotlights,
             List<VkMttComponent> components,

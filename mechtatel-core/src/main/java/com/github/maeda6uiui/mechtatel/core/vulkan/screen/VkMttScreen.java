@@ -169,6 +169,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 depthImageFormat,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
+                VK_FORMAT_R16_SFLOAT,
                 false);
         if (vertShaderModulesStorage.containsKey("primitive")) {
             var vertShaderModules = vertShaderModulesStorage.get("primitive");
@@ -209,6 +210,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 depthImageFormat,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
+                VK_FORMAT_R16_SFLOAT,
                 true);
         if (vertShaderModulesStorage.containsKey("primitive_fill")) {
             var vertShaderModules = vertShaderModulesStorage.get("primitive_fill");
@@ -248,7 +250,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 device,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
-                VK_FORMAT_R16G16B16A16_SFLOAT);
+                VK_FORMAT_R16G16B16A16_SFLOAT,
+                VK_FORMAT_R16G16B16A16_SFLOAT
+        );
         if (vertShaderModulesStorage.containsKey("merge_scenes")) {
             var vertShaderModules = vertShaderModulesStorage.get("merge_scenes");
             var fragShaderModules = fragShaderModulesStorage.get("merge_scenes");
@@ -417,10 +421,12 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
             renderPassInfo.renderPass(gBufferNabor.getRenderPass(0));
             renderPassInfo.framebuffer(gBufferNabor.getFramebuffer(0, 0));
+
             VkRect2D renderArea = VkRect2D.calloc(stack);
             renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
             renderArea.extent(gBufferNabor.getExtent(0));
             renderPassInfo.renderArea(renderArea);
+
             VkClearValue.Buffer clearValues = VkClearValue.calloc(2, stack);
             clearValues.get(0).depthStencil().set(1.0f, 0);
             clearValues.get(1).color().float32(
@@ -502,10 +508,12 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
             renderPassInfo.renderPass(gBufferNabor.getRenderPass(1));
             renderPassInfo.framebuffer(gBufferNabor.getFramebuffer(1, 0));
+
             VkRect2D renderArea = VkRect2D.calloc(stack);
             renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
             renderArea.extent(gBufferNabor.getExtent(1));
             renderPassInfo.renderArea(renderArea);
+
             VkClearValue.Buffer clearValues = VkClearValue.calloc(4, stack);
             clearValues.get(0).depthStencil().set(1.0f, 0);
             clearValues.get(1).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
@@ -578,11 +586,13 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
             renderPassInfo.renderPass(primitiveNabor.getRenderPass());
             renderPassInfo.framebuffer(primitiveNabor.getFramebuffer(0));
+
             VkRect2D renderArea = VkRect2D.calloc(stack);
             renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
             renderArea.extent(primitiveNabor.getExtent());
             renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.calloc(4, stack);
+
+            VkClearValue.Buffer clearValues = VkClearValue.calloc(5, stack);
             clearValues.get(0).depthStencil().set(1.0f, 0);
             clearValues.get(1).color().float32(
                     stack.floats(
@@ -592,6 +602,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                             backgroundColor.w));
             clearValues.get(2).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             clearValues.get(3).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            clearValues.get(4).color().float32(stack.floats(0.0f));
             renderPassInfo.pClearValues(clearValues);
 
             VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
@@ -653,11 +664,13 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
             renderPassInfo.renderPass(primitiveFillNabor.getRenderPass());
             renderPassInfo.framebuffer(primitiveFillNabor.getFramebuffer(0));
+
             VkRect2D renderArea = VkRect2D.calloc(stack);
             renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
             renderArea.extent(primitiveFillNabor.getExtent());
             renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.calloc(4, stack);
+
+            VkClearValue.Buffer clearValues = VkClearValue.calloc(5, stack);
             clearValues.get(0).depthStencil().set(1.0f, 0);
             clearValues.get(1).color().float32(
                     stack.floats(
@@ -667,6 +680,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                             backgroundColor.w));
             clearValues.get(2).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             clearValues.get(3).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            clearValues.get(4).color().float32(stack.floats(0.0f));
             renderPassInfo.pClearValues(clearValues);
 
             VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);
@@ -721,15 +735,18 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
             renderPassInfo.renderPass(mergeScenesNabor.getRenderPass());
             renderPassInfo.framebuffer(mergeScenesNabor.getFramebuffer(0));
+
             VkRect2D renderArea = VkRect2D.calloc(stack);
             renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
             renderArea.extent(mergeScenesNabor.getExtent());
             renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.calloc(4, stack);
+
+            VkClearValue.Buffer clearValues = VkClearValue.calloc(5, stack);
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             clearValues.get(1).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             clearValues.get(2).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             clearValues.get(3).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            clearValues.get(4).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             renderPassInfo.pClearValues(clearValues);
 
             long mergeScenesInfoUBOMemory = mergeScenesNabor.getUniformBufferMemory(0);
@@ -746,16 +763,19 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 gBufferNabor.transitionDepthImageLayout(commandPool, graphicsQueue);
                 gBufferNabor.transitionPositionImageLayout(commandPool, graphicsQueue);
                 gBufferNabor.transitionNormalImageLayout(commandPool, graphicsQueue);
+                gBufferNabor.transitionStencilImageLayout(commandPool, graphicsQueue);
 
                 primitiveNabor.transitionAlbedoImageLayout(commandPool, graphicsQueue);
                 primitiveNabor.transitionDepthImageLayout(commandPool, graphicsQueue);
                 primitiveNabor.transitionPositionImageLayout(commandPool, graphicsQueue);
                 primitiveNabor.transitionNormalImageLayout(commandPool, graphicsQueue);
+                primitiveNabor.transitionStencilImageLayout(commandPool, graphicsQueue);
 
                 primitiveFillNabor.transitionAlbedoImageLayout(commandPool, graphicsQueue);
                 primitiveFillNabor.transitionDepthImageLayout(commandPool, graphicsQueue);
                 primitiveFillNabor.transitionPositionImageLayout(commandPool, graphicsQueue);
                 primitiveFillNabor.transitionNormalImageLayout(commandPool, graphicsQueue);
+                primitiveFillNabor.transitionStencilImageLayout(commandPool, graphicsQueue);
 
                 mergeScenesNabor.bindAlbedoImages(
                         commandBuffer,
@@ -789,6 +809,14 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                                 primitiveFillNabor.getNormalImageView()
                         )
                 );
+                mergeScenesNabor.bindStencilImages(
+                        commandBuffer,
+                        Arrays.asList(
+                                gBufferNabor.getStencilImageView(),
+                                primitiveNabor.getStencilImageView(),
+                                primitiveFillNabor.getStencilImageView()
+                        )
+                );
 
                 quadDrawer.draw(commandBuffer);
             }
@@ -820,6 +848,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         mergeScenesNabor.transitionDepthImageLayout(commandPool, graphicsQueue);
         mergeScenesNabor.transitionPositionImageLayout(commandPool, graphicsQueue);
         mergeScenesNabor.transitionNormalImageLayout(commandPool, graphicsQueue);
+        mergeScenesNabor.transitionStencilImageLayout(commandPool, graphicsQueue);
 
         if (shadowMappingNabor != null) {
             ShadowMappingNaborRunner.runShadowMappingNabor(
@@ -871,11 +900,16 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         return mergeScenesNabor.getDepthImageView();
     }
 
+    public long getStencilImageView() {
+        return mergeScenesNabor.getStencilImageView();
+    }
+
     public VkMttTexture texturize(ScreenImageType imageType, VkMttScreen dstScreen) {
         long imageView;
         switch (imageType) {
             case COLOR -> imageView = this.getColorImageView();
             case DEPTH -> imageView = this.getDepthImageView();
+            case STENCIL -> imageView = this.getStencilImageView();
             default -> throw new IllegalArgumentException("Unsupported image type specified: " + imageType);
         }
 

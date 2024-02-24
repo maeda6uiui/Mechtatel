@@ -21,6 +21,8 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public abstract class PostProcessingNabor extends Nabor {
+    public static final int COLOR_ATTACHMENT_INDEX = 0;
+
     public PostProcessingNabor(
             VkDevice device,
             int msaaSamples,
@@ -32,7 +34,7 @@ public abstract class PostProcessingNabor extends Nabor {
 
     public void transitionColorImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long colorImage = this.getImage(0);
+        long colorImage = this.getImage(COLOR_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -46,7 +48,7 @@ public abstract class PostProcessingNabor extends Nabor {
     }
 
     public long getColorImageView() {
-        return this.getImageView(0);
+        return this.getImageView(COLOR_ATTACHMENT_INDEX);
     }
 
     @Override

@@ -23,9 +23,9 @@ class PropertiesNabor extends Nabor {
 
     private int depthImageAspect;
 
-    private int depthAttachmentIndex;
-    private int positionAttachmentIndex;
-    private int normalAttachmentIndex;
+    private static final int DEPTH_ATTACHMENT_INDEX = 0;
+    private static final int POSITION_ATTACHMENT_INDEX = 1;
+    private static final int NORMAL_ATTACHMENT_INDEX = 2;
 
     public PropertiesNabor(
             VkDevice device,
@@ -64,7 +64,7 @@ class PropertiesNabor extends Nabor {
 
     public void transitionDepthImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long depthImage = this.getImage(depthAttachmentIndex);
+        long depthImage = this.getImage(DEPTH_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -78,12 +78,12 @@ class PropertiesNabor extends Nabor {
     }
 
     public long getDepthImageView() {
-        return this.getImageView(depthAttachmentIndex);
+        return this.getImageView(DEPTH_ATTACHMENT_INDEX);
     }
 
     public void transitionPositionImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long positionImage = this.getImage(positionAttachmentIndex);
+        long positionImage = this.getImage(POSITION_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -97,12 +97,12 @@ class PropertiesNabor extends Nabor {
     }
 
     public long getPositionImageView() {
-        return this.getImageView(positionAttachmentIndex);
+        return this.getImageView(POSITION_ATTACHMENT_INDEX);
     }
 
     public void transitionNormalImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long normalImage = this.getImage(normalAttachmentIndex);
+        long normalImage = this.getImage(NORMAL_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -116,7 +116,7 @@ class PropertiesNabor extends Nabor {
     }
 
     public long getNormalImageView() {
-        return this.getImageView(normalAttachmentIndex);
+        return this.getImageView(NORMAL_ATTACHMENT_INDEX);
     }
 
     @Override
@@ -146,9 +146,7 @@ class PropertiesNabor extends Nabor {
             VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(3, stack);
 
             //Depth-stencil attachment
-            depthAttachmentIndex = 0;
-
-            VkAttachmentDescription depthAttachment = attachments.get(depthAttachmentIndex);
+            VkAttachmentDescription depthAttachment = attachments.get(DEPTH_ATTACHMENT_INDEX);
             depthAttachment.format(depthImageFormat);
             depthAttachment.samples(msaaSamples);
             depthAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -158,14 +156,12 @@ class PropertiesNabor extends Nabor {
             depthAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             depthAttachment.finalLayout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference depthAttachmentRef = attachmentRefs.get(depthAttachmentIndex);
-            depthAttachmentRef.attachment(depthAttachmentIndex);
+            VkAttachmentReference depthAttachmentRef = attachmentRefs.get(DEPTH_ATTACHMENT_INDEX);
+            depthAttachmentRef.attachment(DEPTH_ATTACHMENT_INDEX);
             depthAttachmentRef.layout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
             //Position attachment
-            positionAttachmentIndex = 1;
-
-            VkAttachmentDescription positionAttachment = attachments.get(positionAttachmentIndex);
+            VkAttachmentDescription positionAttachment = attachments.get(POSITION_ATTACHMENT_INDEX);
             positionAttachment.format(positionImageFormat);
             positionAttachment.samples(msaaSamples);
             positionAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -175,14 +171,12 @@ class PropertiesNabor extends Nabor {
             positionAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             positionAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference positionAttachmentRef = attachmentRefs.get(positionAttachmentIndex);
-            positionAttachmentRef.attachment(positionAttachmentIndex);
+            VkAttachmentReference positionAttachmentRef = attachmentRefs.get(POSITION_ATTACHMENT_INDEX);
+            positionAttachmentRef.attachment(POSITION_ATTACHMENT_INDEX);
             positionAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             //Normal attachment
-            normalAttachmentIndex = 2;
-
-            VkAttachmentDescription normalAttachment = attachments.get(normalAttachmentIndex);
+            VkAttachmentDescription normalAttachment = attachments.get(NORMAL_ATTACHMENT_INDEX);
             normalAttachment.format(normalImageFormat);
             normalAttachment.samples(msaaSamples);
             normalAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -192,8 +186,8 @@ class PropertiesNabor extends Nabor {
             normalAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             normalAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference normalAttachmentRef = attachmentRefs.get(normalAttachmentIndex);
-            normalAttachmentRef.attachment(normalAttachmentIndex);
+            VkAttachmentReference normalAttachmentRef = attachmentRefs.get(NORMAL_ATTACHMENT_INDEX);
+            normalAttachmentRef.attachment(NORMAL_ATTACHMENT_INDEX);
             normalAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             VkAttachmentReference.Buffer colorAttachmentRefs = VkAttachmentReference.calloc(2, stack);

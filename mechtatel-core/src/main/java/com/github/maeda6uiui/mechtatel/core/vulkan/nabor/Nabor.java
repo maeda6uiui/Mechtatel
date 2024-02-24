@@ -861,15 +861,6 @@ public abstract class Nabor {
         }
     }
 
-    public void bindImages(
-            VkCommandBuffer commandBuffer,
-            int naborIndex,
-            int dstSet,
-            int dstBinding,
-            List<Long> imageViews) {
-        throw new RuntimeException("Unsupported operation");
-    }
-
     private void copyImageToBuffer(
             long commandPool,
             VkQueue graphicsQueue,

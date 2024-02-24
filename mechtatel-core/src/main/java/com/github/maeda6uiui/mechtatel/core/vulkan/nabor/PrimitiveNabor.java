@@ -24,6 +24,7 @@ public class PrimitiveNabor extends Nabor {
     private int depthImageFormat;
     private int positionImageFormat;
     private int normalImageFormat;
+    private int stencilImageFormat;
 
     private int depthImageAspect;
 
@@ -31,6 +32,7 @@ public class PrimitiveNabor extends Nabor {
     private static final int ALBEDO_ATTACHMENT_INDEX = 1;
     private static final int POSITION_ATTACHMENT_INDEX = 2;
     private static final int NORMAL_ATTACHMENT_INDEX = 3;
+    private static final int STENCIL_ATTACHMENT_INDEX = 4;
 
     private boolean fill;
 
@@ -39,6 +41,7 @@ public class PrimitiveNabor extends Nabor {
             int depthImageFormat,
             int positionImageFormat,
             int normalImageFormat,
+            int stencilImageFormat,
             boolean fill) {
         super(
                 device,
@@ -51,6 +54,7 @@ public class PrimitiveNabor extends Nabor {
         this.depthImageFormat = depthImageFormat;
         this.positionImageFormat = positionImageFormat;
         this.normalImageFormat = normalImageFormat;
+        this.stencilImageFormat = stencilImageFormat;
 
         depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
         if (DepthResourceUtils.hasStencilComponent(depthImageFormat)) {
@@ -136,6 +140,25 @@ public class PrimitiveNabor extends Nabor {
         return this.getImageView(NORMAL_ATTACHMENT_INDEX);
     }
 
+    public void transitionStencilImageLayout(long commandPool, VkQueue graphicsQueue) {
+        VkDevice device = this.getDevice();
+        long stencilImage = this.getImage(STENCIL_ATTACHMENT_INDEX);
+
+        ImageUtils.transitionImageLayout(
+                device,
+                commandPool,
+                graphicsQueue,
+                stencilImage,
+                VK_IMAGE_ASPECT_COLOR_BIT,
+                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                1);
+    }
+
+    public long getStencilImageView() {
+        return this.getImageView(STENCIL_ATTACHMENT_INDEX);
+    }
+
     @Override
     public void cleanup(boolean reserveForRecreation) {
         super.cleanup(reserveForRecreation);
@@ -159,8 +182,8 @@ public class PrimitiveNabor extends Nabor {
             VkDevice device = this.getDevice();
             int msaaSamples = this.getMsaaSamples();
 
-            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.calloc(4, stack);
-            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(4, stack);
+            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.calloc(5, stack);
+            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(5, stack);
 
             //Depth-stencil attachment
             VkAttachmentDescription depthAttachment = attachments.get(DEPTH_ATTACHMENT_INDEX);
@@ -222,14 +245,30 @@ public class PrimitiveNabor extends Nabor {
             normalAttachmentRef.attachment(NORMAL_ATTACHMENT_INDEX);
             normalAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference.Buffer colorAttachmentRefs = VkAttachmentReference.calloc(3, stack);
+            //Stencil attachment
+            VkAttachmentDescription stencilAttachment = attachments.get(STENCIL_ATTACHMENT_INDEX);
+            stencilAttachment.format(stencilImageFormat);
+            stencilAttachment.samples(msaaSamples);
+            stencilAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
+            stencilAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
+            stencilAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
+            stencilAttachment.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
+            stencilAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
+            stencilAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
+            VkAttachmentReference stencilAttachmentRef = attachmentRefs.get(STENCIL_ATTACHMENT_INDEX);
+            stencilAttachmentRef.attachment(STENCIL_ATTACHMENT_INDEX);
+            stencilAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
+            VkAttachmentReference.Buffer colorAttachmentRefs = VkAttachmentReference.calloc(4, stack);
             colorAttachmentRefs.put(0, albedoAttachmentRef);
             colorAttachmentRefs.put(1, positionAttachmentRef);
             colorAttachmentRefs.put(2, normalAttachmentRef);
+            colorAttachmentRefs.put(3, stencilAttachmentRef);
 
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.calloc(1, stack);
             subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
-            subpass.colorAttachmentCount(3);
+            subpass.colorAttachmentCount(4);
             subpass.pDepthStencilAttachment(depthAttachmentRef);
             subpass.pColorAttachments(colorAttachmentRefs);
 
@@ -686,6 +725,35 @@ public class PrimitiveNabor extends Nabor {
             this.getImages().add(normalImage);
             this.getImageMemories().add(normalImageMemory);
             this.getImageViews().add(normalImageView);
+
+            //Stencil image
+            ImageUtils.createImage(
+                    device,
+                    extent.width(),
+                    extent.height(),
+                    1,
+                    msaaSamples,
+                    stencilImageFormat,
+                    VK_IMAGE_TILING_OPTIMAL,
+                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                    pImage,
+                    pImageMemory);
+            long stencilImage = pImage.get(0);
+            long stencilImageMemory = pImageMemory.get(0);
+
+            viewInfo.image(stencilImage);
+            viewInfo.format(stencilImageFormat);
+            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+
+            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create an image view");
+            }
+            long stencilImageView = pImageView.get(0);
+
+            this.getImages().add(stencilImage);
+            this.getImageMemories().add(stencilImageMemory);
+            this.getImageViews().add(stencilImageView);
         }
     }
 }

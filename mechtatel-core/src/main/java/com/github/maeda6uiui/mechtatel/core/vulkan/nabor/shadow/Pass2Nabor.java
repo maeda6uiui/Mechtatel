@@ -25,6 +25,8 @@ import static org.lwjgl.vulkan.VK10.*;
 class Pass2Nabor extends Nabor {
     public static final int MAX_NUM_SHADOW_MAPS = 16;
 
+    public static final int COLOR_ATTACHMENT_INDEX = 0;
+
     public Pass2Nabor(VkDevice device) {
         super(
                 device,
@@ -37,7 +39,7 @@ class Pass2Nabor extends Nabor {
 
     public void transitionColorImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long colorImage = this.getImage(0);
+        long colorImage = this.getImage(COLOR_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -51,7 +53,7 @@ class Pass2Nabor extends Nabor {
     }
 
     public long getColorImageView() {
-        return this.getImageView(0);
+        return this.getImageView(COLOR_ATTACHMENT_INDEX);
     }
 
     @Override
@@ -416,7 +418,7 @@ class Pass2Nabor extends Nabor {
             VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(1, stack);
 
             //Color attachment
-            VkAttachmentDescription colorAttachment = attachments.get(0);
+            VkAttachmentDescription colorAttachment = attachments.get(COLOR_ATTACHMENT_INDEX);
             colorAttachment.format(colorImageFormat);
             colorAttachment.samples(msaaSamples);
             colorAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -426,8 +428,8 @@ class Pass2Nabor extends Nabor {
             colorAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             colorAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference colorAttachmentRef = attachmentRefs.get(0);
-            colorAttachmentRef.attachment(0);
+            VkAttachmentReference colorAttachmentRef = attachmentRefs.get(COLOR_ATTACHMENT_INDEX);
+            colorAttachmentRef.attachment(COLOR_ATTACHMENT_INDEX);
             colorAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             VkAttachmentReference.Buffer colorAttachmentRefs = VkAttachmentReference.calloc(1, stack);

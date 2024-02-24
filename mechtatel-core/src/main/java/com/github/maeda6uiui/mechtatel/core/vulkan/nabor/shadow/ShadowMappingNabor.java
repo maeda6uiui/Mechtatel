@@ -23,6 +23,8 @@ import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_1_BIT;
 public class ShadowMappingNabor extends PostProcessingNabor {
     public static final int MAX_NUM_SHADOW_MAPS = Pass2Nabor.MAX_NUM_SHADOW_MAPS;
 
+    public static final int COLOR_ATTACHMENT_INDEX = Pass2Nabor.COLOR_ATTACHMENT_INDEX;
+
     private int depthImageWidth;
     private int depthImageHeight;
 

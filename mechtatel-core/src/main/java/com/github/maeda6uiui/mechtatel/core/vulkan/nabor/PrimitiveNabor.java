@@ -27,10 +27,10 @@ public class PrimitiveNabor extends Nabor {
 
     private int depthImageAspect;
 
-    private int depthAttachmentIndex;
-    private int albedoAttachmentIndex;
-    private int positionAttachmentIndex;
-    private int normalAttachmentIndex;
+    private static final int DEPTH_ATTACHMENT_INDEX = 0;
+    private static final int ALBEDO_ATTACHMENT_INDEX = 1;
+    private static final int POSITION_ATTACHMENT_INDEX = 2;
+    private static final int NORMAL_ATTACHMENT_INDEX = 3;
 
     private boolean fill;
 
@@ -62,7 +62,7 @@ public class PrimitiveNabor extends Nabor {
 
     public void transitionDepthImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long depthImage = this.getImage(depthAttachmentIndex);
+        long depthImage = this.getImage(DEPTH_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -76,12 +76,12 @@ public class PrimitiveNabor extends Nabor {
     }
 
     public long getDepthImageView() {
-        return this.getImageView(depthAttachmentIndex);
+        return this.getImageView(DEPTH_ATTACHMENT_INDEX);
     }
 
     public void transitionAlbedoImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long albedoResolveImage = this.getImage(albedoAttachmentIndex);
+        long albedoResolveImage = this.getImage(ALBEDO_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -95,12 +95,12 @@ public class PrimitiveNabor extends Nabor {
     }
 
     public long getAlbedoImageView() {
-        return this.getImageView(albedoAttachmentIndex);
+        return this.getImageView(ALBEDO_ATTACHMENT_INDEX);
     }
 
     public void transitionPositionImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long positionImage = this.getImage(positionAttachmentIndex);
+        long positionImage = this.getImage(POSITION_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -114,12 +114,12 @@ public class PrimitiveNabor extends Nabor {
     }
 
     public long getPositionImageView() {
-        return this.getImageView(positionAttachmentIndex);
+        return this.getImageView(POSITION_ATTACHMENT_INDEX);
     }
 
     public void transitionNormalImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long normalImage = this.getImage(normalAttachmentIndex);
+        long normalImage = this.getImage(NORMAL_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -133,7 +133,7 @@ public class PrimitiveNabor extends Nabor {
     }
 
     public long getNormalImageView() {
-        return this.getImageView(normalAttachmentIndex);
+        return this.getImageView(NORMAL_ATTACHMENT_INDEX);
     }
 
     @Override
@@ -163,9 +163,7 @@ public class PrimitiveNabor extends Nabor {
             VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(4, stack);
 
             //Depth-stencil attachment
-            depthAttachmentIndex = 0;
-
-            VkAttachmentDescription depthAttachment = attachments.get(depthAttachmentIndex);
+            VkAttachmentDescription depthAttachment = attachments.get(DEPTH_ATTACHMENT_INDEX);
             depthAttachment.format(depthImageFormat);
             depthAttachment.samples(msaaSamples);
             depthAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -175,14 +173,12 @@ public class PrimitiveNabor extends Nabor {
             depthAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             depthAttachment.finalLayout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference depthAttachmentRef = attachmentRefs.get(depthAttachmentIndex);
-            depthAttachmentRef.attachment(depthAttachmentIndex);
+            VkAttachmentReference depthAttachmentRef = attachmentRefs.get(DEPTH_ATTACHMENT_INDEX);
+            depthAttachmentRef.attachment(DEPTH_ATTACHMENT_INDEX);
             depthAttachmentRef.layout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
             //Albedo attachment
-            albedoAttachmentIndex = 1;
-
-            VkAttachmentDescription albedoAttachment = attachments.get(albedoAttachmentIndex);
+            VkAttachmentDescription albedoAttachment = attachments.get(ALBEDO_ATTACHMENT_INDEX);
             albedoAttachment.format(colorImageFormat);
             albedoAttachment.samples(msaaSamples);
             albedoAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -192,14 +188,12 @@ public class PrimitiveNabor extends Nabor {
             albedoAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             albedoAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference albedoAttachmentRef = attachmentRefs.get(albedoAttachmentIndex);
-            albedoAttachmentRef.attachment(albedoAttachmentIndex);
+            VkAttachmentReference albedoAttachmentRef = attachmentRefs.get(ALBEDO_ATTACHMENT_INDEX);
+            albedoAttachmentRef.attachment(ALBEDO_ATTACHMENT_INDEX);
             albedoAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             //Position attachment
-            positionAttachmentIndex = 2;
-
-            VkAttachmentDescription positionAttachment = attachments.get(positionAttachmentIndex);
+            VkAttachmentDescription positionAttachment = attachments.get(POSITION_ATTACHMENT_INDEX);
             positionAttachment.format(positionImageFormat);
             positionAttachment.samples(VK_SAMPLE_COUNT_1_BIT);
             positionAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
@@ -209,14 +203,12 @@ public class PrimitiveNabor extends Nabor {
             positionAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             positionAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference positionAttachmentRef = attachmentRefs.get(positionAttachmentIndex);
-            positionAttachmentRef.attachment(positionAttachmentIndex);
+            VkAttachmentReference positionAttachmentRef = attachmentRefs.get(POSITION_ATTACHMENT_INDEX);
+            positionAttachmentRef.attachment(POSITION_ATTACHMENT_INDEX);
             positionAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             //Normal attachment
-            normalAttachmentIndex = 3;
-
-            VkAttachmentDescription normalAttachment = attachments.get(normalAttachmentIndex);
+            VkAttachmentDescription normalAttachment = attachments.get(NORMAL_ATTACHMENT_INDEX);
             normalAttachment.format(normalImageFormat);
             normalAttachment.samples(msaaSamples);
             normalAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -226,8 +218,8 @@ public class PrimitiveNabor extends Nabor {
             normalAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             normalAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference normalAttachmentRef = attachmentRefs.get(normalAttachmentIndex);
-            normalAttachmentRef.attachment(normalAttachmentIndex);
+            VkAttachmentReference normalAttachmentRef = attachmentRefs.get(NORMAL_ATTACHMENT_INDEX);
+            normalAttachmentRef.attachment(NORMAL_ATTACHMENT_INDEX);
             normalAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             VkAttachmentReference.Buffer colorAttachmentRefs = VkAttachmentReference.calloc(3, stack);

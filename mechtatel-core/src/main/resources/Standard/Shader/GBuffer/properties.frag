@@ -11,5 +11,5 @@ layout(location=2) out float outStencil;
 void main(){
     outPosition=fragPosition;
     outNormal=fragNormal;
-    outStencil=1.0;
+    outStencil=0.0;
 }

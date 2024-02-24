@@ -14,5 +14,5 @@ void main(){
     outAlbedo=fragColor;
     outPosition=fragPosition;
     outNormal=fragNormal;
-    outStencil=1.0;
+    outStencil=0.0;
 }

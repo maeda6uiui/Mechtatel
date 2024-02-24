@@ -444,8 +444,8 @@ public abstract class PostProcessingNabor extends Nabor {
             //Depth-stencil
             VkPipelineDepthStencilStateCreateInfo depthStencil = VkPipelineDepthStencilStateCreateInfo.calloc(stack);
             depthStencil.sType(VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO);
-            depthStencil.depthTestEnable(true);
-            depthStencil.depthWriteEnable(true);
+            depthStencil.depthTestEnable(false);
+            depthStencil.depthWriteEnable(false);
             depthStencil.depthCompareOp(VK_COMPARE_OP_LESS);
             depthStencil.depthBoundsTestEnable(false);
             depthStencil.minDepthBounds(0.0f);

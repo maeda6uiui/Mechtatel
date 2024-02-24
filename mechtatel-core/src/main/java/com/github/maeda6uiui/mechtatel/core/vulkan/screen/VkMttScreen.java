@@ -14,6 +14,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PrimitiveNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNaborChain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow.ShadowMappingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
@@ -905,23 +906,53 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
     }
 
     public VkMttTexture texturize(ScreenImageType imageType, VkMttScreen dstScreen) {
-        long imageView;
-        switch (imageType) {
-            case COLOR -> imageView = this.getColorImageView();
-            case DEPTH -> imageView = this.getDepthImageView();
-            case STENCIL -> imageView = this.getStencilImageView();
-            default -> throw new IllegalArgumentException("Unsupported image type specified: " + imageType);
-        }
+        long imageView = switch (imageType) {
+            case COLOR -> this.getColorImageView();
+            case DEPTH -> this.getDepthImageView();
+            case STENCIL -> this.getStencilImageView();
+        };
 
         return new VkMttTexture(device, dstScreen, imageView);
     }
 
-    public BufferedImage createBufferedImage(int imageIndex, PixelFormat pixelFormat) {
-        if (ppNaborChain != null) {
-            return ppNaborChain.createBufferedImage(imageIndex, pixelFormat);
-        } else if (shadowMappingNabor != null) {
-            return shadowMappingNabor.createBufferedImage(commandPool, graphicsQueue, imageIndex, pixelFormat);
-        } else {
+    public BufferedImage createBufferedImage(ScreenImageType imageType, PixelFormat pixelFormat) {
+        //Color image is acquired from one of the following sources:
+        //- Post-processing nabor
+        //- Shadow mapping nabor
+        //- Merge-scenes nabor
+        if (imageType == ScreenImageType.COLOR) {
+            //Acquire image from a post-processing nabor
+            if (ppNaborChain != null) {
+                return ppNaborChain.createBufferedImage(PostProcessingNabor.COLOR_ATTACHMENT_INDEX, pixelFormat);
+            }
+            //Acquire image from shadow mapping nabor
+            else if (shadowMappingNabor != null) {
+                return shadowMappingNabor.createBufferedImage(
+                        commandPool,
+                        graphicsQueue,
+                        ShadowMappingNabor.COLOR_ATTACHMENT_INDEX,
+                        pixelFormat
+                );
+            }
+            //Acquire image from merge-scenes nabor
+            //if there is neither post-processing nor shadow mapping declared in this screen
+            else {
+                return mergeScenesNabor.createBufferedImage(
+                        commandPool,
+                        graphicsQueue,
+                        MergeScenesNabor.ALBEDO_ATTACHMENT_INDEX,
+                        pixelFormat
+                );
+            }
+        }
+        //Other type of image is acquired from merge-scenes nabor
+        else {
+            int imageIndex = switch (imageType) {
+                case DEPTH -> MergeScenesNabor.DEPTH_ATTACHMENT_INDEX;
+                case STENCIL -> MergeScenesNabor.STENCIL_ATTACHMENT_INDEX;
+                default -> throw new RuntimeException("Unexpected image type: " + imageType);
+            };
+
             return mergeScenesNabor.createBufferedImage(commandPool, graphicsQueue, imageIndex, pixelFormat);
         }
     }

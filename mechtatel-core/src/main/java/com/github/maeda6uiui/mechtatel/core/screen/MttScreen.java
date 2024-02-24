@@ -266,10 +266,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
      * @return Buffered image
      */
     public BufferedImage createBufferedImage(ScreenImageType imageType, PixelFormat pixelFormat) {
-        return switch (imageType) {
-            case COLOR -> screen.createBufferedImage(0, pixelFormat);
-            case DEPTH -> screen.createBufferedImage(1, pixelFormat);
-        };
+        return screen.createBufferedImage(imageType, pixelFormat);
     }
 
     /**

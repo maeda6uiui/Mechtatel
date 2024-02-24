@@ -48,10 +48,12 @@ public class ShadowMappingNaborRunner {
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
             renderPassInfo.renderPass(shadowMappingNabor.getRenderPass(0));
             renderPassInfo.framebuffer(shadowMappingNabor.getFramebuffer(0, 0));
+
             VkRect2D renderArea = VkRect2D.calloc(stack);
             renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
             renderArea.extent(shadowMappingNabor.getExtent(0));
             renderPassInfo.renderArea(renderArea);
+            
             VkClearValue.Buffer clearValues = VkClearValue.calloc(1, stack);
             clearValues.get(0).depthStencil().set(1.0f, 0);
             renderPassInfo.pClearValues(clearValues);

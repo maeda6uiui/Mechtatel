@@ -318,15 +318,10 @@ public class ShadowMappingNabor extends Nabor {
     @Override
     public void bindImages(
             VkCommandBuffer commandBuffer,
-            int naborIndex,
             int dstSet,
             int dstBinding,
             List<Long> imageViews) {
-        if (naborIndex == 1) {
-            pass2.bindImages(commandBuffer, dstSet, dstBinding, imageViews);
-        } else {
-            throw new RuntimeException("Unsupported operation");
-        }
+        pass2.bindImages(commandBuffer, dstSet, dstBinding, imageViews);
     }
 
     @Override

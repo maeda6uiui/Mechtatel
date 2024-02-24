@@ -128,7 +128,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 albedoMSAASamples,
                 depthImageFormat,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
-                VK_FORMAT_R16G16B16A16_SFLOAT);
+                VK_FORMAT_R16G16B16A16_SFLOAT,
+                VK_FORMAT_R16_SFLOAT);
         if (vertShaderModulesStorage.containsKey("gbuffer")) {
             var vertShaderModules = vertShaderModulesStorage.get("gbuffer");
             var fragShaderModules = fragShaderModulesStorage.get("gbuffer");
@@ -505,10 +506,11 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
             renderArea.extent(gBufferNabor.getExtent(1));
             renderPassInfo.renderArea(renderArea);
-            VkClearValue.Buffer clearValues = VkClearValue.calloc(3, stack);
+            VkClearValue.Buffer clearValues = VkClearValue.calloc(4, stack);
             clearValues.get(0).depthStencil().set(1.0f, 0);
             clearValues.get(1).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             clearValues.get(2).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
+            clearValues.get(3).color().float32(stack.floats(0.0f));
             renderPassInfo.pClearValues(clearValues);
 
             vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);

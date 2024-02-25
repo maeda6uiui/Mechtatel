@@ -16,10 +16,10 @@ layout(set=2,binding=0) uniform MergeScenesInfoUBO{
 layout(location=0) in vec2 fragTexCoords;
 
 layout(location=0) out vec4 outAlbedo;
-layout(location=1) out float outDepth;
-layout(location=2) out vec3 outPosition;
-layout(location=3) out vec3 outNormal;
-layout(location=4) out float outStencil;
+layout(location=1) out vec4 outDepth;
+layout(location=2) out vec4 outPosition;
+layout(location=3) out vec4 outNormal;
+layout(location=4) out vec4 outStencil;
 
 void main(){
     vec4 curAlbedo=vec4(0.0);
@@ -55,8 +55,8 @@ void main(){
     }
 
     outAlbedo=curAlbedo;
-    outDepth=curDepth;
-    outPosition=curPosition;
-    outNormal=curNormal;
-    outStencil=curStencil;
+    outDepth=vec4(vec3(curDepth),1.0);
+    outPosition=vec4(curPosition,1.0);
+    outNormal=vec4(curNormal,1.0);
+    outStencil=vec4(vec3(curStencil),1.0);
 }

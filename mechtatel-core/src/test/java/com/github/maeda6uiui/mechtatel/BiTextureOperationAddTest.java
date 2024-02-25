@@ -39,7 +39,7 @@ public class BiTextureOperationAddTest extends Mechtatel {
     private MttScreen secondScreen;
     private MttScreen finalScreen;
     private MttTexturedQuad2D texturedQuad;
-    private BiTextureOperation opTest;
+    private BiTextureOperation opAdd;
     private FreeCamera camera;
 
     @Override
@@ -100,30 +100,28 @@ public class BiTextureOperationAddTest extends Mechtatel {
 
         firstScreen.draw();
         secondScreen.draw();
-        opTest.run();
+        opAdd.run();
         finalScreen.draw();
         window.present(finalScreen);
     }
 
     private void createTextureOperation() {
-        if (opTest != null) {
-            opTest.cleanup();
+        if (opAdd != null) {
+            opAdd.cleanup();
         }
 
         MttTexture firstColorTexture = firstScreen.texturize(ScreenImageType.COLOR, finalScreen);
-        MttTexture firstDepthTexture = firstScreen.texturize(ScreenImageType.DEPTH, finalScreen);
         MttTexture secondColorTexture = secondScreen.texturize(ScreenImageType.COLOR, finalScreen);
-        MttTexture secondDepthTexture = secondScreen.texturize(ScreenImageType.DEPTH, finalScreen);
 
-        var biParameters = new BiTextureOperationParameters();
-        biParameters.setOperationType(BiTextureOperationParameters.OperationType.ADD);
+        var texOpParams = new BiTextureOperationParameters();
+        texOpParams.setOperationType(BiTextureOperationParameters.OperationType.ADD);
 
-        opTest = finalScreen.createBiTextureOperation(
+        opAdd = finalScreen.createBiTextureOperation(
                 Arrays.asList(firstColorTexture, secondColorTexture),
                 new ArrayList<>(),
                 true
         );
-        opTest.setBiParameters(biParameters);
-        texturedQuad.replaceTexture(opTest.getResultTexture());
+        opAdd.setBiParameters(texOpParams);
+        texturedQuad.replaceTexture(opAdd.getResultTexture());
     }
 }

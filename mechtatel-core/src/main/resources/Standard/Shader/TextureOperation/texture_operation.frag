@@ -45,11 +45,7 @@ void main(){
             depth_2=parameters.secondTextureFixedDepth;
         }
 
-        if(depth_1<depth_2){
-            outColor=color_1*parameters.firstTextureFactor;
-        }else{
-            outColor=color_2*parameters.secondTextureFactor;
-        }
+        outColor=(depth_1<depth_2)?color_1*parameters.firstTextureFactor:color_2*parameters.secondTextureFactor;
     }else{
         outColor=color_1;
     }

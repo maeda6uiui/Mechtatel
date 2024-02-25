@@ -747,7 +747,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             clearValues.get(1).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             clearValues.get(2).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             clearValues.get(3).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
-            clearValues.get(4).color().float32(stack.floats(1.0f, 1.0f, 1.0f, 1.0f));
+            clearValues.get(4).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 0.0f));
             renderPassInfo.pClearValues(clearValues);
 
             long mergeScenesInfoUBOMemory = mergeScenesNabor.getUniformBufferMemory(0);

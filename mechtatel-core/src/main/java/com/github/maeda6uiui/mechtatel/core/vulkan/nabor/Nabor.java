@@ -824,6 +824,15 @@ public abstract class Nabor {
         userDefImageViews.clear();
     }
 
+    /**
+     * Binds an image.
+     * Image binding will not be executed if the list of image views given is empty.
+     *
+     * @param commandBuffer Command buffer
+     * @param dstSet        Index of destination set
+     * @param dstBinding    Index of destination binding
+     * @param imageViews    Image view
+     */
     public void bindImages(VkCommandBuffer commandBuffer, int dstSet, int dstBinding, List<Long> imageViews) {
         if (imageViews.isEmpty()) {
             return;

@@ -14,13 +14,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class TextureOperationAddTest extends Mechtatel {
-    private static final Logger logger = LoggerFactory.getLogger(TextureOperationAddTest.class);
+public class BiTextureOperationAddTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(BiTextureOperationAddTest.class);
 
-    public TextureOperationAddTest(MttSettings settings) {
+    public BiTextureOperationAddTest(MttSettings settings) {
         super(settings);
         this.run();
     }
@@ -29,7 +30,7 @@ public class TextureOperationAddTest extends Mechtatel {
         MttSettings
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
-                        TextureOperationAddTest::new,
+                        BiTextureOperationAddTest::new,
                         () -> logger.error("Failed to load settings")
                 );
     }
@@ -119,7 +120,7 @@ public class TextureOperationAddTest extends Mechtatel {
 
         opTest = finalScreen.createBiTextureOperation(
                 Arrays.asList(firstColorTexture, secondColorTexture),
-                Arrays.asList(firstDepthTexture, secondDepthTexture),
+                new ArrayList<>(),
                 true
         );
         opTest.setBiParameters(biParameters);

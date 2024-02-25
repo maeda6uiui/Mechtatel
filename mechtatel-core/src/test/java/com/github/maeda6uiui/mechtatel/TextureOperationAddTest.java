@@ -114,15 +114,15 @@ public class TextureOperationAddTest extends Mechtatel {
         MttTexture secondColorTexture = secondScreen.texturize(ScreenImageType.COLOR, finalScreen);
         MttTexture secondDepthTexture = secondScreen.texturize(ScreenImageType.DEPTH, finalScreen);
 
-        var textureOperationParameters = new BiTextureOperationParameters();
-        textureOperationParameters.setOperationType(BiTextureOperationParameters.OperationType.ADD);
+        var biParameters = new BiTextureOperationParameters();
+        biParameters.setOperationType(BiTextureOperationParameters.OperationType.ADD);
 
         opTest = finalScreen.createTextureOperation(
                 Arrays.asList(firstColorTexture, secondColorTexture),
                 Arrays.asList(firstDepthTexture, secondDepthTexture),
                 true
         );
-        opTest.setBiParameters(textureOperationParameters);
+        opTest.setBiParameters(biParameters);
         texturedQuad.replaceTexture(opTest.getResultTexture());
     }
 }

@@ -22,6 +22,8 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class TextureOperationNabor extends Nabor {
+    public static final int COLOR_ATTACHMENT_INDEX = 0;
+
     public record TextureOperationInfo(
             long srcColorImageViewA,
             long srcDepthImageViewA,
@@ -43,7 +45,7 @@ public class TextureOperationNabor extends Nabor {
 
     public void transitionColorImage(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long colorImage = this.getImage(0);
+        long colorImage = this.getImage(COLOR_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -57,7 +59,7 @@ public class TextureOperationNabor extends Nabor {
     }
 
     public long getColorImageView() {
-        return this.getImageView(0);
+        return this.getImageView(COLOR_ATTACHMENT_INDEX);
     }
 
     @Override
@@ -87,7 +89,7 @@ public class TextureOperationNabor extends Nabor {
             VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(1, stack);
 
             //Color attachment
-            VkAttachmentDescription colorAttachment = attachments.get(0);
+            VkAttachmentDescription colorAttachment = attachments.get(COLOR_ATTACHMENT_INDEX);
             colorAttachment.format(colorImageFormat);
             colorAttachment.samples(msaaSamples);
             colorAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -97,8 +99,8 @@ public class TextureOperationNabor extends Nabor {
             colorAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             colorAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference colorAttachmentRef = attachmentRefs.get(0);
-            colorAttachmentRef.attachment(0);
+            VkAttachmentReference colorAttachmentRef = attachmentRefs.get(COLOR_ATTACHMENT_INDEX);
+            colorAttachmentRef.attachment(COLOR_ATTACHMENT_INDEX);
             colorAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.calloc(1, stack);

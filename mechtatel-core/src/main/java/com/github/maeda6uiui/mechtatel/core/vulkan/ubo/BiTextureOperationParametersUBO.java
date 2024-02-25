@@ -8,11 +8,11 @@ import java.nio.ByteBuffer;
 import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.*;
 
 /**
- * Uniform buffer object for texture operation parameters
+ * Uniform buffer object for parameters of texture operations that consume two textures
  *
  * @author maeda6uiui
  */
-public class TextureOperationParametersUBO extends UBO {
+public class BiTextureOperationParametersUBO extends UBO {
     public static final int SIZEOF = SIZEOF_VEC4 * 2 + SIZEOF_INT + SIZEOF_FLOAT * 2;
 
     private Vector4f firstTextureFactor;
@@ -21,7 +21,7 @@ public class TextureOperationParametersUBO extends UBO {
     private float firstTextureFixedDepth;
     private float secondTextureFixedDepth;
 
-    public TextureOperationParametersUBO(BiTextureOperationParameters parameters) {
+    public BiTextureOperationParametersUBO(BiTextureOperationParameters parameters) {
         firstTextureFactor = parameters.getFirstTextureFactor();
         secondTextureFactor = parameters.getSecondTextureFactor();
         operationType = parameters.getOperationType().ordinal();

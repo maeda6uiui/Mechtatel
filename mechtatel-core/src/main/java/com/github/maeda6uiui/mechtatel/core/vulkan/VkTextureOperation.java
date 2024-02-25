@@ -6,7 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationInfo;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.TextureOperationParametersUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.BiTextureOperationParametersUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -101,7 +101,7 @@ public class VkTextureOperation {
             renderPassInfo.pClearValues(clearValues);
 
             long parametersUBOMemory = textureOperationNabor.getUniformBufferMemory(0);
-            var parametersUBO = new TextureOperationParametersUBO(parameters);
+            var parametersUBO = new BiTextureOperationParametersUBO(parameters);
             parametersUBO.update(device, parametersUBOMemory);
 
             VkCommandBuffer commandBuffer = CommandBufferUtils.beginSingleTimeCommands(device, commandPool);

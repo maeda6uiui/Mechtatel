@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2DUV;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.TextureOperationParametersUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.BiTextureOperationParametersUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
@@ -64,7 +64,7 @@ public class TextureOperationNabor extends Nabor {
         VkDevice device = this.getDevice();
 
         var parametersUBOInfos = BufferUtils.createUBOBuffers(
-                device, descriptorCount, TextureOperationParametersUBO.SIZEOF);
+                device, descriptorCount, BiTextureOperationParametersUBO.SIZEOF);
         for (var parametersUBOInfo : parametersUBOInfos) {
             this.getUniformBuffers().add(parametersUBOInfo.buffer);
             this.getUniformBufferMemories().add(parametersUBOInfo.bufferMemory);
@@ -305,7 +305,7 @@ public class TextureOperationNabor extends Nabor {
             VkDescriptorBufferInfo parametersUBOInfo = uboInfos.get(0);
             parametersUBOInfo.buffer(this.getUniformBuffer(0));
             parametersUBOInfo.offset(0);
-            parametersUBOInfo.range(TextureOperationParametersUBO.SIZEOF);
+            parametersUBOInfo.range(BiTextureOperationParametersUBO.SIZEOF);
 
             VkWriteDescriptorSet uboDescriptorWrite = descriptorWrites.get(0);
             uboDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);

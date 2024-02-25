@@ -127,8 +127,8 @@ public class SkyboxTest extends Mechtatel {
         MttTexture mainColorTexture = mainScreen.texturize(ScreenImageType.COLOR, finalScreen);
         MttTexture mainDepthTexture = mainScreen.texturize(ScreenImageType.DEPTH, finalScreen);
 
-        var textureOperationParameters = new TextureOperationParameters();
-        textureOperationParameters.setOperationType(TextureOperationParameters.OperationType.MERGE_BY_DEPTH);
+        var textureOperationParameters = new BiTextureOperationParameters();
+        textureOperationParameters.setOperationType(BiTextureOperationParameters.OperationType.MERGE_BY_DEPTH);
         textureOperationParameters.setFirstTextureFixedDepth(0.99999f);
 
         opMergeByDepth = finalScreen.createTextureOperation(
@@ -136,7 +136,7 @@ public class SkyboxTest extends Mechtatel {
                 Arrays.asList(skyboxDepthTexture, mainDepthTexture),
                 true
         );
-        opMergeByDepth.setParameters(textureOperationParameters);
+        opMergeByDepth.setBiParameters(textureOperationParameters);
         texturedQuad.replaceTexture(opMergeByDepth.getResultTexture());
     }
 }

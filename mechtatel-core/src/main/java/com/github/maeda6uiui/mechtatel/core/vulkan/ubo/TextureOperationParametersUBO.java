@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.ubo;
 
-import com.github.maeda6uiui.mechtatel.core.TextureOperationParameters;
+import com.github.maeda6uiui.mechtatel.core.BiTextureOperationParameters;
 import org.joml.Vector4f;
 
 import java.nio.ByteBuffer;
@@ -21,7 +21,7 @@ public class TextureOperationParametersUBO extends UBO {
     private float firstTextureFixedDepth;
     private float secondTextureFixedDepth;
 
-    public TextureOperationParametersUBO(TextureOperationParameters parameters) {
+    public TextureOperationParametersUBO(BiTextureOperationParameters parameters) {
         firstTextureFactor = parameters.getFirstTextureFactor();
         secondTextureFactor = parameters.getSecondTextureFactor();
         operationType = parameters.getOperationType().ordinal();

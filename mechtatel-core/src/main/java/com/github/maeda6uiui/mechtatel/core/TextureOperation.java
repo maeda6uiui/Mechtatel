@@ -17,7 +17,7 @@ import java.util.List;
 public class TextureOperation {
     private VkTextureOperation vkTextureOperation;
     private MttTexture resultTexture;
-    private TextureOperationParameters parameters;
+    private BiTextureOperationParameters biParameters;
 
     private List<MttTexture> colorTextures;
     private List<MttTexture> depthTextures;
@@ -49,7 +49,7 @@ public class TextureOperation {
                 dstScreen.getVulkanScreen()
         );
         resultTexture = new MttTexture(dstScreen, vkTextureOperation.getResultTexture());
-        parameters = new TextureOperationParameters();
+        biParameters = new BiTextureOperationParameters();
 
         this.colorTextures = colorTextures;
         this.depthTextures = depthTextures;
@@ -72,19 +72,19 @@ public class TextureOperation {
     }
 
     public void run() {
-        vkTextureOperation.run(parameters);
+        vkTextureOperation.run(biParameters);
     }
 
     public MttTexture getResultTexture() {
         return resultTexture;
     }
 
-    public void setParameters(TextureOperationParameters parameters) {
-        this.parameters = parameters;
+    public void setBiParameters(BiTextureOperationParameters biParameters) {
+        this.biParameters = biParameters;
     }
 
-    public TextureOperationParameters getParameters() {
-        return parameters;
+    public BiTextureOperationParameters getBiParameters() {
+        return biParameters;
     }
 
     public boolean isValid() {

@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
-import com.github.maeda6uiui.mechtatel.core.TextureOperationParameters;
+import com.github.maeda6uiui.mechtatel.core.BiTextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationInfo;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationNabor;
@@ -84,7 +84,7 @@ public class VkTextureOperation {
         return resultTexture;
     }
 
-    public void run(TextureOperationParameters parameters) {
+    public void run(BiTextureOperationParameters parameters) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);

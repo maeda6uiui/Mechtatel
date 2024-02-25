@@ -7,5 +7,6 @@ package com.github.maeda6uiui.mechtatel.core.screen;
  */
 public enum ScreenImageType {
     COLOR,
-    DEPTH
+    DEPTH,
+    STENCIL
 }

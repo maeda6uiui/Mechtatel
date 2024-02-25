@@ -14,12 +14,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
-public class TextureOperationTest extends Mechtatel {
-    private static final Logger logger = LoggerFactory.getLogger(TextureOperationTest.class);
+public class BiTextureOperationAddTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(BiTextureOperationAddTest.class);
 
-    public TextureOperationTest(MttSettings settings) {
+    public BiTextureOperationAddTest(MttSettings settings) {
         super(settings);
         this.run();
     }
@@ -28,7 +30,7 @@ public class TextureOperationTest extends Mechtatel {
         MttSettings
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
-                        TextureOperationTest::new,
+                        BiTextureOperationAddTest::new,
                         () -> logger.error("Failed to load settings")
                 );
     }
@@ -37,7 +39,7 @@ public class TextureOperationTest extends Mechtatel {
     private MttScreen secondScreen;
     private MttScreen finalScreen;
     private MttTexturedQuad2D texturedQuad;
-    private TextureOperation opTest;
+    private BiTextureOperation opAdd;
     private FreeCamera camera;
 
     @Override
@@ -98,32 +100,28 @@ public class TextureOperationTest extends Mechtatel {
 
         firstScreen.draw();
         secondScreen.draw();
-        opTest.run();
+        opAdd.run();
         finalScreen.draw();
         window.present(finalScreen);
     }
 
     private void createTextureOperation() {
-        if (opTest != null) {
-            opTest.cleanup();
+        if (opAdd != null) {
+            opAdd.cleanup();
         }
 
         MttTexture firstColorTexture = firstScreen.texturize(ScreenImageType.COLOR, finalScreen);
-        MttTexture firstDepthTexture = firstScreen.texturize(ScreenImageType.DEPTH, finalScreen);
         MttTexture secondColorTexture = secondScreen.texturize(ScreenImageType.COLOR, finalScreen);
-        MttTexture secondDepthTexture = secondScreen.texturize(ScreenImageType.DEPTH, finalScreen);
 
-        var textureOperationParameters = new TextureOperationParameters();
-        textureOperationParameters.setOperationType(TextureOperationParameters.OperationType.ADD);
+        var texOpParams = new BiTextureOperationParameters();
+        texOpParams.setOperationType(BiTextureOperationParameters.OperationType.ADD);
 
-        opTest = finalScreen.createTextureOperation(
-                firstColorTexture,
-                firstDepthTexture,
-                secondColorTexture,
-                secondDepthTexture,
+        opAdd = finalScreen.createBiTextureOperation(
+                Arrays.asList(firstColorTexture, secondColorTexture),
+                new ArrayList<>(),
                 true
         );
-        opTest.setParameters(textureOperationParameters);
-        texturedQuad.replaceTexture(opTest.getResultTexture());
+        opAdd.setBiParameters(texOpParams);
+        texturedQuad.replaceTexture(opAdd.getResultTexture());
     }
 }

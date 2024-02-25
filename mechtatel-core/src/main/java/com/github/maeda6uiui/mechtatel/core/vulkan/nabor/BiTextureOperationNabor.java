@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2DUV;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.TextureOperationParametersUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.BiTextureOperationParametersUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
@@ -11,39 +11,33 @@ import org.lwjgl.vulkan.*;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Nabor for texture operations
+ * Nabor for texture operations<br>
+ * This nabor consumes two textures, applies an operation to them,
+ * and returns one result texture.
  *
  * @author maeda6uiui
  */
-public class TextureOperationNabor extends Nabor {
-    public record TextureOperationInfo(
-            long srcColorImageViewA,
-            long srcDepthImageViewA,
-            long srcColorImageViewB,
-            long srcDepthImageViewB,
-            long dstImage,
-            long dstImageView) {
-    }
+public class BiTextureOperationNabor extends Nabor {
+    public static final int COLOR_ATTACHMENT_INDEX = 0;
 
-    public TextureOperationNabor(VkDevice device) {
+    public BiTextureOperationNabor(VkDevice device) {
         super(
                 device,
                 VK_SAMPLE_COUNT_1_BIT,
                 false,
-                TextureOperationNabor.class.getResource("/Standard/Shader/TextureOperation/texture_operation.vert"),
-                TextureOperationNabor.class.getResource("/Standard/Shader/TextureOperation/texture_operation.frag")
+                BiTextureOperationNabor.class.getResource("/Standard/Shader/BiTextureOperation/bi_texture_operation.vert"),
+                BiTextureOperationNabor.class.getResource("/Standard/Shader/BiTextureOperation/bi_texture_operation.frag")
         );
     }
 
     public void transitionColorImage(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long colorImage = this.getImage(0);
+        long colorImage = this.getImage(COLOR_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -57,7 +51,7 @@ public class TextureOperationNabor extends Nabor {
     }
 
     public long getColorImageView() {
-        return this.getImageView(0);
+        return this.getImageView(COLOR_ATTACHMENT_INDEX);
     }
 
     @Override
@@ -70,7 +64,7 @@ public class TextureOperationNabor extends Nabor {
         VkDevice device = this.getDevice();
 
         var parametersUBOInfos = BufferUtils.createUBOBuffers(
-                device, descriptorCount, TextureOperationParametersUBO.SIZEOF);
+                device, descriptorCount, BiTextureOperationParametersUBO.SIZEOF);
         for (var parametersUBOInfo : parametersUBOInfos) {
             this.getUniformBuffers().add(parametersUBOInfo.buffer);
             this.getUniformBufferMemories().add(parametersUBOInfo.bufferMemory);
@@ -87,7 +81,7 @@ public class TextureOperationNabor extends Nabor {
             VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(1, stack);
 
             //Color attachment
-            VkAttachmentDescription colorAttachment = attachments.get(0);
+            VkAttachmentDescription colorAttachment = attachments.get(COLOR_ATTACHMENT_INDEX);
             colorAttachment.format(colorImageFormat);
             colorAttachment.samples(msaaSamples);
             colorAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -97,8 +91,8 @@ public class TextureOperationNabor extends Nabor {
             colorAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             colorAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference colorAttachmentRef = attachmentRefs.get(0);
-            colorAttachmentRef.attachment(0);
+            VkAttachmentReference colorAttachmentRef = attachmentRefs.get(COLOR_ATTACHMENT_INDEX);
+            colorAttachmentRef.attachment(COLOR_ATTACHMENT_INDEX);
             colorAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.calloc(1, stack);
@@ -311,7 +305,7 @@ public class TextureOperationNabor extends Nabor {
             VkDescriptorBufferInfo parametersUBOInfo = uboInfos.get(0);
             parametersUBOInfo.buffer(this.getUniformBuffer(0));
             parametersUBOInfo.offset(0);
-            parametersUBOInfo.range(TextureOperationParametersUBO.SIZEOF);
+            parametersUBOInfo.range(BiTextureOperationParametersUBO.SIZEOF);
 
             VkWriteDescriptorSet uboDescriptorWrite = descriptorWrites.get(0);
             uboDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
@@ -559,17 +553,11 @@ public class TextureOperationNabor extends Nabor {
         }
     }
 
-    public void bindColorImages(VkCommandBuffer commandBuffer, long colorImageViewA, long colorImageViewB) {
-        var arrImageViews = new Long[]{colorImageViewA, colorImageViewB};
-        var imageViews = Arrays.asList(arrImageViews);
-
+    public void bindColorImages(VkCommandBuffer commandBuffer, List<Long> imageViews) {
         this.bindImages(commandBuffer, 1, 0, imageViews);
     }
 
-    public void bindDepthImages(VkCommandBuffer commandBuffer, long depthImageViewA, long depthImageViewB) {
-        var arrImageViews = new Long[]{depthImageViewA, depthImageViewB};
-        var imageViews = Arrays.asList(arrImageViews);
-
+    public void bindDepthImages(VkCommandBuffer commandBuffer, List<Long> imageViews) {
         this.bindImages(commandBuffer, 1, 1, imageViews);
     }
 

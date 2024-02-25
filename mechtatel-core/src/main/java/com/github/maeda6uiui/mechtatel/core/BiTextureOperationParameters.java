@@ -3,11 +3,11 @@ package com.github.maeda6uiui.mechtatel.core;
 import org.joml.Vector4f;
 
 /**
- * Parameters for texture operations
+ * Parameters for texture operations that consume two textures
  *
  * @author maeda6uiui
  */
-public class TextureOperationParameters {
+public class BiTextureOperationParameters {
     public enum OperationType {
         ADD,
         SUB,
@@ -22,7 +22,7 @@ public class TextureOperationParameters {
     private float firstTextureFixedDepth;
     private float secondTextureFixedDepth;
 
-    public TextureOperationParameters() {
+    public BiTextureOperationParameters() {
         firstTextureFactor = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
         secondTextureFactor = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
         operationType = OperationType.ADD;

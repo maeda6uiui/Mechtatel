@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow;
 
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkExtent2D;
@@ -20,8 +20,10 @@ import static org.lwjgl.vulkan.VK10.VK_SAMPLE_COUNT_1_BIT;
  *
  * @author maeda6uiui
  */
-public class ShadowMappingNabor extends PostProcessingNabor {
+public class ShadowMappingNabor extends Nabor {
     public static final int MAX_NUM_SHADOW_MAPS = Pass2Nabor.MAX_NUM_SHADOW_MAPS;
+
+    public static final int COLOR_ATTACHMENT_INDEX = Pass2Nabor.COLOR_ATTACHMENT_INDEX;
 
     private int depthImageWidth;
     private int depthImageHeight;
@@ -105,12 +107,10 @@ public class ShadowMappingNabor extends PostProcessingNabor {
         pass2.cleanup(reserveForRecreation);
     }
 
-    @Override
     public void transitionColorImageLayout(long commandPool, VkQueue graphicsQueue) {
         pass2.transitionColorImageLayout(commandPool, graphicsQueue);
     }
 
-    @Override
     public long getColorImageView() {
         return pass2.getColorImageView();
     }
@@ -318,37 +318,10 @@ public class ShadowMappingNabor extends PostProcessingNabor {
     @Override
     public void bindImages(
             VkCommandBuffer commandBuffer,
-            int naborIndex,
             int dstSet,
             int dstBinding,
             List<Long> imageViews) {
-        if (naborIndex == 1) {
-            pass2.bindImages(commandBuffer, dstSet, dstBinding, imageViews);
-        } else {
-            throw new RuntimeException("Unsupported operation");
-        }
-    }
-
-    @Override
-    public void bindImages(
-            VkCommandBuffer commandBuffer,
-            int naborIndex,
-            int dstBinding,
-            long albedoImageView,
-            long depthImageView,
-            long positionImageView,
-            long normalImageView) {
-        if (naborIndex == 1) {
-            pass2.bindImages(
-                    commandBuffer,
-                    dstBinding,
-                    albedoImageView,
-                    depthImageView,
-                    positionImageView,
-                    normalImageView);
-        } else {
-            throw new RuntimeException("Unsupported operation");
-        }
+        pass2.bindImages(commandBuffer, dstSet, dstBinding, imageViews);
     }
 
     @Override

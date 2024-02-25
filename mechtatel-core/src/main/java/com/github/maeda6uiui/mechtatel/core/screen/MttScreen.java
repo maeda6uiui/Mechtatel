@@ -152,7 +152,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     private boolean shouldAutoUpdateCameraAspect;
 
     private List<MttComponent> components;
-    private List<TextureOperation> textureOperations;
+    private List<BiTextureOperation> biTextureOperations;
     private List<MttTexture> textures;
 
     private Map<String, MttAnimation> animations;
@@ -202,14 +202,14 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         spotlights = new ArrayList<>();
 
         components = new ArrayList<>();
-        textureOperations = new ArrayList<>();
+        biTextureOperations = new ArrayList<>();
         textures = new ArrayList<>();
         animations = new HashMap<>();
     }
 
     public void cleanup() {
         components.forEach(MttComponent::cleanup);
-        textureOperations.forEach(TextureOperation::cleanup);
+        biTextureOperations.forEach(BiTextureOperation::cleanup);
         textures.forEach(MttTexture::cleanup);
         screen.cleanup();
     }
@@ -266,10 +266,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
      * @return Buffered image
      */
     public BufferedImage createBufferedImage(ScreenImageType imageType, PixelFormat pixelFormat) {
-        return switch (imageType) {
-            case COLOR -> screen.createBufferedImage(0, pixelFormat);
-            case DEPTH -> screen.createBufferedImage(1, pixelFormat);
-        };
+        return screen.createBufferedImage(imageType, pixelFormat);
     }
 
     /**
@@ -486,42 +483,48 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         return new MttTexture(vulkanImpl, this, textureResource.toURI(), generateMipmaps);
     }
 
-    public TextureOperation createTextureOperation(
-            MttTexture firstColorTexture,
-            MttTexture firstDepthTexture,
-            MttTexture secondColorTexture,
-            MttTexture secondDepthTexture,
+    /**
+     * Creates a texture operation that consumes two textures.
+     * The list for depth textures can be empty
+     * if the texture operation doesn't require them.
+     *
+     * @param colorTextures            List of color textures
+     * @param depthTextures            List of depth textures
+     * @param textureCleanupDelegation Whether to clean up textures when this texture operation is destroyed
+     * @return Texture operation
+     */
+    public BiTextureOperation createBiTextureOperation(
+            List<MttTexture> colorTextures,
+            List<MttTexture> depthTextures,
             boolean textureCleanupDelegation) {
-        var textureOperation = new TextureOperation(
+        var textureOperation = new BiTextureOperation(
                 vulkanImpl,
-                firstColorTexture,
-                firstDepthTexture,
-                secondColorTexture,
-                secondDepthTexture,
+                colorTextures,
+                depthTextures,
                 this,
                 textureCleanupDelegation
         );
-        textureOperations.add(textureOperation);
+        biTextureOperations.add(textureOperation);
 
         return textureOperation;
     }
 
-    public boolean deleteTextureOperation(TextureOperation textureOperation) {
-        if (!textureOperations.contains(textureOperation)) {
+    public boolean deleteBiTextureOperation(BiTextureOperation biTextureOperation) {
+        if (!biTextureOperations.contains(biTextureOperation)) {
             return false;
         }
 
-        textureOperation.cleanup();
-        return textureOperations.remove(textureOperation);
+        biTextureOperation.cleanup();
+        return biTextureOperations.remove(biTextureOperation);
     }
 
-    public void deleteAllTextureOperations() {
-        textureOperations.forEach(TextureOperation::cleanup);
-        textureOperations.clear();
+    public void deleteAllBiTextureOperations() {
+        biTextureOperations.forEach(BiTextureOperation::cleanup);
+        biTextureOperations.clear();
     }
 
     public void removeGarbageTextureOperations() {
-        textureOperations.removeIf(op -> !op.isValid());
+        biTextureOperations.removeIf(op -> !op.isValid());
     }
 
     //Animation ==========

@@ -24,13 +24,15 @@ public class PrimitiveNabor extends Nabor {
     private int depthImageFormat;
     private int positionImageFormat;
     private int normalImageFormat;
+    private int stencilImageFormat;
 
     private int depthImageAspect;
 
-    private int depthAttachmentIndex;
-    private int albedoAttachmentIndex;
-    private int positionAttachmentIndex;
-    private int normalAttachmentIndex;
+    public static final int DEPTH_ATTACHMENT_INDEX = 0;
+    public static final int ALBEDO_ATTACHMENT_INDEX = 1;
+    public static final int POSITION_ATTACHMENT_INDEX = 2;
+    public static final int NORMAL_ATTACHMENT_INDEX = 3;
+    public static final int STENCIL_ATTACHMENT_INDEX = 4;
 
     private boolean fill;
 
@@ -39,6 +41,7 @@ public class PrimitiveNabor extends Nabor {
             int depthImageFormat,
             int positionImageFormat,
             int normalImageFormat,
+            int stencilImageFormat,
             boolean fill) {
         super(
                 device,
@@ -51,6 +54,7 @@ public class PrimitiveNabor extends Nabor {
         this.depthImageFormat = depthImageFormat;
         this.positionImageFormat = positionImageFormat;
         this.normalImageFormat = normalImageFormat;
+        this.stencilImageFormat = stencilImageFormat;
 
         depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
         if (DepthResourceUtils.hasStencilComponent(depthImageFormat)) {
@@ -62,7 +66,7 @@ public class PrimitiveNabor extends Nabor {
 
     public void transitionDepthImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long depthImage = this.getImage(depthAttachmentIndex);
+        long depthImage = this.getImage(DEPTH_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -76,12 +80,12 @@ public class PrimitiveNabor extends Nabor {
     }
 
     public long getDepthImageView() {
-        return this.getImageView(depthAttachmentIndex);
+        return this.getImageView(DEPTH_ATTACHMENT_INDEX);
     }
 
     public void transitionAlbedoImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long albedoResolveImage = this.getImage(albedoAttachmentIndex);
+        long albedoResolveImage = this.getImage(ALBEDO_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -95,12 +99,12 @@ public class PrimitiveNabor extends Nabor {
     }
 
     public long getAlbedoImageView() {
-        return this.getImageView(albedoAttachmentIndex);
+        return this.getImageView(ALBEDO_ATTACHMENT_INDEX);
     }
 
     public void transitionPositionImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long positionImage = this.getImage(positionAttachmentIndex);
+        long positionImage = this.getImage(POSITION_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -114,12 +118,12 @@ public class PrimitiveNabor extends Nabor {
     }
 
     public long getPositionImageView() {
-        return this.getImageView(positionAttachmentIndex);
+        return this.getImageView(POSITION_ATTACHMENT_INDEX);
     }
 
     public void transitionNormalImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long normalImage = this.getImage(normalAttachmentIndex);
+        long normalImage = this.getImage(NORMAL_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -133,7 +137,26 @@ public class PrimitiveNabor extends Nabor {
     }
 
     public long getNormalImageView() {
-        return this.getImageView(normalAttachmentIndex);
+        return this.getImageView(NORMAL_ATTACHMENT_INDEX);
+    }
+
+    public void transitionStencilImageLayout(long commandPool, VkQueue graphicsQueue) {
+        VkDevice device = this.getDevice();
+        long stencilImage = this.getImage(STENCIL_ATTACHMENT_INDEX);
+
+        ImageUtils.transitionImageLayout(
+                device,
+                commandPool,
+                graphicsQueue,
+                stencilImage,
+                VK_IMAGE_ASPECT_COLOR_BIT,
+                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                1);
+    }
+
+    public long getStencilImageView() {
+        return this.getImageView(STENCIL_ATTACHMENT_INDEX);
     }
 
     @Override
@@ -159,13 +182,11 @@ public class PrimitiveNabor extends Nabor {
             VkDevice device = this.getDevice();
             int msaaSamples = this.getMsaaSamples();
 
-            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.calloc(4, stack);
-            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(4, stack);
+            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.calloc(5, stack);
+            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(5, stack);
 
             //Depth-stencil attachment
-            depthAttachmentIndex = 0;
-
-            VkAttachmentDescription depthAttachment = attachments.get(depthAttachmentIndex);
+            VkAttachmentDescription depthAttachment = attachments.get(DEPTH_ATTACHMENT_INDEX);
             depthAttachment.format(depthImageFormat);
             depthAttachment.samples(msaaSamples);
             depthAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -175,14 +196,12 @@ public class PrimitiveNabor extends Nabor {
             depthAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             depthAttachment.finalLayout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference depthAttachmentRef = attachmentRefs.get(depthAttachmentIndex);
-            depthAttachmentRef.attachment(depthAttachmentIndex);
+            VkAttachmentReference depthAttachmentRef = attachmentRefs.get(DEPTH_ATTACHMENT_INDEX);
+            depthAttachmentRef.attachment(DEPTH_ATTACHMENT_INDEX);
             depthAttachmentRef.layout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
             //Albedo attachment
-            albedoAttachmentIndex = 1;
-
-            VkAttachmentDescription albedoAttachment = attachments.get(albedoAttachmentIndex);
+            VkAttachmentDescription albedoAttachment = attachments.get(ALBEDO_ATTACHMENT_INDEX);
             albedoAttachment.format(colorImageFormat);
             albedoAttachment.samples(msaaSamples);
             albedoAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -192,14 +211,12 @@ public class PrimitiveNabor extends Nabor {
             albedoAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             albedoAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference albedoAttachmentRef = attachmentRefs.get(albedoAttachmentIndex);
-            albedoAttachmentRef.attachment(albedoAttachmentIndex);
+            VkAttachmentReference albedoAttachmentRef = attachmentRefs.get(ALBEDO_ATTACHMENT_INDEX);
+            albedoAttachmentRef.attachment(ALBEDO_ATTACHMENT_INDEX);
             albedoAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             //Position attachment
-            positionAttachmentIndex = 2;
-
-            VkAttachmentDescription positionAttachment = attachments.get(positionAttachmentIndex);
+            VkAttachmentDescription positionAttachment = attachments.get(POSITION_ATTACHMENT_INDEX);
             positionAttachment.format(positionImageFormat);
             positionAttachment.samples(VK_SAMPLE_COUNT_1_BIT);
             positionAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
@@ -209,14 +226,12 @@ public class PrimitiveNabor extends Nabor {
             positionAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             positionAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference positionAttachmentRef = attachmentRefs.get(positionAttachmentIndex);
-            positionAttachmentRef.attachment(positionAttachmentIndex);
+            VkAttachmentReference positionAttachmentRef = attachmentRefs.get(POSITION_ATTACHMENT_INDEX);
+            positionAttachmentRef.attachment(POSITION_ATTACHMENT_INDEX);
             positionAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             //Normal attachment
-            normalAttachmentIndex = 3;
-
-            VkAttachmentDescription normalAttachment = attachments.get(normalAttachmentIndex);
+            VkAttachmentDescription normalAttachment = attachments.get(NORMAL_ATTACHMENT_INDEX);
             normalAttachment.format(normalImageFormat);
             normalAttachment.samples(msaaSamples);
             normalAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -226,18 +241,34 @@ public class PrimitiveNabor extends Nabor {
             normalAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             normalAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference normalAttachmentRef = attachmentRefs.get(normalAttachmentIndex);
-            normalAttachmentRef.attachment(normalAttachmentIndex);
+            VkAttachmentReference normalAttachmentRef = attachmentRefs.get(NORMAL_ATTACHMENT_INDEX);
+            normalAttachmentRef.attachment(NORMAL_ATTACHMENT_INDEX);
             normalAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference.Buffer colorAttachmentRefs = VkAttachmentReference.calloc(3, stack);
+            //Stencil attachment
+            VkAttachmentDescription stencilAttachment = attachments.get(STENCIL_ATTACHMENT_INDEX);
+            stencilAttachment.format(stencilImageFormat);
+            stencilAttachment.samples(msaaSamples);
+            stencilAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
+            stencilAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
+            stencilAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
+            stencilAttachment.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
+            stencilAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
+            stencilAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
+            VkAttachmentReference stencilAttachmentRef = attachmentRefs.get(STENCIL_ATTACHMENT_INDEX);
+            stencilAttachmentRef.attachment(STENCIL_ATTACHMENT_INDEX);
+            stencilAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
+            VkAttachmentReference.Buffer colorAttachmentRefs = VkAttachmentReference.calloc(4, stack);
             colorAttachmentRefs.put(0, albedoAttachmentRef);
             colorAttachmentRefs.put(1, positionAttachmentRef);
             colorAttachmentRefs.put(2, normalAttachmentRef);
+            colorAttachmentRefs.put(3, stencilAttachmentRef);
 
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.calloc(1, stack);
             subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
-            subpass.colorAttachmentCount(3);
+            subpass.colorAttachmentCount(4);
             subpass.pDepthStencilAttachment(depthAttachmentRef);
             subpass.pColorAttachments(colorAttachmentRefs);
 
@@ -488,21 +519,15 @@ public class PrimitiveNabor extends Nabor {
 
             //Color blending
             VkPipelineColorBlendAttachmentState.Buffer colorBlendAttachments
-                    = VkPipelineColorBlendAttachmentState.calloc(3, stack);
-            for (int i = 0; i < 3; i++) {
+                    = VkPipelineColorBlendAttachmentState.calloc(4, stack);
+            for (int i = 0; i < 4; i++) {
                 VkPipelineColorBlendAttachmentState colorBlendAttachment = colorBlendAttachments.get(i);
                 colorBlendAttachment.colorWriteMask(
                         VK_COLOR_COMPONENT_R_BIT |
                                 VK_COLOR_COMPONENT_G_BIT |
                                 VK_COLOR_COMPONENT_B_BIT |
                                 VK_COLOR_COMPONENT_A_BIT);
-                colorBlendAttachment.blendEnable(true);
-                colorBlendAttachment.srcColorBlendFactor(VK_BLEND_FACTOR_SRC_ALPHA);
-                colorBlendAttachment.dstColorBlendFactor(VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA);
-                colorBlendAttachment.colorBlendOp(VK_BLEND_OP_ADD);
-                colorBlendAttachment.srcAlphaBlendFactor(VK_BLEND_FACTOR_SRC_ALPHA);
-                colorBlendAttachment.dstAlphaBlendFactor(VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA);
-                colorBlendAttachment.alphaBlendOp(VK_BLEND_OP_SUBTRACT);
+                colorBlendAttachment.blendEnable(false);
             }
 
             VkPipelineColorBlendStateCreateInfo colorBlending = VkPipelineColorBlendStateCreateInfo.calloc(stack);
@@ -694,6 +719,35 @@ public class PrimitiveNabor extends Nabor {
             this.getImages().add(normalImage);
             this.getImageMemories().add(normalImageMemory);
             this.getImageViews().add(normalImageView);
+
+            //Stencil image
+            ImageUtils.createImage(
+                    device,
+                    extent.width(),
+                    extent.height(),
+                    1,
+                    msaaSamples,
+                    stencilImageFormat,
+                    VK_IMAGE_TILING_OPTIMAL,
+                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                    pImage,
+                    pImageMemory);
+            long stencilImage = pImage.get(0);
+            long stencilImageMemory = pImageMemory.get(0);
+
+            viewInfo.image(stencilImage);
+            viewInfo.format(stencilImageFormat);
+            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+
+            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create an image view");
+            }
+            long stencilImageView = pImageView.get(0);
+
+            this.getImages().add(stencilImage);
+            this.getImageMemories().add(stencilImageMemory);
+            this.getImageViews().add(stencilImageView);
         }
     }
 }

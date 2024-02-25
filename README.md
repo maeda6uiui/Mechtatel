@@ -10,8 +10,8 @@ This project aims to create a Vulkan-based game engine in Java with help of [LWJ
 It's still far from what you call a game engine, but I'll keep on developing little by little in my free time.
 Leave a star in this repo if you like it!
 
-I'm sorry that currently there is no elaborate document for this project.
-But you could check out the [test code](./mechtatel-core/src/test/java/com/github/maeda6uiui/mechtatel/) and hopefully get the gist of how Mechtatel works.
+Unfortunately, there are no elaborate documents for this project so far.
+However, you could check out the [test code](./mechtatel-core/src/test/java/com/github/maeda6uiui/mechtatel/) and hopefully get the gist of what Mechtatel has to offer!
 
 ## Message from developer
 

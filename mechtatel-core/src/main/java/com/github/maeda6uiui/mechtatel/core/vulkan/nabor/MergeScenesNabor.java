@@ -26,17 +26,20 @@ public class MergeScenesNabor extends Nabor {
     private int depthImageFormat;
     private int positionImageFormat;
     private int normalImageFormat;
+    private int stencilImageFormat;
 
-    private static final int ALBEDO_ATTACHMENT_INDEX = 0;
-    private static final int DEPTH_ATTACHMENT_INDEX = 1;
-    private static final int POSITION_ATTACHMENT_INDEX = 2;
-    private static final int NORMAL_ATTACHMENT_INDEX = 3;
+    public static final int ALBEDO_ATTACHMENT_INDEX = 0;
+    public static final int DEPTH_ATTACHMENT_INDEX = 1;
+    public static final int POSITION_ATTACHMENT_INDEX = 2;
+    public static final int NORMAL_ATTACHMENT_INDEX = 3;
+    public static final int STENCIL_ATTACHMENT_INDEX = 4;
 
     public MergeScenesNabor(
             VkDevice device,
             int depthImageFormat,
             int positionImageFormat,
-            int normalImageFormat) {
+            int normalImageFormat,
+            int stencilImageFormat) {
         super(
                 device,
                 VK_SAMPLE_COUNT_1_BIT,
@@ -48,6 +51,7 @@ public class MergeScenesNabor extends Nabor {
         this.depthImageFormat = depthImageFormat;
         this.positionImageFormat = positionImageFormat;
         this.normalImageFormat = normalImageFormat;
+        this.stencilImageFormat = stencilImageFormat;
     }
 
     public void transitionAlbedoImageLayout(long commandPool, VkQueue graphicsQueue) {
@@ -126,6 +130,25 @@ public class MergeScenesNabor extends Nabor {
         return this.getImageView(NORMAL_ATTACHMENT_INDEX);
     }
 
+    public void transitionStencilImageLayout(long commandPool, VkQueue graphicsQueue) {
+        VkDevice device = this.getDevice();
+        long stencilImage = this.getImage(STENCIL_ATTACHMENT_INDEX);
+
+        ImageUtils.transitionImageLayout(
+                device,
+                commandPool,
+                graphicsQueue,
+                stencilImage,
+                VK_IMAGE_ASPECT_COLOR_BIT,
+                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                1);
+    }
+
+    public long getStencilImageView() {
+        return this.getImageView(STENCIL_ATTACHMENT_INDEX);
+    }
+
     @Override
     public void cleanup(boolean reserveForRecreation) {
         super.cleanup(reserveForRecreation);
@@ -148,8 +171,8 @@ public class MergeScenesNabor extends Nabor {
             VkDevice device = this.getDevice();
             int msaaSamples = this.getMsaaSamples();
 
-            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.calloc(4, stack);
-            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(4, stack);
+            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.calloc(5, stack);
+            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(5, stack);
 
             //Albedo attachment
             VkAttachmentDescription albedoAttachment = attachments.get(ALBEDO_ATTACHMENT_INDEX);
@@ -213,15 +236,31 @@ public class MergeScenesNabor extends Nabor {
             normalAttachmentRef.attachment(NORMAL_ATTACHMENT_INDEX);
             normalAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference.Buffer colorAttachmentRefs = VkAttachmentReference.calloc(4, stack);
+            //Stencil attachment
+            VkAttachmentDescription stencilAttachment = attachments.get(STENCIL_ATTACHMENT_INDEX);
+            stencilAttachment.format(stencilImageFormat);
+            stencilAttachment.samples(msaaSamples);
+            stencilAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
+            stencilAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
+            stencilAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
+            stencilAttachment.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
+            stencilAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
+            stencilAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
+            VkAttachmentReference stencilAttachmentRef = attachmentRefs.get(STENCIL_ATTACHMENT_INDEX);
+            stencilAttachmentRef.attachment(STENCIL_ATTACHMENT_INDEX);
+            stencilAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
+            VkAttachmentReference.Buffer colorAttachmentRefs = VkAttachmentReference.calloc(5, stack);
             colorAttachmentRefs.put(ALBEDO_ATTACHMENT_INDEX, albedoAttachmentRef);
             colorAttachmentRefs.put(DEPTH_ATTACHMENT_INDEX, depthAttachmentRef);
             colorAttachmentRefs.put(POSITION_ATTACHMENT_INDEX, positionAttachmentRef);
             colorAttachmentRefs.put(NORMAL_ATTACHMENT_INDEX, normalAttachmentRef);
+            colorAttachmentRefs.put(STENCIL_ATTACHMENT_INDEX, stencilAttachmentRef);
 
             VkSubpassDescription.Buffer subpass = VkSubpassDescription.calloc(1, stack);
             subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
-            subpass.colorAttachmentCount(4);
+            subpass.colorAttachmentCount(5);
             subpass.pColorAttachments(colorAttachmentRefs);
 
             VkSubpassDependency.Buffer dependency = VkSubpassDependency.calloc(1, stack);
@@ -254,7 +293,7 @@ public class MergeScenesNabor extends Nabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorSetLayoutBinding.Buffer imageLayoutBindings = VkDescriptorSetLayoutBinding.calloc(4, stack);
+            VkDescriptorSetLayoutBinding.Buffer imageLayoutBindings = VkDescriptorSetLayoutBinding.calloc(5, stack);
 
             VkDescriptorSetLayoutBinding albedoImageLayoutBinding = imageLayoutBindings.get(0);
             albedoImageLayoutBinding.binding(0);
@@ -283,6 +322,13 @@ public class MergeScenesNabor extends Nabor {
             normalImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             normalImageLayoutBinding.pImmutableSamplers(null);
             normalImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+
+            VkDescriptorSetLayoutBinding stencilImageLayoutBinding = imageLayoutBindings.get(4);
+            stencilImageLayoutBinding.binding(4);
+            stencilImageLayoutBinding.descriptorCount(MAX_NUM_SCENES);
+            stencilImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            stencilImageLayoutBinding.pImmutableSamplers(null);
+            stencilImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 1 ===
             VkDescriptorSetLayoutBinding.Buffer samplerLayoutBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
@@ -340,7 +386,7 @@ public class MergeScenesNabor extends Nabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.calloc(4, stack);
+            VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.calloc(5, stack);
 
             VkDescriptorPoolSize albedoImagePoolSize = imagePoolSizes.get(0);
             albedoImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
@@ -357,6 +403,10 @@ public class MergeScenesNabor extends Nabor {
             VkDescriptorPoolSize normalImagePoolSize = imagePoolSizes.get(3);
             normalImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             normalImagePoolSize.descriptorCount(descriptorCount * MAX_NUM_SCENES);
+
+            VkDescriptorPoolSize stencilImagePoolSize = imagePoolSizes.get(4);
+            stencilImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            stencilImagePoolSize.descriptorCount(descriptorCount * MAX_NUM_SCENES);
 
             //=== set 1 ===
             VkDescriptorPoolSize.Buffer samplerPoolSizes = VkDescriptorPoolSize.calloc(1, stack);
@@ -446,8 +496,8 @@ public class MergeScenesNabor extends Nabor {
             VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.calloc(setCount, stack);
 
             //=== set 0 ===
-            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.calloc(MAX_NUM_SCENES * 4, stack);
-            for (int i = 0; i < MAX_NUM_SCENES * 4; i++) {
+            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.calloc(MAX_NUM_SCENES * 5, stack);
+            for (int i = 0; i < MAX_NUM_SCENES * 5; i++) {
                 VkDescriptorImageInfo imageInfo = imageInfos.get(i);
                 imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
                 imageInfo.imageView(this.getDummyImageView());
@@ -458,7 +508,7 @@ public class MergeScenesNabor extends Nabor {
             imageDescriptorWrite.dstBinding(0);
             imageDescriptorWrite.dstArrayElement(0);
             imageDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            imageDescriptorWrite.descriptorCount(MAX_NUM_SCENES * 4);
+            imageDescriptorWrite.descriptorCount(MAX_NUM_SCENES * 5);
             imageDescriptorWrite.pImageInfo(imageInfos);
 
             //=== set 1 ===
@@ -584,8 +634,8 @@ public class MergeScenesNabor extends Nabor {
             //Depth-stencil
             VkPipelineDepthStencilStateCreateInfo depthStencil = VkPipelineDepthStencilStateCreateInfo.calloc(stack);
             depthStencil.sType(VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO);
-            depthStencil.depthTestEnable(true);
-            depthStencil.depthWriteEnable(true);
+            depthStencil.depthTestEnable(false);
+            depthStencil.depthWriteEnable(false);
             depthStencil.depthCompareOp(VK_COMPARE_OP_LESS);
             depthStencil.depthBoundsTestEnable(false);
             depthStencil.minDepthBounds(0.0f);
@@ -594,8 +644,8 @@ public class MergeScenesNabor extends Nabor {
 
             //Color blending
             VkPipelineColorBlendAttachmentState.Buffer colorBlendAttachments
-                    = VkPipelineColorBlendAttachmentState.calloc(4, stack);
-            for (int i = 0; i < 4; i++) {
+                    = VkPipelineColorBlendAttachmentState.calloc(5, stack);
+            for (int i = 0; i < 5; i++) {
                 VkPipelineColorBlendAttachmentState colorBlendAttachment = colorBlendAttachments.get(i);
                 colorBlendAttachment.colorWriteMask(
                         VK_COLOR_COMPONENT_R_BIT |
@@ -785,6 +835,35 @@ public class MergeScenesNabor extends Nabor {
             this.getImages().add(normalImage);
             this.getImageMemories().add(normalImageMemory);
             this.getImageViews().add(normalImageView);
+
+            //Stencil image
+            ImageUtils.createImage(
+                    device,
+                    extent.width(),
+                    extent.height(),
+                    1,
+                    msaaSamples,
+                    stencilImageFormat,
+                    VK_IMAGE_TILING_OPTIMAL,
+                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                    pImage,
+                    pImageMemory);
+            long stencilImage = pImage.get(0);
+            long stencilImageMemory = pImageMemory.get(0);
+
+            viewInfo.image(stencilImage);
+            viewInfo.format(stencilImageFormat);
+            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+
+            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create an image view");
+            }
+            long stencilImageView = pImageView.get(0);
+
+            this.getImages().add(stencilImage);
+            this.getImageMemories().add(stencilImageMemory);
+            this.getImageViews().add(stencilImageView);
         }
     }
 
@@ -802,5 +881,9 @@ public class MergeScenesNabor extends Nabor {
 
     public void bindNormalImages(VkCommandBuffer commandBuffer, List<Long> imageViews) {
         this.bindImages(commandBuffer, 0, NORMAL_ATTACHMENT_INDEX, imageViews);
+    }
+
+    public void bindStencilImages(VkCommandBuffer commandBuffer, List<Long> imageViews) {
+        this.bindImages(commandBuffer, 0, STENCIL_ATTACHMENT_INDEX, imageViews);
     }
 }

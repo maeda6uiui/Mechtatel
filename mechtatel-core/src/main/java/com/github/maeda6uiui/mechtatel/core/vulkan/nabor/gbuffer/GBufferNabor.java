@@ -27,7 +27,8 @@ public class GBufferNabor extends Nabor {
             int albedoMSAASamples,
             int depthImageFormat,
             int positionImageFormat,
-            int normalImageFormat) {
+            int normalImageFormat,
+            int stencilImageFormat) {
         super(
                 device,
                 VK_SAMPLE_COUNT_1_BIT,
@@ -37,7 +38,8 @@ public class GBufferNabor extends Nabor {
         );
 
         albedoNabor = new AlbedoNabor(device, albedoMSAASamples, depthImageFormat);
-        propertiesNabor = new PropertiesNabor(device, depthImageFormat, positionImageFormat, normalImageFormat);
+        propertiesNabor = new PropertiesNabor(
+                device, depthImageFormat, positionImageFormat, normalImageFormat, stencilImageFormat);
     }
 
     @Override
@@ -186,6 +188,14 @@ public class GBufferNabor extends Nabor {
 
     public long getNormalImageView() {
         return propertiesNabor.getNormalImageView();
+    }
+
+    public void transitionStencilImageLayout(long commandPool, VkQueue graphicsQueue) {
+        propertiesNabor.transitionStencilImageLayout(commandPool, graphicsQueue);
+    }
+
+    public long getStencilImageView() {
+        return propertiesNabor.getStencilImageView();
     }
 
     @Override

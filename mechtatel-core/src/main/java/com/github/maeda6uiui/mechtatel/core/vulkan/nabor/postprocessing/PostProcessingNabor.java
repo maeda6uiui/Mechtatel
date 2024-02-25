@@ -10,7 +10,6 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
@@ -21,6 +20,8 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public abstract class PostProcessingNabor extends Nabor {
+    public static final int COLOR_ATTACHMENT_INDEX = 0;
+
     public PostProcessingNabor(
             VkDevice device,
             int msaaSamples,
@@ -32,7 +33,7 @@ public abstract class PostProcessingNabor extends Nabor {
 
     public void transitionColorImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long colorImage = this.getImage(0);
+        long colorImage = this.getImage(COLOR_ATTACHMENT_INDEX);
 
         ImageUtils.transitionImageLayout(
                 device,
@@ -46,7 +47,7 @@ public abstract class PostProcessingNabor extends Nabor {
     }
 
     public long getColorImageView() {
-        return this.getImageView(0);
+        return this.getImageView(COLOR_ATTACHMENT_INDEX);
     }
 
     @Override
@@ -63,7 +64,7 @@ public abstract class PostProcessingNabor extends Nabor {
             VkDevice device = this.getDevice();
 
             //=== set 1 ===
-            VkDescriptorSetLayoutBinding.Buffer imageLayoutBindings = VkDescriptorSetLayoutBinding.calloc(4, stack);
+            VkDescriptorSetLayoutBinding.Buffer imageLayoutBindings = VkDescriptorSetLayoutBinding.calloc(5, stack);
 
             VkDescriptorSetLayoutBinding albedoImageLayoutBinding = imageLayoutBindings.get(0);
             albedoImageLayoutBinding.binding(0);
@@ -92,6 +93,13 @@ public abstract class PostProcessingNabor extends Nabor {
             normalImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             normalImageLayoutBinding.pImmutableSamplers(null);
             normalImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+
+            VkDescriptorSetLayoutBinding stencilImageLayoutBinding = imageLayoutBindings.get(4);
+            stencilImageLayoutBinding.binding(4);
+            stencilImageLayoutBinding.descriptorCount(1);
+            stencilImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            stencilImageLayoutBinding.pImmutableSamplers(null);
+            stencilImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 2 ===
             VkDescriptorSetLayoutBinding.Buffer samplerLayoutBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
@@ -143,7 +151,7 @@ public abstract class PostProcessingNabor extends Nabor {
             VkDevice device = this.getDevice();
 
             //=== set 1 ===
-            VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.calloc(4, stack);
+            VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.calloc(5, stack);
 
             VkDescriptorPoolSize albedoImagePoolSize = imagePoolSizes.get(0);
             albedoImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
@@ -160,6 +168,10 @@ public abstract class PostProcessingNabor extends Nabor {
             VkDescriptorPoolSize normalImagePoolSize = imagePoolSizes.get(3);
             normalImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             normalImagePoolSize.descriptorCount(descriptorCount);
+
+            VkDescriptorPoolSize stencilImagePoolSize = imagePoolSizes.get(4);
+            stencilImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+            stencilImagePoolSize.descriptorCount(descriptorCount);
 
             //=== set 2 ===
             VkDescriptorPoolSize.Buffer samplerPoolSizes = VkDescriptorPoolSize.calloc(1, stack);
@@ -253,8 +265,8 @@ public abstract class PostProcessingNabor extends Nabor {
             VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.calloc(2, stack);
 
             //=== set 1 ===
-            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.calloc(4, stack);
-            for (int i = 0; i < 4; i++) {
+            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.calloc(5, stack);
+            for (int i = 0; i < 5; i++) {
                 VkDescriptorImageInfo imageInfo = imageInfos.get(i);
                 imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
                 imageInfo.imageView(this.getDummyImageView());
@@ -265,7 +277,7 @@ public abstract class PostProcessingNabor extends Nabor {
             imageDescriptorWrite.dstBinding(0);
             imageDescriptorWrite.dstArrayElement(0);
             imageDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            imageDescriptorWrite.descriptorCount(4);
+            imageDescriptorWrite.descriptorCount(5);
             imageDescriptorWrite.pImageInfo(imageInfos);
 
             //=== set 2 ===
@@ -310,7 +322,7 @@ public abstract class PostProcessingNabor extends Nabor {
             VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(1, stack);
 
             //Color attachment
-            VkAttachmentDescription colorAttachment = attachments.get(0);
+            VkAttachmentDescription colorAttachment = attachments.get(COLOR_ATTACHMENT_INDEX);
             colorAttachment.format(colorImageFormat);
             colorAttachment.samples(msaaSamples);
             colorAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
@@ -320,8 +332,8 @@ public abstract class PostProcessingNabor extends Nabor {
             colorAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
             colorAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-            VkAttachmentReference colorAttachmentRef = attachmentRefs.get(0);
-            colorAttachmentRef.attachment(0);
+            VkAttachmentReference colorAttachmentRef = attachmentRefs.get(COLOR_ATTACHMENT_INDEX);
+            colorAttachmentRef.attachment(COLOR_ATTACHMENT_INDEX);
             colorAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
             VkAttachmentReference.Buffer colorAttachmentRefs = VkAttachmentReference.calloc(1, stack);
@@ -442,8 +454,8 @@ public abstract class PostProcessingNabor extends Nabor {
             //Depth-stencil
             VkPipelineDepthStencilStateCreateInfo depthStencil = VkPipelineDepthStencilStateCreateInfo.calloc(stack);
             depthStencil.sType(VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO);
-            depthStencil.depthTestEnable(true);
-            depthStencil.depthWriteEnable(true);
+            depthStencil.depthTestEnable(false);
+            depthStencil.depthWriteEnable(false);
             depthStencil.depthCompareOp(VK_COMPARE_OP_LESS);
             depthStencil.depthBoundsTestEnable(false);
             depthStencil.minDepthBounds(0.0f);
@@ -555,29 +567,5 @@ public abstract class PostProcessingNabor extends Nabor {
             this.getImageMemories().add(colorImageMemory);
             this.getImageViews().add(colorImageView);
         }
-    }
-
-    public void bindImages(
-            VkCommandBuffer commandBuffer,
-            int dstBinding,
-            long albedoImageView,
-            long depthImageView,
-            long positionImageView,
-            long normalImageView) {
-        var arrImageViews = new Long[]{albedoImageView, depthImageView, positionImageView, normalImageView};
-        var imageViews = Arrays.asList(arrImageViews);
-
-        this.bindImages(commandBuffer, 1, dstBinding, imageViews);
-    }
-
-    public void bindImages(
-            VkCommandBuffer commandBuffer,
-            int naborIndex,
-            int dstBinding,
-            long albedoImageView,
-            long depthImageView,
-            long positionImageView,
-            long normalImageView) {
-        throw new RuntimeException("Unsupported operation");
     }
 }

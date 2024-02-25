@@ -11,27 +11,19 @@ import org.lwjgl.vulkan.*;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Nabor for texture operations
+ * Nabor for texture operations<br>
+ * This nabor consumes two textures, applies an operation to them,
+ * and returns one result texture.
  *
  * @author maeda6uiui
  */
 public class TextureOperationNabor extends Nabor {
     public static final int COLOR_ATTACHMENT_INDEX = 0;
-
-    public record TextureOperationInfo(
-            long srcColorImageViewA,
-            long srcDepthImageViewA,
-            long srcColorImageViewB,
-            long srcDepthImageViewB,
-            long dstImage,
-            long dstImageView) {
-    }
 
     public TextureOperationNabor(VkDevice device) {
         super(
@@ -561,17 +553,11 @@ public class TextureOperationNabor extends Nabor {
         }
     }
 
-    public void bindColorImages(VkCommandBuffer commandBuffer, long colorImageViewA, long colorImageViewB) {
-        var arrImageViews = new Long[]{colorImageViewA, colorImageViewB};
-        var imageViews = Arrays.asList(arrImageViews);
-
+    public void bindColorImages(VkCommandBuffer commandBuffer, List<Long> imageViews) {
         this.bindImages(commandBuffer, 1, 0, imageViews);
     }
 
-    public void bindDepthImages(VkCommandBuffer commandBuffer, long depthImageViewA, long depthImageViewB) {
-        var arrImageViews = new Long[]{depthImageViewA, depthImageViewB};
-        var imageViews = Arrays.asList(arrImageViews);
-
+    public void bindDepthImages(VkCommandBuffer commandBuffer, List<Long> imageViews) {
         this.bindImages(commandBuffer, 1, 1, imageViews);
     }
 

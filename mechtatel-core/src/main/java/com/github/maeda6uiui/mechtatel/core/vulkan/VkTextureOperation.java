@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan;
 
 import com.github.maeda6uiui.mechtatel.core.TextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationInfo;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
@@ -9,6 +10,9 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.TextureOperationParameter
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -24,7 +28,7 @@ public class VkTextureOperation {
     private TextureOperationNabor textureOperationNabor;
 
     private VkMttTexture resultTexture;
-    private TextureOperationNabor.TextureOperationInfo textureOperationInfo;
+    private TextureOperationInfo textureOperationInfo;
 
     private QuadDrawer quadDrawer;
 
@@ -34,10 +38,8 @@ public class VkTextureOperation {
             VkQueue graphicsQueue,
             TextureOperationNabor textureOperationNabor,
             int imageFormat,
-            VkMttTexture firstColorTexture,
-            VkMttTexture firstDepthTexture,
-            VkMttTexture secondColorTexture,
-            VkMttTexture secondDepthTexture,
+            List<VkMttTexture> colorTextures,
+            List<VkMttTexture> depthTextures,
             VkMttScreen dstScreen) {
         this.device = device;
         this.commandPool = commandPool;
@@ -55,13 +57,17 @@ public class VkTextureOperation {
                 VK_IMAGE_ASPECT_COLOR_BIT
         );
         long dstImageView = textureOperationNabor.lookUpUserDefImageView(dstImage);
-
         resultTexture = new VkMttTexture(device, dstScreen, dstImageView);
-        textureOperationInfo = new TextureOperationNabor.TextureOperationInfo(
-                firstColorTexture.getTextureImageView(),
-                firstDepthTexture.getTextureImageView(),
-                secondColorTexture.getTextureImageView(),
-                secondDepthTexture.getTextureImageView(),
+
+        var colorImageViews = new ArrayList<Long>();
+        colorTextures.forEach(v -> colorImageViews.add(v.getTextureImageView()));
+
+        var depthImageViews = new ArrayList<Long>();
+        depthTextures.forEach(v -> depthImageViews.add(v.getTextureImageView()));
+
+        textureOperationInfo = new TextureOperationInfo(
+                colorImageViews,
+                depthImageViews,
                 dstImage,
                 dstImageView
         );
@@ -84,10 +90,12 @@ public class VkTextureOperation {
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
             renderPassInfo.renderPass(textureOperationNabor.getRenderPass());
             renderPassInfo.framebuffer(textureOperationNabor.getFramebuffer(0));
+
             VkRect2D renderArea = VkRect2D.calloc(stack);
             renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
             renderArea.extent(textureOperationNabor.getExtent());
             renderPassInfo.renderArea(renderArea);
+
             VkClearValue.Buffer clearValues = VkClearValue.calloc(1, stack);
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
             renderPassInfo.pClearValues(clearValues);
@@ -105,16 +113,8 @@ public class VkTextureOperation {
                         VK_PIPELINE_BIND_POINT_GRAPHICS,
                         textureOperationNabor.getGraphicsPipeline(0));
 
-                textureOperationNabor.bindColorImages(
-                        commandBuffer,
-                        textureOperationInfo.srcColorImageViewA(),
-                        textureOperationInfo.srcColorImageViewB()
-                );
-                textureOperationNabor.bindDepthImages(
-                        commandBuffer,
-                        textureOperationInfo.srcDepthImageViewA(),
-                        textureOperationInfo.srcDepthImageViewB()
-                );
+                textureOperationNabor.bindColorImages(commandBuffer, textureOperationInfo.colorImageViews());
+                textureOperationNabor.bindDepthImages(commandBuffer, textureOperationInfo.depthImageViews());
 
                 quadDrawer.draw(commandBuffer);
             }

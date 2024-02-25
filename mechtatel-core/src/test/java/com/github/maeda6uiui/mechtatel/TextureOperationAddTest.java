@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class TextureOperationAddTest extends Mechtatel {
@@ -117,10 +118,8 @@ public class TextureOperationAddTest extends Mechtatel {
         textureOperationParameters.setOperationType(TextureOperationParameters.OperationType.ADD);
 
         opTest = finalScreen.createTextureOperation(
-                firstColorTexture,
-                firstDepthTexture,
-                secondColorTexture,
-                secondDepthTexture,
+                Arrays.asList(firstColorTexture, secondColorTexture),
+                Arrays.asList(firstDepthTexture, secondDepthTexture),
                 true
         );
         opTest.setParameters(textureOperationParameters);

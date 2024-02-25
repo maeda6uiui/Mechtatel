@@ -484,17 +484,13 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     public TextureOperation createTextureOperation(
-            MttTexture firstColorTexture,
-            MttTexture firstDepthTexture,
-            MttTexture secondColorTexture,
-            MttTexture secondDepthTexture,
+            List<MttTexture> colorTextures,
+            List<MttTexture> depthTextures,
             boolean textureCleanupDelegation) {
         var textureOperation = new TextureOperation(
                 vulkanImpl,
-                firstColorTexture,
-                firstDepthTexture,
-                secondColorTexture,
-                secondDepthTexture,
+                colorTextures,
+                depthTextures,
                 this,
                 textureCleanupDelegation
         );

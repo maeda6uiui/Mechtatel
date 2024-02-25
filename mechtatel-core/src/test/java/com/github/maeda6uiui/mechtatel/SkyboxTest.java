@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class SkyboxTest extends Mechtatel {
@@ -131,10 +132,8 @@ public class SkyboxTest extends Mechtatel {
         textureOperationParameters.setFirstTextureFixedDepth(0.99999f);
 
         opMergeByDepth = finalScreen.createTextureOperation(
-                skyboxColorTexture,
-                skyboxDepthTexture,
-                mainColorTexture,
-                mainDepthTexture,
+                Arrays.asList(skyboxColorTexture, mainColorTexture),
+                Arrays.asList(skyboxDepthTexture, mainDepthTexture),
                 true
         );
         opMergeByDepth.setParameters(textureOperationParameters);

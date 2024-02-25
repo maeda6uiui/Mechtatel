@@ -30,8 +30,8 @@ public class BiTextureOperationNabor extends Nabor {
                 device,
                 VK_SAMPLE_COUNT_1_BIT,
                 false,
-                BiTextureOperationNabor.class.getResource("/Standard/Shader/TextureOperation/texture_operation.vert"),
-                BiTextureOperationNabor.class.getResource("/Standard/Shader/TextureOperation/texture_operation.frag")
+                BiTextureOperationNabor.class.getResource("/Standard/Shader/BiTextureOperation/bi_texture_operation.vert"),
+                BiTextureOperationNabor.class.getResource("/Standard/Shader/BiTextureOperation/bi_texture_operation.frag")
         );
     }
 

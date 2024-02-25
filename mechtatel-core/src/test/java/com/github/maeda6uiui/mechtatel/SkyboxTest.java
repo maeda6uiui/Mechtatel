@@ -37,7 +37,7 @@ public class SkyboxTest extends Mechtatel {
     private MttScreen skyboxScreen;
     private MttScreen mainScreen;
     private MttScreen finalScreen;
-    private TextureOperation opMergeByDepth;
+    private BiTextureOperation opMergeByDepth;
     private MttTexturedQuad2D texturedQuad;
     private FreeCamera camera;
 

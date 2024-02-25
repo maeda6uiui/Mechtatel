@@ -3,19 +3,19 @@ package com.github.maeda6uiui.mechtatel.core;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
-import com.github.maeda6uiui.mechtatel.core.vulkan.VkTextureOperation;
+import com.github.maeda6uiui.mechtatel.core.vulkan.VkBiTextureOperation;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Texture operation
+ * Texture operation that consumes two textures
  *
  * @author maeda6uiui
  */
-public class TextureOperation {
-    private VkTextureOperation vkTextureOperation;
+public class BiTextureOperation {
+    private VkBiTextureOperation vkBiTextureOperation;
     private MttTexture resultTexture;
     private BiTextureOperationParameters biParameters;
 
@@ -25,7 +25,7 @@ public class TextureOperation {
     private boolean textureCleanupDelegation;
     private boolean isValid;
 
-    public TextureOperation(
+    public BiTextureOperation(
             MttVulkanImpl vulkanImpl,
             List<MttTexture> colorTextures,
             List<MttTexture> depthTextures,
@@ -38,7 +38,7 @@ public class TextureOperation {
         depthTextures.forEach(v -> vkDepthTextures.add(v.getVulkanTexture()));
 
         var dq = vulkanImpl.getDeviceAndQueues();
-        vkTextureOperation = new VkTextureOperation(
+        vkBiTextureOperation = new VkBiTextureOperation(
                 dq.device(),
                 vulkanImpl.getCommandPool(),
                 dq.graphicsQueue(),
@@ -48,7 +48,7 @@ public class TextureOperation {
                 vkDepthTextures,
                 dstScreen.getVulkanScreen()
         );
-        resultTexture = new MttTexture(dstScreen, vkTextureOperation.getResultTexture());
+        resultTexture = new MttTexture(dstScreen, vkBiTextureOperation.getResultTexture());
         biParameters = new BiTextureOperationParameters();
 
         this.colorTextures = colorTextures;
@@ -60,7 +60,7 @@ public class TextureOperation {
 
     public void cleanup() {
         if (isValid) {
-            vkTextureOperation.cleanup();
+            vkBiTextureOperation.cleanup();
             resultTexture.cleanup();
 
             if (textureCleanupDelegation) {
@@ -72,7 +72,7 @@ public class TextureOperation {
     }
 
     public void run() {
-        vkTextureOperation.run(biParameters);
+        vkBiTextureOperation.run(biParameters);
     }
 
     public MttTexture getResultTexture() {

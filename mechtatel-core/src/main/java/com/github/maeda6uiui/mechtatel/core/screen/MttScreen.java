@@ -152,7 +152,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     private boolean shouldAutoUpdateCameraAspect;
 
     private List<MttComponent> components;
-    private List<TextureOperation> textureOperations;
+    private List<BiTextureOperation> biTextureOperations;
     private List<MttTexture> textures;
 
     private Map<String, MttAnimation> animations;
@@ -202,14 +202,14 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         spotlights = new ArrayList<>();
 
         components = new ArrayList<>();
-        textureOperations = new ArrayList<>();
+        biTextureOperations = new ArrayList<>();
         textures = new ArrayList<>();
         animations = new HashMap<>();
     }
 
     public void cleanup() {
         components.forEach(MttComponent::cleanup);
-        textureOperations.forEach(TextureOperation::cleanup);
+        biTextureOperations.forEach(BiTextureOperation::cleanup);
         textures.forEach(MttTexture::cleanup);
         screen.cleanup();
     }
@@ -483,38 +483,38 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         return new MttTexture(vulkanImpl, this, textureResource.toURI(), generateMipmaps);
     }
 
-    public TextureOperation createTextureOperation(
+    public BiTextureOperation createTextureOperation(
             List<MttTexture> colorTextures,
             List<MttTexture> depthTextures,
             boolean textureCleanupDelegation) {
-        var textureOperation = new TextureOperation(
+        var textureOperation = new BiTextureOperation(
                 vulkanImpl,
                 colorTextures,
                 depthTextures,
                 this,
                 textureCleanupDelegation
         );
-        textureOperations.add(textureOperation);
+        biTextureOperations.add(textureOperation);
 
         return textureOperation;
     }
 
-    public boolean deleteTextureOperation(TextureOperation textureOperation) {
-        if (!textureOperations.contains(textureOperation)) {
+    public boolean deleteTextureOperation(BiTextureOperation biTextureOperation) {
+        if (!biTextureOperations.contains(biTextureOperation)) {
             return false;
         }
 
-        textureOperation.cleanup();
-        return textureOperations.remove(textureOperation);
+        biTextureOperation.cleanup();
+        return biTextureOperations.remove(biTextureOperation);
     }
 
     public void deleteAllTextureOperations() {
-        textureOperations.forEach(TextureOperation::cleanup);
-        textureOperations.clear();
+        biTextureOperations.forEach(BiTextureOperation::cleanup);
+        biTextureOperations.clear();
     }
 
     public void removeGarbageTextureOperations() {
-        textureOperations.removeIf(op -> !op.isValid());
+        biTextureOperations.removeIf(op -> !op.isValid());
     }
 
     //Animation ==========

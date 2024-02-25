@@ -38,7 +38,7 @@ public class TextureOperationAddTest extends Mechtatel {
     private MttScreen secondScreen;
     private MttScreen finalScreen;
     private MttTexturedQuad2D texturedQuad;
-    private TextureOperation opTest;
+    private BiTextureOperation opTest;
     private FreeCamera camera;
 
     @Override

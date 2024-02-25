@@ -12,8 +12,8 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.creator.CommandPoolCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.LogicalDeviceCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.SurfaceCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.BiTextureOperationNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
@@ -56,7 +56,7 @@ public class MttVulkanImpl {
     private int depthImageAspect;
 
     private PresentNabor presentNabor;
-    private TextureOperationNabor textureOperationNabor;
+    private BiTextureOperationNabor biTextureOperationNabor;
     private QuadDrawer quadDrawer;
     private long acquireImageIndexFence;
 
@@ -95,10 +95,10 @@ public class MttVulkanImpl {
                 swapchain.getSwapchainExtent());
         swapchain.createFramebuffers(presentNabor.getRenderPass());
 
-        textureOperationNabor.recreate(
+        biTextureOperationNabor.recreate(
                 swapchain.getSwapchainImageFormat(),
                 swapchain.getSwapchainExtent());
-        textureOperationNabor.cleanupUserDefImages();
+        biTextureOperationNabor.cleanupUserDefImages();
     }
 
     public MttVulkanImpl(long window, MttSettings.VulkanSettings vulkanSettings) {
@@ -155,8 +155,8 @@ public class MttVulkanImpl {
                 swapchain.getNumSwapchainImages());
         swapchain.createFramebuffers(presentNabor.getRenderPass());
 
-        textureOperationNabor = new TextureOperationNabor(dq.device());
-        textureOperationNabor.compile(
+        biTextureOperationNabor = new BiTextureOperationNabor(dq.device());
+        biTextureOperationNabor.compile(
                 swapchain.getSwapchainImageFormat(),
                 VK_FILTER_NEAREST,
                 VK_SAMPLER_MIPMAP_MODE_NEAREST,
@@ -186,7 +186,7 @@ public class MttVulkanImpl {
         quadDrawer.cleanup();
 
         swapchain.cleanup();
-        textureOperationNabor.cleanup(false);
+        biTextureOperationNabor.cleanup(false);
         presentNabor.cleanup(false);
         vkDestroyFence(dq.device(), acquireImageIndexFence, null);
 
@@ -319,7 +319,7 @@ public class MttVulkanImpl {
         return albedoMSAASamples;
     }
 
-    public TextureOperationNabor getTextureOperationNabor() {
-        return textureOperationNabor;
+    public BiTextureOperationNabor getTextureOperationNabor() {
+        return biTextureOperationNabor;
     }
 }

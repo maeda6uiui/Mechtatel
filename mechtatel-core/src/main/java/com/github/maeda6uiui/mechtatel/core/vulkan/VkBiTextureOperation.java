@@ -2,8 +2,8 @@ package com.github.maeda6uiui.mechtatel.core.vulkan;
 
 import com.github.maeda6uiui.mechtatel.core.BiTextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.BiTextureOperationNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationInfo;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.BiTextureOperationParametersUBO;
@@ -17,26 +17,26 @@ import java.util.List;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Vulkan implementation of texture operation
+ * Vulkan implementation of texture operation that consumes two textures
  *
  * @author maeda6uiui
  */
-public class VkTextureOperation {
+public class VkBiTextureOperation {
     private VkDevice device;
     private long commandPool;
     private VkQueue graphicsQueue;
-    private TextureOperationNabor textureOperationNabor;
+    private BiTextureOperationNabor biTextureOperationNabor;
 
     private VkMttTexture resultTexture;
     private TextureOperationInfo textureOperationInfo;
 
     private QuadDrawer quadDrawer;
 
-    public VkTextureOperation(
+    public VkBiTextureOperation(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            TextureOperationNabor textureOperationNabor,
+            BiTextureOperationNabor biTextureOperationNabor,
             int imageFormat,
             List<VkMttTexture> colorTextures,
             List<VkMttTexture> depthTextures,
@@ -44,10 +44,10 @@ public class VkTextureOperation {
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
-        this.textureOperationNabor = textureOperationNabor;
+        this.biTextureOperationNabor = biTextureOperationNabor;
 
-        VkExtent2D extent = textureOperationNabor.getExtent();
-        long dstImage = textureOperationNabor.createUserDefImage(
+        VkExtent2D extent = biTextureOperationNabor.getExtent();
+        long dstImage = biTextureOperationNabor.createUserDefImage(
                 extent.width(),
                 extent.height(),
                 1,
@@ -56,7 +56,7 @@ public class VkTextureOperation {
                 imageFormat,
                 VK_IMAGE_ASPECT_COLOR_BIT
         );
-        long dstImageView = textureOperationNabor.lookUpUserDefImageView(dstImage);
+        long dstImageView = biTextureOperationNabor.lookUpUserDefImageView(dstImage);
         resultTexture = new VkMttTexture(device, dstScreen, dstImageView);
 
         var colorImageViews = new ArrayList<Long>();
@@ -88,19 +88,19 @@ public class VkTextureOperation {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkRenderPassBeginInfo renderPassInfo = VkRenderPassBeginInfo.calloc(stack);
             renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO);
-            renderPassInfo.renderPass(textureOperationNabor.getRenderPass());
-            renderPassInfo.framebuffer(textureOperationNabor.getFramebuffer(0));
+            renderPassInfo.renderPass(biTextureOperationNabor.getRenderPass());
+            renderPassInfo.framebuffer(biTextureOperationNabor.getFramebuffer(0));
 
             VkRect2D renderArea = VkRect2D.calloc(stack);
             renderArea.offset(VkOffset2D.calloc(stack).set(0, 0));
-            renderArea.extent(textureOperationNabor.getExtent());
+            renderArea.extent(biTextureOperationNabor.getExtent());
             renderPassInfo.renderArea(renderArea);
 
             VkClearValue.Buffer clearValues = VkClearValue.calloc(1, stack);
             clearValues.get(0).color().float32(stack.floats(0.0f, 0.0f, 0.0f, 1.0f));
             renderPassInfo.pClearValues(clearValues);
 
-            long parametersUBOMemory = textureOperationNabor.getUniformBufferMemory(0);
+            long parametersUBOMemory = biTextureOperationNabor.getUniformBufferMemory(0);
             var parametersUBO = new BiTextureOperationParametersUBO(parameters);
             parametersUBO.update(device, parametersUBOMemory);
 
@@ -111,10 +111,10 @@ public class VkTextureOperation {
                 vkCmdBindPipeline(
                         commandBuffer,
                         VK_PIPELINE_BIND_POINT_GRAPHICS,
-                        textureOperationNabor.getGraphicsPipeline(0));
+                        biTextureOperationNabor.getGraphicsPipeline(0));
 
-                textureOperationNabor.bindColorImages(commandBuffer, textureOperationInfo.colorImageViews());
-                textureOperationNabor.bindDepthImages(commandBuffer, textureOperationInfo.depthImageViews());
+                biTextureOperationNabor.bindColorImages(commandBuffer, textureOperationInfo.colorImageViews());
+                biTextureOperationNabor.bindDepthImages(commandBuffer, textureOperationInfo.depthImageViews());
 
                 quadDrawer.draw(commandBuffer);
             }
@@ -122,7 +122,7 @@ public class VkTextureOperation {
 
             CommandBufferUtils.endSingleTimeCommands(device, commandPool, commandBuffer, graphicsQueue);
 
-            textureOperationNabor.copyColorImage(commandPool, graphicsQueue, textureOperationInfo.dstImage());
+            biTextureOperationNabor.copyColorImage(commandPool, graphicsQueue, textureOperationInfo.dstImage());
         }
     }
 }

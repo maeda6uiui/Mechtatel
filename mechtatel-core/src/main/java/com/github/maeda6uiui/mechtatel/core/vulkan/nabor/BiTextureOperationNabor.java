@@ -22,16 +22,16 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class TextureOperationNabor extends Nabor {
+public class BiTextureOperationNabor extends Nabor {
     public static final int COLOR_ATTACHMENT_INDEX = 0;
 
-    public TextureOperationNabor(VkDevice device) {
+    public BiTextureOperationNabor(VkDevice device) {
         super(
                 device,
                 VK_SAMPLE_COUNT_1_BIT,
                 false,
-                TextureOperationNabor.class.getResource("/Standard/Shader/TextureOperation/texture_operation.vert"),
-                TextureOperationNabor.class.getResource("/Standard/Shader/TextureOperation/texture_operation.frag")
+                BiTextureOperationNabor.class.getResource("/Standard/Shader/TextureOperation/texture_operation.vert"),
+                BiTextureOperationNabor.class.getResource("/Standard/Shader/TextureOperation/texture_operation.frag")
         );
     }
 

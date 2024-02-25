@@ -117,7 +117,7 @@ public class TextureOperationAddTest extends Mechtatel {
         var biParameters = new BiTextureOperationParameters();
         biParameters.setOperationType(BiTextureOperationParameters.OperationType.ADD);
 
-        opTest = finalScreen.createTextureOperation(
+        opTest = finalScreen.createBiTextureOperation(
                 Arrays.asList(firstColorTexture, secondColorTexture),
                 Arrays.asList(firstDepthTexture, secondDepthTexture),
                 true

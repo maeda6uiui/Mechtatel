@@ -131,7 +131,7 @@ public class SkyboxTest extends Mechtatel {
         biParameters.setOperationType(BiTextureOperationParameters.OperationType.MERGE_BY_DEPTH);
         biParameters.setFirstTextureFixedDepth(0.99999f);
 
-        opMergeByDepth = finalScreen.createTextureOperation(
+        opMergeByDepth = finalScreen.createBiTextureOperation(
                 Arrays.asList(skyboxColorTexture, mainColorTexture),
                 Arrays.asList(skyboxDepthTexture, mainDepthTexture),
                 true

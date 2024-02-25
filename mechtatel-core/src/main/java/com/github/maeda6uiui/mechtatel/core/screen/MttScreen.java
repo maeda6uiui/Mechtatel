@@ -483,7 +483,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         return new MttTexture(vulkanImpl, this, textureResource.toURI(), generateMipmaps);
     }
 
-    public BiTextureOperation createTextureOperation(
+    public BiTextureOperation createBiTextureOperation(
             List<MttTexture> colorTextures,
             List<MttTexture> depthTextures,
             boolean textureCleanupDelegation) {
@@ -499,7 +499,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         return textureOperation;
     }
 
-    public boolean deleteTextureOperation(BiTextureOperation biTextureOperation) {
+    public boolean deleteBiTextureOperation(BiTextureOperation biTextureOperation) {
         if (!biTextureOperations.contains(biTextureOperation)) {
             return false;
         }
@@ -508,7 +508,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         return biTextureOperations.remove(biTextureOperation);
     }
 
-    public void deleteAllTextureOperations() {
+    public void deleteAllBiTextureOperations() {
         biTextureOperations.forEach(BiTextureOperation::cleanup);
         biTextureOperations.clear();
     }

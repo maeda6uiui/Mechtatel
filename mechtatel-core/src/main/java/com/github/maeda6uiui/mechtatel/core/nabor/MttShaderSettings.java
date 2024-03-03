@@ -235,7 +235,12 @@ public class MttShaderSettings {
         instance = new MttShaderSettings();
         return instance;
     }
-    
+
+    /**
+     * Returns currently retained settings instance.
+     *
+     * @return Settings
+     */
     public static Optional<MttShaderSettings> get() {
         return Optional.ofNullable(instance);
     }

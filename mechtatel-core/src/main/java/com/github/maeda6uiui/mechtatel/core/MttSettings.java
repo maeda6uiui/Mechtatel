@@ -216,6 +216,11 @@ public class MttSettings {
         return load(Paths.get(jsonFilepath));
     }
 
+    /**
+     * Returns currently retained settings instance.
+     *
+     * @return Settings
+     */
     public static Optional<MttSettings> get() {
         return Optional.ofNullable(instance);
     }

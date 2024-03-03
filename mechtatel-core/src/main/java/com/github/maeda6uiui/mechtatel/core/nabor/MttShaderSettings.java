@@ -226,6 +226,16 @@ public class MttShaderSettings {
         return load(Paths.get(jsonFilepath));
     }
 
+    /**
+     * Creates a new instance of {@link MttShaderSettings}.
+     *
+     * @return Settings
+     */
+    public static MttShaderSettings create() {
+        instance = new MttShaderSettings();
+        return instance;
+    }
+    
     public static Optional<MttShaderSettings> get() {
         return Optional.ofNullable(instance);
     }

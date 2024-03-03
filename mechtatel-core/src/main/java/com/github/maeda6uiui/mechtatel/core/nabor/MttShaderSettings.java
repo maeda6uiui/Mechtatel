@@ -1,7 +1,18 @@
 package com.github.maeda6uiui.mechtatel.core.nabor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Optional;
 
 /**
  * Shader settings
@@ -149,7 +160,73 @@ public class MttShaderSettings {
     public PrimitiveShaderInfo primitive;
     public ShadowMappingShaderInfo shadowMapping;
 
+    private static MttShaderSettings instance;
+
     public MttShaderSettings() {
-        
+        biTextureOperation = new BiTextureOperationShaderInfo();
+        gBuffer = new GBufferShaderInfo();
+        mergeScenes = new MergeScenesShaderInfo();
+        postProcessing = new PostProcessingShaderInfo();
+        present = new PresentShaderInfo();
+        primitive = new PrimitiveShaderInfo();
+        shadowMapping = new ShadowMappingShaderInfo();
+    }
+
+    /**
+     * Loads settings from a JSON file.
+     * This method returns empty value if the file specified as {@code jsonFile} does not exist
+     * or if it fails to load settings from the file specified.
+     *
+     * @param jsonFile Path of the setting file
+     * @return Settings
+     */
+    public static Optional<MttShaderSettings> load(@NotNull Path jsonFile) {
+        if (!Files.exists(jsonFile)) {
+            logger.error("Setting file ({}) was not found", jsonFile);
+            return Optional.empty();
+        }
+
+        try {
+            String json = Files.readString(jsonFile);
+            instance = new ObjectMapper().readValue(json, MttShaderSettings.class);
+            return Optional.of(instance);
+        } catch (IOException e) {
+            logger.error("Failed to load setting file", e);
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Loads settings from a JSON file.
+     *
+     * @param jsonResource URL of the setting file
+     * @return Settings
+     * @see #load(Path)
+     */
+    public static Optional<MttShaderSettings> load(@NotNull URL jsonResource) {
+        URI jsonResourceURI;
+        try {
+            jsonResourceURI = jsonResource.toURI();
+        } catch (URISyntaxException e) {
+            logger.error("URI syntax is invalid", e);
+            return Optional.empty();
+        }
+
+        return load(Paths.get(jsonResourceURI));
+    }
+
+    /**
+     * Loads settings from a JSON file.
+     *
+     * @param jsonFilepath Filepath of the setting file
+     * @return Settings
+     * @see #load(String)
+     */
+    public static Optional<MttShaderSettings> load(@NotNull String jsonFilepath) {
+        return load(Paths.get(jsonFilepath));
+    }
+
+    public static Optional<MttShaderSettings> get() {
+        return Optional.ofNullable(instance);
     }
 }

@@ -147,7 +147,7 @@ public class MttVulkanImpl {
             depthImageAspect |= VK_IMAGE_ASPECT_STENCIL_BIT;
         }
 
-        //Load shader resources =====
+        //Get shader URLs =====
         MttShaderSettings shaderSettings = MttShaderSettings
                 .get()
                 .orElse(MttShaderSettings.create());

@@ -127,7 +127,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
 
-        //Load shader resources =====
+        //Get shader URLs =====
         MttShaderSettings shaderSettings = MttShaderSettings
                 .get()
                 .orElse(MttShaderSettings.create());

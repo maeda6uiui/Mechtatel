@@ -64,7 +64,7 @@ public class PostProcessingNaborChain {
         ppNabors = new LinkedHashMap<>();
         this.customizableNaborInfos = customizableNaborInfos;
 
-        //Load shader resources =====
+        //Get shader URLs =====
         MttShaderSettings shaderSettings = MttShaderSettings
                 .get()
                 .orElse(MttShaderSettings.create());

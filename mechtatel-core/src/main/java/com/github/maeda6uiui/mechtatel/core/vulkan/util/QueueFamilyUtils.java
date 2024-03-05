@@ -62,7 +62,7 @@ public class QueueFamilyUtils {
 
             int graphicsFamily;
             if (preferableGraphicsFamilyIndex == -1) {
-                graphicsFamily = graphicsFamilyCandidates.get(0);
+                graphicsFamily = graphicsFamilyCandidates.get(graphicsFamilyCandidates.size() - 1);
             } else if (graphicsFamilyCandidates.contains(preferableGraphicsFamilyIndex)) {
                 graphicsFamily = preferableGraphicsFamilyIndex;
             } else {
@@ -72,7 +72,7 @@ public class QueueFamilyUtils {
 
             int presentFamily;
             if (preferablePresentFamilyIndex == -1) {
-                presentFamily = presentFamilyCandidates.get(0);
+                presentFamily = presentFamilyCandidates.get(presentFamilyCandidates.size() - 1);
             } else if (presentFamilyCandidates.contains(preferablePresentFamilyIndex)) {
                 presentFamily = preferablePresentFamilyIndex;
             } else {

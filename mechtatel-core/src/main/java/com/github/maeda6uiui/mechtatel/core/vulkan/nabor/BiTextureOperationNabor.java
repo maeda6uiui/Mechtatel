@@ -8,6 +8,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
@@ -25,14 +26,8 @@ import static org.lwjgl.vulkan.VK10.*;
 public class BiTextureOperationNabor extends Nabor {
     public static final int COLOR_ATTACHMENT_INDEX = 0;
 
-    public BiTextureOperationNabor(VkDevice device) {
-        super(
-                device,
-                VK_SAMPLE_COUNT_1_BIT,
-                false,
-                BiTextureOperationNabor.class.getResource("/Standard/Shader/BiTextureOperation/bi_texture_operation.vert"),
-                BiTextureOperationNabor.class.getResource("/Standard/Shader/BiTextureOperation/bi_texture_operation.frag")
-        );
+    public BiTextureOperationNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
     }
 
     public void transitionColorImage(long commandPool, VkQueue graphicsQueue) {

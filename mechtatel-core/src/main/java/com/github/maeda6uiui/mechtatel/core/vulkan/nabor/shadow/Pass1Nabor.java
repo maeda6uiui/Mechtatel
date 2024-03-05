@@ -8,6 +8,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
@@ -21,14 +22,8 @@ import static org.lwjgl.vulkan.VK10.*;
 class Pass1Nabor extends Nabor {
     private int depthImageFormat;
 
-    public Pass1Nabor(VkDevice device, int depthImageFormat) {
-        super(
-                device,
-                VK_SAMPLE_COUNT_1_BIT,
-                false,
-                Pass1Nabor.class.getResource("/Standard/Shader/ShadowMapping/pass_1.vert"),
-                Pass1Nabor.class.getResource("/Standard/Shader/ShadowMapping/pass_1.frag")
-        );
+    public Pass1Nabor(VkDevice device, int depthImageFormat, URL vertShaderResource, URL fragShaderResource) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
 
         this.depthImageFormat = depthImageFormat;
     }

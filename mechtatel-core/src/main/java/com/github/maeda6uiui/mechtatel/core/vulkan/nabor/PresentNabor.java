@@ -4,6 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 
@@ -16,14 +17,8 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class PresentNabor extends Nabor {
-    public PresentNabor(VkDevice device) {
-        super(
-                device,
-                VK_SAMPLE_COUNT_1_BIT,
-                false,
-                PresentNabor.class.getResource("/Standard/Shader/Present/present.vert"),
-                PresentNabor.class.getResource("/Standard/Shader/Present/present.frag")
-        );
+    public PresentNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
     }
 
     @Override

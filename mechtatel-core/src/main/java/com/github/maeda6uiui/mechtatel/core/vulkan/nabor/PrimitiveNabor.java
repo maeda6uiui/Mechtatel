@@ -8,6 +8,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
@@ -42,14 +43,10 @@ public class PrimitiveNabor extends Nabor {
             int positionImageFormat,
             int normalImageFormat,
             int stencilImageFormat,
-            boolean fill) {
-        super(
-                device,
-                VK_SAMPLE_COUNT_1_BIT,
-                false,
-                PrimitiveNabor.class.getResource("/Standard/Shader/Primitive/primitive.vert"),
-                PrimitiveNabor.class.getResource("/Standard/Shader/Primitive/primitive.frag")
-        );
+            boolean fill,
+            URL vertShaderResource,
+            URL fragShaderResource) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
 
         this.depthImageFormat = depthImageFormat;
         this.positionImageFormat = positionImageFormat;

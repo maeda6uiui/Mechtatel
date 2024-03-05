@@ -6,6 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.net.URL;
 import java.nio.LongBuffer;
 import java.util.List;
 
@@ -17,14 +18,8 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class FogNabor extends PostProcessingNabor {
-    public FogNabor(VkDevice device) {
-        super(
-                device,
-                VK_SAMPLE_COUNT_1_BIT,
-                false,
-                FogNabor.class.getResource("/Standard/Shader/PostProcessing/post_processing.vert"),
-                FogNabor.class.getResource("/Standard/Shader/PostProcessing/fog.frag")
-        );
+    public FogNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.net.URL;
 import java.nio.LongBuffer;
 import java.util.List;
 
@@ -20,14 +21,8 @@ import static org.lwjgl.vulkan.VK10.*;
 public class ParallelLightNabor extends PostProcessingNabor {
     public static final int MAX_NUM_LIGHTS = 4;
 
-    public ParallelLightNabor(VkDevice device) {
-        super(
-                device,
-                VK_SAMPLE_COUNT_1_BIT,
-                false,
-                ParallelLightNabor.class.getResource("/Standard/Shader/PostProcessing/post_processing.vert"),
-                ParallelLightNabor.class.getResource("/Standard/Shader/PostProcessing/parallel_light.frag")
-        );
+    public ParallelLightNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
     }
 
     @Override

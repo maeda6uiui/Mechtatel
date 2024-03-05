@@ -7,6 +7,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
@@ -39,14 +40,10 @@ public class MergeScenesNabor extends Nabor {
             int depthImageFormat,
             int positionImageFormat,
             int normalImageFormat,
-            int stencilImageFormat) {
-        super(
-                device,
-                VK_SAMPLE_COUNT_1_BIT,
-                false,
-                MergeScenesNabor.class.getResource("/Standard/Shader/MergeScenes/merge_scenes.vert"),
-                MergeScenesNabor.class.getResource("/Standard/Shader/MergeScenes/merge_scenes.frag")
-        );
+            int stencilImageFormat,
+            URL vertShaderResource,
+            URL fragShaderResource) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
 
         this.depthImageFormat = depthImageFormat;
         this.positionImageFormat = positionImageFormat;

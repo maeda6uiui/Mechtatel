@@ -18,8 +18,8 @@
     "vulkan": {
         "enableValidationLayer": true,
         "preferablePhysicalDeviceIndex": 0,
-        "preferableGraphicsFamilyIndex": -1,
-        "preferablePresentFamilyIndex": -1,
+        "preferableGraphicsFamilyIndex": 0,
+        "preferablePresentFamilyIndex": 0,
         "albedoMSAASamples": 2,
         "appInfo": {
             "name": "Mechtatel",

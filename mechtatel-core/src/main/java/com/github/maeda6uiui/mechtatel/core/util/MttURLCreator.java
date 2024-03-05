@@ -5,16 +5,16 @@ import java.net.URL;
 import java.nio.file.Paths;
 
 /**
- * Helper methods to load resources
+ * Helper methods to create URL
  *
  * @author maeda6uiui
  */
-public class MttResourceLoader {
-    public static URL getResource(String name, boolean external) throws MalformedURLException {
+public class MttURLCreator {
+    public static URL getResourceURL(String name, boolean external) throws MalformedURLException {
         if (external) {
             return Paths.get(name).toUri().toURL();
         } else {
-            return MttResourceLoader.class.getResource(name);
+            return MttURLCreator.class.getResource(name);
         }
     }
 }

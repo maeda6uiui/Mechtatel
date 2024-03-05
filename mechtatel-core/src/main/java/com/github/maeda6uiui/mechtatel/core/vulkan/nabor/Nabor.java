@@ -718,6 +718,9 @@ public abstract class Nabor {
         if (skipIfExists && !vertShaderModules.isEmpty()) {
             return;
         }
+        if (vertShaderResource == null || fragShaderResource == null) {
+            return;
+        }
 
         try (ShaderSPIRVUtils.SPIRV vertShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(
                 vertShaderResource.toURI(), ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER);

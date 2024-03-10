@@ -319,6 +319,10 @@ public class MttWindow {
         logger.debug("Window ({}) cleaned up", Long.toHexString(handle));
     }
 
+    public MttVulkanImpl getVulkanImpl() {
+        return vulkanImpl;
+    }
+
     public void close() {
         glfwSetWindowShouldClose(handle, true);
     }

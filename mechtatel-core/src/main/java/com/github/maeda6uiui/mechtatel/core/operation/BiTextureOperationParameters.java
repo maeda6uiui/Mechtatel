@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core;
+package com.github.maeda6uiui.mechtatel.core.operation;
 
 import org.joml.Vector4f;
 

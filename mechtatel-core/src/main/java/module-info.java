@@ -35,4 +35,6 @@ module com.github.maeda6uiui.mechtatel.core {
     exports com.github.maeda6uiui.mechtatel.core.text;
     exports com.github.maeda6uiui.mechtatel.core.screen.texture;
     exports com.github.maeda6uiui.mechtatel.core.util;
+    exports com.github.maeda6uiui.mechtatel.core.operation;
+    exports com.github.maeda6uiui.mechtatel.core.vulkan;
 }

@@ -1,6 +1,6 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan;
+package com.github.maeda6uiui.mechtatel.core.vulkan.operation;
 
-import com.github.maeda6uiui.mechtatel.core.BiTextureOperationParameters;
+import com.github.maeda6uiui.mechtatel.core.operation.BiTextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.BiTextureOperationNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationInfo;

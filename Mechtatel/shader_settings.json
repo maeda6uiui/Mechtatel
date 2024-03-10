@@ -1,0 +1,14 @@
+{
+    "present": {
+        "main": {
+            "vert": {
+                "filepath": "./Mechtatel/Addon/maeda6uiui/Shader/custom_present.vert",
+                "external": true
+            },
+            "frag": {
+                "filepath": "./Mechtatel/Addon/maeda6uiui/Shader/custom_present.frag",
+                "external": true
+            }
+        }
+    }
+}

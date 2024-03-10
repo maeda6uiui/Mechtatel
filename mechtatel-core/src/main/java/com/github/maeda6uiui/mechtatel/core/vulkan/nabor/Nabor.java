@@ -634,15 +634,13 @@ public abstract class Nabor {
         this.createFramebuffers();
     }
 
-    public void cleanup(boolean reserveForRecreation) {
-        if (isContainer) {
-            if (!reserveForRecreation) {
-                this.cleanupUserDefImages();
-            }
-
-            return;
+    private void cleanupContainer(boolean reserveForRecreation) {
+        if (!reserveForRecreation) {
+            this.cleanupUserDefImages();
         }
+    }
 
+    private void cleanupSelf(boolean reserveForRecreation) {
         graphicsPipelines.forEach(graphicsPipeline -> vkDestroyPipeline(device, graphicsPipeline, null));
         pipelineLayouts.forEach(pipelineLayout -> vkDestroyPipelineLayout(device, pipelineLayout, null));
         graphicsPipelines.clear();
@@ -692,6 +690,14 @@ public abstract class Nabor {
         vkDestroyRenderPass(device, renderPass, null);
     }
 
+    public void cleanup(boolean reserveForRecreation) {
+        if (isContainer) {
+            this.cleanupContainer(reserveForRecreation);
+        } else {
+            this.cleanupSelf(reserveForRecreation);
+        }
+    }
+
     //==========
     protected long createShaderModule(VkDevice device, ByteBuffer spirvCode) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -710,6 +716,9 @@ public abstract class Nabor {
 
     protected void setupShaderModules(boolean skipIfExists) {
         if (skipIfExists && !vertShaderModules.isEmpty()) {
+            return;
+        }
+        if (vertShaderResource == null || fragShaderResource == null) {
             return;
         }
 

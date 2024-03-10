@@ -9,6 +9,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
@@ -26,14 +27,13 @@ class AlbedoNabor extends Nabor {
     public static final int ALBEDO_ATTACHMENT_INDEX = 1;
     public static final int ALBEDO_RESOLVE_ATTACHMENT_INDEX = 2;
 
-    public AlbedoNabor(VkDevice device, int msaaSamples, int depthImageFormat) {
-        super(
-                device,
-                msaaSamples,
-                false,
-                AlbedoNabor.class.getResource("/Standard/Shader/GBuffer/albedo.vert"),
-                AlbedoNabor.class.getResource("/Standard/Shader/GBuffer/albedo.frag")
-        );
+    public AlbedoNabor(
+            VkDevice device,
+            int msaaSamples,
+            int depthImageFormat,
+            URL vertShaderResource,
+            URL fragShaderResource) {
+        super(device, msaaSamples, false, vertShaderResource, fragShaderResource);
 
         this.depthImageFormat = depthImageFormat;
         depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;

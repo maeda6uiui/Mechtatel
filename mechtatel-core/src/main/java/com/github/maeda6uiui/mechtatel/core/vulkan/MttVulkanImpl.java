@@ -2,12 +2,14 @@ package com.github.maeda6uiui.mechtatel.core.vulkan;
 
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
+import com.github.maeda6uiui.mechtatel.core.nabor.MttShaderSettings;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
+import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.CommandPoolCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.LogicalDeviceCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.SurfaceCreator;
@@ -26,6 +28,8 @@ import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.util.List;
@@ -143,7 +147,39 @@ public class MttVulkanImpl {
             depthImageAspect |= VK_IMAGE_ASPECT_STENCIL_BIT;
         }
 
-        presentNabor = new PresentNabor(dq.device());
+        //Get shader URLs =====
+        MttShaderSettings shaderSettings = MttShaderSettings
+                .get()
+                .orElse(MttShaderSettings.create());
+
+        URL presentVertShaderResource;
+        URL presentFragShaderResource;
+        URL biTextureOperationVertShaderResource;
+        URL biTextureOperationFragShaderResource;
+        try {
+            presentVertShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.present.main.vert.filepath,
+                    shaderSettings.present.main.vert.external
+            );
+            presentFragShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.present.main.frag.filepath,
+                    shaderSettings.present.main.frag.external
+            );
+
+            biTextureOperationVertShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.biTextureOperation.main.vert.filepath,
+                    shaderSettings.biTextureOperation.main.vert.external
+            );
+            biTextureOperationFragShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.biTextureOperation.main.frag.filepath,
+                    shaderSettings.biTextureOperation.main.frag.external
+            );
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        //==========
+
+        presentNabor = new PresentNabor(dq.device(), presentVertShaderResource, presentFragShaderResource);
         presentNabor.compile(
                 swapchain.getSwapchainImageFormat(),
                 VK_FILTER_NEAREST,
@@ -155,7 +191,8 @@ public class MttVulkanImpl {
                 swapchain.getNumSwapchainImages());
         swapchain.createFramebuffers(presentNabor.getRenderPass());
 
-        biTextureOperationNabor = new BiTextureOperationNabor(dq.device());
+        biTextureOperationNabor = new BiTextureOperationNabor(
+                dq.device(), biTextureOperationVertShaderResource, biTextureOperationFragShaderResource);
         biTextureOperationNabor.compile(
                 swapchain.getSwapchainImageFormat(),
                 VK_FILTER_NEAREST,

@@ -5,6 +5,7 @@ import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkExtent2D;
 import org.lwjgl.vulkan.VkQueue;
 
+import java.net.URL;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,18 +29,29 @@ public class GBufferNabor extends Nabor {
             int depthImageFormat,
             int positionImageFormat,
             int normalImageFormat,
-            int stencilImageFormat) {
-        super(
-                device,
-                VK_SAMPLE_COUNT_1_BIT,
-                true,
-                GBufferNabor.class.getResource(""),
-                GBufferNabor.class.getResource("")
-        );
+            int stencilImageFormat,
+            URL albedoVertShaderResource,
+            URL albedoFragShaderResource,
+            URL propertiesVertShaderResource,
+            URL propertiesFragShaderResource) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, true, null, null);
 
-        albedoNabor = new AlbedoNabor(device, albedoMSAASamples, depthImageFormat);
+        albedoNabor = new AlbedoNabor(
+                device,
+                albedoMSAASamples,
+                depthImageFormat,
+                albedoVertShaderResource,
+                albedoFragShaderResource
+        );
         propertiesNabor = new PropertiesNabor(
-                device, depthImageFormat, positionImageFormat, normalImageFormat, stencilImageFormat);
+                device,
+                depthImageFormat,
+                positionImageFormat,
+                normalImageFormat,
+                stencilImageFormat,
+                propertiesVertShaderResource,
+                propertiesFragShaderResource
+        );
     }
 
     @Override

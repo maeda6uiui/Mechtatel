@@ -8,6 +8,7 @@ import org.lwjgl.vulkan.VkExtent2D;
 import org.lwjgl.vulkan.VkQueue;
 
 import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,20 +32,22 @@ public class ShadowMappingNabor extends Nabor {
     private Pass1Nabor pass1;
     private Pass2Nabor pass2;
 
-    public ShadowMappingNabor(VkDevice device, int depthImageFormat, int depthImageWidth, int depthImageHeight) {
-        super(
-                device,
-                VK_SAMPLE_COUNT_1_BIT,
-                true,
-                ShadowMappingNabor.class.getResource(""),
-                ShadowMappingNabor.class.getResource("")
-        );
+    public ShadowMappingNabor(
+            VkDevice device,
+            int depthImageFormat,
+            int depthImageWidth,
+            int depthImageHeight,
+            URL pass1VertShaderResource,
+            URL pass1FragShaderResource,
+            URL pass2VertShaderResource,
+            URL pass2FragShaderResource) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, true, null, null);
 
         this.depthImageWidth = depthImageWidth;
         this.depthImageHeight = depthImageHeight;
 
-        pass1 = new Pass1Nabor(device, depthImageFormat);
-        pass2 = new Pass2Nabor(device);
+        pass1 = new Pass1Nabor(device, depthImageFormat, pass1VertShaderResource, pass1FragShaderResource);
+        pass2 = new Pass2Nabor(device, pass2VertShaderResource, pass2FragShaderResource);
     }
 
     @Override

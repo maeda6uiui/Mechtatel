@@ -3,12 +3,14 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.nabor.CustomizableNaborInfo;
+import com.github.maeda6uiui.mechtatel.core.nabor.MttShaderSettings;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.LightingInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
+import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow.ShadowMappingNabor;
@@ -20,6 +22,8 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.awt.image.BufferedImage;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 import static org.lwjgl.vulkan.VK10.*;
@@ -60,6 +64,71 @@ public class PostProcessingNaborChain {
         ppNabors = new LinkedHashMap<>();
         this.customizableNaborInfos = customizableNaborInfos;
 
+        //Get shader URLs =====
+        MttShaderSettings shaderSettings = MttShaderSettings
+                .get()
+                .orElse(MttShaderSettings.create());
+
+        URL fogVertShaderResource;
+        URL fogFragShaderResource;
+        URL parallelLightVertShaderResource;
+        URL parallelLightFragShaderResource;
+        URL pointLightVertShaderResource;
+        URL pointLightFragShaderResource;
+        URL spotlightVertShaderResource;
+        URL spotlightFragShaderResource;
+        URL simpleBlurVertShaderResource;
+        URL simpleBlurFragShaderResource;
+        try {
+            fogVertShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.postProcessing.fog.vert.filepath,
+                    shaderSettings.postProcessing.fog.vert.external
+            );
+            fogFragShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.postProcessing.fog.frag.filepath,
+                    shaderSettings.postProcessing.fog.frag.external
+            );
+
+            parallelLightVertShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.postProcessing.parallelLight.vert.filepath,
+                    shaderSettings.postProcessing.parallelLight.vert.external
+            );
+            parallelLightFragShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.postProcessing.parallelLight.frag.filepath,
+                    shaderSettings.postProcessing.parallelLight.frag.external
+            );
+
+            pointLightVertShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.postProcessing.pointLight.vert.filepath,
+                    shaderSettings.postProcessing.pointLight.vert.external
+            );
+            pointLightFragShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.postProcessing.pointLight.frag.filepath,
+                    shaderSettings.postProcessing.pointLight.frag.external
+            );
+
+            spotlightVertShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.postProcessing.spotlight.vert.filepath,
+                    shaderSettings.postProcessing.spotlight.vert.external
+            );
+            spotlightFragShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.postProcessing.spotlight.frag.filepath,
+                    shaderSettings.postProcessing.spotlight.frag.external
+            );
+
+            simpleBlurVertShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.postProcessing.simpleBlur.vert.filepath,
+                    shaderSettings.postProcessing.simpleBlur.vert.external
+            );
+            simpleBlurFragShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.postProcessing.simpleBlur.frag.filepath,
+                    shaderSettings.postProcessing.simpleBlur.frag.external
+            );
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        //==========
+
         for (var naborName : naborNames) {
             PostProcessingNabor ppNabor;
 
@@ -79,11 +148,15 @@ public class PostProcessingNaborChain {
                 );
             } else {
                 ppNabor = switch (naborName) {
-                    case "fog" -> new FogNabor(device);
-                    case "parallel_light" -> new ParallelLightNabor(device);
-                    case "point_light" -> new PointLightNabor(device);
-                    case "spotlight" -> new SpotlightNabor(device);
-                    case "simple_blur" -> new SimpleBlurNabor(device);
+                    case "fog" -> new FogNabor(device, fogVertShaderResource, fogFragShaderResource);
+                    case "parallel_light" ->
+                            new ParallelLightNabor(device, parallelLightVertShaderResource, parallelLightFragShaderResource);
+                    case "point_light" ->
+                            new PointLightNabor(device, pointLightVertShaderResource, pointLightFragShaderResource);
+                    case "spotlight" ->
+                            new SpotlightNabor(device, spotlightVertShaderResource, spotlightFragShaderResource);
+                    case "simple_blur" ->
+                            new SimpleBlurNabor(device, simpleBlurVertShaderResource, simpleBlurFragShaderResource);
                     default -> throw new IllegalArgumentException("Unknown nabor name specified: " + naborName);
                 };
             }

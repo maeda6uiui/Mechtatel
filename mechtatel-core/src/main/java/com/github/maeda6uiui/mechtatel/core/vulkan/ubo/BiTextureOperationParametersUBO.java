@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.ubo;
 
-import com.github.maeda6uiui.mechtatel.core.BiTextureOperationParameters;
+import com.github.maeda6uiui.mechtatel.core.operation.BiTextureOperationParameters;
 import org.joml.Vector4f;
 
 import java.nio.ByteBuffer;

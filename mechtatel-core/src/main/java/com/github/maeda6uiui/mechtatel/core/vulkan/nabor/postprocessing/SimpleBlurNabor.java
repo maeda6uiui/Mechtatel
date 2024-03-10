@@ -5,6 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.net.URL;
 import java.nio.LongBuffer;
 import java.util.List;
 
@@ -16,14 +17,8 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class SimpleBlurNabor extends PostProcessingNabor {
-    public SimpleBlurNabor(VkDevice device) {
-        super(
-                device,
-                VK_SAMPLE_COUNT_1_BIT,
-                false,
-                SimpleBlurNabor.class.getResource("/Standard/Shader/PostProcessing/post_processing.vert"),
-                SimpleBlurNabor.class.getResource("/Standard/Shader/PostProcessing/simple_blur.frag")
-        );
+    public SimpleBlurNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
     }
 
     @Override

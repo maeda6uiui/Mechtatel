@@ -9,6 +9,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
@@ -26,14 +27,8 @@ class Pass2Nabor extends Nabor {
 
     public static final int COLOR_ATTACHMENT_INDEX = 0;
 
-    public Pass2Nabor(VkDevice device) {
-        super(
-                device,
-                VK_SAMPLE_COUNT_1_BIT,
-                false,
-                Pass2Nabor.class.getResource("/Standard/Shader/ShadowMapping/pass_2.vert"),
-                Pass2Nabor.class.getResource("/Standard/Shader/ShadowMapping/pass_2.frag")
-        );
+    public Pass2Nabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
     }
 
     public void transitionColorImageLayout(long commandPool, VkQueue graphicsQueue) {

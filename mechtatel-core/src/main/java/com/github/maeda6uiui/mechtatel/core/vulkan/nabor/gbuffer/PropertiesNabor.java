@@ -9,6 +9,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
@@ -34,14 +35,10 @@ class PropertiesNabor extends Nabor {
             int depthImageFormat,
             int positionImageFormat,
             int normalImageFormat,
-            int stencilImageFormat) {
-        super(
-                device,
-                VK_SAMPLE_COUNT_1_BIT,
-                false,
-                PropertiesNabor.class.getResource("/Standard/Shader/GBuffer/properties.vert"),
-                PropertiesNabor.class.getResource("/Standard/Shader/GBuffer/properties.frag")
-        );
+            int stencilImageFormat,
+            URL vertShaderResource,
+            URL fragShaderResource) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
 
         this.depthImageFormat = depthImageFormat;
         this.positionImageFormat = positionImageFormat;

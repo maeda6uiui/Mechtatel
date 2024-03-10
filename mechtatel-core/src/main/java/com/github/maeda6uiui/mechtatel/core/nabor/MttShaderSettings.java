@@ -15,7 +15,9 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 /**
- * Shader settings
+ * Shader settings<br>
+ * Shader settings must be updated before they are loaded by nabors.
+ * Changes to these settings does not have any effects after nabors are created.
  *
  * @author maeda6uiui
  */

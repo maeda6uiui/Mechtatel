@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
@@ -319,8 +320,8 @@ public class MttWindow {
         logger.debug("Window ({}) cleaned up", Long.toHexString(handle));
     }
 
-    public MttVulkanImpl getVulkanImpl() {
-        return vulkanImpl;
+    public Optional<MttVulkanImpl> getVulkanImpl() {
+        return Optional.ofNullable(vulkanImpl);
     }
 
     public void close() {

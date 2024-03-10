@@ -54,6 +54,12 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ## Todo
 
+### Will certainly do
+
+- Add sample to build a 3D model viewer
+
+### Probably...
+
 - Implement functionality to run `mechtatel-core` via YAML definitions<br>i.e. Load and manipulate resources according to the procedure defined in a YAML file
 
 ## Special thanks to
@@ -63,6 +69,20 @@ You can overwrite it or use another logging implementation at your discretion.
 - [3D Game Development with LWJGL 3](https://ahbejarano.gitbook.io/lwjglgamedev/)
 
 ## 進捗報告(Progress report)
+
+### 2024-03-10
+
+デフォルトのシェーダーをユーザーが指定したものに変更する機能を実装しました。
+Javaコードからの変更と設定ファイルを用いた変更が可能です。
+([テストコード](./mechtatel-core/src/test/java/com/github/maeda6uiui/mechtatel/OverwriteDefaultShadersTest.java)を参照のこと)
+
+Present Nabor (最終的な描画結果をウィンドウに表示するためのNabor)で使用するシェーダーを変更して、表示結果の色を反転させてみました。
+
+![デフォルトシェーダーの変更](./Image/overwrite_default_shaders.png)
+
+一見地味な機能ですが、カスタマイズ性という点ではかなり有用な機能ではないかと思います。
+Mechtatelのデフォルトのシェーダーだとちょっと物足りないというときに、気軽にシェーダーを変更できるようになります。
+シェーダーの入力と出力に縛りがあるので、何でもかんでも自由にできるというわけではありませんが...。
 
 ### 2024-02-12
 

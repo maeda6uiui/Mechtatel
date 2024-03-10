@@ -1,9 +1,9 @@
-package com.github.maeda6uiui.mechtatel.core;
+package com.github.maeda6uiui.mechtatel.core.operation;
 
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
-import com.github.maeda6uiui.mechtatel.core.vulkan.VkBiTextureOperation;
+import com.github.maeda6uiui.mechtatel.core.vulkan.operation.VkBiTextureOperation;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 
 import java.util.ArrayList;

@@ -52,11 +52,11 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ## Currently working on
 
+- Add sample to build a 3D model viewer
+
 ## Todo
 
 ### Will certainly do
-
-- Add sample to build a 3D model viewer
 
 ### Probably...
 

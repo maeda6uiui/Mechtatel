@@ -5,6 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttImGui;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.extension.imguifiledialog.ImGuiFileDialog;
@@ -12,11 +13,13 @@ import imgui.extension.imguifiledialog.flag.ImGuiFileDialogFlags;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
+import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 
 public class ModelViewerTest extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(ModelViewerTest.class);
@@ -36,14 +39,12 @@ public class ModelViewerTest extends Mechtatel {
     }
 
     private MttImGui imgui;
-
-    //Selected filepaths
-    private Map<String, String> selections;
-
-    //Buffers for values associated with ImGui controls
     private float[] bufScaleX;
     private float[] bufScaleY;
     private float[] bufScaleZ;
+
+    private String modelFilepath;
+    private MttModel model;
 
     private void resetBuffers() {
         bufScaleX[0] = bufScaleY[0] = bufScaleZ[0] = 1.0f;
@@ -58,13 +59,11 @@ public class ModelViewerTest extends Mechtatel {
         ImGuiIO io = ImGui.getIO();
         io.addConfigFlags(ImGuiConfigFlags.DockingEnable);
 
-        ImGui.styleColorsLight();
-
-        selections = new HashMap<>();
-
         bufScaleX = new float[]{1.0f};
         bufScaleY = new float[]{1.0f};
         bufScaleZ = new float[]{1.0f};
+
+        modelFilepath = "";
     }
 
     @Override
@@ -74,6 +73,7 @@ public class ModelViewerTest extends Mechtatel {
 
             ImGui.dockSpaceOverViewport(ImGui.getMainViewport());
 
+            //Main menu bar =====
             if (ImGui.beginMainMenuBar()) {
                 if (ImGui.beginMenu("File")) {
                     if (ImGui.menuItem("Open...")) {
@@ -92,7 +92,7 @@ public class ModelViewerTest extends Mechtatel {
                     ImGui.endMenu();
                 }
                 if (ImGui.beginMenu("Tools")) {
-                    if (ImGui.menuItem("Rescale")) {
+                    if (ImGui.menuItem("Rescale", "", false, !modelFilepath.isEmpty())) {
                         shouldOpenRescaleDialog = true;
                     }
 
@@ -101,25 +101,29 @@ public class ModelViewerTest extends Mechtatel {
 
                 ImGui.endMainMenuBar();
             }
+            //==========
 
+            //Open rescale popup
+            if (shouldOpenRescaleDialog) {
+                ImGui.openPopup("Rescale");
+            }
+
+            //Popups =====
             if (ImGuiFileDialog.display(
                     "browse-key",
                     ImGuiWindowFlags.NoCollapse,
                     700.0f, 400.0f,
                     Float.MAX_VALUE, Float.MAX_VALUE)) {
                 if (ImGuiFileDialog.isOk()) {
-                    selections.putAll(ImGuiFileDialog.getSelection());
+                    modelFilepath = ImGuiFileDialog.getFilePathName();
                 }
                 ImGuiFileDialog.close();
             }
 
-            if (shouldOpenRescaleDialog) {
-                ImGui.openPopup("Rescale");
-            }
             if (ImGui.beginPopupModal("Rescale", new ImBoolean(true), ImGuiWindowFlags.AlwaysAutoResize)) {
-                ImGui.sliderFloat("x", bufScaleX, 0.01f, 10.0f);
-                ImGui.sliderFloat("y", bufScaleY, 0.01f, 10.0f);
-                ImGui.sliderFloat("z", bufScaleZ, 0.01f, 10.0f);
+                ImGui.dragFloat("x", bufScaleX, 0.01f, 0.01f, 10.0f);
+                ImGui.dragFloat("y", bufScaleY, 0.01f, 0.01f, 10.0f);
+                ImGui.dragFloat("z", bufScaleZ, 0.01f, 0.01f, 10.0f);
                 ImGui.newLine();
 
                 if (ImGui.button("Cancel")) {
@@ -128,21 +132,34 @@ public class ModelViewerTest extends Mechtatel {
                 }
                 ImGui.sameLine();
                 if (ImGui.button("OK")) {
+                    if (model != null) {
+                        model.rescale(new Vector3f(bufScaleX[0], bufScaleY[0], bufScaleZ[0]));
+                    }
+
                     ImGui.closeCurrentPopup();
                     this.resetBuffers();
                 }
 
                 ImGui.endPopup();
             }
+            //==========
         });
 
-        if (!selections.isEmpty()) {
-            logger.info("Selections=");
-            selections.forEach((k, v) -> logger.info("key={},value={}", k, v));
-            selections.clear();
+        MttScreen defaultScreen = window.getDefaultScreen();
+
+        if (!modelFilepath.isEmpty()) {
+            if (model != null) {
+                model.cleanup();
+            }
+
+            try {
+                var modelURL = Paths.get(modelFilepath).toUri().toURL();
+                model = defaultScreen.createModel(modelURL);
+            } catch (IOException | URISyntaxException e) {
+                logger.error("Error", e);
+            }
         }
 
-        MttScreen defaultScreen = window.getDefaultScreen();
         defaultScreen.draw();
         window.present(defaultScreen);
     }

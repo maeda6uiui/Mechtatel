@@ -44,7 +44,7 @@ public class ModelViewerTest extends Mechtatel {
     private float[] bufScaleY;
     private float[] bufScaleZ;
 
-    private String modelFilepath;
+    private String modelFilepathToLoad;
     private MttModel model;
 
     private MttScreen imguiScreen;
@@ -71,7 +71,7 @@ public class ModelViewerTest extends Mechtatel {
         bufScaleY = new float[]{1.0f};
         bufScaleZ = new float[]{1.0f};
 
-        modelFilepath = "";
+        modelFilepathToLoad = "";
     }
 
     @Override
@@ -100,7 +100,7 @@ public class ModelViewerTest extends Mechtatel {
                     ImGui.endMenu();
                 }
                 if (ImGui.beginMenu("Tools")) {
-                    if (ImGui.menuItem("Rescale", "", false, !modelFilepath.isEmpty())) {
+                    if (ImGui.menuItem("Rescale", "", false, model != null)) {
                         shouldOpenRescaleDialog = true;
                     }
 
@@ -123,7 +123,7 @@ public class ModelViewerTest extends Mechtatel {
                     700.0f, 400.0f,
                     Float.MAX_VALUE, Float.MAX_VALUE)) {
                 if (ImGuiFileDialog.isOk()) {
-                    modelFilepath = ImGuiFileDialog.getFilePathName();
+                    modelFilepathToLoad = ImGuiFileDialog.getFilePathName();
                 }
                 ImGuiFileDialog.close();
             }
@@ -157,17 +157,19 @@ public class ModelViewerTest extends Mechtatel {
         imguiScreen.draw();
 
         //Load model
-        if (!modelFilepath.isEmpty() && Files.exists(Paths.get(modelFilepath))) {
+        if (!modelFilepathToLoad.isEmpty() && Files.exists(Paths.get(modelFilepathToLoad))) {
             if (model != null) {
                 model.cleanup();
             }
 
             try {
-                var modelURL = Paths.get(modelFilepath).toUri().toURL();
+                var modelURL = Paths.get(modelFilepathToLoad).toUri().toURL();
                 model = modelScreen.createModel(modelURL);
             } catch (IOException | URISyntaxException e) {
                 logger.error("Error", e);
             }
+
+            modelFilepathToLoad = "";
         }
 
         //Draw model

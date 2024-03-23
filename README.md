@@ -70,6 +70,13 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ## 進捗報告(Progress report)
 
+### 2024-03-23
+
+モデルビューアーのサンプルを作成しています。
+ImGuiのウィンドウがモデルの後ろ側に行ってしまうので、これの回避策を調査しています。
+
+![ImGuiのウィンドウと3Dモデル](./Image/imgui_4.png)
+
 ### 2024-03-10
 
 デフォルトのシェーダーをユーザーが指定したものに変更する機能を実装しました。

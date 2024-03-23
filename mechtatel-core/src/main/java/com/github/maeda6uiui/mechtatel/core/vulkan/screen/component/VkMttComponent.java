@@ -32,6 +32,10 @@ public class VkMttComponent {
         return naborName;
     }
 
+    public boolean isValid() {
+        return mttComponent.isValid();
+    }
+
     public Matrix4fc getMat() {
         return mttComponent.getMat();
     }

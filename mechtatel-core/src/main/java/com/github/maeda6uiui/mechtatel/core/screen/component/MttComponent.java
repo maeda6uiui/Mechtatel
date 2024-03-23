@@ -121,6 +121,7 @@ public class MttComponent implements IMttComponentForVkMttComponent, Comparable<
         return vkTextures;
     }
 
+    @Override
     public boolean isValid() {
         return isValid;
     }

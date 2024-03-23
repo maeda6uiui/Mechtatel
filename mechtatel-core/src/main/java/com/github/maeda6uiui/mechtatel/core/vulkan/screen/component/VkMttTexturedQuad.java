@@ -143,7 +143,7 @@ public class VkMttTexturedQuad extends VkMttComponent {
 
     @Override
     public void draw(VkCommandBuffer commandBuffer, long pipelineLayout) {
-        if (!this.isVisible()) {
+        if (!this.isValid() || !this.isVisible()) {
             return;
         }
         if (texture == null) {
@@ -180,7 +180,7 @@ public class VkMttTexturedQuad extends VkMttComponent {
 
     @Override
     public void transfer(VkCommandBuffer commandBuffer) {
-        if (!this.isVisible()) {
+        if (!this.isValid() || !this.isVisible()) {
             return;
         }
 

@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class ModelViewerTest extends Mechtatel {
@@ -46,14 +47,21 @@ public class ModelViewerTest extends Mechtatel {
     private String modelFilepath;
     private MttModel model;
 
+    private MttScreen imguiScreen;
+    private MttScreen modelScreen;
+    private MttScreen finalScreen;
+
     private void resetBuffers() {
         bufScaleX[0] = bufScaleY[0] = bufScaleZ[0] = 1.0f;
     }
 
     @Override
     public void onInit(MttWindow initialWindow) {
-        MttScreen defaultScreen = initialWindow.getDefaultScreen();
-        imgui = defaultScreen.createImGui();
+        imguiScreen = initialWindow.createScreen(new MttScreen.MttScreenCreateInfo());
+        modelScreen = initialWindow.createScreen(new MttScreen.MttScreenCreateInfo());
+        finalScreen = initialWindow.createScreen(new MttScreen.MttScreenCreateInfo());
+
+        imgui = imguiScreen.createImGui();
 
         imgui.makeCurrent();
         ImGuiIO io = ImGui.getIO();
@@ -103,7 +111,7 @@ public class ModelViewerTest extends Mechtatel {
             }
             //==========
 
-            //Open rescale popup
+            //Open rescale dialog
             if (shouldOpenRescaleDialog) {
                 ImGui.openPopup("Rescale");
             }
@@ -145,22 +153,27 @@ public class ModelViewerTest extends Mechtatel {
             //==========
         });
 
-        MttScreen defaultScreen = window.getDefaultScreen();
+        //Draw ImGui components
+        imguiScreen.draw();
 
-        if (!modelFilepath.isEmpty()) {
+        //Load model
+        if (!modelFilepath.isEmpty() && Files.exists(Paths.get(modelFilepath))) {
             if (model != null) {
                 model.cleanup();
             }
 
             try {
                 var modelURL = Paths.get(modelFilepath).toUri().toURL();
-                model = defaultScreen.createModel(modelURL);
+                model = modelScreen.createModel(modelURL);
             } catch (IOException | URISyntaxException e) {
                 logger.error("Error", e);
             }
         }
 
-        defaultScreen.draw();
-        window.present(defaultScreen);
+        //Draw model
+        modelScreen.draw();
+
+        //Present final result to window
+        window.present(imguiScreen);
     }
 }

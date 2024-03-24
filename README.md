@@ -56,8 +56,6 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ### Will certainly do
 
-- Add sample to build a 3D model viewer
-
 ### Probably...
 
 - Implement functionality to run `mechtatel-core` via YAML definitions<br>i.e. Load and manipulate resources according to the procedure defined in a YAML file

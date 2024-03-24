@@ -70,6 +70,15 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ## 進捗報告(Progress report)
 
+### 2024-03-24
+
+ImGuiのウィンドウがモデルの後ろ側に行ってしまう問題は解決できなかったので、キー入力でメインのレンダリング結果の表示・非表示を変更できるようにしました。
+[テストコード](./mechtatel-core/src/test/java/com/github/maeda6uiui/mechtatel/ModelViewerTest.java)
+
+モデル描画のために別のスクリーンを用意して、その描画結果を`ImGui.image`で表示させようと思いましたが、この方法だとうまくいきませんでした。
+ImGuiのImageにはVkDescriptorSetを渡すらしいのですが、ImGui Javaの現在の実装だとint型しか受け付けない仕様になっていて、long型を使うVkDescriptorSetを渡すことができませんでした。
+これについてはImGui Javaのレポジトリに[Issue](https://github.com/SpaiR/imgui-java/issues/185)が上がっていました。
+
 ### 2024-03-23
 
 モデルビューアーのサンプルを作成しています。

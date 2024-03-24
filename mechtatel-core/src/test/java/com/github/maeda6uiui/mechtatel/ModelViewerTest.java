@@ -59,16 +59,33 @@ public class ModelViewerTest extends Mechtatel {
     private boolean shouldShowMainObjects;
 
     private MttImGui imgui;
+
+    //Buffers for ImGui inputs =====
+    private float[] bufTranslateX;
+    private float[] bufTranslateY;
+    private float[] bufTranslateZ;
+    private float[] bufRotateX;
+    private float[] bufRotateY;
+    private float[] bufRotateZ;
     private float[] bufScaleX;
     private float[] bufScaleY;
     private float[] bufScaleZ;
+    //==========
 
     private String modelFilepathToLoad;
     private MttModel model;
 
     private FreeCamera camera;
 
-    private void resetBuffers() {
+    private void resetTranslateBuffers() {
+        bufTranslateX[0] = bufTranslateY[0] = bufTranslateZ[0] = 0.0f;
+    }
+
+    private void resetRotateBuffers() {
+        bufRotateX[0] = bufRotateY[0] = bufRotateZ[0] = 0.0f;
+    }
+
+    private void resetScaleBuffers() {
         bufScaleX[0] = bufScaleY[0] = bufScaleZ[0] = 1.0f;
     }
 
@@ -107,9 +124,20 @@ public class ModelViewerTest extends Mechtatel {
         io.addConfigFlags(ImGuiConfigFlags.DockingEnable);
 
         //Declare variables for ImGui inputs
-        bufScaleX = new float[]{1.0f};
-        bufScaleY = new float[]{1.0f};
-        bufScaleZ = new float[]{1.0f};
+        bufTranslateX = new float[1];
+        bufTranslateY = new float[1];
+        bufTranslateZ = new float[1];
+        this.resetTranslateBuffers();
+
+        bufRotateX = new float[1];
+        bufRotateY = new float[1];
+        bufRotateZ = new float[1];
+        this.resetRotateBuffers();
+
+        bufScaleX = new float[1];
+        bufScaleY = new float[1];
+        bufScaleZ = new float[1];
+        this.resetScaleBuffers();
 
         modelFilepathToLoad = "";
 
@@ -134,6 +162,8 @@ public class ModelViewerTest extends Mechtatel {
     public void onUpdate(MttWindow window) {
         //Declare ImGui components
         imgui.declare(() -> {
+            boolean shouldOpenTranslateDialog = false;
+            boolean shouldOpenRotateDialog = false;
             boolean shouldOpenRescaleDialog = false;
 
             //Main menu bar =====
@@ -155,6 +185,12 @@ public class ModelViewerTest extends Mechtatel {
                     ImGui.endMenu();
                 }
                 if (ImGui.beginMenu("Tools")) {
+                    if (ImGui.menuItem("Translate", "", false, model != null)) {
+                        shouldOpenTranslateDialog = true;
+                    }
+                    if (ImGui.menuItem("Rotate", "", false, model != null)) {
+                        shouldOpenRotateDialog = true;
+                    }
                     if (ImGui.menuItem("Rescale", "", false, model != null)) {
                         shouldOpenRescaleDialog = true;
                     }
@@ -166,12 +202,19 @@ public class ModelViewerTest extends Mechtatel {
             }
             //==========
 
-            //Open rescale dialog
+            //Open dialogs =====
+            if (shouldOpenTranslateDialog) {
+                ImGui.openPopup("Translate");
+            }
+            if (shouldOpenRotateDialog) {
+                ImGui.openPopup("Rotate");
+            }
             if (shouldOpenRescaleDialog) {
                 ImGui.openPopup("Rescale");
             }
+            //==========
 
-            //Popups =====
+            //Dialogs =====
             if (ImGuiFileDialog.display(
                     "OpenFile",
                     ImGuiWindowFlags.NoCollapse,
@@ -183,6 +226,50 @@ public class ModelViewerTest extends Mechtatel {
                 ImGuiFileDialog.close();
             }
 
+            if (ImGui.beginPopupModal("Translate", new ImBoolean(true), ImGuiWindowFlags.AlwaysAutoResize)) {
+                ImGui.dragFloat("x", bufTranslateX, 0.1f, -100.0f, 100.0f);
+                ImGui.dragFloat("y", bufTranslateY, 0.1f, -100.0f, 100.0f);
+                ImGui.dragFloat("z", bufTranslateZ, 0.1f, -100.0f, 100.0f);
+                ImGui.newLine();
+
+                if (ImGui.button("Cancel")) {
+                    ImGui.closeCurrentPopup();
+                    this.resetTranslateBuffers();
+                }
+                ImGui.sameLine();
+                if (ImGui.button("OK")) {
+                    if (model != null) {
+                        model.translate(new Vector3f(bufTranslateX[0], bufTranslateY[0], bufTranslateZ[0]));
+                    }
+
+                    ImGui.closeCurrentPopup();
+                    this.resetTranslateBuffers();
+                }
+
+                ImGui.endPopup();
+            }
+            if (ImGui.beginPopupModal("Rotate", new ImBoolean(true), ImGuiWindowFlags.AlwaysAutoResize)) {
+                ImGui.dragFloat("x", bufRotateX, 0.01f, (float) Math.PI * (-0.5f), (float) Math.PI * 0.5f);
+                ImGui.dragFloat("y", bufRotateY, 0.01f, (float) Math.PI * (-0.5f), (float) Math.PI * 0.5f);
+                ImGui.dragFloat("z", bufRotateZ, 0.01f, (float) Math.PI * (-0.5f), (float) Math.PI * 0.5f);
+                ImGui.newLine();
+
+                if (ImGui.button("Cancel")) {
+                    ImGui.closeCurrentPopup();
+                    this.resetRotateBuffers();
+                }
+                ImGui.sameLine();
+                if (ImGui.button("OK")) {
+                    if (model != null) {
+                        model.rotX(bufRotateX[0]).rotY(bufRotateY[0]).rotZ(bufRotateZ[0]);
+                    }
+
+                    ImGui.closeCurrentPopup();
+                    this.resetRotateBuffers();
+                }
+
+                ImGui.endPopup();
+            }
             if (ImGui.beginPopupModal("Rescale", new ImBoolean(true), ImGuiWindowFlags.AlwaysAutoResize)) {
                 ImGui.dragFloat("x", bufScaleX, 0.01f, 0.01f, 10.0f);
                 ImGui.dragFloat("y", bufScaleY, 0.01f, 0.01f, 10.0f);
@@ -191,7 +278,7 @@ public class ModelViewerTest extends Mechtatel {
 
                 if (ImGui.button("Cancel")) {
                     ImGui.closeCurrentPopup();
-                    this.resetBuffers();
+                    this.resetScaleBuffers();
                 }
                 ImGui.sameLine();
                 if (ImGui.button("OK")) {
@@ -200,7 +287,7 @@ public class ModelViewerTest extends Mechtatel {
                     }
 
                     ImGui.closeCurrentPopup();
-                    this.resetBuffers();
+                    this.resetScaleBuffers();
                 }
 
                 ImGui.endPopup();
@@ -250,7 +337,7 @@ public class ModelViewerTest extends Mechtatel {
         imguiScreen.draw();
         mainScreen.draw();
 
-        //Filter out main rendering if flag is false
+        //Filter out main rendering if flag is set to false
         if (!shouldShowMainObjects) {
             opAdd.getBiParameters().setSecondTextureFactor(new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
         } else {

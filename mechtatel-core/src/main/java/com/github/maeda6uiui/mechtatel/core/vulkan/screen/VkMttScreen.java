@@ -1095,4 +1095,24 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         long dummyImageView = gBufferNabor.getDummyImageView();
         this.updateTextureDescriptorSets(allocationIndex, dummyImageView);
     }
+
+    public List<Long> getTextureDescriptorSets() {
+        int numDescriptorSets = gBufferNabor.getNumDescriptorSets(0);
+        var descriptorSets = new ArrayList<Long>();
+        for (int i = 0; i < numDescriptorSets; i++) {
+            descriptorSets.add(gBufferNabor.getDescriptorSet(0, i));
+        }
+
+        int setCount = gBufferNabor.getSetCount(0);
+
+        var textureDescriptorSets = new ArrayList<Long>();
+        for (int i = 0; i < descriptorSets.size(); i++) {
+            //Get set 1
+            if (i % setCount == 1) {
+                textureDescriptorSets.add(descriptorSets.get(i));
+            }
+        }
+
+        return textureDescriptorSets;
+    }
 }

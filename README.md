@@ -72,8 +72,12 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ### 2024-03-24
 
-ImGuiのウィンドウがモデルの後ろ側に行ってしまう問題は解決できなかったので、キー入力でメインのレンダリング結果の表示・非表示を変更できるようにしました。
+~~ImGuiのウィンドウがモデルの後ろ側に行ってしまう問題は解決できなかったので、~~ キー入力でメインのレンダリング結果の表示・非表示を変更できるようにしました。
 [テストコード](./mechtatel-core/src/test/java/com/github/maeda6uiui/mechtatel/ModelViewerTest.java)
+→ImGuiのスタイルをLightに変更したら半透明な感じで表示されるようになりました。
+Darkだと黒(0)ベースなので、加算して最終的な描画結果を作成するときにメインの描画に負けてしまう感じですね。(たぶん)
+
+![ImGuiのウィンドウと3Dモデル](./Image/imgui_5.png)
 
 モデル描画のために別のスクリーンを用意して、その描画結果を`ImGui.image`で表示させようと思いましたが、この方法だとうまくいきませんでした。
 ImGuiのImageにはVkDescriptorSetを渡すらしいのですが、ImGui Javaの現在の実装だとint型しか受け付けない仕様になっていて、long型を使うVkDescriptorSetを渡すことができませんでした。

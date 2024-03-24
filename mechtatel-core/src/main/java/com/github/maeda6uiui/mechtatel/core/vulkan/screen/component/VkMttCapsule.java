@@ -89,7 +89,7 @@ public class VkMttCapsule extends VkMttComponent {
 
     @Override
     public void draw(VkCommandBuffer commandBuffer, long pipelineLayout) {
-        if (!this.isVisible()) {
+        if (!this.isValid() || !this.isVisible()) {
             return;
         }
 

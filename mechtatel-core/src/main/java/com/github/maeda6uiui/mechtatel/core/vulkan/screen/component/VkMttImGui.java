@@ -197,7 +197,7 @@ public class VkMttImGui extends VkMttComponent {
 
     @Override
     public void draw(VkCommandBuffer commandBuffer, long pipelineLayout) {
-        if (!this.isVisible() || texture == null || drawData == null) {
+        if (!this.isValid() || !this.isVisible() || texture == null || drawData == null) {
             return;
         }
 
@@ -221,7 +221,7 @@ public class VkMttImGui extends VkMttComponent {
 
     @Override
     public void transfer(VkCommandBuffer commandBuffer) {
-        if (!this.isVisible() || drawData == null) {
+        if (!this.isValid() || !this.isVisible() || drawData == null) {
             return;
         }
 

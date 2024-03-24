@@ -123,6 +123,7 @@ public class ModelViewerTest extends Mechtatel {
         ImGuiIO io = ImGui.getIO();
         io.addConfigFlags(ImGuiConfigFlags.DockingEnable);
 
+        //Set style
         ImGui.styleColorsLight();
 
         //Declare variables for ImGui inputs

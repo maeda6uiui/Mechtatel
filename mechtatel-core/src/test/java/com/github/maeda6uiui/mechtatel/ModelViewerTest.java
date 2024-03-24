@@ -5,9 +5,14 @@ import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
+import com.github.maeda6uiui.mechtatel.core.operation.BiTextureOperation;
+import com.github.maeda6uiui.mechtatel.core.operation.BiTextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttImGui;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttTexturedQuad2D;
+import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.extension.imguifiledialog.ImGuiFileDialog;
@@ -15,7 +20,9 @@ import imgui.extension.imguifiledialog.flag.ImGuiFileDialogFlags;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +30,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class ModelViewerTest extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(ModelViewerTest.class);
@@ -41,6 +51,13 @@ public class ModelViewerTest extends Mechtatel {
                 );
     }
 
+    private MttScreen imguiScreen;
+    private MttScreen mainScreen;
+    private MttScreen finalScreen;
+    private BiTextureOperation opAdd;
+    private MttTexturedQuad2D texturedQuad;
+    private boolean shouldShowMainObjects;
+
     private MttImGui imgui;
     private float[] bufScaleX;
     private float[] bufScaleY;
@@ -57,9 +74,32 @@ public class ModelViewerTest extends Mechtatel {
 
     @Override
     public void onInit(MttWindow initialWindow) {
+        //Create screens
+        imguiScreen = initialWindow.createScreen(new MttScreen.MttScreenCreateInfo());
+        mainScreen = initialWindow.createScreen(new MttScreen.MttScreenCreateInfo());
+        finalScreen = initialWindow.createScreen(new MttScreen.MttScreenCreateInfo());
+
+        try {
+            //Create a textured quad to render to final screen
+            //Texture specified here will be replaced later
+            texturedQuad = finalScreen.createTexturedQuad2D(
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Texture/checker.png")),
+                    new Vector2f(-1.0f, -1.0f),
+                    new Vector2f(1.0f, 1.0f),
+                    0.0f
+            );
+        } catch (IOException | URISyntaxException e) {
+            logger.error("Error", e);
+            initialWindow.close();
+
+            return;
+        }
+
+        //Set flag to represent whether to show main objects
+        shouldShowMainObjects = true;
+
         //Create ImGui instance for Mechtatel
-        MttScreen defaultScreen = initialWindow.getDefaultScreen();
-        imgui = defaultScreen.createImGui();
+        imgui = imguiScreen.createImGui();
 
         //Add flags to ImGui IO
         imgui.makeCurrent();
@@ -74,10 +114,20 @@ public class ModelViewerTest extends Mechtatel {
         modelFilepathToLoad = "";
 
         //Draw axes
-        defaultScreen.createLineSet().addPositiveAxes(10.0f).createBuffer();
+        mainScreen.createLineSet().addPositiveAxes(10.0f).createBuffer();
 
         //Create camera
-        camera = new FreeCamera(defaultScreen.getCamera());
+        camera = new FreeCamera(mainScreen.getCamera());
+
+        //Create texture operations
+        this.createTextureOperations();
+    }
+
+    @Override
+    public void onRecreate(MttWindow window, int width, int height) {
+        //Texture operations must be recreated on resource recreation accompanied by window resize,
+        //as some resources such as underlying textures of a screen are destroyed and no longer valid.
+        this.createTextureOperations();
     }
 
     @Override
@@ -85,8 +135,6 @@ public class ModelViewerTest extends Mechtatel {
         //Declare ImGui components
         imgui.declare(() -> {
             boolean shouldOpenRescaleDialog = false;
-
-            ImGui.dockSpaceOverViewport(ImGui.getMainViewport());
 
             //Main menu bar =====
             if (ImGui.beginMainMenuBar()) {
@@ -161,7 +209,6 @@ public class ModelViewerTest extends Mechtatel {
         });
 
         //Load model
-        MttScreen defaultScreen = window.getDefaultScreen();
         if (!modelFilepathToLoad.isEmpty() && Files.exists(Paths.get(modelFilepathToLoad))) {
             if (model != null) {
                 model.cleanup();
@@ -169,7 +216,7 @@ public class ModelViewerTest extends Mechtatel {
 
             try {
                 var modelURL = Paths.get(modelFilepathToLoad).toUri().toURL();
-                model = defaultScreen.createModel(modelURL);
+                model = mainScreen.createModel(modelURL);
             } catch (IOException | URISyntaxException e) {
                 logger.error("Error", e);
                 window.close();
@@ -194,10 +241,51 @@ public class ModelViewerTest extends Mechtatel {
                 window.getKeyboardPressingCount(KeyCode.RIGHT)
         );
 
-        //Run rendering
-        defaultScreen.draw();
+        //Update flag to show main objects
+        if (window.getKeyboardPressingCount(KeyCode.F1) == 1) {
+            shouldShowMainObjects = !shouldShowMainObjects;
+        }
 
-        //Present to the window
-        window.present(defaultScreen);
+        //Rendering
+        imguiScreen.draw();
+        mainScreen.draw();
+
+        //Filter out main rendering if flag is false
+        if (!shouldShowMainObjects) {
+            opAdd.getBiParameters().setSecondTextureFactor(new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
+        } else {
+            opAdd.getBiParameters().setSecondTextureFactor(new Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+        }
+
+        //Add rendering results
+        opAdd.run();
+
+        //Render to the final screen and present it
+        finalScreen.draw();
+        window.present(finalScreen);
+    }
+
+    private void createTextureOperations() {
+        //Clean up texture operations if there is any
+        if (opAdd != null) {
+            opAdd.cleanup();
+        }
+
+        //Add rendering results of ImGui and main screens
+        MttTexture imguiColorTexture = imguiScreen.texturize(ScreenImageType.COLOR, finalScreen);
+        MttTexture mainColorTexture = mainScreen.texturize(ScreenImageType.COLOR, finalScreen);
+
+        opAdd = finalScreen.createBiTextureOperation(
+                Arrays.asList(imguiColorTexture, mainColorTexture),
+                new ArrayList<>(),
+                true
+        );
+
+        var texOpAddParams = new BiTextureOperationParameters();
+        texOpAddParams.setOperationType(BiTextureOperationParameters.OperationType.ADD);
+        opAdd.setBiParameters(texOpAddParams);
+
+        //Set result texture of add operation as final output
+        texturedQuad.replaceTexture(opAdd.getResultTexture());
     }
 }

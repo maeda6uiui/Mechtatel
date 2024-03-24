@@ -93,7 +93,7 @@ public class ModelViewerTest extends Mechtatel {
                 if (ImGui.beginMenu("File")) {
                     if (ImGui.menuItem("Open...")) {
                         ImGuiFileDialog.openModal(
-                                "browse-key", "Open", ".bd1,.obj", ".",
+                                "OpenFile", "Open", ".bd1,.obj", ".",
                                 null,
                                 10.0f, 1, 0,
                                 ImGuiFileDialogFlags.DisableCreateDirectoryButton
@@ -125,7 +125,7 @@ public class ModelViewerTest extends Mechtatel {
 
             //Popups =====
             if (ImGuiFileDialog.display(
-                    "browse-key",
+                    "OpenFile",
                     ImGuiWindowFlags.NoCollapse,
                     700.0f, 400.0f,
                     Float.MAX_VALUE, Float.MAX_VALUE)) {

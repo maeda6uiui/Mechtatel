@@ -2,6 +2,8 @@ package com.github.maeda6uiui.mechtatel.core.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
+import com.github.maeda6uiui.mechtatel.core.util.model.AssimpModelLoader;
+import com.github.maeda6uiui.mechtatel.core.util.model.JXMModelLoader;
 import com.github.maeda6uiui.mechtatel.core.util.model.MttModelData;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttModel;
@@ -32,13 +34,24 @@ public class MttModel extends MttComponent {
 
         this.modelResource = modelResource;
 
+        //Load model data
+        String modelFilepath = modelResource.getPath();
+
+        MttModelData modelData;
+        if (modelFilepath.endsWith(".bd1") || modelFilepath.endsWith(".BD1")) {
+            modelData = JXMModelLoader.load(modelResource);
+        } else {
+            modelData = AssimpModelLoader.load(modelResource);
+        }
+
+        //Create Vulkan component
         var dq = vulkanImpl.getDeviceAndQueues();
         vkModel = new VkMttModel(
                 this, dq.device(),
                 vulkanImpl.getCommandPool(),
                 dq.graphicsQueue(),
                 screen.getVulkanScreen(),
-                modelResource
+                modelData
         );
         this.associateVulkanComponents(vkModel);
     }
@@ -70,7 +83,7 @@ public class MttModel extends MttComponent {
     }
 
     public MttModelData getModel() {
-        return vkModel.getModel();
+        return vkModel.getModelData();
     }
 
     public Set<Integer> getTextureIndices() {

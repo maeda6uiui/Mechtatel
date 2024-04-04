@@ -1,7 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
-import com.github.maeda6uiui.mechtatel.core.util.model.ModelLoader;
 import com.github.maeda6uiui.mechtatel.core.util.model.MttMaterial;
 import com.github.maeda6uiui.mechtatel.core.util.model.MttModelData;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
@@ -12,8 +11,6 @@ import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkQueue;
 
-import java.io.IOException;
-import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.*;
@@ -30,7 +27,7 @@ public class VkMttModel extends VkMttComponent {
 
     private boolean isDuplicatedModel;
 
-    private MttModelData model;
+    private MttModelData modelData;
 
     private Map<Integer, VkMttTexture> textures;
     private Map<Integer, Boolean> externalTextureFlags;
@@ -41,15 +38,15 @@ public class VkMttModel extends VkMttComponent {
 
     private List<Integer> drawMeshIndices;
 
-    public MttModelData getModel() {
-        return model;
+    public MttModelData getModelData() {
+        return modelData;
     }
 
     private void loadTextures(
             long commandPool,
             VkQueue graphicsQueue,
             VkMttScreen screen) {
-        Map<Integer, MttMaterial> materials = model.materials;
+        Map<Integer, MttMaterial> materials = modelData.materials;
 
         textures = new HashMap<>();
         externalTextureFlags = new HashMap<>();
@@ -73,7 +70,7 @@ public class VkMttModel extends VkMttComponent {
     private void createBuffers(
             long commandPool,
             VkQueue graphicsQueue) {
-        int numMeshes = model.meshes.size();
+        int numMeshes = modelData.meshes.size();
 
         //Create buffers
         vertexBuffers = new HashMap<>();
@@ -83,12 +80,12 @@ public class VkMttModel extends VkMttComponent {
         for (int i = 0; i < numMeshes; i++) {
             //Create a vertex buffer and a vertex buffer memory
             BufferUtils.BufferInfo bufferInfo = BufferUtils.createVerticesUVBufferFromHeapMemory(
-                    device, commandPool, graphicsQueue, model.meshes.get(i).vertices);
+                    device, commandPool, graphicsQueue, modelData.meshes.get(i).vertices);
             vertexBuffers.put(i, bufferInfo.buffer);
             vertexBufferMemories.put(i, bufferInfo.bufferMemory);
 
             //Create an index buffer and an index buffer memory
-            bufferInfo = BufferUtils.createIndexBufferFromHeapMemory(device, commandPool, graphicsQueue, model.meshes.get(i).indices);
+            bufferInfo = BufferUtils.createIndexBufferFromHeapMemory(device, commandPool, graphicsQueue, modelData.meshes.get(i).indices);
             indexBuffers.put(i, bufferInfo.buffer);
             indexBufferMemories.put(i, bufferInfo.bufferMemory);
         }
@@ -100,19 +97,19 @@ public class VkMttModel extends VkMttComponent {
             long commandPool,
             VkQueue graphicsQueue,
             VkMttScreen screen,
-            URI modelResource) throws IOException {
+            MttModelData modelData) {
         super(mttComponent, screen, "gbuffer");
 
         this.device = device;
 
         isDuplicatedModel = false;
 
-        model = ModelLoader.loadModel(modelResource);
+        this.modelData = modelData;
         this.loadTextures(commandPool, graphicsQueue, screen);
         this.createBuffers(commandPool, graphicsQueue);
 
         drawMeshIndices = new ArrayList<>();
-        for (int i = 0; i < model.meshes.size(); i++) {
+        for (int i = 0; i < modelData.meshes.size(); i++) {
             drawMeshIndices.add(i);
         }
     }
@@ -129,11 +126,11 @@ public class VkMttModel extends VkMttComponent {
 
         isDuplicatedModel = true;
 
-        model = srcModel.model;
+        modelData = srcModel.modelData;
         this.createBuffers(commandPool, graphicsQueue);
 
         drawMeshIndices = new ArrayList<>();
-        for (int i = 0; i < model.meshes.size(); i++) {
+        for (int i = 0; i < modelData.meshes.size(); i++) {
             drawMeshIndices.add(i);
         }
 
@@ -174,7 +171,7 @@ public class VkMttModel extends VkMttComponent {
     }
 
     public int getNumMeshes() {
-        return model.meshes.size();
+        return modelData.meshes.size();
     }
 
     public void setDrawMeshIndices(List<Integer> drawMeshIndices) {
@@ -188,13 +185,13 @@ public class VkMttModel extends VkMttComponent {
         }
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            int numMeshes = model.meshes.size();
+            int numMeshes = modelData.meshes.size();
             for (int i = 0; i < numMeshes; i++) {
                 if (!drawMeshIndices.contains(i)) {
                     continue;
                 }
 
-                VkMttTexture texture = textures.get(model.meshes.get(i).materialIndex);
+                VkMttTexture texture = textures.get(modelData.meshes.get(i).materialIndex);
                 if (texture == null) {
                     continue;
                 }
@@ -218,7 +215,7 @@ public class VkMttModel extends VkMttComponent {
 
                 vkCmdDrawIndexed(
                         commandBuffer,
-                        model.meshes.get(i).indices.size(),
+                        modelData.meshes.get(i).indices.size(),
                         1,
                         0,
                         0,
@@ -234,7 +231,7 @@ public class VkMttModel extends VkMttComponent {
         }
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            int numMeshes = model.meshes.size();
+            int numMeshes = modelData.meshes.size();
             for (int i = 0; i < numMeshes; i++) {
                 if (!drawMeshIndices.contains(i)) {
                     continue;
@@ -248,7 +245,7 @@ public class VkMttModel extends VkMttComponent {
 
                 vkCmdDrawIndexed(
                         commandBuffer,
-                        model.meshes.get(i).indices.size(),
+                        modelData.meshes.get(i).indices.size(),
                         1,
                         0,
                         0,

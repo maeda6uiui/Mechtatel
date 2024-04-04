@@ -31,7 +31,7 @@ import static org.lwjgl.assimp.Assimp.*;
 public class ModelLoader {
 
     private static void processMaterial(
-            AIMaterial aiMaterial, Material material, String modelDirname) throws IOException {
+            AIMaterial aiMaterial, MttMaterial material, String modelDirname) throws IOException {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             //Get the filepath of the diffuse texture
             AIString aiDiffuseTexFilename = AIString.calloc(stack);
@@ -115,7 +115,7 @@ public class ModelLoader {
         }
     }
 
-    private static void processMesh(AIMesh aiMesh, Mesh mesh) {
+    private static void processMesh(AIMesh aiMesh, MttMesh mesh) {
         var positions = new ArrayList<Vector3fc>();
         var texCoords = new ArrayList<Vector2fc>();
         var normals = new ArrayList<Vector3fc>();
@@ -139,7 +139,7 @@ public class ModelLoader {
         }
     }
 
-    private static Model loadModelWithJXM(URI modelResource) throws IOException {
+    private static MttModelData loadModelWithJXM(URI modelResource) throws IOException {
         var manipulator = new BD1Manipulator(new File(modelResource));
 
         //Rescale the model so that 1 coord represents 1 meter
@@ -154,7 +154,7 @@ public class ModelLoader {
 
         Path modelDir = Paths.get(modelResource).getParent();
 
-        var model = new Model(buffers.size(), buffers.size());
+        var model = new MttModelData(buffers.size(), buffers.size());
         for (int i = 0; i < buffers.size(); i++) {
             BD1Buffer buffer = buffers.get(i);
 
@@ -200,7 +200,7 @@ public class ModelLoader {
         return model;
     }
 
-    private static Model loadModelWithAssimp(URI modelResource) throws IOException {
+    private static MttModelData loadModelWithAssimp(URI modelResource) throws IOException {
         Path modelFile = Paths.get(modelResource);
         try (AIScene scene = aiImportFile(
                 modelFile.toString(),
@@ -217,7 +217,7 @@ public class ModelLoader {
             PointerBuffer pMaterials = scene.mMaterials();
             PointerBuffer pMeshes = scene.mMeshes();
 
-            var model = new Model(numMaterials, numMeshes);
+            var model = new MttModelData(numMaterials, numMeshes);
 
             //Process materials
             Path modelDir = modelFile.getParent();
@@ -236,7 +236,7 @@ public class ModelLoader {
         }
     }
 
-    public static Model loadModel(URI modelResource) throws IOException {
+    public static MttModelData loadModel(URI modelResource) throws IOException {
         String modelFilepath = modelResource.getPath();
         if (modelFilepath.endsWith(".bd1") || modelFilepath.endsWith(".BD1")) {
             return loadModelWithJXM(modelResource);

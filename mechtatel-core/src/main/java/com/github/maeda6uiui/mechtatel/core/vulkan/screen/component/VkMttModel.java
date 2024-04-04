@@ -1,9 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
-import com.github.maeda6uiui.mechtatel.core.util.model.Material;
-import com.github.maeda6uiui.mechtatel.core.util.model.Model;
 import com.github.maeda6uiui.mechtatel.core.util.model.ModelLoader;
+import com.github.maeda6uiui.mechtatel.core.util.model.MttMaterial;
+import com.github.maeda6uiui.mechtatel.core.util.model.MttModelData;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
@@ -30,7 +30,7 @@ public class VkMttModel extends VkMttComponent {
 
     private boolean isDuplicatedModel;
 
-    private Model model;
+    private MttModelData model;
 
     private Map<Integer, VkMttTexture> textures;
     private Map<Integer, Boolean> externalTextureFlags;
@@ -41,7 +41,7 @@ public class VkMttModel extends VkMttComponent {
 
     private List<Integer> drawMeshIndices;
 
-    public Model getModel() {
+    public MttModelData getModel() {
         return model;
     }
 
@@ -49,13 +49,13 @@ public class VkMttModel extends VkMttComponent {
             long commandPool,
             VkQueue graphicsQueue,
             VkMttScreen screen) {
-        Map<Integer, Material> materials = model.materials;
+        Map<Integer, MttMaterial> materials = model.materials;
 
         textures = new HashMap<>();
         externalTextureFlags = new HashMap<>();
         for (var materialEntry : materials.entrySet()) {
             int index = materialEntry.getKey();
-            Material material = materialEntry.getValue();
+            MttMaterial material = materialEntry.getValue();
 
             var texture = new VkMttTexture(
                     device,

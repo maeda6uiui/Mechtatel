@@ -4,23 +4,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Model
+ * Model data
  *
  * @author maeda6uiui
  */
-public class Model {
-    public final Map<Integer, Material> materials;
-    public final Map<Integer, Mesh> meshes;
+public class MttModelData {
+    public final Map<Integer, MttMaterial> materials;
+    public final Map<Integer, MttMesh> meshes;
 
-    public Model(int numMaterials, int numMeshes) {
+    public MttModelData(int numMaterials, int numMeshes) {
         materials = new HashMap<>();
         for (int i = 0; i < numMaterials; i++) {
-            materials.put(i, new Material());
+            materials.put(i, new MttMaterial());
         }
 
         meshes = new HashMap<>();
         for (int i = 0; i < numMeshes; i++) {
-            meshes.put(i, new Mesh());
+            meshes.put(i, new MttMesh());
         }
     }
 }

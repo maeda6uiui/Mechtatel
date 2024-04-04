@@ -10,14 +10,14 @@ import java.net.URI;
  *
  * @author maeda6uiui
  */
-public class Material {
+public class MttMaterial {
     public URI diffuseTexResource;
 
     public Vector4fc ambientColor;
     public Vector4fc diffuseColor;
     public Vector4fc specularColor;
 
-    public Material() {
+    public MttMaterial() {
         ambientColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
         diffuseColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
         specularColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);

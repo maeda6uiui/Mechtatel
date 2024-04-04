@@ -10,13 +10,13 @@ import java.util.List;
  *
  * @author maeda6uiui
  */
-public class Mesh {
+public class MttMesh {
     public int materialIndex;
 
     public final List<MttVertexUV> vertices;
     public final List<Integer> indices;
 
-    public Mesh() {
+    public MttMesh() {
         materialIndex = -1;
 
         vertices = new ArrayList<>();

@@ -4,7 +4,6 @@ import com.goxr3plus.streamplayer.stream.StreamPlayer;
 import com.goxr3plus.streamplayer.stream.StreamPlayerEvent;
 import com.goxr3plus.streamplayer.stream.StreamPlayerException;
 import com.goxr3plus.streamplayer.stream.StreamPlayerListener;
-import jakarta.validation.constraints.NotNull;
 
 import java.net.URL;
 import java.util.Map;
@@ -15,7 +14,7 @@ import java.util.Map;
  * @author maeda6uiui
  */
 public class MttSound2D extends StreamPlayer implements StreamPlayerListener {
-    public MttSound2D(@NotNull URL soundResource) throws StreamPlayerException {
+    public MttSound2D(URL soundResource) throws StreamPlayerException {
         addStreamPlayerListener(this);
         open(soundResource);
     }

@@ -1,7 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.nabor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -182,7 +181,7 @@ public class MttShaderSettings {
      * @param jsonFile Path of the setting file
      * @return Settings
      */
-    public static Optional<MttShaderSettings> load(@NotNull Path jsonFile) {
+    public static Optional<MttShaderSettings> load(Path jsonFile) {
         if (!Files.exists(jsonFile)) {
             logger.error("Setting file ({}) was not found", jsonFile);
             return Optional.empty();
@@ -205,7 +204,7 @@ public class MttShaderSettings {
      * @return Settings
      * @see #load(Path)
      */
-    public static Optional<MttShaderSettings> load(@NotNull URL jsonResource) {
+    public static Optional<MttShaderSettings> load(URL jsonResource) {
         URI jsonResourceURI;
         try {
             jsonResourceURI = jsonResource.toURI();
@@ -224,7 +223,7 @@ public class MttShaderSettings {
      * @return Settings
      * @see #load(String)
      */
-    public static Optional<MttShaderSettings> load(@NotNull String jsonFilepath) {
+    public static Optional<MttShaderSettings> load(String jsonFilepath) {
         return load(Paths.get(jsonFilepath));
     }
 

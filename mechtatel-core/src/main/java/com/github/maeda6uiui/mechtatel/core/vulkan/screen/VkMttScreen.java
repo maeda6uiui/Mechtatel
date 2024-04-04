@@ -24,7 +24,6 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.MergeScenesInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
-import jakarta.validation.constraints.NotNull;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
@@ -110,8 +109,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             VkExtent2D extent,
             boolean shouldChangeExtentOnRecreate,
             boolean useShadowMapping,
-            @NotNull Map<String, CustomizableNaborInfo> customizableNaborInfos,
-            @NotNull List<String> ppNaborNames) {
+            Map<String, CustomizableNaborInfo> customizableNaborInfos,
+            List<String> ppNaborNames) {
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;

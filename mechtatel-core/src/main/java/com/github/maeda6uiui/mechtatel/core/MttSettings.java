@@ -3,7 +3,6 @@ package com.github.maeda6uiui.mechtatel.core;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
-import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,7 +169,7 @@ public class MttSettings {
      * @param jsonFile Path of the setting file
      * @return Settings
      */
-    public static Optional<MttSettings> load(@NotNull Path jsonFile) {
+    public static Optional<MttSettings> load(Path jsonFile) {
         if (!Files.exists(jsonFile)) {
             logger.error("Setting file ({}) was not found", jsonFile);
             return Optional.empty();
@@ -193,7 +192,7 @@ public class MttSettings {
      * @return Settings
      * @see #load(Path)
      */
-    public static Optional<MttSettings> load(@NotNull URL jsonResource) {
+    public static Optional<MttSettings> load(URL jsonResource) {
         URI jsonResourceURI;
         try {
             jsonResourceURI = jsonResource.toURI();
@@ -212,7 +211,7 @@ public class MttSettings {
      * @return Settings
      * @see #load(Path)
      */
-    public static Optional<MttSettings> load(@NotNull String jsonFilepath) {
+    public static Optional<MttSettings> load(String jsonFilepath) {
         return load(Paths.get(jsonFilepath));
     }
 

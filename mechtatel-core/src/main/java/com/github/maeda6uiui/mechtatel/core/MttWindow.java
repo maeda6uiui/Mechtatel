@@ -12,7 +12,6 @@ import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.flag.ImGuiKey;
 import imgui.internal.ImGuiContext;
-import jakarta.validation.constraints.NotNull;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryUtil;
@@ -439,7 +438,7 @@ public class MttWindow {
         screens.add(defaultScreen);
     }
 
-    public MttSound createSound(@NotNull URL soundResource, boolean loop, boolean relative) throws URISyntaxException, IOException {
+    public MttSound createSound(URL soundResource, boolean loop, boolean relative) throws URISyntaxException, IOException {
         var sound = new MttSound(soundResource.toURI(), loop, relative);
         sounds3D.add(sound);
 

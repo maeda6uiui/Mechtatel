@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
-import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
+import com.github.maeda6uiui.mechtatel.core.util.model.Model;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttModel;
 
@@ -69,7 +69,7 @@ public class MttModel extends MttComponent {
         return modelResource;
     }
 
-    public ModelLoader.Model getModel() {
+    public Model getModel() {
         return vkModel.getModel();
     }
 

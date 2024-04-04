@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.util;
+package com.github.maeda6uiui.mechtatel.core.util.model;
 
 import com.github.dabasan.jxm.bd1.BD1Buffer;
 import com.github.dabasan.jxm.bd1.BD1Manipulator;
@@ -17,7 +17,9 @@ import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import static org.lwjgl.assimp.Assimp.*;
 
@@ -27,50 +29,6 @@ import static org.lwjgl.assimp.Assimp.*;
  * @author maeda6uiui
  */
 public class ModelLoader {
-    public static class Material {
-        public URI diffuseTexResource;
-
-        public Vector4fc ambientColor;
-        public Vector4fc diffuseColor;
-        public Vector4fc specularColor;
-
-        public Material() {
-            ambientColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
-            diffuseColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
-            specularColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
-        }
-    }
-
-    public static class Mesh {
-        public int materialIndex;
-
-        public final List<MttVertexUV> vertices;
-        public final List<Integer> indices;
-
-        public Mesh() {
-            materialIndex = -1;
-
-            vertices = new ArrayList<>();
-            indices = new ArrayList<>();
-        }
-    }
-
-    public static class Model {
-        public final Map<Integer, Material> materials;
-        public final Map<Integer, Mesh> meshes;
-
-        public Model(int numMaterials, int numMeshes) {
-            materials = new HashMap<>();
-            for (int i = 0; i < numMaterials; i++) {
-                materials.put(i, new Material());
-            }
-
-            meshes = new HashMap<>();
-            for (int i = 0; i < numMeshes; i++) {
-                meshes.put(i, new Mesh());
-            }
-        }
-    }
 
     private static void processMaterial(
             AIMaterial aiMaterial, Material material, String modelDirname) throws IOException {

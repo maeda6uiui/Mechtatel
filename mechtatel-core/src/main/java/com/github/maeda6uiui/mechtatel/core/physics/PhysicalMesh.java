@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.physics;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
-import com.github.maeda6uiui.mechtatel.core.util.ModelLoader;
+import com.github.maeda6uiui.mechtatel.core.util.model.Model;
 import com.jme3.bullet.collision.shapes.MeshCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.IndexedMesh;
 import com.jme3.bullet.objects.PhysicsRigidBody;
@@ -20,7 +20,7 @@ public class PhysicalMesh extends PhysicalObject {
     public PhysicalMesh(MttModel model, float mass) {
         var indexedMeshes = new ArrayList<IndexedMesh>();
 
-        ModelLoader.Model innerModel = model.getModel();
+        Model innerModel = model.getModel();
         for (var mesh : innerModel.meshes.values()) {
             int numPositions = mesh.vertices.size();
             var positions = new Vector3f[numPositions];

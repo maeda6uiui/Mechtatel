@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.util.model;
+package com.github.maeda6uiui.mechtatel.core.model;
 
 import java.util.HashMap;
 import java.util.Map;

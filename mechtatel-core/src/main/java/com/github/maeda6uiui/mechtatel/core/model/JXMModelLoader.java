@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.util.model;
+package com.github.maeda6uiui.mechtatel.core.model;
 
 import com.github.dabasan.jxm.bd1.BD1Buffer;
 import com.github.dabasan.jxm.bd1.BD1Manipulator;

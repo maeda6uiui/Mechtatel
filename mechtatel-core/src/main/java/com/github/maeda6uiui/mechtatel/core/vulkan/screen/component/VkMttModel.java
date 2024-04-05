@@ -1,8 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
+import com.github.maeda6uiui.mechtatel.core.model.MttMaterial;
+import com.github.maeda6uiui.mechtatel.core.model.MttModelData;
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
-import com.github.maeda6uiui.mechtatel.core.util.model.MttMaterial;
-import com.github.maeda6uiui.mechtatel.core.util.model.MttModelData;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;

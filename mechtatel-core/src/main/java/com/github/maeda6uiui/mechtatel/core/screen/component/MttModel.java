@@ -1,10 +1,10 @@
 package com.github.maeda6uiui.mechtatel.core.screen.component;
 
+import com.github.maeda6uiui.mechtatel.core.model.AssimpModelLoader;
+import com.github.maeda6uiui.mechtatel.core.model.JXMModelLoader;
+import com.github.maeda6uiui.mechtatel.core.model.MttModelData;
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
-import com.github.maeda6uiui.mechtatel.core.util.model.AssimpModelLoader;
-import com.github.maeda6uiui.mechtatel.core.util.model.JXMModelLoader;
-import com.github.maeda6uiui.mechtatel.core.util.model.MttModelData;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttModel;
 

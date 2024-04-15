@@ -1,7 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.model;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
-import com.github.maeda6uiui.mechtatel.core.util.ArrayUtils;
 import org.joml.*;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -198,10 +197,7 @@ public class AssimpModelLoader {
             }
         }
 
-        return new MttAnimMeshData(
-                ArrayUtils.listFloatToArray(weights),
-                ArrayUtils.listIntToArray(boneIds)
-        );
+        return new MttAnimMeshData(weights, boneIds);
     }
 
     public static MttModelData load(URI modelResource) throws IOException {

@@ -200,6 +200,21 @@ public class AssimpModelLoader {
         return new MttAnimMeshData(weights, boneIds);
     }
 
+    private static MttNode buildNodesTree(AINode aiNode, MttNode parentNode) {
+        String nodeName = aiNode.mName().dataString();
+        var node = new MttNode(nodeName, parentNode, toMatrix(aiNode.mTransformation()));
+
+        int numChildren = aiNode.mNumChildren();
+        PointerBuffer aiChildren = aiNode.mChildren();
+        for (int i = 0; i < numChildren; i++) {
+            AINode aiChildNode = AINode.create(aiChildren.get(i));
+            MttNode childNode = buildNodesTree(aiChildNode, node);
+            node.addChild(childNode);
+        }
+
+        return node;
+    }
+
     public static MttModelData load(URI modelResource) throws IOException {
         Path modelFile = Paths.get(modelResource);
         try (AIScene scene = aiImportFile(

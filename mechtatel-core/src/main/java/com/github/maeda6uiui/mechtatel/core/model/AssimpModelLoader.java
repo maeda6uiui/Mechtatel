@@ -27,8 +27,6 @@ import static org.lwjgl.assimp.Assimp.*;
  * @author maeda6uiui
  */
 public class AssimpModelLoader {
-    public static final int MESH_MAX_WEIGHTS = 4;
-
     private static void processMaterial(
             AIMaterial aiMaterial, MttMaterial material, String modelDirname) throws IOException {
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -188,7 +186,7 @@ public class AssimpModelLoader {
         for (int i = 0; i < numVertices; i++) {
             List<MttVertexWeight> vertexWeightList = weightSet.get(i);
             int size = vertexWeightList != null ? vertexWeightList.size() : 0;
-            for (int j = 0; j < MESH_MAX_WEIGHTS; j++) {
+            for (int j = 0; j < MttMesh.MAX_NUM_WEIGHTS; j++) {
                 if (j < size) {
                     MttVertexWeight vw = vertexWeightList.get(j);
                     weights.add(vw.weight());

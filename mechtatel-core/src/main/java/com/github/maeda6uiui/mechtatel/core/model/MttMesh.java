@@ -17,11 +17,15 @@ public class MttMesh {
 
     public final List<MttVertexUV> vertices;
     public final List<Integer> indices;
+    public final List<Integer> boneIndices;
+    public final List<Float> weights;
 
     public MttMesh() {
         materialIndex = -1;
 
         vertices = new ArrayList<>();
         indices = new ArrayList<>();
+        boneIndices = new ArrayList<>();
+        weights = new ArrayList<>();
     }
 }

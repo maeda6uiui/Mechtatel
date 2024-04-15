@@ -1,6 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.model;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
+import com.github.maeda6uiui.mechtatel.core.util.ArrayUtils;
 import org.joml.*;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -14,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,6 +27,7 @@ import static org.lwjgl.assimp.Assimp.*;
  * @author maeda6uiui
  */
 public class AssimpModelLoader {
+    public static final int MESH_MAX_WEIGHTS = 4;
 
     private static void processMaterial(
             AIMaterial aiMaterial, MttMaterial material, String modelDirname) throws IOException {
@@ -133,6 +136,74 @@ public class AssimpModelLoader {
                     normals.get(i));
             mesh.vertices.add(vertex);
         }
+    }
+
+    private static Matrix4f toMatrix(AIMatrix4x4 aiMatrix4x4) {
+        var result = new Matrix4f();
+        result.m00(aiMatrix4x4.a1());
+        result.m10(aiMatrix4x4.a2());
+        result.m20(aiMatrix4x4.a3());
+        result.m30(aiMatrix4x4.a4());
+        result.m01(aiMatrix4x4.b1());
+        result.m11(aiMatrix4x4.b2());
+        result.m21(aiMatrix4x4.b3());
+        result.m31(aiMatrix4x4.b4());
+        result.m02(aiMatrix4x4.c1());
+        result.m12(aiMatrix4x4.c2());
+        result.m22(aiMatrix4x4.c3());
+        result.m32(aiMatrix4x4.c4());
+        result.m03(aiMatrix4x4.d1());
+        result.m13(aiMatrix4x4.d2());
+        result.m23(aiMatrix4x4.d3());
+        result.m33(aiMatrix4x4.d4());
+
+        return result;
+    }
+
+    private static MttAnimMeshData processBones(AIMesh aiMesh, List<MttBone> boneList) {
+        var boneIds = new ArrayList<Integer>();
+        var weights = new ArrayList<Float>();
+        var weightSet = new HashMap<Integer, List<MttVertexWeight>>();
+
+        int numBones = aiMesh.mNumBones();
+        PointerBuffer aiBones = aiMesh.mBones();
+        for (int i = 0; i < numBones; i++) {
+            AIBone aiBone = AIBone.create(aiBones.get(i));
+            int id = boneList.size();
+            var bone = new MttBone(id, aiBone.mName().dataString(), toMatrix(aiBone.mOffsetMatrix()));
+            boneList.add(bone);
+
+            int numWeights = aiBone.mNumWeights();
+            AIVertexWeight.Buffer aiWeights = aiBone.mWeights();
+            for (int j = 0; j < numWeights; j++) {
+                AIVertexWeight aiWeight = aiWeights.get(j);
+                var vw = new MttVertexWeight(bone.boneId(), aiWeight.mVertexId(), aiWeight.mWeight());
+
+                List<MttVertexWeight> vertexWeightList = weightSet.computeIfAbsent(vw.vertexId(), v -> new ArrayList<>());
+                vertexWeightList.add(vw);
+            }
+        }
+
+        int numVertices = aiMesh.mNumVertices();
+        for (int i = 0; i < numVertices; i++) {
+            List<MttVertexWeight> vertexWeightList = weightSet.get(i);
+            int size = vertexWeightList != null ? vertexWeightList.size() : 0;
+            for (int j = 0; j < MESH_MAX_WEIGHTS; j++) {
+                if (j < size) {
+                    MttVertexWeight vw = vertexWeightList.get(j);
+                    weights.add(vw.weight());
+                    boneIds.add(vw.boneId());
+                } else {
+                    weights.add(0.0f);
+                    boneIds.add(0);
+                }
+            }
+        }
+
+        return new MttAnimMeshData(
+                ArrayUtils.listFloatToArray(weights),
+                ArrayUtils.listIntToArray(boneIds)
+        );
     }
 
     public static MttModelData load(URI modelResource) throws IOException {

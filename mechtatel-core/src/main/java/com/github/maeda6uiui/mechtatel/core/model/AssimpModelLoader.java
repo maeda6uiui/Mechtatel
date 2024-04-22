@@ -8,15 +8,13 @@ import org.lwjgl.system.MemoryStack;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.Math;
 import java.net.URI;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static org.lwjgl.assimp.Assimp.*;
 
@@ -26,6 +24,8 @@ import static org.lwjgl.assimp.Assimp.*;
  * @author maeda6uiui
  */
 public class AssimpModelLoader {
+    public static final int MAX_NUM_BONES = 150;
+
     private static void processMaterial(
             AIMaterial aiMaterial, MttMaterial material, String modelDirname) throws IOException {
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -111,30 +111,6 @@ public class AssimpModelLoader {
         }
     }
 
-    private static void processMesh(AIMesh aiMesh, MttMesh mesh) {
-        var positions = new ArrayList<Vector3fc>();
-        var texCoords = new ArrayList<Vector2fc>();
-        var normals = new ArrayList<Vector3fc>();
-
-        processPositions(aiMesh, positions);
-        processTexCoords(aiMesh, texCoords);
-        processNormals(aiMesh, normals);
-        processIndices(aiMesh, mesh.indices);
-
-        mesh.materialIndex = aiMesh.mMaterialIndex();
-
-        //Create vertices
-        int numVertices = positions.size();
-        for (int i = 0; i < numVertices; i++) {
-            var vertex = new MttVertexUV(
-                    positions.get(i),
-                    new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
-                    texCoords.get(i),
-                    normals.get(i));
-            mesh.vertices.add(vertex);
-        }
-    }
-
     private static Matrix4f toMatrix(AIMatrix4x4 aiMatrix4x4) {
         var result = new Matrix4f();
         result.m00(aiMatrix4x4.a1());
@@ -200,6 +176,34 @@ public class AssimpModelLoader {
         return new MttAnimMeshData(weights, boneIds);
     }
 
+    private static void processMesh(AIMesh aiMesh, MttMesh mesh, List<MttBone> boneList) {
+        var positions = new ArrayList<Vector3fc>();
+        var texCoords = new ArrayList<Vector2fc>();
+        var normals = new ArrayList<Vector3fc>();
+
+        processPositions(aiMesh, positions);
+        processTexCoords(aiMesh, texCoords);
+        processNormals(aiMesh, normals);
+        processIndices(aiMesh, mesh.indices);
+
+        mesh.materialIndex = aiMesh.mMaterialIndex();
+
+        MttAnimMeshData animMeshData = processBones(aiMesh, boneList);
+        mesh.boneIndices.addAll(animMeshData.boneIds());
+        mesh.weights.addAll(animMeshData.weights());
+
+        //Create vertices
+        int numVertices = positions.size();
+        for (int i = 0; i < numVertices; i++) {
+            var vertex = new MttVertexUV(
+                    positions.get(i),
+                    new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
+                    texCoords.get(i),
+                    normals.get(i));
+            mesh.vertices.add(vertex);
+        }
+    }
+
     private static MttNode buildNodesTree(AINode aiNode, MttNode parentNode) {
         String nodeName = aiNode.mName().dataString();
         var node = new MttNode(nodeName, parentNode, toMatrix(aiNode.mTransformation()));
@@ -215,39 +219,192 @@ public class AssimpModelLoader {
         return node;
     }
 
+    private static int calcAnimationMaxFrames(AIAnimation aiAnimation) {
+        int maxFrames = 0;
+        int numNodeAnims = aiAnimation.mNumChannels();
+        PointerBuffer aiChannels = aiAnimation.mChannels();
+        for (int i = 0; i < numNodeAnims; i++) {
+            AINodeAnim aiNodeAnim = AINodeAnim.create(aiChannels.get(i));
+            int numFrames = Math.max(
+                    Math.max(
+                            aiNodeAnim.mNumPositionKeys(), aiNodeAnim.mNumScalingKeys()
+                    ),
+                    aiNodeAnim.mNumRotationKeys()
+            );
+            maxFrames = Math.max(maxFrames, numFrames);
+        }
+
+        return maxFrames;
+    }
+
+    private static AINodeAnim findAIAnimNode(AIAnimation aiAnimation, String nodeName) {
+        AINodeAnim result = null;
+
+        int numAnimNodes = aiAnimation.mNumChannels();
+        PointerBuffer aiChannels = aiAnimation.mChannels();
+        for (int i = 0; i < numAnimNodes; i++) {
+            AINodeAnim aiNodeAnim = AINodeAnim.create(aiChannels.get(i));
+            if (nodeName.equals(aiNodeAnim.mNodeName().dataString())) {
+                result = aiNodeAnim;
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    private static Matrix4f buildNodeTransformationMatrix(AINodeAnim aiNodeAnim, int frame) {
+        AIVectorKey.Buffer positionKeys = aiNodeAnim.mPositionKeys();
+        AIVectorKey.Buffer scalingKeys = aiNodeAnim.mScalingKeys();
+        AIQuatKey.Buffer rotationKeys = aiNodeAnim.mRotationKeys();
+
+        AIVectorKey aiVecKey;
+        AIQuatKey aiQuatKey;
+        AIVector3D vec;
+
+        var nodeTransform = new Matrix4f();
+        int numPositions = aiNodeAnim.mNumPositionKeys();
+        if (numPositions > 0) {
+            aiVecKey = positionKeys.get(Math.min(numPositions - 1, frame));
+            vec = aiVecKey.mValue();
+            nodeTransform.translate(vec.x(), vec.y(), vec.z());
+        }
+
+        int numRotations = aiNodeAnim.mNumRotationKeys();
+        if (numRotations > 0) {
+            aiQuatKey = rotationKeys.get(Math.min(numRotations - 1, frame));
+            AIQuaternion aiQuat = aiQuatKey.mValue();
+            var quat = new Quaternionf(aiQuat.x(), aiQuat.y(), aiQuat.z(), aiQuat.w());
+            nodeTransform.rotate(quat);
+        }
+
+        int numScalingKeys = aiNodeAnim.mNumScalingKeys();
+        if (numScalingKeys > 0) {
+            aiVecKey = scalingKeys.get(Math.min(numScalingKeys - 1, frame));
+            vec = aiVecKey.mValue();
+            nodeTransform.scale(vec.x(), vec.y(), vec.z());
+        }
+
+        return nodeTransform;
+    }
+
+    private static void buildFrameMatrices(
+            AIAnimation aiAnimation,
+            List<MttBone> boneList,
+            MttModelData.AnimatedFrame animatedFrame,
+            int frame,
+            MttNode node,
+            Matrix4f parentTransformation,
+            Matrix4f globalInverseTransform) {
+        String nodeName = node.getName();
+        AINodeAnim aiNodeAnim = findAIAnimNode(aiAnimation, nodeName);
+        Matrix4f nodeTransform = node.getNodeTransformation();
+        if (aiNodeAnim != null) {
+            nodeTransform = buildNodeTransformationMatrix(aiNodeAnim, frame);
+        }
+        var nodeGlobalTransform = new Matrix4f(parentTransformation).mul(nodeTransform);
+
+        List<MttBone> affectedBones = boneList.stream().filter(b -> b.boneName().equals(nodeName)).toList();
+        for (var bone : affectedBones) {
+            var boneTransform = new Matrix4f(globalInverseTransform).mul(nodeGlobalTransform).mul(bone.offsetMatrix());
+            animatedFrame.boneMatrices()[bone.boneId()] = boneTransform;
+        }
+
+        for (var childNode : node.getChildren()) {
+            buildFrameMatrices(
+                    aiAnimation,
+                    boneList,
+                    animatedFrame,
+                    frame,
+                    childNode,
+                    nodeGlobalTransform,
+                    globalInverseTransform
+            );
+        }
+    }
+
+    private static void processAnimations(
+            AIScene aiScene,
+            List<MttModelData.Animation> animationList,
+            List<MttBone> boneList,
+            MttNode rootNode,
+            Matrix4f globalInverseTransformation) {
+        int numAnimations = aiScene.mNumAnimations();
+        PointerBuffer aiAnimations = aiScene.mAnimations();
+        for (int i = 0; i < numAnimations; i++) {
+            AIAnimation aiAnimation = AIAnimation.create(aiAnimations.get(i));
+            int maxFrames = calcAnimationMaxFrames(aiAnimation);
+
+            var frames = new ArrayList<MttModelData.AnimatedFrame>();
+            var animation = new MttModelData.Animation(
+                    aiAnimation.mName().dataString(),
+                    aiAnimation.mDuration(),
+                    frames
+            );
+            animationList.add(animation);
+
+            for (int j = 0; j < maxFrames; j++) {
+                var boneMatrices = new Matrix4f[MAX_NUM_BONES];
+                Arrays.fill(boneMatrices, new Matrix4f().identity());
+                var animatedFrame = new MttModelData.AnimatedFrame(boneMatrices);
+                buildFrameMatrices(
+                        aiAnimation,
+                        boneList,
+                        animatedFrame,
+                        j,
+                        rootNode,
+                        rootNode.getNodeTransformation(),
+                        globalInverseTransformation
+                );
+                frames.add(animatedFrame);
+            }
+        }
+    }
+
     public static MttModelData load(URI modelResource) throws IOException {
         Path modelFile = Paths.get(modelResource);
-        try (AIScene scene = aiImportFile(
+        try (AIScene aiScene = aiImportFile(
                 modelFile.toString(),
-                aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs)) {
-            if (scene == null || scene.mRootNode() == null) {
+                aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs)
+        ) {
+            if (aiScene == null || aiScene.mRootNode() == null) {
                 String errorStr = String.format(
                         "Could not load a model %s\n%s", modelResource.getPath(), aiGetErrorString());
                 throw new IOException(errorStr);
             }
 
-            int numMaterials = scene.mNumMaterials();
-            int numMeshes = scene.mNumMeshes();
+            int numMaterials = aiScene.mNumMaterials();
+            int numMeshes = aiScene.mNumMeshes();
 
-            PointerBuffer pMaterials = scene.mMaterials();
-            PointerBuffer pMeshes = scene.mMeshes();
+            PointerBuffer pMaterials = aiScene.mMaterials();
+            PointerBuffer pMeshes = aiScene.mMeshes();
 
-            var model = new MttModelData(numMaterials, numMeshes);
+            var modelData = new MttModelData(numMaterials, numMeshes);
 
             //Process materials
             Path modelDir = modelFile.getParent();
             for (int i = 0; i < numMaterials; i++) {
                 AIMaterial aiMaterial = AIMaterial.create(pMaterials.get(i));
-                processMaterial(aiMaterial, model.materials.get(i), modelDir.toString());
+                processMaterial(aiMaterial, modelData.materials.get(i), modelDir.toString());
             }
 
             //Process meshes
+            var boneList = new ArrayList<MttBone>();
             for (int i = 0; i < numMeshes; i++) {
                 AIMesh aiMesh = AIMesh.create(pMeshes.get(i));
-                processMesh(aiMesh, model.meshes.get(i));
+                processMesh(aiMesh, modelData.meshes.get(i), boneList);
             }
 
-            return model;
+            //Process animations
+            int numAnimations = aiScene.mNumAnimations();
+            if (numAnimations > 0) {
+                MttNode rootNode = buildNodesTree(aiScene.mRootNode(), null);
+                Matrix4f globalInverseTransformation = toMatrix(aiScene.mRootNode().mTransformation()).invert();
+                processAnimations(
+                        aiScene, modelData.animationList, boneList, rootNode, globalInverseTransformation);
+            }
+
+            return modelData;
         }
     }
 }

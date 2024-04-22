@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.model;
 
 import org.joml.Matrix4f;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,7 @@ public class MttModelData {
 
     public final Map<Integer, MttMaterial> materials;
     public final Map<Integer, MttMesh> meshes;
-    public List<Animation> animationList;
+    public final List<Animation> animationList;
 
     public MttModelData(int numMaterials, int numMeshes) {
         materials = new HashMap<>();
@@ -32,5 +33,7 @@ public class MttModelData {
         for (int i = 0; i < numMeshes; i++) {
             meshes.put(i, new MttMesh());
         }
+
+        animationList = new ArrayList<>();
     }
 }

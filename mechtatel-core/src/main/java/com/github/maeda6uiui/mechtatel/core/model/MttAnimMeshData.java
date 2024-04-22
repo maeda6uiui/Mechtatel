@@ -7,5 +7,5 @@ import java.util.List;
  *
  * @author maeda6uiui
  */
-public record MttAnimMeshData(List<Float> weights, List<Integer> boneIds) {
+record MttAnimMeshData(List<Float> weights, List<Integer> boneIds) {
 }

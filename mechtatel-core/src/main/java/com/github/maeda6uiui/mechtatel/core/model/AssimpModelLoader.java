@@ -325,10 +325,10 @@ public class AssimpModelLoader {
 
     private static void processAnimations(
             AIScene aiScene,
-            List<MttModelData.Animation> animationList,
             List<MttBone> boneList,
             MttNode rootNode,
-            Matrix4f globalInverseTransformation) {
+            Matrix4f globalInverseTransformation,
+            List<MttModelData.Animation> animationList) {
         int numAnimations = aiScene.mNumAnimations();
         PointerBuffer aiAnimations = aiScene.mAnimations();
         for (int i = 0; i < numAnimations; i++) {
@@ -401,7 +401,12 @@ public class AssimpModelLoader {
                 MttNode rootNode = buildNodesTree(aiScene.mRootNode(), null);
                 Matrix4f globalInverseTransformation = toMatrix(aiScene.mRootNode().mTransformation()).invert();
                 processAnimations(
-                        aiScene, modelData.animationList, boneList, rootNode, globalInverseTransformation);
+                        aiScene,
+                        boneList,
+                        rootNode,
+                        globalInverseTransformation,
+                        modelData.animationList
+                );
             }
 
             return modelData;

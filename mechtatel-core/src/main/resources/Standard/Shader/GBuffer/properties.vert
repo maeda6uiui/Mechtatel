@@ -23,8 +23,8 @@ layout(location=0) in vec3 inPosition;
 layout(location=1) in vec4 inColor;
 layout(location=2) in vec2 inTexCoords;
 layout(location=3) in vec3 inNormal;
-layout(location=4) in vec4 boneWeights;
-layout(location=5) in ivec4 boneIndices;
+layout(location=4) in vec4 inBoneWeights;
+layout(location=5) in ivec4 inBoneIndices;
 
 layout(location=0) out vec3 fragPosition;
 layout(location=1) out vec3 fragNormal;
@@ -35,8 +35,8 @@ void process3DDrawing(){
 
     int count=0;
     for(int i=0;i<MAX_WEIGHTS;i++){
-        float weight=boneWeights[i];
-        int boneIndex=boneIndices[i];
+        float weight=inBoneWeights[i];
+        int boneIndex=inBoneIndices[i];
         
         if(boneIndex>=0){
             vec4 tmpPos=animation.boneMatrices[boneIndex]*vec4(inPosition,1.0);

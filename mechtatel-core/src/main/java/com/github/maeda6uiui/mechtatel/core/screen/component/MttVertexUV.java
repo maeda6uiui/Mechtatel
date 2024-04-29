@@ -10,11 +10,11 @@ import java.nio.ByteBuffer;
  * @author maeda6uiui
  */
 public class MttVertexUV {
-    public static final int SIZEOF = (3 + 4 + 2 + 3) * Float.BYTES;
     public static final int OFFSETOF_POS = 0;
-    public static final int OFFSETOF_COLOR = 3 * Float.BYTES;
-    public static final int OFFSETOF_TEXCOORDS = (3 + 4) * Float.BYTES;
-    public static final int OFFSETOF_NORMAL = (3 + 4 + 2) * Float.BYTES;
+    public static final int OFFSETOF_COLOR = OFFSETOF_POS + 3 * Float.BYTES;
+    public static final int OFFSETOF_TEXCOORDS = OFFSETOF_COLOR + 4 * Float.BYTES;
+    public static final int OFFSETOF_NORMAL = OFFSETOF_TEXCOORDS + 2 * Float.BYTES;
+    public static final int SIZEOF = OFFSETOF_NORMAL + 3 * Float.BYTES;
 
     public Vector3fc pos;
     public Vector4fc color;

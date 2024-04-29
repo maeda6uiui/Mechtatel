@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
@@ -94,7 +94,7 @@ public class VkMttTexturedQuadSingleTextureSet extends VkMttComponent {
         vertices.add(v4);
     }
 
-    public void add(MttVertex2DUV topLeft, MttVertex2DUV bottomRight, float z) {
+    public void add(MttVertex2D topLeft, MttVertex2D bottomRight, float z) {
         var v1 = new MttVertex(
                 new Vector3f(topLeft.pos.x(), topLeft.pos.y(), z), topLeft.color, topLeft.texCoords);
         var v2 = new MttVertex(

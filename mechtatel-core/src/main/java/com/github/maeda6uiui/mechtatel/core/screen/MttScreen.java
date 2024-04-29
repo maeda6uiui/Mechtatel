@@ -689,7 +689,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     public MttTexturedQuad2D createTexturedQuad2D(
             URL textureResource,
-            MttVertex2DUV v1, MttVertex2DUV v2, MttVertex2DUV v3, MttVertex2DUV v4, float z)
+            MttVertex2D v1, MttVertex2D v2, MttVertex2D v3, MttVertex2D v4, float z)
             throws URISyntaxException, FileNotFoundException {
         return new MttTexturedQuad2D(
                 vulkanImpl, this, textureResource.toURI(), v1, v2, v3, v4, z);
@@ -704,7 +704,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     public MttTexturedQuad2D createTexturedQuad2D(
             MttTexture texture,
-            MttVertex2DUV v1, MttVertex2DUV v2, MttVertex2DUV v3, MttVertex2DUV v4, float z) {
+            MttVertex2D v1, MttVertex2D v2, MttVertex2D v3, MttVertex2D v4, float z) {
         return new MttTexturedQuad2D(vulkanImpl, this, texture, v1, v2, v3, v4, z);
     }
 
@@ -716,7 +716,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     public MttTexturedQuad2D duplicateTexturedQuad2D(
             MttTexturedQuad2D srcQuad,
-            MttVertex2DUV v1, MttVertex2DUV v2, MttVertex2DUV v3, MttVertex2DUV v4, float z) {
+            MttVertex2D v1, MttVertex2D v2, MttVertex2D v3, MttVertex2D v4, float z) {
         return new MttTexturedQuad2D(vulkanImpl, this, srcQuad, v1, v2, v3, v4, z);
     }
 

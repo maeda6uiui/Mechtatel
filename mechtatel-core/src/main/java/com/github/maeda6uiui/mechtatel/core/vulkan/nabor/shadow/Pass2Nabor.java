@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass2InfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.ShadowInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
@@ -493,8 +493,8 @@ class Pass2Nabor extends Nabor {
             //Vertex stage
             VkPipelineVertexInputStateCreateInfo vertexInputInfo = VkPipelineVertexInputStateCreateInfo.calloc(stack);
             vertexInputInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO);
-            vertexInputInfo.pVertexBindingDescriptions(VkMttVertex2DUV.getBindingDescription());
-            vertexInputInfo.pVertexAttributeDescriptions(VkMttVertex2DUV.getAttributeDescriptions());
+            vertexInputInfo.pVertexBindingDescriptions(VkMttVertex2D.getBindingDescription());
+            vertexInputInfo.pVertexAttributeDescriptions(VkMttVertex2D.getAttributeDescriptions());
 
             //Assembly stage
             VkPipelineInputAssemblyStateCreateInfo inputAssembly = VkPipelineInputAssemblyStateCreateInfo.calloc(stack);

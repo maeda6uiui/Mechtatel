@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.MergeScenesInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
@@ -583,8 +583,8 @@ public class MergeScenesNabor extends Nabor {
             //Vertex stage
             VkPipelineVertexInputStateCreateInfo vertexInputInfo = VkPipelineVertexInputStateCreateInfo.calloc(stack);
             vertexInputInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO);
-            vertexInputInfo.pVertexBindingDescriptions(VkMttVertex2DUV.getBindingDescription());
-            vertexInputInfo.pVertexAttributeDescriptions(VkMttVertex2DUV.getAttributeDescriptions());
+            vertexInputInfo.pVertexBindingDescriptions(VkMttVertex2D.getBindingDescription());
+            vertexInputInfo.pVertexAttributeDescriptions(VkMttVertex2D.getAttributeDescriptions());
 
             //Assembly stage
             VkPipelineInputAssemblyStateCreateInfo inputAssembly = VkPipelineInputAssemblyStateCreateInfo.calloc(stack);

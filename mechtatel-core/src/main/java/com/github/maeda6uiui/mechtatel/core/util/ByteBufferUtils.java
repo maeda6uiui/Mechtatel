@@ -3,7 +3,6 @@ package com.github.maeda6uiui.mechtatel.core.util;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttPrimitiveVertex;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2D;
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2DUV;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
@@ -83,27 +82,8 @@ public class ByteBufferUtils {
      * @param stack    Stack
      * @return Byte buffer
      */
-    public static ByteBuffer vertices2DToByteBuffer(List<MttVertex2D> vertices, MemoryStack stack) {
+    public static ByteBuffer vertices2DUVToByteBuffer(List<MttVertex2D> vertices, MemoryStack stack) {
         int bufferSize = MttVertex2D.SIZEOF * vertices.size();
-        ByteBuffer buffer = malloc(bufferSize, stack);
-        vertices.forEach(v -> v.putToByteBuffer(buffer));
-        buffer.flip();
-
-        return buffer;
-    }
-
-    /**
-     * Converts a list of {@link MttVertex2DUV} to a byte buffer.
-     * Buffer is created from a stack memory if stack is provided by the argument.
-     * Otherwise, it is created from a heap memory allocated by {@code malloc()},
-     * and the memory must be freed afterward.
-     *
-     * @param vertices List of vertices
-     * @param stack    Stack
-     * @return Byte buffer
-     */
-    public static ByteBuffer vertices2DUVToByteBuffer(List<MttVertex2DUV> vertices, MemoryStack stack) {
-        int bufferSize = MttVertex2DUV.SIZEOF * vertices.size();
         ByteBuffer buffer = malloc(bufferSize, stack);
         vertices.forEach(v -> v.putToByteBuffer(buffer));
         buffer.flip();

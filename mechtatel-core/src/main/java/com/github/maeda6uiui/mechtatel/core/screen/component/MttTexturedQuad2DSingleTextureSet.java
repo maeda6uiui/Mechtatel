@@ -65,7 +65,7 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
     }
 
     public MttTexturedQuad2DSingleTextureSet add(
-            MttVertex2DUV v1, MttVertex2DUV v2, MttVertex2DUV v3, MttVertex2DUV v4, float z) {
+            MttVertex2D v1, MttVertex2D v2, MttVertex2D v3, MttVertex2D v4, float z) {
         var vv1 = new MttVertex(
                 new Vector3f(v1.pos.x(), v1.pos.y(), z),
                 new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), v1.texCoords);

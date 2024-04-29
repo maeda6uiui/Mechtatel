@@ -25,7 +25,7 @@ public class MttTexturedQuad2D extends MttComponent {
     private VkMttTexturedQuad vkTexturedQuad;
 
     private List<MttVertex> createVertices(
-            MttVertex2DUV v1, MttVertex2DUV v2, MttVertex2DUV v3, MttVertex2DUV v4, float z) {
+            MttVertex2D v1, MttVertex2D v2, MttVertex2D v3, MttVertex2D v4, float z) {
         var vv1 = new MttVertex(new Vector3f(v1.pos.x(), v1.pos.y(), z), v1.color, v1.texCoords);
         var vv2 = new MttVertex(new Vector3f(v2.pos.x(), v2.pos.y(), z), v2.color, v2.texCoords);
         var vv3 = new MttVertex(new Vector3f(v3.pos.x(), v3.pos.y(), z), v3.color, v3.texCoords);
@@ -35,19 +35,19 @@ public class MttTexturedQuad2D extends MttComponent {
     }
 
     private List<MttVertex> createVertices(Vector2fc topLeft, Vector2fc bottomRight, float z) {
-        var v1 = new MttVertex2DUV(
+        var v1 = new MttVertex2D(
                 topLeft,
                 new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
                 new Vector2f(0.0f, 0.0f));
-        var v2 = new MttVertex2DUV(
+        var v2 = new MttVertex2D(
                 new Vector2f(topLeft.x(), bottomRight.y()),
                 new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
                 new Vector2f(0.0f, 1.0f));
-        var v3 = new MttVertex2DUV(
+        var v3 = new MttVertex2D(
                 bottomRight,
                 new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
                 new Vector2f(1.0f, 1.0f));
-        var v4 = new MttVertex2DUV(
+        var v4 = new MttVertex2D(
                 new Vector2f(bottomRight.x(), topLeft.y()),
                 new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
                 new Vector2f(1.0f, 0.0f));
@@ -122,10 +122,10 @@ public class MttTexturedQuad2D extends MttComponent {
             MttVulkanImpl vulkanImpl,
             IMttScreenForMttComponent screen,
             URI textureResource,
-            MttVertex2DUV v1,
-            MttVertex2DUV v2,
-            MttVertex2DUV v3,
-            MttVertex2DUV v4,
+            MttVertex2D v1,
+            MttVertex2D v2,
+            MttVertex2D v3,
+            MttVertex2D v4,
             float z) throws FileNotFoundException {
         super(screen, generateCreateInfo());
 
@@ -150,10 +150,10 @@ public class MttTexturedQuad2D extends MttComponent {
             MttVulkanImpl vulkanImpl,
             IMttScreenForMttComponent screen,
             MttTexture texture,
-            MttVertex2DUV v1,
-            MttVertex2DUV v2,
-            MttVertex2DUV v3,
-            MttVertex2DUV v4,
+            MttVertex2D v1,
+            MttVertex2D v2,
+            MttVertex2D v3,
+            MttVertex2D v4,
             float z) {
         super(screen, generateCreateInfo());
 
@@ -178,10 +178,10 @@ public class MttTexturedQuad2D extends MttComponent {
             MttVulkanImpl vulkanImpl,
             IMttScreenForMttComponent screen,
             MttTexturedQuad2D srcQuad,
-            MttVertex2DUV v1,
-            MttVertex2DUV v2,
-            MttVertex2DUV v3,
-            MttVertex2DUV v4,
+            MttVertex2D v1,
+            MttVertex2D v2,
+            MttVertex2D v3,
+            MttVertex2D v4,
             float z) {
         super(screen, generateCreateInfo());
 

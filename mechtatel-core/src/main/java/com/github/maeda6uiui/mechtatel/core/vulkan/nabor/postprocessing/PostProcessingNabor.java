@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -406,8 +406,8 @@ public abstract class PostProcessingNabor extends Nabor {
             //Vertex stage
             VkPipelineVertexInputStateCreateInfo vertexInputInfo = VkPipelineVertexInputStateCreateInfo.calloc(stack);
             vertexInputInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO);
-            vertexInputInfo.pVertexBindingDescriptions(VkMttVertex2DUV.getBindingDescription());
-            vertexInputInfo.pVertexAttributeDescriptions(VkMttVertex2DUV.getAttributeDescriptions());
+            vertexInputInfo.pVertexBindingDescriptions(VkMttVertex2D.getBindingDescription());
+            vertexInputInfo.pVertexAttributeDescriptions(VkMttVertex2D.getAttributeDescriptions());
 
             //Assembly stage
             VkPipelineInputAssemblyStateCreateInfo inputAssembly = VkPipelineInputAssemblyStateCreateInfo.calloc(stack);

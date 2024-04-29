@@ -3,7 +3,6 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.util;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttPrimitiveVertex;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2D;
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.util.ByteBufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
@@ -176,46 +175,11 @@ public class BufferUtils {
         }
     }
 
-    public static BufferInfo createVertices2DBufferFromStackMemory(
-            VkDevice device,
-            long commandPool,
-            VkQueue graphicsQueue,
-            List<MttVertex2D> vertices) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            ByteBuffer dataBuffer = ByteBufferUtils.vertices2DToByteBuffer(vertices, stack);
-            return createBufferFromByteBuffer(
-                    device,
-                    commandPool,
-                    graphicsQueue,
-                    dataBuffer,
-                    VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
-            );
-        }
-    }
-
-    public static BufferInfo createVertices2DBufferFromHeapMemory(
-            VkDevice device,
-            long commandPool,
-            VkQueue graphicsQueue,
-            List<MttVertex2D> vertices) {
-        ByteBuffer dataBuffer = ByteBufferUtils.vertices2DToByteBuffer(vertices, null);
-        BufferInfo bufferInfo = createBufferFromByteBuffer(
-                device,
-                commandPool,
-                graphicsQueue,
-                dataBuffer,
-                VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
-        );
-        MemoryUtil.memFree(dataBuffer);
-
-        return bufferInfo;
-    }
-
     public static BufferInfo createVertices2DUVBufferFromStackMemory(
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<MttVertex2DUV> vertices) {
+            List<MttVertex2D> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             ByteBuffer dataBuffer = ByteBufferUtils.vertices2DUVToByteBuffer(vertices, stack);
             return createBufferFromByteBuffer(
@@ -232,7 +196,7 @@ public class BufferUtils {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<MttVertex2DUV> vertices) {
+            List<MttVertex2D> vertices) {
         ByteBuffer dataBuffer = ByteBufferUtils.vertices2DUVToByteBuffer(vertices, null);
         BufferInfo bufferInfo = createBufferFromByteBuffer(
                 device,

@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2DUV;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.text.Glyph;
 import com.github.maeda6uiui.mechtatel.core.text.TextUtil;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
@@ -138,11 +138,11 @@ public class VkMttFont extends VkMttComponent {
                 float vBottom = (glyph.y + glyph.height) / (float) imageHeight;
                 float scaledGlyphWidth = glyph.width * glyphWidthScale;
 
-                var topLeft = new MttVertex2DUV(
+                var topLeft = new MttVertex2D(
                         new Vector2f(drawX, drawY),
                         new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
                         new Vector2f(uLeft, vTop + vOffset));
-                var bottomRight = new MttVertex2DUV(
+                var bottomRight = new MttVertex2D(
                         new Vector2f(
                                 drawX + scaledGlyphWidth,
                                 drawY + scaledLineHeight),

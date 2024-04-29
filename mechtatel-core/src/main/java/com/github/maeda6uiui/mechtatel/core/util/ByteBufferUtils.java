@@ -82,7 +82,7 @@ public class ByteBufferUtils {
      * @param stack    Stack
      * @return Byte buffer
      */
-    public static ByteBuffer vertices2DUVToByteBuffer(List<MttVertex2D> vertices, MemoryStack stack) {
+    public static ByteBuffer vertices2DToByteBuffer(List<MttVertex2D> vertices, MemoryStack stack) {
         int bufferSize = MttVertex2D.SIZEOF * vertices.size();
         ByteBuffer buffer = malloc(bufferSize, stack);
         vertices.forEach(v -> v.putToByteBuffer(buffer));
@@ -101,7 +101,7 @@ public class ByteBufferUtils {
      * @param stack    Stack
      * @return Byte buffer
      */
-    public static ByteBuffer verticesToByteBuffer(List<MttPrimitiveVertex> vertices, MemoryStack stack) {
+    public static ByteBuffer primitiveVerticesToByteBuffer(List<MttPrimitiveVertex> vertices, MemoryStack stack) {
         int bufferSize = MttPrimitiveVertex.SIZEOF * vertices.size();
         ByteBuffer buffer = malloc(bufferSize, stack);
         vertices.forEach(v -> v.putToByteBuffer(buffer));
@@ -120,7 +120,7 @@ public class ByteBufferUtils {
      * @param stack    Stack
      * @return Byte buffer
      */
-    public static ByteBuffer verticesUVToByteBuffer(List<MttVertex> vertices, MemoryStack stack) {
+    public static ByteBuffer verticesToByteBuffer(List<MttVertex> vertices, MemoryStack stack) {
         int bufferSize = MttVertex.SIZEOF * vertices.size();
         ByteBuffer buffer = malloc(bufferSize, stack);
         vertices.forEach(v -> v.putToByteBuffer(buffer));

@@ -27,7 +27,7 @@ public class VkMttLine extends VkMttComponent {
     private long vertexBufferMemory;
 
     private void createBuffer(long commandPool, VkQueue graphicsQueue, List<MttPrimitiveVertex> vertices) {
-        BufferUtils.BufferInfo bufferInfo = BufferUtils.createVerticesBufferFromStackMemory(
+        BufferUtils.BufferInfo bufferInfo = BufferUtils.createPrimitiveVerticesBufferFromStackMemory(
                 device,
                 commandPool,
                 graphicsQueue,

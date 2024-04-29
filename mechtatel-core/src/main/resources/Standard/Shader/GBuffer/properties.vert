@@ -36,9 +36,9 @@ void process3DDrawing(){
     int count=0;
     for(int i=0;i<MAX_WEIGHTS;i++){
         float weight=boneWeights[i];
-        if(weight>0){
-            int boneIndex=boneIndices[i];
-
+        int boneIndex=boneIndices[i];
+        
+        if(boneIndex>=0){
             vec4 tmpPos=animation.boneMatrices[boneIndex]*vec4(inPosition,1.0);
             initPos+=weight*tmpPos;
 

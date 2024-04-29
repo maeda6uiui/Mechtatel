@@ -22,7 +22,7 @@ public class VkMttVertex {
     }
 
     public static VkVertexInputAttributeDescription.Buffer getAttributeDescriptions() {
-        VkVertexInputAttributeDescription.Buffer attributeDescriptions = VkVertexInputAttributeDescription.calloc(4);
+        VkVertexInputAttributeDescription.Buffer attributeDescriptions = VkVertexInputAttributeDescription.calloc(6);
 
         //Position
         VkVertexInputAttributeDescription posDescription = attributeDescriptions.get(0);
@@ -51,6 +51,20 @@ public class VkMttVertex {
         normalDescription.location(3);
         normalDescription.format(VK_FORMAT_R32G32B32_SFLOAT);
         normalDescription.offset(MttVertex.OFFSETOF_NORMAL);
+
+        //Bone weights
+        VkVertexInputAttributeDescription boneWeightsDescription = attributeDescriptions.get(4);
+        boneWeightsDescription.binding(0);
+        boneWeightsDescription.location(4);
+        boneWeightsDescription.format(VK_FORMAT_R32G32B32A32_SFLOAT);
+        boneWeightsDescription.offset(MttVertex.OFFSETOF_BONE_WEIGHTS);
+
+        //Bone indices
+        VkVertexInputAttributeDescription boneIndicesDescription = attributeDescriptions.get(5);
+        boneIndicesDescription.binding(0);
+        boneIndicesDescription.location(5);
+        boneIndicesDescription.format(VK_FORMAT_R32G32B32A32_SINT);
+        boneIndicesDescription.offset(MttVertex.OFFSETOF_BONE_INDICES);
 
         return attributeDescriptions;
     }

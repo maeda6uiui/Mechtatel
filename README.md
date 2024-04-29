@@ -52,11 +52,13 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ## Currently working on
 
-- Investigate the methods to play 3D model animations
+- Implement skeletal animation
 
 ## Todo
 
 ### Will certainly do
+
+- Implement Gaussian blur effect
 
 ### Probably...
 

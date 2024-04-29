@@ -27,10 +27,12 @@ layout(location=0) out vec4 outColor;
 void main(){
     vec4 albedo=texture(sampler2D(albedoTexture,textureSampler),fragTexCoords);
     vec3 position=texture(sampler2D(positionTexture,textureSampler),fragTexCoords).rgb;
+    float stencil=texture(sampler2D(stencilTexture,textureSampler),fragTexCoords).r;
 
     float linearPos=length(camera.eye-position);
     float fogFactor=clamp((fog.end-linearPos)/(fog.end-fog.start),0.0,1.0);
 
     vec4 fogColor=vec4(fog.color,1.0);
     outColor=mix(fogColor,albedo,fogFactor);
+    outColor=outColor*(1.0-stencil);
 }

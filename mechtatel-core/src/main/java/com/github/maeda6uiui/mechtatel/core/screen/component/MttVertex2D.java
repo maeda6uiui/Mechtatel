@@ -13,21 +13,20 @@ import java.nio.ByteBuffer;
  * @author maeda6uiui
  */
 public class MttVertex2D {
-    public static final int SIZEOF = (2 + 4) * Float.BYTES;
     public static final int OFFSETOF_POS = 0;
-    public static final int OFFSETOF_COLOR = 2 * Float.BYTES;
+    public static final int OFFSETOF_COLOR = OFFSETOF_POS + 2 * Float.BYTES;
+    public static final int SIZEOF = OFFSETOF_COLOR + 2 * Float.BYTES;
 
     public Vector2fc pos;
     public Vector4fc color;
 
     public void putToByteBuffer(ByteBuffer buffer) {
-        buffer.putFloat(pos.x());
-        buffer.putFloat(pos.y());
-
-        buffer.putFloat(color.x());
-        buffer.putFloat(color.y());
-        buffer.putFloat(color.z());
-        buffer.putFloat(color.w());
+        for (int i = 0; i < 2; i++) {
+            buffer.putFloat(pos.get(i));
+        }
+        for (int i = 0; i < 4; i++) {
+            buffer.putFloat(color.get(i));
+        }
     }
 
     public MttVertex2D(Vector2fc pos, Vector4fc color) {
@@ -36,7 +35,6 @@ public class MttVertex2D {
     }
 
     public MttVertex2D() {
-        pos = new Vector2f();
-        color = new Vector4f();
+        this(new Vector2f(), new Vector4f());
     }
 }

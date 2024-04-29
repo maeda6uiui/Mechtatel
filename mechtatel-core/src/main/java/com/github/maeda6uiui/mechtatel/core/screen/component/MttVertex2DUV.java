@@ -13,26 +13,25 @@ import java.nio.ByteBuffer;
  * @author maeda6uiui
  */
 public class MttVertex2DUV {
-    public static final int SIZEOF = (2 + 4 + 2) * Float.BYTES;
     public static final int OFFSETOF_POS = 0;
-    public static final int OFFSETOF_COLOR = 2 * Float.BYTES;
-    public static final int OFFSETOF_TEXCOORDS = (2 + 4) * Float.BYTES;
+    public static final int OFFSETOF_COLOR = OFFSETOF_POS + 2 * Float.BYTES;
+    public static final int OFFSETOF_TEXCOORDS = OFFSETOF_COLOR + 4 * Float.BYTES;
+    public static final int SIZEOF = OFFSETOF_TEXCOORDS + 2 * Float.BYTES;
 
     public Vector2fc pos;
     public Vector4fc color;
     public Vector2fc texCoords;
 
     public void putToByteBuffer(ByteBuffer buffer) {
-        buffer.putFloat(pos.x());
-        buffer.putFloat(pos.y());
-
-        buffer.putFloat(color.x());
-        buffer.putFloat(color.y());
-        buffer.putFloat(color.z());
-        buffer.putFloat(color.w());
-
-        buffer.putFloat(texCoords.x());
-        buffer.putFloat(texCoords.y());
+        for (int i = 0; i < 2; i++) {
+            buffer.putFloat(pos.get(i));
+        }
+        for (int i = 0; i < 4; i++) {
+            buffer.putFloat(color.get(i));
+        }
+        for (int i = 0; i < 2; i++) {
+            buffer.putFloat(texCoords.get(i));
+        }
     }
 
     public MttVertex2DUV(Vector2fc pos, Vector4fc color, Vector2fc texCoords) {
@@ -42,8 +41,6 @@ public class MttVertex2DUV {
     }
 
     public MttVertex2DUV() {
-        pos = new Vector2f();
-        color = new Vector4f();
-        texCoords = new Vector2f();
+        this(new Vector2f(), new Vector4f(), new Vector2f());
     }
 }

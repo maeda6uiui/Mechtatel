@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.model;
 
 import com.github.dabasan.jxm.bd1.BD1Buffer;
 import com.github.dabasan.jxm.bd1.BD1Manipulator;
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -77,7 +77,7 @@ public class JXMModelLoader {
                         uvBuffer.get(j * 2 + 1)
                 );
 
-                var vertex = new MttVertexUV(position, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), texCoords, normal);
+                var vertex = new MttVertex(position, new Vector4f(1.0f, 1.0f, 1.0f, 1.0f), texCoords, normal);
                 model.meshes.get(i).vertices.add(vertex);
             }
         }

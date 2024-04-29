@@ -32,10 +32,10 @@ public class MttTexturedQuad extends MttComponent {
             IMttScreenForMttComponent screen,
             URI textureResource,
             boolean generateMipmaps,
-            MttVertexUV v1,
-            MttVertexUV v2,
-            MttVertexUV v3,
-            MttVertexUV v4) throws FileNotFoundException {
+            MttVertex v1,
+            MttVertex v2,
+            MttVertex v3,
+            MttVertex v4) throws FileNotFoundException {
         super(screen, generateCreateInfo());
 
         if (!Files.exists(Paths.get(textureResource))) {
@@ -60,10 +60,10 @@ public class MttTexturedQuad extends MttComponent {
             MttVulkanImpl vulkanImpl,
             IMttScreenForMttComponent screen,
             MttTexturedQuad srcQuad,
-            MttVertexUV v1,
-            MttVertexUV v2,
-            MttVertexUV v3,
-            MttVertexUV v4) {
+            MttVertex v1,
+            MttVertex v2,
+            MttVertex v3,
+            MttVertex v4) {
         super(screen, generateCreateInfo());
 
         var dq = vulkanImpl.getDeviceAndQueues();
@@ -82,10 +82,10 @@ public class MttTexturedQuad extends MttComponent {
             MttVulkanImpl vulkanImpl,
             IMttScreenForMttComponent screen,
             MttTexture texture,
-            MttVertexUV v1,
-            MttVertexUV v2,
-            MttVertexUV v3,
-            MttVertexUV v4) {
+            MttVertex v1,
+            MttVertex v2,
+            MttVertex v3,
+            MttVertex v4) {
         super(screen, generateCreateInfo());
 
         var dq = vulkanImpl.getDeviceAndQueues();

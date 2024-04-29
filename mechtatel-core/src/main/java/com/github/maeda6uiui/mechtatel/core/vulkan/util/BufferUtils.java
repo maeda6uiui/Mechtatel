@@ -1,9 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.util;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttPrimitiveVertex;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2DUV;
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
 import com.github.maeda6uiui.mechtatel.core.util.ByteBufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
@@ -285,7 +285,7 @@ public class BufferUtils {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<MttVertexUV> vertices) {
+            List<MttVertex> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             ByteBuffer dataBuffer = ByteBufferUtils.verticesUVToByteBuffer(vertices, stack);
             return createBufferFromByteBuffer(
@@ -302,7 +302,7 @@ public class BufferUtils {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<MttVertexUV> vertices) {
+            List<MttVertex> vertices) {
         ByteBuffer dataBuffer = ByteBufferUtils.verticesUVToByteBuffer(vertices, null);
         BufferInfo bufferInfo = createBufferFromByteBuffer(
                 device,

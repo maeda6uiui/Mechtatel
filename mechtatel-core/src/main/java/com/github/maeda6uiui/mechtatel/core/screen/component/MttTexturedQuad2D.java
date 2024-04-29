@@ -24,17 +24,17 @@ import java.util.List;
 public class MttTexturedQuad2D extends MttComponent {
     private VkMttTexturedQuad vkTexturedQuad;
 
-    private List<MttVertexUV> createVertices(
+    private List<MttVertex> createVertices(
             MttVertex2DUV v1, MttVertex2DUV v2, MttVertex2DUV v3, MttVertex2DUV v4, float z) {
-        var vv1 = new MttVertexUV(new Vector3f(v1.pos.x(), v1.pos.y(), z), v1.color, v1.texCoords);
-        var vv2 = new MttVertexUV(new Vector3f(v2.pos.x(), v2.pos.y(), z), v2.color, v2.texCoords);
-        var vv3 = new MttVertexUV(new Vector3f(v3.pos.x(), v3.pos.y(), z), v3.color, v3.texCoords);
-        var vv4 = new MttVertexUV(new Vector3f(v4.pos.x(), v4.pos.y(), z), v4.color, v4.texCoords);
+        var vv1 = new MttVertex(new Vector3f(v1.pos.x(), v1.pos.y(), z), v1.color, v1.texCoords);
+        var vv2 = new MttVertex(new Vector3f(v2.pos.x(), v2.pos.y(), z), v2.color, v2.texCoords);
+        var vv3 = new MttVertex(new Vector3f(v3.pos.x(), v3.pos.y(), z), v3.color, v3.texCoords);
+        var vv4 = new MttVertex(new Vector3f(v4.pos.x(), v4.pos.y(), z), v4.color, v4.texCoords);
 
         return Arrays.asList(vv1, vv2, vv3, vv4);
     }
 
-    private List<MttVertexUV> createVertices(Vector2fc topLeft, Vector2fc bottomRight, float z) {
+    private List<MttVertex> createVertices(Vector2fc topLeft, Vector2fc bottomRight, float z) {
         var v1 = new MttVertex2DUV(
                 topLeft,
                 new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
@@ -59,7 +59,7 @@ public class MttTexturedQuad2D extends MttComponent {
             MttVulkanImpl vulkanImpl,
             IMttScreenForMttComponent screen,
             URI textureResource,
-            List<MttVertexUV> vertices) throws FileNotFoundException {
+            List<MttVertex> vertices) throws FileNotFoundException {
         if (!Files.exists(Paths.get(textureResource))) {
             throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
         }
@@ -81,7 +81,7 @@ public class MttTexturedQuad2D extends MttComponent {
     private void create(
             MttVulkanImpl vulkanImpl,
             MttTexture texture,
-            List<MttVertexUV> vertices) {
+            List<MttVertex> vertices) {
         var dq = vulkanImpl.getDeviceAndQueues();
         vkTexturedQuad = new VkMttTexturedQuad(
                 this,
@@ -97,7 +97,7 @@ public class MttTexturedQuad2D extends MttComponent {
     private void duplicate(
             MttVulkanImpl vulkanImpl,
             MttTexturedQuad2D srcQuad,
-            List<MttVertexUV> vertices) {
+            List<MttVertex> vertices) {
         var dq = vulkanImpl.getDeviceAndQueues();
         vkTexturedQuad = new VkMttTexturedQuad(
                 this,

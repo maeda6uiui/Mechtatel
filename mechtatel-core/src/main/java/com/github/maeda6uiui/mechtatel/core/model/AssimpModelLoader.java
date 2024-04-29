@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.model;
 
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
 import org.joml.*;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -195,7 +195,7 @@ public class AssimpModelLoader {
         //Create vertices
         int numVertices = positions.size();
         for (int i = 0; i < numVertices; i++) {
-            var vertex = new MttVertexUV(
+            var vertex = new MttVertex(
                     positions.get(i),
                     new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
                     texCoords.get(i),

@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertexUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass1InfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
@@ -252,8 +252,8 @@ class Pass1Nabor extends Nabor {
             //Vertex stage
             VkPipelineVertexInputStateCreateInfo vertexInputInfo = VkPipelineVertexInputStateCreateInfo.calloc(stack);
             vertexInputInfo.sType(VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO);
-            vertexInputInfo.pVertexBindingDescriptions(VkMttVertexUV.getBindingDescription());
-            vertexInputInfo.pVertexAttributeDescriptions(VkMttVertexUV.getAttributeDescriptions());
+            vertexInputInfo.pVertexBindingDescriptions(VkMttVertex.getBindingDescription());
+            vertexInputInfo.pVertexAttributeDescriptions(VkMttVertex.getAttributeDescriptions());
 
             //Assembly stage
             VkPipelineInputAssemblyStateCreateInfo inputAssembly = VkPipelineInputAssemblyStateCreateInfo.calloc(stack);

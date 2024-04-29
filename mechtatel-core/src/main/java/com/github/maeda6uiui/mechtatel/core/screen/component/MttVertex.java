@@ -5,11 +5,11 @@ import org.joml.*;
 import java.nio.ByteBuffer;
 
 /**
- * 3D vertex with UV
+ * 3D vertex
  *
  * @author maeda6uiui
  */
-public class MttVertexUV {
+public class MttVertex {
     public static final int OFFSETOF_POS = 0;
     public static final int OFFSETOF_COLOR = OFFSETOF_POS + 3 * Float.BYTES;
     public static final int OFFSETOF_TEXCOORDS = OFFSETOF_COLOR + 4 * Float.BYTES;
@@ -39,21 +39,21 @@ public class MttVertexUV {
         buffer.putFloat(normal.z());
     }
 
-    public MttVertexUV(Vector3fc pos, Vector4fc color, Vector2fc texCoords, Vector3fc normal) {
+    public MttVertex(Vector3fc pos, Vector4fc color, Vector2fc texCoords, Vector3fc normal) {
         this.pos = pos;
         this.color = color;
         this.texCoords = texCoords;
         this.normal = normal;
     }
 
-    public MttVertexUV(Vector3fc pos, Vector4fc color, Vector2fc texCoords) {
+    public MttVertex(Vector3fc pos, Vector4fc color, Vector2fc texCoords) {
         this.pos = pos;
         this.color = color;
         this.texCoords = texCoords;
         this.normal = new Vector3f(0.0f, 1.0f, 0.0f);
     }
 
-    public MttVertexUV() {
+    public MttVertex() {
         pos = new Vector3f();
         color = new Vector4f();
         texCoords = new Vector2f();

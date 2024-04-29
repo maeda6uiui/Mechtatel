@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
@@ -90,8 +90,8 @@ public class VkMttImGui extends VkMttComponent {
         this.drawData = drawData;
     }
 
-    private List<MttVertexUV> convertImGuiVtxBufferDataToVertices(ByteBuffer vtxBufferData, float z) {
-        var vertices = new ArrayList<MttVertexUV>();
+    private List<MttVertex> convertImGuiVtxBufferDataToVertices(ByteBuffer vtxBufferData, float z) {
+        var vertices = new ArrayList<MttVertex>();
         int numVertices = vtxBufferData.remaining() / ImDrawData.SIZEOF_IM_DRAW_VERT;
         for (int i = 0; i < numVertices; i++) {
             float posX = vtxBufferData.getFloat();
@@ -105,7 +105,7 @@ public class VkMttImGui extends VkMttComponent {
             int colB = (col >> 16) & 0xff;
             int colA = (col >> 24) & 0xff;
 
-            var vertex = new MttVertexUV(
+            var vertex = new MttVertex(
                     new Vector3f(posX, posY, z),
                     new Vector4f(colR / 255.0f, colG / 255.0f, colB / 255.0f, colA / 255.0f),
                     new Vector2f(texU, texV)
@@ -138,7 +138,7 @@ public class VkMttImGui extends VkMttComponent {
                 }
                 //Otherwise create new one
                 else {
-                    List<MttVertexUV> vertices = this.convertImGuiVtxBufferDataToVertices(
+                    List<MttVertex> vertices = this.convertImGuiVtxBufferDataToVertices(
                             drawData.getCmdListVtxBufferData(i), 0.0f
                     );
 

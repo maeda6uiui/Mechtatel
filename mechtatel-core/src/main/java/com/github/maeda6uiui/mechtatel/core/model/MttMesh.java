@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.model;
 
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ public class MttMesh {
 
     public int materialIndex;
 
-    public final List<MttVertexUV> vertices;
+    public final List<MttVertex> vertices;
     public final List<Integer> indices;
     public final List<Integer> boneIndices;
     public final List<Float> weights;

@@ -658,10 +658,10 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     public MttTexturedQuad createTexturedQuad(
             URL textureResource,
             boolean generateMipmaps,
-            MttVertexUV v1,
-            MttVertexUV v2,
-            MttVertexUV v3,
-            MttVertexUV v4) throws URISyntaxException, FileNotFoundException {
+            MttVertex v1,
+            MttVertex v2,
+            MttVertex v3,
+            MttVertex v4) throws URISyntaxException, FileNotFoundException {
         return new MttTexturedQuad(
                 vulkanImpl,
                 this,
@@ -673,7 +673,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     public MttTexturedQuad createTexturedQuad(
             MttTexture texture,
-            MttVertexUV v1, MttVertexUV v2, MttVertexUV v3, MttVertexUV v4) {
+            MttVertex v1, MttVertex v2, MttVertex v3, MttVertex v4) {
         return new MttTexturedQuad(
                 vulkanImpl, this, texture, v1, v2, v3, v4
         );
@@ -681,7 +681,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     public MttTexturedQuad duplicateTexturedQuad(
             MttTexturedQuad srcQuad,
-            MttVertexUV v1, MttVertexUV v2, MttVertexUV v3, MttVertexUV v4) {
+            MttVertex v1, MttVertex v2, MttVertex v3, MttVertex v4) {
         return new MttTexturedQuad(
                 vulkanImpl, this, srcQuad, v1, v2, v3, v4
         );

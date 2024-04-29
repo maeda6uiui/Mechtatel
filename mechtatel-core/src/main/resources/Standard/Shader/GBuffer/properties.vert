@@ -52,14 +52,12 @@ void process3DDrawing(){
     if(count==0){
         initPos=vec4(inPosition,1.0);
         initNormal=vec4(inNormal,0.0);
-    }else{
-        initPos.w=1.0;
     }
 
-    gl_Position=camera.proj*camera.view*pc.model*initPos;
+    gl_Position=camera.proj*camera.view*pc.model*vec4(initPos.xyz,1.0);
 
-    fragPosition=(pc.model*initPos).xyz;
-    fragNormal=initNormal;
+    fragPosition=(pc.model*vec4(initPos.xyz,1.0)).xyz;
+    fragNormal=initNormal.xyz;
 }
 
 void process2DDrawing(){

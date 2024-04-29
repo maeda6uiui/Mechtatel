@@ -608,7 +608,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         return new MttModel(vulkanImpl, this, srcModel);
     }
 
-    public MttLine createLine(MttVertex v1, MttVertex v2) {
+    public MttLine createLine(MttPrimitiveVertex v1, MttPrimitiveVertex v2) {
         return new MttLine(vulkanImpl, this, v1, v2);
     }
 
@@ -633,7 +633,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         return new MttLine2DSet(vulkanImpl, this);
     }
 
-    public MttQuad createQuad(MttVertex v1, MttVertex v2, MttVertex v3, MttVertex v4, boolean fill) {
+    public MttQuad createQuad(MttPrimitiveVertex v1, MttPrimitiveVertex v2, MttPrimitiveVertex v3, MttPrimitiveVertex v4, boolean fill) {
         return new MttQuad(vulkanImpl, this, v1, v2, v3, v4, fill);
     }
 

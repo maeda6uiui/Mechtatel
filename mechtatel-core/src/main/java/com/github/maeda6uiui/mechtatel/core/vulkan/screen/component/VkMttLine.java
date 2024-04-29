@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttPrimitiveVertex;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.lwjgl.system.MemoryStack;
@@ -26,7 +26,7 @@ public class VkMttLine extends VkMttComponent {
     private long vertexBuffer;
     private long vertexBufferMemory;
 
-    private void createBuffer(long commandPool, VkQueue graphicsQueue, List<MttVertex> vertices) {
+    private void createBuffer(long commandPool, VkQueue graphicsQueue, List<MttPrimitiveVertex> vertices) {
         BufferUtils.BufferInfo bufferInfo = BufferUtils.createVerticesBufferFromStackMemory(
                 device,
                 commandPool,
@@ -42,13 +42,13 @@ public class VkMttLine extends VkMttComponent {
             long commandPool,
             VkQueue graphicsQueue,
             VkMttScreen screen,
-            MttVertex v1,
-            MttVertex v2) {
+            MttPrimitiveVertex v1,
+            MttPrimitiveVertex v2) {
         super(mttComponent, screen, "primitive");
 
         this.device = device;
 
-        var vertices = new ArrayList<MttVertex>();
+        var vertices = new ArrayList<MttPrimitiveVertex>();
         vertices.add(v1);
         vertices.add(v2);
 

@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttPrimitiveVertex;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.joml.Vector3fc;
@@ -27,7 +27,7 @@ public class VkMttLineSet extends VkMttComponent {
     private long commandPool;
     private VkQueue graphicsQueue;
 
-    private List<MttVertex> vertices;
+    private List<MttPrimitiveVertex> vertices;
 
     private long vertexBuffer;
     private long vertexBufferMemory;
@@ -50,21 +50,21 @@ public class VkMttLineSet extends VkMttComponent {
         bufferCreated = false;
     }
 
-    public void add(MttVertex v1, MttVertex v2) {
+    public void add(MttPrimitiveVertex v1, MttPrimitiveVertex v2) {
         vertices.add(v1);
         vertices.add(v2);
     }
 
     public void add(Vector3fc p1, Vector4fc color1, Vector3fc p2, Vector4fc color2) {
-        var v1 = new MttVertex(p1, color1);
-        var v2 = new MttVertex(p2, color2);
+        var v1 = new MttPrimitiveVertex(p1, color1);
+        var v2 = new MttPrimitiveVertex(p2, color2);
         vertices.add(v1);
         vertices.add(v2);
     }
 
     public void add(Vector3fc p1, Vector3fc p2, Vector4fc color) {
-        var v1 = new MttVertex(p1, color);
-        var v2 = new MttVertex(p2, color);
+        var v1 = new MttPrimitiveVertex(p1, color);
+        var v2 = new MttPrimitiveVertex(p2, color);
         vertices.add(v1);
         vertices.add(v2);
     }

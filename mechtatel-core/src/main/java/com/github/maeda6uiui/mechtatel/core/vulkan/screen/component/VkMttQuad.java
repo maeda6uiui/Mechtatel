@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttPrimitiveVertex;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.lwjgl.system.MemoryStack;
@@ -33,7 +33,7 @@ public class VkMttQuad extends VkMttComponent {
     private void createBuffers(
             long commandPool,
             VkQueue graphicsQueue,
-            List<MttVertex> vertices,
+            List<MttPrimitiveVertex> vertices,
             boolean fill) {
         if (vertices.size() != 4) {
             throw new RuntimeException("Number of vertices must be 4");
@@ -75,7 +75,7 @@ public class VkMttQuad extends VkMttComponent {
             long commandPool,
             VkQueue graphicsQueue,
             VkMttScreen screen,
-            List<MttVertex> vertices,
+            List<MttPrimitiveVertex> vertices,
             boolean fill) {
         super(
                 mttComponent,

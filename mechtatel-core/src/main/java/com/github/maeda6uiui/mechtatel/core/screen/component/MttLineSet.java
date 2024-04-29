@@ -37,7 +37,7 @@ public class MttLineSet extends MttComponent {
         this.associateVulkanComponents(vkLineSet);
     }
 
-    public MttLineSet add(MttVertex v1, MttVertex v2) {
+    public MttLineSet add(MttPrimitiveVertex v1, MttPrimitiveVertex v2) {
         vkLineSet.add(v1, v2);
         return this;
     }

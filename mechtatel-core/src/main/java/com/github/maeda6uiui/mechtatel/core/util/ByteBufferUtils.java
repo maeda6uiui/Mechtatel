@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.util;
 
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttPrimitiveVertex;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
@@ -112,7 +112,7 @@ public class ByteBufferUtils {
     }
 
     /**
-     * Converts a list of {@link MttVertex} to a byte buffer.
+     * Converts a list of {@link MttPrimitiveVertex} to a byte buffer.
      * Buffer is created from a stack memory if stack is provided by the argument.
      * Otherwise, it is created from a heap memory allocated by {@code malloc()},
      * and the memory must be freed afterward.
@@ -121,8 +121,8 @@ public class ByteBufferUtils {
      * @param stack    Stack
      * @return Byte buffer
      */
-    public static ByteBuffer verticesToByteBuffer(List<MttVertex> vertices, MemoryStack stack) {
-        int bufferSize = MttVertex.SIZEOF * vertices.size();
+    public static ByteBuffer verticesToByteBuffer(List<MttPrimitiveVertex> vertices, MemoryStack stack) {
+        int bufferSize = MttPrimitiveVertex.SIZEOF * vertices.size();
         ByteBuffer buffer = malloc(bufferSize, stack);
         vertices.forEach(v -> v.putToByteBuffer(buffer));
         buffer.flip();

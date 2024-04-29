@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttPrimitiveVertex;
 import com.github.maeda6uiui.mechtatel.core.util.VertexUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
@@ -35,7 +35,7 @@ public class VkMttCapsule extends VkMttComponent {
     private void createBuffers(
             long commandPool,
             VkQueue graphicsQueue,
-            List<MttVertex> vertices,
+            List<MttPrimitiveVertex> vertices,
             List<Integer> indices) {
         BufferUtils.BufferInfo bufferInfo = BufferUtils.createVerticesBufferFromStackMemory(
                 device,
@@ -70,7 +70,7 @@ public class VkMttCapsule extends VkMttComponent {
 
         this.device = device;
 
-        List<MttVertex> vertices = VertexUtils.createCapsuleVertices(center, length, radius, numVDivs, numHDivs, color);
+        List<MttPrimitiveVertex> vertices = VertexUtils.createCapsuleVertices(center, length, radius, numVDivs, numHDivs, color);
         List<Integer> indices = VertexUtils.createCapsuleIndices(numVDivs, numHDivs);
 
         numIndices = indices.size();

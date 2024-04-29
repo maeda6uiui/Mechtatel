@@ -18,7 +18,7 @@ import java.util.List;
 public class MttQuad extends MttComponent {
     private VkMttQuad vkQuad;
 
-    private void setup(MttVulkanImpl vulkanImpl, VkMttScreen vulkanScreen, List<MttVertex> vertices, boolean fill) {
+    private void setup(MttVulkanImpl vulkanImpl, VkMttScreen vulkanScreen, List<MttPrimitiveVertex> vertices, boolean fill) {
         var dq = vulkanImpl.getDeviceAndQueues();
         vkQuad = new VkMttQuad(
                 this,
@@ -43,10 +43,10 @@ public class MttQuad extends MttComponent {
     public MttQuad(
             MttVulkanImpl vulkanImpl,
             IMttScreenForMttComponent screen,
-            MttVertex v1,
-            MttVertex v2,
-            MttVertex v3,
-            MttVertex v4,
+            MttPrimitiveVertex v1,
+            MttPrimitiveVertex v2,
+            MttPrimitiveVertex v3,
+            MttPrimitiveVertex v4,
             boolean fill) {
         super(screen, generateCreateInfo(fill));
 
@@ -64,10 +64,10 @@ public class MttQuad extends MttComponent {
             Vector4fc color) {
         super(screen, generateCreateInfo(fill));
 
-        var v1 = new MttVertex(p1, color);
-        var v2 = new MttVertex(p2, color);
-        var v3 = new MttVertex(p3, color);
-        var v4 = new MttVertex(p4, color);
+        var v1 = new MttPrimitiveVertex(p1, color);
+        var v2 = new MttPrimitiveVertex(p2, color);
+        var v3 = new MttPrimitiveVertex(p3, color);
+        var v4 = new MttPrimitiveVertex(p4, color);
         this.setup(vulkanImpl, screen.getVulkanScreen(), Arrays.asList(v1, v2, v3, v4), fill);
     }
 }

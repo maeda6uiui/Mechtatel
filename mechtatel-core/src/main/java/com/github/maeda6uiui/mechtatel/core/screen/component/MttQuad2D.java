@@ -28,12 +28,12 @@ public class MttQuad2D extends MttComponent {
             MttVertex2D v4,
             float z,
             boolean fill) {
-        var vv1 = new MttVertex(new Vector3f(v1.pos.x(), v1.pos.y(), z), v1.color);
-        var vv2 = new MttVertex(new Vector3f(v2.pos.x(), v2.pos.y(), z), v2.color);
-        var vv3 = new MttVertex(new Vector3f(v3.pos.x(), v3.pos.y(), z), v3.color);
-        var vv4 = new MttVertex(new Vector3f(v4.pos.x(), v4.pos.y(), z), v4.color);
+        var vv1 = new MttPrimitiveVertex(new Vector3f(v1.pos.x(), v1.pos.y(), z), v1.color);
+        var vv2 = new MttPrimitiveVertex(new Vector3f(v2.pos.x(), v2.pos.y(), z), v2.color);
+        var vv3 = new MttPrimitiveVertex(new Vector3f(v3.pos.x(), v3.pos.y(), z), v3.color);
+        var vv4 = new MttPrimitiveVertex(new Vector3f(v4.pos.x(), v4.pos.y(), z), v4.color);
 
-        var vertices = new ArrayList<MttVertex>();
+        var vertices = new ArrayList<MttPrimitiveVertex>();
         vertices.add(vv1);
         vertices.add(vv2);
         vertices.add(vv3);

@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.util;
 
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttPrimitiveVertex;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2D;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex2DUV;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertexUV;
@@ -250,7 +250,7 @@ public class BufferUtils {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<MttVertex> vertices) {
+            List<MttPrimitiveVertex> vertices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             ByteBuffer dataBuffer = ByteBufferUtils.verticesToByteBuffer(vertices, stack);
             return createBufferFromByteBuffer(
@@ -267,7 +267,7 @@ public class BufferUtils {
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            List<MttVertex> vertices) {
+            List<MttPrimitiveVertex> vertices) {
         ByteBuffer dataBuffer = ByteBufferUtils.verticesToByteBuffer(vertices, null);
         BufferInfo bufferInfo = createBufferFromByteBuffer(
                 device,

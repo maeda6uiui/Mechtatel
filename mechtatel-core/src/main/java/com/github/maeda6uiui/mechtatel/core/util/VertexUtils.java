@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.util;
 
-import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttPrimitiveVertex;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
@@ -14,7 +14,7 @@ import java.util.List;
  * @author maeda6uiui
  */
 public class VertexUtils {
-    public static List<MttVertex> createSphereVertices(
+    public static List<MttPrimitiveVertex> createSphereVertices(
             Vector3fc center,
             float radius,
             int numVDivs,
@@ -46,9 +46,9 @@ public class VertexUtils {
             }
         }
 
-        var vertices = new ArrayList<MttVertex>();
+        var vertices = new ArrayList<MttPrimitiveVertex>();
         positions.forEach(pos -> {
-            var vertex = new MttVertex(pos.add(center), color);
+            var vertex = new MttPrimitiveVertex(pos.add(center), color);
             vertices.add(vertex);
         });
 
@@ -85,7 +85,7 @@ public class VertexUtils {
         return indices;
     }
 
-    public static List<MttVertex> createCapsuleVertices(
+    public static List<MttPrimitiveVertex> createCapsuleVertices(
             Vector3fc center,
             float length,
             float radius,
@@ -131,9 +131,9 @@ public class VertexUtils {
             transPositions.add(transPosition);
         });
 
-        var vertices = new ArrayList<MttVertex>();
+        var vertices = new ArrayList<MttPrimitiveVertex>();
         transPositions.forEach(pos -> {
-            var vertex = new MttVertex(pos, color);
+            var vertex = new MttPrimitiveVertex(pos, color);
             vertices.add(vertex);
         });
 

@@ -462,7 +462,8 @@ public class PostProcessingNaborChain {
                                             shadowMappingNabor.getColorImageView(),
                                             lastMergeNabor.getDepthImageView(),
                                             lastMergeNabor.getPositionImageView(),
-                                            lastMergeNabor.getNormalImageView()
+                                            lastMergeNabor.getNormalImageView(),
+                                            lastMergeNabor.getStencilImageView()
                                     )
                             );
                         } else {
@@ -474,7 +475,8 @@ public class PostProcessingNaborChain {
                                             lastMergeNabor.getAlbedoImageView(),
                                             lastMergeNabor.getDepthImageView(),
                                             lastMergeNabor.getPositionImageView(),
-                                            lastMergeNabor.getNormalImageView()
+                                            lastMergeNabor.getNormalImageView(),
+                                            lastMergeNabor.getStencilImageView()
                                     )
                             );
                         }
@@ -487,7 +489,8 @@ public class PostProcessingNaborChain {
                                         previousPPNabor.getColorImageView(),
                                         lastMergeNabor.getDepthImageView(),
                                         lastMergeNabor.getPositionImageView(),
-                                        lastMergeNabor.getNormalImageView()
+                                        lastMergeNabor.getNormalImageView(),
+                                        lastMergeNabor.getStencilImageView()
                                 )
                         );
                     }

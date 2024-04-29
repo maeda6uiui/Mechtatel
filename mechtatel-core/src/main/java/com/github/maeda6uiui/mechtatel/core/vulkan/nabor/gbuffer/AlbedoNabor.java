@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertexUV;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.AnimationUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
@@ -94,6 +95,13 @@ class AlbedoNabor extends Nabor {
         for (var cameraUBOInfo : cameraUBOInfos) {
             this.getUniformBuffers().add(cameraUBOInfo.buffer);
             this.getUniformBufferMemories().add(cameraUBOInfo.bufferMemory);
+        }
+
+        var animationUBOInfos = BufferUtils.createUBOBuffers(
+                device, descriptorCount, AnimationUBO.SIZEOF);
+        for (var animationUBOInfo : animationUBOInfos) {
+            this.getUniformBuffers().add(animationUBOInfo.buffer);
+            this.getUniformBufferMemories().add(animationUBOInfo.bufferMemory);
         }
     }
 
@@ -188,7 +196,7 @@ class AlbedoNabor extends Nabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorSetLayoutBinding.Buffer uboLayoutBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
+            VkDescriptorSetLayoutBinding.Buffer uboLayoutBindings = VkDescriptorSetLayoutBinding.calloc(2, stack);
 
             VkDescriptorSetLayoutBinding cameraUBOLayoutBinding = uboLayoutBindings.get(0);
             cameraUBOLayoutBinding.binding(0);
@@ -196,6 +204,13 @@ class AlbedoNabor extends Nabor {
             cameraUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             cameraUBOLayoutBinding.pImmutableSamplers(null);
             cameraUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
+
+            VkDescriptorSetLayoutBinding animationUBOLayoutBinding = uboLayoutBindings.get(1);
+            animationUBOLayoutBinding.binding(1);
+            animationUBOLayoutBinding.descriptorCount(1);
+            animationUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            animationUBOLayoutBinding.pImmutableSamplers(null);
+            animationUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
 
             //=== set 1 ===
             VkDescriptorSetLayoutBinding.Buffer imageLayoutBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
@@ -253,11 +268,15 @@ class AlbedoNabor extends Nabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.calloc(1, stack);
+            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.calloc(2, stack);
 
             VkDescriptorPoolSize cameraUBOPoolSize = uboPoolSizes.get(0);
             cameraUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             cameraUBOPoolSize.descriptorCount(descriptorCount);
+
+            VkDescriptorPoolSize animationUBOPoolSize = uboPoolSizes.get(1);
+            animationUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            animationUBOPoolSize.descriptorCount(descriptorCount);
 
             //=== set 1 ===
             VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.calloc(1, stack);
@@ -347,12 +366,17 @@ class AlbedoNabor extends Nabor {
             VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.calloc(setCount, stack);
 
             //=== set 0 ===
-            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.calloc(1, stack);
+            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.calloc(2, stack);
 
             VkDescriptorBufferInfo cameraUBOInfo = uboInfos.get(0);
             cameraUBOInfo.buffer(this.getUniformBuffer(0));
             cameraUBOInfo.offset(0);
             cameraUBOInfo.range(CameraUBO.SIZEOF);
+
+            VkDescriptorBufferInfo animationUBOInfo = uboInfos.get(1);
+            animationUBOInfo.buffer(this.getUniformBuffer(1));
+            animationUBOInfo.offset(0);
+            animationUBOInfo.range(AnimationUBO.SIZEOF);
 
             VkWriteDescriptorSet uboDescriptorWrite = descriptorWrites.get(0);
             uboDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);

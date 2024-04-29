@@ -23,18 +23,15 @@ public class MttPrimitiveVertex {
     public Vector3fc normal;
 
     public void putToByteBuffer(ByteBuffer buffer) {
-        buffer.putFloat(pos.x());
-        buffer.putFloat(pos.y());
-        buffer.putFloat(pos.z());
-
-        buffer.putFloat(color.x());
-        buffer.putFloat(color.y());
-        buffer.putFloat(color.z());
-        buffer.putFloat(color.w());
-
-        buffer.putFloat(normal.x());
-        buffer.putFloat(normal.y());
-        buffer.putFloat(normal.z());
+        for (int i = 0; i < 3; i++) {
+            buffer.putFloat(pos.get(i));
+        }
+        for (int i = 0; i < 4; i++) {
+            buffer.putFloat(color.get(i));
+        }
+        for (int i = 0; i < 3; i++) {
+            buffer.putFloat(normal.get(i));
+        }
     }
 
     public MttPrimitiveVertex(Vector3fc pos, Vector4fc color, Vector3fc normal) {
@@ -44,14 +41,14 @@ public class MttPrimitiveVertex {
     }
 
     public MttPrimitiveVertex(Vector3fc pos, Vector4fc color) {
-        this.pos = pos;
-        this.color = color;
-        this.normal = new Vector3f(0.0f, 1.0f, 0.0f);
+        this(pos, color, new Vector3f(0.0f, 1.0f, 0.0f));
     }
 
     public MttPrimitiveVertex() {
-        pos = new Vector3f();
-        color = new Vector4f();
-        normal = new Vector3f(0.0f, 1.0f, 0.0f);
+        this(
+                new Vector3f(),
+                new Vector4f(),
+                new Vector3f(0.0f, 1.0f, 0.0f)
+        );
     }
 }

@@ -44,6 +44,7 @@ void main(){
     float depth=texture(sampler2D(depthTexture,textureSampler),fragTexCoords).r;
     vec3 position=texture(sampler2D(positionTexture,textureSampler),fragTexCoords).rgb;
     vec3 normal=texture(sampler2D(normalTexture,textureSampler),fragTexCoords).rgb;
+    float stencil=texture(sampler2D(stencilTexture,textureSampler),fragTexCoords).r;
 
     vec3 lightingColor=lightingInfo.ambientColor;
 
@@ -62,4 +63,5 @@ void main(){
     vec3 postLightingColor=albedo.rgb*lightingColor;
 
     outColor=vec4(postLightingColor,albedo.a);
+    outColor=outColor*(1.0-stencil);
 }

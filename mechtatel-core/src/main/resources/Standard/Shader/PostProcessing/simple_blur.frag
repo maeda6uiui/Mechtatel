@@ -19,6 +19,8 @@ layout(location=0) in vec2 fragTexCoords;
 layout(location=0) out vec4 outColor;
 
 void main(){
+    float stencil=texture(sampler2D(stencilTexture,textureSampler),fragTexCoords).r;
+
     float texelSizeH=1.0/blurInfo.textureWidth;
     float texelSizeV=1.0/blurInfo.textureHeight;
 
@@ -32,4 +34,5 @@ void main(){
     }
 
     outColor=sum/count;
+    outColor=outColor*(1.0-stencil);
 }

@@ -12,8 +12,6 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
-import com.github.maeda6uiui.mechtatel.core.screen.animation.AnimationInfo;
-import com.github.maeda6uiui.mechtatel.core.screen.animation.MttAnimation;
 import com.github.maeda6uiui.mechtatel.core.screen.component.*;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
@@ -158,8 +156,6 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     private List<BiTextureOperation> biTextureOperations;
     private List<MttTexture> textures;
 
-    private Map<String, MttAnimation> animations;
-
     public MttScreen(MttVulkanImpl vulkanImpl, ImGuiContext imguiContext, MttScreenCreateInfo createInfo) {
         var dq = vulkanImpl.getDeviceAndQueues();
         screen = new VkMttScreen(
@@ -207,7 +203,6 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         components = new ArrayList<>();
         biTextureOperations = new ArrayList<>();
         textures = new ArrayList<>();
-        animations = new HashMap<>();
     }
 
     public void cleanup() {
@@ -528,44 +523,6 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     public void removeGarbageTextureOperations() {
         biTextureOperations.removeIf(op -> !op.isValid());
-    }
-
-    //Animation ==========
-    public MttAnimation createAnimation(String tag, AnimationInfo animationInfo) throws IOException {
-        var animation = new MttAnimation(vulkanImpl, this, animationInfo);
-        animations.put(tag, animation);
-
-        return animation;
-    }
-
-    public MttAnimation createAnimation(String tag, AnimationInfo animationInfo, Map<String, MttModel> srcModels) {
-        var animation = new MttAnimation(vulkanImpl, this, animationInfo, srcModels);
-        animations.put(tag, animation);
-
-        return animation;
-    }
-
-    public Map<String, MttAnimation> getAnimations() {
-        return animations;
-    }
-
-    public boolean deleteAnimation(String tag) {
-        if (!animations.containsKey(tag)) {
-            return false;
-        }
-
-        MttAnimation animation = animations.remove(tag);
-        if (animation != null) {
-            animation.cleanup();
-            return true;
-        }
-
-        return false;
-    }
-
-    public void deleteAllAnimations() {
-        animations.values().forEach(MttAnimation::cleanup);
-        animations.clear();
     }
 
     //Components ==========

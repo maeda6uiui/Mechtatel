@@ -5,7 +5,6 @@ import com.github.maeda6uiui.mechtatel.core.input.keyboard.Keyboard;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.Mouse;
 import com.github.maeda6uiui.mechtatel.core.input.mouse.MouseCode;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
-import com.github.maeda6uiui.mechtatel.core.screen.animation.MttAnimation;
 import com.github.maeda6uiui.mechtatel.core.sound.MttSound;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import imgui.ImGui;
@@ -290,7 +289,6 @@ public class MttWindow {
         }
 
         screens.forEach(screen -> {
-            screen.getAnimations().values().forEach(MttAnimation::update);
             screen.removeGarbageComponents();
             screen.removeGarbageTextures();
             screen.removeGarbageTextureOperations();

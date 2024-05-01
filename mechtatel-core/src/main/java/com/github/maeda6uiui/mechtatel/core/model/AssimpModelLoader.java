@@ -169,7 +169,7 @@ public class AssimpModelLoader {
                     boneIds.add(vw.boneId());
                 } else {
                     weights.add(0.0f);
-                    boneIds.add(0);
+                    boneIds.add(-1);
                 }
             }
         }

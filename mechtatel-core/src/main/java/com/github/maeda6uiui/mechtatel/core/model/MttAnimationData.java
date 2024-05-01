@@ -1,22 +1,11 @@
 package com.github.maeda6uiui.mechtatel.core.model;
 
-import org.joml.Matrix4f;
-
-import java.util.Arrays;
-
 /**
  * Animation data
  *
  * @author maeda6uiui
  */
 public class MttAnimationData {
-    public static final Matrix4f[] DEFAULT_BONES_MATRICES = new Matrix4f[AssimpModelLoader.MAX_NUM_BONES];
-
-    static {
-        var zeroMatrix = new Matrix4f().zero();
-        Arrays.fill(DEFAULT_BONES_MATRICES, zeroMatrix);
-    }
-
     private MttModelData.Animation currentAnimation;
     private int currentFrameIdx;
 

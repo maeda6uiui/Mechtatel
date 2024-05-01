@@ -257,14 +257,12 @@ public class VkMttModel extends VkMttComponent {
     @Override
     public void updateUBOs(VkDevice device, List<Long> uniformBufferMemories) {
         MttAnimationData animationData = parent.getAnimationData();
-
-        AnimationUBO animationUBO;
         if (animationData == null) {
-            animationUBO = new AnimationUBO();
-        } else {
-            MttModelData.AnimatedFrame currentFrame = animationData.getCurrentFrame();
-            animationUBO = new AnimationUBO(currentFrame);
+            return;
         }
+
+        MttModelData.AnimatedFrame currentFrame = animationData.getCurrentFrame();
+        var animationUBO = new AnimationUBO(currentFrame);
 
         long animationUBOMemory = uniformBufferMemories.get(0);
         animationUBO.update(device, animationUBOMemory);

@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.ubo;
 
 import com.github.maeda6uiui.mechtatel.core.model.AssimpModelLoader;
-import com.github.maeda6uiui.mechtatel.core.model.MttAnimationData;
+import com.github.maeda6uiui.mechtatel.core.model.MttModelData;
 import org.joml.Matrix4f;
 
 import java.nio.ByteBuffer;
@@ -21,10 +21,10 @@ public class AnimationUBO extends UBO {
     /**
      * Constructor
      *
-     * @param animationData Animation data (not null)
+     * @param currentFrame Current frame
      */
-    public AnimationUBO(MttAnimationData animationData) {
-        boneMatrices = animationData.getCurrentFrame().boneMatrices();
+    public AnimationUBO(MttModelData.AnimatedFrame currentFrame) {
+        boneMatrices = currentFrame.boneMatrices();
     }
 
     @Override

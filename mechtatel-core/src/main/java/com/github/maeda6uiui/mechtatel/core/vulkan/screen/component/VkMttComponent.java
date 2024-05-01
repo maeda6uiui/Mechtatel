@@ -4,6 +4,9 @@ import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkM
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.IVkMttScreenForVkMttComponent;
 import org.joml.Matrix4fc;
 import org.lwjgl.vulkan.VkCommandBuffer;
+import org.lwjgl.vulkan.VkDevice;
+
+import java.util.List;
 
 /**
  * Vulkan implementation of component
@@ -69,6 +72,16 @@ public class VkMttComponent {
      * after commands are submitted to a graphics queue.
      */
     public void cleanupLocally() {
+
+    }
+
+    /**
+     * Updates UBOs peculiar to this component.
+     *
+     * @param device                Logical device
+     * @param uniformBufferMemories List of uniform buffer memories
+     */
+    public void updateUBOs(VkDevice device, List<Long> uniformBufferMemories) {
 
     }
 

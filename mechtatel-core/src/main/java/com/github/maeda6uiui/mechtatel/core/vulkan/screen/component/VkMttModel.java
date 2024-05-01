@@ -1,11 +1,13 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 
+import com.github.maeda6uiui.mechtatel.core.model.MttAnimationData;
 import com.github.maeda6uiui.mechtatel.core.model.MttMaterial;
 import com.github.maeda6uiui.mechtatel.core.model.MttModelData;
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttModelForVkMttModel;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.AnimationUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
@@ -250,5 +252,19 @@ public class VkMttModel extends VkMttComponent {
                         0);
             }
         }
+    }
+
+    @Override
+    public void updateUBOs(VkDevice device, List<Long> uniformBufferMemories) {
+        MttAnimationData animationData = parent.getAnimationData();
+        if (animationData == null) {
+            return;
+        }
+
+        MttModelData.AnimatedFrame currentFrame = animationData.getCurrentFrame();
+        var animationUBO = new AnimationUBO(currentFrame);
+
+        long animationUBOMemory = uniformBufferMemories.get(0);
+        animationUBO.update(device, animationUBOMemory);
     }
 }

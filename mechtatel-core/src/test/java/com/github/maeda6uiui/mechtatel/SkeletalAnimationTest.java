@@ -33,13 +33,13 @@ public class SkeletalAnimationTest extends Mechtatel {
     }
 
     private FreeCamera camera;
+    private MttModel animModel;
 
     @Override
     public void onCreate(MttWindow window) {
         MttScreen defaultScreen = window.getDefaultScreen();
         camera = new FreeCamera(defaultScreen.getCamera());
 
-        MttModel animModel;
         try {
             animModel = defaultScreen.createModel(
                     Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cz1/cz_1.dae"))
@@ -79,5 +79,8 @@ public class SkeletalAnimationTest extends Mechtatel {
         MttScreen defaultScreen = window.getDefaultScreen();
         defaultScreen.draw();
         window.present(defaultScreen);
+
+        MttAnimationData animationData = animModel.getAnimationData();
+        animationData.nextFrame();
     }
 }

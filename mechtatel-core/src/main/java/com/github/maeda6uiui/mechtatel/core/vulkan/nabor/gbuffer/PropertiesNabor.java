@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer;
 
+import com.github.maeda6uiui.mechtatel.core.model.AssimpModelLoader;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.AnimationUBO;
@@ -330,7 +331,7 @@ class PropertiesNabor extends Nabor {
 
             VkDescriptorPoolSize animationUBOPoolSize = uboPoolSizes.get(1);
             animationUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            animationUBOPoolSize.descriptorCount(descriptorCount);
+            animationUBOPoolSize.descriptorCount(descriptorCount * AssimpModelLoader.MAX_NUM_BONES);
 
             //Create descriptor pools
             VkDescriptorPoolCreateInfo.Buffer poolInfos = VkDescriptorPoolCreateInfo.calloc(3, stack);
@@ -409,7 +410,7 @@ class PropertiesNabor extends Nabor {
             uboDescriptorWrite.dstBinding(0);
             uboDescriptorWrite.dstArrayElement(0);
             uboDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            uboDescriptorWrite.descriptorCount(1);
+            uboDescriptorWrite.descriptorCount(2);
             uboDescriptorWrite.pBufferInfo(uboInfos);
 
             for (int i = 0; i < descriptorCount; i++) {

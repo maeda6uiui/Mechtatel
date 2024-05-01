@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 import com.github.maeda6uiui.mechtatel.core.model.MttMaterial;
 import com.github.maeda6uiui.mechtatel.core.model.MttModelData;
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
+import com.github.maeda6uiui.mechtatel.core.screen.component.IMttModelForVkMttModel;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
@@ -25,9 +26,7 @@ import static org.lwjgl.vulkan.VK10.*;
 public class VkMttModel extends VkMttComponent {
     private VkDevice device;
 
-    private boolean isDuplicatedModel;
-
-    private MttModelData modelData;
+    private IMttModelForVkMttModel parent;
 
     private Map<Integer, VkMttTexture> textures;
     private Map<Integer, Boolean> externalTextureFlags;
@@ -36,12 +35,14 @@ public class VkMttModel extends VkMttComponent {
     private Map<Integer, Long> indexBuffers;
     private Map<Integer, Long> indexBufferMemories;
 
+    private boolean isDuplicatedModel;
     private List<Integer> drawMeshIndices;
 
     private void loadTextures(
             long commandPool,
             VkQueue graphicsQueue,
             VkMttScreen screen) {
+        MttModelData modelData = parent.getModelData();
         Map<Integer, MttMaterial> materials = modelData.materials;
 
         textures = new HashMap<>();
@@ -66,6 +67,7 @@ public class VkMttModel extends VkMttComponent {
     private void createBuffers(
             long commandPool,
             VkQueue graphicsQueue) {
+        MttModelData modelData = parent.getModelData();
         int numMeshes = modelData.meshes.size();
 
         //Create buffers
@@ -93,18 +95,19 @@ public class VkMttModel extends VkMttComponent {
             long commandPool,
             VkQueue graphicsQueue,
             VkMttScreen screen,
-            MttModelData modelData) {
+            IMttModelForVkMttModel parent) {
         super(mttComponent, screen, "gbuffer");
 
         this.device = device;
 
         isDuplicatedModel = false;
 
-        this.modelData = modelData;
+        this.parent = parent;
         this.loadTextures(commandPool, graphicsQueue, screen);
         this.createBuffers(commandPool, graphicsQueue);
 
         drawMeshIndices = new ArrayList<>();
+        MttModelData modelData = parent.getModelData();
         for (int i = 0; i < modelData.meshes.size(); i++) {
             drawMeshIndices.add(i);
         }
@@ -122,10 +125,11 @@ public class VkMttModel extends VkMttComponent {
 
         isDuplicatedModel = true;
 
-        modelData = srcModel.modelData;
+        parent = srcModel.parent;
         this.createBuffers(commandPool, graphicsQueue);
 
         drawMeshIndices = new ArrayList<>();
+        MttModelData modelData = parent.getModelData();
         for (int i = 0; i < modelData.meshes.size(); i++) {
             drawMeshIndices.add(i);
         }
@@ -166,10 +170,6 @@ public class VkMttModel extends VkMttComponent {
         externalTextureFlags.put(index, true);
     }
 
-    public int getNumMeshes() {
-        return modelData.meshes.size();
-    }
-
     public void setDrawMeshIndices(List<Integer> drawMeshIndices) {
         this.drawMeshIndices = drawMeshIndices;
     }
@@ -181,6 +181,7 @@ public class VkMttModel extends VkMttComponent {
         }
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
+            MttModelData modelData = parent.getModelData();
             int numMeshes = modelData.meshes.size();
             for (int i = 0; i < numMeshes; i++) {
                 if (!drawMeshIndices.contains(i)) {
@@ -227,6 +228,7 @@ public class VkMttModel extends VkMttComponent {
         }
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
+            MttModelData modelData = parent.getModelData();
             int numMeshes = modelData.meshes.size();
             for (int i = 0; i < numMeshes; i++) {
                 if (!drawMeshIndices.contains(i)) {

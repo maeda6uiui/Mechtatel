@@ -2,6 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.model.AssimpModelLoader;
 import com.github.maeda6uiui.mechtatel.core.model.JXMModelLoader;
+import com.github.maeda6uiui.mechtatel.core.model.MttAnimationData;
 import com.github.maeda6uiui.mechtatel.core.model.MttModelData;
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
@@ -18,9 +19,12 @@ import java.util.Set;
  *
  * @author maeda6uiui
  */
-public class MttModel extends MttComponent {
+public class MttModel extends MttComponent implements IMttModelForVkMttModel {
     private URI modelResource;
     private VkMttModel vkModel;
+
+    private MttModelData modelData;
+    private MttAnimationData animationData;
 
     public MttModel(MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen, URI modelResource) throws IOException {
         super(
@@ -36,8 +40,6 @@ public class MttModel extends MttComponent {
 
         //Load model data
         String modelFilepath = modelResource.getPath();
-
-        MttModelData modelData;
         if (modelFilepath.endsWith(".bd1") || modelFilepath.endsWith(".BD1")) {
             modelData = JXMModelLoader.load(modelResource);
         } else {
@@ -51,7 +53,7 @@ public class MttModel extends MttComponent {
                 vulkanImpl.getCommandPool(),
                 dq.graphicsQueue(),
                 screen.getVulkanScreen(),
-                modelData
+                this
         );
         this.associateVulkanComponents(vkModel);
     }
@@ -76,14 +78,22 @@ public class MttModel extends MttComponent {
                 srcModel.vkModel
         );
         this.associateVulkanComponents(vkModel);
+
+        this.modelData = srcModel.modelData;
     }
 
     public URI getModelResource() {
         return modelResource;
     }
 
-    public MttModelData getModel() {
-        return vkModel.getModelData();
+    @Override
+    public MttModelData getModelData() {
+        return modelData;
+    }
+
+    @Override
+    public MttAnimationData getAnimationData() {
+        return animationData;
     }
 
     public Set<Integer> getTextureIndices() {

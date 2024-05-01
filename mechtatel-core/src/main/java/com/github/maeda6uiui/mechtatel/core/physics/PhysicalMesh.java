@@ -19,8 +19,8 @@ public class PhysicalMesh extends PhysicalObject {
     public PhysicalMesh(com.github.maeda6uiui.mechtatel.core.screen.component.MttModel model, float mass) {
         var indexedMeshes = new ArrayList<IndexedMesh>();
 
-        MttModelData innerModel = model.getModel();
-        for (var mesh : innerModel.meshes.values()) {
+        MttModelData innerModelData = model.getModelData();
+        for (var mesh : innerModelData.meshes.values()) {
             int numPositions = mesh.vertices.size();
             var positions = new Vector3f[numPositions];
             for (int i = 0; i < numPositions; i++) {

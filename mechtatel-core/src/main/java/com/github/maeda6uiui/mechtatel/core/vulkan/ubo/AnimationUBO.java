@@ -1,7 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.ubo;
 
 import com.github.maeda6uiui.mechtatel.core.model.AssimpModelLoader;
-import com.github.maeda6uiui.mechtatel.core.model.MttAnimationData;
 import com.github.maeda6uiui.mechtatel.core.model.MttModelData;
 import org.joml.Matrix4f;
 
@@ -26,14 +25,6 @@ public class AnimationUBO extends UBO {
      */
     public AnimationUBO(MttModelData.AnimatedFrame currentFrame) {
         boneMatrices = currentFrame.boneMatrices();
-    }
-
-    /**
-     * Constructor
-     * Array for the bone matrices is filled with a default value.
-     */
-    public AnimationUBO() {
-        boneMatrices = MttAnimationData.DEFAULT_BONES_MATRICES;
     }
 
     @Override

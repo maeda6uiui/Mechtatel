@@ -6,7 +6,7 @@ import org.joml.Matrix4fc;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * Vulkan implementation of component
@@ -79,9 +79,9 @@ public class VkMttComponent {
      * Updates UBOs peculiar to this component.
      *
      * @param device                Logical device
-     * @param uniformBufferMemories List of uniform buffer memories
+     * @param uniformBufferMemories Map of uniform buffer memories
      */
-    public void updateUBOs(VkDevice device, List<Long> uniformBufferMemories) {
+    public void updateUBOs(VkDevice device, Map<String, Long> uniformBufferMemories) {
 
     }
 

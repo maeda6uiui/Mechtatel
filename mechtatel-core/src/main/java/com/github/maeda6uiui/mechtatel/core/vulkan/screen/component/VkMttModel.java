@@ -255,16 +255,19 @@ public class VkMttModel extends VkMttComponent {
     }
 
     @Override
-    public void updateUBOs(VkDevice device, List<Long> uniformBufferMemories) {
+    public void updateUBOs(VkDevice device, Map<String, Long> uniformBufferMemories) {
         MttAnimationData animationData = parent.getAnimationData();
         if (animationData == null) {
+            return;
+        }
+        if (!uniformBufferMemories.containsKey("animation")) {
             return;
         }
 
         MttModelData.AnimatedFrame currentFrame = animationData.getCurrentFrame();
         var animationUBO = new AnimationUBO(currentFrame);
 
-        long animationUBOMemory = uniformBufferMemories.get(0);
+        long animationUBOMemory = uniformBufferMemories.get("animation");
         animationUBO.update(device, animationUBOMemory);
     }
 }

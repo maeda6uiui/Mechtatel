@@ -588,7 +588,12 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                             0,
                             pcBuffer);
 
-                    component.updateUBOs(device, List.of(gBufferNabor.getUniformBufferMemory(0, 0)));
+                    Map<String, Long> uniformBufferMemories = Map.of(
+                            "animation",
+                            gBufferNabor.getUniformBufferMemory(0, 1)
+                    );
+                    component.updateUBOs(device, uniformBufferMemories);
+
                     component.draw(commandBuffer, gBufferNabor.getPipelineLayout(0, 0));
                 }
             }
@@ -657,7 +662,12 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                             0,
                             pcBuffer);
 
-                    component.updateUBOs(device, List.of(gBufferNabor.getUniformBufferMemory(1, 0)));
+                    Map<String, Long> uniformBufferMemories = Map.of(
+                            "animation",
+                            gBufferNabor.getUniformBufferMemory(1, 1)
+                    );
+                    component.updateUBOs(device, uniformBufferMemories);
+
                     component.transfer(commandBuffer);
                 }
             }
@@ -744,7 +754,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                             0,
                             pcBuffer);
 
-                    component.updateUBOs(device, List.of(primitiveNabor.getUniformBufferMemory(0)));
                     component.draw(commandBuffer, primitiveNabor.getPipelineLayout(0));
                 }
             }
@@ -823,7 +832,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                             0,
                             pcBuffer);
 
-                    component.updateUBOs(device, List.of(primitiveFillNabor.getUniformBufferMemory(0)));
                     component.draw(commandBuffer, primitiveFillNabor.getPipelineLayout(0));
                 }
             }

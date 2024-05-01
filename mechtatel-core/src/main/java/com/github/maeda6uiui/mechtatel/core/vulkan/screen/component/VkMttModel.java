@@ -38,10 +38,6 @@ public class VkMttModel extends VkMttComponent {
 
     private List<Integer> drawMeshIndices;
 
-    public MttModelData getModelData() {
-        return modelData;
-    }
-
     private void loadTextures(
             long commandPool,
             VkQueue graphicsQueue,

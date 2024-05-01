@@ -24,6 +24,7 @@ import static org.lwjgl.assimp.Assimp.*;
  * @author maeda6uiui
  */
 public class AssimpModelLoader {
+    public static final int MAX_NUM_WEIGHTS = 4;    //Must be 4 or less
     public static final int MAX_NUM_BONES = 150;
 
     private static void processMaterial(
@@ -161,7 +162,7 @@ public class AssimpModelLoader {
         for (int i = 0; i < numVertices; i++) {
             List<MttVertexWeight> vertexWeightList = weightSet.get(i);
             int size = vertexWeightList != null ? vertexWeightList.size() : 0;
-            for (int j = 0; j < MttMesh.MAX_NUM_WEIGHTS; j++) {
+            for (int j = 0; j < MAX_NUM_WEIGHTS; j++) {
                 if (j < size) {
                     MttVertexWeight vw = vertexWeightList.get(j);
                     weights.add(vw.weight());
@@ -189,17 +190,25 @@ public class AssimpModelLoader {
         mesh.materialIndex = aiMesh.mMaterialIndex();
 
         MttAnimMeshData animMeshData = processBones(aiMesh, boneList);
-        mesh.boneIndices.addAll(animMeshData.boneIds());
-        mesh.weights.addAll(animMeshData.weights());
 
         //Create vertices
         int numVertices = positions.size();
         for (int i = 0; i < numVertices; i++) {
+            var boneWeights = new Vector4f(0.0f);
+            var boneIndices = new Vector4i(-1);
+            for (int j = 0; j < Math.min(MAX_NUM_WEIGHTS, 4); j++) {
+                boneWeights.setComponent(j, animMeshData.weights().get(i * MAX_NUM_WEIGHTS + j));
+                boneIndices.setComponent(j, animMeshData.boneIds().get(i * MAX_NUM_WEIGHTS + j));
+            }
+
             var vertex = new MttVertex(
                     positions.get(i),
                     new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
                     texCoords.get(i),
-                    normals.get(i));
+                    normals.get(i),
+                    boneWeights,
+                    boneIndices
+            );
             mesh.vertices.add(vertex);
         }
     }

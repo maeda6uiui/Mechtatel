@@ -5,6 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
+import com.github.maeda6uiui.mechtatel.core.model.MttAnimationData;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import org.slf4j.Logger;
@@ -49,6 +50,13 @@ public class SkeletalAnimationTest extends Mechtatel {
 
             return;
         }
+
+        var animationData = new MttAnimationData(
+                animModel.getModelData().animationList.get(0),
+                0,
+                -2
+        );
+        animModel.setAnimationData(animationData);
 
         defaultScreen.createLineSet().addPositiveAxes(2.0f).createBuffer();
     }

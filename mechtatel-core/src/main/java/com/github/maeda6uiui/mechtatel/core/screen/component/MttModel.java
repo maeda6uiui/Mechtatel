@@ -96,6 +96,10 @@ public class MttModel extends MttComponent implements IMttModelForVkMttModel {
         return animationData;
     }
 
+    public void setAnimationData(MttAnimationData animationData) {
+        this.animationData = animationData;
+    }
+
     public Set<Integer> getTextureIndices() {
         return vkModel.getTextureIndices();
     }

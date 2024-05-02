@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author maeda6uiui
  */
-public class MttNode {
+class MttNode {
     private final List<MttNode> children;
     private final String name;
     private final MttNode parent;

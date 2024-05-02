@@ -33,7 +33,7 @@ public class Mechtatel implements IMechtatelForMttWindow {
     private boolean mechtatelReady;
 
     private int fps;
-    private float secondsPerFrame;
+    private double secondsPerFrame;
 
     private MttWindow initialWindow;
     private List<MttWindow> windows;
@@ -99,7 +99,7 @@ public class Mechtatel implements IMechtatelForMttWindow {
 
         //Set frames per second and calculate seconds per frame
         fps = settings.systemSettings.fps;
-        secondsPerFrame = 1.0f / fps;
+        secondsPerFrame = 1.0 / fps;
 
         //Create list for windows
         windows = new ArrayList<>();
@@ -252,7 +252,7 @@ public class Mechtatel implements IMechtatelForMttWindow {
         return fps;
     }
 
-    public float getSecondsPerFrame() {
+    public double getSecondsPerFrame() {
         return secondsPerFrame;
     }
 }

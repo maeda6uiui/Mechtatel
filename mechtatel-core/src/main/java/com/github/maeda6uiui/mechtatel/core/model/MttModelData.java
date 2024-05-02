@@ -16,6 +16,11 @@ public class MttModelData {
     public record AnimatedFrame(Matrix4f[] boneMatrices) {
     }
 
+    /**
+     * @param name     Name of the animation
+     * @param duration Duration of the animation in milliseconds
+     * @param frames   List of frames
+     */
     public record Animation(String name, double duration, List<AnimatedFrame> frames) {
     }
 

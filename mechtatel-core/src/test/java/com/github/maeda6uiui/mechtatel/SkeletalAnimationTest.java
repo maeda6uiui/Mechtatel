@@ -6,8 +6,10 @@ import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.model.MttAnimationData;
+import com.github.maeda6uiui.mechtatel.core.model.MttModelData;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
+import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,12 +35,19 @@ public class SkeletalAnimationTest extends Mechtatel {
     }
 
     private FreeCamera camera;
+
     private MttModel animModel;
+    private int animStartFrameIndex;
+    private float animSecondsPerFrame;
+    private float animAccumSeconds;
 
     @Override
     public void onCreate(MttWindow window) {
         MttScreen defaultScreen = window.getDefaultScreen();
+        defaultScreen.getCamera().setEye(new Vector3f(2.0f, 2.0f, 2.0f));
         camera = new FreeCamera(defaultScreen.getCamera());
+
+        defaultScreen.createLineSet().addPositiveAxes(2.0f).createBuffer();
 
         try {
             animModel = defaultScreen.createModel(
@@ -51,14 +60,16 @@ public class SkeletalAnimationTest extends Mechtatel {
             return;
         }
 
-        var animationData = new MttAnimationData(
-                animModel.getModelData().animationList.get(0),
-                0,
-                -2
-        );
+        //Attach first animation to the model
+        animStartFrameIndex = 0;
+        MttModelData.Animation animation = animModel.getModelData().animationList.get(0);
+        var animationData = new MttAnimationData(animation, animStartFrameIndex, -2);
         animModel.setAnimationData(animationData);
 
-        defaultScreen.createLineSet().addPositiveAxes(2.0f).createBuffer();
+        //Get duration of the animation and calculate seconds per frame
+        float animDurationSeconds = (float) animation.duration() / 1000.0f;
+        animSecondsPerFrame = animDurationSeconds / animation.frames().size();
+        animAccumSeconds = 0.0f;
     }
 
     @Override
@@ -80,7 +91,30 @@ public class SkeletalAnimationTest extends Mechtatel {
         defaultScreen.draw();
         window.present(defaultScreen);
 
+        this.updateAnimation();
+    }
+
+    private void updateAnimation() {
+        //Go to next frame if seconds per frame for the animation has elapsed
         MttAnimationData animationData = animModel.getAnimationData();
-        animationData.nextFrame();
+        boolean mustResetTimeCounter = false;
+
+        int currentFrameIdx = animationData.getCurrentFrameIdx();
+        if (animAccumSeconds >= animSecondsPerFrame * (currentFrameIdx + 1)) {
+            animationData.nextFrame();
+
+            if (animationData.getCurrentFrameIdx() == animStartFrameIndex) {
+                mustResetTimeCounter = true;
+            }
+        }
+
+        //Reset time counter if it comes back to the first frame
+        if (mustResetTimeCounter) {
+            animAccumSeconds = 0.0f;
+        }
+        //Update time counter otherwise
+        else {
+            animAccumSeconds += this.getSecondsPerFrame();
+        }
     }
 }

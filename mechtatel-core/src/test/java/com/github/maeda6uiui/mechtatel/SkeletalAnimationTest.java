@@ -7,6 +7,8 @@ import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.model.MttAnimationData;
 import com.github.maeda6uiui.mechtatel.core.model.MttModelData;
+import com.github.maeda6uiui.mechtatel.core.model.helper.AnimationPlayMode;
+import com.github.maeda6uiui.mechtatel.core.model.helper.AnimationUpdater;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import org.joml.Vector3f;
@@ -35,11 +37,8 @@ public class SkeletalAnimationTest extends Mechtatel {
     }
 
     private FreeCamera camera;
-
     private MttModel animModel;
-    private int animStartFrameIndex;
-    private float animSecondsPerFrame;
-    private float animAccumSeconds;
+    private AnimationUpdater animUpdater;
 
     @Override
     public void onCreate(MttWindow window) {
@@ -61,15 +60,16 @@ public class SkeletalAnimationTest extends Mechtatel {
         }
 
         //Attach first animation to the model
-        animStartFrameIndex = 0;
         MttModelData.Animation animation = animModel.getModelData().animationList.get(0);
-        var animationData = new MttAnimationData(animation, animStartFrameIndex, -2);
+        var animationData = new MttAnimationData(animation, 0, 0);
         animModel.setAnimationData(animationData);
 
-        //Get duration of the animation and calculate seconds per frame
-        float animDurationSeconds = (float) animation.duration() / 1000.0f;
-        animSecondsPerFrame = animDurationSeconds / animation.frames().size();
-        animAccumSeconds = 0.0f;
+        //Create helper class to update animation
+        animUpdater = new AnimationUpdater(
+                animationData,
+                AnimationPlayMode.REPEAT,
+                this.getSecondsPerFrame()
+        );
     }
 
     @Override
@@ -91,30 +91,6 @@ public class SkeletalAnimationTest extends Mechtatel {
         defaultScreen.draw();
         window.present(defaultScreen);
 
-        this.updateAnimation();
-    }
-
-    private void updateAnimation() {
-        //Go to next frame if seconds per frame for the animation has elapsed
-        MttAnimationData animationData = animModel.getAnimationData();
-        boolean mustResetTimeCounter = false;
-
-        int currentFrameIdx = animationData.getCurrentFrameIdx();
-        if (animAccumSeconds >= animSecondsPerFrame * (currentFrameIdx + 1)) {
-            animationData.nextFrame();
-
-            if (animationData.getCurrentFrameIdx() == animStartFrameIndex) {
-                mustResetTimeCounter = true;
-            }
-        }
-
-        //Reset time counter if it comes back to the first frame
-        if (mustResetTimeCounter) {
-            animAccumSeconds = 0.0f;
-        }
-        //Update time counter otherwise
-        else {
-            animAccumSeconds += this.getSecondsPerFrame();
-        }
+        animUpdater.update();
     }
 }

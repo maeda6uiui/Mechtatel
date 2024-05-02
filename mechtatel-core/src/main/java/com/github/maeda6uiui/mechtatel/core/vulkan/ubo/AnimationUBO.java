@@ -19,8 +19,6 @@ public class AnimationUBO extends UBO {
     private Matrix4f[] boneMatrices;
 
     /**
-     * Constructor
-     *
      * @param currentFrame Current frame
      */
     public AnimationUBO(MttModelData.AnimatedFrame currentFrame) {

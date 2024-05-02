@@ -27,6 +27,11 @@ public class MttAnimationData {
         return currentAnimation;
     }
 
+    public void setCurrentAnimation(MttModelData.Animation currentAnimation) {
+        this.currentAnimation = currentAnimation;
+        currentFrameIdx = startFrameOffset;
+    }
+
     public MttModelData.AnimatedFrame getCurrentFrame() {
         return currentAnimation.frames().get(currentFrameIdx);
     }
@@ -45,8 +50,11 @@ public class MttAnimationData {
         }
     }
 
-    public void setCurrentAnimation(MttModelData.Animation currentAnimation) {
-        this.currentAnimation = currentAnimation;
-        currentFrameIdx = startFrameOffset;
+    public int getStartFrameOffset() {
+        return startFrameOffset;
+    }
+
+    public int getEndFrameOffset() {
+        return endFrameOffset;
     }
 }

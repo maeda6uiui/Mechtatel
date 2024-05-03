@@ -28,7 +28,7 @@ public class Pass2InfoUBO extends UBO {
         biasCoefficient = info.getBiasCoefficient();
         maxBias = info.getMaxBias();
         normalOffset = info.getNormalOffset();
-        outputMode = info.getOutputMode();
+        outputMode = info.getOutputMode().ordinal();
         outputDepthImageIndex = info.getOutputDepthImageIndex();
     }
 

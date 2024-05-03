@@ -1,7 +1,5 @@
 package com.github.maeda6uiui.mechtatel.core.shadow;
 
-import static com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings.OUTPUT_MODE_SHADOW_MAPPING;
-
 /**
  * Pass 2 info
  *
@@ -12,7 +10,7 @@ public class Pass2Info {
     private float biasCoefficient;
     private float maxBias;
     private float normalOffset;
-    private int outputMode;
+    private ShadowMappingOutputMode outputMode;
     private int outputDepthImageIndex;
 
     public Pass2Info() {
@@ -20,7 +18,7 @@ public class Pass2Info {
         biasCoefficient = 0.0001f;
         maxBias = 0.001f;
         normalOffset = 0.005f;
-        outputMode = OUTPUT_MODE_SHADOW_MAPPING;
+        outputMode = ShadowMappingOutputMode.SHADOW_MAPPING;
         outputDepthImageIndex = 0;
     }
 
@@ -65,11 +63,11 @@ public class Pass2Info {
         this.normalOffset = normalOffset;
     }
 
-    public int getOutputMode() {
+    public ShadowMappingOutputMode getOutputMode() {
         return outputMode;
     }
 
-    public void setOutputMode(int outputMode) {
+    public void setOutputMode(ShadowMappingOutputMode outputMode) {
         this.outputMode = outputMode;
     }
 

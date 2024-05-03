@@ -1,8 +1,8 @@
 #version 450
 #extension GL_ARB_separate_shader_objects:enable
 
-const int MAX_WEIGHTS=4;
-const int MAX_BONES=150;
+const int MAX_NUM_WEIGHTS=4;
+const int MAX_NUM_BONES=150;
 
 layout(set=0,binding=0) uniform CameraUBO{
     mat4 view;
@@ -12,7 +12,7 @@ layout(set=0,binding=0) uniform CameraUBO{
     vec3 center;
 }camera;
 layout(set=0,binding=1) uniform AnimationUBO{
-    mat4 boneMatrices[MAX_BONES];
+    mat4 boneMatrices[MAX_NUM_BONES];
 }animation;
 layout(push_constant) uniform VertPC{
     mat4 model;
@@ -33,7 +33,7 @@ void process3DDrawing(){
     vec4 initPos=vec4(0.0,0.0,0.0,0.0);
 
     int count=0;
-    for(int i=0;i<MAX_WEIGHTS;i++){
+    for(int i=0;i<MAX_NUM_WEIGHTS;i++){
         float weight=inBoneWeights[i];
         int boneIndex=inBoneIndices[i];
 

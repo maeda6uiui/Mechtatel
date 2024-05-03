@@ -52,8 +52,6 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ## Currently working on
 
-- Implement skeletal animation
-
 ## Todo
 
 ### Will certainly do
@@ -62,7 +60,11 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ### Probably...
 
-- Implement functionality to run `mechtatel-core` via YAML definitions<br>i.e. Load and manipulate resources according to the procedure defined in a YAML file
+- Investigate the methods to reproduce water surface
+- Implement functionality to simulate sea waves
+  - Implement it in another module or as an add-on
+- Implement functionality to run `mechtatel-core` via YAML definitions
+  - i.e. Load and manipulate resources according to the procedure defined in a YAML file
 
 ## Special thanks to
 
@@ -71,6 +73,13 @@ You can overwrite it or use another logging implementation at your discretion.
 - [3D Game Development with LWJGL 3](https://ahbejarano.gitbook.io/lwjglgamedev/)
 
 ## 進捗報告(Progress report)
+
+### 2024-05-03
+
+Skeletal Animationの機能を実装しました。
+Blenderなどで作成したモデルのアニメーションをMechtatelで再生することができます。
+
+![Skeletal Animation](./Video/skeletal_animation.mp4)
 
 ### 2024-03-24
 

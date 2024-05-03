@@ -79,7 +79,11 @@ You can overwrite it or use another logging implementation at your discretion.
 Skeletal Animationの機能を実装しました。
 Blenderなどで作成したモデルのアニメーションをMechtatelで再生することができます。
 
-[Video](./Video/skeletal_animation.mp4)
+![Skeletal Animation 1](./Image/skeletal_animation.png)
+
+![Skeletal Animation 2](./Image/skeletal_animation_2.png)
+
+![Skeletal Animation 3](./Image/skeletal_animation_3.png)
 
 ### 2024-03-24
 

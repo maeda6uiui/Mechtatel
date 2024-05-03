@@ -75,7 +75,7 @@ public class Spotlight {
     }
 
     public void setCenter(Vector3f center) {
-        this.direction = center.sub(position).normalize();
+        this.center = center;
     }
 
     public Vector3f getDiffuseColor() {

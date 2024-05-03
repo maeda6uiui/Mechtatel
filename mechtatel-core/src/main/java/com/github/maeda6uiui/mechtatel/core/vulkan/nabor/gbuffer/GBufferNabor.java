@@ -171,11 +171,11 @@ public class GBufferNabor extends Nabor {
     }
 
     public void transitionAlbedoImageLayout(long commandPool, VkQueue graphicsQueue) {
-        albedoNabor.transitionAlbedoResolveImageLayout(commandPool, graphicsQueue);
+        albedoNabor.transitionAlbedoImageLayout(commandPool, graphicsQueue);
     }
 
     public long getAlbedoImageView() {
-        return albedoNabor.getAlbedoResolveImageView();
+        return albedoNabor.getAlbedoImageView();
     }
 
     public void transitionDepthImageLayout(long commandPool, VkQueue graphicsQueue) {

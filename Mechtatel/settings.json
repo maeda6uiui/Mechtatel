@@ -20,7 +20,7 @@
         "preferablePhysicalDeviceIndex": 0,
         "preferableGraphicsFamilyIndex": 0,
         "preferablePresentFamilyIndex": 0,
-        "albedoMSAASamples": 2,
+        "albedoMSAASamples": 1,
         "appInfo": {
             "name": "Mechtatel",
             "majorVersion": 0,

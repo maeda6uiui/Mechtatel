@@ -63,23 +63,36 @@ class AlbedoNabor extends Nabor {
         return this.getImageView(DEPTH_ATTACHMENT_INDEX);
     }
 
-    public void transitionAlbedoResolveImageLayout(long commandPool, VkQueue graphicsQueue) {
+    public void transitionAlbedoImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
-        long albedoResolveImage = this.getImage(ALBEDO_RESOLVE_ATTACHMENT_INDEX);
+        int msaaSamples = this.getMsaaSamples();
+
+        long albedoImage;
+        if (msaaSamples == VK_SAMPLE_COUNT_1_BIT) {
+            albedoImage = this.getImage(ALBEDO_ATTACHMENT_INDEX);
+        } else {
+            albedoImage = this.getImage(ALBEDO_RESOLVE_ATTACHMENT_INDEX);
+        }
 
         ImageUtils.transitionImageLayout(
                 device,
                 commandPool,
                 graphicsQueue,
-                albedoResolveImage,
+                albedoImage,
                 VK_IMAGE_ASPECT_COLOR_BIT,
                 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                1);
+                1
+        );
     }
 
-    public long getAlbedoResolveImageView() {
-        return this.getImageView(ALBEDO_RESOLVE_ATTACHMENT_INDEX);
+    public long getAlbedoImageView() {
+        int msaaSamples = this.getMsaaSamples();
+        if (msaaSamples == VK_SAMPLE_COUNT_1_BIT) {
+            return this.getImageView(ALBEDO_ATTACHMENT_INDEX);
+        } else {
+            return this.getImageView(ALBEDO_RESOLVE_ATTACHMENT_INDEX);
+        }
     }
 
     @Override
@@ -106,11 +119,75 @@ class AlbedoNabor extends Nabor {
         }
     }
 
-    @Override
-    protected void createRenderPass(int colorImageFormat) {
+    private long createNonMSAARenderPass(int colorImageFormat) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkDevice device = this.getDevice();
-            int msaaSamples = this.getMsaaSamples();
+
+            VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.calloc(2, stack);
+            VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(2, stack);
+
+            //Depth-stencil attachment
+            VkAttachmentDescription depthAttachment = attachments.get(DEPTH_ATTACHMENT_INDEX);
+            depthAttachment.format(depthImageFormat);
+            depthAttachment.samples(VK_SAMPLE_COUNT_1_BIT);
+            depthAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
+            depthAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
+            depthAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
+            depthAttachment.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
+            depthAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
+            depthAttachment.finalLayout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+
+            VkAttachmentReference depthAttachmentRef = attachmentRefs.get(DEPTH_ATTACHMENT_INDEX);
+            depthAttachmentRef.attachment(DEPTH_ATTACHMENT_INDEX);
+            depthAttachmentRef.layout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+
+            //Albedo attachment
+            VkAttachmentDescription albedoAttachment = attachments.get(ALBEDO_ATTACHMENT_INDEX);
+            albedoAttachment.format(colorImageFormat);
+            albedoAttachment.samples(VK_SAMPLE_COUNT_1_BIT);
+            albedoAttachment.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR);
+            albedoAttachment.storeOp(VK_ATTACHMENT_STORE_OP_STORE);
+            albedoAttachment.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE);
+            albedoAttachment.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE);
+            albedoAttachment.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED);
+            albedoAttachment.finalLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
+            VkAttachmentReference albedoAttachmentRef = attachmentRefs.get(ALBEDO_ATTACHMENT_INDEX);
+            albedoAttachmentRef.attachment(ALBEDO_ATTACHMENT_INDEX);
+            albedoAttachmentRef.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
+            VkSubpassDescription.Buffer subpass = VkSubpassDescription.calloc(1, stack);
+            subpass.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS);
+            subpass.colorAttachmentCount(1);
+            subpass.pDepthStencilAttachment(depthAttachmentRef);
+            subpass.pColorAttachments(VkAttachmentReference.calloc(1, stack).put(0, albedoAttachmentRef));
+
+            VkSubpassDependency.Buffer dependency = VkSubpassDependency.calloc(1, stack);
+            dependency.srcSubpass(VK_SUBPASS_EXTERNAL);
+            dependency.dstSubpass(0);
+            dependency.srcStageMask(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+            dependency.srcAccessMask(0);
+            dependency.dstStageMask(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+            dependency.dstAccessMask(VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
+
+            VkRenderPassCreateInfo renderPassInfo = VkRenderPassCreateInfo.calloc(stack);
+            renderPassInfo.sType(VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO);
+            renderPassInfo.pAttachments(attachments);
+            renderPassInfo.pSubpasses(subpass);
+            renderPassInfo.pDependencies(dependency);
+
+            LongBuffer pRenderPass = stack.mallocLong(1);
+            if (vkCreateRenderPass(device, renderPassInfo, null, pRenderPass) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create a render pass");
+            }
+
+            return pRenderPass.get(0);
+        }
+    }
+
+    private long createMSAARenderPass(int colorImageFormat, int msaaSamples) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDevice device = this.getDevice();
 
             VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.calloc(3, stack);
             VkAttachmentReference.Buffer attachmentRefs = VkAttachmentReference.calloc(3, stack);
@@ -186,9 +263,22 @@ class AlbedoNabor extends Nabor {
                 throw new RuntimeException("Failed to create a render pass");
             }
 
-            long renderPass = pRenderPass.get(0);
-            this.setRenderPass(renderPass);
+            return pRenderPass.get(0);
         }
+    }
+
+    @Override
+    protected void createRenderPass(int colorImageFormat) {
+        int msaaSamples = this.getMsaaSamples();
+
+        long renderPass;
+        if (msaaSamples == VK_SAMPLE_COUNT_1_BIT) {
+            renderPass = this.createNonMSAARenderPass(colorImageFormat);
+        } else {
+            renderPass = this.createMSAARenderPass(colorImageFormat, msaaSamples);
+        }
+
+        this.setRenderPass(renderPass);
     }
 
     @Override
@@ -681,33 +771,35 @@ class AlbedoNabor extends Nabor {
             this.getImageViews().add(albedoImageView);
 
             //Albedo resolve image
-            ImageUtils.createImage(
-                    device,
-                    extent.width(),
-                    extent.height(),
-                    1,
-                    VK_SAMPLE_COUNT_1_BIT,
-                    colorImageFormat,
-                    VK_IMAGE_TILING_OPTIMAL,
-                    VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    pImage,
-                    pImageMemory);
-            long albedoResolveImage = pImage.get(0);
-            long albedoResolveImageMemory = pImageMemory.get(0);
+            if (msaaSamples != VK_SAMPLE_COUNT_1_BIT) {
+                ImageUtils.createImage(
+                        device,
+                        extent.width(),
+                        extent.height(),
+                        1,
+                        VK_SAMPLE_COUNT_1_BIT,
+                        colorImageFormat,
+                        VK_IMAGE_TILING_OPTIMAL,
+                        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                        pImage,
+                        pImageMemory);
+                long albedoResolveImage = pImage.get(0);
+                long albedoResolveImageMemory = pImageMemory.get(0);
 
-            viewInfo.image(albedoResolveImage);
-            viewInfo.format(colorImageFormat);
-            viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
+                viewInfo.image(albedoResolveImage);
+                viewInfo.format(colorImageFormat);
+                viewInfo.subresourceRange().aspectMask(VK_IMAGE_ASPECT_COLOR_BIT);
 
-            if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
-                throw new RuntimeException("Failed to create an image view");
+                if (vkCreateImageView(device, viewInfo, null, pImageView) != VK_SUCCESS) {
+                    throw new RuntimeException("Failed to create an image view");
+                }
+                long albedoResolveImageView = pImageView.get(0);
+
+                this.getImages().add(albedoResolveImage);
+                this.getImageMemories().add(albedoResolveImageMemory);
+                this.getImageViews().add(albedoResolveImageView);
             }
-            long albedoResolveImageView = pImageView.get(0);
-
-            this.getImages().add(albedoResolveImage);
-            this.getImageMemories().add(albedoResolveImageMemory);
-            this.getImageViews().add(albedoResolveImageView);
         }
     }
 }

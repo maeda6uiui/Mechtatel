@@ -1,7 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow;
 
+import com.github.maeda6uiui.mechtatel.core.model.AssimpModelLoader;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.AnimationUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass1InfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
@@ -37,6 +39,13 @@ class Pass1Nabor extends Nabor {
         for (var pass1InfoUBOInfo : pass1InfoUBOInfos) {
             this.getUniformBuffers().add(pass1InfoUBOInfo.buffer);
             this.getUniformBufferMemories().add(pass1InfoUBOInfo.bufferMemory);
+        }
+
+        var animationUBOInfos = BufferUtils.createUBOBuffers(
+                device, descriptorCount, AnimationUBO.SIZEOF);
+        for (var animationUBOInfo : animationUBOInfos) {
+            this.getUniformBuffers().add(animationUBOInfo.buffer);
+            this.getUniformBufferMemories().add(animationUBOInfo.bufferMemory);
         }
     }
 
@@ -99,7 +108,7 @@ class Pass1Nabor extends Nabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorSetLayoutBinding.Buffer uboLayoutBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
+            VkDescriptorSetLayoutBinding.Buffer uboLayoutBindings = VkDescriptorSetLayoutBinding.calloc(2, stack);
 
             VkDescriptorSetLayoutBinding pass1InfoUBOLayoutBinding = uboLayoutBindings.get(0);
             pass1InfoUBOLayoutBinding.binding(0);
@@ -107,6 +116,13 @@ class Pass1Nabor extends Nabor {
             pass1InfoUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             pass1InfoUBOLayoutBinding.pImmutableSamplers(null);
             pass1InfoUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
+
+            VkDescriptorSetLayoutBinding animationUBOLayoutBinding = uboLayoutBindings.get(1);
+            animationUBOLayoutBinding.binding(1);
+            animationUBOLayoutBinding.descriptorCount(1);
+            animationUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            animationUBOLayoutBinding.pImmutableSamplers(null);
+            animationUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_VERTEX_BIT);
 
             //Create descriptor set layouts
             VkDescriptorSetLayoutCreateInfo.Buffer layoutCreateInfos = VkDescriptorSetLayoutCreateInfo.calloc(1, stack);
@@ -132,11 +148,15 @@ class Pass1Nabor extends Nabor {
             VkDevice device = this.getDevice();
 
             //=== set 0 ===
-            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.calloc(1, stack);
+            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.calloc(2, stack);
 
             VkDescriptorPoolSize pass1InfoUBOPoolSize = uboPoolSizes.get(0);
             pass1InfoUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
             pass1InfoUBOPoolSize.descriptorCount(descriptorCount);
+
+            VkDescriptorPoolSize animationUBOPoolSize = uboPoolSizes.get(1);
+            animationUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            animationUBOPoolSize.descriptorCount(descriptorCount * AssimpModelLoader.MAX_NUM_BONES);
 
             //Create descriptor pools
             VkDescriptorPoolCreateInfo.Buffer poolInfos = VkDescriptorPoolCreateInfo.calloc(1, stack);
@@ -196,19 +216,24 @@ class Pass1Nabor extends Nabor {
             VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.calloc(setCount, stack);
 
             //=== set 0 ===
-            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.calloc(1, stack);
+            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.calloc(2, stack);
 
             VkDescriptorBufferInfo pass1InfoUBOInfo = uboInfos.get(0);
             pass1InfoUBOInfo.buffer(this.getUniformBuffer(0));
             pass1InfoUBOInfo.offset(0);
             pass1InfoUBOInfo.range(Pass1InfoUBO.SIZEOF);
 
+            VkDescriptorBufferInfo animationUBOInfo = uboInfos.get(1);
+            animationUBOInfo.buffer(this.getUniformBuffer(1));
+            animationUBOInfo.offset(0);
+            animationUBOInfo.range(AnimationUBO.SIZEOF);
+
             VkWriteDescriptorSet uboDescriptorWrite = descriptorWrites.get(0);
             uboDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
             uboDescriptorWrite.dstBinding(0);
             uboDescriptorWrite.dstArrayElement(0);
             uboDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            uboDescriptorWrite.descriptorCount(1);
+            uboDescriptorWrite.descriptorCount(2);
             uboDescriptorWrite.pBufferInfo(uboInfos);
 
             for (int i = 0; i < descriptorCount; i++) {

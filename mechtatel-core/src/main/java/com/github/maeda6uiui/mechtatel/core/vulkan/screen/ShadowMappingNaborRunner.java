@@ -23,6 +23,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -92,6 +93,12 @@ public class ShadowMappingNaborRunner {
                             VK_SHADER_STAGE_VERTEX_BIT,
                             0,
                             matBuffer);
+
+                    Map<String, Long> uniformBufferMemories = Map.of(
+                            "animation",
+                            shadowMappingNabor.getUniformBufferMemory(0, 1)
+                    );
+                    component.updateUBOs(device, uniformBufferMemories);
 
                     component.transfer(commandBuffer);
                 }

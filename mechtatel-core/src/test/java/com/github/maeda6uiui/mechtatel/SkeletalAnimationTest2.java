@@ -137,6 +137,7 @@ public class SkeletalAnimationTest2 extends Mechtatel {
         animUpdater = new AnimationUpdater(
                 animationData,
                 AnimationPlayMode.REPEAT,
+                1.0,
                 this.getSecondsPerFrame()
         );
 

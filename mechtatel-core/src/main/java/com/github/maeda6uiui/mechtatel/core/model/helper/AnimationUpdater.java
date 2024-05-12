@@ -21,11 +21,13 @@ public class AnimationUpdater {
     /**
      * @param animationData         Animation data
      * @param playMode              Play mode for the animation
+     * @param animationTimeScale    Timescale for the animation
      * @param engineSecondsPerFrame Seconds per frame of the Mechtatel engine
      */
     public AnimationUpdater(
             MttAnimationData animationData,
             AnimationPlayMode playMode,
+            double animationTimeScale,
             double engineSecondsPerFrame) {
         this.animationData = animationData;
         this.playMode = playMode;
@@ -35,7 +37,7 @@ public class AnimationUpdater {
         numAnimationFrames = currentAnimation.frames().size();
         double animationDuration = currentAnimation.duration();
         double animationDurationSeconds = animationDuration / 1000.0;
-        animationSecondsPerFrame = animationDurationSeconds / numAnimationFrames;
+        animationSecondsPerFrame = animationDurationSeconds / numAnimationFrames * animationTimeScale;
 
         int animationStartFrameOffset = animationData.getStartFrameOffset();
         animationAccumTime = animationSecondsPerFrame * animationStartFrameOffset;

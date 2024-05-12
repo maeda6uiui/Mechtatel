@@ -29,7 +29,7 @@ public class JXMModelLoader {
 
         //Rescale the model so that 1 coord represents 1 meter
         final float RESCALE_FACTOR = 1.7f / 20.0f;
-        manipulator.rescale(RESCALE_FACTOR, RESCALE_FACTOR, RESCALE_FACTOR);
+        manipulator.rescale(RESCALE_FACTOR, RESCALE_FACTOR, RESCALE_FACTOR).applyTransformation();
 
         //Invert the model along the Z-axis
         //so that it matches the right-handed coordinate system of OpenGL and Vulkan

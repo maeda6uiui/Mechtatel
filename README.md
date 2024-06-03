@@ -63,8 +63,9 @@ You can overwrite it or use another logging implementation at your discretion.
 - Investigate the methods to reproduce water surface
 - Implement functionality to simulate sea waves
   - Implement it in another module or as an add-on
-- Implement functionality to run `mechtatel-core` via YAML definitions
-  - i.e. Load and manipulate resources according to the procedure defined in a YAML file
+- Design and implement API that can be invoked from external applications
+  - Establish connection between Mechtatel (server) and client app
+  - Build client app in any language (Go, Rust, etc.)
 
 ## Special thanks to
 

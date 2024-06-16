@@ -4,7 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.model.AssimpModelLoader;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.AnimationUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass1InfoUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.shadow.Pass1InfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;

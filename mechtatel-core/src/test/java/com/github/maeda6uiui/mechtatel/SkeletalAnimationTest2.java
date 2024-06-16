@@ -72,7 +72,7 @@ public class SkeletalAnimationTest2 extends Mechtatel {
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
                         .setUseShadowMapping(true)
-                        .setPpNaborNames(Arrays.asList("parallel_light"))
+                        .setPostProcessingNaborNames(Arrays.asList("parallel_light"))
         );
 
         //Create light

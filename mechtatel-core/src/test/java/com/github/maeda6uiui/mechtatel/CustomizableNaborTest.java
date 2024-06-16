@@ -65,7 +65,7 @@ public class CustomizableNaborTest extends Mechtatel {
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
                         .setUseShadowMapping(true)
-                        .setPpNaborNames(List.of("sepia"))
+                        .setPostProcessingNaborNames(List.of("sepia"))
                         .setCustomizableNaborInfos(Map.of("sepia", naborInfo))
         );
         mainScreen.createParallelLight();

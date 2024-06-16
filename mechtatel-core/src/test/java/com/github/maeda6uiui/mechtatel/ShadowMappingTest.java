@@ -50,7 +50,7 @@ public class ShadowMappingTest extends Mechtatel {
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
                         .setUseShadowMapping(true)
-                        .setPpNaborNames(Arrays.asList("parallel_light", "fog"))
+                        .setPostProcessingNaborNames(Arrays.asList("parallel_light", "fog"))
         );
         mainScreen.createParallelLight();
         mainScreen.getFog().setStart(10.0f);

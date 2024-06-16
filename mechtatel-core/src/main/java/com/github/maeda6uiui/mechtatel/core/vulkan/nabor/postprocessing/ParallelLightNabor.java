@@ -22,7 +22,7 @@ public class ParallelLightNabor extends PostProcessingNabor {
     public static final int MAX_NUM_LIGHTS = 4;
 
     public ParallelLightNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
+        super(device, vertShaderResource, fragShaderResource);
     }
 
     @Override

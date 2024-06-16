@@ -32,7 +32,7 @@ public class CustomizableNabor extends PostProcessingNabor {
             URL vertShaderResource,
             URL fragShaderResource,
             List<CustomizableNaborInfo.UniformResourceType> uniformResourceTypes) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
+        super(device, vertShaderResource, fragShaderResource);
 
         this.uniformResourceTypes = uniformResourceTypes;
     }

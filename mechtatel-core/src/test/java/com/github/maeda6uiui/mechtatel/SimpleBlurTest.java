@@ -7,6 +7,7 @@ import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import org.joml.Vector2i;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,8 +60,7 @@ public class SimpleBlurTest extends Mechtatel {
     @Override
     public void onUpdate(MttWindow window) {
         var simpleBlurInfo = new SimpleBlurInfo();
-        simpleBlurInfo.setTextureWidth(mainScreen.getScreenWidth());
-        simpleBlurInfo.setTextureHeight(mainScreen.getScreenHeight());
+        simpleBlurInfo.setTextureSize(new Vector2i(mainScreen.getScreenWidth(), mainScreen.getScreenHeight()));
         simpleBlurInfo.setBlurSize(10);
         simpleBlurInfo.setStride(1);
         mainScreen.setSimpleBlurInfo(simpleBlurInfo);

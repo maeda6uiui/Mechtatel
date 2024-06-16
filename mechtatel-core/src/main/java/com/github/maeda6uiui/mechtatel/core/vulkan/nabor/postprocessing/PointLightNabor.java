@@ -22,7 +22,7 @@ public class PointLightNabor extends PostProcessingNabor {
     public static final int MAX_NUM_LIGHTS = 64;
 
     public PointLightNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
+        super(device, vertShaderResource, fragShaderResource);
     }
 
     @Override

@@ -18,7 +18,7 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class SimpleBlurNabor extends PostProcessingNabor {
     public SimpleBlurNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
+        super(device, vertShaderResource, fragShaderResource);
     }
 
     @Override

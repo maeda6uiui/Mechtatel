@@ -2,8 +2,6 @@ package com.github.maeda6uiui.mechtatel.core.fseffect;
 
 import org.joml.Vector2i;
 
-import java.util.Arrays;
-
 /**
  * Info for Gaussian blur
  *
@@ -24,7 +22,6 @@ public class GaussianBlurInfo {
         textureSize = new Vector2i(1280, 720);
 
         weights = new float[numWeights];
-        Arrays.fill(weights, 0.0f);
 
         float s2 = standardDeviation * standardDeviation;
         float sum = 0.0f;

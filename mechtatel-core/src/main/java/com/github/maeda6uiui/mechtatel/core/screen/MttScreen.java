@@ -127,7 +127,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
             return this;
         }
 
-        public MttScreenCreateInfo setPpNaborNames(List<String> ppNaborNames) {
+        public MttScreenCreateInfo setPostProcessingNaborNames(List<String> ppNaborNames) {
             this.ppNaborNames = ppNaborNames;
             return this;
         }

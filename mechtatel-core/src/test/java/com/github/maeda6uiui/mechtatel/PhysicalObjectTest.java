@@ -53,7 +53,7 @@ public class PhysicalObjectTest extends Mechtatel {
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
                         .setUseShadowMapping(true)
-                        .setPpNaborNames(Arrays.asList("spotlight", "fog"))
+                        .setPostProcessingNaborNames(Arrays.asList("spotlight", "fog"))
         );
         mainScreen.getFog().setStart(10.0f);
         mainScreen.getFog().setEnd(20.0f);

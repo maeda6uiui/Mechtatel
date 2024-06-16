@@ -2,8 +2,8 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2D;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.Pass2InfoUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.shadow.ShadowInfoUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.shadow.Pass2InfoUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.shadow.ShadowInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;

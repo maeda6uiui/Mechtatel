@@ -58,7 +58,7 @@ void main(){
 
     vec3 lightingColor=lightingInfo.ambientColor;
 
-    for(int i=0;i<lightingInfo.numLights;i++){
+    for(int i=0;i<min(lightingInfo.numLights,MAX_NUM_LIGHTS);i++){
         vec3 r=position-lights[i].position;
         float lenR=length(r);
         float attenuation=1.0/(lights[i].k0+lights[i].k1*pow(lenR,1.0)+lights[i].k2*pow(lenR,2.0));

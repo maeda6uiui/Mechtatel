@@ -28,7 +28,7 @@ void main(){
     vec3 curNormal=vec3(0.0);
     float curStencil=1.0;
 
-    for(int i=0;i<mergeScenesInfo.numScenes;i++){
+    for(int i=0;i<min(mergeScenesInfo.numScenes,MAX_NUM_SCENES);i++){
         vec4 albedo=texture(sampler2D(albedoTextures[i],textureSampler),fragTexCoords);
         float depth=texture(sampler2D(depthTextures[i],textureSampler),fragTexCoords).r;
         vec3 position=texture(sampler2D(positionTextures[i],textureSampler),fragTexCoords).rgb;

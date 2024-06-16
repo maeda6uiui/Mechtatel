@@ -18,27 +18,28 @@ layout(location=0) out vec4 outColor;
 void main(){
     vec4 result=vec4(0.0);
     vec2 texel_size=1.0/blurInfo.texture_size;
+    int upperBound=min(blurInfo.numWeights,MAX_NUM_WEIGHTS);
 
     vec2 cur_uv;
 
     //Horizontal
-    for(int i=1;i<blurInfo.numWeights;i++){
+    for(int i=1;i<upperBound;i++){
         cur_uv=fragTexCoords+vec2(texel_size.x*(-i),0.0);
         result+=texture(sampler2D(colorTexture,textureSampler),cur_uv)*blurInfo.weights[i];
     }
     result+=texture(sampler2D(colorTexture,textureSampler),fragTexCoords)*blurInfo.weights[0];
-    for(int i=1;i<blurInfo.numWeights;i++){
+    for(int i=1;i<upperBound;i++){
         cur_uv=fragTexCoords+vec2(texel_size.x*i,0.0);
         result+=texture(sampler2D(colorTexture,textureSampler),cur_uv)*blurInfo.weights[i];
     }
 
     //Vertical
-    for(int i=1;i<blurInfo.numWeights;i++){
+    for(int i=1;i<upperBound;i++){
         cur_uv=fragTexCoords+vec2(0.0,texel_size.y*(-i));
         result+=texture(sampler2D(colorTexture,textureSampler),cur_uv)*blurInfo.weights[i];
     }
     result+=texture(sampler2D(colorTexture,textureSampler),fragTexCoords)*blurInfo.weights[0];
-    for(int i=1;i<blurInfo.numWeights;i++){
+    for(int i=1;i<upperBound;i++){
         cur_uv=fragTexCoords+vec2(0.0,texel_size.y*i);
         result+=texture(sampler2D(colorTexture,textureSampler),cur_uv)*blurInfo.weights[i];
     }

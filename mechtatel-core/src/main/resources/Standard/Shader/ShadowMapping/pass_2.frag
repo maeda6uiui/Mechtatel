@@ -53,7 +53,7 @@ void main(){
 
     vec3 shadowFactors=vec3(1.0);
 
-    for(int i=0;i<passInfo.numShadowMaps;i++){
+    for(int i=0;i<min(passInfo.numShadowMaps,MAX_NUM_SHADOW_MAPS);i++){
         float cosTh=abs(dot(shadowInfos[i].lightDirection,normal));
         float bias=passInfo.biasCoefficient*tan(acos(cosTh));
         bias=clamp(bias,0.0,passInfo.maxBias);

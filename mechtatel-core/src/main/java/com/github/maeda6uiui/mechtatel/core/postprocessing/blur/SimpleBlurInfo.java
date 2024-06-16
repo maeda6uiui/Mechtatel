@@ -1,37 +1,29 @@
 package com.github.maeda6uiui.mechtatel.core.postprocessing.blur;
 
+import org.joml.Vector2i;
+
 /**
  * Info for simple blur
  *
  * @author maeda6uiui
  */
 public class SimpleBlurInfo {
-    private int textureWidth;
-    private int textureHeight;
+    private Vector2i textureSize;
     private int blurSize;
     private int stride;
 
     public SimpleBlurInfo() {
-        textureWidth = 1280;
-        textureHeight = 720;
+        textureSize = new Vector2i(1280, 720);
         blurSize = 5;
         stride = 1;
     }
 
-    public int getTextureWidth() {
-        return textureWidth;
+    public Vector2i getTextureSize() {
+        return textureSize;
     }
 
-    public void setTextureWidth(int textureWidth) {
-        this.textureWidth = textureWidth;
-    }
-
-    public int getTextureHeight() {
-        return textureHeight;
-    }
-
-    public void setTextureHeight(int textureHeight) {
-        this.textureHeight = textureHeight;
+    public void setTextureSize(Vector2i textureSize) {
+        this.textureSize = textureSize;
     }
 
     public int getBlurSize() {

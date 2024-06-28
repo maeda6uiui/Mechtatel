@@ -13,6 +13,8 @@ Leave a star in this repo if you like it!
 Unfortunately, there are no elaborate documents for this project so far.
 However, you could check out the [test code](./mechtatel-core/src/test/java/com/github/maeda6uiui/mechtatel/) and hopefully get to learn what Mechtatel has to offer!
 
+Note that this project is currently under development and is subject to drastic changes.
+
 ## Message from developer
 
 It's been years since I came up with an idea like "Isn't it great if I could create a game engine and build my own game upon it?"
@@ -52,11 +54,11 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ## Currently working on
 
+- Implement Gaussian blur effect
+
 ## Todo
 
 ### Will certainly do
-
-- Implement Gaussian blur effect
 
 ### Probably...
 

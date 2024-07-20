@@ -109,7 +109,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             VkExtent2D extent,
             boolean shouldChangeExtentOnRecreate,
             boolean useShadowMapping,
-            Map<String, CustomizablePostProcessingNaborInfo> customizableNaborInfos,
+            Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos,
             List<String> ppNaborNames) {
         this.device = device;
         this.commandPool = commandPool;
@@ -388,7 +388,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                     samplerAddressMode,
                     extent,
                     ppNaborNames,
-                    customizableNaborInfos,
+                    customizablePPNaborInfos,
                     new HashMap<>(vertShaderModulesStorage),
                     new HashMap<>(fragShaderModulesStorage)
             );

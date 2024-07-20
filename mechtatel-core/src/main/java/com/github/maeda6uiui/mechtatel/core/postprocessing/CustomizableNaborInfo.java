@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.nabor;
+package com.github.maeda6uiui.mechtatel.core.postprocessing;
 
 import org.joml.Vector3f;
 

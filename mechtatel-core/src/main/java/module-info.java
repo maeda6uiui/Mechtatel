@@ -37,4 +37,5 @@ module com.github.maeda6uiui.mechtatel.core {
     exports com.github.maeda6uiui.mechtatel.core.vulkan;
     exports com.github.maeda6uiui.mechtatel.core.model;
     exports com.github.maeda6uiui.mechtatel.core.model.helper;
+    exports com.github.maeda6uiui.mechtatel.core.postprocessing;
 }

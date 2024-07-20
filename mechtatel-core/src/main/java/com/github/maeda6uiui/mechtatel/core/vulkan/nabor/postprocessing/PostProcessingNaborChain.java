@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.nabor.MttShaderSettings;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizableNaborInfo;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizablePostProcessingNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.LightingInfo;
@@ -39,7 +39,7 @@ public class PostProcessingNaborChain {
     private VkQueue graphicsQueue;
 
     private Map<String, PostProcessingNabor> ppNabors;
-    private Map<String, CustomizableNaborInfo> customizableNaborInfos;
+    private Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos;
     private PostProcessingNabor lastPPNabor;
 
     private QuadDrawer quadDrawer;
@@ -54,7 +54,7 @@ public class PostProcessingNaborChain {
             int samplerAddressMode,
             VkExtent2D extent,
             List<String> naborNames,
-            Map<String, CustomizableNaborInfo> customizableNaborInfos,
+            Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos,
             Map<String, List<Long>> vertShaderModulesStorage,
             Map<String, List<Long>> fragShaderModulesStorage) {
         this.device = device;
@@ -62,7 +62,7 @@ public class PostProcessingNaborChain {
         this.graphicsQueue = graphicsQueue;
 
         ppNabors = new LinkedHashMap<>();
-        this.customizableNaborInfos = customizableNaborInfos;
+        this.customizablePPNaborInfos = customizablePPNaborInfos;
 
         //Get shader URLs =====
         MttShaderSettings shaderSettings = MttShaderSettings
@@ -132,19 +132,19 @@ public class PostProcessingNaborChain {
         for (var naborName : naborNames) {
             PostProcessingNabor ppNabor;
 
-            CustomizableNaborInfo customizableNaborInfo = customizableNaborInfos
+            CustomizablePostProcessingNaborInfo customizablePPNaborInfo = customizablePPNaborInfos
                     .entrySet()
                     .stream()
                     .filter(v -> v.getKey().equals(naborName))
                     .map(Map.Entry::getValue)
                     .findFirst()
                     .orElse(null);
-            if (customizableNaborInfo != null) {
-                ppNabor = new CustomizableNabor(
+            if (customizablePPNaborInfo != null) {
+                ppNabor = new CustomizablePostProcessingNabor(
                         device,
-                        customizableNaborInfo.getVertShaderResource(),
-                        customizableNaborInfo.getFragShaderResource(),
-                        customizableNaborInfo.getUniformResourceTypes()
+                        customizablePPNaborInfo.getVertShaderResource(),
+                        customizablePPNaborInfo.getFragShaderResource(),
+                        customizablePPNaborInfo.getUniformResourceTypes()
                 );
             } else {
                 ppNabor = switch (naborName) {
@@ -208,7 +208,7 @@ public class PostProcessingNaborChain {
         quadDrawer.cleanup();
     }
 
-    private void updateStandardNaborUBOs(
+    private void updateStandardPPNaborUBOs(
             String naborName,
             PostProcessingNabor ppNabor,
             Camera camera,
@@ -307,9 +307,9 @@ public class PostProcessingNaborChain {
         }
     }
 
-    private void updateCustomizableNaborUBOs(
+    private void updateCustomizablePPNaborUBOs(
             PostProcessingNabor ppNabor,
-            CustomizableNaborInfo customizableNaborInfo,
+            CustomizablePostProcessingNaborInfo customizablePPNaborInfo,
             Camera camera,
             Fog fog,
             List<ParallelLight> parallelLights,
@@ -319,7 +319,7 @@ public class PostProcessingNaborChain {
             List<Spotlight> spotlights,
             Vector3f spotlightAmbientColor,
             SimpleBlurInfo simpleBlurInfo) {
-        List<CustomizableNaborInfo.UniformResourceType> uniformResourceTypes = customizableNaborInfo.getUniformResourceTypes();
+        List<CustomizablePostProcessingNaborInfo.UniformResourceType> uniformResourceTypes = customizablePPNaborInfo.getUniformResourceTypes();
         for (int i = 0; i < uniformResourceTypes.size(); i++) {
             long uboMemory = ppNabor.getUniformBufferMemory(i);
 
@@ -335,7 +335,7 @@ public class PostProcessingNaborChain {
                 }
                 case LIGHTING_INFO -> {
                     var lightingInfo = new LightingInfo();
-                    switch (customizableNaborInfo.getLightingType()) {
+                    switch (customizablePPNaborInfo.getLightingType()) {
                         case PARALLEL -> {
                             lightingInfo.setNumLights(parallelLights.size());
                             lightingInfo.setAmbientColor(parallelLightAmbientColor);
@@ -350,8 +350,8 @@ public class PostProcessingNaborChain {
                         }
                     }
 
-                    lightingInfo.setLightingClampMin(customizableNaborInfo.getLightingClampMin());
-                    lightingInfo.setLightingClampMax(customizableNaborInfo.getLightingClampMax());
+                    lightingInfo.setLightingClampMin(customizablePPNaborInfo.getLightingClampMin());
+                    lightingInfo.setLightingClampMax(customizablePPNaborInfo.getLightingClampMax());
 
                     var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
                     lightingInfoUBO.update(device, uboMemory);
@@ -399,11 +399,11 @@ public class PostProcessingNaborChain {
             String naborName = entry.getKey();
             PostProcessingNabor ppNabor = entry.getValue();
 
-            if (customizableNaborInfos.containsKey(naborName)) {
-                CustomizableNaborInfo customizableNaborInfo = customizableNaborInfos.get(naborName);
-                this.updateCustomizableNaborUBOs(
+            if (customizablePPNaborInfos.containsKey(naborName)) {
+                CustomizablePostProcessingNaborInfo customizablePPNaborInfo = customizablePPNaborInfos.get(naborName);
+                this.updateCustomizablePPNaborUBOs(
                         ppNabor,
-                        customizableNaborInfo,
+                        customizablePPNaborInfo,
                         camera,
                         fog,
                         parallelLights,
@@ -415,7 +415,7 @@ public class PostProcessingNaborChain {
                         simpleBlurInfo
                 );
             } else {
-                this.updateStandardNaborUBOs(
+                this.updateStandardPPNaborUBOs(
                         naborName,
                         ppNabor,
                         camera,

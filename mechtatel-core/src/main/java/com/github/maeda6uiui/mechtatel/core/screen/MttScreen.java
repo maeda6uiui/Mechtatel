@@ -6,7 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.SamplerFilterMode;
 import com.github.maeda6uiui.mechtatel.core.SamplerMipmapMode;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.operation.BiTextureOperation;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizableNaborInfo;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizablePostProcessingNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
@@ -60,7 +60,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         public SamplerAddressMode samplerAddressMode;
         public boolean shouldChangeExtentOnRecreate;
         public boolean useShadowMapping;
-        public Map<String, CustomizableNaborInfo> customizableNaborInfos;
+        public Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos;
         public List<String> ppNaborNames;
 
         public MttScreenCreateInfo() {
@@ -73,7 +73,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
             samplerAddressMode = SamplerAddressMode.REPEAT;
             shouldChangeExtentOnRecreate = true;
             useShadowMapping = false;
-            customizableNaborInfos = new HashMap<>();
+            customizablePPNaborInfos = new HashMap<>();
             ppNaborNames = new ArrayList<>();
         }
 
@@ -122,8 +122,9 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
             return this;
         }
 
-        public MttScreenCreateInfo setCustomizableNaborInfos(Map<String, CustomizableNaborInfo> customizableNaborInfos) {
-            this.customizableNaborInfos = customizableNaborInfos;
+        public MttScreenCreateInfo setCustomizablePostProcessingNaborInfos(
+                Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos) {
+            this.customizablePPNaborInfos = customizablePPNaborInfos;
             return this;
         }
 
@@ -178,7 +179,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
                 ),
                 createInfo.shouldChangeExtentOnRecreate,
                 createInfo.useShadowMapping,
-                createInfo.customizableNaborInfos,
+                createInfo.customizablePPNaborInfos,
                 createInfo.ppNaborNames
         );
 

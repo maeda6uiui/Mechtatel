@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 
-import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizableNaborInfo;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizablePostProcessingNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
@@ -14,7 +14,7 @@ import java.util.List;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Customizable nabor<br>
+ * Customizable post-processing nabor<br>
  * This nabor can be used with user-defined external shaders
  * if the post processing is achieved with a single fragment shader.
  * You have to create your own nabor if the processing
@@ -24,14 +24,14 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class CustomizableNabor extends PostProcessingNabor {
-    private List<CustomizableNaborInfo.UniformResourceType> uniformResourceTypes;
+public class CustomizablePostProcessingNabor extends PostProcessingNabor {
+    private List<CustomizablePostProcessingNaborInfo.UniformResourceType> uniformResourceTypes;
 
-    public CustomizableNabor(
+    public CustomizablePostProcessingNabor(
             VkDevice device,
             URL vertShaderResource,
             URL fragShaderResource,
-            List<CustomizableNaborInfo.UniformResourceType> uniformResourceTypes) {
+            List<CustomizablePostProcessingNaborInfo.UniformResourceType> uniformResourceTypes) {
         super(device, vertShaderResource, fragShaderResource);
 
         this.uniformResourceTypes = uniformResourceTypes;

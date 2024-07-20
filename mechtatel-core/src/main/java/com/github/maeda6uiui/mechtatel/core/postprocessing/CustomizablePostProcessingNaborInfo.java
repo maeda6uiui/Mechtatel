@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Info for customizable nabor
+ * Info of customizable post-processing nabor
  *
  * @author maeda6uiui
  */
-public class CustomizableNaborInfo {
+public class CustomizablePostProcessingNaborInfo {
     public enum LightingType {
         PARALLEL,
         POINT,
@@ -35,7 +35,7 @@ public class CustomizableNaborInfo {
     private Vector3f lightingClampMin;
     private Vector3f lightingClampMax;
 
-    public CustomizableNaborInfo(URL vertShaderResource, URL fragShaderResource) {
+    public CustomizablePostProcessingNaborInfo(URL vertShaderResource, URL fragShaderResource) {
         this.vertShaderResource = vertShaderResource;
         this.fragShaderResource = fragShaderResource;
         uniformResourceTypes = new ArrayList<>();

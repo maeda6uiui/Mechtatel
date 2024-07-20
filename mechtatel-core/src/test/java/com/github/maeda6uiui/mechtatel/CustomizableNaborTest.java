@@ -6,7 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizableNaborInfo;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizablePostProcessingNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
@@ -55,18 +55,18 @@ public class CustomizableNaborTest extends Mechtatel {
             return;
         }
 
-        var naborInfo = new CustomizableNaborInfo(
+        var naborInfo = new CustomizablePostProcessingNaborInfo(
                 Objects.requireNonNull(
                         this.getClass().getResource("/Standard/Shader/PostProcessing/post_processing.vert")),
                 fragShaderResource
         );
-        naborInfo.setLightingType(CustomizableNaborInfo.LightingType.PARALLEL);
+        naborInfo.setLightingType(CustomizablePostProcessingNaborInfo.LightingType.PARALLEL);
 
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
                         .setUseShadowMapping(true)
                         .setPostProcessingNaborNames(List.of("sepia"))
-                        .setCustomizableNaborInfos(Map.of("sepia", naborInfo))
+                        .setCustomizablePostProcessingNaborInfos(Map.of("sepia", naborInfo))
         );
         mainScreen.createParallelLight();
         mainScreen.getFog().setStart(10.0f);

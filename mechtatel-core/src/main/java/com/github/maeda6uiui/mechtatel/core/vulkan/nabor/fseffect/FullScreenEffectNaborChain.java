@@ -1,9 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.fseffect;
 
+import com.github.maeda6uiui.mechtatel.core.MttShaderSettings;
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.fseffect.GaussianBlurInfo;
-import com.github.maeda6uiui.mechtatel.core.nabor.MttShaderSettings;
 import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNabor;

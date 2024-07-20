@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.nabor;
+package com.github.maeda6uiui.mechtatel.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

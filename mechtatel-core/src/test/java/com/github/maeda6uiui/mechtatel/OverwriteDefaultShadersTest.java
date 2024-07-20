@@ -2,8 +2,8 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
+import com.github.maeda6uiui.mechtatel.core.MttShaderSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
-import com.github.maeda6uiui.mechtatel.core.nabor.MttShaderSettings;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

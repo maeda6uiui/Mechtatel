@@ -18,6 +18,7 @@ module com.github.maeda6uiui.mechtatel.core {
     requires com.github.maeda6uiui.mechtatel.natives;
 
     exports com.github.maeda6uiui.mechtatel.core;
+    exports com.github.maeda6uiui.mechtatel.core.fseffect;
     exports com.github.maeda6uiui.mechtatel.core.camera;
     exports com.github.maeda6uiui.mechtatel.core.screen.component;
     exports com.github.maeda6uiui.mechtatel.core.input.keyboard;

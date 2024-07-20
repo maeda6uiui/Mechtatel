@@ -33,7 +33,6 @@ public class FullScreenEffectNaborChain {
     private VkQueue graphicsQueue;
 
     private Map<String, FullScreenEffectNabor> fseNabors;
-    private Map<String, FullScreenEffectNaborInfo> fseNaborInfos;
     private FullScreenEffectNabor lastFSENabor;
 
     private QuadDrawer quadDrawer;
@@ -56,7 +55,6 @@ public class FullScreenEffectNaborChain {
         this.graphicsQueue = graphicsQueue;
 
         fseNabors = new LinkedHashMap<>();
-        this.fseNaborInfos = fseNaborInfos;
 
         //Get shader URLs =====
         MttShaderSettings shaderSettings = MttShaderSettings

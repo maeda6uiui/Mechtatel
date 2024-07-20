@@ -35,6 +35,11 @@ module com.github.maeda6uiui.mechtatel.core {
     exports com.github.maeda6uiui.mechtatel.core.util;
     exports com.github.maeda6uiui.mechtatel.core.operation;
     exports com.github.maeda6uiui.mechtatel.core.vulkan;
+    exports com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
+    exports com.github.maeda6uiui.mechtatel.core.vulkan.nabor.fseffect;
+    exports com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer;
+    exports com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
+    exports com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow;
     exports com.github.maeda6uiui.mechtatel.core.vulkan.screen;
     exports com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
     exports com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture;

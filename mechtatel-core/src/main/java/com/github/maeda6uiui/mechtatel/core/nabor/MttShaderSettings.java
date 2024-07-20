@@ -118,6 +118,16 @@ public class MttShaderSettings {
         }
     }
 
+    public static class FullScreenEffectShaderInfo {
+        public ShaderInfo gaussianBlur;
+
+        public FullScreenEffectShaderInfo() {
+            gaussianBlur = new ShaderInfo();
+            gaussianBlur.vert.filepath = "/Standard/Shader/FullScreenEffect/full_screen_effect.vert";
+            gaussianBlur.frag.filepath = "/Standard/Shader/FullScreenEffect/gaussian_blur.frag";
+        }
+    }
+
     public static class PresentShaderInfo {
         public ShaderInfo main;
 
@@ -160,6 +170,7 @@ public class MttShaderSettings {
     public PresentShaderInfo present;
     public PrimitiveShaderInfo primitive;
     public ShadowMappingShaderInfo shadowMapping;
+    public FullScreenEffectShaderInfo fullScreenEffect;
 
     private static MttShaderSettings instance;
 
@@ -171,6 +182,7 @@ public class MttShaderSettings {
         present = new PresentShaderInfo();
         primitive = new PrimitiveShaderInfo();
         shadowMapping = new ShadowMappingShaderInfo();
+        fullScreenEffect = new FullScreenEffectShaderInfo();
     }
 
     /**

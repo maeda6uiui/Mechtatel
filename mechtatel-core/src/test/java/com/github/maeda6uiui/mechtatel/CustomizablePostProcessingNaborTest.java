@@ -23,10 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class CustomizableNaborTest extends Mechtatel {
-    private static final Logger logger = LoggerFactory.getLogger(CustomizableNaborTest.class);
+public class CustomizablePostProcessingNaborTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(CustomizablePostProcessingNaborTest.class);
 
-    public CustomizableNaborTest(MttSettings settings) {
+    public CustomizablePostProcessingNaborTest(MttSettings settings) {
         super(settings);
         this.run();
     }
@@ -35,7 +35,7 @@ public class CustomizableNaborTest extends Mechtatel {
         MttSettings
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
-                        CustomizableNaborTest::new,
+                        CustomizablePostProcessingNaborTest::new,
                         () -> logger.error("Failed to load settings")
                 );
     }

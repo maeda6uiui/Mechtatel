@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.fseffect;
 import com.github.maeda6uiui.mechtatel.core.MttShaderSettings;
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectNaborInfo;
-import com.github.maeda6uiui.mechtatel.core.fseffect.GaussianBlurInfo;
+import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectProperties;
 import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.fseffect.GaussianBlurInfoUBO;
@@ -150,15 +150,15 @@ public class FullScreenEffectNaborChain {
     private void updateFSENaborUBOs(
             String naborName,
             FullScreenEffectNabor fseNabor,
-            GaussianBlurInfo gaussianBlurInfo) {
+            FullScreenEffectProperties fseProperties) {
         if (naborName.equals("gaussian_blur")) {
             long gaussianBlurInfoUBOMemory = fseNabor.getUniformBufferMemory(0);
-            var gaussianBlurInfoUBO = new GaussianBlurInfoUBO(gaussianBlurInfo);
+            var gaussianBlurInfoUBO = new GaussianBlurInfoUBO(fseProperties.gaussianBlurInfo);
             gaussianBlurInfoUBO.update(device, gaussianBlurInfoUBOMemory);
         }
     }
 
-    public void run(GaussianBlurInfo gaussianBlurInfo, long baseColorImageView) {
+    public void run(FullScreenEffectProperties fseProperties, long baseColorImageView) {
         FullScreenEffectNabor previousFSENabor = null;
         for (var entry : fseNabors.entrySet()) {
             String naborName = entry.getKey();
@@ -167,7 +167,7 @@ public class FullScreenEffectNaborChain {
             this.updateFSENaborUBOs(
                     naborName,
                     fseNabor,
-                    gaussianBlurInfo
+                    fseProperties
             );
 
             try (MemoryStack stack = MemoryStack.stackPush()) {

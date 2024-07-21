@@ -6,7 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.SamplerFilterMode;
 import com.github.maeda6uiui.mechtatel.core.SamplerMipmapMode;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectNaborInfo;
-import com.github.maeda6uiui.mechtatel.core.fseffect.GaussianBlurInfo;
+import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectProperties;
 import com.github.maeda6uiui.mechtatel.core.operation.BiTextureOperation;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizablePostProcessingNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
@@ -153,7 +153,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     private ShadowMappingSettings shadowMappingSettings;
     private PostProcessingProperties ppProperties;
-    private GaussianBlurInfo gaussianBlurInfo;
+    private FullScreenEffectProperties fseProperties;
 
     private boolean shouldAutoUpdateCameraAspect;
 
@@ -199,7 +199,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
         shadowMappingSettings = new ShadowMappingSettings();
         ppProperties = new PostProcessingProperties();
-        gaussianBlurInfo = new GaussianBlurInfo(8, 1.0f, 0.25f);
+        fseProperties = new FullScreenEffectProperties();
 
         components = new ArrayList<>();
         biTextureOperations = new ArrayList<>();
@@ -223,7 +223,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
                 camera,
                 shadowMappingSettings,
                 ppProperties,
-                gaussianBlurInfo,
+                fseProperties,
                 vkComponents
         );
     }
@@ -345,12 +345,12 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     //Full-screen effect
-    public GaussianBlurInfo getGaussianBlurInfo() {
-        return gaussianBlurInfo;
+    public FullScreenEffectProperties getFullScreenEffectProperties() {
+        return fseProperties;
     }
 
-    public void setGaussianBlurInfo(GaussianBlurInfo gaussianBlurInfo) {
-        this.gaussianBlurInfo = gaussianBlurInfo;
+    public void setFullScreenEffectProperties(FullScreenEffectProperties fseProperties) {
+        this.fseProperties = fseProperties;
     }
 
     //Texture ==========

@@ -4,7 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.MttShaderSettings;
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectNaborInfo;
-import com.github.maeda6uiui.mechtatel.core.fseffect.GaussianBlurInfo;
+import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectProperties;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizablePostProcessingNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
@@ -975,7 +975,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             Camera camera,
             ShadowMappingSettings shadowMappingSettings,
             PostProcessingProperties ppProperties,
-            GaussianBlurInfo gaussianBlurInfo,
+            FullScreenEffectProperties fseProperties,
             List<VkMttComponent> components) {
         this.runGBufferNabor(backgroundColor, camera, components);
         this.runPrimitiveNabor(backgroundColor, camera, components);
@@ -1032,7 +1032,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 baseColorImageView = mergeScenesNabor.getAlbedoImageView();
             }
 
-            fseNaborChain.run(gaussianBlurInfo, baseColorImageView);
+            fseNaborChain.run(fseProperties, baseColorImageView);
         }
 
         components.forEach(VkMttComponent::cleanupLocally);

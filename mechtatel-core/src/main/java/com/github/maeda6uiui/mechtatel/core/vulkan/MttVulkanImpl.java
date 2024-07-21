@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttShaderSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
-import com.github.maeda6uiui.mechtatel.core.fseffect.GaussianBlurInfo;
+import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectProperties;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
@@ -300,14 +300,14 @@ public class MttVulkanImpl {
             Camera camera,
             ShadowMappingSettings shadowMappingSettings,
             PostProcessingProperties ppProperties,
-            GaussianBlurInfo gaussianBlurInfo,
+            FullScreenEffectProperties fseProperties,
             List<VkMttComponent> components) {
         screen.run(
                 backgroundColor,
                 camera,
                 shadowMappingSettings,
                 ppProperties,
-                gaussianBlurInfo,
+                fseProperties,
                 components
         );
     }

@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
+import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectProperties;
 import com.github.maeda6uiui.mechtatel.core.fseffect.GaussianBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector2f;
@@ -58,7 +59,9 @@ public class GaussianBlurTest extends Mechtatel {
 
         var gaussianBlurInfo = new GaussianBlurInfo(32, 16.0f, 0.1f);
         gaussianBlurInfo.setTextureSize(new Vector2i(mainScreen.getScreenWidth(), mainScreen.getScreenHeight()));
-        mainScreen.setGaussianBlurInfo(gaussianBlurInfo);
+
+        FullScreenEffectProperties fseProperties = mainScreen.getFullScreenEffectProperties();
+        fseProperties.gaussianBlurInfo = gaussianBlurInfo;
 
         logger.info(Arrays.toString(gaussianBlurInfo.getWeights()));
     }

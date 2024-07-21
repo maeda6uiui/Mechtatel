@@ -6,7 +6,6 @@ import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.fseffect.GaussianBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.fseffect.GaussianBlurInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import org.lwjgl.system.MemoryStack;
@@ -159,7 +158,7 @@ public class FullScreenEffectNaborChain {
         }
     }
 
-    public void run(GaussianBlurInfo gaussianBlurInfo, PostProcessingNabor lastPPNabor) {
+    public void run(GaussianBlurInfo gaussianBlurInfo, long baseColorImageView) {
         FullScreenEffectNabor previousFSENabor = null;
         for (var entry : fseNabors.entrySet()) {
             String naborName = entry.getKey();
@@ -198,7 +197,7 @@ public class FullScreenEffectNaborChain {
                                 commandBuffer,
                                 1,
                                 0,
-                                List.of(lastPPNabor.getColorImageView())
+                                List.of(baseColorImageView)
                         );
                     } else {
                         fseNabor.bindImages(

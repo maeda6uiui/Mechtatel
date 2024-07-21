@@ -12,8 +12,6 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.shadow.ShadowMappingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
@@ -392,8 +390,11 @@ public class PostProcessingNaborChain {
             List<Spotlight> spotlights,
             Vector3f spotlightAmbientColor,
             SimpleBlurInfo simpleBlurInfo,
-            MergeScenesNabor lastMergeNabor,
-            ShadowMappingNabor shadowMappingNabor) {
+            long baseColorImageView,
+            long baseDepthImageView,
+            long basePositionImageView,
+            long baseNormalImageView,
+            long baseStencilImageView) {
         PostProcessingNabor previousPPNabor = null;
         for (var entry : ppNabors.entrySet()) {
             String naborName = entry.getKey();
@@ -453,33 +454,18 @@ public class PostProcessingNaborChain {
 
                     //First post-processing
                     if (previousPPNabor == null) {
-                        if (shadowMappingNabor != null) {
-                            ppNabor.bindImages(
-                                    commandBuffer,
-                                    1,
-                                    0,
-                                    Arrays.asList(
-                                            shadowMappingNabor.getColorImageView(),
-                                            lastMergeNabor.getDepthImageView(),
-                                            lastMergeNabor.getPositionImageView(),
-                                            lastMergeNabor.getNormalImageView(),
-                                            lastMergeNabor.getStencilImageView()
-                                    )
-                            );
-                        } else {
-                            ppNabor.bindImages(
-                                    commandBuffer,
-                                    1,
-                                    0,
-                                    Arrays.asList(
-                                            lastMergeNabor.getAlbedoImageView(),
-                                            lastMergeNabor.getDepthImageView(),
-                                            lastMergeNabor.getPositionImageView(),
-                                            lastMergeNabor.getNormalImageView(),
-                                            lastMergeNabor.getStencilImageView()
-                                    )
-                            );
-                        }
+                        ppNabor.bindImages(
+                                commandBuffer,
+                                1,
+                                0,
+                                Arrays.asList(
+                                        baseColorImageView,
+                                        baseDepthImageView,
+                                        basePositionImageView,
+                                        baseNormalImageView,
+                                        baseStencilImageView
+                                )
+                        );
                     } else {
                         ppNabor.bindImages(
                                 commandBuffer,
@@ -487,10 +473,10 @@ public class PostProcessingNaborChain {
                                 0,
                                 Arrays.asList(
                                         previousPPNabor.getColorImageView(),
-                                        lastMergeNabor.getDepthImageView(),
-                                        lastMergeNabor.getPositionImageView(),
-                                        lastMergeNabor.getNormalImageView(),
-                                        lastMergeNabor.getStencilImageView()
+                                        baseDepthImageView,
+                                        basePositionImageView,
+                                        baseNormalImageView,
+                                        baseStencilImageView
                                 )
                         );
                     }

@@ -54,7 +54,7 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ## Currently working on
 
-- Implement Gaussian blur effect
+- Implement headless mode (rendering without a window)
 
 ## Todo
 
@@ -75,5 +75,5 @@ You can overwrite it or use another logging implementation at your discretion.
 - [Vulkan-Tutorial-Java](https://github.com/Naitsirc98/Vulkan-Tutorial-Java)
 - [3D Game Development with LWJGL 3](https://ahbejarano.gitbook.io/lwjglgamedev/)
 
-## 進捗報告(Progress report)
+## Progress report
 

@@ -77,3 +77,8 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ## Progress report
 
+### 2024-07-21
+
+Implemented Gaussian blur as a full-screen effect.
+Full-screen effects are intended to be applied after post-processing stages.
+Post-processing shaders consume images other than color (such as depth and position), whereas full-screen effect shaders consume only a color image.

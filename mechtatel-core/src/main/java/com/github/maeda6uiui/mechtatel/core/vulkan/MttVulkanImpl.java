@@ -47,7 +47,7 @@ public class MttVulkanImpl {
     private long surface;
     private VkPhysicalDevice physicalDevice;
 
-    private LogicalDeviceCreator.DeviceAndQueues dq;
+    private DeviceAndQueues dq;
     private long commandPool;
     private Swapchain swapchain;
 
@@ -312,7 +312,7 @@ public class MttVulkanImpl {
         );
     }
 
-    public LogicalDeviceCreator.DeviceAndQueues getDeviceAndQueues() {
+    public DeviceAndQueues getDeviceAndQueues() {
         return dq;
     }
 

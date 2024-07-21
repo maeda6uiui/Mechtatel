@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.creator;
 
+import com.github.maeda6uiui.mechtatel.core.vulkan.DeviceAndQueues;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.PointerBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.QueueFamilyUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.SwapchainUtils;
@@ -16,14 +17,6 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class LogicalDeviceCreator {
-    public record DeviceAndQueues(
-            VkDevice device,
-            VkQueue graphicsQueue,
-            VkQueue presentQueue,
-            int graphicsFamilyIndex,
-            int presentFamilyIndex) {
-    }
-
     public static DeviceAndQueues createLogicalDevice(
             VkPhysicalDevice physicalDevice,
             long surface,

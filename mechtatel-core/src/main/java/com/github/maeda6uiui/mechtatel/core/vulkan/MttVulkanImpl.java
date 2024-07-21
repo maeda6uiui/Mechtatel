@@ -3,6 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.vulkan;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttShaderSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
+import com.github.maeda6uiui.mechtatel.core.fseffect.GaussianBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
@@ -311,6 +312,7 @@ public class MttVulkanImpl {
             Vector3f spotlightAmbientColor,
             ShadowMappingSettings shadowMappingSettings,
             SimpleBlurInfo simpleBlurInfo,
+            GaussianBlurInfo gaussianBlurInfo,
             List<VkMttComponent> components) {
         screen.run(
                 backgroundColor,
@@ -324,6 +326,7 @@ public class MttVulkanImpl {
                 spotlightAmbientColor,
                 shadowMappingSettings,
                 simpleBlurInfo,
+                gaussianBlurInfo,
                 components
         );
     }

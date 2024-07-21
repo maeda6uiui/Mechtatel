@@ -3,6 +3,8 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.screen;
 import com.github.maeda6uiui.mechtatel.core.MttShaderSettings;
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
+import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectNaborInfo;
+import com.github.maeda6uiui.mechtatel.core.fseffect.GaussianBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizablePostProcessingNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
@@ -15,6 +17,8 @@ import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PrimitiveNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.fseffect.FullScreenEffectNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.fseffect.FullScreenEffectNaborChain;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.gbuffer.GBufferNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PostProcessingNaborChain;
@@ -63,13 +67,14 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
     private static Map<String, List<Long>> vertShaderModulesStorage = new HashMap<>();
     private static Map<String, List<Long>> fragShaderModulesStorage = new HashMap<>();
 
-    private PostProcessingNaborChain ppNaborChain;
-
     private ShadowMappingNabor shadowMappingNabor;
     private int depthImageFormat;
     private int depthImageWidth;
     private int depthImageHeight;
     private int depthImageAspect;
+
+    private PostProcessingNaborChain ppNaborChain;
+    private FullScreenEffectNaborChain fseNaborChain;
 
     private int initialWidth;
     private int initialHeight;
@@ -109,8 +114,10 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             VkExtent2D extent,
             boolean shouldChangeExtentOnRecreate,
             boolean useShadowMapping,
+            List<String> ppNaborNames,
             Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos,
-            List<String> ppNaborNames) {
+            List<String> fseNaborNames,
+            Map<String, FullScreenEffectNaborInfo> fseNaborInfos) {
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
@@ -377,29 +384,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             fragShaderModulesStorage.put("merge_scenes", fragShaderModules);
         }
 
-        if (!ppNaborNames.isEmpty()) {
-            ppNaborChain = new PostProcessingNaborChain(
-                    device,
-                    commandPool,
-                    graphicsQueue,
-                    colorImageFormat,
-                    samplerFilter,
-                    samplerMipmapMode,
-                    samplerAddressMode,
-                    extent,
-                    ppNaborNames,
-                    customizablePPNaborInfos,
-                    new HashMap<>(vertShaderModulesStorage),
-                    new HashMap<>(fragShaderModulesStorage)
-            );
-
-            var ppNaborChainVertShaderModules = ppNaborChain.getVertShaderModules();
-            vertShaderModulesStorage.putAll(ppNaborChainVertShaderModules);
-
-            var ppNaborChainFragShaderModules = ppNaborChain.getFragShaderModules();
-            fragShaderModulesStorage.putAll(ppNaborChainFragShaderModules);
-        }
-
         if (useShadowMapping) {
             shadowMappingNabor = new ShadowMappingNabor(
                     device,
@@ -445,6 +429,50 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
 
             this.createShadowMappingNaborUserDefImages(shadowMappingNabor);
         }
+        if (!ppNaborNames.isEmpty()) {
+            ppNaborChain = new PostProcessingNaborChain(
+                    device,
+                    commandPool,
+                    graphicsQueue,
+                    colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
+                    extent,
+                    ppNaborNames,
+                    customizablePPNaborInfos,
+                    new HashMap<>(vertShaderModulesStorage),
+                    new HashMap<>(fragShaderModulesStorage)
+            );
+
+            var ppNaborChainVertShaderModules = ppNaborChain.getVertShaderModules();
+            vertShaderModulesStorage.putAll(ppNaborChainVertShaderModules);
+
+            var ppNaborChainFragShaderModules = ppNaborChain.getFragShaderModules();
+            fragShaderModulesStorage.putAll(ppNaborChainFragShaderModules);
+        }
+        if (!fseNaborNames.isEmpty()) {
+            fseNaborChain = new FullScreenEffectNaborChain(
+                    device,
+                    commandPool,
+                    graphicsQueue,
+                    colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
+                    extent,
+                    fseNaborNames,
+                    fseNaborInfos,
+                    new HashMap<>(vertShaderModulesStorage),
+                    new HashMap<>(fragShaderModulesStorage)
+            );
+
+            var fseNaborChainVertShaderModules = fseNaborChain.getVertShaderModules();
+            vertShaderModulesStorage.putAll(fseNaborChainVertShaderModules);
+
+            var fseNaborChainFragShaderModules = fseNaborChain.getFragShaderModules();
+            fragShaderModulesStorage.putAll(fseNaborChainFragShaderModules);
+        }
     }
 
     public void recreate(int colorImageFormat, VkExtent2D extent) {
@@ -454,11 +482,14 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             primitiveFillNabor.recreate(colorImageFormat, extent);
             mergeScenesNabor.recreate(colorImageFormat, extent);
 
+            if (shadowMappingNabor != null) {
+                shadowMappingNabor.recreate(colorImageFormat, extent);
+            }
             if (ppNaborChain != null) {
                 ppNaborChain.recreate(colorImageFormat, extent);
             }
-            if (shadowMappingNabor != null) {
-                shadowMappingNabor.recreate(colorImageFormat, extent);
+            if (fseNaborChain != null) {
+                fseNaborChain.recreate(colorImageFormat, extent);
             }
         } else {
             VkExtent2D initialExtent = VkExtent2D.create();
@@ -470,11 +501,14 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             primitiveFillNabor.recreate(colorImageFormat, initialExtent);
             mergeScenesNabor.recreate(colorImageFormat, initialExtent);
 
+            if (shadowMappingNabor != null) {
+                shadowMappingNabor.recreate(colorImageFormat, initialExtent);
+            }
             if (ppNaborChain != null) {
                 ppNaborChain.recreate(colorImageFormat, initialExtent);
             }
-            if (shadowMappingNabor != null) {
-                shadowMappingNabor.recreate(colorImageFormat, initialExtent);
+            if (fseNaborChain != null) {
+                fseNaborChain.recreate(colorImageFormat, extent);
             }
         }
     }
@@ -487,11 +521,14 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         primitiveFillNabor.cleanup(false);
         mergeScenesNabor.cleanup(false);
 
+        if (shadowMappingNabor != null) {
+            shadowMappingNabor.cleanup(false);
+        }
         if (ppNaborChain != null) {
             ppNaborChain.cleanup();
         }
-        if (shadowMappingNabor != null) {
-            shadowMappingNabor.cleanup(false);
+        if (fseNaborChain != null) {
+            fseNaborChain.cleanup();
         }
     }
 
@@ -950,6 +987,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             Vector3f spotlightAmbientColor,
             ShadowMappingSettings shadowMappingSettings,
             SimpleBlurInfo simpleBlurInfo,
+            GaussianBlurInfo gaussianBlurInfo,
             List<VkMttComponent> components) {
         this.runGBufferNabor(backgroundColor, camera, components);
         this.runPrimitiveNabor(backgroundColor, camera, components);
@@ -978,8 +1016,14 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                     quadDrawer
             );
         }
-
         if (ppNaborChain != null) {
+            long baseColorImageView;
+            if (shadowMappingNabor != null) {
+                baseColorImageView = shadowMappingNabor.getColorImageView();
+            } else {
+                baseColorImageView = mergeScenesNabor.getAlbedoImageView();
+            }
+
             ppNaborChain.run(
                     camera,
                     fog,
@@ -990,16 +1034,33 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                     spotlights,
                     spotlightAmbientColor,
                     simpleBlurInfo,
-                    mergeScenesNabor,
-                    shadowMappingNabor
+                    baseColorImageView,
+                    mergeScenesNabor.getDepthImageView(),
+                    mergeScenesNabor.getPositionImageView(),
+                    mergeScenesNabor.getNormalImageView(),
+                    mergeScenesNabor.getStencilImageView()
             );
+        }
+        if (fseNaborChain != null) {
+            long baseColorImageView;
+            if (ppNaborChain != null) {
+                baseColorImageView = ppNaborChain.getLastPPNaborColorImageView();
+            } else if (shadowMappingNabor != null) {
+                baseColorImageView = shadowMappingNabor.getColorImageView();
+            } else {
+                baseColorImageView = mergeScenesNabor.getAlbedoImageView();
+            }
+
+            fseNaborChain.run(gaussianBlurInfo, baseColorImageView);
         }
 
         components.forEach(VkMttComponent::cleanupLocally);
     }
 
     public long getColorImageView() {
-        if (ppNaborChain != null) {
+        if (fseNaborChain != null) {
+            return fseNaborChain.getLastFSENaborColorImageView();
+        } else if (ppNaborChain != null) {
             return ppNaborChain.getLastPPNaborColorImageView();
         } else if (shadowMappingNabor != null) {
             return shadowMappingNabor.getColorImageView();
@@ -1028,12 +1089,17 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
 
     public BufferedImage createBufferedImage(ScreenImageType imageType, PixelFormat pixelFormat) {
         //Color image is acquired from one of the following sources:
+        //- Full-screen effect nabor
         //- Post-processing nabor
         //- Shadow mapping nabor
         //- Merge-scenes nabor
         if (imageType == ScreenImageType.COLOR) {
+            //Acquire image from a full-screen effect nabor
+            if (fseNaborChain != null) {
+                return fseNaborChain.createBufferedImage(FullScreenEffectNabor.COLOR_ATTACHMENT_INDEX, pixelFormat);
+            }
             //Acquire image from a post-processing nabor
-            if (ppNaborChain != null) {
+            else if (ppNaborChain != null) {
                 return ppNaborChain.createBufferedImage(PostProcessingNabor.COLOR_ATTACHMENT_INDEX, pixelFormat);
             }
             //Acquire image from shadow mapping nabor
@@ -1046,7 +1112,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 );
             }
             //Acquire image from merge-scenes nabor
-            //if there is neither post-processing nor shadow mapping declared in this screen
             else {
                 return mergeScenesNabor.createBufferedImage(
                         commandPool,

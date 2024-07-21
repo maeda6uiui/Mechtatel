@@ -5,6 +5,8 @@ import com.github.maeda6uiui.mechtatel.core.SamplerAddressMode;
 import com.github.maeda6uiui.mechtatel.core.SamplerFilterMode;
 import com.github.maeda6uiui.mechtatel.core.SamplerMipmapMode;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
+import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectNaborInfo;
+import com.github.maeda6uiui.mechtatel.core.fseffect.GaussianBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.operation.BiTextureOperation;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizablePostProcessingNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
@@ -60,8 +62,10 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         public SamplerAddressMode samplerAddressMode;
         public boolean shouldChangeExtentOnRecreate;
         public boolean useShadowMapping;
-        public Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos;
         public List<String> ppNaborNames;
+        public Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos;
+        public List<String> fseNaborNames;
+        public Map<String, FullScreenEffectNaborInfo> fseNaborInfos;
 
         public MttScreenCreateInfo() {
             depthImageWidth = 2048;
@@ -73,8 +77,10 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
             samplerAddressMode = SamplerAddressMode.REPEAT;
             shouldChangeExtentOnRecreate = true;
             useShadowMapping = false;
-            customizablePPNaborInfos = new HashMap<>();
             ppNaborNames = new ArrayList<>();
+            customizablePPNaborInfos = new HashMap<>();
+            fseNaborNames = new ArrayList<>();
+            fseNaborInfos = new HashMap<>();
         }
 
         public MttScreenCreateInfo setDepthImageWidth(int depthImageWidth) {
@@ -122,14 +128,24 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
             return this;
         }
 
+        public MttScreenCreateInfo setPostProcessingNaborNames(List<String> ppNaborNames) {
+            this.ppNaborNames = ppNaborNames;
+            return this;
+        }
+
         public MttScreenCreateInfo setCustomizablePostProcessingNaborInfos(
                 Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos) {
             this.customizablePPNaborInfos = customizablePPNaborInfos;
             return this;
         }
 
-        public MttScreenCreateInfo setPostProcessingNaborNames(List<String> ppNaborNames) {
-            this.ppNaborNames = ppNaborNames;
+        public MttScreenCreateInfo setFullScreenEffectNaborNames(List<String> fseNaborNames) {
+            this.fseNaborNames = fseNaborNames;
+            return this;
+        }
+
+        public MttScreenCreateInfo setFullScreenEffectNaborInfos(Map<String, FullScreenEffectNaborInfo> fseNaborInfos) {
+            this.fseNaborInfos = fseNaborInfos;
             return this;
         }
     }
@@ -141,6 +157,11 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     private Vector4f backgroundColor;
     private Camera camera;
+
+    //Shadow mapping
+    private ShadowMappingSettings shadowMappingSettings;
+
+    //Post-processing
     private Fog fog;
     private List<ParallelLight> parallelLights;
     private Vector3f parallelLightAmbientColor;
@@ -148,8 +169,10 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     private Vector3f pointLightAmbientColor;
     private List<Spotlight> spotlights;
     private Vector3f spotlightAmbientColor;
-    private ShadowMappingSettings shadowMappingSettings;
     private SimpleBlurInfo simpleBlurInfo;
+
+    //Full-screen effect
+    private GaussianBlurInfo gaussianBlurInfo;
 
     private boolean shouldAutoUpdateCameraAspect;
 
@@ -179,8 +202,10 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
                 ),
                 createInfo.shouldChangeExtentOnRecreate,
                 createInfo.useShadowMapping,
+                createInfo.ppNaborNames,
                 createInfo.customizablePPNaborInfos,
-                createInfo.ppNaborNames
+                createInfo.fseNaborNames,
+                createInfo.fseNaborInfos
         );
 
         shouldAutoUpdateCameraAspect = true;
@@ -188,18 +213,21 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         this.vulkanImpl = vulkanImpl;
         this.imguiContext = imguiContext;
 
-        backgroundColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
-        parallelLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
-        pointLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
-        spotlightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
         shadowMappingSettings = new ShadowMappingSettings();
-        simpleBlurInfo = new SimpleBlurInfo();
 
         camera = new Camera();
+        backgroundColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+
         fog = new Fog();
         parallelLights = new ArrayList<>();
         pointLights = new ArrayList<>();
         spotlights = new ArrayList<>();
+        parallelLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
+        pointLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
+        spotlightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
+        simpleBlurInfo = new SimpleBlurInfo();
+
+        gaussianBlurInfo = new GaussianBlurInfo(8, 1.0f);
 
         components = new ArrayList<>();
         biTextureOperations = new ArrayList<>();
@@ -230,6 +258,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
                 spotlightAmbientColor,
                 shadowMappingSettings,
                 simpleBlurInfo,
+                gaussianBlurInfo,
                 vkComponents
         );
     }
@@ -332,34 +361,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         this.camera.setUp(new Vector3f(camera.getUp()));
     }
 
-    public Fog getFog() {
-        return fog;
-    }
-
-    public void setFog(Fog fog) {
-        this.fog = fog;
-    }
-
-    public Vector3f getParallelLightAmbientColor() {
-        return parallelLightAmbientColor;
-    }
-
-    public Vector3f getPointLightAmbientColor() {
-        return pointLightAmbientColor;
-    }
-
-    public void setPointLightAmbientColor(Vector3f pointLightAmbientColor) {
-        this.pointLightAmbientColor = pointLightAmbientColor;
-    }
-
-    public Vector3f getSpotlightAmbientColor() {
-        return spotlightAmbientColor;
-    }
-
-    public void setSpotlightAmbientColor(Vector3f spotlightAmbientColor) {
-        this.spotlightAmbientColor = spotlightAmbientColor;
-    }
-
+    //Shadow mapping =====
     public ShadowMappingSettings getShadowMappingSettings() {
         return shadowMappingSettings;
     }
@@ -368,12 +370,13 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         this.shadowMappingSettings = shadowMappingSettings;
     }
 
-    public SimpleBlurInfo getSimpleBlurInfo() {
-        return simpleBlurInfo;
+    //Post-processing =====
+    public Fog getFog() {
+        return fog;
     }
 
-    public void setSimpleBlurInfo(SimpleBlurInfo simpleBlurInfo) {
-        this.simpleBlurInfo = simpleBlurInfo;
+    public void setFog(Fog fog) {
+        this.fog = fog;
     }
 
     public int getNumParallelLights() {
@@ -446,6 +449,43 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     public boolean removeSpotlight(Spotlight spotlight) {
         return spotlights.remove(spotlight);
+    }
+
+    public Vector3f getParallelLightAmbientColor() {
+        return parallelLightAmbientColor;
+    }
+
+    public Vector3f getPointLightAmbientColor() {
+        return pointLightAmbientColor;
+    }
+
+    public void setPointLightAmbientColor(Vector3f pointLightAmbientColor) {
+        this.pointLightAmbientColor = pointLightAmbientColor;
+    }
+
+    public Vector3f getSpotlightAmbientColor() {
+        return spotlightAmbientColor;
+    }
+
+    public void setSpotlightAmbientColor(Vector3f spotlightAmbientColor) {
+        this.spotlightAmbientColor = spotlightAmbientColor;
+    }
+
+    public SimpleBlurInfo getSimpleBlurInfo() {
+        return simpleBlurInfo;
+    }
+
+    public void setSimpleBlurInfo(SimpleBlurInfo simpleBlurInfo) {
+        this.simpleBlurInfo = simpleBlurInfo;
+    }
+
+    //Full-screen effect
+    public GaussianBlurInfo getGaussianBlurInfo() {
+        return gaussianBlurInfo;
+    }
+
+    public void setGaussianBlurInfo(GaussianBlurInfo gaussianBlurInfo) {
+        this.gaussianBlurInfo = gaussianBlurInfo;
     }
 
     //Texture ==========

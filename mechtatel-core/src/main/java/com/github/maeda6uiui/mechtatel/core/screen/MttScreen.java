@@ -227,7 +227,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         spotlightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
         simpleBlurInfo = new SimpleBlurInfo();
 
-        gaussianBlurInfo = new GaussianBlurInfo(8, 1.0f);
+        gaussianBlurInfo = new GaussianBlurInfo(8, 1.0f, 0.25f);
 
         components = new ArrayList<>();
         biTextureOperations = new ArrayList<>();

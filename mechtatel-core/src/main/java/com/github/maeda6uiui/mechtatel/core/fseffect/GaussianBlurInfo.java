@@ -17,27 +17,19 @@ public class GaussianBlurInfo {
      *
      * @param numWeights        Number of weights
      * @param standardDeviation Standard deviation
+     * @param amplitude         Amplitude
      */
-    public GaussianBlurInfo(int numWeights, float standardDeviation) {
+    public GaussianBlurInfo(int numWeights, float standardDeviation, float amplitude) {
         textureSize = new Vector2i(1280, 720);
 
         weights = new float[numWeights];
 
         float s2 = standardDeviation * standardDeviation;
-        float sum = 0.0f;
         for (int i = 0; i < numWeights; i++) {
             float x2 = i * i;
             float weight = (float) Math.exp(-0.5f * x2 / s2);
-            weights[i] = weight;
 
-            if (i == 0) {
-                sum += weight * 2.0f;
-            } else {
-                sum += weight * 4.0f;
-            }
-        }
-        for (int i = 0; i < numWeights; i++) {
-            weights[i] /= sum;
+            weights[i] = weight * amplitude;
         }
     }
 

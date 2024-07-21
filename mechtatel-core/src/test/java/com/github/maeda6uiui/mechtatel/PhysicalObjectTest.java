@@ -9,6 +9,7 @@ import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalBox;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalMesh;
 import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObject;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
@@ -55,22 +56,25 @@ public class PhysicalObjectTest extends Mechtatel {
                         .setUseShadowMapping(true)
                         .setPostProcessingNaborNames(Arrays.asList("spotlight", "fog"))
         );
-        mainScreen.getFog().setStart(10.0f);
-        mainScreen.getFog().setEnd(20.0f);
-        mainScreen.getShadowMappingSettings().setBiasCoefficient(0.003f);
-        mainScreen.setSpotlightAmbientColor(new Vector3f(0.0f, 0.0f, 0.0f));
 
-        var spotlightR = mainScreen.createSpotlight();
+        mainScreen.getShadowMappingSettings().setBiasCoefficient(0.003f);
+
+        PostProcessingProperties ppProperties = mainScreen.getPostProcessingProperties();
+        ppProperties.fog.setStart(10.0f);
+        ppProperties.fog.setEnd(20.0f);
+        ppProperties.spotlightAmbientColor = new Vector3f(0.0f, 0.0f, 0.0f);
+
+        var spotlightR = ppProperties.createSpotlight();
         spotlightR.setPosition(new Vector3f(10.0f, 10.0f, 10.0f));
         spotlightR.setDirection(new Vector3f(-1.0f, -1.0f, -1.0f));
         spotlightR.setDiffuseColor(new Vector3f(1.0f, 0.0f, 0.0f));
 
-        var spotlightG = mainScreen.createSpotlight();
+        var spotlightG = ppProperties.createSpotlight();
         spotlightG.setPosition(new Vector3f(10.0f, 10.0f, -10.0f));
         spotlightG.setDirection(new Vector3f(-1.0f, -1.0f, 1.0f));
         spotlightG.setDiffuseColor(new Vector3f(0.0f, 1.0f, 0.0f));
 
-        var spotlightB = mainScreen.createSpotlight();
+        var spotlightB = ppProperties.createSpotlight();
         spotlightB.setPosition(new Vector3f(-10.0f, 10.0f, 0.0f));
         spotlightB.setDirection(new Vector3f(1.0f, -1.0f, 0.0f));
         spotlightB.setDiffuseColor(new Vector3f(0.0f, 0.0f, 1.0f));

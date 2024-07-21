@@ -9,6 +9,7 @@ import com.github.maeda6uiui.mechtatel.core.model.helper.AnimationPlayMode;
 import com.github.maeda6uiui.mechtatel.core.model.helper.AnimationUpdater;
 import com.github.maeda6uiui.mechtatel.core.operation.BiTextureOperation;
 import com.github.maeda6uiui.mechtatel.core.operation.BiTextureOperationParameters;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
@@ -76,7 +77,8 @@ public class SkeletalAnimationTest2 extends Mechtatel {
         );
 
         //Create light
-        ParallelLight parallelLight = mainScreen.createParallelLight();
+        PostProcessingProperties ppProperties = mainScreen.getPostProcessingProperties();
+        ParallelLight parallelLight = ppProperties.createParallelLight();
 
         var lightPosition = new Vector3f(50.0f, 50.0f, 50.0f);
         var lightCenter = new Vector3f(0.0f, 0.0f, 0.0f);

@@ -6,11 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.fseffect.GaussianBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizablePostProcessingNaborInfo;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.light.PointLight;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
@@ -28,7 +24,6 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.MergeScenesInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -978,15 +973,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
     public void run(
             Vector4f backgroundColor,
             Camera camera,
-            Fog fog,
-            List<ParallelLight> parallelLights,
-            Vector3f parallelLightAmbientColor,
-            List<PointLight> pointLights,
-            Vector3f pointLightAmbientColor,
-            List<Spotlight> spotlights,
-            Vector3f spotlightAmbientColor,
             ShadowMappingSettings shadowMappingSettings,
-            SimpleBlurInfo simpleBlurInfo,
+            PostProcessingProperties ppProperties,
             GaussianBlurInfo gaussianBlurInfo,
             List<VkMttComponent> components) {
         this.runGBufferNabor(backgroundColor, camera, components);
@@ -1008,8 +996,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                     mergeScenesNabor,
                     null,
                     shadowMappingNabor,
-                    parallelLights,
-                    spotlights,
+                    ppProperties.parallelLights,
+                    ppProperties.spotlights,
                     components,
                     depthImageAspect,
                     shadowMappingSettings,
@@ -1026,14 +1014,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
 
             ppNaborChain.run(
                     camera,
-                    fog,
-                    parallelLights,
-                    parallelLightAmbientColor,
-                    pointLights,
-                    pointLightAmbientColor,
-                    spotlights,
-                    spotlightAmbientColor,
-                    simpleBlurInfo,
+                    ppProperties,
                     baseColorImageView,
                     mergeScenesNabor.getDepthImageView(),
                     mergeScenesNabor.getPositionImageView(),

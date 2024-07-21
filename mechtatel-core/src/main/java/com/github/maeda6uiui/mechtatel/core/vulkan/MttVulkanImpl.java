@@ -4,11 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttShaderSettings;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fseffect.GaussianBlurInfo;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.light.PointLight;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.CommandPoolCreator;
@@ -24,7 +20,6 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.MultisamplingUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.PhysicalDevicePicker;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -303,29 +298,15 @@ public class MttVulkanImpl {
             VkMttScreen screen,
             Vector4f backgroundColor,
             Camera camera,
-            Fog fog,
-            List<ParallelLight> parallelLights,
-            Vector3f parallelLightAmbientColor,
-            List<PointLight> pointLights,
-            Vector3f pointLightAmbientColor,
-            List<Spotlight> spotlights,
-            Vector3f spotlightAmbientColor,
             ShadowMappingSettings shadowMappingSettings,
-            SimpleBlurInfo simpleBlurInfo,
+            PostProcessingProperties ppProperties,
             GaussianBlurInfo gaussianBlurInfo,
             List<VkMttComponent> components) {
         screen.run(
                 backgroundColor,
                 camera,
-                fog,
-                parallelLights,
-                parallelLightAmbientColor,
-                pointLights,
-                pointLightAmbientColor,
-                spotlights,
-                spotlightAmbientColor,
                 shadowMappingSettings,
-                simpleBlurInfo,
+                ppProperties,
                 gaussianBlurInfo,
                 components
         );

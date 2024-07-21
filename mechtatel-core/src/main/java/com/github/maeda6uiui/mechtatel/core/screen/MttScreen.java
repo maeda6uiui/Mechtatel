@@ -9,18 +9,11 @@ import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.fseffect.GaussianBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.operation.BiTextureOperation;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizablePostProcessingNaborInfo;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.light.PointLight;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.screen.component.*;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.ParallelLightNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLightNabor;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.SpotlightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
@@ -158,20 +151,8 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     private Vector4f backgroundColor;
     private Camera camera;
 
-    //Shadow mapping
     private ShadowMappingSettings shadowMappingSettings;
-
-    //Post-processing
-    private Fog fog;
-    private List<ParallelLight> parallelLights;
-    private Vector3f parallelLightAmbientColor;
-    private List<PointLight> pointLights;
-    private Vector3f pointLightAmbientColor;
-    private List<Spotlight> spotlights;
-    private Vector3f spotlightAmbientColor;
-    private SimpleBlurInfo simpleBlurInfo;
-
-    //Full-screen effect
+    private PostProcessingProperties ppProperties;
     private GaussianBlurInfo gaussianBlurInfo;
 
     private boolean shouldAutoUpdateCameraAspect;
@@ -213,20 +194,11 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         this.vulkanImpl = vulkanImpl;
         this.imguiContext = imguiContext;
 
-        shadowMappingSettings = new ShadowMappingSettings();
-
         camera = new Camera();
         backgroundColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
 
-        fog = new Fog();
-        parallelLights = new ArrayList<>();
-        pointLights = new ArrayList<>();
-        spotlights = new ArrayList<>();
-        parallelLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
-        pointLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
-        spotlightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
-        simpleBlurInfo = new SimpleBlurInfo();
-
+        shadowMappingSettings = new ShadowMappingSettings();
+        ppProperties = new PostProcessingProperties();
         gaussianBlurInfo = new GaussianBlurInfo(8, 1.0f, 0.25f);
 
         components = new ArrayList<>();
@@ -249,15 +221,8 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
                 screen,
                 backgroundColor,
                 camera,
-                fog,
-                parallelLights,
-                parallelLightAmbientColor,
-                pointLights,
-                pointLightAmbientColor,
-                spotlights,
-                spotlightAmbientColor,
                 shadowMappingSettings,
-                simpleBlurInfo,
+                ppProperties,
                 gaussianBlurInfo,
                 vkComponents
         );
@@ -371,112 +336,12 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     //Post-processing =====
-    public Fog getFog() {
-        return fog;
+    public PostProcessingProperties getPostProcessingProperties() {
+        return ppProperties;
     }
 
-    public void setFog(Fog fog) {
-        this.fog = fog;
-    }
-
-    public int getNumParallelLights() {
-        return parallelLights.size();
-    }
-
-    public ParallelLight getParallelLight(int index) {
-        return parallelLights.get(index);
-    }
-
-    public ParallelLight createParallelLight() {
-        if (parallelLights.size() >= ParallelLightNabor.MAX_NUM_LIGHTS) {
-            String msg = String.format("Cannot create more than %d lights", ParallelLightNabor.MAX_NUM_LIGHTS);
-            throw new RuntimeException(msg);
-        }
-
-        var parallelLight = new ParallelLight();
-        parallelLights.add(parallelLight);
-
-        return parallelLight;
-    }
-
-    public boolean removeParallelLight(ParallelLight parallelLight) {
-        return parallelLights.remove(parallelLight);
-    }
-
-    public int getNumPointLights() {
-        return pointLights.size();
-    }
-
-    public PointLight getPointLight(int index) {
-        return pointLights.get(index);
-    }
-
-    public PointLight createPointLight() {
-        if (pointLights.size() >= PointLightNabor.MAX_NUM_LIGHTS) {
-            String msg = String.format("Cannot create more than %d lights", PointLightNabor.MAX_NUM_LIGHTS);
-            throw new RuntimeException(msg);
-        }
-
-        var pointLight = new PointLight();
-        pointLights.add(pointLight);
-
-        return pointLight;
-    }
-
-    public boolean removePointLight(PointLight pointLight) {
-        return pointLights.remove(pointLight);
-    }
-
-    public int getNumSpotlights() {
-        return spotlights.size();
-    }
-
-    public Spotlight getSpotlight(int index) {
-        return spotlights.get(index);
-    }
-
-    public Spotlight createSpotlight() {
-        if (spotlights.size() >= SpotlightNabor.MAX_NUM_LIGHTS) {
-            String msg = String.format("Cannot create more than %d lights", SpotlightNabor.MAX_NUM_LIGHTS);
-            throw new RuntimeException(msg);
-        }
-
-        var spotlight = new Spotlight();
-        spotlights.add(spotlight);
-
-        return spotlight;
-    }
-
-    public boolean removeSpotlight(Spotlight spotlight) {
-        return spotlights.remove(spotlight);
-    }
-
-    public Vector3f getParallelLightAmbientColor() {
-        return parallelLightAmbientColor;
-    }
-
-    public Vector3f getPointLightAmbientColor() {
-        return pointLightAmbientColor;
-    }
-
-    public void setPointLightAmbientColor(Vector3f pointLightAmbientColor) {
-        this.pointLightAmbientColor = pointLightAmbientColor;
-    }
-
-    public Vector3f getSpotlightAmbientColor() {
-        return spotlightAmbientColor;
-    }
-
-    public void setSpotlightAmbientColor(Vector3f spotlightAmbientColor) {
-        this.spotlightAmbientColor = spotlightAmbientColor;
-    }
-
-    public SimpleBlurInfo getSimpleBlurInfo() {
-        return simpleBlurInfo;
-    }
-
-    public void setSimpleBlurInfo(SimpleBlurInfo simpleBlurInfo) {
-        this.simpleBlurInfo = simpleBlurInfo;
+    public void setPostProcessingProperties(PostProcessingProperties ppProperties) {
+        this.ppProperties = ppProperties;
     }
 
     //Full-screen effect

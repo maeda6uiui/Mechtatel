@@ -5,6 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.joml.Vector2i;
@@ -55,16 +56,18 @@ public class SimpleBlurTest extends Mechtatel {
         }
 
         camera = new FreeCamera(mainScreen.getCamera());
-    }
 
-    @Override
-    public void onUpdate(MttWindow window) {
         var simpleBlurInfo = new SimpleBlurInfo();
         simpleBlurInfo.setTextureSize(new Vector2i(mainScreen.getScreenWidth(), mainScreen.getScreenHeight()));
         simpleBlurInfo.setBlurSize(10);
         simpleBlurInfo.setStride(1);
-        mainScreen.setSimpleBlurInfo(simpleBlurInfo);
 
+        PostProcessingProperties ppProperties = mainScreen.getPostProcessingProperties();
+        ppProperties.simpleBlurInfo = simpleBlurInfo;
+    }
+
+    @Override
+    public void onUpdate(MttWindow window) {
         camera.translate(
                 window.getKeyboardPressingCount(KeyCode.W),
                 window.getKeyboardPressingCount(KeyCode.S),

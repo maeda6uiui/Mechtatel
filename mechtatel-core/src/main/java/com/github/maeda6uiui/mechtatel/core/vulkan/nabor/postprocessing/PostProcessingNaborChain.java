@@ -4,18 +4,13 @@ import com.github.maeda6uiui.mechtatel.core.MttShaderSettings;
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizablePostProcessingNaborInfo;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.blur.SimpleBlurInfo;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.LightingInfo;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.light.PointLight;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
 import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.*;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
-import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
@@ -210,14 +205,7 @@ public class PostProcessingNaborChain {
             String naborName,
             PostProcessingNabor ppNabor,
             Camera camera,
-            Fog fog,
-            List<ParallelLight> parallelLights,
-            Vector3f parallelLightAmbientColor,
-            List<PointLight> pointLights,
-            Vector3f pointLightAmbientColor,
-            List<Spotlight> spotlights,
-            Vector3f spotlightAmbientColor,
-            SimpleBlurInfo simpleBlurInfo) {
+            PostProcessingProperties ppProperties) {
         switch (naborName) {
             case "fog": {
                 long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
@@ -225,7 +213,7 @@ public class PostProcessingNaborChain {
                 cameraUBO.update(device, cameraUBOMemory);
 
                 long fogUBOMemory = ppNabor.getUniformBufferMemory(1);
-                var fogUBO = new FogUBO(fog);
+                var fogUBO = new FogUBO(ppProperties.fog);
                 fogUBO.update(device, fogUBOMemory);
             }
             break;
@@ -236,16 +224,16 @@ public class PostProcessingNaborChain {
                 cameraUBO.update(device, cameraUBOMemory);
 
                 var lightingInfo = new LightingInfo();
-                lightingInfo.setNumLights(parallelLights.size());
-                lightingInfo.setAmbientColor(parallelLightAmbientColor);
+                lightingInfo.setNumLights(ppProperties.parallelLights.size());
+                lightingInfo.setAmbientColor(ppProperties.parallelLightAmbientColor);
 
                 long lightingInfoUBOMemory = ppNabor.getUniformBufferMemory(1);
                 var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
                 lightingInfoUBO.update(device, lightingInfoUBOMemory);
 
                 long lightUBOMemory = ppNabor.getUniformBufferMemory(2);
-                for (int i = 0; i < parallelLights.size(); i++) {
-                    var lightUBO = new ParallelLightUBO(parallelLights.get(i));
+                for (int i = 0; i < ppProperties.parallelLights.size(); i++) {
+                    var lightUBO = new ParallelLightUBO(ppProperties.parallelLights.get(i));
                     lightUBO.update(device, lightUBOMemory, i);
                 }
             }
@@ -257,16 +245,16 @@ public class PostProcessingNaborChain {
                 cameraUBO.update(device, cameraUBOMemory);
 
                 var lightingInfo = new LightingInfo();
-                lightingInfo.setNumLights(pointLights.size());
-                lightingInfo.setAmbientColor(pointLightAmbientColor);
+                lightingInfo.setNumLights(ppProperties.pointLights.size());
+                lightingInfo.setAmbientColor(ppProperties.pointLightAmbientColor);
 
                 long lightingInfoUBOMemory = ppNabor.getUniformBufferMemory(1);
                 var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
                 lightingInfoUBO.update(device, lightingInfoUBOMemory);
 
                 long lightUBOMemory = ppNabor.getUniformBufferMemory(2);
-                for (int i = 0; i < pointLights.size(); i++) {
-                    var lightUBO = new PointLightUBO(pointLights.get(i));
+                for (int i = 0; i < ppProperties.pointLights.size(); i++) {
+                    var lightUBO = new PointLightUBO(ppProperties.pointLights.get(i));
                     lightUBO.update(device, lightUBOMemory, i);
                 }
             }
@@ -278,16 +266,16 @@ public class PostProcessingNaborChain {
                 cameraUBO.update(device, cameraUBOMemory);
 
                 var lightingInfo = new LightingInfo();
-                lightingInfo.setNumLights(spotlights.size());
-                lightingInfo.setAmbientColor(spotlightAmbientColor);
+                lightingInfo.setNumLights(ppProperties.spotlights.size());
+                lightingInfo.setAmbientColor(ppProperties.spotlightAmbientColor);
 
                 long lightingInfoUBOMemory = ppNabor.getUniformBufferMemory(1);
                 var lightingInfoUBO = new LightingInfoUBO(lightingInfo);
                 lightingInfoUBO.update(device, lightingInfoUBOMemory);
 
                 long lightUBOMemory = ppNabor.getUniformBufferMemory(2);
-                for (int i = 0; i < spotlights.size(); i++) {
-                    var lightUBO = new SpotlightUBO(spotlights.get(i));
+                for (int i = 0; i < ppProperties.spotlights.size(); i++) {
+                    var lightUBO = new SpotlightUBO(ppProperties.spotlights.get(i));
                     lightUBO.update(device, lightUBOMemory, i);
                 }
             }
@@ -295,7 +283,7 @@ public class PostProcessingNaborChain {
 
             case "simple_blur": {
                 long blurInfoUBOMemory = ppNabor.getUniformBufferMemory(0);
-                var blurInfoUBO = new SimpleBlurInfoUBO(simpleBlurInfo);
+                var blurInfoUBO = new SimpleBlurInfoUBO(ppProperties.simpleBlurInfo);
                 blurInfoUBO.update(device, blurInfoUBOMemory);
             }
             break;
@@ -309,14 +297,7 @@ public class PostProcessingNaborChain {
             PostProcessingNabor ppNabor,
             CustomizablePostProcessingNaborInfo customizablePPNaborInfo,
             Camera camera,
-            Fog fog,
-            List<ParallelLight> parallelLights,
-            Vector3f parallelLightAmbientColor,
-            List<PointLight> pointLights,
-            Vector3f pointLightAmbientColor,
-            List<Spotlight> spotlights,
-            Vector3f spotlightAmbientColor,
-            SimpleBlurInfo simpleBlurInfo) {
+            PostProcessingProperties ppProperties) {
         List<CustomizablePostProcessingNaborInfo.UniformResourceType> uniformResourceTypes = customizablePPNaborInfo.getUniformResourceTypes();
         for (int i = 0; i < uniformResourceTypes.size(); i++) {
             long uboMemory = ppNabor.getUniformBufferMemory(i);
@@ -328,23 +309,23 @@ public class PostProcessingNaborChain {
                     cameraUBO.update(device, uboMemory);
                 }
                 case FOG -> {
-                    var fogUBO = new FogUBO(fog);
+                    var fogUBO = new FogUBO(ppProperties.fog);
                     fogUBO.update(device, uboMemory);
                 }
                 case LIGHTING_INFO -> {
                     var lightingInfo = new LightingInfo();
                     switch (customizablePPNaborInfo.getLightingType()) {
                         case PARALLEL -> {
-                            lightingInfo.setNumLights(parallelLights.size());
-                            lightingInfo.setAmbientColor(parallelLightAmbientColor);
+                            lightingInfo.setNumLights(ppProperties.parallelLights.size());
+                            lightingInfo.setAmbientColor(ppProperties.parallelLightAmbientColor);
                         }
                         case POINT -> {
-                            lightingInfo.setNumLights(pointLights.size());
-                            lightingInfo.setAmbientColor(pointLightAmbientColor);
+                            lightingInfo.setNumLights(ppProperties.pointLights.size());
+                            lightingInfo.setAmbientColor(ppProperties.pointLightAmbientColor);
                         }
                         case SPOT -> {
-                            lightingInfo.setNumLights(spotlights.size());
-                            lightingInfo.setAmbientColor(spotlightAmbientColor);
+                            lightingInfo.setNumLights(ppProperties.spotlights.size());
+                            lightingInfo.setAmbientColor(ppProperties.spotlightAmbientColor);
                         }
                     }
 
@@ -355,24 +336,24 @@ public class PostProcessingNaborChain {
                     lightingInfoUBO.update(device, uboMemory);
                 }
                 case PARALLEL_LIGHT -> {
-                    for (int j = 0; j < parallelLights.size(); j++) {
-                        var lightUBO = new ParallelLightUBO(parallelLights.get(j));
+                    for (int j = 0; j < ppProperties.parallelLights.size(); j++) {
+                        var lightUBO = new ParallelLightUBO(ppProperties.parallelLights.get(j));
                         lightUBO.update(device, uboMemory, j);
                     }
                 }
                 case POINT_LIGHT -> {
-                    for (int j = 0; j < pointLights.size(); j++) {
-                        var lightUBO = new PointLightUBO(pointLights.get(j));
+                    for (int j = 0; j < ppProperties.pointLights.size(); j++) {
+                        var lightUBO = new PointLightUBO(ppProperties.pointLights.get(j));
                         lightUBO.update(device, uboMemory, j);
                     }
                 }
                 case SIMPLE_BLUR -> {
-                    var blurInfoUBO = new SimpleBlurInfoUBO(simpleBlurInfo);
+                    var blurInfoUBO = new SimpleBlurInfoUBO(ppProperties.simpleBlurInfo);
                     blurInfoUBO.update(device, uboMemory);
                 }
                 case SPOTLIGHT -> {
-                    for (int j = 0; j < spotlights.size(); j++) {
-                        var lightUBO = new SpotlightUBO(spotlights.get(j));
+                    for (int j = 0; j < ppProperties.spotlights.size(); j++) {
+                        var lightUBO = new SpotlightUBO(ppProperties.spotlights.get(j));
                         lightUBO.update(device, uboMemory, j);
                     }
                 }
@@ -382,14 +363,7 @@ public class PostProcessingNaborChain {
 
     public void run(
             Camera camera,
-            Fog fog,
-            List<ParallelLight> parallelLights,
-            Vector3f parallelLightAmbientColor,
-            List<PointLight> pointLights,
-            Vector3f pointLightAmbientColor,
-            List<Spotlight> spotlights,
-            Vector3f spotlightAmbientColor,
-            SimpleBlurInfo simpleBlurInfo,
+            PostProcessingProperties ppProperties,
             long baseColorImageView,
             long baseDepthImageView,
             long basePositionImageView,
@@ -406,28 +380,14 @@ public class PostProcessingNaborChain {
                         ppNabor,
                         customizablePPNaborInfo,
                         camera,
-                        fog,
-                        parallelLights,
-                        parallelLightAmbientColor,
-                        pointLights,
-                        pointLightAmbientColor,
-                        spotlights,
-                        spotlightAmbientColor,
-                        simpleBlurInfo
+                        ppProperties
                 );
             } else {
                 this.updateStandardPPNaborUBOs(
                         naborName,
                         ppNabor,
                         camera,
-                        fog,
-                        parallelLights,
-                        parallelLightAmbientColor,
-                        pointLights,
-                        pointLightAmbientColor,
-                        spotlights,
-                        spotlightAmbientColor,
-                        simpleBlurInfo
+                        ppProperties
                 );
             }
 

@@ -5,6 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
@@ -61,9 +62,11 @@ public class TexturedScreenTest extends Mechtatel {
                         .setShouldChangeExtentOnRecreate(false)
         );
         secondaryScreen.setBackgroundColor(new Vector4f(0.0f, 1.0f, 0.0f, 1.0f));
-        secondaryScreen.createParallelLight();
         secondaryCameraPosition = new Vector3f(1.2f, 1.2f, 1.2f);
         secondaryScreen.getCamera().setEye(secondaryCameraPosition);
+
+        PostProcessingProperties ppProperties = secondaryScreen.getPostProcessingProperties();
+        ppProperties.createParallelLight();
 
         try {
             primaryCube = primaryScreen.createModel(

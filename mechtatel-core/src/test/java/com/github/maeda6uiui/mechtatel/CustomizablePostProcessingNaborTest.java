@@ -7,6 +7,7 @@ import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizablePostProcessingNaborInfo;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
@@ -68,9 +69,10 @@ public class CustomizablePostProcessingNaborTest extends Mechtatel {
                         .setPostProcessingNaborNames(List.of("sepia"))
                         .setCustomizablePostProcessingNaborInfos(Map.of("sepia", naborInfo))
         );
-        mainScreen.createParallelLight();
-        mainScreen.getFog().setStart(10.0f);
-        mainScreen.getFog().setEnd(20.0f);
+        PostProcessingProperties ppProperties = mainScreen.getPostProcessingProperties();
+        ppProperties.createParallelLight();
+        ppProperties.fog.setStart(10.0f);
+        ppProperties.fog.setEnd(20.0f);
 
         try {
             mainScreen.createModel(

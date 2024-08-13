@@ -23,10 +23,46 @@ public class QueueFamilyUtils {
     public record QueueFamilyIndices(int graphicsFamily, int presentFamily) {
     }
 
-    public static QueueFamilyIndices findQueueFamilies(
+    private static int findGraphicsFamily(VkPhysicalDevice device, int preferableGraphicsFamilyIndex) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer queueFamilyCount = stack.ints(0);
+            vkGetPhysicalDeviceQueueFamilyProperties(device, queueFamilyCount, null);
+
+            VkQueueFamilyProperties.Buffer queueFamilies = VkQueueFamilyProperties.malloc(queueFamilyCount.get(0), stack);
+            vkGetPhysicalDeviceQueueFamilyProperties(device, queueFamilyCount, queueFamilies);
+
+            var graphicsFamilyCandidates = new ArrayList<Integer>();
+            for (int i = 0; i < queueFamilies.capacity(); i++) {
+                if ((queueFamilies.get(i).queueFlags() & VK_QUEUE_GRAPHICS_BIT) != 0) {
+                    graphicsFamilyCandidates.add(i);
+                }
+            }
+
+            logger.debug("Graphics family candidates: {}", graphicsFamilyCandidates);
+
+            if (graphicsFamilyCandidates.isEmpty()) {
+                throw new RuntimeException("No suitable graphics family found");
+            }
+
+            int graphicsFamily;
+            if (preferableGraphicsFamilyIndex == -1) {
+                graphicsFamily = graphicsFamilyCandidates.get(graphicsFamilyCandidates.size() - 1);
+            } else if (graphicsFamilyCandidates.contains(preferableGraphicsFamilyIndex)) {
+                graphicsFamily = preferableGraphicsFamilyIndex;
+            } else {
+                graphicsFamily = graphicsFamilyCandidates.get(0);
+                logger.warn("Queue family #{} is not a suitable graphics family", preferableGraphicsFamilyIndex);
+            }
+
+            logger.debug("Queue family #{} has been found as a suitable graphics family", graphicsFamily);
+
+            return graphicsFamily;
+        }
+    }
+
+    private static int findPresentFamily(
             VkPhysicalDevice device,
             long surface,
-            int preferableGraphicsFamilyIndex,
             int preferablePresentFamilyIndex) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer queueFamilyCount = stack.ints(0);
@@ -37,37 +73,18 @@ public class QueueFamilyUtils {
 
             IntBuffer presentSupport = stack.ints(VK_FALSE);
 
-            var graphicsFamilyCandidates = new ArrayList<Integer>();
             var presentFamilyCandidates = new ArrayList<Integer>();
             for (int i = 0; i < queueFamilies.capacity(); i++) {
-                if ((queueFamilies.get(i).queueFlags() & VK_QUEUE_GRAPHICS_BIT) != 0) {
-                    graphicsFamilyCandidates.add(i);
-                }
-
                 KHRSurface.vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, presentSupport);
                 if (presentSupport.get(0) == VK_TRUE) {
                     presentFamilyCandidates.add(i);
                 }
             }
 
-            logger.debug("Graphics family candidates: {}", graphicsFamilyCandidates);
             logger.debug("Present family candidates: {}", presentFamilyCandidates);
 
-            if (graphicsFamilyCandidates.isEmpty()) {
-                throw new RuntimeException("No suitable graphics family found");
-            }
             if (presentFamilyCandidates.isEmpty()) {
                 throw new RuntimeException("No suitable present family found");
-            }
-
-            int graphicsFamily;
-            if (preferableGraphicsFamilyIndex == -1) {
-                graphicsFamily = graphicsFamilyCandidates.get(graphicsFamilyCandidates.size() - 1);
-            } else if (graphicsFamilyCandidates.contains(preferableGraphicsFamilyIndex)) {
-                graphicsFamily = preferableGraphicsFamilyIndex;
-            } else {
-                graphicsFamily = graphicsFamilyCandidates.get(0);
-                logger.warn("Queue family ({}) is not a suitable graphics family", preferableGraphicsFamilyIndex);
             }
 
             int presentFamily;
@@ -77,13 +94,29 @@ public class QueueFamilyUtils {
                 presentFamily = preferablePresentFamilyIndex;
             } else {
                 presentFamily = presentFamilyCandidates.get(0);
-                logger.warn("Queue family ({}) is not a suitable present family", preferablePresentFamilyIndex);
+                logger.warn("Queue family #{} is not a suitable present family", preferablePresentFamilyIndex);
             }
 
-            logger.debug("graphicsFamily={} presentFamily={}", graphicsFamily, presentFamily);
+            logger.debug("Queue family #{} has been found as a suitable present family", presentFamily);
 
-            return new QueueFamilyIndices(graphicsFamily, presentFamily);
+            return presentFamily;
         }
+    }
+
+    public static QueueFamilyIndices findQueueFamilies(
+            VkPhysicalDevice device,
+            long surface,
+            int preferableGraphicsFamilyIndex,
+            int preferablePresentFamilyIndex,
+            boolean mustFindPresentFamily) {
+        int graphicsFamily = findGraphicsFamily(device, preferableGraphicsFamilyIndex);
+
+        int presentFamily = -1;
+        if (mustFindPresentFamily) {
+            presentFamily = findPresentFamily(device, surface, preferablePresentFamilyIndex);
+        }
+
+        return new QueueFamilyIndices(graphicsFamily, presentFamily);
     }
 
     private static boolean checkExtensionSupported(VkPhysicalDevice device, Set<String> deviceExtensions) {

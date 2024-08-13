@@ -19,6 +19,61 @@ import static org.lwjgl.vulkan.VK10.*;
 public class LogicalDeviceCreator {
     public static DeviceAndQueues createLogicalDevice(
             VkPhysicalDevice physicalDevice,
+            int preferableGraphicsFamilyIndex,
+            boolean enableValidationLayer) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            QueueFamilyUtils.QueueFamilyIndices indices
+                    = QueueFamilyUtils.findQueueFamilies(
+                    physicalDevice,
+                    -1,
+                    preferableGraphicsFamilyIndex,
+                    -1,
+                    false
+            );
+
+            VkDeviceQueueCreateInfo.Buffer queueCreateInfos = VkDeviceQueueCreateInfo.calloc(1, stack);
+
+            VkDeviceQueueCreateInfo graphicsQueueCreateInfo = queueCreateInfos.get(0);
+            graphicsQueueCreateInfo.sType(VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO);
+            graphicsQueueCreateInfo.queueFamilyIndex(indices.graphicsFamily());
+            graphicsQueueCreateInfo.pQueuePriorities(stack.floats(1.0f));
+
+            VkPhysicalDeviceFeatures deviceFeatures = VkPhysicalDeviceFeatures.calloc(stack);
+            deviceFeatures.samplerAnisotropy(true);
+            deviceFeatures.sampleRateShading(true);
+
+            VkDeviceCreateInfo createInfo = VkDeviceCreateInfo.calloc(stack);
+            createInfo.sType(VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO);
+            createInfo.pQueueCreateInfos(queueCreateInfos);
+            createInfo.pEnabledFeatures(deviceFeatures);
+
+            if (enableValidationLayer) {
+                createInfo.ppEnabledLayerNames(PointerBufferUtils.asPointerBuffer(ValidationLayers.VALIDATION_LAYERS));
+            }
+
+            PointerBuffer pDevice = stack.pointers(VK_NULL_HANDLE);
+            if (vkCreateDevice(physicalDevice, createInfo, null, pDevice) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create a logical device");
+            }
+
+            var device = new VkDevice(pDevice.get(0), physicalDevice, createInfo);
+
+            PointerBuffer pGraphicsQueue = stack.pointers(VK_NULL_HANDLE);
+            vkGetDeviceQueue(device, indices.graphicsFamily(), 0, pGraphicsQueue);
+            var graphicsQueue = new VkQueue(pGraphicsQueue.get(0), device);
+
+            return new DeviceAndQueues(
+                    device,
+                    graphicsQueue,
+                    null,
+                    indices.graphicsFamily(),
+                    -1
+            );
+        }
+    }
+
+    public static DeviceAndQueues createLogicalDevice(
+            VkPhysicalDevice physicalDevice,
             long surface,
             int preferableGraphicsFamilyIndex,
             int preferablePresentFamilyIndex,
@@ -29,7 +84,8 @@ public class LogicalDeviceCreator {
                     physicalDevice,
                     surface,
                     preferableGraphicsFamilyIndex,
-                    preferablePresentFamilyIndex
+                    preferablePresentFamilyIndex,
+                    true
             );
 
             VkDeviceQueueCreateInfo.Buffer queueCreateInfos;

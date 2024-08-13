@@ -109,7 +109,8 @@ public class MttVulkanImpl {
                     physicalDevice = PhysicalDevicePicker.pickPhysicalDevice(
                             v.getVkInstance(),
                             surface,
-                            vulkanSettings.preferablePhysicalDeviceIndex
+                            vulkanSettings.preferablePhysicalDeviceIndex,
+                            true
                     );
                 });
 

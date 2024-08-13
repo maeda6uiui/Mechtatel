@@ -23,7 +23,8 @@ public class PhysicalDevicePicker {
     public static VkPhysicalDevice pickPhysicalDevice(
             VkInstance instance,
             long surface,
-            int preferablePhysicalDeviceIndex) {
+            int preferablePhysicalDeviceIndex,
+            boolean mustFindSwapchainSuitableDevice) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer deviceCount = stack.ints(0);
             vkEnumeratePhysicalDevices(instance, deviceCount, null);
@@ -39,7 +40,11 @@ public class PhysicalDevicePicker {
             var devices = new ArrayList<VkPhysicalDevice>();
             for (int i = 0; i < ppPhysicalDevices.capacity(); i++) {
                 var device = new VkPhysicalDevice(ppPhysicalDevices.get(i), instance);
-                if (QueueFamilyUtils.isDeviceSuitable(device, surface, SwapchainUtils.DEVICE_EXTENSIONS)) {
+                if (mustFindSwapchainSuitableDevice) {
+                    if (QueueFamilyUtils.isDeviceSuitable(device, surface, SwapchainUtils.DEVICE_EXTENSIONS)) {
+                        devices.add(device);
+                    }
+                } else {
                     devices.add(device);
                 }
             }

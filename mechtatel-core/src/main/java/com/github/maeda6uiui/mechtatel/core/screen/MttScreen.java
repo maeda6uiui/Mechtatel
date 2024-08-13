@@ -14,6 +14,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.component.*;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
+import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImplHeadless;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
@@ -23,6 +24,7 @@ import imgui.ImGuiIO;
 import imgui.internal.ImGuiContext;
 import imgui.type.ImInt;
 import org.joml.*;
+import org.lwjgl.vulkan.VkExtent2D;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -144,6 +146,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     private MttVulkanImpl vulkanImpl;
+    private MttVulkanImplHeadless vulkanImplHeadless;
     private VkMttScreen screen;
 
     private ImGuiContext imguiContext;
@@ -160,6 +163,21 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     private List<MttComponent> components;
     private List<BiTextureOperation> biTextureOperations;
     private List<MttTexture> textures;
+
+    private void commonSetup() {
+        camera = new Camera();
+        backgroundColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+
+        shadowMappingSettings = new ShadowMappingSettings();
+        ppProperties = new PostProcessingProperties();
+        fseProperties = new FullScreenEffectProperties();
+
+        shouldAutoUpdateCameraAspect = true;
+
+        components = new ArrayList<>();
+        biTextureOperations = new ArrayList<>();
+        textures = new ArrayList<>();
+    }
 
     public MttScreen(MttVulkanImpl vulkanImpl, ImGuiContext imguiContext, MttScreenCreateInfo createInfo) {
         var dq = vulkanImpl.getDeviceAndQueues();
@@ -189,21 +207,43 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
                 createInfo.fseNaborInfos
         );
 
-        shouldAutoUpdateCameraAspect = true;
-
         this.vulkanImpl = vulkanImpl;
         this.imguiContext = imguiContext;
 
-        camera = new Camera();
-        backgroundColor = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+        this.commonSetup();
+    }
 
-        shadowMappingSettings = new ShadowMappingSettings();
-        ppProperties = new PostProcessingProperties();
-        fseProperties = new FullScreenEffectProperties();
+    public MttScreen(MttVulkanImplHeadless vulkanImplHeadless, ImGuiContext imguiContext, MttScreenCreateInfo createInfo) {
+        VkExtent2D extent = VkExtent2D.create();
+        extent.set(createInfo.screenWidth, createInfo.screenHeight);
 
-        components = new ArrayList<>();
-        biTextureOperations = new ArrayList<>();
-        textures = new ArrayList<>();
+        var dq = vulkanImplHeadless.getDeviceAndQueues();
+        screen = new VkMttScreen(
+                dq.device(),
+                vulkanImplHeadless.getCommandPool(),
+                dq.graphicsQueue(),
+                vulkanImplHeadless.getDepthImageFormat(),
+                createInfo.depthImageWidth,
+                createInfo.depthImageHeight,
+                vulkanImplHeadless.getDepthImageAspect(),
+                MttVulkanImplHeadless.COLOR_IMAGE_FORMAT,
+                vulkanImplHeadless.getAlbedoMSAASamples(),
+                VkScreenCreationUtils.getISamplerFilter(createInfo.samplerFilter),
+                VkScreenCreationUtils.getISamplerMipmapMode(createInfo.samplerMipmapMode),
+                VkScreenCreationUtils.getISamplerAddressMode(createInfo.samplerAddressMode),
+                extent,
+                createInfo.shouldChangeExtentOnRecreate,
+                createInfo.useShadowMapping,
+                createInfo.ppNaborNames,
+                createInfo.customizablePPNaborInfos,
+                createInfo.fseNaborNames,
+                createInfo.fseNaborInfos
+        );
+
+        this.vulkanImplHeadless = vulkanImplHeadless;
+        this.imguiContext = imguiContext;
+
+        this.commonSetup();
     }
 
     public void cleanup() {
@@ -217,15 +257,28 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         var vkComponents = new ArrayList<VkMttComponent>();
         components.forEach(v -> vkComponents.addAll(v.getVulkanComponents()));
 
-        vulkanImpl.draw(
-                screen,
-                backgroundColor,
-                camera,
-                shadowMappingSettings,
-                ppProperties,
-                fseProperties,
-                vkComponents
-        );
+        if (vulkanImpl != null) {
+            vulkanImpl.draw(
+                    screen,
+                    backgroundColor,
+                    camera,
+                    shadowMappingSettings,
+                    ppProperties,
+                    fseProperties,
+                    vkComponents
+            );
+        }
+        if (vulkanImplHeadless != null) {
+            vulkanImplHeadless.draw(
+                    screen,
+                    backgroundColor,
+                    camera,
+                    shadowMappingSettings,
+                    ppProperties,
+                    fseProperties,
+                    vkComponents
+            );
+        }
     }
 
     public void recreate() {

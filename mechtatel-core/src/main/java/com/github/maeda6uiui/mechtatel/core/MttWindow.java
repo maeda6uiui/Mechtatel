@@ -40,7 +40,7 @@ public class MttWindow {
 
     private String uniqueID;
 
-    private IMechtatelForMttWindow mtt;
+    private IMechtatelWindowEventHandlers mtt;
     private MttVulkanImpl vulkanImpl;
 
     private ImGuiContext imguiContext;
@@ -71,7 +71,7 @@ public class MttWindow {
         mustRecreate = true;
     }
 
-    public MttWindow(IMechtatelForMttWindow mtt, MttSettings settings) {
+    public MttWindow(IMechtatelWindowEventHandlers mtt, MttSettings settings) {
         this(
                 mtt,
                 settings,
@@ -82,7 +82,7 @@ public class MttWindow {
     }
 
     public MttWindow(
-            IMechtatelForMttWindow mtt,
+            IMechtatelWindowEventHandlers mtt,
             MttSettings settings,
             int width,
             int height,

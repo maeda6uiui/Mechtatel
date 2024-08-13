@@ -1,11 +1,11 @@
 package com.github.maeda6uiui.mechtatel.core;
 
 /**
- * Provides an interface of {@link Mechtatel} to {@link MttWindow}
+ * Provides an interface to event handlers of window
  *
  * @author maeda6uiui
  */
-interface IMechtatelForMttWindow {
+interface IMechtatelWindowEventHandlers {
     /**
      * Called after the window is successfully created.
      *

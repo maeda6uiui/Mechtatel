@@ -27,7 +27,7 @@ import static org.lwjgl.openal.ALC10.*;
  *
  * @author maeda6uiui
  */
-public class Mechtatel implements IMechtatelForMttWindow {
+public class Mechtatel implements IMechtatelWindowEventHandlers {
     private final Logger logger = LoggerFactory.getLogger(Mechtatel.class);
 
     private boolean mechtatelReady;

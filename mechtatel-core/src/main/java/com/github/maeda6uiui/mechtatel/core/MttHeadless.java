@@ -51,7 +51,7 @@ public class MttHeadless {
 
         //Not create ini file
         io.setIniFilename(null);
-        //Set window size
+        //Set screen size
         io.setDisplaySize(width, height);
         //==========
 

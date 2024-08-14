@@ -46,7 +46,10 @@ public class MttVulkanImplHeadless {
     private BiTextureOperationNabor biTextureOperationNabor;
     private QuadDrawer quadDrawer;
 
-    public MttVulkanImplHeadless(MttSettings.VulkanSettings vulkanSettings, int width, int height) {
+    public MttVulkanImplHeadless(
+            MttSettings.VulkanSettings vulkanSettings,
+            int biTextureOperationWidth,
+            int biTextureOperationHeight) {
         MttVulkanInstance
                 .get()
                 .ifPresent(v -> {
@@ -102,7 +105,7 @@ public class MttVulkanImplHeadless {
                 dq.device(), biTextureOperationVertShaderResource, biTextureOperationFragShaderResource);
 
         VkExtent2D extent = VkExtent2D.create();
-        extent.set(width, height);
+        extent.set(biTextureOperationWidth, biTextureOperationHeight);
 
         biTextureOperationNabor.compile(
                 COLOR_IMAGE_FORMAT,

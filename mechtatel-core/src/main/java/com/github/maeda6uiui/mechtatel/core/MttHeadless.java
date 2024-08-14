@@ -21,6 +21,8 @@ import java.util.UUID;
 public class MttHeadless {
     private static final Logger logger = LoggerFactory.getLogger(MttHeadless.class);
 
+    private boolean shouldClose;
+
     private String instanceId;
 
     private IMechtatelHeadlessEventHandlers mtt;
@@ -32,6 +34,9 @@ public class MttHeadless {
     private List<MttScreen> screens;
 
     public MttHeadless(IMechtatelHeadlessEventHandlers mtt, MttSettings settings, int width, int height) {
+        //Set should close flag
+        shouldClose = false;
+
         //Get unique ID for this instance
         instanceId = UUID.randomUUID().toString();
 
@@ -85,6 +90,14 @@ public class MttHeadless {
 
     public Optional<MttVulkanImplHeadless> getVulkanImplHeadless() {
         return Optional.ofNullable(vulkanImplHeadless);
+    }
+
+    public void close() {
+        shouldClose = true;
+    }
+
+    public boolean shouldClose() {
+        return shouldClose;
     }
 
     public String getInstanceId() {

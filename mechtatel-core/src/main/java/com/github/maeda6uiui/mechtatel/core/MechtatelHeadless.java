@@ -153,6 +153,18 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
         glfwTerminate();
     }
 
+    public MttHeadless getInitialInstance() {
+        return initialInstance;
+    }
+
+    public void registerInstance(MttHeadless instance) {
+        newInstancesQueue.add(instance);
+    }
+
+    public void closeAllInstances() {
+        instances.forEach(MttHeadless::close);
+    }
+
     /**
      * Called after the Mechtatel engine is initialized and the initial instance is created.
      *

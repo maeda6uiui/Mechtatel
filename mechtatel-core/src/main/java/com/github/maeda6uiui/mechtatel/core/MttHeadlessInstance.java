@@ -18,8 +18,8 @@ import java.util.UUID;
  *
  * @author maeda6uiui
  */
-public class MttHeadless {
-    private static final Logger logger = LoggerFactory.getLogger(MttHeadless.class);
+public class MttHeadlessInstance {
+    private static final Logger logger = LoggerFactory.getLogger(MttHeadlessInstance.class);
 
     private boolean shouldClose;
     private String instanceId;
@@ -31,7 +31,7 @@ public class MttHeadless {
     private MttScreen defaultScreen;
     private List<MttScreen> screens;
 
-    public MttHeadless(IMechtatelHeadlessEventHandlers mtt, MttSettings settings, int width, int height) {
+    public MttHeadlessInstance(IMechtatelHeadlessEventHandlers mtt, MttSettings settings, int width, int height) {
         shouldClose = false;
         instanceId = UUID.randomUUID().toString();
         this.mtt = mtt;

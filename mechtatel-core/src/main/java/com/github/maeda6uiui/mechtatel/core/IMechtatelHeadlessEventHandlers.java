@@ -11,19 +11,19 @@ public interface IMechtatelHeadlessEventHandlers {
      *
      * @param headless Headless instance
      */
-    void onCreate(MttHeadless headless);
+    void onCreate(MttHeadlessInstance headless);
 
     /**
      * Called before the clean-up process of the headless instance begins.
      *
      * @param headless Headless instance
      */
-    void onDispose(MttHeadless headless);
+    void onDispose(MttHeadlessInstance headless);
 
     /**
      * Called in each frame after update of resources belonging to the headless instance is completed.
      *
      * @param headless Headless instance
      */
-    void onUpdate(MttHeadless headless);
+    void onUpdate(MttHeadlessInstance headless);
 }

@@ -29,9 +29,9 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
     private int fps;
     private double secondsPerFrame;
 
-    private MttHeadless initialInstance;
-    private List<MttHeadless> instances;
-    private List<MttHeadless> newInstancesQueue;
+    private MttHeadlessInstance initialInstance;
+    private List<MttHeadlessInstance> instances;
+    private List<MttHeadlessInstance> newInstancesQueue;
 
     private void initMechtatel(MttSettings settings, int width, int height) {
         //Initialize GLFW
@@ -66,7 +66,7 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
         instances = new ArrayList<>();
         newInstancesQueue = new ArrayList<>();
 
-        initialInstance = new MttHeadless(this, settings, width, height);
+        initialInstance = new MttHeadlessInstance(this, settings, width, height);
         instances.add(initialInstance);
 
         this.onInit(initialInstance);
@@ -117,9 +117,9 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
             //Update instances if seconds per frame is elapsed
             if (elapsedTime >= secondsPerFrame) {
                 //Clean up and remove instances that are flagged as closed
-                Iterator<MttHeadless> it = instances.iterator();
+                Iterator<MttHeadlessInstance> it = instances.iterator();
                 while (it.hasNext()) {
-                    MttHeadless instance = it.next();
+                    MttHeadlessInstance instance = it.next();
                     if (instance.shouldClose()) {
                         instance.cleanup();
                         it.remove();
@@ -130,7 +130,7 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
                 PhysicalObjects.get().ifPresent(v -> v.updatePhysicsSpace((float) elapsedTime));
 
                 //Call update handler for each instance
-                instances.forEach(MttHeadless::update);
+                instances.forEach(MttHeadlessInstance::update);
 
                 //Add instance to queue if instance creation is requested
                 if (!newInstancesQueue.isEmpty()) {
@@ -153,16 +153,16 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
         glfwTerminate();
     }
 
-    public MttHeadless getInitialInstance() {
+    public MttHeadlessInstance getInitialInstance() {
         return initialInstance;
     }
 
-    public void registerInstance(MttHeadless instance) {
+    public void registerInstance(MttHeadlessInstance instance) {
         newInstancesQueue.add(instance);
     }
 
     public void closeAllInstances() {
-        instances.forEach(MttHeadless::close);
+        instances.forEach(MttHeadlessInstance::close);
     }
 
     /**
@@ -170,7 +170,7 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
      *
      * @param initialInstance Initial instance
      */
-    public void onInit(MttHeadless initialInstance) {
+    public void onInit(MttHeadlessInstance initialInstance) {
 
     }
 
@@ -182,17 +182,17 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
     }
 
     @Override
-    public void onCreate(MttHeadless instance) {
+    public void onCreate(MttHeadlessInstance instance) {
 
     }
 
     @Override
-    public void onDispose(MttHeadless instance) {
+    public void onDispose(MttHeadlessInstance instance) {
 
     }
 
     @Override
-    public void onUpdate(MttHeadless instance) {
+    public void onUpdate(MttHeadlessInstance instance) {
 
     }
 

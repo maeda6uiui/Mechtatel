@@ -61,7 +61,11 @@ public class MttHeadless {
         //==========
 
         //Create default screen
-        defaultScreen = new MttScreen(vulkanImplHeadless, imguiContext, new MttScreen.MttScreenCreateInfo());
+        defaultScreen = new MttScreen(
+                vulkanImplHeadless,
+                imguiContext,
+                new MttScreen.MttScreenCreateInfo().setScreenWidth(width).setScreenHeight(height)
+        );
         screens = new ArrayList<>();
         screens.add(defaultScreen);
 

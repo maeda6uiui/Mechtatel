@@ -40,20 +40,20 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
     private List<MttWindow> newWindowsQueue;
 
     private void initMechtatel(MttSettings settings) {
-        //Initialize GLFW
+        //Initialize GLFW =====
         if (!glfwInit()) {
             throw new RuntimeException("Failed to initialize GLFW");
         }
 
-        //Set window hints
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         if (settings.windowSettings.resizable) {
             glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         } else {
             glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
         }
+        //==========
 
-        //Set up OpenAL
+        //Set up OpenAL =====
         long alcDevice = alcOpenDevice((ByteBuffer) null);
         if (alcDevice == 0) {
             throw new RuntimeException("Failed to open default OpenAL device");
@@ -67,8 +67,9 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
 
         alcMakeContextCurrent(alcContext);
         AL.createCapabilities(deviceCaps);
+        //==========
 
-        //Create native library loader
+        //Load native libraries
         IMttNativeLoader nativeLoader;
         try {
             nativeLoader = MttNativeLoaderFactory.createNativeLoader(PlatformInfo.PLATFORM);
@@ -81,36 +82,24 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
             throw new RuntimeException(e);
         }
 
-        //Set up Libbulletjme
         nativeLoader.loadLibbulletjme();
         PhysicalObjects.init(PhysicsSpace.BroadphaseType.DBVT);
 
-        //Set up for Vulkan
-        if (settings.renderingSettings.engine == RenderingEngine.VULKAN) {
-            //Load shaderc
-            nativeLoader.loadShaderc();
+        nativeLoader.loadShaderc();
+        //==========
 
-            //Create vulkan instance
-            MttVulkanInstance.create(settings.vulkanSettings, false);
-        }
-
-        //Set image format
+        MttVulkanInstance.create(settings.vulkanSettings, false);
         MttTexture.setImageFormat(settings.renderingSettings.imageFormat);
 
-        //Set frames per second and calculate seconds per frame
         fps = settings.systemSettings.fps;
         secondsPerFrame = 1.0 / fps;
 
-        //Create list for windows
         windows = new ArrayList<>();
-        //Create list to use as a queue for new windows
         newWindowsQueue = new ArrayList<>();
 
-        //Create initial window
         initialWindow = new MttWindow(this, settings);
         windows.add(initialWindow);
 
-        //Call onInit handler
         this.onInit(initialWindow);
     }
 

@@ -39,10 +39,8 @@ public class MttWindow {
     private static final Logger logger = LoggerFactory.getLogger(MttWindow.class);
 
     private String windowId;
-
     private IMechtatelWindowEventHandlers mtt;
     private MttVulkanImpl vulkanImpl;
-
     private ImGuiContext imguiContext;
 
     private long handle;
@@ -87,7 +85,6 @@ public class MttWindow {
             int width,
             int height,
             String title) {
-        //Get unique ID for this window
         windowId = UUID.randomUUID().toString();
 
         //Get monitor if full-screen or windowed full-screen is requested
@@ -129,7 +126,7 @@ public class MttWindow {
             }
         }
 
-        //Create window
+        //Create window =====
         if (bSpecifyMonior) {
             handle = glfwCreateWindow(actualWidth, actualHeight, title, monitor, NULL);
         } else {
@@ -139,46 +136,36 @@ public class MttWindow {
         if (handle == NULL) {
             throw new RuntimeException("Failed to create a window");
         }
+        //==========
 
         this.width = width;
         this.height = height;
         this.title = title;
 
-        //Set interface of Mechtatel
         this.mtt = mtt;
 
-        //Set up Vulkan implementation
         vulkanImpl = new MttVulkanImpl(handle, settings.vulkanSettings);
 
-        //Set up keyboard and mouse
         keyboard = new Keyboard();
         mouse = new Mouse();
-        fixCursorFlag = false;
 
-        //Set flags
+        fixCursorFlag = false;
         mustRecreate = false;
         validWindow = true;
 
-        //Set framebuffer size callback
         glfwSetFramebufferSizeCallback(handle, this::framebufferResizeCallback);
 
-        //Create list for 3D sounds
         sounds3D = new ArrayList<>();
 
         //Set up ImGui =====
-        //Create context and make it current
         imguiContext = ImGui.createContext();
         ImGui.setCurrentContext(imguiContext);
 
-        //Get IO
         ImGuiIO io = ImGui.getIO();
 
-        //Not create ini file
         io.setIniFilename(null);
-        //Set window size
         io.setDisplaySize(width, height);
 
-        //Set key map
         io.setKeyMap(ImGuiKey.Tab, GLFW_KEY_TAB);
         io.setKeyMap(ImGuiKey.LeftArrow, GLFW_KEY_LEFT);
         io.setKeyMap(ImGuiKey.RightArrow, GLFW_KEY_RIGHT);
@@ -196,7 +183,6 @@ public class MttWindow {
         io.setKeyMap(ImGuiKey.Escape, GLFW_KEY_ESCAPE);
         io.setKeyMap(ImGuiKey.KeyPadEnter, GLFW_KEY_KP_ENTER);
 
-        //Set key callback
         glfwSetKeyCallback(handle, (handle, key, scancode, action, mods) -> {
             boolean pressingFlag = action == GLFW_PRESS || action == GLFW_REPEAT;
             keyboard.setPressingFlag(key, pressingFlag);
@@ -211,8 +197,6 @@ public class MttWindow {
             io.setKeyAlt(io.getKeysDown(GLFW_KEY_LEFT_ALT) || io.getKeysDown(GLFW_KEY_RIGHT_ALT));
             io.setKeySuper(io.getKeysDown(GLFW_KEY_LEFT_SUPER) || io.getKeysDown(GLFW_KEY_RIGHT_SUPER));
         });
-
-        //Set mouse callback
         glfwSetMouseButtonCallback(handle, (handle, button, action, mods) -> {
             boolean pressingFlag = action == GLFW_PRESS;
             mouse.setPressingFlag(button, pressingFlag);
@@ -223,8 +207,6 @@ public class MttWindow {
                 io.setMouseDown(button, false);
             }
         });
-
-        //Set cursor pos callback
         glfwSetCursorPosCallback(handle, (handle, xPos, yPos) -> {
             mouse.setCursorPos(xPos, yPos);
             if (fixCursorFlag) {
@@ -233,8 +215,6 @@ public class MttWindow {
 
             io.setMousePos((float) xPos, (float) yPos);
         });
-
-        //Set scroll callback
         glfwSetScrollCallback(handle, (handle, dx, dy) -> {
             if (scrollCallback != null) {
                 scrollCallback.accept(dx, dy);
@@ -243,8 +223,6 @@ public class MttWindow {
             io.setMouseWheel((float) dy);
             io.setMouseWheelH((float) dx);
         });
-
-        //Set char callback
         glfwSetCharCallback(handle, (handle, c) -> {
             if (!io.getWantCaptureKeyboard()) {
                 return;
@@ -253,15 +231,12 @@ public class MttWindow {
         });
         //==========
 
-        //Create default screen
         defaultScreen = new MttScreen(vulkanImpl, imguiContext, new MttScreen.MttScreenCreateInfo());
         screens = new ArrayList<>();
         screens.add(defaultScreen);
 
-        //Output debug log
         logger.debug("Window ({}) successfully created", Long.toHexString(handle));
 
-        //Call onCreate handler
         mtt.onCreate(this);
     }
 

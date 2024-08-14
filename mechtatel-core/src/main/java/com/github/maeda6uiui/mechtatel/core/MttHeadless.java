@@ -22,9 +22,7 @@ public class MttHeadless {
     private static final Logger logger = LoggerFactory.getLogger(MttHeadless.class);
 
     private boolean shouldClose;
-
     private String instanceId;
-
     private IMechtatelHeadlessEventHandlers mtt;
     private MttVulkanImplHeadless vulkanImplHeadless;
 
@@ -34,33 +32,21 @@ public class MttHeadless {
     private List<MttScreen> screens;
 
     public MttHeadless(IMechtatelHeadlessEventHandlers mtt, MttSettings settings, int width, int height) {
-        //Set should close flag
         shouldClose = false;
-
-        //Get unique ID for this instance
         instanceId = UUID.randomUUID().toString();
-
-        //Set interface of Mechtatel
         this.mtt = mtt;
-
-        //Set up Vulkan implementation
         vulkanImplHeadless = new MttVulkanImplHeadless(settings.vulkanSettings, width, height);
 
         //Set up ImGui =====
-        //Create context and make it current
         imguiContext = ImGui.createContext();
         ImGui.setCurrentContext(imguiContext);
 
-        //Get IO
         ImGuiIO io = ImGui.getIO();
 
-        //Not create ini file
         io.setIniFilename(null);
-        //Set screen size
         io.setDisplaySize(width, height);
         //==========
 
-        //Create default screen
         defaultScreen = new MttScreen(
                 vulkanImplHeadless,
                 imguiContext,
@@ -69,7 +55,6 @@ public class MttHeadless {
         screens = new ArrayList<>();
         screens.add(defaultScreen);
 
-        //Call onCreate handler
         mtt.onCreate(this);
     }
 

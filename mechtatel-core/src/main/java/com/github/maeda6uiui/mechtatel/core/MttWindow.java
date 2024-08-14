@@ -38,7 +38,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class MttWindow {
     private static final Logger logger = LoggerFactory.getLogger(MttWindow.class);
 
-    private String uniqueID;
+    private String windowId;
 
     private IMechtatelWindowEventHandlers mtt;
     private MttVulkanImpl vulkanImpl;
@@ -88,7 +88,7 @@ public class MttWindow {
             int height,
             String title) {
         //Get unique ID for this window
-        uniqueID = UUID.randomUUID().toString();
+        windowId = UUID.randomUUID().toString();
 
         //Get monitor if full-screen or windowed full-screen is requested
         boolean bSpecifyMonior = settings.windowSettings.fullScreen || settings.windowSettings.windowedFullScreen;
@@ -337,8 +337,8 @@ public class MttWindow {
         return glfwWindowShouldClose(handle);
     }
 
-    public String getUniqueID() {
-        return uniqueID;
+    public String getWindowId() {
+        return windowId;
     }
 
     public int getWidth() {

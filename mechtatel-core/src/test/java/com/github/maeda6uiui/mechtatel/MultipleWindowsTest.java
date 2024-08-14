@@ -77,7 +77,7 @@ public class MultipleWindowsTest extends Mechtatel {
         modelProps.position = modelPosition;
         modelProps.rotation = modelRotation;
         modelProps.apply();
-        modelPropsMap.put(window.getUniqueID(), modelProps);
+        modelPropsMap.put(window.getWindowId(), modelProps);
 
         defaultScreen.createLineSet().addAxes(10.0f).createBuffer();
     }

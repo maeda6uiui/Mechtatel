@@ -214,6 +214,15 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     public MttScreen(MttVulkanImplHeadless vulkanImplHeadless, ImGuiContext imguiContext, MttScreenCreateInfo createInfo) {
+        if (createInfo.screenWidth <= 0 || createInfo.screenHeight <= 0) {
+            throw new RuntimeException(
+                    String.format(
+                            "Screen size not allowed: (width,height)=(%d,%d)",
+                            createInfo.screenWidth, createInfo.screenHeight
+                    )
+            );
+        }
+
         VkExtent2D extent = VkExtent2D.create();
         extent.set(createInfo.screenWidth, createInfo.screenHeight);
 

@@ -36,9 +36,6 @@ public class MttVulkanImplHeadless {
 
     private VkPhysicalDevice physicalDevice;
 
-    private int width;
-    private int height;
-
     private DeviceAndQueues dq;
     private long commandPool;
 
@@ -60,9 +57,6 @@ public class MttVulkanImplHeadless {
                             false
                     );
                 });
-
-        this.width = width;
-        this.height = height;
 
         dq = LogicalDeviceCreator.createLogicalDevice(
                 physicalDevice,
@@ -165,14 +159,6 @@ public class MttVulkanImplHeadless {
 
     public int getDepthImageAspect() {
         return depthImageAspect;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
     }
 
     public int getAlbedoMSAASamples() {

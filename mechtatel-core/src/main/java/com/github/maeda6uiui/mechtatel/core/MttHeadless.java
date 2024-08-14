@@ -21,7 +21,7 @@ import java.util.UUID;
 public class MttHeadless {
     private static final Logger logger = LoggerFactory.getLogger(MttHeadless.class);
 
-    private String uniqueID;
+    private String instanceId;
 
     private IMechtatelHeadlessEventHandlers mtt;
     private MttVulkanImplHeadless vulkanImplHeadless;
@@ -33,7 +33,7 @@ public class MttHeadless {
 
     public MttHeadless(IMechtatelHeadlessEventHandlers mtt, MttSettings settings, int width, int height) {
         //Get unique ID for this instance
-        uniqueID = UUID.randomUUID().toString();
+        instanceId = UUID.randomUUID().toString();
 
         //Set interface of Mechtatel
         this.mtt = mtt;
@@ -87,8 +87,8 @@ public class MttHeadless {
         return Optional.ofNullable(vulkanImplHeadless);
     }
 
-    public String getUniqueID() {
-        return uniqueID;
+    public String getInstanceId() {
+        return instanceId;
     }
 
     public MttScreen getDefaultScreen() {

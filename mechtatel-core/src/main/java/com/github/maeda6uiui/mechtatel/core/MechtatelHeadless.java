@@ -6,15 +6,21 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.natives.IMttNativeLoader;
 import com.github.maeda6uiui.mechtatel.natives.MttNativeLoaderFactory;
 import com.jme3.bullet.PhysicsSpace;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.ALC;
+import org.lwjgl.openal.ALCCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.openal.ALC10.*;
 
 /**
  * Base class of the Mechtatel engine for headless mode
@@ -38,6 +44,24 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
         if (!glfwInit()) {
             throw new RuntimeException("Failed to initialize GLFW");
         }
+
+        //Set up OpenAL =====
+        if (settings.headlessSettings.useOpenAL) {
+            long alcDevice = alcOpenDevice((ByteBuffer) null);
+            if (alcDevice == 0) {
+                throw new RuntimeException("Failed to open default OpenAL device");
+            }
+            ALCCapabilities deviceCaps = ALC.createCapabilities(alcDevice);
+
+            long alcContext = alcCreateContext(alcDevice, (IntBuffer) null);
+            if (alcContext == 0) {
+                throw new RuntimeException("Failed to create OpenAL context");
+            }
+
+            alcMakeContextCurrent(alcContext);
+            AL.createCapabilities(deviceCaps);
+        }
+        //==========
 
         //Load native libraries
         IMttNativeLoader nativeLoader;

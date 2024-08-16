@@ -59,10 +59,12 @@ public class MttSettings {
     public static class HeadlessSettings {
         public int width;
         public int height;
+        public boolean useOpenAL;
 
         public HeadlessSettings() {
             width = 1280;
             height = 720;
+            useOpenAL = false;
         }
 
         @Override

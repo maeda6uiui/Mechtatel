@@ -32,7 +32,7 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class MttVulkanImplHeadless implements IMttVulkanImplCommon {
-    private static final int COLOR_IMAGE_FORMAT = VK_FORMAT_B8G8R8A8_UNORM;
+    private static final int COLOR_IMAGE_FORMAT = VK_FORMAT_B8G8R8A8_SRGB;
 
     private VkPhysicalDevice physicalDevice;
 

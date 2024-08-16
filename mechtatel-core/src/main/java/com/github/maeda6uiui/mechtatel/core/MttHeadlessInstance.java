@@ -31,6 +31,15 @@ public class MttHeadlessInstance {
     private MttScreen defaultScreen;
     private List<MttScreen> screens;
 
+    public MttHeadlessInstance(IMechtatelHeadlessEventHandlers mtt, MttSettings settings) {
+        this(
+                mtt,
+                settings,
+                settings.headlessSettings.width,
+                settings.headlessSettings.height
+        );
+    }
+
     public MttHeadlessInstance(IMechtatelHeadlessEventHandlers mtt, MttSettings settings, int width, int height) {
         shouldClose = false;
         instanceId = UUID.randomUUID().toString();

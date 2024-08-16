@@ -33,7 +33,7 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
     private List<MttHeadlessInstance> instances;
     private List<MttHeadlessInstance> newInstancesQueue;
 
-    private void initMechtatel(MttSettings settings, int width, int height) {
+    private void initMechtatel(MttSettings settings) {
         //Initialize GLFW
         if (!glfwInit()) {
             throw new RuntimeException("Failed to initialize GLFW");
@@ -66,13 +66,13 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
         instances = new ArrayList<>();
         newInstancesQueue = new ArrayList<>();
 
-        initialInstance = new MttHeadlessInstance(this, settings, width, height);
+        initialInstance = new MttHeadlessInstance(this, settings);
         instances.add(initialInstance);
 
         this.onInit(initialInstance);
     }
 
-    public MechtatelHeadless(MttSettings settings, int width, int height) {
+    public MechtatelHeadless(MttSettings settings) {
         logger.debug(settings.toString());
         logger.debug("Platform={} Architecture={}", PlatformInfo.PLATFORM, PlatformInfo.ARCHITECTURE);
         logger.debug(
@@ -85,7 +85,7 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
 
         mechtatelReady = true;
         try {
-            this.initMechtatel(settings, width, height);
+            this.initMechtatel(settings);
         } catch (RuntimeException e) {
             logger.error("Fatal error", e);
 

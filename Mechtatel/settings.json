@@ -8,6 +8,10 @@
         "windowedFullScreen": false,
         "monitorIndex": 0
     },
+    "headless": {
+        "width": 1280,
+        "height": 720
+    },
     "system": {
         "fps": 60
     },

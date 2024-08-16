@@ -56,6 +56,24 @@ public class MttSettings {
         }
     }
 
+    public static class HeadlessSettings {
+        public int width;
+        public int height;
+
+        public HeadlessSettings() {
+            width = 1280;
+            height = 720;
+        }
+
+        @Override
+        public String toString() {
+            return "HeadlessSettings{" +
+                    "width=" + width +
+                    ", height=" + height +
+                    '}';
+        }
+    }
+
     public static class SystemSettings {
         public int fps;
 
@@ -145,6 +163,8 @@ public class MttSettings {
 
     @JsonProperty("window")
     public WindowSettings windowSettings;
+    @JsonProperty("headless")
+    public HeadlessSettings headlessSettings;
     @JsonProperty("system")
     public SystemSettings systemSettings;
     @JsonProperty("rendering")
@@ -156,6 +176,7 @@ public class MttSettings {
 
     public MttSettings() {
         windowSettings = new WindowSettings();
+        headlessSettings = new HeadlessSettings();
         systemSettings = new SystemSettings();
         renderingSettings = new RenderingSettings();
         vulkanSettings = new VulkanSettings();
@@ -228,6 +249,7 @@ public class MttSettings {
     public String toString() {
         return "MttSettings{" +
                 "windowSettings=" + windowSettings +
+                ", headlessSettings=" + headlessSettings +
                 ", systemSettings=" + systemSettings +
                 ", renderingSettings=" + renderingSettings +
                 ", vulkanSettings=" + vulkanSettings +

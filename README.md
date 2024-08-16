@@ -13,7 +13,7 @@ Leave a star in this repo if you like it!
 Unfortunately, there are no elaborate documents for this project so far.
 However, you could check out the [test code](./mechtatel-core/src/test/java/com/github/maeda6uiui/mechtatel/) and hopefully get to learn what Mechtatel has to offer!
 
-Note that this project is currently under development and is subject to drastic changes.
+Note that this project is currently under development and is subject to drastic change.
 
 ## Message from developer
 
@@ -22,12 +22,8 @@ If you just want to create a game, then you should take advantage of the great g
 As for me, I simply love to write code, and want to develop a game starting from the lowest level possible.
 
 *Mechtatel* is a word that means "Dreamer" in Russian.
-It's a word that best describes me, only dreaming and being far from achivements.
-Maybe I wouldn't achieve anything until I die, maybe I would make some aesthetic garbage, I don't know...
-But if you are a nerd or something and like my work, then leave a star in this repo.
-It'll be my great mental support.
-
-Thank you!
+It's by far the best word to describe me, only dreaming and being far from any achivements.
+God knows if I could complete this work by the time you'd think I'm no more...
 
 ## Try it out
 
@@ -54,8 +50,6 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ## Currently working on
 
-- Implement headless mode (rendering without a window)
-
 ## Todo
 
 ### Will certainly do
@@ -76,6 +70,11 @@ You can overwrite it or use another logging implementation at your discretion.
 - [3D Game Development with LWJGL 3](https://ahbejarano.gitbook.io/lwjglgamedev/)
 
 ## Progress report
+
+### 2024-08-16
+
+Implemented headless mode, that is, rendering without a window.
+This feature will enable you to run a GPU instance on a cloud service and obtain rendering results from the Mechtatel engine, although it is yet to be tested on a cloud service. 
 
 ### 2024-07-21
 

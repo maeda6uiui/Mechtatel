@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static org.lwjgl.vulkan.VK10.VK_FORMAT_B8G8R8A8_UNORM;
+
 /**
  * Screen
  *
@@ -235,7 +237,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
                 createInfo.depthImageWidth,
                 createInfo.depthImageHeight,
                 vulkanImplHeadless.getDepthImageAspect(),
-                MttVulkanImplHeadless.COLOR_IMAGE_FORMAT,
+                VK_FORMAT_B8G8R8A8_UNORM,
                 vulkanImplHeadless.getAlbedoMSAASamples(),
                 VkScreenCreationUtils.getISamplerFilter(createInfo.samplerFilter),
                 VkScreenCreationUtils.getISamplerMipmapMode(createInfo.samplerMipmapMode),

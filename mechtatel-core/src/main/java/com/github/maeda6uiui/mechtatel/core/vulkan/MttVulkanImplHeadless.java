@@ -32,8 +32,6 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class MttVulkanImplHeadless {
-    public static final int COLOR_IMAGE_FORMAT = VK_FORMAT_B8G8R8_SRGB;
-
     private VkPhysicalDevice physicalDevice;
 
     private DeviceAndQueues dq;
@@ -108,7 +106,7 @@ public class MttVulkanImplHeadless {
         extent.set(biTextureOperationWidth, biTextureOperationHeight);
 
         biTextureOperationNabor.compile(
-                COLOR_IMAGE_FORMAT,
+                VK_FORMAT_B8G8R8A8_UNORM,
                 VK_FILTER_NEAREST,
                 VK_SAMPLER_MIPMAP_MODE_NEAREST,
                 VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,

@@ -41,7 +41,7 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class MttVulkanImpl {
+public class MttVulkanImpl implements IMttVulkanImplCommon {
     private static final long UINT64_MAX = 0xFFFFFFFFFFFFFFFFL;
 
     private long surface;
@@ -313,34 +313,42 @@ public class MttVulkanImpl {
         );
     }
 
+    @Override
     public DeviceAndQueues getDeviceAndQueues() {
         return dq;
     }
 
+    @Override
     public long getCommandPool() {
         return commandPool;
     }
 
+    @Override
     public int getDepthImageFormat() {
         return depthImageFormat;
     }
 
+    @Override
     public int getDepthImageAspect() {
         return depthImageAspect;
     }
 
-    public VkExtent2D getSwapchainExtent() {
+    @Override
+    public VkExtent2D getExtent() {
         return swapchain.getSwapchainExtent();
     }
 
-    public int getSwapchainImageFormat() {
+    @Override
+    public int getColorImageFormat() {
         return swapchain.getSwapchainImageFormat();
     }
 
+    @Override
     public int getAlbedoMSAASamples() {
         return albedoMSAASamples;
     }
 
+    @Override
     public BiTextureOperationNabor getTextureOperationNabor() {
         return biTextureOperationNabor;
     }

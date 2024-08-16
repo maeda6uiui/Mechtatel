@@ -43,7 +43,7 @@ public class BiTextureOperation {
                 vulkanImpl.getCommandPool(),
                 dq.graphicsQueue(),
                 vulkanImpl.getTextureOperationNabor(),
-                vulkanImpl.getSwapchainImageFormat(),
+                vulkanImpl.getColorImageFormat(),
                 vkColorTextures,
                 vkDepthTextures,
                 dstScreen.getVulkanScreen()

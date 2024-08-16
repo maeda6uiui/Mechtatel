@@ -31,7 +31,9 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class MttVulkanImplHeadless {
+public class MttVulkanImplHeadless implements IMttVulkanImplCommon {
+    private static final int COLOR_IMAGE_FORMAT = VK_FORMAT_B8G8R8A8_UNORM;
+
     private VkPhysicalDevice physicalDevice;
 
     private DeviceAndQueues dq;
@@ -44,10 +46,10 @@ public class MttVulkanImplHeadless {
     private BiTextureOperationNabor biTextureOperationNabor;
     private QuadDrawer quadDrawer;
 
-    public MttVulkanImplHeadless(
-            MttSettings.VulkanSettings vulkanSettings,
-            int biTextureOperationWidth,
-            int biTextureOperationHeight) {
+    private int width;
+    private int height;
+
+    public MttVulkanImplHeadless(MttSettings.VulkanSettings vulkanSettings, int width, int height) {
         MttVulkanInstance
                 .get()
                 .ifPresent(v -> {
@@ -103,10 +105,10 @@ public class MttVulkanImplHeadless {
                 dq.device(), biTextureOperationVertShaderResource, biTextureOperationFragShaderResource);
 
         VkExtent2D extent = VkExtent2D.create();
-        extent.set(biTextureOperationWidth, biTextureOperationHeight);
+        extent.set(width, height);
 
         biTextureOperationNabor.compile(
-                VK_FORMAT_B8G8R8A8_UNORM,
+                COLOR_IMAGE_FORMAT,
                 VK_FILTER_NEAREST,
                 VK_SAMPLER_MIPMAP_MODE_NEAREST,
                 VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
@@ -117,6 +119,9 @@ public class MttVulkanImplHeadless {
         );
 
         quadDrawer = new QuadDrawer(dq.device(), commandPool, dq.graphicsQueue());
+
+        this.width = width;
+        this.height = height;
     }
 
     public void cleanup() {
@@ -146,26 +151,42 @@ public class MttVulkanImplHeadless {
         );
     }
 
+    @Override
     public DeviceAndQueues getDeviceAndQueues() {
         return dq;
     }
 
+    @Override
     public long getCommandPool() {
         return commandPool;
     }
 
+    @Override
     public int getDepthImageFormat() {
         return depthImageFormat;
     }
 
+    @Override
     public int getDepthImageAspect() {
         return depthImageAspect;
     }
 
+    @Override
+    public VkExtent2D getExtent() {
+        return VkExtent2D.create().set(width, height);
+    }
+
+    @Override
+    public int getColorImageFormat() {
+        return COLOR_IMAGE_FORMAT;
+    }
+
+    @Override
     public int getAlbedoMSAASamples() {
         return albedoMSAASamples;
     }
 
+    @Override
     public BiTextureOperationNabor getTextureOperationNabor() {
         return biTextureOperationNabor;
     }

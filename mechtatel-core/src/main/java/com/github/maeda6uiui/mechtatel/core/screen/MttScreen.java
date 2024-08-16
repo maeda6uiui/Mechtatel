@@ -191,13 +191,13 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
                 createInfo.depthImageWidth,
                 createInfo.depthImageHeight,
                 vulkanImpl.getDepthImageAspect(),
-                vulkanImpl.getSwapchainImageFormat(),
+                vulkanImpl.getColorImageFormat(),
                 vulkanImpl.getAlbedoMSAASamples(),
                 VkScreenCreationUtils.getISamplerFilter(createInfo.samplerFilter),
                 VkScreenCreationUtils.getISamplerMipmapMode(createInfo.samplerMipmapMode),
                 VkScreenCreationUtils.getISamplerAddressMode(createInfo.samplerAddressMode),
                 VkScreenCreationUtils.createExtent(
-                        vulkanImpl.getSwapchainExtent(),
+                        vulkanImpl.getExtent(),
                         createInfo.screenWidth,
                         createInfo.screenHeight
                 ),
@@ -294,7 +294,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     public void recreate() {
         if (vulkanImpl != null) {
-            screen.recreate(vulkanImpl.getSwapchainImageFormat(), vulkanImpl.getSwapchainExtent());
+            screen.recreate(vulkanImpl.getColorImageFormat(), vulkanImpl.getExtent());
         }
     }
 

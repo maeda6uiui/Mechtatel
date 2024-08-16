@@ -97,7 +97,6 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
     }
 
     public MechtatelHeadless(MttSettings settings) {
-        logger.debug(settings.toString());
         logger.debug("Platform={} Architecture={}", PlatformInfo.PLATFORM, PlatformInfo.ARCHITECTURE);
         logger.debug(
                 "Mechtatel version={}.{}.{}",

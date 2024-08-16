@@ -41,19 +41,6 @@ public class MttSettings {
             windowedFullScreen = false;
             monitorIndex = 0;
         }
-
-        @Override
-        public String toString() {
-            return "WindowSettings{" +
-                    "title='" + title + '\'' +
-                    ", width=" + width +
-                    ", height=" + height +
-                    ", resizable=" + resizable +
-                    ", fullScreen=" + fullScreen +
-                    ", windowedFullScreen=" + windowedFullScreen +
-                    ", monitorIndex=" + monitorIndex +
-                    '}';
-        }
     }
 
     public static class HeadlessSettings {
@@ -66,14 +53,6 @@ public class MttSettings {
             height = 720;
             useOpenAL = false;
         }
-
-        @Override
-        public String toString() {
-            return "HeadlessSettings{" +
-                    "width=" + width +
-                    ", height=" + height +
-                    '}';
-        }
     }
 
     public static class SystemSettings {
@@ -81,13 +60,6 @@ public class MttSettings {
 
         public SystemSettings() {
             fps = 60;
-        }
-
-        @Override
-        public String toString() {
-            return "SystemSettings{" +
-                    "fps=" + fps +
-                    '}';
         }
     }
 
@@ -98,14 +70,6 @@ public class MttSettings {
         public RenderingSettings() {
             engine = RenderingEngine.VULKAN;
             imageFormat = MttTexture.ImageFormat.SRGB;
-        }
-
-        @Override
-        public String toString() {
-            return "RenderingSettings{" +
-                    "engine=" + engine +
-                    ", imageFormat=" + imageFormat +
-                    '}';
         }
     }
 
@@ -121,16 +85,6 @@ public class MttSettings {
                 majorVersion = 0;
                 minorVersion = 0;
                 patchVersion = 0;
-            }
-
-            @Override
-            public String toString() {
-                return "AppInfo{" +
-                        "name='" + name + '\'' +
-                        ", majorVersion=" + majorVersion +
-                        ", minorVersion=" + minorVersion +
-                        ", patchVersion=" + patchVersion +
-                        '}';
             }
         }
 
@@ -148,18 +102,6 @@ public class MttSettings {
             preferablePresentFamilyIndex = -1;
             albedoMSAASamples = 2;
             appInfo = new AppInfo();
-        }
-
-        @Override
-        public String toString() {
-            return "VulkanSettings{" +
-                    "enableValidationLayer=" + enableValidationLayer +
-                    ", preferablePhysicalDeviceIndex=" + preferablePhysicalDeviceIndex +
-                    ", preferableGraphicsFamilyIndex=" + preferableGraphicsFamilyIndex +
-                    ", preferablePresentFamilyIndex=" + preferablePresentFamilyIndex +
-                    ", albedoMSAASamples=" + albedoMSAASamples +
-                    ", appInfo=" + appInfo +
-                    '}';
         }
     }
 
@@ -245,16 +187,5 @@ public class MttSettings {
      */
     public static Optional<MttSettings> get() {
         return Optional.ofNullable(instance);
-    }
-
-    @Override
-    public String toString() {
-        return "MttSettings{" +
-                "windowSettings=" + windowSettings +
-                ", headlessSettings=" + headlessSettings +
-                ", systemSettings=" + systemSettings +
-                ", renderingSettings=" + renderingSettings +
-                ", vulkanSettings=" + vulkanSettings +
-                '}';
     }
 }

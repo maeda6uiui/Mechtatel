@@ -52,6 +52,8 @@ public class HeadlessModeTest extends MechtatelHeadless {
     @Override
     public void onUpdate(MttHeadlessInstance instance) {
         MttScreen defaultScreen = instance.getDefaultScreen();
+        defaultScreen.draw();
+
         try {
             defaultScreen.save(ScreenImageType.COLOR, PixelFormat.BGRA, Paths.get("./screenshot.png"));
         } catch (IOException e) {

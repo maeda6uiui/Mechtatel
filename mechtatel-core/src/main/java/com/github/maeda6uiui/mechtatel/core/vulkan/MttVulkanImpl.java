@@ -334,11 +334,21 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
         return depthImageAspect;
     }
 
+    /**
+     * Returns the extent of the swapchain.
+     *
+     * @return Extent of swapchain
+     */
     @Override
     public VkExtent2D getExtent() {
         return swapchain.getSwapchainExtent();
     }
 
+    /**
+     * Returns the image format of the swapchain.
+     *
+     * @return Image format of swapchain
+     */
     @Override
     public int getColorImageFormat() {
         return swapchain.getSwapchainImageFormat();

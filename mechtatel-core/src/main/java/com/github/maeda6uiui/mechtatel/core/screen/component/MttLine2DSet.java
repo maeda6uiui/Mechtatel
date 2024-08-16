@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
+import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplCommon;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttLineSet;
 import org.joml.Vector2fc;
 import org.joml.Vector3f;
@@ -15,7 +15,7 @@ import org.joml.Vector4fc;
 public class MttLine2DSet extends MttComponent {
     private VkMttLineSet vkLineSet;
 
-    public MttLine2DSet(MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen) {
+    public MttLine2DSet(IMttVulkanImplCommon vulkanImplCommon, IMttScreenForMttComponent screen) {
         super(
                 screen,
                 new MttComponentCreateInfo()
@@ -25,11 +25,11 @@ public class MttLine2DSet extends MttComponent {
                         .setDrawOrder(0)
         );
 
-        var dq = vulkanImpl.getDeviceAndQueues();
+        var dq = vulkanImplCommon.getDeviceAndQueues();
         vkLineSet = new VkMttLineSet(
                 this,
                 dq.device(),
-                vulkanImpl.getCommandPool(),
+                vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 screen.getVulkanScreen()
         );

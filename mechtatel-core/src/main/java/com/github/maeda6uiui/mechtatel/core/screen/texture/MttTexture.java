@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.screen.texture;
 
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttTexture;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
+import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplCommon;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 
 import java.io.FileNotFoundException;
@@ -33,7 +33,7 @@ public class MttTexture {
     }
 
     public MttTexture(
-            MttVulkanImpl vulkanImpl,
+            IMttVulkanImplCommon vulkanImplCommon,
             IMttScreenForMttTexture screen,
             URI textureResource,
             boolean generateMipmaps) throws FileNotFoundException {
@@ -41,10 +41,10 @@ public class MttTexture {
             throw new FileNotFoundException("Specified texture file does not exist: " + textureResource.getPath());
         }
 
-        var dq = vulkanImpl.getDeviceAndQueues();
+        var dq = vulkanImplCommon.getDeviceAndQueues();
         texture = new VkMttTexture(
                 dq.device(),
-                vulkanImpl.getCommandPool(),
+                vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 screen.getVulkanScreen(),
                 textureResource,
@@ -57,15 +57,15 @@ public class MttTexture {
     }
 
     public MttTexture(
-            MttVulkanImpl vulkanImpl,
+            IMttVulkanImplCommon vulkanImplCommon,
             IMttScreenForMttTexture screen,
             ByteBuffer pixels,
             int width,
             int height) {
-        var dq = vulkanImpl.getDeviceAndQueues();
+        var dq = vulkanImplCommon.getDeviceAndQueues();
         texture = new VkMttTexture(
                 dq.device(),
-                vulkanImpl.getCommandPool(),
+                vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 screen.getVulkanScreen(),
                 pixels,

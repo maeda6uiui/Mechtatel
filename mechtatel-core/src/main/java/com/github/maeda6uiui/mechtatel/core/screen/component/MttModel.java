@@ -6,7 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.model.MttAnimationData;
 import com.github.maeda6uiui.mechtatel.core.model.MttModelData;
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
+import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplCommon;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttModel;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ public class MttModel extends MttComponent implements IMttModelForVkMttModel {
     private MttModelData modelData;
     private MttAnimationData animationData;
 
-    public MttModel(MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen, URI modelResource) throws IOException {
+    public MttModel(IMttVulkanImplCommon vulkanImplCommon, IMttScreenForMttComponent screen, URI modelResource) throws IOException {
         super(
                 screen,
                 new MttComponentCreateInfo()
@@ -47,10 +47,10 @@ public class MttModel extends MttComponent implements IMttModelForVkMttModel {
         }
 
         //Create Vulkan component
-        var dq = vulkanImpl.getDeviceAndQueues();
+        var dq = vulkanImplCommon.getDeviceAndQueues();
         vkModel = new VkMttModel(
                 this, dq.device(),
-                vulkanImpl.getCommandPool(),
+                vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 screen.getVulkanScreen(),
                 this
@@ -58,7 +58,7 @@ public class MttModel extends MttComponent implements IMttModelForVkMttModel {
         this.associateVulkanComponents(vkModel);
     }
 
-    public MttModel(MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen, MttModel srcModel) {
+    public MttModel(IMttVulkanImplCommon vulkanImplCommon, IMttScreenForMttComponent screen, MttModel srcModel) {
         super(
                 screen,
                 new MttComponentCreateInfo()
@@ -70,10 +70,10 @@ public class MttModel extends MttComponent implements IMttModelForVkMttModel {
 
         this.modelResource = srcModel.modelResource;
 
-        var dq = vulkanImpl.getDeviceAndQueues();
+        var dq = vulkanImplCommon.getDeviceAndQueues();
         vkModel = new VkMttModel(
                 this, dq.device(),
-                vulkanImpl.getCommandPool(),
+                vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 srcModel.vkModel
         );

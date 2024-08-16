@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
+import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplCommon;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttTexturedQuad;
 
 import java.io.FileNotFoundException;
@@ -28,7 +28,7 @@ public class MttTexturedQuad extends MttComponent {
     }
 
     public MttTexturedQuad(
-            MttVulkanImpl vulkanImpl,
+            IMttVulkanImplCommon vulkanImplCommon,
             IMttScreenForMttComponent screen,
             URI textureResource,
             boolean generateMipmaps,
@@ -42,11 +42,11 @@ public class MttTexturedQuad extends MttComponent {
             throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
         }
 
-        var dq = vulkanImpl.getDeviceAndQueues();
+        var dq = vulkanImplCommon.getDeviceAndQueues();
         vkTexturedQuad = new VkMttTexturedQuad(
                 this,
                 dq.device(),
-                vulkanImpl.getCommandPool(),
+                vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 screen.getVulkanScreen(),
                 textureResource,
@@ -57,7 +57,7 @@ public class MttTexturedQuad extends MttComponent {
     }
 
     public MttTexturedQuad(
-            MttVulkanImpl vulkanImpl,
+            IMttVulkanImplCommon vulkanImplCommon,
             IMttScreenForMttComponent screen,
             MttTexturedQuad srcQuad,
             MttVertex v1,
@@ -66,11 +66,11 @@ public class MttTexturedQuad extends MttComponent {
             MttVertex v4) {
         super(screen, generateCreateInfo());
 
-        var dq = vulkanImpl.getDeviceAndQueues();
+        var dq = vulkanImplCommon.getDeviceAndQueues();
         vkTexturedQuad = new VkMttTexturedQuad(
                 this,
                 dq.device(),
-                vulkanImpl.getCommandPool(),
+                vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 srcQuad.vkTexturedQuad,
                 Arrays.asList(v1, v2, v3, v4)
@@ -79,7 +79,7 @@ public class MttTexturedQuad extends MttComponent {
     }
 
     public MttTexturedQuad(
-            MttVulkanImpl vulkanImpl,
+            IMttVulkanImplCommon vulkanImplCommon,
             IMttScreenForMttComponent screen,
             MttTexture texture,
             MttVertex v1,
@@ -88,11 +88,11 @@ public class MttTexturedQuad extends MttComponent {
             MttVertex v4) {
         super(screen, generateCreateInfo());
 
-        var dq = vulkanImpl.getDeviceAndQueues();
+        var dq = vulkanImplCommon.getDeviceAndQueues();
         vkTexturedQuad = new VkMttTexturedQuad(
                 this,
                 dq.device(),
-                vulkanImpl.getCommandPool(),
+                vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 texture.getVulkanTexture(),
                 Arrays.asList(v1, v2, v3, v4)

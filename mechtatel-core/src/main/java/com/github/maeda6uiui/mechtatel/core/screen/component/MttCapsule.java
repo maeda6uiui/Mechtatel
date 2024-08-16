@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
+import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplCommon;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttCapsule;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
@@ -15,7 +15,7 @@ public class MttCapsule extends MttComponent {
     private VkMttCapsule vkCapsule;
 
     public MttCapsule(
-            MttVulkanImpl vulkanImpl,
+            IMttVulkanImplCommon vulkanImplCommon,
             IMttScreenForMttComponent screen,
             Vector3fc center,
             float length,
@@ -32,11 +32,11 @@ public class MttCapsule extends MttComponent {
                         .setDrawOrder(0)
         );
 
-        var dq = vulkanImpl.getDeviceAndQueues();
+        var dq = vulkanImplCommon.getDeviceAndQueues();
         vkCapsule = new VkMttCapsule(
                 this,
                 dq.device(),
-                vulkanImpl.getCommandPool(),
+                vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 screen.getVulkanScreen(),
                 center, length, radius, numVDivs, numHDivs, color

@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
+import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplCommon;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttTexturedQuadSingleTextureSet;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
@@ -31,18 +31,18 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
     }
 
     public MttTexturedQuad2DSingleTextureSet(
-            MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen, URI textureResource) throws FileNotFoundException {
+            IMttVulkanImplCommon vulkanImplCommon, IMttScreenForMttComponent screen, URI textureResource) throws FileNotFoundException {
         super(screen, generateCreateInfo());
 
         if (!Files.exists(Paths.get(textureResource))) {
             throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
         }
 
-        var dq = vulkanImpl.getDeviceAndQueues();
+        var dq = vulkanImplCommon.getDeviceAndQueues();
         vkTexturedQuadSet = new VkMttTexturedQuadSingleTextureSet(
                 this,
                 dq.device(),
-                vulkanImpl.getCommandPool(),
+                vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 screen.getVulkanScreen(),
                 textureResource
@@ -50,14 +50,14 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
         this.associateVulkanComponents(vkTexturedQuadSet);
     }
 
-    public MttTexturedQuad2DSingleTextureSet(MttVulkanImpl vulkanImpl, IMttScreenForMttComponent screen, MttTexture texture) {
+    public MttTexturedQuad2DSingleTextureSet(IMttVulkanImplCommon vulkanImplCommon, IMttScreenForMttComponent screen, MttTexture texture) {
         super(screen, generateCreateInfo());
 
-        var dq = vulkanImpl.getDeviceAndQueues();
+        var dq = vulkanImplCommon.getDeviceAndQueues();
         vkTexturedQuadSet = new VkMttTexturedQuadSingleTextureSet(
                 this,
                 dq.device(),
-                vulkanImpl.getCommandPool(),
+                vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 texture.getVulkanTexture()
         );

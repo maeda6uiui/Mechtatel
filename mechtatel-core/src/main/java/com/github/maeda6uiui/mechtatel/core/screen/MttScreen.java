@@ -13,6 +13,7 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingPropert
 import com.github.maeda6uiui.mechtatel.core.screen.component.*;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
+import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplCommon;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImplHeadless;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
@@ -40,8 +41,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import static org.lwjgl.vulkan.VK10.VK_FORMAT_B8G8R8A8_UNORM;
 
 /**
  * Screen
@@ -147,8 +146,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         }
     }
 
-    private MttVulkanImpl vulkanImpl;
-    private MttVulkanImplHeadless vulkanImplHeadless;
+    private IMttVulkanImplCommon vulkanImplCommon;
     private VkMttScreen screen;
 
     private ImGuiContext imguiContext;
@@ -209,7 +207,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
                 createInfo.fseNaborInfos
         );
 
-        this.vulkanImpl = vulkanImpl;
+        vulkanImplCommon = vulkanImpl;
         this.imguiContext = imguiContext;
 
         this.commonSetup();
@@ -237,7 +235,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
                 createInfo.depthImageWidth,
                 createInfo.depthImageHeight,
                 vulkanImplHeadless.getDepthImageAspect(),
-                VK_FORMAT_B8G8R8A8_UNORM,
+                vulkanImplHeadless.getColorImageFormat(),
                 vulkanImplHeadless.getAlbedoMSAASamples(),
                 VkScreenCreationUtils.getISamplerFilter(createInfo.samplerFilter),
                 VkScreenCreationUtils.getISamplerMipmapMode(createInfo.samplerMipmapMode),
@@ -251,7 +249,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
                 createInfo.fseNaborInfos
         );
 
-        this.vulkanImplHeadless = vulkanImplHeadless;
+        vulkanImplCommon = vulkanImplHeadless;
         this.imguiContext = imguiContext;
 
         this.commonSetup();
@@ -268,34 +266,19 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         var vkComponents = new ArrayList<VkMttComponent>();
         components.forEach(v -> vkComponents.addAll(v.getVulkanComponents()));
 
-        if (vulkanImpl != null) {
-            vulkanImpl.draw(
-                    screen,
-                    backgroundColor,
-                    camera,
-                    shadowMappingSettings,
-                    ppProperties,
-                    fseProperties,
-                    vkComponents
-            );
-        }
-        if (vulkanImplHeadless != null) {
-            vulkanImplHeadless.draw(
-                    screen,
-                    backgroundColor,
-                    camera,
-                    shadowMappingSettings,
-                    ppProperties,
-                    fseProperties,
-                    vkComponents
-            );
-        }
+        vulkanImplCommon.draw(
+                screen,
+                backgroundColor,
+                camera,
+                shadowMappingSettings,
+                ppProperties,
+                fseProperties,
+                vkComponents
+        );
     }
 
     public void recreate() {
-        if (vulkanImpl != null) {
-            screen.recreate(vulkanImpl.getColorImageFormat(), vulkanImpl.getExtent());
-        }
+        screen.recreate(vulkanImplCommon.getColorImageFormat(), vulkanImplCommon.getExtent());
     }
 
     /**
@@ -311,7 +294,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         var fontTexHeight = new ImInt();
         ByteBuffer fontBuffer = fontAtlas.getTexDataAsRGBA32(fontTexWidth, fontTexHeight);
 
-        return new MttTexture(vulkanImpl, this, fontBuffer, fontTexWidth.get(), fontTexHeight.get());
+        return new MttTexture(vulkanImplCommon, this, fontBuffer, fontTexWidth.get(), fontTexHeight.get());
     }
 
     /**
@@ -448,7 +431,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     public MttTexture createTexture(URL textureResource, boolean generateMipmaps)
             throws URISyntaxException, FileNotFoundException {
-        return new MttTexture(vulkanImpl, this, textureResource.toURI(), generateMipmaps);
+        return new MttTexture(vulkanImplCommon, this, textureResource.toURI(), generateMipmaps);
     }
 
     /**
@@ -466,7 +449,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
             List<MttTexture> depthTextures,
             boolean textureCleanupDelegation) {
         var textureOperation = new BiTextureOperation(
-                vulkanImpl,
+                vulkanImplCommon,
                 colorTextures,
                 depthTextures,
                 this,
@@ -524,62 +507,62 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     public MttImGui createImGui() {
-        return new MttImGui(vulkanImpl, this, imguiContext);
+        return new MttImGui(vulkanImplCommon, this, imguiContext);
     }
 
     public MttModel createModel(URL modelResource) throws URISyntaxException, IOException {
-        return new MttModel(vulkanImpl, this, modelResource.toURI());
+        return new MttModel(vulkanImplCommon, this, modelResource.toURI());
     }
 
     public MttModel duplicateModel(MttModel srcModel) {
-        return new MttModel(vulkanImpl, this, srcModel);
+        return new MttModel(vulkanImplCommon, this, srcModel);
     }
 
     public MttLine createLine(MttPrimitiveVertex v1, MttPrimitiveVertex v2) {
-        return new MttLine(vulkanImpl, this, v1, v2);
+        return new MttLine(vulkanImplCommon, this, v1, v2);
     }
 
     public MttLineSet createLineSet() {
-        return new MttLineSet(vulkanImpl, this);
+        return new MttLineSet(vulkanImplCommon, this);
     }
 
     public MttSphere createSphere(Vector3fc center, float radius, int numVDivs, int numHDivs, Vector4fc color) {
-        return new MttSphere(vulkanImpl, this, center, radius, numVDivs, numHDivs, color);
+        return new MttSphere(vulkanImplCommon, this, center, radius, numVDivs, numHDivs, color);
     }
 
     public MttCapsule createCapsule(
             Vector3fc center, float length, float radius, int numVDivs, int numHDivs, Vector4fc color) {
-        return new MttCapsule(vulkanImpl, this, center, length, radius, numVDivs, numHDivs, color);
+        return new MttCapsule(vulkanImplCommon, this, center, length, radius, numVDivs, numHDivs, color);
     }
 
     public MttLine2D createLine2D(MttVertex2D p1, MttVertex2D p2, float z) {
-        return new MttLine2D(vulkanImpl, this, p1, p2, z);
+        return new MttLine2D(vulkanImplCommon, this, p1, p2, z);
     }
 
     public MttLine2DSet createLine2DSet() {
-        return new MttLine2DSet(vulkanImpl, this);
+        return new MttLine2DSet(vulkanImplCommon, this);
     }
 
     public MttQuad createQuad(MttPrimitiveVertex v1, MttPrimitiveVertex v2, MttPrimitiveVertex v3, MttPrimitiveVertex v4, boolean fill) {
-        return new MttQuad(vulkanImpl, this, v1, v2, v3, v4, fill);
+        return new MttQuad(vulkanImplCommon, this, v1, v2, v3, v4, fill);
     }
 
     public MttQuad createQuad(Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc p4, boolean fill, Vector4fc color) {
-        return new MttQuad(vulkanImpl, this, p1, p2, p3, p4, fill, color);
+        return new MttQuad(vulkanImplCommon, this, p1, p2, p3, p4, fill, color);
     }
 
     public MttQuad2D createQuad2D(
             MttVertex2D v1, MttVertex2D v2, MttVertex2D v3, MttVertex2D v4, float z, boolean fill) {
-        return new MttQuad2D(vulkanImpl, this, v1, v2, v3, v4, z, fill);
+        return new MttQuad2D(vulkanImplCommon, this, v1, v2, v3, v4, z, fill);
     }
 
     public MttQuad2D createQuad2D(
             Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4, float z, boolean fill, Vector4fc color) {
-        return new MttQuad2D(vulkanImpl, this, p1, p2, p3, p4, z, fill, color);
+        return new MttQuad2D(vulkanImplCommon, this, p1, p2, p3, p4, z, fill, color);
     }
 
     public MttQuad2D createQuad2D(Vector2fc topLeft, Vector2fc bottomRight, float z, boolean fill, Vector4fc color) {
-        return new MttQuad2D(vulkanImpl, this, topLeft, bottomRight, z, fill, color);
+        return new MttQuad2D(vulkanImplCommon, this, topLeft, bottomRight, z, fill, color);
     }
 
     public MttTexturedQuad createTexturedQuad(
@@ -590,7 +573,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
             MttVertex v3,
             MttVertex v4) throws URISyntaxException, FileNotFoundException {
         return new MttTexturedQuad(
-                vulkanImpl,
+                vulkanImplCommon,
                 this,
                 textureResource.toURI(),
                 generateMipmaps,
@@ -602,7 +585,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
             MttTexture texture,
             MttVertex v1, MttVertex v2, MttVertex v3, MttVertex v4) {
         return new MttTexturedQuad(
-                vulkanImpl, this, texture, v1, v2, v3, v4
+                vulkanImplCommon, this, texture, v1, v2, v3, v4
         );
     }
 
@@ -610,7 +593,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
             MttTexturedQuad srcQuad,
             MttVertex v1, MttVertex v2, MttVertex v3, MttVertex v4) {
         return new MttTexturedQuad(
-                vulkanImpl, this, srcQuad, v1, v2, v3, v4
+                vulkanImplCommon, this, srcQuad, v1, v2, v3, v4
         );
     }
 
@@ -619,57 +602,57 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
             MttVertex2D v1, MttVertex2D v2, MttVertex2D v3, MttVertex2D v4, float z)
             throws URISyntaxException, FileNotFoundException {
         return new MttTexturedQuad2D(
-                vulkanImpl, this, textureResource.toURI(), v1, v2, v3, v4, z);
+                vulkanImplCommon, this, textureResource.toURI(), v1, v2, v3, v4, z);
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
             URL textureResource,
             Vector2fc topLeft, Vector2fc bottomRight, float z) throws URISyntaxException, FileNotFoundException {
         return new MttTexturedQuad2D(
-                vulkanImpl, this, textureResource.toURI(), topLeft, bottomRight, z);
+                vulkanImplCommon, this, textureResource.toURI(), topLeft, bottomRight, z);
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
             MttTexture texture,
             MttVertex2D v1, MttVertex2D v2, MttVertex2D v3, MttVertex2D v4, float z) {
-        return new MttTexturedQuad2D(vulkanImpl, this, texture, v1, v2, v3, v4, z);
+        return new MttTexturedQuad2D(vulkanImplCommon, this, texture, v1, v2, v3, v4, z);
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
             MttTexture texture,
             Vector2fc topLeft, Vector2fc bottomRight, float z) {
-        return new MttTexturedQuad2D(vulkanImpl, this, texture, topLeft, bottomRight, z);
+        return new MttTexturedQuad2D(vulkanImplCommon, this, texture, topLeft, bottomRight, z);
     }
 
     public MttTexturedQuad2D duplicateTexturedQuad2D(
             MttTexturedQuad2D srcQuad,
             MttVertex2D v1, MttVertex2D v2, MttVertex2D v3, MttVertex2D v4, float z) {
-        return new MttTexturedQuad2D(vulkanImpl, this, srcQuad, v1, v2, v3, v4, z);
+        return new MttTexturedQuad2D(vulkanImplCommon, this, srcQuad, v1, v2, v3, v4, z);
     }
 
     public MttTexturedQuad2D duplicateTexturedQuad2D(
             MttTexturedQuad2D srcQuad, Vector2fc topLeft, Vector2fc bottomRight, float z) {
-        return new MttTexturedQuad2D(vulkanImpl, this, srcQuad, topLeft, bottomRight, z);
+        return new MttTexturedQuad2D(vulkanImplCommon, this, srcQuad, topLeft, bottomRight, z);
     }
 
     public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(URL textureResource)
             throws URISyntaxException, FileNotFoundException {
-        return new MttTexturedQuad2DSingleTextureSet(vulkanImpl, this, textureResource.toURI());
+        return new MttTexturedQuad2DSingleTextureSet(vulkanImplCommon, this, textureResource.toURI());
     }
 
     public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(MttTexture texture) {
-        return new MttTexturedQuad2DSingleTextureSet(vulkanImpl, this, texture);
+        return new MttTexturedQuad2DSingleTextureSet(vulkanImplCommon, this, texture);
     }
 
     public MttBox createBox(float xHalfExtent, float yHalfExtent, float zHalfExtent, Vector4fc color) {
-        return new MttBox(vulkanImpl, this, xHalfExtent, yHalfExtent, zHalfExtent, color);
+        return new MttBox(vulkanImplCommon, this, xHalfExtent, yHalfExtent, zHalfExtent, color);
     }
 
     public MttBox createBox(float halfExtent, Vector4fc color) {
-        return new MttBox(vulkanImpl, this, halfExtent, color);
+        return new MttBox(vulkanImplCommon, this, halfExtent, color);
     }
 
     public MttFont createFont(Font font, boolean antiAlias, Color fontColor, String requiredChars) {
-        return new MttFont(vulkanImpl, this, font, antiAlias, fontColor, requiredChars);
+        return new MttFont(vulkanImplCommon, this, font, antiAlias, fontColor, requiredChars);
     }
 }

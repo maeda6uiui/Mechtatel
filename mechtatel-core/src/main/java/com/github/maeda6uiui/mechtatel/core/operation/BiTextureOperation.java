@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.operation;
 
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
+import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplCommon;
 import com.github.maeda6uiui.mechtatel.core.vulkan.operation.VkBiTextureOperation;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 
@@ -26,7 +26,7 @@ public class BiTextureOperation {
     private boolean isValid;
 
     public BiTextureOperation(
-            MttVulkanImpl vulkanImpl,
+            IMttVulkanImplCommon vulkanImplCommon,
             List<MttTexture> colorTextures,
             List<MttTexture> depthTextures,
             MttScreen dstScreen,
@@ -37,13 +37,13 @@ public class BiTextureOperation {
         var vkDepthTextures = new ArrayList<VkMttTexture>();
         depthTextures.forEach(v -> vkDepthTextures.add(v.getVulkanTexture()));
 
-        var dq = vulkanImpl.getDeviceAndQueues();
+        var dq = vulkanImplCommon.getDeviceAndQueues();
         vkBiTextureOperation = new VkBiTextureOperation(
                 dq.device(),
-                vulkanImpl.getCommandPool(),
+                vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
-                vulkanImpl.getTextureOperationNabor(),
-                vulkanImpl.getColorImageFormat(),
+                vulkanImplCommon.getTextureOperationNabor(),
+                vulkanImplCommon.getColorImageFormat(),
                 vkColorTextures,
                 vkDepthTextures,
                 dstScreen.getVulkanScreen()

@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
+import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplCommon;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttQuad;
 import org.joml.Vector3fc;
@@ -18,12 +18,12 @@ import java.util.List;
 public class MttQuad extends MttComponent {
     private VkMttQuad vkQuad;
 
-    private void setup(MttVulkanImpl vulkanImpl, VkMttScreen vulkanScreen, List<MttPrimitiveVertex> vertices, boolean fill) {
-        var dq = vulkanImpl.getDeviceAndQueues();
+    private void setup(IMttVulkanImplCommon vulkanImplCommon, VkMttScreen vulkanScreen, List<MttPrimitiveVertex> vertices, boolean fill) {
+        var dq = vulkanImplCommon.getDeviceAndQueues();
         vkQuad = new VkMttQuad(
                 this,
                 dq.device(),
-                vulkanImpl.getCommandPool(),
+                vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 vulkanScreen,
                 vertices,
@@ -41,7 +41,7 @@ public class MttQuad extends MttComponent {
     }
 
     public MttQuad(
-            MttVulkanImpl vulkanImpl,
+            IMttVulkanImplCommon vulkanImplCommon,
             IMttScreenForMttComponent screen,
             MttPrimitiveVertex v1,
             MttPrimitiveVertex v2,
@@ -50,11 +50,11 @@ public class MttQuad extends MttComponent {
             boolean fill) {
         super(screen, generateCreateInfo(fill));
 
-        this.setup(vulkanImpl, screen.getVulkanScreen(), Arrays.asList(v1, v2, v3, v4), fill);
+        this.setup(vulkanImplCommon, screen.getVulkanScreen(), Arrays.asList(v1, v2, v3, v4), fill);
     }
 
     public MttQuad(
-            MttVulkanImpl vulkanImpl,
+            IMttVulkanImplCommon vulkanImplCommon,
             IMttScreenForMttComponent screen,
             Vector3fc p1,
             Vector3fc p2,
@@ -68,6 +68,6 @@ public class MttQuad extends MttComponent {
         var v2 = new MttPrimitiveVertex(p2, color);
         var v3 = new MttPrimitiveVertex(p3, color);
         var v4 = new MttPrimitiveVertex(p4, color);
-        this.setup(vulkanImpl, screen.getVulkanScreen(), Arrays.asList(v1, v2, v3, v4), fill);
+        this.setup(vulkanImplCommon, screen.getVulkanScreen(), Arrays.asList(v1, v2, v3, v4), fill);
     }
 }

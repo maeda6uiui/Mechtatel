@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.screen.component;
 
 import com.github.maeda6uiui.mechtatel.core.screen.IMttScreenForMttComponent;
-import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImpl;
+import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplCommon;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttImGui;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import imgui.ImFontAtlas;
@@ -30,12 +30,12 @@ public class MttImGui extends MttComponent {
      * This class does not change I/O settings (e.g. keyboard and mouse) for the ImGui context passed.
      * It only creates a texture for ImGui rendering.
      *
-     * @param vulkanImpl Vulkan implementation
-     * @param screen     Screen
-     * @param context    ImGui context
+     * @param vulkanImplCommon Vulkan implementation
+     * @param screen           Screen
+     * @param context          ImGui context
      */
     public MttImGui(
-            MttVulkanImpl vulkanImpl,
+            IMttVulkanImplCommon vulkanImplCommon,
             IMttScreenForMttComponent screen,
             ImGuiContext context) {
         super(
@@ -50,7 +50,7 @@ public class MttImGui extends MttComponent {
         this.context = context;
 
         //Get required resources related to Vulkan
-        var dq = vulkanImpl.getDeviceAndQueues();
+        var dq = vulkanImplCommon.getDeviceAndQueues();
 
         //Make this ImGui context current
         ImGui.setCurrentContext(context);
@@ -63,7 +63,7 @@ public class MttImGui extends MttComponent {
 
         vkTexture = new VkMttTexture(
                 dq.device(),
-                vulkanImpl.getCommandPool(),
+                vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 screen.getVulkanScreen(),
                 buffer,
@@ -77,7 +77,7 @@ public class MttImGui extends MttComponent {
         vkImGui = new VkMttImGui(
                 this,
                 dq.device(),
-                vulkanImpl.getCommandPool(),
+                vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 screen.getVulkanScreen(),
                 vkTexture

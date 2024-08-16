@@ -17,7 +17,7 @@
     },
     "rendering": {
         "engine": "VULKAN",
-        "imageFormat": "UNORM"
+        "imageFormat": "SRGB"
     },
     "vulkan": {
         "enableValidationLayer": true,

@@ -58,8 +58,8 @@ public class MttShaderSettings {
 
         public TextureOperationShaderInfo() {
             main = new ShaderInfo();
-            main.vert.filepath = "/Standard/Shader/TextureOperation/bi_texture_operation.vert";
-            main.frag.filepath = "/Standard/Shader/TextureOperation/bi_texture_operation.frag";
+            main.vert.filepath = "/Standard/Shader/TextureOperation/texture_operation.vert";
+            main.frag.filepath = "/Standard/Shader/TextureOperation/texture_operation.frag";
         }
     }
 

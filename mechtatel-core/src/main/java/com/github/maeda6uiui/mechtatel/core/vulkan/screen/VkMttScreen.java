@@ -471,40 +471,26 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
     }
 
     public void recreate(int colorImageFormat, VkExtent2D extent) {
+        VkExtent2D recreationExtent;
         if (shouldChangeExtentOnRecreate) {
-            gBufferNabor.recreate(colorImageFormat, extent);
-            primitiveNabor.recreate(colorImageFormat, extent);
-            primitiveFillNabor.recreate(colorImageFormat, extent);
-            mergeScenesNabor.recreate(colorImageFormat, extent);
-
-            if (shadowMappingNabor != null) {
-                shadowMappingNabor.recreate(colorImageFormat, extent);
-            }
-            if (ppNaborChain != null) {
-                ppNaborChain.recreate(colorImageFormat, extent);
-            }
-            if (fseNaborChain != null) {
-                fseNaborChain.recreate(colorImageFormat, extent);
-            }
+            recreationExtent = extent;
         } else {
-            VkExtent2D initialExtent = VkExtent2D.create();
-            initialExtent.width(initialWidth);
-            initialExtent.height(initialHeight);
+            recreationExtent = VkExtent2D.create().set(initialWidth, initialHeight);
+        }
 
-            gBufferNabor.recreate(colorImageFormat, initialExtent);
-            primitiveNabor.recreate(colorImageFormat, initialExtent);
-            primitiveFillNabor.recreate(colorImageFormat, initialExtent);
-            mergeScenesNabor.recreate(colorImageFormat, initialExtent);
+        gBufferNabor.recreate(colorImageFormat, recreationExtent);
+        primitiveNabor.recreate(colorImageFormat, recreationExtent);
+        primitiveFillNabor.recreate(colorImageFormat, recreationExtent);
+        mergeScenesNabor.recreate(colorImageFormat, recreationExtent);
 
-            if (shadowMappingNabor != null) {
-                shadowMappingNabor.recreate(colorImageFormat, initialExtent);
-            }
-            if (ppNaborChain != null) {
-                ppNaborChain.recreate(colorImageFormat, initialExtent);
-            }
-            if (fseNaborChain != null) {
-                fseNaborChain.recreate(colorImageFormat, extent);
-            }
+        if (shadowMappingNabor != null) {
+            shadowMappingNabor.recreate(colorImageFormat, recreationExtent);
+        }
+        if (ppNaborChain != null) {
+            ppNaborChain.recreate(colorImageFormat, recreationExtent);
+        }
+        if (fseNaborChain != null) {
+            fseNaborChain.recreate(colorImageFormat, recreationExtent);
         }
     }
 

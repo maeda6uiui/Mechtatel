@@ -76,10 +76,12 @@ public class MttSettings {
     public static class TextureOperationSettings {
         public int width;
         public int height;
+        public boolean changeExtentOnRecreate;
 
         public TextureOperationSettings() {
             width = -1;
             height = -1;
+            changeExtentOnRecreate = true;
         }
     }
 

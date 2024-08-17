@@ -159,6 +159,7 @@ public class MttWindow {
 
         //Set up ImGui =====
         imguiContext = ImGui.createContext();
+        imguiContext = new ImGuiContext(imguiContext.ptr);
         ImGui.setCurrentContext(imguiContext);
 
         ImGuiIO io = ImGui.getIO();

@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -122,7 +121,6 @@ public class TextureOperationAddTest extends Mechtatel {
 
         opAdd = finalScreen.createTextureOperation(
                 Arrays.asList(firstColorTexture, secondColorTexture),
-                new ArrayList<>(),
                 true
         );
         opAdd.setParameters(texOpParams);

@@ -39,7 +39,6 @@ public class VkTextureOperation {
             TextureOperationNabor textureOperationNabor,
             int imageFormat,
             List<VkMttTexture> colorTextures,
-            List<VkMttTexture> depthTextures,
             VkMttScreen dstScreen) {
         this.device = device;
         this.commandPool = commandPool;
@@ -59,15 +58,20 @@ public class VkTextureOperation {
         long dstImageView = textureOperationNabor.lookUpUserDefImageView(dstImage);
         resultTexture = new VkMttTexture(device, dstScreen, dstImageView);
 
+        if (colorTextures.size() > TextureOperationNabor.MAX_NUM_TEXTURES) {
+            throw new RuntimeException(
+                    String.format(
+                            "Number of textures exceeds maximum allowed (%d)",
+                            TextureOperationNabor.MAX_NUM_TEXTURES
+                    )
+            );
+        }
+
         var colorImageViews = new ArrayList<Long>();
         colorTextures.forEach(v -> colorImageViews.add(v.getTextureImageView()));
 
-        var depthImageViews = new ArrayList<Long>();
-        depthTextures.forEach(v -> depthImageViews.add(v.getTextureImageView()));
-
         textureOperationInfo = new TextureOperationInfo(
                 colorImageViews,
-                depthImageViews,
                 dstImage,
                 dstImageView
         );
@@ -112,10 +116,7 @@ public class VkTextureOperation {
                         commandBuffer,
                         VK_PIPELINE_BIND_POINT_GRAPHICS,
                         textureOperationNabor.getGraphicsPipeline(0));
-
                 textureOperationNabor.bindColorImages(commandBuffer, textureOperationInfo.colorImageViews());
-                textureOperationNabor.bindDepthImages(commandBuffer, textureOperationInfo.depthImageViews());
-
                 quadDrawer.draw(commandBuffer);
             }
             vkCmdEndRenderPass(commandBuffer);

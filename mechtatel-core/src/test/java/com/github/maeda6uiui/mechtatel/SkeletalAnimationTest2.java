@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -211,7 +210,6 @@ public class SkeletalAnimationTest2 extends Mechtatel {
 
         opStencil = finalScreen.createTextureOperation(
                 Arrays.asList(skyboxColorTexture, mainStencilTexture),
-                new ArrayList<>(),
                 true
         );
 
@@ -225,7 +223,6 @@ public class SkeletalAnimationTest2 extends Mechtatel {
 
         opAdd = finalScreen.createTextureOperation(
                 Arrays.asList(stencilTexture, mainColorTexture),
-                new ArrayList<>(),
                 true
         );
 

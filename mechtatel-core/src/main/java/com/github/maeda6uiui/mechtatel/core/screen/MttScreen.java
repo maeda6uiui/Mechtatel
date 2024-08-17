@@ -440,18 +440,15 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
      * if the texture operation doesn't require them.
      *
      * @param colorTextures            List of color textures
-     * @param depthTextures            List of depth textures
      * @param textureCleanupDelegation Whether to clean up textures when this texture operation is destroyed
      * @return Texture operation
      */
     public TextureOperation createTextureOperation(
             List<MttTexture> colorTextures,
-            List<MttTexture> depthTextures,
             boolean textureCleanupDelegation) {
         var textureOperation = new TextureOperation(
                 vulkanImplCommon,
                 colorTextures,
-                depthTextures,
                 this,
                 textureCleanupDelegation
         );

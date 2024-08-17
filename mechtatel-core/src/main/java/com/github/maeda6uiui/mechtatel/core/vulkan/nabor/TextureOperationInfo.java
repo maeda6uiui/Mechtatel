@@ -9,7 +9,6 @@ import java.util.List;
  */
 public record TextureOperationInfo(
         List<Long> colorImageViews,
-        List<Long> depthImageViews,
         long dstImage,
         long dstImageView) {
 }

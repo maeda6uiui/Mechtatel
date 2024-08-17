@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -155,7 +154,6 @@ public class HeadlessModeTest2 extends MechtatelHeadless {
 
         opStencil = finalScreen.createTextureOperation(
                 Arrays.asList(skyboxColorTexture, mainStencilTexture),
-                new ArrayList<>(),
                 true
         );
 
@@ -169,7 +167,6 @@ public class HeadlessModeTest2 extends MechtatelHeadless {
 
         opAdd = finalScreen.createTextureOperation(
                 Arrays.asList(stencilTexture, mainColorTexture),
-                new ArrayList<>(),
                 true
         );
 

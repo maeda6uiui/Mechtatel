@@ -20,7 +20,6 @@ public class TextureOperation {
     private TextureOperationParameters parameters;
 
     private List<MttTexture> colorTextures;
-    private List<MttTexture> depthTextures;
 
     private boolean textureCleanupDelegation;
     private boolean isValid;
@@ -28,14 +27,10 @@ public class TextureOperation {
     public TextureOperation(
             IMttVulkanImplCommon vulkanImplCommon,
             List<MttTexture> colorTextures,
-            List<MttTexture> depthTextures,
             MttScreen dstScreen,
             boolean textureCleanupDelegation) {
         var vkColorTextures = new ArrayList<VkMttTexture>();
         colorTextures.forEach(v -> vkColorTextures.add(v.getVulkanTexture()));
-
-        var vkDepthTextures = new ArrayList<VkMttTexture>();
-        depthTextures.forEach(v -> vkDepthTextures.add(v.getVulkanTexture()));
 
         var dq = vulkanImplCommon.getDeviceAndQueues();
         vkTextureOperation = new VkTextureOperation(
@@ -45,14 +40,12 @@ public class TextureOperation {
                 vulkanImplCommon.getTextureOperationNabor(),
                 vulkanImplCommon.getColorImageFormat(),
                 vkColorTextures,
-                vkDepthTextures,
                 dstScreen.getVulkanScreen()
         );
         resultTexture = new MttTexture(dstScreen, vkTextureOperation.getResultTexture());
         parameters = new TextureOperationParameters();
 
         this.colorTextures = colorTextures;
-        this.depthTextures = depthTextures;
 
         this.textureCleanupDelegation = textureCleanupDelegation;
         isValid = true;
@@ -65,7 +58,6 @@ public class TextureOperation {
 
             if (textureCleanupDelegation) {
                 colorTextures.forEach(MttTexture::cleanup);
-                depthTextures.forEach(MttTexture::cleanup);
             }
         }
         isValid = false;

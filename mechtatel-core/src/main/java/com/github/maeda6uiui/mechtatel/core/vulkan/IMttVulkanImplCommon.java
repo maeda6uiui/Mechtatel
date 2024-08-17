@@ -4,7 +4,7 @@ import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectProperties;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.BiTextureOperationNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
 import org.joml.Vector4f;
@@ -41,5 +41,5 @@ public interface IMttVulkanImplCommon {
 
     int getAlbedoMSAASamples();
 
-    BiTextureOperationNabor getTextureOperationNabor();
+    TextureOperationNabor getTextureOperationNabor();
 }

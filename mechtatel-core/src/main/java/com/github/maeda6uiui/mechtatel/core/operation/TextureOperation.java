@@ -3,56 +3,49 @@ package com.github.maeda6uiui.mechtatel.core.operation;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplCommon;
-import com.github.maeda6uiui.mechtatel.core.vulkan.operation.VkBiTextureOperation;
+import com.github.maeda6uiui.mechtatel.core.vulkan.operation.VkTextureOperation;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Texture operation that consumes two textures
+ * Texture operation
  *
  * @author maeda6uiui
  */
-public class BiTextureOperation {
-    private VkBiTextureOperation vkBiTextureOperation;
+public class TextureOperation {
+    private VkTextureOperation vkTextureOperation;
     private MttTexture resultTexture;
-    private BiTextureOperationParameters parameters;
+    private TextureOperationParameters parameters;
 
     private List<MttTexture> colorTextures;
-    private List<MttTexture> depthTextures;
 
     private boolean textureCleanupDelegation;
     private boolean isValid;
 
-    public BiTextureOperation(
+    public TextureOperation(
             IMttVulkanImplCommon vulkanImplCommon,
             List<MttTexture> colorTextures,
-            List<MttTexture> depthTextures,
             MttScreen dstScreen,
             boolean textureCleanupDelegation) {
         var vkColorTextures = new ArrayList<VkMttTexture>();
         colorTextures.forEach(v -> vkColorTextures.add(v.getVulkanTexture()));
 
-        var vkDepthTextures = new ArrayList<VkMttTexture>();
-        depthTextures.forEach(v -> vkDepthTextures.add(v.getVulkanTexture()));
-
         var dq = vulkanImplCommon.getDeviceAndQueues();
-        vkBiTextureOperation = new VkBiTextureOperation(
+        vkTextureOperation = new VkTextureOperation(
                 dq.device(),
                 vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 vulkanImplCommon.getTextureOperationNabor(),
                 vulkanImplCommon.getColorImageFormat(),
                 vkColorTextures,
-                vkDepthTextures,
                 dstScreen.getVulkanScreen()
         );
-        resultTexture = new MttTexture(dstScreen, vkBiTextureOperation.getResultTexture());
-        parameters = new BiTextureOperationParameters();
+        resultTexture = new MttTexture(dstScreen, vkTextureOperation.getResultTexture());
+        parameters = new TextureOperationParameters();
 
         this.colorTextures = colorTextures;
-        this.depthTextures = depthTextures;
 
         this.textureCleanupDelegation = textureCleanupDelegation;
         isValid = true;
@@ -60,30 +53,29 @@ public class BiTextureOperation {
 
     public void cleanup() {
         if (isValid) {
-            vkBiTextureOperation.cleanup();
+            vkTextureOperation.cleanup();
             resultTexture.cleanup();
 
             if (textureCleanupDelegation) {
                 colorTextures.forEach(MttTexture::cleanup);
-                depthTextures.forEach(MttTexture::cleanup);
             }
         }
         isValid = false;
     }
 
     public void run() {
-        vkBiTextureOperation.run(parameters);
+        vkTextureOperation.run(parameters);
     }
 
     public MttTexture getResultTexture() {
         return resultTexture;
     }
 
-    public void setParameters(BiTextureOperationParameters parameters) {
+    public void setParameters(TextureOperationParameters parameters) {
         this.parameters = parameters;
     }
 
-    public BiTextureOperationParameters getParameters() {
+    public TextureOperationParameters getParameters() {
         return parameters;
     }
 

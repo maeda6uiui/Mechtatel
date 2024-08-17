@@ -71,6 +71,11 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ## Progress report
 
+### 2024-08-17
+
+Texture operations can now take up to 8 textures.
+Merge-by-depth operation has been removed.
+
 ### 2024-08-16
 
 Implemented headless mode, that is, rendering without a window.

@@ -1,6 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core;
 
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.sound.MttSound;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImplHeadless;
 import imgui.ImGui;
 import imgui.ImGuiIO;
@@ -8,6 +9,9 @@ import imgui.internal.ImGuiContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +37,8 @@ public class MttHeadlessInstance {
     private MttScreen defaultScreen;
     private List<MttScreen> screens;
 
+    private List<MttSound> sounds3D;
+
     private double lastUpdateTime;
     private double actualFPS;
 
@@ -50,6 +56,8 @@ public class MttHeadlessInstance {
         instanceId = UUID.randomUUID().toString();
         this.mtt = mtt;
         vulkanImplHeadless = new MttVulkanImplHeadless(width, height);
+
+        sounds3D = new ArrayList<>();
 
         //Set up ImGui =====
         imguiContext = ImGui.createContext();
@@ -93,6 +101,7 @@ public class MttHeadlessInstance {
 
         screens.forEach(MttScreen::cleanup);
         vulkanImplHeadless.cleanup();
+        sounds3D.forEach(MttSound::cleanup);
 
         ImGui.destroyContext(imguiContext);
     }
@@ -145,5 +154,30 @@ public class MttHeadlessInstance {
                 .forEach(MttScreen::cleanup);
         screens.clear();
         screens.add(defaultScreen);
+    }
+
+    public MttSound createSound(URL soundResource, boolean loop, boolean relative) throws URISyntaxException, IOException {
+        var sound = new MttSound(soundResource.toURI(), loop, relative);
+        sounds3D.add(sound);
+
+        return sound;
+    }
+
+    public MttSound duplicateSound(MttSound srcSound, boolean loop, boolean relative) {
+        var sound = new MttSound(srcSound, loop, relative);
+        sounds3D.add(sound);
+
+        return sound;
+    }
+
+    public boolean deleteSound(MttSound sound) {
+        if (sounds3D.contains(sound)) {
+            sound.cleanup();
+            sounds3D.remove(sound);
+
+            return true;
+        }
+
+        return false;
     }
 }

@@ -3,8 +3,8 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.*;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
-import com.github.maeda6uiui.mechtatel.core.operation.BiTextureOperation;
-import com.github.maeda6uiui.mechtatel.core.operation.BiTextureOperationParameters;
+import com.github.maeda6uiui.mechtatel.core.operation.TextureOperation;
+import com.github.maeda6uiui.mechtatel.core.operation.TextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
@@ -40,8 +40,8 @@ public class SkyboxTest extends Mechtatel {
     private MttScreen skyboxScreen;
     private MttScreen mainScreen;
     private MttScreen finalScreen;
-    private BiTextureOperation opStencil;
-    private BiTextureOperation opAdd;
+    private TextureOperation opStencil;
+    private TextureOperation opAdd;
     private MttTexturedQuad2D texturedQuad;
     private FreeCamera camera;
 
@@ -159,28 +159,28 @@ public class SkyboxTest extends Mechtatel {
         MttTexture skyboxColorTexture = skyboxScreen.texturize(ScreenImageType.COLOR, finalScreen);
         MttTexture mainStencilTexture = mainScreen.texturize(ScreenImageType.STENCIL, finalScreen);
 
-        opStencil = finalScreen.createBiTextureOperation(
+        opStencil = finalScreen.createTextureOperation(
                 Arrays.asList(skyboxColorTexture, mainStencilTexture),
                 new ArrayList<>(),
                 true
         );
 
-        var texOpStencilParams = new BiTextureOperationParameters();
-        texOpStencilParams.setOperationType(BiTextureOperationParameters.OperationType.MUL);
+        var texOpStencilParams = new TextureOperationParameters();
+        texOpStencilParams.setOperationType(TextureOperationParameters.OperationType.MUL);
         opStencil.setParameters(texOpStencilParams);
 
         //Add rendering result of main screen to the stencil
         MttTexture stencilTexture = opStencil.getResultTexture();
         MttTexture mainColorTexture = mainScreen.texturize(ScreenImageType.COLOR, finalScreen);
 
-        opAdd = finalScreen.createBiTextureOperation(
+        opAdd = finalScreen.createTextureOperation(
                 Arrays.asList(stencilTexture, mainColorTexture),
                 new ArrayList<>(),
                 true
         );
 
-        var texOpAddParams = new BiTextureOperationParameters();
-        texOpAddParams.setOperationType(BiTextureOperationParameters.OperationType.ADD);
+        var texOpAddParams = new TextureOperationParameters();
+        texOpAddParams.setOperationType(TextureOperationParameters.OperationType.ADD);
         opAdd.setParameters(texOpAddParams);
 
         //Set result texture of add operation as final output

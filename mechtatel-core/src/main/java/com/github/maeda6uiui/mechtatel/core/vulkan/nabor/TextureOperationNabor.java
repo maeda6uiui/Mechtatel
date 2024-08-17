@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2D;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.BiTextureOperationParametersUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.TextureOperationParametersUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
@@ -23,10 +23,10 @@ import static org.lwjgl.vulkan.VK10.*;
  *
  * @author maeda6uiui
  */
-public class BiTextureOperationNabor extends Nabor {
+public class TextureOperationNabor extends Nabor {
     public static final int COLOR_ATTACHMENT_INDEX = 0;
 
-    public BiTextureOperationNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
+    public TextureOperationNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
         super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
     }
 
@@ -59,7 +59,7 @@ public class BiTextureOperationNabor extends Nabor {
         VkDevice device = this.getDevice();
 
         var parametersUBOInfos = BufferUtils.createUBOBuffers(
-                device, descriptorCount, BiTextureOperationParametersUBO.SIZEOF);
+                device, descriptorCount, TextureOperationParametersUBO.SIZEOF);
         for (var parametersUBOInfo : parametersUBOInfos) {
             this.getUniformBuffers().add(parametersUBOInfo.buffer);
             this.getUniformBufferMemories().add(parametersUBOInfo.bufferMemory);
@@ -300,7 +300,7 @@ public class BiTextureOperationNabor extends Nabor {
             VkDescriptorBufferInfo parametersUBOInfo = uboInfos.get(0);
             parametersUBOInfo.buffer(this.getUniformBuffer(0));
             parametersUBOInfo.offset(0);
-            parametersUBOInfo.range(BiTextureOperationParametersUBO.SIZEOF);
+            parametersUBOInfo.range(TextureOperationParametersUBO.SIZEOF);
 
             VkWriteDescriptorSet uboDescriptorWrite = descriptorWrites.get(0);
             uboDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);

@@ -7,7 +7,7 @@ import com.github.maeda6uiui.mechtatel.core.SamplerMipmapMode;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectProperties;
-import com.github.maeda6uiui.mechtatel.core.operation.BiTextureOperation;
+import com.github.maeda6uiui.mechtatel.core.operation.TextureOperation;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizablePostProcessingNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.screen.component.*;
@@ -161,7 +161,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     private boolean shouldAutoUpdateCameraAspect;
 
     private List<MttComponent> components;
-    private List<BiTextureOperation> biTextureOperations;
+    private List<TextureOperation> textureOperations;
     private List<MttTexture> textures;
 
     private void commonSetup() {
@@ -175,7 +175,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         shouldAutoUpdateCameraAspect = true;
 
         components = new ArrayList<>();
-        biTextureOperations = new ArrayList<>();
+        textureOperations = new ArrayList<>();
         textures = new ArrayList<>();
     }
 
@@ -257,7 +257,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
     public void cleanup() {
         components.forEach(MttComponent::cleanup);
-        biTextureOperations.forEach(BiTextureOperation::cleanup);
+        textureOperations.forEach(TextureOperation::cleanup);
         textures.forEach(MttTexture::cleanup);
         screen.cleanup();
     }
@@ -444,38 +444,38 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
      * @param textureCleanupDelegation Whether to clean up textures when this texture operation is destroyed
      * @return Texture operation
      */
-    public BiTextureOperation createBiTextureOperation(
+    public TextureOperation createTextureOperation(
             List<MttTexture> colorTextures,
             List<MttTexture> depthTextures,
             boolean textureCleanupDelegation) {
-        var textureOperation = new BiTextureOperation(
+        var textureOperation = new TextureOperation(
                 vulkanImplCommon,
                 colorTextures,
                 depthTextures,
                 this,
                 textureCleanupDelegation
         );
-        biTextureOperations.add(textureOperation);
+        textureOperations.add(textureOperation);
 
         return textureOperation;
     }
 
-    public boolean deleteBiTextureOperation(BiTextureOperation biTextureOperation) {
-        if (!biTextureOperations.contains(biTextureOperation)) {
+    public boolean deleteTextureOperation(TextureOperation textureOperation) {
+        if (!textureOperations.contains(textureOperation)) {
             return false;
         }
 
-        biTextureOperation.cleanup();
-        return biTextureOperations.remove(biTextureOperation);
+        textureOperation.cleanup();
+        return textureOperations.remove(textureOperation);
     }
 
-    public void deleteAllBiTextureOperations() {
-        biTextureOperations.forEach(BiTextureOperation::cleanup);
-        biTextureOperations.clear();
+    public void deleteAllTextureOperations() {
+        textureOperations.forEach(TextureOperation::cleanup);
+        textureOperations.clear();
     }
 
     public void removeGarbageTextureOperations() {
-        biTextureOperations.removeIf(op -> !op.isValid());
+        textureOperations.removeIf(op -> !op.isValid());
     }
 
     //Components ==========

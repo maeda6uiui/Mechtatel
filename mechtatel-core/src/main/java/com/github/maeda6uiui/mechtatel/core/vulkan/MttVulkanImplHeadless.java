@@ -10,7 +10,7 @@ import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.CommandPoolCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.LogicalDeviceCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.BiTextureOperationNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.DepthResourceUtils;
@@ -43,7 +43,7 @@ public class MttVulkanImplHeadless implements IMttVulkanImplCommon {
     private int depthImageFormat;
     private int depthImageAspect;
 
-    private BiTextureOperationNabor biTextureOperationNabor;
+    private TextureOperationNabor textureOperationNabor;
     private QuadDrawer quadDrawer;
 
     private int width;
@@ -87,16 +87,16 @@ public class MttVulkanImplHeadless implements IMttVulkanImplCommon {
                 .get()
                 .orElse(MttShaderSettings.create());
 
-        URL biTextureOperationVertShaderResource;
-        URL biTextureOperationFragShaderResource;
+        URL textureOperationVertShaderResource;
+        URL textureOperationFragShaderResource;
         try {
-            biTextureOperationVertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.biTextureOperation.main.vert.filepath,
-                    shaderSettings.biTextureOperation.main.vert.external
+            textureOperationVertShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.textureOperation.main.vert.filepath,
+                    shaderSettings.textureOperation.main.vert.external
             );
-            biTextureOperationFragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.biTextureOperation.main.frag.filepath,
-                    shaderSettings.biTextureOperation.main.frag.external
+            textureOperationFragShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.textureOperation.main.frag.filepath,
+                    shaderSettings.textureOperation.main.frag.external
             );
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
@@ -119,9 +119,9 @@ public class MttVulkanImplHeadless implements IMttVulkanImplCommon {
 
         VkExtent2D textureOperationExtent = VkExtent2D.create().set(textureOperationWidth, textureOperationHeight);
 
-        biTextureOperationNabor = new BiTextureOperationNabor(
-                dq.device(), biTextureOperationVertShaderResource, biTextureOperationFragShaderResource);
-        biTextureOperationNabor.compile(
+        textureOperationNabor = new TextureOperationNabor(
+                dq.device(), textureOperationVertShaderResource, textureOperationFragShaderResource);
+        textureOperationNabor.compile(
                 COLOR_IMAGE_FORMAT,
                 VK_FILTER_NEAREST,
                 VK_SAMPLER_MIPMAP_MODE_NEAREST,
@@ -141,7 +141,7 @@ public class MttVulkanImplHeadless implements IMttVulkanImplCommon {
     public void cleanup() {
         vkDeviceWaitIdle(dq.device());
         quadDrawer.cleanup();
-        biTextureOperationNabor.cleanup(false);
+        textureOperationNabor.cleanup(false);
 
         vkDestroyCommandPool(dq.device(), commandPool, null);
         vkDestroyDevice(dq.device(), null);
@@ -202,7 +202,7 @@ public class MttVulkanImplHeadless implements IMttVulkanImplCommon {
     }
 
     @Override
-    public BiTextureOperationNabor getTextureOperationNabor() {
-        return biTextureOperationNabor;
+    public TextureOperationNabor getTextureOperationNabor() {
+        return textureOperationNabor;
     }
 }

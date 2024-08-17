@@ -5,8 +5,8 @@ import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
-import com.github.maeda6uiui.mechtatel.core.operation.BiTextureOperation;
-import com.github.maeda6uiui.mechtatel.core.operation.BiTextureOperationParameters;
+import com.github.maeda6uiui.mechtatel.core.operation.TextureOperation;
+import com.github.maeda6uiui.mechtatel.core.operation.TextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttTexturedQuad2D;
@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class BiTextureOperationAddTest extends Mechtatel {
-    private static final Logger logger = LoggerFactory.getLogger(BiTextureOperationAddTest.class);
+public class TextureOperationAddTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(TextureOperationAddTest.class);
 
-    public BiTextureOperationAddTest(MttSettings settings) {
+    public TextureOperationAddTest(MttSettings settings) {
         super(settings);
         this.run();
     }
@@ -34,7 +34,7 @@ public class BiTextureOperationAddTest extends Mechtatel {
         MttSettings
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
-                        BiTextureOperationAddTest::new,
+                        TextureOperationAddTest::new,
                         () -> logger.error("Failed to load settings")
                 );
     }
@@ -43,7 +43,7 @@ public class BiTextureOperationAddTest extends Mechtatel {
     private MttScreen secondScreen;
     private MttScreen finalScreen;
     private MttTexturedQuad2D texturedQuad;
-    private BiTextureOperation opAdd;
+    private TextureOperation opAdd;
     private FreeCamera camera;
 
     @Override
@@ -117,10 +117,10 @@ public class BiTextureOperationAddTest extends Mechtatel {
         MttTexture firstColorTexture = firstScreen.texturize(ScreenImageType.COLOR, finalScreen);
         MttTexture secondColorTexture = secondScreen.texturize(ScreenImageType.COLOR, finalScreen);
 
-        var texOpParams = new BiTextureOperationParameters();
-        texOpParams.setOperationType(BiTextureOperationParameters.OperationType.ADD);
+        var texOpParams = new TextureOperationParameters();
+        texOpParams.setOperationType(TextureOperationParameters.OperationType.ADD);
 
-        opAdd = finalScreen.createBiTextureOperation(
+        opAdd = finalScreen.createTextureOperation(
                 Arrays.asList(firstColorTexture, secondColorTexture),
                 new ArrayList<>(),
                 true

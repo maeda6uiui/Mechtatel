@@ -11,8 +11,8 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.creator.CommandPoolCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.LogicalDeviceCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.SurfaceCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
-import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.BiTextureOperationNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PresentNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.TextureOperationNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.vulkan.swapchain.Swapchain;
@@ -56,7 +56,7 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
     private int depthImageAspect;
 
     private PresentNabor presentNabor;
-    private BiTextureOperationNabor biTextureOperationNabor;
+    private TextureOperationNabor textureOperationNabor;
     private QuadDrawer quadDrawer;
     private long acquireImageIndexFence;
 
@@ -105,10 +105,10 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
             textureOperationExtent = textureOperationInitialExtent;
         }
 
-        biTextureOperationNabor.recreate(
+        textureOperationNabor.recreate(
                 swapchain.getSwapchainImageFormat(),
                 textureOperationExtent);
-        biTextureOperationNabor.cleanupUserDefImages();
+        textureOperationNabor.cleanupUserDefImages();
     }
 
     public MttVulkanImpl(long window) {
@@ -163,8 +163,8 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
 
         URL presentVertShaderResource;
         URL presentFragShaderResource;
-        URL biTextureOperationVertShaderResource;
-        URL biTextureOperationFragShaderResource;
+        URL textureOperationVertShaderResource;
+        URL textureOperationFragShaderResource;
         try {
             presentVertShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.present.main.vert.filepath,
@@ -175,13 +175,13 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
                     shaderSettings.present.main.frag.external
             );
 
-            biTextureOperationVertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.biTextureOperation.main.vert.filepath,
-                    shaderSettings.biTextureOperation.main.vert.external
+            textureOperationVertShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.textureOperation.main.vert.filepath,
+                    shaderSettings.textureOperation.main.vert.external
             );
-            biTextureOperationFragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.biTextureOperation.main.frag.filepath,
-                    shaderSettings.biTextureOperation.main.frag.external
+            textureOperationFragShaderResource = MttURLUtils.getResourceURL(
+                    shaderSettings.textureOperation.main.frag.filepath,
+                    shaderSettings.textureOperation.main.frag.external
             );
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
@@ -217,9 +217,9 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
         VkExtent2D textureOperationExtent = VkExtent2D.create().set(textureOperationWidth, textureOperationHeight);
         textureOperationInitialExtent = textureOperationExtent;
 
-        biTextureOperationNabor = new BiTextureOperationNabor(
-                dq.device(), biTextureOperationVertShaderResource, biTextureOperationFragShaderResource);
-        biTextureOperationNabor.compile(
+        textureOperationNabor = new TextureOperationNabor(
+                dq.device(), textureOperationVertShaderResource, textureOperationFragShaderResource);
+        textureOperationNabor.compile(
                 swapchain.getSwapchainImageFormat(),
                 VK_FILTER_NEAREST,
                 VK_SAMPLER_MIPMAP_MODE_NEAREST,
@@ -249,7 +249,7 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
         quadDrawer.cleanup();
 
         swapchain.cleanup();
-        biTextureOperationNabor.cleanup(false);
+        textureOperationNabor.cleanup(false);
         presentNabor.cleanup(false);
         vkDestroyFence(dq.device(), acquireImageIndexFence, null);
 
@@ -389,7 +389,7 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
     }
 
     @Override
-    public BiTextureOperationNabor getTextureOperationNabor() {
-        return biTextureOperationNabor;
+    public TextureOperationNabor getTextureOperationNabor() {
+        return textureOperationNabor;
     }
 }

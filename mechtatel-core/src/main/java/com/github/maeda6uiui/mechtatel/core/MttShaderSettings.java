@@ -53,13 +53,13 @@ public class MttShaderSettings {
         }
     }
 
-    public static class BiTextureOperationShaderInfo {
+    public static class TextureOperationShaderInfo {
         public ShaderInfo main;
 
-        public BiTextureOperationShaderInfo() {
+        public TextureOperationShaderInfo() {
             main = new ShaderInfo();
-            main.vert.filepath = "/Standard/Shader/BiTextureOperation/bi_texture_operation.vert";
-            main.frag.filepath = "/Standard/Shader/BiTextureOperation/bi_texture_operation.frag";
+            main.vert.filepath = "/Standard/Shader/TextureOperation/bi_texture_operation.vert";
+            main.frag.filepath = "/Standard/Shader/TextureOperation/bi_texture_operation.frag";
         }
     }
 
@@ -163,7 +163,7 @@ public class MttShaderSettings {
         }
     }
 
-    public BiTextureOperationShaderInfo biTextureOperation;
+    public TextureOperationShaderInfo textureOperation;
     public GBufferShaderInfo gBuffer;
     public MergeScenesShaderInfo mergeScenes;
     public PostProcessingShaderInfo postProcessing;
@@ -175,7 +175,7 @@ public class MttShaderSettings {
     private static MttShaderSettings instance;
 
     public MttShaderSettings() {
-        biTextureOperation = new BiTextureOperationShaderInfo();
+        textureOperation = new TextureOperationShaderInfo();
         gBuffer = new GBufferShaderInfo();
         mergeScenes = new MergeScenesShaderInfo();
         postProcessing = new PostProcessingShaderInfo();

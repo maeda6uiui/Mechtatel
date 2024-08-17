@@ -5,8 +5,8 @@ import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
-import com.github.maeda6uiui.mechtatel.core.operation.BiTextureOperation;
-import com.github.maeda6uiui.mechtatel.core.operation.BiTextureOperationParameters;
+import com.github.maeda6uiui.mechtatel.core.operation.TextureOperation;
+import com.github.maeda6uiui.mechtatel.core.operation.TextureOperationParameters;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttImGui;
@@ -54,7 +54,7 @@ public class ModelViewerTest extends Mechtatel {
     private MttScreen imguiScreen;
     private MttScreen mainScreen;
     private MttScreen finalScreen;
-    private BiTextureOperation opAdd;
+    private TextureOperation opAdd;
     private MttTexturedQuad2D texturedQuad;
     private boolean shouldShowMainObjects;
 
@@ -365,14 +365,14 @@ public class ModelViewerTest extends Mechtatel {
         MttTexture imguiColorTexture = imguiScreen.texturize(ScreenImageType.COLOR, finalScreen);
         MttTexture mainColorTexture = mainScreen.texturize(ScreenImageType.COLOR, finalScreen);
 
-        opAdd = finalScreen.createBiTextureOperation(
+        opAdd = finalScreen.createTextureOperation(
                 Arrays.asList(imguiColorTexture, mainColorTexture),
                 new ArrayList<>(),
                 true
         );
 
-        var texOpAddParams = new BiTextureOperationParameters();
-        texOpAddParams.setOperationType(BiTextureOperationParameters.OperationType.ADD);
+        var texOpAddParams = new TextureOperationParameters();
+        texOpAddParams.setOperationType(TextureOperationParameters.OperationType.ADD);
         opAdd.setParameters(texOpAddParams);
 
         //Set result texture of add operation as final output

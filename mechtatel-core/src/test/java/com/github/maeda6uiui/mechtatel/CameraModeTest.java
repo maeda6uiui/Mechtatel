@@ -68,8 +68,6 @@ public class CameraModeTest extends Mechtatel {
 
     @Override
     public void onUpdate(MttWindow window) {
-        logger.info("{}", window.getActualFPS());
-
         camera.translate(
                 window.getKeyboardPressingCount(KeyCode.W),
                 window.getKeyboardPressingCount(KeyCode.S),

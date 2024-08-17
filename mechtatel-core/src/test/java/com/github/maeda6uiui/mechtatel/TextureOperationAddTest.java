@@ -13,6 +13,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.component.MttTexturedQuad2D;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,6 +119,7 @@ public class TextureOperationAddTest extends Mechtatel {
 
         var texOpParams = new TextureOperationParameters();
         texOpParams.setOperationType(TextureOperationParameters.OperationType.ADD);
+        texOpParams.fillFactors(2, new Vector4f(1.0f));
 
         opAdd = finalScreen.createTextureOperation(
                 Arrays.asList(firstColorTexture, secondColorTexture),

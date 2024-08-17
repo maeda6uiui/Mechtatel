@@ -9,6 +9,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttTexturedQuad2D;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import org.joml.Vector2f;
+import org.joml.Vector4f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -159,6 +160,7 @@ public class HeadlessModeTest2 extends MechtatelHeadless {
 
         var texOpStencilParams = new TextureOperationParameters();
         texOpStencilParams.setOperationType(TextureOperationParameters.OperationType.MUL);
+        texOpStencilParams.fillFactors(2, new Vector4f(1.0f));
         opStencil.setParameters(texOpStencilParams);
 
         //Add rendering result of main screen to the stencil
@@ -172,6 +174,7 @@ public class HeadlessModeTest2 extends MechtatelHeadless {
 
         var texOpAddParams = new TextureOperationParameters();
         texOpAddParams.setOperationType(TextureOperationParameters.OperationType.ADD);
+        texOpAddParams.fillFactors(2, new Vector4f(1.0f));
         opAdd.setParameters(texOpAddParams);
 
         //Set result texture of add operation as final output

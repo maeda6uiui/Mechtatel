@@ -19,6 +19,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -215,6 +216,7 @@ public class SkeletalAnimationTest2 extends Mechtatel {
 
         var texOpStencilParams = new TextureOperationParameters();
         texOpStencilParams.setOperationType(TextureOperationParameters.OperationType.MUL);
+        texOpStencilParams.fillFactors(2, new Vector4f(1.0f));
         opStencil.setParameters(texOpStencilParams);
 
         //Add rendering result of main screen to the stencil
@@ -228,6 +230,7 @@ public class SkeletalAnimationTest2 extends Mechtatel {
 
         var texOpAddParams = new TextureOperationParameters();
         texOpAddParams.setOperationType(TextureOperationParameters.OperationType.ADD);
+        texOpAddParams.fillFactors(2, new Vector4f(1.0f));
         opAdd.setParameters(texOpAddParams);
 
         //Set result texture of add operation as final output

@@ -439,7 +439,7 @@ public class MttWindow {
         return sound;
     }
 
-    public boolean removeSound(MttSound sound) {
+    public boolean deleteSound(MttSound sound) {
         if (sounds3D.contains(sound)) {
             sound.cleanup();
             sounds3D.remove(sound);

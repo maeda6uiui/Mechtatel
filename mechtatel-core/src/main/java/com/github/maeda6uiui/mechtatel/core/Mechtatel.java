@@ -169,7 +169,7 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
                 }
 
                 //Set current time for the next frame
-                lastTime = glfwGetTime();
+                lastTime = currentTime;
             }
 
             glfwPollEvents();

@@ -16,16 +16,13 @@ public class TextureOperationParameters {
         SUB,
         MUL,
         DIV,
-        MERGE_BY_DEPTH
     }
 
     private List<Vector4f> factors;
-    private List<Float> fixedDepths;
     private OperationType operationType;
 
     public TextureOperationParameters() {
         factors = new ArrayList<>();
-        fixedDepths = new ArrayList<>();
         operationType = OperationType.ADD;
     }
 
@@ -35,14 +32,6 @@ public class TextureOperationParameters {
 
     public void setFactors(List<Vector4f> factors) {
         this.factors = factors;
-    }
-
-    public List<Float> getFixedDepths() {
-        return fixedDepths;
-    }
-
-    public void setFixedDepths(List<Float> fixedDepths) {
-        this.fixedDepths = fixedDepths;
     }
 
     public OperationType getOperationType() {

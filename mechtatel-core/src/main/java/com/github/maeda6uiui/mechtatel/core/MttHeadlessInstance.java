@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
+
 /**
  * Provides functionality of headless mode (rendering without a window)
  *
@@ -30,6 +32,9 @@ public class MttHeadlessInstance {
 
     private MttScreen defaultScreen;
     private List<MttScreen> screens;
+
+    private double lastUpdateTime;
+    private double actualFPS;
 
     public MttHeadlessInstance(IMechtatelHeadlessEventHandlers mtt, MttSettings settings) {
         this(
@@ -64,10 +69,16 @@ public class MttHeadlessInstance {
         screens = new ArrayList<>();
         screens.add(defaultScreen);
 
+        lastUpdateTime = glfwGetTime();
+
         mtt.onCreate(this);
     }
 
     public void update() {
+        double curTime = glfwGetTime();
+        actualFPS = 1.0 / (curTime - lastUpdateTime);
+        lastUpdateTime = curTime;
+
         screens.forEach(screen -> {
             screen.removeGarbageComponents();
             screen.removeGarbageTextures();
@@ -84,6 +95,10 @@ public class MttHeadlessInstance {
         vulkanImplHeadless.cleanup();
 
         ImGui.destroyContext(imguiContext);
+    }
+
+    public double getActualFPS() {
+        return actualFPS;
     }
 
     public Optional<MttVulkanImplHeadless> getVulkanImplHeadless() {

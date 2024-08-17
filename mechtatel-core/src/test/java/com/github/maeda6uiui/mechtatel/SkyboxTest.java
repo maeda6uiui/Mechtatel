@@ -167,7 +167,7 @@ public class SkyboxTest extends Mechtatel {
 
         var texOpStencilParams = new BiTextureOperationParameters();
         texOpStencilParams.setOperationType(BiTextureOperationParameters.OperationType.MUL);
-        opStencil.setBiParameters(texOpStencilParams);
+        opStencil.setParameters(texOpStencilParams);
 
         //Add rendering result of main screen to the stencil
         MttTexture stencilTexture = opStencil.getResultTexture();
@@ -181,7 +181,7 @@ public class SkyboxTest extends Mechtatel {
 
         var texOpAddParams = new BiTextureOperationParameters();
         texOpAddParams.setOperationType(BiTextureOperationParameters.OperationType.ADD);
-        opAdd.setBiParameters(texOpAddParams);
+        opAdd.setParameters(texOpAddParams);
 
         //Set result texture of add operation as final output
         texturedQuad.replaceTexture(opAdd.getResultTexture());

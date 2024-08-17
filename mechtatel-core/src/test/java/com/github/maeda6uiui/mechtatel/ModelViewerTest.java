@@ -342,9 +342,9 @@ public class ModelViewerTest extends Mechtatel {
 
         //Filter out main rendering if flag is set to false
         if (!shouldShowMainObjects) {
-            opAdd.getBiParameters().setSecondTextureFactor(new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
+            opAdd.getParameters().setSecondTextureFactor(new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
         } else {
-            opAdd.getBiParameters().setSecondTextureFactor(new Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+            opAdd.getParameters().setSecondTextureFactor(new Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
         }
 
         //Add rendering results
@@ -373,7 +373,7 @@ public class ModelViewerTest extends Mechtatel {
 
         var texOpAddParams = new BiTextureOperationParameters();
         texOpAddParams.setOperationType(BiTextureOperationParameters.OperationType.ADD);
-        opAdd.setBiParameters(texOpAddParams);
+        opAdd.setParameters(texOpAddParams);
 
         //Set result texture of add operation as final output
         texturedQuad.replaceTexture(opAdd.getResultTexture());

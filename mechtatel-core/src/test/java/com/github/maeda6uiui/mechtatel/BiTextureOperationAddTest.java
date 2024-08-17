@@ -125,7 +125,7 @@ public class BiTextureOperationAddTest extends Mechtatel {
                 new ArrayList<>(),
                 true
         );
-        opAdd.setBiParameters(texOpParams);
+        opAdd.setParameters(texOpParams);
         texturedQuad.replaceTexture(opAdd.getResultTexture());
     }
 }

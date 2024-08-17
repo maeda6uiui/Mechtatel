@@ -26,6 +26,19 @@ public class TextureOperationParameters {
         operationType = OperationType.ADD;
     }
 
+    /**
+     * Fills the list of factors with a given value.
+     *
+     * @param numFactors Number of factors
+     * @param factor     Factor
+     */
+    public void fillFactors(int numFactors, Vector4f factor) {
+        factors.clear();
+        for (int i = 0; i < numFactors; i++) {
+            factors.add(factor);
+        }
+    }
+
     public List<Vector4f> getFactors() {
         return factors;
     }

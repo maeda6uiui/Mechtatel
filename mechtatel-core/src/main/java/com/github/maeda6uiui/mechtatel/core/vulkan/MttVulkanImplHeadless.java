@@ -122,7 +122,7 @@ public class MttVulkanImplHeadless implements IMttVulkanImplCommon {
         textureOperationNabor = new TextureOperationNabor(
                 dq.device(), textureOperationVertShaderResource, textureOperationFragShaderResource);
         textureOperationNabor.compile(
-                COLOR_IMAGE_FORMAT,
+                VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FILTER_NEAREST,
                 VK_SAMPLER_MIPMAP_MODE_NEAREST,
                 VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,

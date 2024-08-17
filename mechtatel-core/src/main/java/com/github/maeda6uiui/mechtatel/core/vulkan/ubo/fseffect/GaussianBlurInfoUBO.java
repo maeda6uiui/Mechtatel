@@ -24,23 +24,23 @@ public class GaussianBlurInfoUBO extends UBO {
 
     private Vector2i textureSize;
     private float[] weights;
+    private int numWeights;
 
     public GaussianBlurInfoUBO(GaussianBlurInfo blurInfo) {
         textureSize = blurInfo.getTextureSize();
         weights = blurInfo.getWeights();
+        numWeights = Math.min(weights.length, MAX_NUM_WEIGHTS);
 
         if (weights.length > MAX_NUM_WEIGHTS) {
-            logger.warn("Number of weights exceeds maximum allowed ({}), weights will be truncated", MAX_NUM_WEIGHTS);
+            logger.warn("Weights are truncated because the number of weights exceeds maximum allowed ({})", MAX_NUM_WEIGHTS);
         }
     }
 
     @Override
     protected void memcpy(ByteBuffer buffer) {
-        int lenWeights = Math.min(weights.length, MAX_NUM_WEIGHTS);
-
         textureSize.get(0, buffer);
-        buffer.putInt(SIZEOF_INT * 2, lenWeights);
-        for (int i = 0; i < lenWeights; i++) {
+        buffer.putInt(SIZEOF_INT * 2, numWeights);
+        for (int i = 0; i < numWeights; i++) {
             buffer.putFloat(SIZEOF_INT * 3 + SIZEOF_FLOAT * i, weights[i]);
         }
     }

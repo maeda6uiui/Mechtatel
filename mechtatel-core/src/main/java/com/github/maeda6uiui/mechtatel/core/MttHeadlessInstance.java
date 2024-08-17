@@ -44,7 +44,7 @@ public class MttHeadlessInstance {
         shouldClose = false;
         instanceId = UUID.randomUUID().toString();
         this.mtt = mtt;
-        vulkanImplHeadless = new MttVulkanImplHeadless(settings.vulkanSettings, width, height);
+        vulkanImplHeadless = new MttVulkanImplHeadless(width, height);
 
         //Set up ImGui =====
         imguiContext = ImGui.createContext();

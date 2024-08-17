@@ -341,10 +341,15 @@ public class ModelViewerTest extends Mechtatel {
         mainScreen.draw();
 
         //Filter out main rendering if flag is set to false
+        var factors = new ArrayList<Vector4f>();
+        var zeroVec4 = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+        var oneVec4 = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+        factors.add(oneVec4);
         if (!shouldShowMainObjects) {
-            opAdd.getParameters().setSecondTextureFactor(new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
+            factors.add(zeroVec4);
         } else {
-            opAdd.getParameters().setSecondTextureFactor(new Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+            factors.add(oneVec4);
         }
 
         //Add rendering results
@@ -367,7 +372,6 @@ public class ModelViewerTest extends Mechtatel {
 
         opAdd = finalScreen.createTextureOperation(
                 Arrays.asList(imguiColorTexture, mainColorTexture),
-                new ArrayList<>(),
                 true
         );
 

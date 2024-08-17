@@ -20,6 +20,10 @@
         "engine": "VULKAN",
         "imageFormat": "SRGB"
     },
+    "textureOperation": {
+        "width": -1,
+        "height": -1
+    },
     "vulkan": {
         "enableValidationLayer": true,
         "preferablePhysicalDeviceIndex": 0,

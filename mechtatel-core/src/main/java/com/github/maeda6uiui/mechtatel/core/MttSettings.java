@@ -73,6 +73,16 @@ public class MttSettings {
         }
     }
 
+    public static class TextureOperationSettings {
+        public int width;
+        public int height;
+
+        public TextureOperationSettings() {
+            width = -1;
+            height = -1;
+        }
+    }
+
     public static class VulkanSettings {
         public static class AppInfo {
             public String name;
@@ -113,6 +123,8 @@ public class MttSettings {
     public SystemSettings systemSettings;
     @JsonProperty("rendering")
     public RenderingSettings renderingSettings;
+    @JsonProperty("textureOperation")
+    public TextureOperationSettings textureOperation;
     @JsonProperty("vulkan")
     public VulkanSettings vulkanSettings;
 
@@ -123,6 +135,7 @@ public class MttSettings {
         headlessSettings = new HeadlessSettings();
         systemSettings = new SystemSettings();
         renderingSettings = new RenderingSettings();
+        textureOperation = new TextureOperationSettings();
         vulkanSettings = new VulkanSettings();
     }
 

@@ -22,10 +22,10 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class TextureOperationAddTest extends Mechtatel {
-    private static final Logger logger = LoggerFactory.getLogger(TextureOperationAddTest.class);
+public class TextureOperationTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(TextureOperationTest.class);
 
-    public TextureOperationAddTest(MttSettings settings) {
+    public TextureOperationTest(MttSettings settings) {
         super(settings);
         this.run();
     }
@@ -34,7 +34,7 @@ public class TextureOperationAddTest extends Mechtatel {
         MttSettings
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
-                        TextureOperationAddTest::new,
+                        TextureOperationTest::new,
                         () -> logger.error("Failed to load settings")
                 );
     }

@@ -144,7 +144,7 @@ public class MttWindow {
 
         this.mtt = mtt;
 
-        vulkanImpl = new MttVulkanImpl(handle, settings.vulkanSettings);
+        vulkanImpl = new MttVulkanImpl(handle);
 
         keyboard = new Keyboard();
         mouse = new Mouse();

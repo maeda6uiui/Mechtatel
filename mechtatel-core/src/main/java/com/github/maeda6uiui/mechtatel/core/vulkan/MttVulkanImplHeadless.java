@@ -49,29 +49,31 @@ public class MttVulkanImplHeadless implements IMttVulkanImplCommon {
     private int width;
     private int height;
 
-    public MttVulkanImplHeadless(MttSettings.VulkanSettings vulkanSettings, int width, int height) {
+    public MttVulkanImplHeadless(int width, int height) {
+        MttSettings settings = MttSettings.get().orElse(new MttSettings());
+
         MttVulkanInstance
                 .get()
                 .ifPresent(v -> {
                     physicalDevice = PhysicalDevicePicker.pickPhysicalDevice(
                             v.getVkInstance(),
                             -1,
-                            vulkanSettings.preferablePhysicalDeviceIndex,
+                            settings.vulkanSettings.preferablePhysicalDeviceIndex,
                             false
                     );
                 });
 
         dq = LogicalDeviceCreator.createLogicalDevice(
                 physicalDevice,
-                vulkanSettings.preferableGraphicsFamilyIndex,
-                vulkanSettings.enableValidationLayer
+                settings.vulkanSettings.preferableGraphicsFamilyIndex,
+                settings.vulkanSettings.enableValidationLayer
         );
 
         commandPool = CommandPoolCreator.createCommandPool(dq.device(), dq.graphicsFamilyIndex());
 
-        albedoMSAASamples = vulkanSettings.albedoMSAASamples < 0
+        albedoMSAASamples = settings.vulkanSettings.albedoMSAASamples < 0
                 ? MultisamplingUtils.getMaxUsableSampleCount(dq.device())
-                : vulkanSettings.albedoMSAASamples;
+                : settings.vulkanSettings.albedoMSAASamples;
         depthImageFormat = DepthResourceUtils.findDepthFormat(dq.device());
         depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
 
@@ -101,18 +103,30 @@ public class MttVulkanImplHeadless implements IMttVulkanImplCommon {
         }
         //==========
 
+        int textureOperationWidth;
+        if (settings.textureOperation.width < 0) {
+            textureOperationWidth = width;
+        } else {
+            textureOperationWidth = settings.textureOperation.width;
+        }
+
+        int textureOperationHeight;
+        if (settings.textureOperation.height < 0) {
+            textureOperationHeight = height;
+        } else {
+            textureOperationHeight = settings.textureOperation.height;
+        }
+
+        VkExtent2D textureOperationExtent = VkExtent2D.create().set(textureOperationWidth, textureOperationHeight);
+
         biTextureOperationNabor = new BiTextureOperationNabor(
                 dq.device(), biTextureOperationVertShaderResource, biTextureOperationFragShaderResource);
-
-        VkExtent2D extent = VkExtent2D.create();
-        extent.set(width, height);
-
         biTextureOperationNabor.compile(
                 COLOR_IMAGE_FORMAT,
                 VK_FILTER_NEAREST,
                 VK_SAMPLER_MIPMAP_MODE_NEAREST,
                 VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
-                extent,
+                textureOperationExtent,
                 commandPool,
                 dq.graphicsQueue(),
                 1

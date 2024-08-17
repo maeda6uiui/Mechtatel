@@ -60,6 +60,8 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
     private QuadDrawer quadDrawer;
     private long acquireImageIndexFence;
 
+    private VkExtent2D textureOperationInitialExtent;
+
     private VkExtent2D getFramebufferSize(long window) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer width = stack.ints(0);
@@ -95,13 +97,23 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
                 swapchain.getSwapchainExtent());
         swapchain.createFramebuffers(presentNabor.getRenderPass());
 
+        MttSettings settings = MttSettings.get().orElse(new MttSettings());
+        VkExtent2D textureOperationExtent;
+        if (settings.textureOperation.changeExtentOnRecreate) {
+            textureOperationExtent = swapchain.getSwapchainExtent();
+        } else {
+            textureOperationExtent = textureOperationInitialExtent;
+        }
+
         biTextureOperationNabor.recreate(
                 swapchain.getSwapchainImageFormat(),
-                swapchain.getSwapchainExtent());
+                textureOperationExtent);
         biTextureOperationNabor.cleanupUserDefImages();
     }
 
-    public MttVulkanImpl(long window, MttSettings.VulkanSettings vulkanSettings) {
+    public MttVulkanImpl(long window) {
+        MttSettings settings = MttSettings.get().orElse(new MttSettings());
+
         MttVulkanInstance
                 .get()
                 .ifPresent(v -> {
@@ -109,7 +121,7 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
                     physicalDevice = PhysicalDevicePicker.pickPhysicalDevice(
                             v.getVkInstance(),
                             surface,
-                            vulkanSettings.preferablePhysicalDeviceIndex,
+                            settings.vulkanSettings.preferablePhysicalDeviceIndex,
                             true
                     );
                 });
@@ -117,9 +129,9 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
         dq = LogicalDeviceCreator.createLogicalDevice(
                 physicalDevice,
                 surface,
-                vulkanSettings.preferableGraphicsFamilyIndex,
-                vulkanSettings.preferablePresentFamilyIndex,
-                vulkanSettings.enableValidationLayer
+                settings.vulkanSettings.preferableGraphicsFamilyIndex,
+                settings.vulkanSettings.preferablePresentFamilyIndex,
+                settings.vulkanSettings.enableValidationLayer
         );
 
         commandPool = CommandPoolCreator.createCommandPool(dq.device(), dq.graphicsFamilyIndex());
@@ -133,9 +145,9 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
                 framebufferSize.width(),
                 framebufferSize.height());
 
-        albedoMSAASamples = vulkanSettings.albedoMSAASamples < 0
+        albedoMSAASamples = settings.vulkanSettings.albedoMSAASamples < 0
                 ? MultisamplingUtils.getMaxUsableSampleCount(dq.device())
-                : vulkanSettings.albedoMSAASamples;
+                : settings.vulkanSettings.albedoMSAASamples;
         depthImageFormat = DepthResourceUtils.findDepthFormat(dq.device());
         depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
 
@@ -188,6 +200,23 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
                 swapchain.getNumSwapchainImages());
         swapchain.createFramebuffers(presentNabor.getRenderPass());
 
+        int textureOperationWidth;
+        if (settings.textureOperation.width < 0) {
+            textureOperationWidth = swapchain.getSwapchainExtent().width();
+        } else {
+            textureOperationWidth = settings.textureOperation.width;
+        }
+
+        int textureOperationHeight;
+        if (settings.textureOperation.height < 0) {
+            textureOperationHeight = swapchain.getSwapchainExtent().height();
+        } else {
+            textureOperationHeight = settings.textureOperation.height;
+        }
+
+        VkExtent2D textureOperationExtent = VkExtent2D.create().set(textureOperationWidth, textureOperationHeight);
+        textureOperationInitialExtent = textureOperationExtent;
+
         biTextureOperationNabor = new BiTextureOperationNabor(
                 dq.device(), biTextureOperationVertShaderResource, biTextureOperationFragShaderResource);
         biTextureOperationNabor.compile(
@@ -195,7 +224,7 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
                 VK_FILTER_NEAREST,
                 VK_SAMPLER_MIPMAP_MODE_NEAREST,
                 VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
-                swapchain.getSwapchainExtent(),
+                textureOperationExtent,
                 commandPool,
                 dq.graphicsQueue(),
                 1

@@ -24,6 +24,7 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class TextureOperationNabor extends Nabor {
+    public static final int MAX_NUM_TEXTURES = TextureOperationParametersUBO.MAX_NUM_TEXTURES;
     public static final int COLOR_ATTACHMENT_INDEX = 0;
 
     public TextureOperationNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
@@ -135,21 +136,14 @@ public class TextureOperationNabor extends Nabor {
             parametersUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 1 ===
-            VkDescriptorSetLayoutBinding.Buffer imageLayoutBindings = VkDescriptorSetLayoutBinding.calloc(2, stack);
+            VkDescriptorSetLayoutBinding.Buffer imageLayoutBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
 
             VkDescriptorSetLayoutBinding colorImageLayoutBinding = imageLayoutBindings.get(0);
             colorImageLayoutBinding.binding(0);
-            colorImageLayoutBinding.descriptorCount(2);
+            colorImageLayoutBinding.descriptorCount(MAX_NUM_TEXTURES);
             colorImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
             colorImageLayoutBinding.pImmutableSamplers(null);
             colorImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
-
-            VkDescriptorSetLayoutBinding depthImageLayoutBinding = imageLayoutBindings.get(1);
-            depthImageLayoutBinding.binding(1);
-            depthImageLayoutBinding.descriptorCount(2);
-            depthImageLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            depthImageLayoutBinding.pImmutableSamplers(null);
-            depthImageLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             //=== set 2 ===
             VkDescriptorSetLayoutBinding.Buffer samplerLayoutBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
@@ -204,15 +198,11 @@ public class TextureOperationNabor extends Nabor {
             parametersUBOPoolSize.descriptorCount(descriptorCount);
 
             //=== set 1 ===
-            VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.calloc(2, stack);
+            VkDescriptorPoolSize.Buffer imagePoolSizes = VkDescriptorPoolSize.calloc(1, stack);
 
             VkDescriptorPoolSize colorImagePoolSize = imagePoolSizes.get(0);
             colorImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            colorImagePoolSize.descriptorCount(descriptorCount * 2);
-
-            VkDescriptorPoolSize depthImagePoolSize = imagePoolSizes.get(1);
-            depthImagePoolSize.type(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            depthImagePoolSize.descriptorCount(descriptorCount * 2);
+            colorImagePoolSize.descriptorCount(descriptorCount * MAX_NUM_TEXTURES);
 
             //=== set 2 ===
             VkDescriptorPoolSize.Buffer samplerPoolSizes = VkDescriptorPoolSize.calloc(1, stack);
@@ -311,8 +301,8 @@ public class TextureOperationNabor extends Nabor {
             uboDescriptorWrite.pBufferInfo(uboInfos);
 
             //=== set 1 ===
-            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.calloc(2 * 2, stack);
-            for (int i = 0; i < 2 * 2; i++) {
+            VkDescriptorImageInfo.Buffer imageInfos = VkDescriptorImageInfo.calloc(MAX_NUM_TEXTURES, stack);
+            for (int i = 0; i < MAX_NUM_TEXTURES; i++) {
                 VkDescriptorImageInfo imageInfo = imageInfos.get(i);
                 imageInfo.imageLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
                 imageInfo.imageView(this.getDummyImageView());
@@ -323,7 +313,7 @@ public class TextureOperationNabor extends Nabor {
             imageDescriptorWrite.dstBinding(0);
             imageDescriptorWrite.dstArrayElement(0);
             imageDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-            imageDescriptorWrite.descriptorCount(2 * 2);
+            imageDescriptorWrite.descriptorCount(MAX_NUM_TEXTURES);
             imageDescriptorWrite.pImageInfo(imageInfos);
 
             //=== set 2 ===
@@ -550,10 +540,6 @@ public class TextureOperationNabor extends Nabor {
 
     public void bindColorImages(VkCommandBuffer commandBuffer, List<Long> imageViews) {
         this.bindImages(commandBuffer, 1, 0, imageViews);
-    }
-
-    public void bindDepthImages(VkCommandBuffer commandBuffer, List<Long> imageViews) {
-        this.bindImages(commandBuffer, 1, 1, imageViews);
     }
 
     public void copyColorImage(long commandPool, VkQueue graphicsQueue, long colorDstImage) {

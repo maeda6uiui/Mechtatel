@@ -34,6 +34,7 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
 
     private int fps;
     private double secondsPerFrame;
+    private double actualSecondsPerFrame;
 
     private MttWindow initialWindow;
     private List<MttWindow> windows;
@@ -146,6 +147,8 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
 
             //Update windows if seconds per frame is elapsed
             if (elapsedTime >= secondsPerFrame) {
+                actualSecondsPerFrame = elapsedTime;
+
                 //Clean up and remove windows that are flagged as closed
                 Iterator<MttWindow> it = windows.iterator();
                 while (it.hasNext()) {
@@ -242,5 +245,9 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
 
     public double getSecondsPerFrame() {
         return secondsPerFrame;
+    }
+
+    public double getActualSecondsPerFrame() {
+        return actualSecondsPerFrame;
     }
 }

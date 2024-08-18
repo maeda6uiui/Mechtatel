@@ -34,6 +34,7 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
 
     private int fps;
     private double secondsPerFrame;
+    private double actualSecondsPerFrame;
 
     private MttHeadlessInstance initialInstance;
     private List<MttHeadlessInstance> instances;
@@ -139,6 +140,8 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
 
             //Update instances if seconds per frame is elapsed
             if (elapsedTime >= secondsPerFrame) {
+                actualSecondsPerFrame = elapsedTime;
+
                 //Clean up and remove instances that are flagged as closed
                 Iterator<MttHeadlessInstance> it = instances.iterator();
                 while (it.hasNext()) {
@@ -225,5 +228,9 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
 
     public double getSecondsPerFrame() {
         return secondsPerFrame;
+    }
+
+    public double getActualSecondsPerFrame() {
+        return actualSecondsPerFrame;
     }
 }

@@ -61,9 +61,6 @@ public class MttWindow {
 
     private List<MttSound> sounds3D;
 
-    private double lastUpdateTime;
-    private double actualFPS;
-
     private void framebufferResizeCallback(long window, int width, int height) {
         mtt.onReshape(this, width, height);
 
@@ -239,18 +236,12 @@ public class MttWindow {
         screens = new ArrayList<>();
         screens.add(defaultScreen);
 
-        lastUpdateTime = glfwGetTime();
-
         logger.debug("Window ({}) successfully created", Long.toHexString(handle));
 
         mtt.onCreate(this);
     }
 
     public void update() {
-        double curTime = glfwGetTime();
-        actualFPS = 1.0 / (curTime - lastUpdateTime);
-        lastUpdateTime = curTime;
-
         keyboard.update();
         mouse.update();
 
@@ -300,10 +291,6 @@ public class MttWindow {
 
         validWindow = false;
         logger.debug("Window ({}) cleaned up", Long.toHexString(handle));
-    }
-
-    public double getActualFPS() {
-        return actualFPS;
     }
 
     public Optional<MttVulkanImpl> getVulkanImpl() {

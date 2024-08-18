@@ -32,7 +32,6 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
 
     private boolean mechtatelReady;
 
-    private int fps;
     private double secondsPerFrame;
     private double actualSecondsPerFrame;
 
@@ -92,7 +91,7 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
         MttVulkanInstance.create(settings.vulkanSettings, false);
         MttTexture.setImageFormat(settings.renderingSettings.imageFormat);
 
-        fps = settings.systemSettings.fps;
+        int fps = settings.systemSettings.fps;
         secondsPerFrame = 1.0 / fps;
 
         windows = new ArrayList<>();
@@ -238,11 +237,7 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
     public void onRecreate(MttWindow window, int width, int height) {
 
     }
-
-    public int getFPS() {
-        return fps;
-    }
-
+    
     public double getSecondsPerFrame() {
         return secondsPerFrame;
     }

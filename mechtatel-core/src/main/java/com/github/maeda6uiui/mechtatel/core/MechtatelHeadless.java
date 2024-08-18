@@ -32,7 +32,6 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
 
     private boolean mechtatelReady;
 
-    private int fps;
     private double secondsPerFrame;
     private double actualSecondsPerFrame;
 
@@ -85,7 +84,7 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
         MttVulkanInstance.create(settings.vulkanSettings, false);
         MttTexture.setImageFormat(settings.renderingSettings.imageFormat);
 
-        fps = settings.systemSettings.fps;
+        int fps = settings.systemSettings.fps;
         secondsPerFrame = 1.0 / fps;
 
         instances = new ArrayList<>();
@@ -220,10 +219,6 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
     @Override
     public void onUpdate(MttHeadlessInstance instance) {
 
-    }
-
-    public int getFPS() {
-        return fps;
     }
 
     public double getSecondsPerFrame() {

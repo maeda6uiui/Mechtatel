@@ -10,6 +10,8 @@ import org.joml.Vector3fc;
 public interface ISoundSource {
     void setParameter(int param, float v1, float v2, float v3);
 
+    void setParameter(int param, float[] vs);
+
     void setParameter(int param, float v);
 
     void setParameter(int param, int v);

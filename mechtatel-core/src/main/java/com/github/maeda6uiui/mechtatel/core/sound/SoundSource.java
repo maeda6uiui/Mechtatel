@@ -30,6 +30,11 @@ class SoundSource implements ISoundSource {
     }
 
     @Override
+    public void setParameter(int param, float[] vs) {
+        alSourcefv(source, param, vs);
+    }
+
+    @Override
     public void setParameter(int param, float v) {
         alSourcef(source, param, v);
     }

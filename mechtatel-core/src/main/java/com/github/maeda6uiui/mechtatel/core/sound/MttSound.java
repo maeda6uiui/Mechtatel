@@ -1,12 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.sound;
 
-import org.joml.Vector3fc;
-
 import java.io.IOException;
 import java.net.URI;
-
-import static org.lwjgl.openal.AL10.AL_GAIN;
-import static org.lwjgl.openal.AL10.AL_POSITION;
 
 /**
  * 3D sound
@@ -45,27 +40,7 @@ public class MttSound {
         }
     }
 
-    public void setPosition(Vector3fc position) {
-        source.setParameter(AL_POSITION, position.x(), position.y(), position.z());
-    }
-
-    public void setGain(float gain) {
-        source.setParameter(AL_GAIN, gain);
-    }
-
-    public void play() {
-        source.play();
-    }
-
-    public boolean isPlaying() {
-        return source.isPlaying();
-    }
-
-    public void pause() {
-        source.pause();
-    }
-
-    public void stop() {
-        source.stop();
+    public ISoundSource getSoundSource() {
+        return source;
     }
 }

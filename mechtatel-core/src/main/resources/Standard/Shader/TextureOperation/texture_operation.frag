@@ -24,7 +24,7 @@ void main(){
     vec4 curColor=vec4(0.0);
 
     for(int i=0;i<min(parameters.numTextures,MAX_NUM_TEXTURES);i++){
-        vec4 thisColor=texture(sampler2D(colorTextures[i],textureSampler),fragTexCoords);
+        vec4 thisColor=texture(sampler2D(colorTextures[i],textureSampler),fragTexCoords)*parameters.factors[i];
         if(i==0){
             curColor=thisColor;
             continue;

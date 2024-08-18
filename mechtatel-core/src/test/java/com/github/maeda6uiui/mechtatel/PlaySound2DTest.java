@@ -35,7 +35,7 @@ public class PlaySound2DTest extends Mechtatel {
         try {
             sound = new MttSound2D(
                     Objects.requireNonNull(
-                            this.getClass().getResource("/Standard/Sound/no_1_stereo.ogg")
+                            this.getClass().getResource("/Standard/Sound/no_9.mp3")
                     )
             );
             sound.play();

@@ -45,8 +45,8 @@ public class PlaySoundTest extends Mechtatel {
     public void onCreate(MttWindow window) {
         try {
             sound = window.createSound(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Sound/no_1_monaural.ogg")),
-                    false,
+                    Objects.requireNonNull(this.getClass().getResource("/Standard/Sound/440_sine.ogg")),
+                    true,
                     false
             );
         } catch (URISyntaxException | IOException e) {

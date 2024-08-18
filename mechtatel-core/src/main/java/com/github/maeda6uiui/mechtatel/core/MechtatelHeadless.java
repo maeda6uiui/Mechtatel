@@ -174,8 +174,8 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
 
         MttVulkanInstance.get().ifPresent(MttVulkanInstance::cleanup);
 
-        this.onTerminate();
         glfwTerminate();
+        this.onTerminate();
     }
 
     public MttHeadlessInstance getInitialInstance() {
@@ -200,7 +200,7 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
     }
 
     /**
-     * Called when the Mechtatel engine exits (right before the call to {@link org.lwjgl.glfw.GLFW#glfwTerminate()}).
+     * Called when the Mechtatel engine exits (right after the call to {@link org.lwjgl.glfw.GLFW#glfwTerminate()}).
      */
     public void onTerminate() {
 

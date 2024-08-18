@@ -181,8 +181,8 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
 
         MttVulkanInstance.get().ifPresent(MttVulkanInstance::cleanup);
 
-        this.onTerminate();
         glfwTerminate();
+        this.onTerminate();
     }
 
     public MttWindow getInitialWindow() {
@@ -207,7 +207,7 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
     }
 
     /**
-     * Called when the Mechtatel engine exits (right before the call to {@link org.lwjgl.glfw.GLFW#glfwTerminate()}).
+     * Called when the Mechtatel engine exits (right after the call to {@link org.lwjgl.glfw.GLFW#glfwTerminate()}).
      */
     public void onTerminate() {
 
@@ -237,7 +237,7 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
     public void onRecreate(MttWindow window, int width, int height) {
 
     }
-    
+
     public double getSecondsPerFrame() {
         return secondsPerFrame;
     }

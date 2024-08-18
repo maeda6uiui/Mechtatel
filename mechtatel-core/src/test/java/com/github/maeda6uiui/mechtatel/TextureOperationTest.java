@@ -70,7 +70,7 @@ public class TextureOperationTest extends Mechtatel {
             interimTexturedQuads = new ArrayList<>();
             for (int i = 0; i < 3; i++) {
                 MttScreen interimScreen = interimScreens.get(i);
-                
+
                 String textureFilepath = switch (i) {
                     case 0 -> "/Standard/Texture/checker_r.png";
                     case 1 -> "/Standard/Texture/checker_g.png";
@@ -112,7 +112,7 @@ public class TextureOperationTest extends Mechtatel {
             for (int i = 0; i < 2; i++) {
                 signs[i] = getSign.get();
             }
-
+            
             var translations = new float[2];
             for (int i = 0; i < 2; i++) {
                 translations[i] = random.nextFloat() * TRANSLATION_SCALE * signs[i];
@@ -137,7 +137,7 @@ public class TextureOperationTest extends Mechtatel {
 
         var texOpParams = new TextureOperationParameters();
         texOpParams.setOperationType(TextureOperationParameters.OperationType.ADD);
-        texOpParams.fillFactors(2, new Vector4f(1.0f));
+        texOpParams.fillFactors(3, new Vector4f(1.0f));
 
         opAdd = finalScreen.createTextureOperation(interimTextures, true);
         opAdd.setParameters(texOpParams);

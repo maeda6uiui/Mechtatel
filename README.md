@@ -76,6 +76,10 @@ You can overwrite it or use another logging implementation at your discretion.
 Fixed a bug that the control of frames per second doesn't work properly.
 Previous implementation sees a lower frames per second and laggy rendering because of improper update of the `lastTime` variable.
 
+Fixed a bug that the shader for texture operations ignored factors given as a parameter.
+
+Added test code to play sound files.
+
 ### 2024-08-17
 
 Texture operations can now take up to 8 textures.

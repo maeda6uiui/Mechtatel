@@ -5,6 +5,9 @@ import org.joml.Vector3fc;
 import java.io.IOException;
 import java.net.URI;
 
+import static org.lwjgl.openal.AL10.AL_GAIN;
+import static org.lwjgl.openal.AL10.AL_POSITION;
+
 /**
  * 3D sound
  * 3D functionalities are supposed to work only when you load a monaural sound.
@@ -43,15 +46,11 @@ public class MttSound {
     }
 
     public void setPosition(Vector3fc position) {
-        source.setPosition(position);
-    }
-
-    public void setVelocity(Vector3fc velocity) {
-        source.setVelocity(velocity);
+        source.setParameter(AL_POSITION, position.x(), position.y(), position.z());
     }
 
     public void setGain(float gain) {
-        source.setGain(gain);
+        source.setParameter(AL_GAIN, gain);
     }
 
     public void play() {

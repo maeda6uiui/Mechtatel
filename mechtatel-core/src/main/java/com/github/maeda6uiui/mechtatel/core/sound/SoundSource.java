@@ -1,7 +1,5 @@
 package com.github.maeda6uiui.mechtatel.core.sound;
 
-import org.joml.Vector3fc;
-
 import static org.lwjgl.openal.AL10.*;
 
 /**
@@ -24,16 +22,16 @@ class SoundSource {
         }
     }
 
-    public void setPosition(Vector3fc position) {
-        alSource3f(source, AL_POSITION, position.x(), position.y(), position.z());
+    public void setParameter(int param, float v1, float v2, float v3) {
+        alSource3f(source, param, v1, v2, v3);
     }
 
-    public void setVelocity(Vector3fc velocity) {
-        alSource3f(source, AL_VELOCITY, velocity.x(), velocity.y(), velocity.z());
+    public void setParameter(int param, float v) {
+        alSourcef(source, param, v);
     }
 
-    public void setGain(float gain) {
-        alSourcef(source, AL_GAIN, gain);
+    public void setParameter(int param, int v) {
+        alSourcei(source, param, v);
     }
 
     public void play() {

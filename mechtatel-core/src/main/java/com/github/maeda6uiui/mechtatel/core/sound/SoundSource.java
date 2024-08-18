@@ -1,5 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.sound;
 
+import org.joml.Vector3fc;
+
 import static org.lwjgl.openal.AL10.*;
 
 /**
@@ -35,6 +37,11 @@ class SoundSource implements ISoundSource {
     @Override
     public void setParameter(int param, int v) {
         alSourcei(source, param, v);
+    }
+
+    @Override
+    public void setPosition(Vector3fc position) {
+        this.setParameter(AL_POSITION, position.x(), position.y(), position.z());
     }
 
     @Override

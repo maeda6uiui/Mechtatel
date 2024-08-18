@@ -1,5 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.sound;
 
+import org.joml.Vector3fc;
+
 /**
  * Provides interface to sound source
  *
@@ -11,6 +13,8 @@ public interface ISoundSource {
     void setParameter(int param, float v);
 
     void setParameter(int param, int v);
+
+    void setPosition(Vector3fc position);
 
     void play();
 

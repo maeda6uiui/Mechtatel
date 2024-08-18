@@ -46,6 +46,11 @@ public class PlaySound2DTest extends Mechtatel {
     }
 
     @Override
+    public void onTerminate() {
+        System.exit(0);
+    }
+
+    @Override
     public void onUpdate(MttWindow window) {
         if (window.getKeyboardPressingCount(KeyCode.KEY_1) == 1) {
             sound.pause();

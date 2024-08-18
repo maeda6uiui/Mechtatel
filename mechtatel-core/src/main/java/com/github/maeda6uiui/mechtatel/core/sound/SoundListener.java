@@ -28,4 +28,20 @@ public class SoundListener {
         data[5] = up.z();
         alListenerfv(AL_ORIENTATION, data);
     }
+
+    public static void setParameter(int param, float v1, float v2, float v3) {
+        alListener3f(param, v1, v2, v3);
+    }
+
+    public static void setParameter(int param, float[] vs) {
+        alListenerfv(param, vs);
+    }
+
+    public static void setParameter(int param, float v) {
+        alListenerf(param, v);
+    }
+
+    public static void setParameter(int param, int v) {
+        alListeneri(param, v);
+    }
 }

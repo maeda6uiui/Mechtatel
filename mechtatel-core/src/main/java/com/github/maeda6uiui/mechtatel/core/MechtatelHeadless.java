@@ -164,7 +164,7 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
                 }
 
                 //Set current time for the next frame
-                lastTime = glfwGetTime();
+                lastTime = currentTime;
             }
 
             glfwPollEvents();

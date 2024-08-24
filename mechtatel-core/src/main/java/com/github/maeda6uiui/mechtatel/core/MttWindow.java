@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -159,7 +160,6 @@ public class MttWindow {
 
         //Set up ImGui =====
         imguiContext = ImGui.createContext();
-        imguiContext = new ImGuiContext(imguiContext.ptr);
         ImGui.setCurrentContext(imguiContext);
 
         ImGuiIO io = ImGui.getIO();
@@ -167,45 +167,66 @@ public class MttWindow {
         io.setIniFilename(null);
         io.setDisplaySize(width, height);
 
-        io.setKeyMap(ImGuiKey.Tab, GLFW_KEY_TAB);
-        io.setKeyMap(ImGuiKey.LeftArrow, GLFW_KEY_LEFT);
-        io.setKeyMap(ImGuiKey.RightArrow, GLFW_KEY_RIGHT);
-        io.setKeyMap(ImGuiKey.UpArrow, GLFW_KEY_UP);
-        io.setKeyMap(ImGuiKey.DownArrow, GLFW_KEY_DOWN);
-        io.setKeyMap(ImGuiKey.PageUp, GLFW_KEY_PAGE_UP);
-        io.setKeyMap(ImGuiKey.PageDown, GLFW_KEY_PAGE_DOWN);
-        io.setKeyMap(ImGuiKey.Home, GLFW_KEY_HOME);
-        io.setKeyMap(ImGuiKey.End, GLFW_KEY_END);
-        io.setKeyMap(ImGuiKey.Insert, GLFW_KEY_INSERT);
-        io.setKeyMap(ImGuiKey.Delete, GLFW_KEY_DELETE);
-        io.setKeyMap(ImGuiKey.Backspace, GLFW_KEY_BACKSPACE);
-        io.setKeyMap(ImGuiKey.Space, GLFW_KEY_SPACE);
-        io.setKeyMap(ImGuiKey.Enter, GLFW_KEY_ENTER);
-        io.setKeyMap(ImGuiKey.Escape, GLFW_KEY_ESCAPE);
-        io.setKeyMap(ImGuiKey.KeyPadEnter, GLFW_KEY_KP_ENTER);
+        Function<Integer, Integer> fConvGLFWKeyToImGuiKey = (glfwKey) -> switch (glfwKey) {
+            case GLFW_KEY_TAB -> ImGuiKey.Tab;
+            case GLFW_KEY_LEFT -> ImGuiKey.LeftArrow;
+            case GLFW_KEY_RIGHT -> ImGuiKey.RightArrow;
+            case GLFW_KEY_UP -> ImGuiKey.UpArrow;
+            case GLFW_KEY_DOWN -> ImGuiKey.DownArrow;
+            case GLFW_KEY_PAGE_UP -> ImGuiKey.PageUp;
+            case GLFW_KEY_PAGE_DOWN -> ImGuiKey.PageDown;
+            case GLFW_KEY_HOME -> ImGuiKey.Home;
+            case GLFW_KEY_END -> ImGuiKey.End;
+            case GLFW_KEY_INSERT -> ImGuiKey.Insert;
+            case GLFW_KEY_DELETE -> ImGuiKey.Delete;
+            case GLFW_KEY_BACKSPACE -> ImGuiKey.Backspace;
+            case GLFW_KEY_SPACE -> ImGuiKey.Space;
+            case GLFW_KEY_ENTER -> ImGuiKey.Enter;
+            case GLFW_KEY_ESCAPE -> ImGuiKey.Escape;
+            case GLFW_KEY_KP_ENTER -> ImGuiKey.KeyPadEnter;
+            default -> ImGuiKey.None;
+        };
+        BiConsumer<Integer, Boolean> cSetSpecialKey = (glfwKey, value) -> {
+            switch (glfwKey) {
+                case GLFW_KEY_LEFT_CONTROL:
+                case GLFW_KEY_RIGHT_CONTROL:
+                    io.setKeyCtrl(value);
+                    break;
+                case GLFW_KEY_LEFT_SHIFT:
+                case GLFW_KEY_RIGHT_SHIFT:
+                    io.setKeyShift(value);
+                    break;
+                case GLFW_KEY_LEFT_ALT:
+                case GLFW_KEY_RIGHT_ALT:
+                    io.setKeyAlt(value);
+                    break;
+                case GLFW_KEY_LEFT_SUPER:
+                case GLFW_KEY_RIGHT_SUPER:
+                    io.setKeySuper(value);
+                    break;
+            }
+        };
 
         glfwSetKeyCallback(handle, (handle, key, scancode, action, mods) -> {
             boolean pressingFlag = action == GLFW_PRESS || action == GLFW_REPEAT;
             keyboard.setPressingFlag(key, pressingFlag);
 
             if (action == GLFW_PRESS) {
-                io.setKeysDown(key, true);
+                io.addKeyEvent(fConvGLFWKeyToImGuiKey.apply(key), true);
+                cSetSpecialKey.accept(key, true);
             } else if (action == GLFW_RELEASE) {
-                io.setKeysDown(key, false);
+                io.addKeyEvent(fConvGLFWKeyToImGuiKey.apply(key), false);
+                cSetSpecialKey.accept(key, false);
             }
-            io.setKeyCtrl(io.getKeysDown(GLFW_KEY_LEFT_CONTROL) || io.getKeysDown(GLFW_KEY_RIGHT_CONTROL));
-            io.setKeyShift(io.getKeysDown(GLFW_KEY_LEFT_SHIFT) || io.getKeysDown(GLFW_KEY_RIGHT_SHIFT));
-            io.setKeyAlt(io.getKeysDown(GLFW_KEY_LEFT_ALT) || io.getKeysDown(GLFW_KEY_RIGHT_ALT));
-            io.setKeySuper(io.getKeysDown(GLFW_KEY_LEFT_SUPER) || io.getKeysDown(GLFW_KEY_RIGHT_SUPER));
         });
         glfwSetMouseButtonCallback(handle, (handle, button, action, mods) -> {
             boolean pressingFlag = action == GLFW_PRESS;
             mouse.setPressingFlag(button, pressingFlag);
 
             if (action == GLFW_PRESS) {
-                io.setMouseDown(button, true);
+                io.addMouseButtonEvent(button, true);
             } else if (action == GLFW_RELEASE) {
-                io.setMouseDown(button, false);
+                io.addMouseButtonEvent(button, false);
             }
         });
         glfwSetCursorPosCallback(handle, (handle, xPos, yPos) -> {
@@ -214,15 +235,14 @@ public class MttWindow {
                 glfwSetCursorPos(handle, 0, 0);
             }
 
-            io.setMousePos((float) xPos, (float) yPos);
+            io.addMousePosEvent((float) xPos, (float) yPos);
         });
         glfwSetScrollCallback(handle, (handle, dx, dy) -> {
             if (scrollCallback != null) {
                 scrollCallback.accept(dx, dy);
             }
 
-            io.setMouseWheel((float) dy);
-            io.setMouseWheelH((float) dx);
+            io.addMouseWheelEvent((float) dx, (float) dy);
         });
         glfwSetCharCallback(handle, (handle, c) -> {
             if (!io.getWantCaptureKeyboard()) {

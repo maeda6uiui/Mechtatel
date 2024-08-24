@@ -27,6 +27,21 @@ God knows if I could complete this work by the time you'd think I'm no more...
 
 ## Try it out
 
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.github.dabasan</groupId>
+        <artifactId>mechtatel-core</artifactId>
+        <version>0.0.1-alpha0</version>
+    </dependency>
+    <dependency>
+        <groupId>com.github.dabasan</groupId>
+        <artifactId>mechtatel-logging</artifactId>
+        <version>0.0.1-alpha0</version>
+    </dependency>
+</dependencies>
+```
+
 Snapshot builds are available in the Maven Snapshot Repository.
 
 ```xml
@@ -70,6 +85,12 @@ You can overwrite it or use another logging implementation at your discretion.
 - [3D Game Development with LWJGL 3](https://ahbejarano.gitbook.io/lwjglgamedev/)
 
 ## Progress report
+
+### 2024-08-24
+
+Updated the versions of the dependencies.
+
+Released the first non-snapshot version `0.0.1-alpha0` of the Mechtatel engine.
 
 ### 2024-08-18
 

@@ -1,10 +1,9 @@
 package com.github.maeda6uiui.mechtatel.natives.windows;
 
 import com.github.maeda6uiui.mechtatel.natives.IMttNativeLoader;
-import com.jme3.system.NativeLibraryLoader;
+import com.github.maeda6uiui.mechtatel.natives.NativeLoaderUtils;
 
-import java.io.File;
-import java.util.Objects;
+import java.io.IOException;
 
 /**
  * Loads native libraries for Windows
@@ -13,19 +12,12 @@ import java.util.Objects;
  */
 public class MttNativeLoader implements IMttNativeLoader {
     @Override
-    public void loadLibbulletjme() {
-        NativeLibraryLoader.loadLibbulletjme(
-                true,
-                new File(Objects.requireNonNull(MttNativeLoader.class.getResource("/Bin")).getFile()),
-                "Release",
-                "Sp"
-        );
+    public void loadLibbulletjme() throws IOException {
+        NativeLoaderUtils.loadNativeLibFromJar(this.getClass(), "/Bin/Windows64ReleaseSp_bulletjme.dll");
     }
 
     @Override
-    public void loadShaderc() {
-        String shadercLibFilepath = Objects.requireNonNull(
-                MttNativeLoader.class.getResource("/Bin/shaderc_shared.dll")).getFile();
-        System.load(shadercLibFilepath);
+    public void loadShaderc() throws IOException {
+        NativeLoaderUtils.loadNativeLibFromJar(this.getClass(), "/Bin/shaderc_shared.dll");
     }
 }

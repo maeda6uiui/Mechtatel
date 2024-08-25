@@ -12,6 +12,7 @@ import org.lwjgl.openal.ALCCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -76,10 +77,15 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
             throw new RuntimeException(e);
         }
 
-        nativeLoader.loadLibbulletjme();
-        PhysicalObjects.init(PhysicsSpace.BroadphaseType.DBVT);
+        try {
+            nativeLoader.loadLibbulletjme();
+            nativeLoader.loadShaderc();
+        } catch (IOException e) {
+            logger.error("Failed to load native library");
+            throw new RuntimeException(e);
+        }
 
-        nativeLoader.loadShaderc();
+        PhysicalObjects.init(PhysicsSpace.BroadphaseType.DBVT);
 
         MttVulkanInstance.create(settings.vulkanSettings, false);
         MttTexture.setImageFormat(settings.renderingSettings.imageFormat);

@@ -16,7 +16,7 @@ public class NativeLoaderUtils {
      * @param filepath Filepath of the native library
      * @throws IOException If it fails to load the native library
      */
-    public static void loadNativeLibFromJar(Class<IMttNativeLoader> clazz, String filepath) throws IOException {
+    public static void loadNativeLibFromJar(Class<? extends IMttNativeLoader> clazz, String filepath) throws IOException {
         try (var bis = new BufferedInputStream(Objects.requireNonNull(clazz.getResourceAsStream(filepath)))) {
             File tempFile = File.createTempFile("lib", ".mttlib");
             tempFile.deleteOnExit();

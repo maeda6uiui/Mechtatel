@@ -86,6 +86,10 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ## Progress report
 
+### 2024-08-25
+
+Removed app info from settings and changed it to constant values.
+
 ### 2024-08-24
 
 Updated the versions of the dependencies.

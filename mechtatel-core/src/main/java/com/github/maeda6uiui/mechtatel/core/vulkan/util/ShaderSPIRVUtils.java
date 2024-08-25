@@ -2,11 +2,11 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.util;
 
 import org.lwjgl.system.NativeResource;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.util.shaderc.Shaderc.*;
@@ -55,9 +55,9 @@ public class ShaderSPIRVUtils {
             throw new RuntimeException("Failed to create a shader compiler");
         }
 
-        long result = shaderc_compile_into_spv(compiler, source, shaderKind.kind, filepath, "main", NULL);
+        long result = shaderc_compile_into_spv(compiler, source, shaderKind.kind, "", "main", NULL);
         if (result == NULL) {
-            String errorMessage = String.format("Failed to compile a shader %s into SPIR-V", filepath);
+            String errorMessage = String.format("Failed to compile a shader into SPIR-V: %s", filepath);
             throw new RuntimeException(errorMessage);
         }
 
@@ -74,7 +74,13 @@ public class ShaderSPIRVUtils {
     }
 
     public static SPIRV compileShaderFile(URI shaderResource, ShaderKind shaderKind) throws IOException {
-        String source = new String(Files.readAllBytes(Paths.get(shaderResource)));
-        return compileShader(shaderResource.getPath(), source, shaderKind);
+        URL shaderResourceURL = shaderResource.toURL();
+        String source;
+        try (var bis = new BufferedInputStream(shaderResourceURL.openStream())) {
+            byte[] bs = bis.readAllBytes();
+            source = new String(bs);
+        }
+
+        return compileShader(shaderResourceURL.getPath(), source, shaderKind);
     }
 }

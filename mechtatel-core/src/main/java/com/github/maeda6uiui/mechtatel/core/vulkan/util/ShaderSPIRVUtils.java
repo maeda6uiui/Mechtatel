@@ -4,7 +4,6 @@ import org.lwjgl.system.NativeResource;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
 
@@ -49,7 +48,7 @@ public class ShaderSPIRVUtils {
         }
     }
 
-    public static SPIRV compileShader(String filepath, String source, ShaderKind shaderKind) {
+    public static SPIRV compileShader(String source, ShaderKind shaderKind) {
         long compiler = shaderc_compiler_initialize();
         if (compiler == NULL) {
             throw new RuntimeException("Failed to create a shader compiler");
@@ -57,14 +56,14 @@ public class ShaderSPIRVUtils {
 
         long result = shaderc_compile_into_spv(compiler, source, shaderKind.kind, "", "main", NULL);
         if (result == NULL) {
-            String errorMessage = String.format("Failed to compile a shader into SPIR-V: %s", filepath);
-            throw new RuntimeException(errorMessage);
+            throw new RuntimeException("Failed to compile a shader into SPIR-V");
         }
 
         if (shaderc_result_get_compilation_status(result) != shaderc_compilation_status_success) {
             String errorMessage = String.format(
-                    "Failed to compile a shader %s into SPIR-V\n%s",
-                    filepath, shaderc_result_get_error_message(result));
+                    "Failed to compile a shader into SPIR-V\n%s",
+                    shaderc_result_get_error_message(result)
+            );
             throw new RuntimeException(errorMessage);
         }
 
@@ -73,14 +72,13 @@ public class ShaderSPIRVUtils {
         return new SPIRV(result, shaderc_result_get_bytes(result));
     }
 
-    public static SPIRV compileShaderFile(URI shaderResource, ShaderKind shaderKind) throws IOException {
-        URL shaderResourceURL = shaderResource.toURL();
+    public static SPIRV compileShaderFile(URL shaderResource, ShaderKind shaderKind) throws IOException {
         String source;
-        try (var bis = new BufferedInputStream(shaderResourceURL.openStream())) {
+        try (var bis = new BufferedInputStream(shaderResource.openStream())) {
             byte[] bs = bis.readAllBytes();
             source = new String(bs);
         }
 
-        return compileShader(shaderResourceURL.getPath(), source, shaderKind);
+        return compileShader(source, shaderKind);
     }
 }

@@ -1,6 +1,8 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.util;
 
 import org.lwjgl.system.NativeResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -48,6 +50,8 @@ public class ShaderSPIRVUtils {
         }
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(ShaderSPIRVUtils.class);
+
     public static SPIRV compileShader(String source, ShaderKind shaderKind) {
         long compiler = shaderc_compiler_initialize();
         if (compiler == NULL) {
@@ -73,6 +77,8 @@ public class ShaderSPIRVUtils {
     }
 
     public static SPIRV compileShaderFile(URL shaderResource, ShaderKind shaderKind) throws IOException {
+        logger.debug("Compiling shader: {}", shaderResource.getPath());
+
         String source;
         try (var bis = new BufferedInputStream(shaderResource.openStream())) {
             byte[] bs = bis.readAllBytes();

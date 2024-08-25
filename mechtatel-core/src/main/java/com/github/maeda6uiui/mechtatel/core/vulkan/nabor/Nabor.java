@@ -11,7 +11,6 @@ import org.lwjgl.vulkan.*;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
@@ -723,15 +722,15 @@ public abstract class Nabor {
         }
 
         try (ShaderSPIRVUtils.SPIRV vertShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(
-                vertShaderResource.toURI(), ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER);
+                vertShaderResource, ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER);
              ShaderSPIRVUtils.SPIRV fragShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(
-                     fragShaderResource.toURI(), ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER)) {
+                     fragShaderResource, ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER)) {
             long vertShaderModule = this.createShaderModule(device, vertShaderSPIRV.bytecode());
             long fragShaderModule = this.createShaderModule(device, fragShaderSPIRV.bytecode());
 
             this.addVertShaderModule(vertShaderModule);
             this.addFragShaderModule(fragShaderModule);
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

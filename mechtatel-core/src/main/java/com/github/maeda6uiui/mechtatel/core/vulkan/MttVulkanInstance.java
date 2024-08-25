@@ -23,10 +23,7 @@ public class MttVulkanInstance {
     private static MttVulkanInstance instance;
 
     private MttVulkanInstance(MttSettings.VulkanSettings vulkanSettings) {
-        vkInstance = InstanceCreator.createInstance(
-                vulkanSettings.enableValidationLayer,
-                vulkanSettings.appInfo
-        );
+        vkInstance = InstanceCreator.createInstance(vulkanSettings.enableValidationLayer);
 
         if (vulkanSettings.enableValidationLayer) {
             debugMessenger = ValidationLayers.setupDebugMessenger(vkInstance);

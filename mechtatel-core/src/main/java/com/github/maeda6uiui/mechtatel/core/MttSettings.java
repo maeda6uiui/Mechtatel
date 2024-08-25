@@ -86,26 +86,11 @@ public class MttSettings {
     }
 
     public static class VulkanSettings {
-        public static class AppInfo {
-            public String name;
-            public int majorVersion;
-            public int minorVersion;
-            public int patchVersion;
-
-            public AppInfo() {
-                name = "Mechtatel";
-                majorVersion = 0;
-                minorVersion = 0;
-                patchVersion = 0;
-            }
-        }
-
         public boolean enableValidationLayer;
         public int preferablePhysicalDeviceIndex;
         public int preferableGraphicsFamilyIndex;
         public int preferablePresentFamilyIndex;
         public int albedoMSAASamples;
-        public AppInfo appInfo;
 
         public VulkanSettings() {
             enableValidationLayer = false;
@@ -113,7 +98,6 @@ public class MttSettings {
             preferableGraphicsFamilyIndex = -1;
             preferablePresentFamilyIndex = -1;
             albedoMSAASamples = 2;
-            appInfo = new AppInfo();
         }
     }
 

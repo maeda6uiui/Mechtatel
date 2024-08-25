@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.creator;
 
+import com.github.maeda6uiui.mechtatel.core.AppInfo;
 import com.github.maeda6uiui.mechtatel.core.EngineInfo;
-import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.PointerBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.lwjgl.PointerBuffer;
@@ -37,8 +37,7 @@ public class InstanceCreator {
         return glfwExtensions;
     }
 
-    public static VkInstance createInstance(
-            boolean enableValidationLayer, MttSettings.VulkanSettings.AppInfo appInfo) {
+    public static VkInstance createInstance(boolean enableValidationLayer) {
         if (enableValidationLayer && !ValidationLayers.checkValidationLayerSupport()) {
             throw new RuntimeException("Validation requested but not supported");
         }
@@ -46,9 +45,9 @@ public class InstanceCreator {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             VkApplicationInfo vkAppInfo = VkApplicationInfo.calloc(stack);
             vkAppInfo.sType(VK_STRUCTURE_TYPE_APPLICATION_INFO);
-            vkAppInfo.pApplicationName(stack.UTF8Safe(appInfo.name));
+            vkAppInfo.pApplicationName(stack.UTF8Safe(AppInfo.NAME));
             vkAppInfo.applicationVersion(VK_MAKE_VERSION(
-                    appInfo.majorVersion, appInfo.minorVersion, appInfo.patchVersion));
+                    AppInfo.MAJOR_VERSION, AppInfo.MINOR_VERSION, AppInfo.PATCH_VERSION));
             vkAppInfo.pEngineName(stack.UTF8Safe(EngineInfo.NAME));
             vkAppInfo.engineVersion(VK_MAKE_VERSION(
                     EngineInfo.MAJOR_VERSION, EngineInfo.MINOR_VERSION, EngineInfo.PATCH_VERSION));

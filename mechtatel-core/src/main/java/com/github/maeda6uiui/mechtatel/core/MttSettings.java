@@ -7,9 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -147,25 +144,6 @@ public class MttSettings {
             logger.error("Failed to load setting file", e);
             return Optional.empty();
         }
-    }
-
-    /**
-     * Loads settings from a JSON file.
-     *
-     * @param jsonResource URL of the setting file
-     * @return Settings
-     * @see #load(Path)
-     */
-    public static Optional<MttSettings> load(URL jsonResource) {
-        URI jsonResourceURI;
-        try {
-            jsonResourceURI = jsonResource.toURI();
-        } catch (URISyntaxException e) {
-            logger.error("URI syntax is invalid", e);
-            return Optional.empty();
-        }
-
-        return load(Paths.get(jsonResourceURI));
     }
 
     /**

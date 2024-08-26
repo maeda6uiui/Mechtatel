@@ -718,7 +718,7 @@ public abstract class Nabor {
             return;
         }
         if (vertShaderResource == null || fragShaderResource == null) {
-            return;
+            throw new RuntimeException("Shader resource cannot be null");
         }
 
         try (ShaderSPIRVUtils.SPIRV vertShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(

@@ -19,12 +19,13 @@ public class WindowModeTest extends Mechtatel {
 
     public static void main(String[] args) {
         MttLogging.setRootLoggerLogLevel("DEBUG");
-        MttSettings
-                .load("./Mechtatel/settings.json")
-                .ifPresentOrElse(
-                        WindowModeTest::new,
-                        () -> logger.error("Failed to load settings")
-                );
+
+        var settings = new MttSettings();
+        settings.windowSettings.fullScreen = true;
+        //settings.windowSettings.windowedFullScreen=true;
+        settings.windowSettings.monitorIndex = 0;
+
+        new WindowModeTest(settings);
     }
 
     @Override

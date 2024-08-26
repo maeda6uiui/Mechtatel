@@ -18,8 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -432,8 +431,8 @@ public class MttWindow {
         screens.add(defaultScreen);
     }
 
-    public MttSound createSound(URL soundResource, boolean loop, boolean relative) throws URISyntaxException, IOException {
-        var sound = new MttSound(soundResource.toURI(), loop, relative);
+    public MttSound createSound(Path soundFile, boolean loop, boolean relative) throws IOException {
+        var sound = new MttSound(soundFile, loop, relative);
         sounds3D.add(sound);
 
         return sound;

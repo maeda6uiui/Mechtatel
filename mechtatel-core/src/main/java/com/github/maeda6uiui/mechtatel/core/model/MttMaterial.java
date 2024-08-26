@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core.model;
 import org.joml.Vector4f;
 import org.joml.Vector4fc;
 
-import java.net.URI;
+import java.nio.file.Path;
 
 /**
  * Model material
@@ -11,7 +11,7 @@ import java.net.URI;
  * @author maeda6uiui
  */
 public class MttMaterial {
-    public URI diffuseTexResource;
+    public Path diffuseTexFile;
 
     public Vector4fc ambientColor;
     public Vector4fc diffuseColor;

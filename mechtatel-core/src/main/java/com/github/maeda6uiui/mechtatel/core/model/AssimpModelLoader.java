@@ -9,7 +9,6 @@ import org.lwjgl.system.MemoryStack;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.Math;
-import java.net.URI;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,7 +49,7 @@ public class AssimpModelLoader {
                 throw new FileNotFoundException("Texture file for the model does not exist: " + diffuseTexFile);
             }
 
-            material.diffuseTexResource = diffuseTexFile.toUri();
+            material.diffuseTexFile = diffuseTexFile;
 
             //Get the material colors
             AIColor4D color = AIColor4D.calloc(stack);
@@ -370,15 +369,15 @@ public class AssimpModelLoader {
         }
     }
 
-    public static MttModelData load(URI modelResource) throws IOException {
-        Path modelFile = Paths.get(modelResource);
+    public static MttModelData load(Path modelFile) throws IOException {
         try (AIScene aiScene = aiImportFile(
                 modelFile.toString(),
                 aiProcessPreset_TargetRealtime_Quality | aiProcess_FlipUVs)
         ) {
             if (aiScene == null || aiScene.mRootNode() == null) {
                 String errorStr = String.format(
-                        "Could not load a model %s\n%s", modelResource.getPath(), aiGetErrorString());
+                        "Could not load a model %s\n%s", modelFile, aiGetErrorString()
+                );
                 throw new IOException(errorStr);
             }
 

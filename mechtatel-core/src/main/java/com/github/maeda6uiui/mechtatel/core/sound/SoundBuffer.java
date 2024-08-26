@@ -9,6 +9,7 @@ import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.nio.file.Path;
 
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.stb.STBVorbis.*;
@@ -40,10 +41,10 @@ class SoundBuffer {
         return pcm;
     }
 
-    public SoundBuffer(URI soundResource) throws IOException {
+    public SoundBuffer(Path soundFile) throws IOException {
         this.buffer = alGenBuffers();
         try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
-            ShortBuffer pcm = this.readVorbis(soundResource, 32 * 1024, info);
+            ShortBuffer pcm = this.readVorbis(soundFile.toUri(), 32 * 1024, info);
             alBufferData(buffer, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
         }
     }

@@ -10,9 +10,8 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.io.FileNotFoundException;
-import java.net.URI;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 /**
  * Set of 2D textured quadrangles with a single texture
@@ -31,11 +30,13 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
     }
 
     public MttTexturedQuad2DSingleTextureSet(
-            IMttVulkanImplCommon vulkanImplCommon, IMttScreenForMttComponent screen, URI textureResource) throws FileNotFoundException {
+            IMttVulkanImplCommon vulkanImplCommon,
+            IMttScreenForMttComponent screen,
+            Path textureFile) throws FileNotFoundException {
         super(screen, generateCreateInfo());
 
-        if (!Files.exists(Paths.get(textureResource))) {
-            throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
+        if (!Files.exists(textureFile)) {
+            throw new FileNotFoundException("Texture file not found: " + textureFile);
         }
 
         var dq = vulkanImplCommon.getDeviceAndQueues();
@@ -45,12 +46,15 @@ public class MttTexturedQuad2DSingleTextureSet extends MttComponent {
                 vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 screen.getVulkanScreen(),
-                textureResource
+                textureFile
         );
         this.associateVulkanComponents(vkTexturedQuadSet);
     }
 
-    public MttTexturedQuad2DSingleTextureSet(IMttVulkanImplCommon vulkanImplCommon, IMttScreenForMttComponent screen, MttTexture texture) {
+    public MttTexturedQuad2DSingleTextureSet(
+            IMttVulkanImplCommon vulkanImplCommon,
+            IMttScreenForMttComponent screen,
+            MttTexture texture) {
         super(screen, generateCreateInfo());
 
         var dq = vulkanImplCommon.getDeviceAndQueues();

@@ -58,7 +58,7 @@ public class VkMttModel extends VkMttComponent {
                     commandPool,
                     graphicsQueue,
                     screen,
-                    material.diffuseTexResource,
+                    material.diffuseTexFile,
                     true);
 
             textures.put(index, texture);

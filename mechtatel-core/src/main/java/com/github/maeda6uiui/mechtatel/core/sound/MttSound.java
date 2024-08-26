@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.sound;
 
 import java.io.IOException;
-import java.net.URI;
+import java.nio.file.Path;
 
 /**
  * 3D sound
@@ -15,8 +15,8 @@ public class MttSound {
     private boolean isDuplicatedSound;
     private boolean isCleanedUp;
 
-    public MttSound(URI soundResource, boolean loop, boolean relative) throws IOException {
-        buffer = new SoundBuffer(soundResource);
+    public MttSound(Path soundFile, boolean loop, boolean relative) throws IOException {
+        buffer = new SoundBuffer(soundFile);
         source = new SoundSource(buffer, loop, relative);
         isDuplicatedSound = false;
         isCleanedUp = false;

@@ -33,7 +33,6 @@ import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -429,9 +428,8 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         return new MttTexture(dstScreen, texture);
     }
 
-    public MttTexture createTexture(URL textureResource, boolean generateMipmaps)
-            throws URISyntaxException, FileNotFoundException {
-        return new MttTexture(vulkanImplCommon, this, textureResource.toURI(), generateMipmaps);
+    public MttTexture createTexture(Path textureFile, boolean generateMipmaps) throws FileNotFoundException {
+        return new MttTexture(vulkanImplCommon, this, textureFile, generateMipmaps);
     }
 
     /**
@@ -507,8 +505,8 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         return new MttImGui(vulkanImplCommon, this, imguiContext);
     }
 
-    public MttModel createModel(URL modelResource) throws URISyntaxException, IOException {
-        return new MttModel(vulkanImplCommon, this, modelResource.toURI());
+    public MttModel createModel(Path modelFile) throws IOException {
+        return new MttModel(vulkanImplCommon, this, modelFile);
     }
 
     public MttModel duplicateModel(MttModel srcModel) {
@@ -563,7 +561,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     public MttTexturedQuad createTexturedQuad(
-            URL textureResource,
+            Path textureFile,
             boolean generateMipmaps,
             MttVertex v1,
             MttVertex v2,
@@ -572,7 +570,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         return new MttTexturedQuad(
                 vulkanImplCommon,
                 this,
-                textureResource.toURI(),
+                textureFile,
                 generateMipmaps,
                 v1, v2, v3, v4
         );
@@ -595,18 +593,16 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
-            URL textureResource,
-            MttVertex2D v1, MttVertex2D v2, MttVertex2D v3, MttVertex2D v4, float z)
-            throws URISyntaxException, FileNotFoundException {
+            Path textureFile, MttVertex2D v1, MttVertex2D v2, MttVertex2D v3, MttVertex2D v4, float z)
+            throws FileNotFoundException {
         return new MttTexturedQuad2D(
-                vulkanImplCommon, this, textureResource.toURI(), v1, v2, v3, v4, z);
+                vulkanImplCommon, this, textureFile, v1, v2, v3, v4, z);
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
-            URL textureResource,
-            Vector2fc topLeft, Vector2fc bottomRight, float z) throws URISyntaxException, FileNotFoundException {
+            Path textureFile, Vector2fc topLeft, Vector2fc bottomRight, float z) throws FileNotFoundException {
         return new MttTexturedQuad2D(
-                vulkanImplCommon, this, textureResource.toURI(), topLeft, bottomRight, z);
+                vulkanImplCommon, this, textureFile, topLeft, bottomRight, z);
     }
 
     public MttTexturedQuad2D createTexturedQuad2D(
@@ -632,9 +628,9 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         return new MttTexturedQuad2D(vulkanImplCommon, this, srcQuad, topLeft, bottomRight, z);
     }
 
-    public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(URL textureResource)
-            throws URISyntaxException, FileNotFoundException {
-        return new MttTexturedQuad2DSingleTextureSet(vulkanImplCommon, this, textureResource.toURI());
+    public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(Path textureFile)
+            throws FileNotFoundException {
+        return new MttTexturedQuad2DSingleTextureSet(vulkanImplCommon, this, textureFile);
     }
 
     public MttTexturedQuad2DSingleTextureSet createTexturedQuad2DSingleTextureSet(MttTexture texture) {

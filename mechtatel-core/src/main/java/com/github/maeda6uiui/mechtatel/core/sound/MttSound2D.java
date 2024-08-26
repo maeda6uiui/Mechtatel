@@ -5,7 +5,7 @@ import com.goxr3plus.streamplayer.stream.StreamPlayerEvent;
 import com.goxr3plus.streamplayer.stream.StreamPlayerException;
 import com.goxr3plus.streamplayer.stream.StreamPlayerListener;
 
-import java.net.URL;
+import java.nio.file.Path;
 import java.util.Map;
 
 /**
@@ -14,9 +14,9 @@ import java.util.Map;
  * @author maeda6uiui
  */
 public class MttSound2D extends StreamPlayer implements StreamPlayerListener {
-    public MttSound2D(URL soundResource) throws StreamPlayerException {
+    public MttSound2D(Path soundFile) throws StreamPlayerException {
         addStreamPlayerListener(this);
-        open(soundResource);
+        open(soundFile);
     }
 
     @Override

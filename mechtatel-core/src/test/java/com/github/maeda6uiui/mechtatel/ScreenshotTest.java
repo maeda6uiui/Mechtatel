@@ -16,10 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Objects;
 
 public class ScreenshotTest extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(ScreenshotTest.class);
@@ -57,15 +55,11 @@ public class ScreenshotTest extends Mechtatel {
         camera = new FreeCamera(mainScreen.getCamera());
 
         try {
-            mainScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj"))
-            );
+            mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Plane/plane.obj"));
 
-            MttModel cube = mainScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
-            );
+            MttModel cube = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
             cube.translate(new Vector3f(0.0f, 1.0f, 0.0f));
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             logger.error("Error", e);
             window.close();
 

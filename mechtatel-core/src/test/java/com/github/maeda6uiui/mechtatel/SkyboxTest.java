@@ -16,9 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Objects;
 
 public class SkyboxTest extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(SkyboxTest.class);
@@ -68,7 +67,7 @@ public class SkyboxTest extends Mechtatel {
             //Create a textured quad to render to final screen
             //Texture specified here will be replaced later
             texturedQuad = finalScreen.createTexturedQuad2D(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Texture/checker.png")),
+                    Paths.get("./Mechtatel/Standard/Texture/checker.png"),
                     new Vector2f(-1.0f, -1.0f),
                     new Vector2f(1.0f, 1.0f),
                     0.0f
@@ -76,19 +75,19 @@ public class SkyboxTest extends Mechtatel {
 
             //Create a model for skybox
             MttModel skyboxModel = skyboxScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Skybox/skybox.obj")));
+                    Paths.get("./Mechtatel/Standard/Model/Skybox/skybox.obj"));
             //Load and apply skybox textures to the model
             new SkyboxTextureCreator(
                     skyboxScreen,
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Skybox/Hill")),
+                    Paths.get("./Mechtatel/Standard/Model/Skybox/Hill"),
                     "png",
                     false
             ).apply(skyboxModel);
 
             //Create a sample model to draw on main screen
             mainScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj")));
-        } catch (URISyntaxException | IOException e) {
+                    Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
+        } catch (IOException e) {
             logger.error("Error", e);
             window.close();
 

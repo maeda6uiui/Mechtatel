@@ -9,8 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
-import java.util.Objects;
+import java.nio.file.Paths;
 
 public class ShowTexture extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(ShowTexture.class);
@@ -33,12 +32,12 @@ public class ShowTexture extends Mechtatel {
     public void onCreate(MttWindow window) {
         try {
             window.getDefaultScreen().createTexturedQuad2D(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Texture/checker.png")),
+                    Paths.get("./Mechtatel/Standard/Texture/checker.png"),
                     new Vector2f(-1.0f, -1.0f),
                     new Vector2f(1.0f, 1.0f),
                     0.0f
             );
-        } catch (URISyntaxException | FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             logger.error("Error", e);
             window.close();
         }

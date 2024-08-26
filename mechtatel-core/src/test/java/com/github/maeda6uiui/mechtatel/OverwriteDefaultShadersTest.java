@@ -9,8 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Objects;
+import java.nio.file.Paths;
 
 public class OverwriteDefaultShadersTest extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(OverwriteDefaultShadersTest.class);
@@ -46,9 +45,8 @@ public class OverwriteDefaultShadersTest extends Mechtatel {
         MttScreen defaultScreen = window.getDefaultScreen();
 
         try {
-            defaultScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj")));
-        } catch (URISyntaxException | IOException e) {
+            defaultScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
+        } catch (IOException e) {
             logger.error("Error", e);
             window.close();
 

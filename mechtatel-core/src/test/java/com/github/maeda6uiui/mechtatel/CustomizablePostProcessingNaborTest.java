@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.List;
@@ -58,7 +57,7 @@ public class CustomizablePostProcessingNaborTest extends Mechtatel {
 
         var naborInfo = new CustomizablePostProcessingNaborInfo(
                 Objects.requireNonNull(
-                        this.getClass().getResource("/Standard/Shader/PostProcessing/post_processing.vert")),
+                        this.getClass().getResource("./Mechtatel/Standard/Shader/PostProcessing/post_processing.vert")),
                 fragShaderResource
         );
         naborInfo.setLightingType(CustomizablePostProcessingNaborInfo.LightingType.PARALLEL);
@@ -75,14 +74,10 @@ public class CustomizablePostProcessingNaborTest extends Mechtatel {
         ppProperties.fog.setEnd(20.0f);
 
         try {
-            mainScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj")));
-            mainScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj")));
-            MttModel cube = mainScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj")));
+            mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Plane/plane.obj"));
+            MttModel cube = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
             cube.translate(new Vector3f(0.0f, 3.0f, 0.0f));
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             logger.error("Error", e);
             window.close();
 

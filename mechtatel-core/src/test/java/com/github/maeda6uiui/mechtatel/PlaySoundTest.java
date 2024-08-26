@@ -16,8 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Objects;
+import java.nio.file.Paths;
 
 import static org.lwjgl.openal.AL10.AL_REFERENCE_DISTANCE;
 
@@ -45,11 +44,11 @@ public class PlaySoundTest extends Mechtatel {
     public void onCreate(MttWindow window) {
         try {
             sound = window.createSound(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Sound/440_sine.ogg")),
+                    Paths.get("./Mechtatel/Standard/Sound/440_sine.ogg"),
                     true,
                     false
             );
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             logger.error("Error", e);
             window.close();
 

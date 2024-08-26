@@ -12,10 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class GaussianBlurTest extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(GaussianBlurTest.class);
@@ -45,12 +44,12 @@ public class GaussianBlurTest extends Mechtatel {
 
         try {
             mainScreen.createTexturedQuad2D(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Texture/checker.png")),
+                    Paths.get("./Mechtatel/Standard/Texture/checker.png"),
                     new Vector2f(-1.0f, -1.0f),
                     new Vector2f(1.0f, 1.0f),
                     0.0f
             );
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             logger.error("Error", e);
             window.close();
 

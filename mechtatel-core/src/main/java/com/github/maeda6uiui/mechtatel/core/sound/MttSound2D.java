@@ -16,7 +16,7 @@ import java.util.Map;
 public class MttSound2D extends StreamPlayer implements StreamPlayerListener {
     public MttSound2D(Path soundFile) throws StreamPlayerException {
         addStreamPlayerListener(this);
-        open(soundFile);
+        open(soundFile.toFile());
     }
 
     @Override

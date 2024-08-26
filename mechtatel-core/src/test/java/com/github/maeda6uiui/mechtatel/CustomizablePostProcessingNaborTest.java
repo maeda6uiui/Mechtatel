@@ -11,18 +11,17 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingPropert
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
+import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class CustomizablePostProcessingNaborTest extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(CustomizablePostProcessingNaborTest.class);
@@ -46,9 +45,17 @@ public class CustomizablePostProcessingNaborTest extends Mechtatel {
 
     @Override
     public void onCreate(MttWindow window) {
+        URL vertShaderResource;
         URL fragShaderResource;
         try {
-            fragShaderResource = Paths.get("./Mechtatel/Addon/maeda6uiui/Shader/sepia.frag").toUri().toURL();
+            vertShaderResource = MttURLUtils.getResourceURL(
+                    "/Standard/Shader/PostProcessing/post_processing.vert",
+                    false   //Vertex shader is located inside the JAR of Mechtatel
+            );
+            fragShaderResource = MttURLUtils.getResourceURL(
+                    "./Mechtatel/Addon/maeda6uiui/Shader/sepia.frag",
+                    true    //Fragment shader is located outside the JAR of Mechtatel
+            );
         } catch (MalformedURLException e) {
             logger.error("Error", e);
             window.close();
@@ -56,11 +63,7 @@ public class CustomizablePostProcessingNaborTest extends Mechtatel {
             return;
         }
 
-        var naborInfo = new CustomizablePostProcessingNaborInfo(
-                Objects.requireNonNull(
-                        this.getClass().getResource("/Standard/Shader/PostProcessing/post_processing.vert")),
-                fragShaderResource
-        );
+        var naborInfo = new CustomizablePostProcessingNaborInfo(vertShaderResource, fragShaderResource);
         naborInfo.setLightingType(CustomizablePostProcessingNaborInfo.LightingType.PARALLEL);
 
         mainScreen = window.createScreen(
@@ -75,14 +78,10 @@ public class CustomizablePostProcessingNaborTest extends Mechtatel {
         ppProperties.fog.setEnd(20.0f);
 
         try {
-            mainScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj")));
-            mainScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj")));
-            MttModel cube = mainScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj")));
+            mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Plane/plane.obj"));
+            MttModel cube = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
             cube.translate(new Vector3f(0.0f, 3.0f, 0.0f));
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             logger.error("Error", e);
             window.close();
 

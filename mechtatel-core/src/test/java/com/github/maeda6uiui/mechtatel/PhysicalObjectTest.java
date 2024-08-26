@@ -19,9 +19,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 public class PhysicalObjectTest extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(PhysicalObjectTest.class);
@@ -80,15 +82,11 @@ public class PhysicalObjectTest extends Mechtatel {
         spotlightB.setDiffuseColor(new Vector3f(0.0f, 0.0f, 1.0f));
 
         try {
-            level = mainScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj"))
-            );
+            level = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Plane/plane.obj"));
 
-            box = mainScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
-            );
+            box = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
             box.setVisible(false);
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             logger.error("Error", e);
             window.close();
 

@@ -24,9 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Objects;
 
 public class SkeletalAnimationTest2 extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(SkeletalAnimationTest2.class);
@@ -98,7 +97,7 @@ public class SkeletalAnimationTest2 extends Mechtatel {
         try {
             //Create a textured quad to render to final screen
             texturedQuad = finalScreen.createTexturedQuad2D(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Texture/checker.png")),
+                    Paths.get("./Mechtatel/Standard/Texture/checker.png"),
                     new Vector2f(-1.0f, -1.0f),
                     new Vector2f(1.0f, 1.0f),
                     0.0f
@@ -106,24 +105,24 @@ public class SkeletalAnimationTest2 extends Mechtatel {
 
             //Create a model for skybox
             MttModel skyboxModel = skyboxScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Skybox/skybox.obj")));
+                    Paths.get("./Mechtatel/Standard/Model/Skybox/skybox.obj"));
             //Load and apply skybox textures to the model
             new SkyboxTextureCreator(
                     skyboxScreen,
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Skybox/Hill")),
+                    Paths.get("./Mechtatel/Standard/Model/Skybox/Hill"),
                     "png",
                     false
             ).apply(skyboxModel);
 
             //Create a model for animation
             animModel = mainScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cz1/cz_1.dae")));
+                    Paths.get("./Mechtatel/Standard/Model/Cz1/cz_1.dae"));
 
             //Create a model for ground
             MttModel groundModel = mainScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj")));
+                    Paths.get("./Mechtatel/Standard/Model/Plane/plane.obj"));
             groundModel.rescale(new Vector3f(0.5f, 1.0f, 0.5f));
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             logger.error("Error", e);
             window.close();
 

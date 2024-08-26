@@ -10,7 +10,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplCommon;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttModel;
 
 import java.io.IOException;
-import java.net.URI;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
@@ -20,13 +20,16 @@ import java.util.Set;
  * @author maeda6uiui
  */
 public class MttModel extends MttComponent implements IMttModelForVkMttModel {
-    private URI modelResource;
+    private Path modelFile;
     private VkMttModel vkModel;
 
     private MttModelData modelData;
     private MttAnimationData animationData;
 
-    public MttModel(IMttVulkanImplCommon vulkanImplCommon, IMttScreenForMttComponent screen, URI modelResource) throws IOException {
+    public MttModel(
+            IMttVulkanImplCommon vulkanImplCommon,
+            IMttScreenForMttComponent screen,
+            Path modelFile) throws IOException {
         super(
                 screen,
                 new MttComponentCreateInfo()
@@ -36,14 +39,14 @@ public class MttModel extends MttComponent implements IMttModelForVkMttModel {
                         .setDrawOrder(0)
         );
 
-        this.modelResource = modelResource;
+        this.modelFile = modelFile;
 
         //Load model data
-        String modelFilepath = modelResource.getPath();
+        String modelFilepath = modelFile.toString();
         if (modelFilepath.endsWith(".bd1") || modelFilepath.endsWith(".BD1")) {
-            modelData = JXMModelLoader.load(modelResource);
+            modelData = JXMModelLoader.load(modelFile);
         } else {
-            modelData = AssimpModelLoader.load(modelResource);
+            modelData = AssimpModelLoader.load(modelFile);
         }
 
         //Create Vulkan component
@@ -68,7 +71,7 @@ public class MttModel extends MttComponent implements IMttModelForVkMttModel {
                         .setDrawOrder(0)
         );
 
-        this.modelResource = srcModel.modelResource;
+        this.modelFile = srcModel.modelFile;
 
         var dq = vulkanImplCommon.getDeviceAndQueues();
         vkModel = new VkMttModel(
@@ -82,8 +85,8 @@ public class MttModel extends MttComponent implements IMttModelForVkMttModel {
         this.modelData = srcModel.modelData;
     }
 
-    public URI getModelResource() {
-        return modelResource;
+    public Path getModelFile() {
+        return modelFile;
     }
 
     @Override

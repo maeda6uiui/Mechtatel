@@ -9,7 +9,7 @@ import com.goxr3plus.streamplayer.stream.StreamPlayerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
+import java.nio.file.Paths;
 
 public class PlaySound2DTest extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(PlaySound2DTest.class);
@@ -33,11 +33,7 @@ public class PlaySound2DTest extends Mechtatel {
     @Override
     public void onInit(MttWindow initialWindow) {
         try {
-            sound = new MttSound2D(
-                    Objects.requireNonNull(
-                            this.getClass().getResource("/Standard/Sound/no_9.mp3")
-                    )
-            );
+            sound = new MttSound2D(Paths.get("./Mechtatel/Standard/Sound/no_9.mp3"));
             sound.play();
         } catch (StreamPlayerException e) {
             logger.error("Error", e);
@@ -52,11 +48,11 @@ public class PlaySound2DTest extends Mechtatel {
 
     @Override
     public void onUpdate(MttWindow window) {
-        if (window.getKeyboardPressingCount(KeyCode.KEY_1) == 1) {
+        if (window.getKeyboardPressingCount(KeyCode.F1) == 1) {
             sound.pause();
-        } else if (window.getKeyboardPressingCount(KeyCode.KEY_2) == 1) {
+        } else if (window.getKeyboardPressingCount(KeyCode.F2) == 1) {
             sound.resume();
-        } else if (window.getKeyboardPressingCount(KeyCode.KEY_3) == 1) {
+        } else if (window.getKeyboardPressingCount(KeyCode.F3) == 1) {
             sound.stop();
         }
     }

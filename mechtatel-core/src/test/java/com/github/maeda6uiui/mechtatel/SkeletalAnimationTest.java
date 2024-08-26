@@ -16,8 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Objects;
+import java.nio.file.Paths;
 
 public class SkeletalAnimationTest extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(SkeletalAnimationTest.class);
@@ -49,10 +48,8 @@ public class SkeletalAnimationTest extends Mechtatel {
         defaultScreen.createLineSet().addPositiveAxes(2.0f).createBuffer();
 
         try {
-            animModel = defaultScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cz1/cz_1.dae"))
-            );
-        } catch (URISyntaxException | IOException e) {
+            animModel = defaultScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cz1/cz_1.dae"));
+        } catch (IOException e) {
             logger.error("Error", e);
             window.close();
 

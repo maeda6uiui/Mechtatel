@@ -5,10 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Utility class to create textures for a skybox
@@ -25,23 +22,22 @@ public class SkyboxTextureCreator {
 
     public SkyboxTextureCreator(
             MttScreen screen,
-            URL textureDirUrl,
+            Path textureDir,
             String textureExtension,
-            boolean generateMipmaps) throws URISyntaxException, IOException {
-        Path textureDir = Paths.get(textureDirUrl.toURI());
-        URL texNxResource = textureDir.resolve(String.format("nx.%s", textureExtension)).toUri().toURL();
-        URL texNyResource = textureDir.resolve(String.format("ny.%s", textureExtension)).toUri().toURL();
-        URL texNzResource = textureDir.resolve(String.format("nz.%s", textureExtension)).toUri().toURL();
-        URL texPxResource = textureDir.resolve(String.format("px.%s", textureExtension)).toUri().toURL();
-        URL texPyResource = textureDir.resolve(String.format("py.%s", textureExtension)).toUri().toURL();
-        URL texPzResource = textureDir.resolve(String.format("pz.%s", textureExtension)).toUri().toURL();
+            boolean generateMipmaps) throws IOException {
+        Path texNxFile = textureDir.resolve(String.format("nx.%s", textureExtension));
+        Path texNyFile = textureDir.resolve(String.format("ny.%s", textureExtension));
+        Path texNzFile = textureDir.resolve(String.format("nz.%s", textureExtension));
+        Path texPxFile = textureDir.resolve(String.format("px.%s", textureExtension));
+        Path texPyFile = textureDir.resolve(String.format("py.%s", textureExtension));
+        Path texPzFile = textureDir.resolve(String.format("pz.%s", textureExtension));
 
-        texNx = screen.createTexture(texNxResource, generateMipmaps);
-        texNy = screen.createTexture(texNyResource, generateMipmaps);
-        texNz = screen.createTexture(texNzResource, generateMipmaps);
-        texPx = screen.createTexture(texPxResource, generateMipmaps);
-        texPy = screen.createTexture(texPyResource, generateMipmaps);
-        texPz = screen.createTexture(texPzResource, generateMipmaps);
+        texNx = screen.createTexture(texNxFile, generateMipmaps);
+        texNy = screen.createTexture(texNyFile, generateMipmaps);
+        texNz = screen.createTexture(texNzFile, generateMipmaps);
+        texPx = screen.createTexture(texPxFile, generateMipmaps);
+        texPy = screen.createTexture(texPyFile, generateMipmaps);
+        texPz = screen.createTexture(texPzFile, generateMipmaps);
     }
 
     public void apply(MttModel model) {

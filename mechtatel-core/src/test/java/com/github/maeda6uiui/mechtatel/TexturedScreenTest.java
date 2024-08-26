@@ -17,9 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.Objects;
 
 public class TexturedScreenTest extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(TexturedScreenTest.class);
@@ -69,11 +69,10 @@ public class TexturedScreenTest extends Mechtatel {
         ppProperties.createParallelLight();
 
         try {
-            primaryCube = primaryScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj")));
-            secondaryScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj")));
-        } catch (URISyntaxException | IOException e) {
+            Path modelFile = Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj");
+            primaryCube = primaryScreen.createModel(modelFile);
+            secondaryScreen.createModel(modelFile);
+        } catch (IOException e) {
             logger.error("Error", e);
             window.close();
         }

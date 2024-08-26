@@ -7,15 +7,12 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -24,8 +21,8 @@ import java.util.List;
  * @author maeda6uiui
  */
 public class JXMModelLoader {
-    public static MttModelData load(URI modelResource) throws IOException {
-        var manipulator = new BD1Manipulator(new File(modelResource));
+    public static MttModelData load(Path modelFile) throws IOException {
+        var manipulator = new BD1Manipulator(modelFile.toFile());
 
         //Rescale the model so that 1 coord represents 1 meter
         final float RESCALE_FACTOR = 1.7f / 20.0f;
@@ -37,7 +34,7 @@ public class JXMModelLoader {
 
         List<BD1Buffer> buffers = manipulator.getBuffers(false);
 
-        Path modelDir = Paths.get(modelResource).getParent();
+        Path modelDir = modelFile.getParent();
 
         var model = new MttModelData(buffers.size(), buffers.size());
         for (int i = 0; i < buffers.size(); i++) {
@@ -49,7 +46,7 @@ public class JXMModelLoader {
                 throw new FileNotFoundException("Texture file for the model does not exist: " + textureFile);
             }
 
-            model.materials.get(i).diffuseTexResource = textureFile.toUri();
+            model.materials.get(i).diffuseTexFile = textureFile;
             model.meshes.get(i).materialIndex = i;
 
             IntBuffer indexBuffer = buffer.indexBuffer;

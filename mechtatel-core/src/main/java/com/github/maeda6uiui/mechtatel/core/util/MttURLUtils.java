@@ -10,11 +10,19 @@ import java.nio.file.Paths;
  * @author maeda6uiui
  */
 public class MttURLUtils {
-    public static URL getResourceURL(String name, boolean external) throws MalformedURLException {
+    /**
+     * Returns resource URL.
+     *
+     * @param filepath Filepath of the resource
+     * @param external {@code false} if the resource is inside the JAR that this class belongs to
+     * @return URL of the resource
+     * @throws MalformedURLException If it fails to obtain URL from the path
+     */
+    public static URL getResourceURL(String filepath, boolean external) throws MalformedURLException {
         if (external) {
-            return Paths.get(name).toUri().toURL();
+            return Paths.get(filepath).toUri().toURL();
         } else {
-            return MttURLUtils.class.getResource(name);
+            return MttURLUtils.class.getResource(filepath);
         }
     }
 }

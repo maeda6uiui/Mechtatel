@@ -13,9 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.Objects;
 
 public class SimpleBlurTest extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(SimpleBlurTest.class);
@@ -45,10 +44,8 @@ public class SimpleBlurTest extends Mechtatel {
         );
 
         try {
-            mainScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
-            );
-        } catch (URISyntaxException | IOException e) {
+            mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
+        } catch (IOException e) {
             logger.error("Error", e);
             window.close();
 

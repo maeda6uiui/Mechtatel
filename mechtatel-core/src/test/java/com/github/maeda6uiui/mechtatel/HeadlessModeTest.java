@@ -10,9 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import java.util.Objects;
 
 public class HeadlessModeTest extends MechtatelHeadless {
     private static final Logger logger = LoggerFactory.getLogger(HeadlessModeTest.class);
@@ -36,10 +34,8 @@ public class HeadlessModeTest extends MechtatelHeadless {
         MttScreen defaultScreen = instance.getDefaultScreen();
 
         try {
-            defaultScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
-            );
-        } catch (URISyntaxException | IOException e) {
+            defaultScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
+        } catch (IOException e) {
             logger.error("Error", e);
             instance.close();
 

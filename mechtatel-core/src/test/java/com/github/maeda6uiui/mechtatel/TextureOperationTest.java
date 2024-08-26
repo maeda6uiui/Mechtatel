@@ -16,10 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -61,7 +60,7 @@ public class TextureOperationTest extends Mechtatel {
 
         try {
             texturedQuad = finalScreen.createTexturedQuad2D(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Texture/checker.png")),
+                    Paths.get("./Mechtatel/Standard/Texture/checker.png"),
                     new Vector2f(-1.0f, -1.0f),
                     new Vector2f(1.0f, 1.0f),
                     0.0f
@@ -72,19 +71,19 @@ public class TextureOperationTest extends Mechtatel {
                 MttScreen interimScreen = interimScreens.get(i);
 
                 String textureFilepath = switch (i) {
-                    case 0 -> "/Standard/Texture/checker_r.png";
-                    case 1 -> "/Standard/Texture/checker_g.png";
-                    default -> "/Standard/Texture/checker_b.png";
+                    case 0 -> "./Mechtatel/Standard/Texture/checker_r.png";
+                    case 1 -> "./Mechtatel/Standard/Texture/checker_g.png";
+                    default -> "./Mechtatel/Standard/Texture/checker_b.png";
                 };
                 MttTexturedQuad2D interimTexturedQuad = interimScreen.createTexturedQuad2D(
-                        Objects.requireNonNull(this.getClass().getResource(textureFilepath)),
+                        Paths.get(textureFilepath),
                         new Vector2f(-1.0f, -1.0f),
                         new Vector2f(1.0f, 1.0f),
                         0.0f
                 );
                 interimTexturedQuads.add(interimTexturedQuad);
             }
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             logger.error("Error", e);
             window.close();
 
@@ -112,7 +111,7 @@ public class TextureOperationTest extends Mechtatel {
             for (int i = 0; i < 2; i++) {
                 signs[i] = getSign.get();
             }
-            
+
             var translations = new float[2];
             for (int i = 0; i < 2; i++) {
                 translations[i] = random.nextFloat() * TRANSLATION_SCALE * signs[i];

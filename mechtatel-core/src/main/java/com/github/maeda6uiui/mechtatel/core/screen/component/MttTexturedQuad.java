@@ -6,9 +6,8 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.IMttVulkanImplCommon;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttTexturedQuad;
 
 import java.io.FileNotFoundException;
-import java.net.URI;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 /**
@@ -30,7 +29,7 @@ public class MttTexturedQuad extends MttComponent {
     public MttTexturedQuad(
             IMttVulkanImplCommon vulkanImplCommon,
             IMttScreenForMttComponent screen,
-            URI textureResource,
+            Path textureFile,
             boolean generateMipmaps,
             MttVertex v1,
             MttVertex v2,
@@ -38,8 +37,8 @@ public class MttTexturedQuad extends MttComponent {
             MttVertex v4) throws FileNotFoundException {
         super(screen, generateCreateInfo());
 
-        if (!Files.exists(Paths.get(textureResource))) {
-            throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
+        if (!Files.exists(textureFile)) {
+            throw new FileNotFoundException("Texture file not found: " + textureFile);
         }
 
         var dq = vulkanImplCommon.getDeviceAndQueues();
@@ -49,7 +48,7 @@ public class MttTexturedQuad extends MttComponent {
                 vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 screen.getVulkanScreen(),
-                textureResource,
+                textureFile,
                 generateMipmaps,
                 Arrays.asList(v1, v2, v3, v4)
         );

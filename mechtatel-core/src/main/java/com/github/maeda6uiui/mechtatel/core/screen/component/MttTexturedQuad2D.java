@@ -10,9 +10,8 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.io.FileNotFoundException;
-import java.net.URI;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
@@ -58,10 +57,10 @@ public class MttTexturedQuad2D extends MttComponent {
     private void create(
             IMttVulkanImplCommon vulkanImplCommon,
             IMttScreenForMttComponent screen,
-            URI textureResource,
+            Path textureFile,
             List<MttVertex> vertices) throws FileNotFoundException {
-        if (!Files.exists(Paths.get(textureResource))) {
-            throw new FileNotFoundException("Texture file not found: " + textureResource.getPath());
+        if (!Files.exists(textureFile)) {
+            throw new FileNotFoundException("Texture file not found: " + textureFile);
         }
 
         var dq = vulkanImplCommon.getDeviceAndQueues();
@@ -71,7 +70,7 @@ public class MttTexturedQuad2D extends MttComponent {
                 vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 screen.getVulkanScreen(),
-                textureResource,
+                textureFile,
                 false,
                 vertices
         );
@@ -121,7 +120,7 @@ public class MttTexturedQuad2D extends MttComponent {
     public MttTexturedQuad2D(
             IMttVulkanImplCommon vulkanImplCommon,
             IMttScreenForMttComponent screen,
-            URI textureResource,
+            Path textureFile,
             MttVertex2D v1,
             MttVertex2D v2,
             MttVertex2D v3,
@@ -130,20 +129,20 @@ public class MttTexturedQuad2D extends MttComponent {
         super(screen, generateCreateInfo());
 
         var vertices = this.createVertices(v1, v2, v3, v4, z);
-        this.create(vulkanImplCommon, screen, textureResource, vertices);
+        this.create(vulkanImplCommon, screen, textureFile, vertices);
     }
 
     public MttTexturedQuad2D(
             IMttVulkanImplCommon vulkanImplCommon,
             IMttScreenForMttComponent screen,
-            URI textureResource,
+            Path textureFile,
             Vector2fc topLeft,
             Vector2fc bottomRight,
             float z) throws FileNotFoundException {
         super(screen, generateCreateInfo());
 
         var vertices = this.createVertices(topLeft, bottomRight, z);
-        this.create(vulkanImplCommon, screen, textureResource, vertices);
+        this.create(vulkanImplCommon, screen, textureFile, vertices);
     }
 
     public MttTexturedQuad2D(

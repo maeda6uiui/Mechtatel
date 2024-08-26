@@ -13,8 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Objects;
+import java.nio.file.Paths;
 
 public class CameraModeTest extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(CameraModeTest.class);
@@ -42,11 +41,9 @@ public class CameraModeTest extends Mechtatel {
 
         MttModel srcCube;
         try {
-            srcCube = defaultScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
-            );
+            srcCube = defaultScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
             srcCube.setVisible(false);
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             logger.error("Error", e);
             window.close();
 

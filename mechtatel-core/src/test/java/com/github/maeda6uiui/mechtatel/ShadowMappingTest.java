@@ -15,11 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 
 public class ShadowMappingTest extends Mechtatel {
@@ -69,24 +68,18 @@ public class ShadowMappingTest extends Mechtatel {
         cubePositions = new ArrayList<>();
         cubeRotations = new ArrayList<>();
         try {
-            MttModel plane = mainScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Plane/plane.obj"))
-            );
+            MttModel plane = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Plane/plane.obj"));
             plane.rescale(new Vector3f(2.0f, 1.0f, 2.0f));
 
-            MttModel teapot = mainScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Teapot/teapot.obj"))
-            );
+            MttModel teapot = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Teapot/teapot.obj"));
             teapot.rescale(new Vector3f(2.0f, 2.0f, 2.0f));
 
-            var cube = mainScreen.createModel(
-                    Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj"))
-            );
+            var cube = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
             cube.translate(new Vector3f(6.0f, 2.0f, 0.0f));
             cubes.add(cube);
             cubePositions.add(new Vector3f(6.0f, 2.0f, 0.0f));
             cubeRotations.add(0.0f);
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             logger.error("Error", e);
             window.close();
         }

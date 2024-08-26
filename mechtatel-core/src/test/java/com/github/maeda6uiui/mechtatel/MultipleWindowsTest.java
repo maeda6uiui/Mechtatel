@@ -12,8 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.*;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public class MultipleWindowsTest extends Mechtatel {
     private static final Logger logger = LoggerFactory.getLogger(MultipleWindowsTest.class);
@@ -57,10 +60,9 @@ public class MultipleWindowsTest extends Mechtatel {
 
     private Map<String, ModelProperties> modelPropsMap;
 
-    private void createResources(MttWindow window) throws URISyntaxException, IOException {
+    private void createResources(MttWindow window) throws IOException {
         MttScreen defaultScreen = window.getDefaultScreen();
-        MttModel model = defaultScreen.createModel(
-                Objects.requireNonNull(this.getClass().getResource("/Standard/Model/Cube/cube.obj")));
+        MttModel model = defaultScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
 
         var random = new Random();
         var modelPosition = new Vector3f(4.0f, 0.0f, 0.0f);
@@ -101,7 +103,7 @@ public class MultipleWindowsTest extends Mechtatel {
             for (var window : windows) {
                 this.createResources(window);
             }
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             logger.error("Error", e);
             this.closeAllWindows();
         }

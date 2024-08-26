@@ -48,11 +48,11 @@ public class PlaySound2DTest extends Mechtatel {
 
     @Override
     public void onUpdate(MttWindow window) {
-        if (window.getKeyboardPressingCount(KeyCode.KEY_1) == 1) {
+        if (window.getKeyboardPressingCount(KeyCode.F1) == 1) {
             sound.pause();
-        } else if (window.getKeyboardPressingCount(KeyCode.KEY_2) == 1) {
+        } else if (window.getKeyboardPressingCount(KeyCode.F2) == 1) {
             sound.resume();
-        } else if (window.getKeyboardPressingCount(KeyCode.KEY_3) == 1) {
+        } else if (window.getKeyboardPressingCount(KeyCode.F3) == 1) {
             sound.stop();
         }
     }

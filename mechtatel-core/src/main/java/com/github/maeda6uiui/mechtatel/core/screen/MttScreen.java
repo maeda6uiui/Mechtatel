@@ -32,7 +32,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -566,7 +565,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
             MttVertex v1,
             MttVertex v2,
             MttVertex v3,
-            MttVertex v4) throws URISyntaxException, FileNotFoundException {
+            MttVertex v4) throws FileNotFoundException {
         return new MttTexturedQuad(
                 vulkanImplCommon,
                 this,

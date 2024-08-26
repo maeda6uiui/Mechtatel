@@ -5,7 +5,6 @@ import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 
 /**
@@ -25,7 +24,7 @@ public class SkyboxTextureCreator {
             MttScreen screen,
             Path textureDir,
             String textureExtension,
-            boolean generateMipmaps) throws URISyntaxException, IOException {
+            boolean generateMipmaps) throws IOException {
         Path texNxFile = textureDir.resolve(String.format("nx.%s", textureExtension));
         Path texNyFile = textureDir.resolve(String.format("ny.%s", textureExtension));
         Path texNzFile = textureDir.resolve(String.format("nz.%s", textureExtension));

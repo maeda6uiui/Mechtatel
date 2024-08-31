@@ -33,7 +33,7 @@ void process3DDrawing(){
     vec4 initPos=vec4(0.0,0.0,0.0,0.0);
 
     int count=0;
-    for(int i=0;i<MAX_NUM_WEIGHTS;i++){
+    for(int i=0;i<min(MAX_NUM_WEIGHTS,4);i++){
         float weight=inBoneWeights[i];
         int boneIndex=inBoneIndices[i];
 

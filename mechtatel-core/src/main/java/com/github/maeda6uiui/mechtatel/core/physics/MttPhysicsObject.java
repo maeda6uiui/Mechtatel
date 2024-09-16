@@ -72,6 +72,10 @@ public class MttPhysicsObject {
         return components.remove(component);
     }
 
+    public List<MttComponent> getComponents() {
+        return components;
+    }
+
     public void removeAllComponents() {
         components.clear();
     }

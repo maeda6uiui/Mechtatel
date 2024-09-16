@@ -10,13 +10,13 @@ import org.joml.Vector3fc;
 import java.util.ArrayList;
 
 /**
- * Physical mesh
+ * Physics mesh
  * Note that collision detection between two meshes doesn't work.
  *
  * @author maeda6uiui
  */
-public class PhysicalMesh extends PhysicalObject {
-    public PhysicalMesh(com.github.maeda6uiui.mechtatel.core.screen.component.MttModel model, float mass) {
+public class MttPhysicsMesh extends MttPhysicsObject {
+    public MttPhysicsMesh(com.github.maeda6uiui.mechtatel.core.screen.component.MttModel model, float mass) {
         var indexedMeshes = new ArrayList<IndexedMesh>();
 
         MttModelData innerModelData = model.getModelData();

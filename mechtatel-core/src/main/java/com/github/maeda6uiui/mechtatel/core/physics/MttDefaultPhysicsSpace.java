@@ -10,17 +10,17 @@ import java.util.Optional;
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.convertJOMLVector3fToJMEVector3f;
 
 /**
- * Provides methods to manage physical objects
+ * Default physics space
  *
  * @author maeda6uiui
  */
-public class PhysicalObjects {
+public class MttDefaultPhysicsSpace {
     private PhysicsSpace physicsSpace;
     private float physicsSimulationTimeScale;
 
-    private static PhysicalObjects instance;
+    private static MttDefaultPhysicsSpace instance;
 
-    private PhysicalObjects(PhysicsSpace.BroadphaseType broadphaseType) {
+    private MttDefaultPhysicsSpace(PhysicsSpace.BroadphaseType broadphaseType) {
         physicsSpace = new PhysicsSpace(broadphaseType);
         physicsSpace.setGravity(convertJOMLVector3fToJMEVector3f(new Vector3f(0.0f, -9.8f, 0.0f)));
         physicsSimulationTimeScale = 1.0f;
@@ -56,10 +56,10 @@ public class PhysicalObjects {
             return;
         }
 
-        instance = new PhysicalObjects(broadphaseType);
+        instance = new MttDefaultPhysicsSpace(broadphaseType);
     }
 
-    public static Optional<PhysicalObjects> get() {
+    public static Optional<MttDefaultPhysicsSpace> get() {
         return Optional.ofNullable(instance);
     }
 }

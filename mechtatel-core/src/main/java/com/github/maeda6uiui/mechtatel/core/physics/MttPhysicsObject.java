@@ -14,17 +14,17 @@ import java.util.List;
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.*;
 
 /**
- * Base class for physical objects
+ * Base class for physics objects
  *
  * @author maeda6uiui
  */
-public class PhysicalObject {
+public class MttPhysicsObject {
     private CollisionShape shape;
     private PhysicsRigidBody body;
 
     private List<MttComponent> components;
 
-    public PhysicalObject() {
+    public MttPhysicsObject() {
         components = new ArrayList<>();
     }
 

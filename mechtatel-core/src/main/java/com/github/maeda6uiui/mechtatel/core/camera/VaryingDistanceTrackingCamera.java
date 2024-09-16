@@ -1,8 +1,11 @@
 package com.github.maeda6uiui.mechtatel.core.camera;
 
-import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObject;
+import com.github.maeda6uiui.mechtatel.core.physics.MttPhysicsSphere;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttComponent;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.collision.PhysicsCollisionEvent;
+import com.jme3.bullet.collision.PhysicsCollisionListener;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 
@@ -13,7 +16,7 @@ import org.joml.Vector3f;
  *
  * @author maeda6uiui
  */
-public class VaryingDistanceTrackingCamera {
+public class VaryingDistanceTrackingCamera implements PhysicsCollisionListener {
     private Camera camera;
 
     private MttComponent trackedComponent;
@@ -27,6 +30,7 @@ public class VaryingDistanceTrackingCamera {
     private float verticalAngle;
 
     private PhysicsSpace cameraPhysicsSpace;
+    private boolean cameraCollides;
 
     public VaryingDistanceTrackingCamera(Camera camera, MttComponent trackedComponent) {
         this.camera = camera;
@@ -42,6 +46,7 @@ public class VaryingDistanceTrackingCamera {
         verticalAngle = 0.0f;
 
         cameraPhysicsSpace = new PhysicsSpace(PhysicsSpace.BroadphaseType.DBVT);
+        cameraCollides = false;
     }
 
     public float getDesiredDistance() {
@@ -92,12 +97,17 @@ public class VaryingDistanceTrackingCamera {
         this.verticalAngle = verticalAngle;
     }
 
-    public void addCollisionCheckObject(PhysicalObject obj) {
-        cameraPhysicsSpace.addCollisionObject(obj.getBody());
+    public void addCollisionCheckObject(PhysicsCollisionObject pco) {
+        cameraPhysicsSpace.addCollisionObject(pco);
     }
 
-    public void removeCollisionCheckObject(PhysicalObject obj) {
-        cameraPhysicsSpace.removeCollisionObject(obj.getBody());
+    public void removeCollisionCheckObject(PhysicsCollisionObject pco) {
+        cameraPhysicsSpace.removeCollisionObject(pco);
+    }
+
+    @Override
+    public void collision(PhysicsCollisionEvent event) {
+        cameraCollides = true;
     }
 
     public void update() {
@@ -114,6 +124,17 @@ public class VaryingDistanceTrackingCamera {
                 break;
             }
 
+            var vecToCamera = xzAxis.rotateAxis(verticalAngle, rotAxis.x, rotAxis.y, rotAxis.z).mul(currentDistance);
+            var cameraPosition = new Vector3f(center).add(vecToCamera);
+
+            var cameraSphere = new MttPhysicsSphere(cameraRadius, 0.0f);
+            cameraSphere.setLocation(cameraPosition);
+
+            cameraPhysicsSpace.contactTest(cameraSphere.getBody(), this);
+            if (cameraCollides) {
+                break;
+            }
+
             currentDistance += distanceDelta;
         }
 
@@ -122,5 +143,7 @@ public class VaryingDistanceTrackingCamera {
 
         camera.setEye(cameraPosition);
         camera.setCenter(center);
+
+        cameraCollides = false;
     }
 }

@@ -14,24 +14,18 @@ import java.util.List;
 import static com.github.maeda6uiui.mechtatel.core.util.ClassConversionUtils.*;
 
 /**
- * Base class for physical objects
+ * Base class for physics objects
  *
  * @author maeda6uiui
  */
-public class PhysicalObject {
+public class MttPhysicsObject {
     private CollisionShape shape;
     private PhysicsRigidBody body;
 
     private List<MttComponent> components;
 
-    public PhysicalObject() {
+    public MttPhysicsObject() {
         components = new ArrayList<>();
-    }
-
-    public void cleanup() {
-        if (body != null) {
-            PhysicalObjects.get().ifPresent(v -> v.removeCollisionObject(body));
-        }
     }
 
     protected void setShape(CollisionShape shape) {
@@ -40,7 +34,6 @@ public class PhysicalObject {
 
     protected void setBody(PhysicsRigidBody body) {
         this.body = body;
-        PhysicalObjects.get().ifPresent(v -> v.addCollisionObject(body));
     }
 
     public CollisionShape getShape() {
@@ -77,6 +70,10 @@ public class PhysicalObject {
 
     public boolean removeComponent(MttComponent component) {
         return components.remove(component);
+    }
+
+    public List<MttComponent> getComponents() {
+        return components;
     }
 
     public void removeAllComponents() {

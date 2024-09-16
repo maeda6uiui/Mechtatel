@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core;
 
-import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObjects;
+import com.github.maeda6uiui.mechtatel.core.physics.MttDefaultPhysicsSpace;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.natives.IMttNativeLoader;
@@ -85,7 +85,7 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
             throw new RuntimeException(e);
         }
 
-        PhysicalObjects.init(PhysicsSpace.BroadphaseType.DBVT);
+        MttDefaultPhysicsSpace.init(PhysicsSpace.BroadphaseType.DBVT);
 
         MttVulkanInstance.create(settings.vulkanSettings, false);
         MttTexture.setImageFormat(settings.renderingSettings.imageFormat);
@@ -158,7 +158,7 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
                 }
 
                 //Update physics simulation
-                PhysicalObjects.get().ifPresent(v -> v.updatePhysicsSpace((float) elapsedTime));
+                MttDefaultPhysicsSpace.get().ifPresent(v -> v.updatePhysicsSpace((float) elapsedTime));
 
                 //Call update handler for each instance
                 instances.forEach(MttHeadlessInstance::update);

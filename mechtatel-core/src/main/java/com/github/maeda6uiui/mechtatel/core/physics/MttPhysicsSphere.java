@@ -5,12 +5,12 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Vector3f;
 
 /**
- * Physical sphere
+ * Physics sphere
  *
  * @author maeda6uiui
  */
-public class PhysicalSphere extends PhysicalObject {
-    public PhysicalSphere(float radius, float mass) {
+public class MttPhysicsSphere extends MttPhysicsObject {
+    public MttPhysicsSphere(float radius, float mass) {
         var shape = new SphereCollisionShape(radius);
         var body = new PhysicsRigidBody(shape, mass);
         body.setPhysicsLocation(new Vector3f(0.0f, 0.0f, 0.0f));

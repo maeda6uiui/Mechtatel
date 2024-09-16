@@ -5,12 +5,12 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Vector3f;
 
 /**
- * Physical capsule
+ * Physics capsule
  *
  * @author maeda6uiui
  */
-public class PhysicalCapsule extends PhysicalObject {
-    public PhysicalCapsule(float radius, float height, float mass) {
+public class MttPhysicsCapsule extends MttPhysicsObject {
+    public MttPhysicsCapsule(float radius, float height, float mass) {
         var shape = new CapsuleCollisionShape(radius, height);
         var body = new PhysicsRigidBody(shape, mass);
         body.setPhysicsLocation(new Vector3f(0.0f, 0.0f, 0.0f));

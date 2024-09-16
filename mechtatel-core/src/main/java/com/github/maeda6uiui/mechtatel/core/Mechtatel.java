@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core;
 
-import com.github.maeda6uiui.mechtatel.core.physics.PhysicalObjects;
+import com.github.maeda6uiui.mechtatel.core.physics.MttDefaultPhysicsSpace;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.natives.IMttNativeLoader;
@@ -92,7 +92,7 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
         }
         //==========
 
-        PhysicalObjects.init(PhysicsSpace.BroadphaseType.DBVT);
+        MttDefaultPhysicsSpace.init(PhysicsSpace.BroadphaseType.DBVT);
 
         MttVulkanInstance.create(settings.vulkanSettings, false);
         MttTexture.setImageFormat(settings.renderingSettings.imageFormat);
@@ -165,7 +165,7 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
                 }
 
                 //Update physics simulation
-                PhysicalObjects.get().ifPresent(v -> v.updatePhysicsSpace((float) elapsedTime));
+                MttDefaultPhysicsSpace.get().ifPresent(v -> v.updatePhysicsSpace((float) elapsedTime));
 
                 //Call update handler for each window
                 windows.forEach(MttWindow::update);

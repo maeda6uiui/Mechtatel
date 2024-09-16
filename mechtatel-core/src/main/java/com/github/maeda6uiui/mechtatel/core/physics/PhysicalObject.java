@@ -28,19 +28,12 @@ public class PhysicalObject {
         components = new ArrayList<>();
     }
 
-    public void cleanup() {
-        if (body != null) {
-            PhysicalObjects.get().ifPresent(v -> v.removeCollisionObject(body));
-        }
-    }
-
     protected void setShape(CollisionShape shape) {
         this.shape = shape;
     }
 
     protected void setBody(PhysicsRigidBody body) {
         this.body = body;
-        PhysicalObjects.get().ifPresent(v -> v.addCollisionObject(body));
     }
 
     public CollisionShape getShape() {

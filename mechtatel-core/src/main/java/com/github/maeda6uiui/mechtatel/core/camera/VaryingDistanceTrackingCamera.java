@@ -132,7 +132,7 @@ public class VaryingDistanceTrackingCamera implements PhysicsCollisionListener {
                 break;
             }
 
-            var vecToCamera = xzAxis.rotateAxis(verticalAngle, rotAxis.x, rotAxis.y, rotAxis.z).mul(currentDistance);
+            var vecToCamera = new Vector3f(xzAxis).rotateAxis(verticalAngle, rotAxis.x, rotAxis.y, rotAxis.z).mul(currentDistance);
             var cameraPosition = new Vector3f(center).add(vecToCamera);
 
             var cameraSphere = new MttPhysicsSphere(cameraRadius, 0.0f);
@@ -146,7 +146,7 @@ public class VaryingDistanceTrackingCamera implements PhysicsCollisionListener {
             currentDistance += distanceDelta;
         }
 
-        var vecToCamera = xzAxis.rotateAxis(verticalAngle, rotAxis.x, rotAxis.y, rotAxis.z).mul(currentDistance);
+        var vecToCamera = new Vector3f(xzAxis).rotateAxis(verticalAngle, rotAxis.x, rotAxis.y, rotAxis.z).mul(currentDistance);
         var cameraPosition = new Vector3f(center).add(vecToCamera);
 
         camera.setEye(cameraPosition);

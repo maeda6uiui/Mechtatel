@@ -66,7 +66,7 @@ public class TrackingCamera {
 
         var xzAxis = new Vector3f(1.0f, 0.0f, 0.0f).rotateY(horizontalAngle);
         var rotAxis = new Vector3f(xzAxis).cross(new Vector3f(0.0f, 1.0f, 0.0f));
-        var vecToCamera = xzAxis.rotateAxis(verticalAngle, rotAxis.x, rotAxis.y, rotAxis.z).mul(distance);
+        var vecToCamera = new Vector3f(xzAxis).rotateAxis(verticalAngle, rotAxis.x, rotAxis.y, rotAxis.z).mul(distance);
         var cameraPosition = new Vector3f(center).add(vecToCamera);
 
         camera.setEye(cameraPosition);

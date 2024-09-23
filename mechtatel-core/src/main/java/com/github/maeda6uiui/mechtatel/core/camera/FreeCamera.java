@@ -13,8 +13,8 @@ public class FreeCamera {
     private float translateDelta;
     private float rotateDelta;
 
-    private final float MIN_ROTATE_V = (float) Math.toRadians(-80.0f);
-    private final float MAX_ROTATE_V = (float) Math.toRadians(80.0f);
+    private float minRotateV;
+    private float maxRotateV;
 
     private float rotateH;
     private float rotateV;
@@ -24,6 +24,9 @@ public class FreeCamera {
 
         translateDelta = 0.1f;
         rotateDelta = 0.001f;
+
+        minRotateV = (float) Math.toRadians(-80.0f);
+        maxRotateV = (float) Math.toRadians(80.0f);
 
         rotateH = this.calcRotateH();
         rotateV = this.calcRotateV();
@@ -53,6 +56,10 @@ public class FreeCamera {
         return th;
     }
 
+    public Camera getCamera() {
+        return camera;
+    }
+
     public void setTranslateDelta(float translateDelta) {
         this.translateDelta = translateDelta;
     }
@@ -67,6 +74,22 @@ public class FreeCamera {
 
     public float getRotateDelta() {
         return rotateDelta;
+    }
+
+    public float getMinRotateV() {
+        return minRotateV;
+    }
+
+    public void setMinRotateV(float minRotateV) {
+        this.minRotateV = minRotateV;
+    }
+
+    public float getMaxRotateV() {
+        return maxRotateV;
+    }
+
+    public void setMaxRotateV(float maxRotateV) {
+        this.maxRotateV = maxRotateV;
     }
 
     public void translate(int keyFront, int keyBack, int keyLeft, int keyRight) {
@@ -110,10 +133,10 @@ public class FreeCamera {
 
         rotateV += keyTop * rotateDelta;
         rotateV -= keyBottom * rotateDelta;
-        if (rotateV < MIN_ROTATE_V) {
-            rotateV = MIN_ROTATE_V;
-        } else if (rotateV > MAX_ROTATE_V) {
-            rotateV = MAX_ROTATE_V;
+        if (rotateV < minRotateV) {
+            rotateV = minRotateV;
+        } else if (rotateV > maxRotateV) {
+            rotateV = maxRotateV;
         }
 
         var lookAt = new Vector3f();

@@ -61,7 +61,7 @@ public class VaryingDistanceTrackingCameraTest extends Mechtatel {
 
         sphere = defaultScreen.createSphere(
                 new Vector3f(0.0f), 1.0f, 16, 16, new Vector4f(1.0f));
-        spherePos = new Vector3f(10.0f, 10.0f, 10.0f);
+        spherePos = new Vector3f(5.0f, 1.0f, 5.0f);
         sphere.translate(spherePos);
 
         sphereTranslationSpeed = 0.05f;
@@ -69,7 +69,7 @@ public class VaryingDistanceTrackingCameraTest extends Mechtatel {
         camera = new VaryingDistanceTrackingCamera(defaultScreen.getCamera(), sphere);
         camera.setDesiredDistance(5.0f);
         camera.setMinDistance(1.5f);
-        camera.setDistanceDelta(0.2f);
+        camera.setDistanceDelta(0.1f);
         horizontalAngle = 0.0f;
         verticalAngle = (float) Math.toRadians(45.0f);
         rotationDelta = 0.01f;
@@ -102,7 +102,9 @@ public class VaryingDistanceTrackingCameraTest extends Mechtatel {
         Camera innerCamera = camera.getCamera();
         Vector3f cameraPos = innerCamera.getEye();
         Vector3f cameraTarget = innerCamera.getCenter();
-        Vector3f cameraDirection = new Vector3f(cameraTarget).sub(cameraPos).normalize();
+        Vector3f cameraDirection = new Vector3f(cameraTarget).sub(cameraPos);
+        cameraDirection.y = 0.0f;
+        cameraDirection = cameraDirection.normalize();
         var rightVec = new Vector3f(cameraDirection).cross(new Vector3f(0.0f, 1.0f, 0.0f));
 
         var sphereTranslation = new Vector3f(0.0f);

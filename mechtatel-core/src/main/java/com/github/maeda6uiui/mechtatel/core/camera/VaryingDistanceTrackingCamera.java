@@ -39,7 +39,7 @@ public class VaryingDistanceTrackingCamera implements PhysicsCollisionListener {
 
         desiredDistance = 3.0f;
         minDistance = 0.3f;
-        distanceDelta = 0.3f;
+        distanceDelta = 0.1f;
         cameraRadius = 0.5f;
 
         horizontalAngle = 0.0f;

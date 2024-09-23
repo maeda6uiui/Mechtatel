@@ -49,6 +49,14 @@ public class VaryingDistanceTrackingCamera implements PhysicsCollisionListener {
         cameraCollides = false;
     }
 
+    public Camera getCamera() {
+        return camera;
+    }
+
+    public MttComponent getTrackedComponent() {
+        return trackedComponent;
+    }
+
     public float getDesiredDistance() {
         return desiredDistance;
     }

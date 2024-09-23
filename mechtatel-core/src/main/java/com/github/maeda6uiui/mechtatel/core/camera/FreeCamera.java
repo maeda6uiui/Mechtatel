@@ -56,6 +56,10 @@ public class FreeCamera {
         return th;
     }
 
+    public Camera getCamera() {
+        return camera;
+    }
+
     public void setTranslateDelta(float translateDelta) {
         this.translateDelta = translateDelta;
     }

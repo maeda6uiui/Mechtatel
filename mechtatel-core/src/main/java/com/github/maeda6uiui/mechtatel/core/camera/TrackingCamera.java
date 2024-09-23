@@ -28,6 +28,14 @@ public class TrackingCamera {
         verticalAngle = 0.0f;
     }
 
+    public Camera getCamera() {
+        return camera;
+    }
+
+    public MttComponent getTrackedComponent() {
+        return trackedComponent;
+    }
+
     public void setDistance(float distance) {
         this.distance = distance;
     }

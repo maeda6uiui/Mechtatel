@@ -86,6 +86,10 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ## Progress report
 
+### 2024-09-23
+
+Implemented tracking camera to provide third-person view for the target character.
+
 ### 2024-08-26
 
 `v0.0.1-alpha0` fails to start because it fails to load native libraries and shaders from inside a JAR.

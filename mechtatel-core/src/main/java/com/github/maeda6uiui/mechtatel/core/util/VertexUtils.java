@@ -85,6 +85,37 @@ public class VertexUtils {
         return indices;
     }
 
+    public static List<Integer> createSphereTriangulateIndices(int numVDivs, int numHDivs) {
+        var indices = new ArrayList<Integer>();
+
+        //North Pole
+        for (int i = 1; i <= numHDivs; i++) {
+            indices.add(0);
+            indices.add(i);
+            indices.add((i + 1) % numHDivs);
+        }
+        //Middle
+        for (int i = 0; i < numVDivs - 2; i++) {
+            for (int j = 0; j < numHDivs; j++) {
+                indices.add(1 + i * numHDivs + j);
+                indices.add(1 + (i + 1) * numHDivs + j);
+                indices.add(1 + ((i + 1) * numHDivs + j + 1) % numHDivs);
+
+                indices.add(1 + ((i + 1) * numHDivs + j + 1) % numHDivs);
+                indices.add(1 + (i * numHDivs + j + 1) % numHDivs);
+                indices.add(1 + i * numHDivs + j);
+            }
+        }
+        //South Pole
+        for (int i = 0; i < numHDivs; i++) {
+            indices.add(1 + (numVDivs - 2) * numHDivs + i);
+            indices.add(1 + (numVDivs - 1) * numHDivs);
+            indices.add(1 + ((numVDivs - 2) * numHDivs + i + 1) % numHDivs);
+        }
+
+        return indices;
+    }
+
     public static List<MttPrimitiveVertex> createCapsuleVertices(
             Vector3fc center,
             float length,

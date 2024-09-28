@@ -8,6 +8,7 @@ import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
+import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,7 @@ public class ParallelLightTest extends Mechtatel {
 
     private MttScreen mainScreen;
     private MttModel cube;
+    private MttModel dupCube;
     private FreeCamera camera;
 
     @Override
@@ -55,6 +57,9 @@ public class ParallelLightTest extends Mechtatel {
             return;
         }
 
+        dupCube = mainScreen.duplicateModel(cube);
+        dupCube.translate(new Vector3f(3.0f, 0.0f, 0.0f));
+
         camera = new FreeCamera(mainScreen.getCamera());
     }
 
@@ -74,6 +79,7 @@ public class ParallelLightTest extends Mechtatel {
         );
 
         cube.rotY(0.01f);
+        dupCube.rotY(0.01f);
 
         mainScreen.draw();
         window.present(mainScreen);

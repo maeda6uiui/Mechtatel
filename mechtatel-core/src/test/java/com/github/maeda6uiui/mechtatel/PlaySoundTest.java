@@ -69,7 +69,7 @@ public class PlaySoundTest extends Mechtatel {
 
         soundSource.play();
 
-        defaultScreen.createSphere(new Vector3f(0.0f), 1.0f, 16, 16, new Vector4f(1.0f), false);
+        defaultScreen.createSphere(1.0f, 16, 16, new Vector4f(1.0f), false);
         defaultScreen.createLineSet().addPositiveAxes(10.0f).createBuffer();
     }
 

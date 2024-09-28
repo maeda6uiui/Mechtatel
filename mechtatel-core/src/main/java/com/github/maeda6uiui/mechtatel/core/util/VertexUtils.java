@@ -2,7 +2,6 @@ package com.github.maeda6uiui.mechtatel.core.util;
 
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttPrimitiveVertex;
 import org.joml.Vector3f;
-import org.joml.Vector3fc;
 import org.joml.Vector4fc;
 
 import java.util.ArrayList;
@@ -49,7 +48,6 @@ public class VertexUtils {
     }
 
     public static List<MttPrimitiveVertex> createSphereVertices(
-            Vector3fc center,
             float radius,
             int numVDivs,
             int numHDivs,
@@ -82,15 +80,9 @@ public class VertexUtils {
 
         List<Vector3f> normals = calculateSphereAndCapsuleNormals(positions, numHDivs, numVDivs);
 
-        var transPositions = new ArrayList<Vector3f>();
-        for (int i = 0; i < positions.size(); i++) {
-            var transPosition = new Vector3f(positions.get(i)).add(center);
-            transPositions.add(transPosition);
-        }
-
         var vertices = new ArrayList<MttPrimitiveVertex>();
         for (int i = 0; i < positions.size(); i++) {
-            var vertex = new MttPrimitiveVertex(transPositions.get(i), color, normals.get(i));
+            var vertex = new MttPrimitiveVertex(positions.get(i), color, normals.get(i));
             vertices.add(vertex);
         }
 
@@ -98,7 +90,6 @@ public class VertexUtils {
     }
 
     public static List<MttPrimitiveVertex> createCapsuleVertices(
-            Vector3fc center,
             float length,
             float radius,
             int numVDivs,
@@ -139,15 +130,9 @@ public class VertexUtils {
 
         List<Vector3f> normals = calculateSphereAndCapsuleNormals(positions, numHDivs, numVDivs);
 
-        var transPositions = new ArrayList<Vector3f>();
-        for (int i = 0; i < positions.size(); i++) {
-            var transPosition = new Vector3f(positions.get(i)).add(center);
-            transPositions.add(transPosition);
-        }
-
         var vertices = new ArrayList<MttPrimitiveVertex>();
         for (int i = 0; i < positions.size(); i++) {
-            var vertex = new MttPrimitiveVertex(transPositions.get(i), color, normals.get(i));
+            var vertex = new MttPrimitiveVertex(positions.get(i), color, normals.get(i));
             vertices.add(vertex);
         }
 

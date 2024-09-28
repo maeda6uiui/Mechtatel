@@ -5,7 +5,6 @@ import com.github.maeda6uiui.mechtatel.core.screen.component.MttPrimitiveVertex;
 import com.github.maeda6uiui.mechtatel.core.util.VertexUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
-import org.joml.Vector3fc;
 import org.joml.Vector4fc;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
@@ -60,7 +59,6 @@ public class VkMttSphere extends VkMttComponent {
             long commandPool,
             VkQueue graphicsQueue,
             VkMttScreen screen,
-            Vector3fc center,
             float radius,
             int numVDivs,
             int numHDivs,
@@ -70,7 +68,7 @@ public class VkMttSphere extends VkMttComponent {
 
         this.device = device;
 
-        List<MttPrimitiveVertex> vertices = VertexUtils.createSphereVertices(center, radius, numVDivs, numHDivs, color);
+        List<MttPrimitiveVertex> vertices = VertexUtils.createSphereVertices(radius, numVDivs, numHDivs, color);
 
         List<Integer> indices;
         if (fill) {

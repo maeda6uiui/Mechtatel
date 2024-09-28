@@ -39,6 +39,8 @@ public class SphereAndCapsuleTest extends Mechtatel {
     private MttScreen mainScreen;
     private FreeCamera camera;
 
+    private MttSphere sphere;
+    private MttCapsule capsule;
     private MttSphere filledSphere;
     private MttCapsule filledCapsule;
     private MttModel cube;
@@ -55,29 +57,44 @@ public class SphereAndCapsuleTest extends Mechtatel {
 
         mainScreen.createLineSet().addPositiveAxes(10.0f).createBuffer();
 
-        filledSphere = mainScreen.createSphere(
-                new Vector3f(0.0f),
+        sphere = mainScreen.createSphere(
+                1.0f,
+                16,
+                16,
+                new Vector4f(1.0f, 0.0f, 0.0f, 1.0f),
+                false
+        );
+        sphere.translate(new Vector3f(0.0f, 0.0f, 3.0f));
+        capsule = mainScreen.createCapsule(
+                1.0f,
                 1.0f,
                 16,
                 16,
                 new Vector4f(0.0f, 1.0f, 0.0f, 1.0f),
-                true
+                false
         );
-        filledSphere.translate(new Vector3f(3.0f, 0.0f, 0.0f));
-        filledCapsule = mainScreen.createCapsule(
-                new Vector3f(0.0f),
-                1.0f,
+        capsule.translate(new Vector3f(0.0f, 0.0f, 6.0f));
+        filledSphere = mainScreen.createSphere(
                 1.0f,
                 16,
                 16,
                 new Vector4f(0.0f, 0.0f, 1.0f, 1.0f),
                 true
         );
+        filledSphere.translate(new Vector3f(3.0f, 0.0f, 0.0f));
+        filledCapsule = mainScreen.createCapsule(
+                1.0f,
+                1.0f,
+                16,
+                16,
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
+                true
+        );
         filledCapsule.translate(new Vector3f(6.0f, 0.0f, 0.0f));
 
         try {
             cube = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
-            cube.translate(new Vector3f(9.0f, 0.0f, 0.0f));
+            cube.translate(new Vector3f(5.0f, 0.0f, 5.0f));
         } catch (IOException e) {
             logger.error("Error", e);
             window.close();
@@ -103,6 +120,7 @@ public class SphereAndCapsuleTest extends Mechtatel {
                 window.getKeyboardPressingCount(KeyCode.RIGHT)
         );
 
+        capsule.rotZ(0.01f);
         filledCapsule.rotX(0.01f);
         cube.rotY(0.01f);
 

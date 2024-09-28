@@ -10,6 +10,7 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingPropert
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttSphere;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.slf4j.Logger;
@@ -66,11 +67,12 @@ public class ScreenshotTest extends Mechtatel {
             return;
         }
 
-        mainScreen.createSphere(
-                new Vector3f(5.0f, 2.0f, 0.0f),
+        MttSphere sphere = mainScreen.createSphere(
                 2.0f, 32, 32,
-                new Vector4f(1.0f, 0.0f, 1.0f, 1.0f)
+                new Vector4f(1.0f, 0.0f, 1.0f, 1.0f),
+                false
         );
+        sphere.translate(new Vector3f(5.0f, 2.0f, 0.0f));
     }
 
     @Override

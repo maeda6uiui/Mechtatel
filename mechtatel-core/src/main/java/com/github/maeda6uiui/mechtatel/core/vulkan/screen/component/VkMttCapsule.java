@@ -5,7 +5,6 @@ import com.github.maeda6uiui.mechtatel.core.screen.component.MttPrimitiveVertex;
 import com.github.maeda6uiui.mechtatel.core.util.VertexUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
-import org.joml.Vector3fc;
 import org.joml.Vector4fc;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkCommandBuffer;
@@ -60,19 +59,24 @@ public class VkMttCapsule extends VkMttComponent {
             long commandPool,
             VkQueue graphicsQueue,
             VkMttScreen screen,
-            Vector3fc center,
             float length,
             float radius,
             int numVDivs,
             int numHDivs,
-            Vector4fc color) {
-        super(mttComponent, screen, "primitive");
+            Vector4fc color,
+            boolean fill) {
+        super(mttComponent, screen, fill ? "primitive_fill" : "primitive");
 
         this.device = device;
 
-        List<MttPrimitiveVertex> vertices = VertexUtils.createCapsuleVertices(center, length, radius, numVDivs, numHDivs, color);
-        List<Integer> indices = VertexUtils.createCapsuleIndices(numVDivs, numHDivs);
+        List<MttPrimitiveVertex> vertices = VertexUtils.createCapsuleVertices(length, radius, numVDivs, numHDivs, color);
 
+        List<Integer> indices;
+        if (fill) {
+            indices = VertexUtils.createSphereAndCapsuleTriangulateIndices(numVDivs, numHDivs);
+        } else {
+            indices = VertexUtils.createSphereAndCapsuleIndices(numVDivs, numHDivs);
+        }
         numIndices = indices.size();
 
         this.createBuffers(commandPool, graphicsQueue, vertices, indices);

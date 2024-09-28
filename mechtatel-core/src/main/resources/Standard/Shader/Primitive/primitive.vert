@@ -27,7 +27,7 @@ void main(){
     }else{
         gl_Position=pc.model*vec4(inPosition,1.0);
     }
-    fragPosition=inPosition;
+    fragPosition=(pc.model*vec4(inPosition,1.0)).xyz;
     fragColor=inColor;
-    fragNormal=inNormal;
+    fragNormal=(pc.model*vec4(inNormal,0.0)).xyz;
 }

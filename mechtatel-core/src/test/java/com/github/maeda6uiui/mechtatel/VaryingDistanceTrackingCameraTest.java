@@ -59,8 +59,7 @@ public class VaryingDistanceTrackingCameraTest extends Mechtatel {
 
         defaultScreen.createLineSet().addPositiveAxes(10.0f).createBuffer();
 
-        sphere = defaultScreen.createSphere(
-                new Vector3f(0.0f), 1.0f, 16, 16, new Vector4f(1.0f));
+        sphere = defaultScreen.createSphere(1.0f, 16, 16, new Vector4f(1.0f), false);
         spherePos = new Vector3f(5.0f, 1.0f, 5.0f);
         sphere.translate(spherePos);
 

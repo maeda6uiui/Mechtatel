@@ -18,7 +18,6 @@ public class VertexUtils {
 
         //North Pole
         normals.add(new Vector3f(0.0f, 1.0f, 0.0f));
-        //Middle
         for (int i = 1; i <= numHDivs; i++) {
             Vector3f thisPos = positions.get(i);
             Vector3f upPos = positions.get(0);
@@ -29,7 +28,8 @@ public class VertexUtils {
             var normal = new Vector3f(upVec).cross(leftVec);
             normals.add(normal);
         }
-        for (int i = 0; i < numVDivs - 2; i++) {
+        //Middle
+        for (int i = 0; i < numVDivs - 3; i++) {
             for (int j = 1; j <= numHDivs; j++) {
                 Vector3f thisPos = positions.get((i + 1) * numHDivs + j);
                 Vector3f upPos = positions.get(i * numHDivs + j);
@@ -42,6 +42,16 @@ public class VertexUtils {
             }
         }
         //South Pole
+        for (int i = 1; i <= numHDivs; i++) {
+            Vector3f thisPos = positions.get((numVDivs - 2) * numHDivs + i);
+            Vector3f downPos = positions.get((numVDivs - 1) * numHDivs + 1);
+            Vector3f leftPos = positions.get((numVDivs - 2) * numHDivs + i % numHDivs + 1);
+
+            var upVec = new Vector3f(thisPos).sub(downPos).normalize();
+            var leftVec = new Vector3f(leftPos).sub(thisPos).normalize();
+            var normal = new Vector3f(upVec).cross(leftVec);
+            normals.add(normal);
+        }
         normals.add(new Vector3f(0.0f, -1.0f, 0.0f));
 
         return normals;

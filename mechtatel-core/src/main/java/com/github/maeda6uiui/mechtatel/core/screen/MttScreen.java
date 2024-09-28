@@ -520,8 +520,9 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         return new MttLineSet(vulkanImplCommon, this);
     }
 
-    public MttSphere createSphere(Vector3fc center, float radius, int numVDivs, int numHDivs, Vector4fc color) {
-        return new MttSphere(vulkanImplCommon, this, center, radius, numVDivs, numHDivs, color);
+    public MttSphere createSphere(
+            Vector3fc center, float radius, int numVDivs, int numHDivs, Vector4fc color, boolean fill) {
+        return new MttSphere(vulkanImplCommon, this, center, radius, numVDivs, numHDivs, color, fill);
     }
 
     public MttCapsule createCapsule(

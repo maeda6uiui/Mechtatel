@@ -69,7 +69,8 @@ public class ScreenshotTest extends Mechtatel {
         mainScreen.createSphere(
                 new Vector3f(5.0f, 2.0f, 0.0f),
                 2.0f, 32, 32,
-                new Vector4f(1.0f, 0.0f, 1.0f, 1.0f)
+                new Vector4f(1.0f, 0.0f, 1.0f, 1.0f),
+                false
         );
     }
 

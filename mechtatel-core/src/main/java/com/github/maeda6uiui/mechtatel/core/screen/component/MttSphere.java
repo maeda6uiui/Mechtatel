@@ -21,7 +21,8 @@ public class MttSphere extends MttComponent {
             float radius,
             int numVDivs,
             int numHDivs,
-            Vector4fc color) {
+            Vector4fc color,
+            boolean fill) {
         super(
                 screen,
                 new MttComponentCreateInfo()
@@ -38,7 +39,7 @@ public class MttSphere extends MttComponent {
                 vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 screen.getVulkanScreen(),
-                center, radius, numVDivs, numHDivs, color
+                center, radius, numVDivs, numHDivs, color, fill
         );
         this.associateVulkanComponents(vkSphere);
     }

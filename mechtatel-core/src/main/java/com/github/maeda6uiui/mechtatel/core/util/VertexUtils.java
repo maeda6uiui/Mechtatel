@@ -91,26 +91,26 @@ public class VertexUtils {
         //North Pole
         for (int i = 1; i <= numHDivs; i++) {
             indices.add(0);
+            indices.add(i % numHDivs + 1);
             indices.add(i);
-            indices.add((i + 1) % numHDivs);
         }
         //Middle
         for (int i = 0; i < numVDivs - 2; i++) {
-            for (int j = 0; j < numHDivs; j++) {
-                indices.add(1 + i * numHDivs + j);
-                indices.add(1 + (i + 1) * numHDivs + j);
-                indices.add(1 + ((i + 1) * numHDivs + j + 1) % numHDivs);
+            for (int j = 1; j <= numHDivs; j++) {
+                indices.add(i * numHDivs + j % numHDivs + 1);
+                indices.add((i + 1) * numHDivs + j % numHDivs + 1);
+                indices.add((i + 1) * numHDivs + j);
 
-                indices.add(1 + ((i + 1) * numHDivs + j + 1) % numHDivs);
-                indices.add(1 + (i * numHDivs + j + 1) % numHDivs);
-                indices.add(1 + i * numHDivs + j);
+                indices.add((i + 1) * numHDivs + j);
+                indices.add(i * numHDivs + j);
+                indices.add(i * numHDivs + j % numHDivs + 1);
             }
         }
         //South Pole
-        for (int i = 0; i < numHDivs; i++) {
-            indices.add(1 + (numVDivs - 2) * numHDivs + i);
-            indices.add(1 + (numVDivs - 1) * numHDivs);
-            indices.add(1 + ((numVDivs - 2) * numHDivs + i + 1) % numHDivs);
+        for (int i = 1; i <= numHDivs; i++) {
+            indices.add((numVDivs - 1) * numHDivs + 1);
+            indices.add((numVDivs - 2) * numHDivs + i);
+            indices.add((numVDivs - 2) * numHDivs + i % numHDivs + 1);
         }
 
         return indices;

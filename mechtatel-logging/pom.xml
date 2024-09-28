@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel</artifactId>
-        <version>0.0.1-alpha2</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>mechtatel-logging</artifactId>

@@ -30,7 +30,7 @@ layout(location=0) out vec4 fragColor;
 layout(location=1) out vec2 fragTexCoords;
 
 void process3DDrawing(){
-    vec4 initPos=vec4(0.0,0.0,0.0,0.0);
+    vec4 accumPos=vec4(0.0,0.0,0.0,0.0);
 
     int count=0;
     for(int i=0;i<min(MAX_NUM_WEIGHTS,4);i++){
@@ -39,17 +39,17 @@ void process3DDrawing(){
 
         if(boneIndex>=0){
             vec4 tmpPos=animation.boneMatrices[boneIndex]*vec4(inPosition,1.0);
-            initPos+=weight*tmpPos;
+            accumPos+=weight*tmpPos;
 
             count++;
         }
     }
 
     if(count==0){
-        initPos=vec4(inPosition,1.0);
+        accumPos=vec4(inPosition,1.0);
     }
 
-    gl_Position=camera.proj*camera.view*pc.model*vec4(initPos.xyz,1.0);
+    gl_Position=camera.proj*camera.view*pc.model*vec4(accumPos.xyz,1.0);
 }
 
 void process2DDrawing(){

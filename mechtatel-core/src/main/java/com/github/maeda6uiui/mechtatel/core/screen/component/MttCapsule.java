@@ -22,7 +22,8 @@ public class MttCapsule extends MttComponent {
             float radius,
             int numVDivs,
             int numHDivs,
-            Vector4fc color) {
+            Vector4fc color,
+            boolean fill) {
         super(
                 screen,
                 new MttComponentCreateInfo()
@@ -39,7 +40,7 @@ public class MttCapsule extends MttComponent {
                 vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
                 screen.getVulkanScreen(),
-                center, length, radius, numVDivs, numHDivs, color
+                center, length, radius, numVDivs, numHDivs, color, fill
         );
         this.associateVulkanComponents(vkCapsule);
     }

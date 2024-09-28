@@ -526,8 +526,8 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     public MttCapsule createCapsule(
-            Vector3fc center, float length, float radius, int numVDivs, int numHDivs, Vector4fc color) {
-        return new MttCapsule(vulkanImplCommon, this, center, length, radius, numVDivs, numHDivs, color);
+            Vector3fc center, float length, float radius, int numVDivs, int numHDivs, Vector4fc color, boolean fill) {
+        return new MttCapsule(vulkanImplCommon, this, center, length, radius, numVDivs, numHDivs, color, fill);
     }
 
     public MttLine2D createLine2D(MttVertex2D p1, MttVertex2D p2, float z) {

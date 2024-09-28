@@ -65,14 +65,20 @@ public class VkMttCapsule extends VkMttComponent {
             float radius,
             int numVDivs,
             int numHDivs,
-            Vector4fc color) {
-        super(mttComponent, screen, "primitive");
+            Vector4fc color,
+            boolean fill) {
+        super(mttComponent, screen, fill ? "primitive_fill" : "primitive");
 
         this.device = device;
 
         List<MttPrimitiveVertex> vertices = VertexUtils.createCapsuleVertices(center, length, radius, numVDivs, numHDivs, color);
-        List<Integer> indices = VertexUtils.createSphereAndCapsuleIndices(numVDivs, numHDivs);
 
+        List<Integer> indices;
+        if (fill) {
+            indices = VertexUtils.createSphereAndCapsuleTriangulateIndices(numVDivs, numHDivs);
+        } else {
+            indices = VertexUtils.createSphereAndCapsuleIndices(numVDivs, numHDivs);
+        }
         numIndices = indices.size();
 
         this.createBuffers(commandPool, graphicsQueue, vertices, indices);

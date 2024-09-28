@@ -32,12 +32,12 @@ God knows if I could complete this work by the time you'd think I'm no more...
     <dependency>
         <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel-core</artifactId>
-        <version>0.0.1-alpha1</version>
+        <version>0.0.1-alpha2</version>
     </dependency>
     <dependency>
         <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel-logging</artifactId>
-        <version>0.0.1-alpha1</version>
+        <version>0.0.1-alpha2</version>
     </dependency>
 </dependencies>
 ```
@@ -85,6 +85,10 @@ You can overwrite it or use another logging implementation at your discretion.
 - [3D Game Development with LWJGL 3](https://ahbejarano.gitbook.io/lwjglgamedev/)
 
 ## Progress report
+
+### 2024-09-29
+
+Released `v0.0.1-alpha2`.
 
 ### 2024-09-23
 

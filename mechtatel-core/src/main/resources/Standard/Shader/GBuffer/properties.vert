@@ -30,8 +30,8 @@ layout(location=0) out vec3 fragPosition;
 layout(location=1) out vec3 fragNormal;
 
 void process3DDrawing(){
-    vec4 initPos=vec4(0.0,0.0,0.0,0.0);
-    vec4 initNormal=vec4(0.0,0.0,0.0,0.0);
+    vec4 accumPos=vec4(0.0,0.0,0.0,0.0);
+    vec4 accumNormal=vec4(0.0,0.0,0.0,0.0);
 
     int count=0;
     for(int i=0;i<min(MAX_NUM_WEIGHTS,4);i++){
@@ -40,24 +40,24 @@ void process3DDrawing(){
         
         if(boneIndex>=0){
             vec4 tmpPos=animation.boneMatrices[boneIndex]*vec4(inPosition,1.0);
-            initPos+=weight*tmpPos;
+            accumPos+=weight*tmpPos;
 
             vec4 tmpNormal=animation.boneMatrices[boneIndex]*vec4(inNormal,0.0);
-            initNormal+=weight*tmpNormal;
+            accumNormal+=weight*tmpNormal;
 
             count++;
         }
     }
 
     if(count==0){
-        initPos=vec4(inPosition,1.0);
-        initNormal=vec4(inNormal,0.0);
+        accumPos=vec4(inPosition,1.0);
+        accumNormal=vec4(inNormal,0.0);
     }
 
-    gl_Position=camera.proj*camera.view*pc.model*vec4(initPos.xyz,1.0);
+    gl_Position=camera.proj*camera.view*pc.model*vec4(accumPos.xyz,1.0);
 
-    fragPosition=(pc.model*vec4(initPos.xyz,1.0)).xyz;
-    fragNormal=initNormal.xyz;
+    fragPosition=(pc.model*vec4(accumPos.xyz,1.0)).xyz;
+    fragNormal=(pc.model*vec4(accumNormal.xyz,1.0)).xyz;
 }
 
 void process2DDrawing(){

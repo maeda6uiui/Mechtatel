@@ -57,7 +57,7 @@ void process3DDrawing(){
     gl_Position=camera.proj*camera.view*pc.model*vec4(accumPos.xyz,1.0);
 
     fragPosition=(pc.model*vec4(accumPos.xyz,1.0)).xyz;
-    fragNormal=(pc.model*vec4(accumNormal.xyz,1.0)).xyz;
+    fragNormal=(pc.model*vec4(accumNormal.xyz,0.0)).xyz;
 }
 
 void process2DDrawing(){

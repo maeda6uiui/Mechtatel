@@ -6,7 +6,6 @@ import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttCapsule;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
@@ -39,8 +38,6 @@ public class SphereAndCapsuleTest extends Mechtatel {
 
     private MttScreen mainScreen;
     private FreeCamera camera;
-    private ParallelLight light;
-    private Vector3f lightPos;
 
     private MttSphere sphere;
     private MttCapsule capsule;
@@ -56,9 +53,7 @@ public class SphereAndCapsuleTest extends Mechtatel {
         );
 
         PostProcessingProperties ppProp = mainScreen.getPostProcessingProperties();
-        light = ppProp.createParallelLight();
-        lightPos = new Vector3f(50.0f, 50.0f, 50.0f);
-        light.setPosition(lightPos);
+        ppProp.createParallelLight();
 
         mainScreen.createLineSet().addPositiveAxes(10.0f).createBuffer();
 
@@ -125,12 +120,11 @@ public class SphereAndCapsuleTest extends Mechtatel {
                 window.getKeyboardPressingCount(KeyCode.RIGHT)
         );
 
+        sphere.rotY(0.01f);
+        filledSphere.rotY(0.01f);
         capsule.rotZ(0.01f);
         filledCapsule.rotX(0.01f);
         cube.rotY(0.01f);
-
-        lightPos = lightPos.rotateY(0.01f);
-        light.setPosition(lightPos);
 
         mainScreen.draw();
         window.present(mainScreen);

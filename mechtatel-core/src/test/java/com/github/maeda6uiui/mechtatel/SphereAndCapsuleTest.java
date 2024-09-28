@@ -40,7 +40,7 @@ public class SphereAndCapsuleTest extends Mechtatel {
                 1.0f,
                 16,
                 16,
-                new Vector4f(1.0f),
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
                 false
         );
         defaultScreen.createCapsule(
@@ -49,14 +49,24 @@ public class SphereAndCapsuleTest extends Mechtatel {
                 1.0f,
                 16,
                 16,
-                new Vector4f(1.0f)
+                new Vector4f(1.0f, 0.0f, 0.0f, 1.0f),
+                false
         );
         defaultScreen.createSphere(
                 new Vector3f(6.0f, 0.0f, 0.0f),
                 1.0f,
                 16,
                 16,
-                new Vector4f(1.0f),
+                new Vector4f(0.0f, 1.0f, 0.0f, 1.0f),
+                true
+        );
+        defaultScreen.createCapsule(
+                new Vector3f(9.0f, 0.0f, 0.0f),
+                1.0f,
+                1.0f,
+                16,
+                16,
+                new Vector4f(0.0f, 0.0f, 1.0f, 1.0f),
                 true
         );
 

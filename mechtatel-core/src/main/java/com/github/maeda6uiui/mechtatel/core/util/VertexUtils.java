@@ -55,67 +55,6 @@ public class VertexUtils {
         return vertices;
     }
 
-    public static List<Integer> createSphereIndices(int numVDivs, int numHDivs) {
-        var indices = new ArrayList<Integer>();
-
-        //Vertical lines
-        for (int i = 1; i <= numHDivs; i++) {
-            indices.add(0);
-            indices.add(i);
-        }
-        for (int i = 0; i < numVDivs - 2; i++) {
-            for (int j = 0; j < numHDivs; j++) {
-                indices.add(1 + i * numHDivs + j);
-                indices.add(1 + (i + 1) * numHDivs + j);
-            }
-        }
-        for (int i = 0; i < numHDivs; i++) {
-            indices.add(1 + (numVDivs - 2) * numHDivs + i);
-            indices.add(1 + (numVDivs - 1) * numHDivs);
-        }
-
-        //Horizontal lines
-        for (int i = 0; i < numVDivs - 1; i++) {
-            for (int j = 0; j < numHDivs; j++) {
-                indices.add(1 + i * numHDivs + j);
-                indices.add(1 + i * numHDivs + (j + 1) % numHDivs);
-            }
-        }
-
-        return indices;
-    }
-
-    public static List<Integer> createSphereTriangulateIndices(int numVDivs, int numHDivs) {
-        var indices = new ArrayList<Integer>();
-
-        //North Pole
-        for (int i = 1; i <= numHDivs; i++) {
-            indices.add(0);
-            indices.add(i % numHDivs + 1);
-            indices.add(i);
-        }
-        //Middle
-        for (int i = 0; i < numVDivs - 2; i++) {
-            for (int j = 1; j <= numHDivs; j++) {
-                indices.add(i * numHDivs + j % numHDivs + 1);
-                indices.add((i + 1) * numHDivs + j % numHDivs + 1);
-                indices.add((i + 1) * numHDivs + j);
-
-                indices.add((i + 1) * numHDivs + j);
-                indices.add(i * numHDivs + j);
-                indices.add(i * numHDivs + j % numHDivs + 1);
-            }
-        }
-        //South Pole
-        for (int i = 1; i <= numHDivs; i++) {
-            indices.add((numVDivs - 1) * numHDivs + 1);
-            indices.add((numVDivs - 2) * numHDivs + i);
-            indices.add((numVDivs - 2) * numHDivs + i % numHDivs + 1);
-        }
-
-        return indices;
-    }
-
     public static List<MttPrimitiveVertex> createCapsuleVertices(
             Vector3fc center,
             float length,
@@ -171,7 +110,64 @@ public class VertexUtils {
         return vertices;
     }
 
-    public static List<Integer> createCapsuleIndices(int numVDivs, int numHDivs) {
-        return createSphereIndices(numVDivs, numHDivs);
+    public static List<Integer> createSphereAndCapsuleIndices(int numVDivs, int numHDivs) {
+        var indices = new ArrayList<Integer>();
+
+        //Vertical lines
+        for (int i = 1; i <= numHDivs; i++) {
+            indices.add(0);
+            indices.add(i);
+        }
+        for (int i = 0; i < numVDivs - 2; i++) {
+            for (int j = 0; j < numHDivs; j++) {
+                indices.add(1 + i * numHDivs + j);
+                indices.add(1 + (i + 1) * numHDivs + j);
+            }
+        }
+        for (int i = 0; i < numHDivs; i++) {
+            indices.add(1 + (numVDivs - 2) * numHDivs + i);
+            indices.add(1 + (numVDivs - 1) * numHDivs);
+        }
+
+        //Horizontal lines
+        for (int i = 0; i < numVDivs - 1; i++) {
+            for (int j = 0; j < numHDivs; j++) {
+                indices.add(1 + i * numHDivs + j);
+                indices.add(1 + i * numHDivs + (j + 1) % numHDivs);
+            }
+        }
+
+        return indices;
+    }
+
+    public static List<Integer> createSphereAndCapsuleTriangulateIndices(int numVDivs, int numHDivs) {
+        var indices = new ArrayList<Integer>();
+
+        //North Pole
+        for (int i = 1; i <= numHDivs; i++) {
+            indices.add(0);
+            indices.add(i % numHDivs + 1);
+            indices.add(i);
+        }
+        //Middle
+        for (int i = 0; i < numVDivs - 2; i++) {
+            for (int j = 1; j <= numHDivs; j++) {
+                indices.add(i * numHDivs + j % numHDivs + 1);
+                indices.add((i + 1) * numHDivs + j % numHDivs + 1);
+                indices.add((i + 1) * numHDivs + j);
+
+                indices.add((i + 1) * numHDivs + j);
+                indices.add(i * numHDivs + j);
+                indices.add(i * numHDivs + j % numHDivs + 1);
+            }
+        }
+        //South Pole
+        for (int i = 1; i <= numHDivs; i++) {
+            indices.add((numVDivs - 1) * numHDivs + 1);
+            indices.add((numVDivs - 2) * numHDivs + i);
+            indices.add((numVDivs - 2) * numHDivs + i % numHDivs + 1);
+        }
+
+        return indices;
     }
 }

@@ -74,9 +74,9 @@ public class VkMttSphere extends VkMttComponent {
 
         List<Integer> indices;
         if (fill) {
-            indices = VertexUtils.createSphereTriangulateIndices(numVDivs, numHDivs);
+            indices = VertexUtils.createSphereAndCapsuleTriangulateIndices(numVDivs, numHDivs);
         } else {
-            indices = VertexUtils.createSphereIndices(numVDivs, numHDivs);
+            indices = VertexUtils.createSphereAndCapsuleIndices(numVDivs, numHDivs);
         }
         numIndices = indices.size();
 

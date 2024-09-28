@@ -71,7 +71,7 @@ public class VkMttCapsule extends VkMttComponent {
         this.device = device;
 
         List<MttPrimitiveVertex> vertices = VertexUtils.createCapsuleVertices(center, length, radius, numVDivs, numHDivs, color);
-        List<Integer> indices = VertexUtils.createCapsuleIndices(numVDivs, numHDivs);
+        List<Integer> indices = VertexUtils.createSphereAndCapsuleIndices(numVDivs, numHDivs);
 
         numIndices = indices.size();
 

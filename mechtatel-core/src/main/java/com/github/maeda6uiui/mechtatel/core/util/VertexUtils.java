@@ -14,6 +14,40 @@ import java.util.List;
  * @author maeda6uiui
  */
 public class VertexUtils {
+    private static List<Vector3f> calculateSphereAndCapsuleNormals(List<Vector3f> positions, int numHDivs, int numVDivs) {
+        var normals = new ArrayList<Vector3f>();
+
+        //North Pole
+        normals.add(new Vector3f(0.0f, 1.0f, 0.0f));
+        //Middle
+        for (int i = 1; i <= numHDivs; i++) {
+            Vector3f thisPos = positions.get(i);
+            Vector3f upPos = positions.get(0);
+            Vector3f leftPos = positions.get(i % numHDivs + 1);
+
+            var upVec = new Vector3f(upPos).sub(thisPos).normalize();
+            var leftVec = new Vector3f(leftPos).sub(thisPos).normalize();
+            var normal = new Vector3f(upVec).cross(leftVec);
+            normals.add(normal);
+        }
+        for (int i = 0; i < numVDivs - 2; i++) {
+            for (int j = 1; j <= numHDivs; j++) {
+                Vector3f thisPos = positions.get((i + 1) * numHDivs + j);
+                Vector3f upPos = positions.get(i * numHDivs + j);
+                Vector3f leftPos = positions.get((i + 1) * numHDivs + j % numHDivs + 1);
+
+                var upVec = new Vector3f(upPos).sub(thisPos).normalize();
+                var leftVec = new Vector3f(leftPos).sub(thisPos).normalize();
+                var normal = new Vector3f(upVec).cross(leftVec);
+                normals.add(normal);
+            }
+        }
+        //South Pole
+        normals.add(new Vector3f(0.0f, -1.0f, 0.0f));
+
+        return normals;
+    }
+
     public static List<MttPrimitiveVertex> createSphereVertices(
             Vector3fc center,
             float radius,
@@ -46,11 +80,19 @@ public class VertexUtils {
             }
         }
 
+        List<Vector3f> normals = calculateSphereAndCapsuleNormals(positions, numHDivs, numVDivs);
+
+        var transPositions = new ArrayList<Vector3f>();
+        for (int i = 0; i < positions.size(); i++) {
+            var transPosition = new Vector3f(positions.get(i)).add(center);
+            transPositions.add(transPosition);
+        }
+
         var vertices = new ArrayList<MttPrimitiveVertex>();
-        positions.forEach(pos -> {
-            var vertex = new MttPrimitiveVertex(pos.add(center), color);
+        for (int i = 0; i < positions.size(); i++) {
+            var vertex = new MttPrimitiveVertex(transPositions.get(i), color, normals.get(i));
             vertices.add(vertex);
-        });
+        }
 
         return vertices;
     }
@@ -95,17 +137,19 @@ public class VertexUtils {
             }
         }
 
+        List<Vector3f> normals = calculateSphereAndCapsuleNormals(positions, numHDivs, numVDivs);
+
         var transPositions = new ArrayList<Vector3f>();
-        positions.forEach(pos -> {
-            var transPosition = pos.add(center);
+        for (int i = 0; i < positions.size(); i++) {
+            var transPosition = new Vector3f(positions.get(i)).add(center);
             transPositions.add(transPosition);
-        });
+        }
 
         var vertices = new ArrayList<MttPrimitiveVertex>();
-        transPositions.forEach(pos -> {
-            var vertex = new MttPrimitiveVertex(pos, color);
+        for (int i = 0; i < positions.size(); i++) {
+            var vertex = new MttPrimitiveVertex(transPositions.get(i), color, normals.get(i));
             vertices.add(vertex);
-        });
+        }
 
         return vertices;
     }

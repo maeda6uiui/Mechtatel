@@ -9,6 +9,7 @@ import com.github.maeda6uiui.mechtatel.core.physics.MttDefaultPhysicsSpace;
 import com.github.maeda6uiui.mechtatel.core.physics.MttPhysicsBox;
 import com.github.maeda6uiui.mechtatel.core.physics.MttPhysicsMesh;
 import com.github.maeda6uiui.mechtatel.core.physics.MttPhysicsObject;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
@@ -43,18 +44,25 @@ public class PhysicsObjectTest extends Mechtatel {
     private MttModel box;
     private List<MttPhysicsObject> physicsObjects;
 
+    private MttScreen mainScreen;
     private FreeCamera camera;
 
     private Random random;
 
     @Override
     public void onCreate(MttWindow window) {
-        MttScreen defaultScreen = window.getDefaultScreen();
+        mainScreen = window.createScreen(
+                new MttScreen.MttScreenCreateInfo()
+                        .setPostProcessingNaborNames(List.of("parallel_light"))
+        );
+
+        PostProcessingProperties ppProp = mainScreen.getPostProcessingProperties();
+        ppProp.createParallelLight();
 
         try {
-            plane = defaultScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Plane/plane.obj"));
+            plane = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Plane/plane.obj"));
 
-            box = defaultScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
+            box = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
             box.setVisible(false);
         } catch (IOException e) {
             logger.error("Error", e);
@@ -68,7 +76,7 @@ public class PhysicsObjectTest extends Mechtatel {
         phPlane.getBody().setFriction(0.5f);
         MttDefaultPhysicsSpace.get().ifPresent(v -> v.addCollisionObject(phPlane.getBody()));
 
-        camera = new FreeCamera(defaultScreen.getCamera());
+        camera = new FreeCamera(mainScreen.getCamera());
 
         physicsObjects = new ArrayList<>();
 
@@ -97,10 +105,8 @@ public class PhysicsObjectTest extends Mechtatel {
         x *= signX;
         z *= signZ;
 
-        MttScreen defaultScreen = window.getDefaultScreen();
-
         if (window.getKeyboardPressingCount(KeyCode.KEY_1) == 1) {
-            var dupBox = defaultScreen.duplicateModel(box);
+            var dupBox = mainScreen.duplicateModel(box);
             dupBox.rescale(new Vector3f(0.5f, 0.5f, 0.5f));
 
             var phBox = new MttPhysicsBox(0.5f, 1.0f);
@@ -121,7 +127,7 @@ public class PhysicsObjectTest extends Mechtatel {
 
         physicsObjects.forEach(MttPhysicsObject::syncComponents);
 
-        defaultScreen.draw();
-        window.present(defaultScreen);
+        mainScreen.draw();
+        window.present(mainScreen);
     }
 }

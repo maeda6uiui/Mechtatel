@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 /**
- * 3D sound
+ * 3D sound<br>
  * 3D functionalities are supposed to work only when you load a monaural sound.
  *
  * @author maeda6uiui

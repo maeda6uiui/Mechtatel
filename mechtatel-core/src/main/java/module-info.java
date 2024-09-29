@@ -3,7 +3,6 @@ module com.github.maeda6uiui.mechtatel.core {
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires com.github.dabasan.jxm.bd1;
-    requires com.goxr3plus.streamplayer;
     requires Libbulletjme;
     requires transitive org.slf4j;
     requires transitive org.joml;

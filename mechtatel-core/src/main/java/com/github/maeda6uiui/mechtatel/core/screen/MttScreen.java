@@ -144,6 +144,8 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         }
     }
 
+    private boolean valid;
+
     private IMttVulkanImplCommon vulkanImplCommon;
     private VkMttScreen screen;
 
@@ -175,6 +177,8 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         components = new ArrayList<>();
         textureOperations = new ArrayList<>();
         textures = new ArrayList<>();
+
+        valid = true;
     }
 
     public MttScreen(MttVulkanImpl vulkanImpl, ImGuiContext imguiContext, MttScreenCreateInfo createInfo) {
@@ -254,10 +258,16 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     public void cleanup() {
+        if (!valid) {
+            return;
+        }
+
         components.forEach(MttComponent::cleanup);
         textureOperations.forEach(TextureOperation::cleanup);
         textures.forEach(MttTexture::cleanup);
         screen.cleanup();
+
+        valid = false;
     }
 
     public void draw() {

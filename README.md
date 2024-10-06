@@ -32,12 +32,12 @@ God knows if I could complete this work by the time you'd think I'm no more...
     <dependency>
         <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel-core</artifactId>
-        <version>0.0.1-alpha3</version>
+        <version>0.0.1-alpha4</version>
     </dependency>
     <dependency>
         <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel-logging</artifactId>
-        <version>0.0.1-alpha3</version>
+        <version>0.0.1-alpha4</version>
     </dependency>
 </dependencies>
 ```

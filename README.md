@@ -86,6 +86,10 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ## Progress report
 
+### 2024-10-06
+
+Released `v0.0.1-alpha4`.
+
 ### 2024-09-29
 
 Released `v0.0.1-alpha3`.

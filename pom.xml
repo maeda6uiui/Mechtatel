@@ -6,7 +6,7 @@
 
     <groupId>com.github.dabasan</groupId>
     <artifactId>mechtatel</artifactId>
-    <version>0.0.1-alpha4</version>
+    <version>0.0.1-alpha5</version>
     <packaging>pom</packaging>
     <name>Mechtatel</name>
     <description>Yet unfinished Vulkan-based game engine composed in Java</description>

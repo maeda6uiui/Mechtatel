@@ -28,7 +28,7 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class VkMttTexture {
-    private static Map<Integer, Boolean> allocationStatus;
+    private static final Map<Integer, Boolean> allocationStatus;
     private static int imageFormat;
 
     static {
@@ -40,7 +40,7 @@ public class VkMttTexture {
         imageFormat = VK_FORMAT_R8G8B8A8_SRGB;
     }
 
-    private static int allocateTextureIndex() {
+    private synchronized static int allocateTextureIndex() {
         int index = -1;
 
         for (var entry : allocationStatus.entrySet()) {
@@ -415,7 +415,9 @@ public class VkMttTexture {
             vkDestroyImageView(device, textureImageView, null);
         }
 
-        allocationStatus.put(allocationIndex, false);
+        synchronized (allocationStatus) {
+            allocationStatus.put(allocationIndex, false);
+        }
         screen.resetTextureDescriptorSets(allocationIndex);
     }
 

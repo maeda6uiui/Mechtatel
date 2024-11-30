@@ -50,7 +50,7 @@ public class ShadowMappingTest extends Mechtatel {
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
                         .setUseShadowMapping(true)
-                        .setPostProcessingNaborNames(Arrays.asList("parallel_light", "fog"))
+                        .setPostProcessingNaborNames(Arrays.asList("pp.parallel_light", "pp.fog"))
         );
 
         PostProcessingProperties ppProperties = mainScreen.getPostProcessingProperties();

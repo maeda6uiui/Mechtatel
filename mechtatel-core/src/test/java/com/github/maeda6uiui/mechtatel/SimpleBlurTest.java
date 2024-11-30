@@ -40,7 +40,7 @@ public class SimpleBlurTest extends Mechtatel {
     public void onCreate(MttWindow window) {
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
-                        .setPostProcessingNaborNames(List.of("simple_blur"))
+                        .setPostProcessingNaborNames(List.of("pp.simple_blur"))
         );
 
         try {

@@ -94,7 +94,7 @@ public class FullScreenEffectNaborChain {
                 );
             } else {
                 fseNabor = switch (naborName) {
-                    case "gaussian_blur" ->
+                    case "fse.gaussian_blur" ->
                             new GaussianBlurNabor(device, gaussianBlurVertShaderResource, gaussianBlurFragShaderResource);
                     default -> throw new IllegalArgumentException("Unknown nabor name specified: " + naborName);
                 };
@@ -151,7 +151,7 @@ public class FullScreenEffectNaborChain {
             String naborName,
             FullScreenEffectNabor fseNabor,
             FullScreenEffectProperties fseProperties) {
-        if (naborName.equals("gaussian_blur")) {
+        if (naborName.equals("fse.gaussian_blur")) {
             long gaussianBlurInfoUBOMemory = fseNabor.getUniformBufferMemory(0);
             var gaussianBlurInfoUBO = new GaussianBlurInfoUBO(fseProperties.gaussianBlurInfo);
             gaussianBlurInfoUBO.update(device, gaussianBlurInfoUBOMemory);

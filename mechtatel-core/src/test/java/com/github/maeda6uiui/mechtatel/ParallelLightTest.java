@@ -42,7 +42,7 @@ public class ParallelLightTest extends Mechtatel {
     public void onCreate(MttWindow window) {
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
-                        .setPostProcessingNaborNames(List.of("parallel_light"))
+                        .setPostProcessingNaborNames(List.of("pp.parallel_light"))
         );
 
         PostProcessingProperties ppProp = mainScreen.getPostProcessingProperties();

@@ -54,7 +54,7 @@ public class TexturedScreenTest extends Mechtatel {
 
         secondaryScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
-                        .setPostProcessingNaborNames(List.of("parallel_light"))
+                        .setPostProcessingNaborNames(List.of("pp.parallel_light"))
                         .setDepthImageWidth(1024)
                         .setDepthImageHeight(1024)
                         .setScreenWidth(512)

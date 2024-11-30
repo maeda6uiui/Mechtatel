@@ -141,14 +141,14 @@ public class PostProcessingNaborChain {
                 );
             } else {
                 ppNabor = switch (naborName) {
-                    case "fog" -> new FogNabor(device, fogVertShaderResource, fogFragShaderResource);
-                    case "parallel_light" ->
+                    case "pp.fog" -> new FogNabor(device, fogVertShaderResource, fogFragShaderResource);
+                    case "pp.parallel_light" ->
                             new ParallelLightNabor(device, parallelLightVertShaderResource, parallelLightFragShaderResource);
-                    case "point_light" ->
+                    case "pp.point_light" ->
                             new PointLightNabor(device, pointLightVertShaderResource, pointLightFragShaderResource);
-                    case "spotlight" ->
+                    case "pp.spotlight" ->
                             new SpotlightNabor(device, spotlightVertShaderResource, spotlightFragShaderResource);
-                    case "simple_blur" ->
+                    case "pp.simple_blur" ->
                             new SimpleBlurNabor(device, simpleBlurVertShaderResource, simpleBlurFragShaderResource);
                     default -> throw new IllegalArgumentException("Unknown nabor name specified: " + naborName);
                 };
@@ -207,7 +207,7 @@ public class PostProcessingNaborChain {
             Camera camera,
             PostProcessingProperties ppProperties) {
         switch (naborName) {
-            case "fog": {
+            case "pp.fog": {
                 long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
                 var cameraUBO = new CameraUBO(camera);
                 cameraUBO.update(device, cameraUBOMemory);
@@ -218,7 +218,7 @@ public class PostProcessingNaborChain {
             }
             break;
 
-            case "parallel_light": {
+            case "pp.parallel_light": {
                 long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
                 var cameraUBO = new CameraUBO(camera);
                 cameraUBO.update(device, cameraUBOMemory);
@@ -239,7 +239,7 @@ public class PostProcessingNaborChain {
             }
             break;
 
-            case "point_light": {
+            case "pp.point_light": {
                 long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
                 var cameraUBO = new CameraUBO(camera);
                 cameraUBO.update(device, cameraUBOMemory);
@@ -260,7 +260,7 @@ public class PostProcessingNaborChain {
             }
             break;
 
-            case "spotlight": {
+            case "pp.spotlight": {
                 long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
                 var cameraUBO = new CameraUBO(camera);
                 cameraUBO.update(device, cameraUBOMemory);
@@ -281,7 +281,7 @@ public class PostProcessingNaborChain {
             }
             break;
 
-            case "simple_blur": {
+            case "pp.simple_blur": {
                 long blurInfoUBOMemory = ppNabor.getUniformBufferMemory(0);
                 var blurInfoUBO = new SimpleBlurInfoUBO(ppProperties.simpleBlurInfo);
                 blurInfoUBO.update(device, blurInfoUBOMemory);

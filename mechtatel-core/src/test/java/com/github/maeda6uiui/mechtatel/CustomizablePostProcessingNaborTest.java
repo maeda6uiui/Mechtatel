@@ -69,8 +69,8 @@ public class CustomizablePostProcessingNaborTest extends Mechtatel {
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
                         .setUseShadowMapping(true)
-                        .setPostProcessingNaborNames(List.of("sepia"))
-                        .setCustomizablePostProcessingNaborInfos(Map.of("sepia", naborInfo))
+                        .setPostProcessingNaborNames(List.of("pp.sepia"))
+                        .setCustomizablePostProcessingNaborInfos(Map.of("pp.sepia", naborInfo))
         );
         PostProcessingProperties ppProperties = mainScreen.getPostProcessingProperties();
         ppProperties.createParallelLight();

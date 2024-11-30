@@ -1,4 +1,4 @@
-name: Deploy artifact to Maven Central
+name: Deploy artifacts to Maven Central
 
 on:
   workflow_call:

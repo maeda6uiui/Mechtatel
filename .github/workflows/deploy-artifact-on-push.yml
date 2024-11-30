@@ -1,4 +1,4 @@
-name: Deploy artifact to Maven Central when pushed to GitHub repo
+name: Deploy artifacts to Maven Central when pushed to GitHub repo
 
 on:
   push:

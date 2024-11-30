@@ -1,0 +1,16 @@
+name: Deploy artifact to Maven Central when pushed to GitHub repo
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/deploy-artifact.yml
+    secrets:
+      ossrhUsername: ${{secrets.OSSRH_USERNAME}}
+      ossrhPassword: ${{secrets.OSSRH_PASSWORD}}
+      gpgPrivateKey: ${{secrets.GPG_PRIVATE_KEY}}
+      gpgPassphrase: ${{secrets.GPG_PASSPHRASE}}

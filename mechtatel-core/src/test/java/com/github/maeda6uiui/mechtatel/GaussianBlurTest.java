@@ -39,7 +39,7 @@ public class GaussianBlurTest extends Mechtatel {
     public void onCreate(MttWindow window) {
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
-                        .setFullScreenEffectNaborNames(List.of("gaussian_blur"))
+                        .setFullScreenEffectNaborNames(List.of("fse.gaussian_blur"))
         );
 
         try {

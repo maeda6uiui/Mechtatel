@@ -136,7 +136,7 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
 
     public void run() {
         if (!mechtatelReady) {
-            logger.error("Mechtatel engine is not ready to be run");
+            logger.error("Mechtatel engine is not ready");
             return;
         }
 

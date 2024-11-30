@@ -442,9 +442,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     /**
-     * Creates a texture operation that consumes two textures.
-     * The list for depth textures can be empty
-     * if the texture operation doesn't require them.
+     * Creates a texture operation.
      *
      * @param colorTextures            List of color textures
      * @param textureCleanupDelegation Whether to clean up textures when this texture operation is destroyed

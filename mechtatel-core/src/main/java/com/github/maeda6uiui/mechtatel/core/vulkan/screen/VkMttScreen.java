@@ -454,7 +454,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                     colorImageFormat,
                     samplerFilter,
                     samplerMipmapMode,
-                    samplerAddressMode,
+                    VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
                     extent,
                     fseNaborNames,
                     fseNaborInfos,

@@ -3,10 +3,11 @@ package com.github.maeda6uiui.mechtatel;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
+import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectProperties;
 import com.github.maeda6uiui.mechtatel.core.fseffect.GaussianBlurInfo;
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
-import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,7 @@ public class GaussianBlurTest extends Mechtatel {
     }
 
     private MttScreen mainScreen;
+    private FreeCamera camera;
 
     @Override
     public void onCreate(MttWindow window) {
@@ -43,18 +45,15 @@ public class GaussianBlurTest extends Mechtatel {
         );
 
         try {
-            mainScreen.createTexturedQuad2D(
-                    Paths.get("./Mechtatel/Standard/Texture/checker.png"),
-                    new Vector2f(-1.0f, -1.0f),
-                    new Vector2f(1.0f, 1.0f),
-                    0.0f
-            );
+            mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Playground/playground.bd1"));
         } catch (IOException e) {
             logger.error("Error", e);
             window.close();
 
             return;
         }
+
+        camera = new FreeCamera(mainScreen.getCamera());
 
         var gaussianBlurInfo = new GaussianBlurInfo(32, 16.0f, 0.1f);
         gaussianBlurInfo.setTextureSize(new Vector2i(mainScreen.getScreenWidth(), mainScreen.getScreenHeight()));
@@ -67,6 +66,19 @@ public class GaussianBlurTest extends Mechtatel {
 
     @Override
     public void onUpdate(MttWindow window) {
+        camera.translate(
+                window.getKeyboardPressingCount(KeyCode.W),
+                window.getKeyboardPressingCount(KeyCode.S),
+                window.getKeyboardPressingCount(KeyCode.A),
+                window.getKeyboardPressingCount(KeyCode.D)
+        );
+        camera.rotate(
+                window.getKeyboardPressingCount(KeyCode.UP),
+                window.getKeyboardPressingCount(KeyCode.DOWN),
+                window.getKeyboardPressingCount(KeyCode.LEFT),
+                window.getKeyboardPressingCount(KeyCode.RIGHT)
+        );
+
         mainScreen.draw();
         window.present(mainScreen);
     }

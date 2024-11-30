@@ -1,0 +1,43 @@
+name: Deploy artifact to Maven Central
+
+on:
+  workflow_call:
+    secrets:
+      ossrhUsername:
+        required: true
+      ossrhPassword:
+        required: true
+      gpgPrivateKey:
+        required: true
+      gpgPassphrase:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          gpg-private-key: ${{secrets.gpgPrivateKey}}
+          gpg-passphrase: ${{secrets.gpgPassphrase}}
+      - name: Configure Maven settings
+        run: |
+          mkdir -p ~/.m2
+          cat <<EOF > ~/.m2/settings.xml
+          <settings>
+            <servers>
+              <server>
+                <id>ossrh</id>
+                <username>${{secrets.ossrhUsername}}</username>
+                <password>${{secrets.ossrhPassword}}</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
+      - name: Deploy to Maven Central
+        run: mvn clean deploy

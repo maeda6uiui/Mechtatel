@@ -34,7 +34,7 @@ public abstract class Nabor {
     private URL fragShaderResource;
 
     private boolean isContainer;
-    private boolean isSharedShaderModules;
+    private boolean isBorrowedShaderModules;
 
     private long dummyImage;
     private long dummyImageMemory;
@@ -75,7 +75,7 @@ public abstract class Nabor {
 
         this.msaaSamples = msaaSamples;
         this.isContainer = isContainer;
-        isSharedShaderModules = false;
+        isBorrowedShaderModules = false;
 
         this.vertShaderResource = vertShaderResource;
         this.fragShaderResource = fragShaderResource;
@@ -605,7 +605,7 @@ public abstract class Nabor {
             List<Long> fragShaderModules) {
         this.vertShaderModules = vertShaderModules;
         this.fragShaderModules = fragShaderModules;
-        isSharedShaderModules = true;
+        isBorrowedShaderModules = true;
 
         this.compile(
                 colorImageFormat,
@@ -661,7 +661,7 @@ public abstract class Nabor {
 
             this.cleanupUserDefImages();
 
-            if (!isSharedShaderModules) {
+            if (!isBorrowedShaderModules) {
                 vertShaderModules.forEach(vertShaderModule -> vkDestroyShaderModule(device, vertShaderModule, null));
                 fragShaderModules.forEach(fragShaderModule -> vkDestroyShaderModule(device, fragShaderModule, null));
             }

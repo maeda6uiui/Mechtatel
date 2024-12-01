@@ -46,4 +46,20 @@ public class MttURLUtils {
 
         return getResourceURL(filepath, clazz);
     }
+
+    /**
+     * Returns resource URL.
+     * This method throws {@link RuntimeException} if it fails to obtain the resource URL.
+     *
+     * @param filepath  Filepath of the resource
+     * @param className The name of the class that this resource belongs to
+     * @return URL of the resource
+     */
+    public static URL mustGetResourceURL(String filepath, String className) {
+        try {
+            return getResourceURL(filepath, className);
+        } catch (MalformedURLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -22,21 +22,21 @@ public class MttShaderSettings {
 
     public static class VertShaderInfo {
         public String filepath;
-        public boolean external;
+        public String className;
 
         public VertShaderInfo() {
             filepath = "";
-            external = false;
+            className = "local";
         }
     }
 
     public static class FragShaderInfo {
         public String filepath;
-        public boolean external;
+        public String className;
 
         public FragShaderInfo() {
             filepath = "";
-            external = false;
+            className = "local";
         }
     }
 

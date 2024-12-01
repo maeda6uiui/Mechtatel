@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 public class MttURLUtils {
     /**
      * Returns resource URL.
-     * Pass {@code null} to {@code clazz} if this resource is located on a local directory (outside a JAR).
+     * Pass {@code null} to {@code clazz} if this resource is located in a local directory (outside a JAR).
      *
      * @param filepath Filepath of the resource
      * @param clazz    The class that this resource belongs to
@@ -29,7 +29,7 @@ public class MttURLUtils {
 
     /**
      * Returns resource URL.
-     * Pass {@code "local"} to {@code className} if this resource is located on a local directory (outside a JAR).
+     * Pass {@code "local"} to {@code className} if this resource is located in a local directory (outside a JAR).
      *
      * @param filepath  Filepath of the resource
      * @param className The name of the class that this resource belongs to

@@ -32,12 +32,12 @@ God knows if I could complete this work by the time you'd think I'm no more...
     <dependency>
         <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel-core</artifactId>
-        <version>0.0.1-alpha4</version>
+        <version>0.0.1-alpha5</version>
     </dependency>
     <dependency>
         <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel-logging</artifactId>
-        <version>0.0.1-alpha4</version>
+        <version>0.0.1-alpha5</version>
     </dependency>
 </dependencies>
 ```
@@ -73,7 +73,6 @@ You can overwrite it or use another logging implementation at your discretion.
 
 - Investigate the methods to reproduce water surface
 - Implement functionality to simulate sea waves
-  - Implement it in another module or as an add-on
 - Design and implement API that can be invoked from external applications
   - Establish connection between Mechtatel (server) and client app
   - Build client app in any language (Go, Rust, etc.)
@@ -85,6 +84,10 @@ You can overwrite it or use another logging implementation at your discretion.
 - [3D Game Development with LWJGL 3](https://ahbejarano.gitbook.io/lwjglgamedev/)
 
 ## Progress report
+
+### 2024-12-01
+
+Releases `v0.0.1-alpha5` with some refactoring and changes to methods.
 
 ### 2024-10-06
 

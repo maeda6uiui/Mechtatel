@@ -35,6 +35,7 @@ jobs:
       - name: Import GPG private key
         run: |
           echo "${{secrets.gpgPrivateKey}}" | base64 --decode | gpg --batch --yes --import
+          echo -e "trust\n5\ny\nquit" | gpg --batch --yes --command-fd 0 --edit-key ${{secrets.gpgKeyId}}
           echo "${{secrets.gpgPassphrase}}" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --edit-key ${{secrets.gpgKeyId}} trust quit
       - name: Configure Maven settings
         run: |

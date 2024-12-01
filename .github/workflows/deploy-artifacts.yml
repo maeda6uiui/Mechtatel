@@ -33,10 +33,7 @@ jobs:
           echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
           echo "allow-loopback-pinentry" > ~/.gnupg/gpg-agent.conf
       - name: Import GPG private key
-        run: |
-          echo "${{secrets.gpgPrivateKey}}" | base64 --decode | gpg --batch --yes --import
-          echo -e "trust\n5\ny\nquit" | gpg --batch --yes --command-fd 0 --edit-key ${{secrets.gpgKeyId}}
-          echo "${{secrets.gpgPassphrase}}" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --edit-key ${{secrets.gpgKeyId}} trust quit
+        run: echo "${{secrets.gpgPrivateKey}}" | base64 --decode | gpg --batch --yes --import
       - name: Configure Maven settings
         run: |
           mkdir -p ~/.m2

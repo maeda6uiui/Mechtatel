@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    uses: ./.github/workflows/deploy-artifact.yml
+    uses: ./.github/workflows/deploy-artifacts.yml
     secrets:
       ossrhUsername: ${{secrets.OSSRH_USERNAME}}
       ossrhPassword: ${{secrets.OSSRH_PASSWORD}}

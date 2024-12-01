@@ -17,7 +17,7 @@ public class MttURLUtils {
      * @param filepath Filepath of the resource
      * @param clazz    The class that this resource belongs to
      * @return URL of the resource
-     * @throws MalformedURLException If it fails to construct a class from the name specified
+     * @throws MalformedURLException If it fails to obtain URL from the path
      */
     public static URL getResourceURL(String filepath, Class<?> clazz) throws MalformedURLException {
         if (clazz != null) {
@@ -35,7 +35,7 @@ public class MttURLUtils {
      * @param className The name of the class that this resource belongs to
      * @return URL of the resource
      * @throws MalformedURLException  If it fails to obtain URL from the path
-     * @throws ClassNotFoundException If it fails to construct a class from the name specified
+     * @throws ClassNotFoundException If it fails to find a class from the name specified
      */
     public static URL getResourceURL(String filepath, String className)
             throws MalformedURLException, ClassNotFoundException {

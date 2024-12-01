@@ -154,7 +154,7 @@ public class PostProcessingNaborChain {
                 };
             }
 
-            if (vertShaderModulesStorage.containsKey(naborName)) {
+            if (vertShaderModulesStorage.containsKey(naborName) && fragShaderModulesStorage.containsKey(naborName)) {
                 var vertShaderModules = vertShaderModulesStorage.get(naborName);
                 var fragShaderModules = fragShaderModulesStorage.get(naborName);
 

@@ -1,4 +1,4 @@
-name: Deploy artifact to Maven Central
+name: Deploy artifacts to Maven Central
 
 on:
   workflow_call:
@@ -6,6 +6,8 @@ on:
       ossrhUsername:
         required: true
       ossrhPassword:
+        required: true
+      gpgKeyId:
         required: true
       gpgPrivateKey:
         required: true
@@ -23,8 +25,17 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-          gpg-private-key: ${{secrets.gpgPrivateKey}}
-          gpg-passphrase: ${{secrets.gpgPassphrase}}
+      - name: Configure GPG
+        run: |
+          mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg
+          echo "use-agent" > ~/.gnupg/gpg.conf
+          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+          echo "allow-loopback-pinentry" > ~/.gnupg/gpg-agent.conf
+      - name: Import GPG private key
+        run: |
+          echo "${{secrets.gpgPrivateKey}}" | base64 --decode | gpg --batch --yes --import
+          echo "${{secrets.gpgPassphrase}}" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --edit-key ${{secrets.gpgKeyId}} trust quit
       - name: Configure Maven settings
         run: |
           mkdir -p ~/.m2
@@ -40,4 +51,8 @@ jobs:
           </settings>
           EOF
       - name: Deploy to Maven Central
-        run: mvn clean deploy
+        run: |
+          mvn clean deploy \
+            -Dgpg.executable=gpg \
+            -Dgpg.passphrase=${{secrets.gpgPassphrase}} \
+            -Dgpg.pinentry-mode=loopback

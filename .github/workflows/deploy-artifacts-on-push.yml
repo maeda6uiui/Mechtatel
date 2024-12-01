@@ -1,4 +1,4 @@
-name: Deploy artifact to Maven Central when pushed to GitHub repo
+name: Deploy artifacts to Maven Central when pushed to GitHub repo
 
 on:
   push:
@@ -12,5 +12,6 @@ jobs:
     secrets:
       ossrhUsername: ${{secrets.OSSRH_USERNAME}}
       ossrhPassword: ${{secrets.OSSRH_PASSWORD}}
+      gpgKeyId: ${{secrets.GPG_KEY_ID}}
       gpgPrivateKey: ${{secrets.GPG_PRIVATE_KEY}}
       gpgPassphrase: ${{secrets.GPG_PASSPHRASE}}

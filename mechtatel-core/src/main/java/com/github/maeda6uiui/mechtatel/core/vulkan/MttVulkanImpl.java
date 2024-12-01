@@ -168,22 +168,22 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
         try {
             presentVertShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.present.main.vert.filepath,
-                    shaderSettings.present.main.vert.external
+                    shaderSettings.present.main.vert.className
             );
             presentFragShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.present.main.frag.filepath,
-                    shaderSettings.present.main.frag.external
+                    shaderSettings.present.main.frag.className
             );
 
             textureOperationVertShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.textureOperation.main.vert.filepath,
-                    shaderSettings.textureOperation.main.vert.external
+                    shaderSettings.textureOperation.main.vert.className
             );
             textureOperationFragShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.textureOperation.main.frag.filepath,
-                    shaderSettings.textureOperation.main.frag.external
+                    shaderSettings.textureOperation.main.frag.className
             );
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         //==========

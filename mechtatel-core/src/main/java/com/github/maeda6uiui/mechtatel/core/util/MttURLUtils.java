@@ -12,17 +12,38 @@ import java.nio.file.Paths;
 public class MttURLUtils {
     /**
      * Returns resource URL.
+     * Pass {@code null} to {@code clazz} if this resource is located on a local directory (outside a JAR).
      *
      * @param filepath Filepath of the resource
-     * @param external {@code false} if the resource is inside the JAR that this class belongs to
+     * @param clazz    The class that this resource belongs to
      * @return URL of the resource
-     * @throws MalformedURLException If it fails to obtain URL from the path
+     * @throws MalformedURLException If it fails to construct a class from the name specified
      */
-    public static URL getResourceURL(String filepath, boolean external) throws MalformedURLException {
-        if (external) {
-            return Paths.get(filepath).toUri().toURL();
+    public static URL getResourceURL(String filepath, Class<?> clazz) throws MalformedURLException {
+        if (clazz != null) {
+            return clazz.getResource(filepath);
         } else {
-            return MttURLUtils.class.getResource(filepath);
+            return Paths.get(filepath).toUri().toURL();
         }
+    }
+
+    /**
+     * Returns resource URL.
+     * Pass {@code "local"} to {@code className} if this resource is located on a local directory (outside a JAR).
+     *
+     * @param filepath  Filepath of the resource
+     * @param className The name of the class that this resource belongs to
+     * @return URL of the resource
+     * @throws MalformedURLException  If it fails to obtain URL from the path
+     * @throws ClassNotFoundException If it fails to construct a class from the name specified
+     */
+    public static URL getResourceURL(String filepath, String className)
+            throws MalformedURLException, ClassNotFoundException {
+        Class<?> clazz = null;
+        if (!className.equals("local")) {
+            clazz = Class.forName(className);
+        }
+
+        return getResourceURL(filepath, clazz);
     }
 }

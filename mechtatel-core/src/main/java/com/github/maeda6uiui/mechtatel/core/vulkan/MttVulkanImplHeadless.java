@@ -92,13 +92,13 @@ public class MttVulkanImplHeadless implements IMttVulkanImplCommon {
         try {
             textureOperationVertShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.textureOperation.main.vert.filepath,
-                    shaderSettings.textureOperation.main.vert.external
+                    shaderSettings.textureOperation.main.vert.className
             );
             textureOperationFragShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.textureOperation.main.frag.filepath,
-                    shaderSettings.textureOperation.main.frag.external
+                    shaderSettings.textureOperation.main.frag.className
             );
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         //==========

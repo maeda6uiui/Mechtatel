@@ -26,7 +26,7 @@ public class MttShaderSettings {
 
         public VertShaderInfo() {
             filepath = "";
-            className = "local";
+            className = MttShaderSettings.class.getName();
         }
     }
 
@@ -36,7 +36,7 @@ public class MttShaderSettings {
 
         public FragShaderInfo() {
             filepath = "";
-            className = "local";
+            className = MttShaderSettings.class.getName();
         }
     }
 

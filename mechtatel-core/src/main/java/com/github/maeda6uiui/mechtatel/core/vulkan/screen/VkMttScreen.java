@@ -148,56 +148,56 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         try {
             gBufferAlbedoVertShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.gBuffer.albedo.vert.filepath,
-                    shaderSettings.gBuffer.albedo.vert.external
+                    shaderSettings.gBuffer.albedo.vert.className
             );
             gBufferAlbedoFragShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.gBuffer.albedo.frag.filepath,
-                    shaderSettings.gBuffer.albedo.frag.external
+                    shaderSettings.gBuffer.albedo.frag.className
             );
             gBufferPropertiesVertShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.gBuffer.properties.vert.filepath,
-                    shaderSettings.gBuffer.properties.vert.external
+                    shaderSettings.gBuffer.properties.vert.className
             );
             gBufferPropertiesFragShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.gBuffer.properties.frag.filepath,
-                    shaderSettings.gBuffer.properties.frag.external
+                    shaderSettings.gBuffer.properties.frag.className
             );
 
             primitiveVertShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.primitive.main.vert.filepath,
-                    shaderSettings.primitive.main.vert.external
+                    shaderSettings.primitive.main.vert.className
             );
             primitiveFragShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.primitive.main.frag.filepath,
-                    shaderSettings.primitive.main.frag.external
+                    shaderSettings.primitive.main.frag.className
             );
 
             mergeScenesVertShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.mergeScenes.main.vert.filepath,
-                    shaderSettings.mergeScenes.main.vert.external
+                    shaderSettings.mergeScenes.main.vert.className
             );
             mergeScenesFragShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.mergeScenes.main.frag.filepath,
-                    shaderSettings.mergeScenes.main.frag.external
+                    shaderSettings.mergeScenes.main.frag.className
             );
 
             shadowMappingPass1VertShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.shadowMapping.pass1.vert.filepath,
-                    shaderSettings.shadowMapping.pass1.vert.external
+                    shaderSettings.shadowMapping.pass1.vert.className
             );
             shadowMappingPass1FragShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.shadowMapping.pass1.frag.filepath,
-                    shaderSettings.shadowMapping.pass1.frag.external
+                    shaderSettings.shadowMapping.pass1.frag.className
             );
             shadowMappingPass2VertShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.shadowMapping.pass2.vert.filepath,
-                    shaderSettings.shadowMapping.pass2.vert.external
+                    shaderSettings.shadowMapping.pass2.vert.className
             );
             shadowMappingPass2FragShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.shadowMapping.pass2.frag.filepath,
-                    shaderSettings.shadowMapping.pass2.frag.external
+                    shaderSettings.shadowMapping.pass2.frag.className
             );
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         //==========

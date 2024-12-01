@@ -3,11 +3,11 @@
         "main": {
             "vert": {
                 "filepath": "./Mechtatel/Addon/maeda6uiui/Shader/custom_present.vert",
-                "external": true
+                "className": "local"
             },
             "frag": {
                 "filepath": "./Mechtatel/Addon/maeda6uiui/Shader/custom_present.frag",
-                "external": true
+                "className": "local"
             }
         }
     }

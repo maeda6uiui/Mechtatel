@@ -12,6 +12,7 @@ import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
 import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
+import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.PrimitiveNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.fseffect.FullScreenEffectNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.fseffect.FullScreenEffectNaborChain;
@@ -29,7 +30,6 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.awt.image.BufferedImage;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -93,6 +93,49 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         }
     }
 
+    private void compileNabor(
+            Nabor nabor,
+            String naborName,
+            int colorImageFormat,
+            int samplerFilter,
+            int samplerMipmapMode,
+            int samplerAddressMode,
+            VkExtent2D extent) {
+        if (vertShaderModulesStorage.containsKey(naborName) && fragShaderModulesStorage.containsKey(naborName)) {
+            var vertShaderModules = vertShaderModulesStorage.get(naborName);
+            var fragShaderModules = fragShaderModulesStorage.get(naborName);
+
+            nabor.compile(
+                    colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
+                    extent,
+                    commandPool,
+                    graphicsQueue,
+                    1,
+                    vertShaderModules,
+                    fragShaderModules
+            );
+        } else {
+            nabor.compile(
+                    colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
+                    extent,
+                    commandPool,
+                    graphicsQueue,
+                    1
+            );
+
+            var vertShaderModules = nabor.getVertShaderModules();
+            var fragShaderModules = nabor.getFragShaderModules();
+            vertShaderModulesStorage.put(naborName, vertShaderModules);
+            fragShaderModulesStorage.put(naborName, fragShaderModules);
+        }
+    }
+
     public VkMttScreen(
             VkDevice device,
             long commandPool,
@@ -128,81 +171,28 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
 
-        //Get shader URLs =====
         MttShaderSettings shaderSettings = MttShaderSettings
                 .get()
                 .orElse(MttShaderSettings.create());
 
-        URL gBufferAlbedoVertShaderResource;
-        URL gBufferAlbedoFragShaderResource;
-        URL gBufferPropertiesVertShaderResource;
-        URL gBufferPropertiesFragShaderResource;
-        URL primitiveVertShaderResource;
-        URL primitiveFragShaderResource;
-        URL mergeScenesVertShaderResource;
-        URL mergeScenesFragShaderResource;
-        URL shadowMappingPass1VertShaderResource;
-        URL shadowMappingPass1FragShaderResource;
-        URL shadowMappingPass2VertShaderResource;
-        URL shadowMappingPass2FragShaderResource;
-        try {
-            gBufferAlbedoVertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.gBuffer.albedo.vert.filepath,
-                    shaderSettings.gBuffer.albedo.vert.external
-            );
-            gBufferAlbedoFragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.gBuffer.albedo.frag.filepath,
-                    shaderSettings.gBuffer.albedo.frag.external
-            );
-            gBufferPropertiesVertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.gBuffer.properties.vert.filepath,
-                    shaderSettings.gBuffer.properties.vert.external
-            );
-            gBufferPropertiesFragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.gBuffer.properties.frag.filepath,
-                    shaderSettings.gBuffer.properties.frag.external
-            );
-
-            primitiveVertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.primitive.main.vert.filepath,
-                    shaderSettings.primitive.main.vert.external
-            );
-            primitiveFragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.primitive.main.frag.filepath,
-                    shaderSettings.primitive.main.frag.external
-            );
-
-            mergeScenesVertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.mergeScenes.main.vert.filepath,
-                    shaderSettings.mergeScenes.main.vert.external
-            );
-            mergeScenesFragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.mergeScenes.main.frag.filepath,
-                    shaderSettings.mergeScenes.main.frag.external
-            );
-
-            shadowMappingPass1VertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.shadowMapping.pass1.vert.filepath,
-                    shaderSettings.shadowMapping.pass1.vert.external
-            );
-            shadowMappingPass1FragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.shadowMapping.pass1.frag.filepath,
-                    shaderSettings.shadowMapping.pass1.frag.external
-            );
-            shadowMappingPass2VertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.shadowMapping.pass2.vert.filepath,
-                    shaderSettings.shadowMapping.pass2.vert.external
-            );
-            shadowMappingPass2FragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.shadowMapping.pass2.frag.filepath,
-                    shaderSettings.shadowMapping.pass2.frag.external
-            );
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-        //==========
-
         //GBuffer nabor
+        URL gBufferAlbedoVertShaderResource = MttURLUtils.mustGetResourceURL(
+                shaderSettings.gBuffer.albedo.vert.filepath,
+                shaderSettings.gBuffer.albedo.vert.className
+        );
+        URL gBufferAlbedoFragShaderResource = MttURLUtils.mustGetResourceURL(
+                shaderSettings.gBuffer.albedo.frag.filepath,
+                shaderSettings.gBuffer.albedo.frag.className
+        );
+        URL gBufferPropertiesVertShaderResource = MttURLUtils.mustGetResourceURL(
+                shaderSettings.gBuffer.properties.vert.filepath,
+                shaderSettings.gBuffer.properties.vert.className
+        );
+        URL gBufferPropertiesFragShaderResource = MttURLUtils.mustGetResourceURL(
+                shaderSettings.gBuffer.properties.frag.filepath,
+                shaderSettings.gBuffer.properties.frag.className
+        );
+
         gBufferNabor = new GBufferNabor(
                 device,
                 albedoMSAASamples,
@@ -215,40 +205,26 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 gBufferPropertiesVertShaderResource,
                 gBufferPropertiesFragShaderResource
         );
-        if (vertShaderModulesStorage.containsKey("gbuffer")) {
-            var vertShaderModules = vertShaderModulesStorage.get("gbuffer");
-            var fragShaderModules = fragShaderModulesStorage.get("gbuffer");
-
-            gBufferNabor.compile(
-                    colorImageFormat,
-                    samplerFilter,
-                    samplerMipmapMode,
-                    samplerAddressMode,
-                    extent,
-                    commandPool,
-                    graphicsQueue,
-                    1,
-                    vertShaderModules,
-                    fragShaderModules
-            );
-        } else {
-            gBufferNabor.compile(
-                    colorImageFormat,
-                    samplerFilter,
-                    samplerMipmapMode,
-                    samplerAddressMode,
-                    extent,
-                    commandPool,
-                    graphicsQueue,
-                    1);
-
-            var vertShaderModules = gBufferNabor.getVertShaderModules();
-            var fragShaderModules = gBufferNabor.getFragShaderModules();
-            vertShaderModulesStorage.put("gbuffer", vertShaderModules);
-            fragShaderModulesStorage.put("gbuffer", fragShaderModules);
-        }
+        this.compileNabor(
+                gBufferNabor,
+                "gbuffer",
+                colorImageFormat,
+                samplerFilter,
+                samplerMipmapMode,
+                samplerAddressMode,
+                extent
+        );
 
         //Primitive nabor
+        URL primitiveVertShaderResource = MttURLUtils.mustGetResourceURL(
+                shaderSettings.primitive.main.vert.filepath,
+                shaderSettings.primitive.main.vert.className
+        );
+        URL primitiveFragShaderResource = MttURLUtils.mustGetResourceURL(
+                shaderSettings.primitive.main.frag.filepath,
+                shaderSettings.primitive.main.frag.className
+        );
+
         primitiveNabor = new PrimitiveNabor(
                 device,
                 depthImageFormat,
@@ -259,38 +235,15 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 primitiveVertShaderResource,
                 primitiveFragShaderResource
         );
-        if (vertShaderModulesStorage.containsKey("primitive")) {
-            var vertShaderModules = vertShaderModulesStorage.get("primitive");
-            var fragShaderModules = fragShaderModulesStorage.get("primitive");
-
-            primitiveNabor.compile(
-                    colorImageFormat,
-                    samplerFilter,
-                    samplerMipmapMode,
-                    samplerAddressMode,
-                    extent,
-                    commandPool,
-                    graphicsQueue,
-                    1,
-                    vertShaderModules,
-                    fragShaderModules
-            );
-        } else {
-            primitiveNabor.compile(
-                    colorImageFormat,
-                    samplerFilter,
-                    samplerMipmapMode,
-                    samplerAddressMode,
-                    extent,
-                    commandPool,
-                    graphicsQueue,
-                    1);
-
-            var vertShaderModules = primitiveNabor.getVertShaderModules();
-            var fragShaderModules = primitiveNabor.getFragShaderModules();
-            vertShaderModulesStorage.put("primitive", vertShaderModules);
-            fragShaderModulesStorage.put("primitive", fragShaderModules);
-        }
+        this.compileNabor(
+                primitiveNabor,
+                "primitive",
+                colorImageFormat,
+                samplerFilter,
+                samplerMipmapMode,
+                samplerAddressMode,
+                extent
+        );
 
         //Primitive-Fill nabor
         primitiveFillNabor = new PrimitiveNabor(
@@ -303,40 +256,26 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 primitiveVertShaderResource,
                 primitiveFragShaderResource
         );
-        if (vertShaderModulesStorage.containsKey("primitive_fill")) {
-            var vertShaderModules = vertShaderModulesStorage.get("primitive_fill");
-            var fragShaderModules = fragShaderModulesStorage.get("primitive_fill");
-
-            primitiveFillNabor.compile(
-                    colorImageFormat,
-                    samplerFilter,
-                    samplerMipmapMode,
-                    samplerAddressMode,
-                    extent,
-                    commandPool,
-                    graphicsQueue,
-                    1,
-                    vertShaderModules,
-                    fragShaderModules
-            );
-        } else {
-            primitiveFillNabor.compile(
-                    colorImageFormat,
-                    samplerFilter,
-                    samplerMipmapMode,
-                    samplerAddressMode,
-                    extent,
-                    commandPool,
-                    graphicsQueue,
-                    1);
-
-            var vertShaderModules = primitiveFillNabor.getVertShaderModules();
-            var fragShaderModules = primitiveFillNabor.getFragShaderModules();
-            vertShaderModulesStorage.put("primitive_fill", vertShaderModules);
-            fragShaderModulesStorage.put("primitive_fill", fragShaderModules);
-        }
+        this.compileNabor(
+                primitiveFillNabor,
+                "primitive_fill",
+                colorImageFormat,
+                samplerFilter,
+                samplerMipmapMode,
+                samplerAddressMode,
+                extent
+        );
 
         //Merge-Scenes nabor
+        URL mergeScenesVertShaderResource = MttURLUtils.mustGetResourceURL(
+                shaderSettings.mergeScenes.main.vert.filepath,
+                shaderSettings.mergeScenes.main.vert.className
+        );
+        URL mergeScenesFragShaderResource = MttURLUtils.mustGetResourceURL(
+                shaderSettings.mergeScenes.main.frag.filepath,
+                shaderSettings.mergeScenes.main.frag.className
+        );
+
         mergeScenesNabor = new MergeScenesNabor(
                 device,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
@@ -346,40 +285,35 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 mergeScenesVertShaderResource,
                 mergeScenesFragShaderResource
         );
-        if (vertShaderModulesStorage.containsKey("merge_scenes")) {
-            var vertShaderModules = vertShaderModulesStorage.get("merge_scenes");
-            var fragShaderModules = fragShaderModulesStorage.get("merge_scenes");
+        this.compileNabor(
+                mergeScenesNabor,
+                "merge_scenes",
+                colorImageFormat,
+                samplerFilter,
+                samplerMipmapMode,
+                samplerAddressMode,
+                extent
+        );
 
-            mergeScenesNabor.compile(
-                    colorImageFormat,
-                    samplerFilter,
-                    samplerMipmapMode,
-                    samplerAddressMode,
-                    extent,
-                    commandPool,
-                    graphicsQueue,
-                    1,
-                    vertShaderModules,
-                    fragShaderModules
-            );
-        } else {
-            mergeScenesNabor.compile(
-                    colorImageFormat,
-                    samplerFilter,
-                    samplerMipmapMode,
-                    samplerAddressMode,
-                    extent,
-                    commandPool,
-                    graphicsQueue,
-                    1);
-
-            var vertShaderModules = mergeScenesNabor.getVertShaderModules();
-            var fragShaderModules = mergeScenesNabor.getFragShaderModules();
-            vertShaderModulesStorage.put("merge_scenes", vertShaderModules);
-            fragShaderModulesStorage.put("merge_scenes", fragShaderModules);
-        }
-
+        //Shadow mapping
         if (useShadowMapping) {
+            URL shadowMappingPass1VertShaderResource = MttURLUtils.mustGetResourceURL(
+                    shaderSettings.shadowMapping.pass1.vert.filepath,
+                    shaderSettings.shadowMapping.pass1.vert.className
+            );
+            URL shadowMappingPass1FragShaderResource = MttURLUtils.mustGetResourceURL(
+                    shaderSettings.shadowMapping.pass1.frag.filepath,
+                    shaderSettings.shadowMapping.pass1.frag.className
+            );
+            URL shadowMappingPass2VertShaderResource = MttURLUtils.mustGetResourceURL(
+                    shaderSettings.shadowMapping.pass2.vert.filepath,
+                    shaderSettings.shadowMapping.pass2.vert.className
+            );
+            URL shadowMappingPass2FragShaderResource = MttURLUtils.mustGetResourceURL(
+                    shaderSettings.shadowMapping.pass2.frag.filepath,
+                    shaderSettings.shadowMapping.pass2.frag.className
+            );
+
             shadowMappingNabor = new ShadowMappingNabor(
                     device,
                     depthImageFormat,
@@ -390,40 +324,19 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                     shadowMappingPass2VertShaderResource,
                     shadowMappingPass2FragShaderResource
             );
-            if (vertShaderModulesStorage.containsKey("shadow_mapping")) {
-                var vertShaderModules = vertShaderModulesStorage.get("shadow_mapping");
-                var fragShaderModules = fragShaderModulesStorage.get("shadow_mapping");
-
-                shadowMappingNabor.compile(
-                        colorImageFormat,
-                        samplerFilter,
-                        samplerMipmapMode,
-                        samplerAddressMode,
-                        extent,
-                        commandPool,
-                        graphicsQueue,
-                        1,
-                        vertShaderModules,
-                        fragShaderModules);
-            } else {
-                shadowMappingNabor.compile(
-                        colorImageFormat,
-                        samplerFilter,
-                        samplerMipmapMode,
-                        samplerAddressMode,
-                        extent,
-                        commandPool,
-                        graphicsQueue,
-                        1);
-
-                var vertShaderModules = shadowMappingNabor.getVertShaderModules();
-                var fragShaderModules = shadowMappingNabor.getFragShaderModules();
-                vertShaderModulesStorage.put("shadow_mapping", vertShaderModules);
-                fragShaderModulesStorage.put("shadow_mapping", fragShaderModules);
-            }
-
+            this.compileNabor(
+                    shadowMappingNabor,
+                    "shadow_mapping",
+                    colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
+                    extent
+            );
             this.createShadowMappingNaborUserDefImages(shadowMappingNabor);
         }
+
+        //Post-processing nabors
         if (!ppNaborNames.isEmpty()) {
             ppNaborChain = new PostProcessingNaborChain(
                     device,
@@ -446,6 +359,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             var ppNaborChainFragShaderModules = ppNaborChain.getFragShaderModules();
             fragShaderModulesStorage.putAll(ppNaborChainFragShaderModules);
         }
+
+        //Full-screen effect nabors
         if (!fseNaborNames.isEmpty()) {
             fseNaborChain = new FullScreenEffectNaborChain(
                     device,

@@ -24,9 +24,9 @@ public class OverwriteDefaultShadersTest extends Mechtatel {
         /*
         MttShaderSettings shaderSettings = MttShaderSettings.create();
         shaderSettings.present.main.vert.filepath = "./Mechtatel/Addon/maeda6uiui/Shader/custom_present.vert";
-        shaderSettings.present.main.vert.external = true;
+        shaderSettings.present.main.vert.className = "local";
         shaderSettings.present.main.frag.filepath = "./Mechtatel/Addon/maeda6uiui/Shader/custom_present.frag";
-        shaderSettings.present.main.frag.external = true;
+        shaderSettings.present.main.frag.className = "local";
          */
 
         //Overwrite default shaders from setting file

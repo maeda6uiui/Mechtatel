@@ -65,13 +65,13 @@ public class FullScreenEffectNaborChain {
         try {
             gaussianBlurVertShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.fullScreenEffect.gaussianBlur.vert.filepath,
-                    shaderSettings.fullScreenEffect.gaussianBlur.vert.external
+                    shaderSettings.fullScreenEffect.gaussianBlur.vert.className
             );
             gaussianBlurFragShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.fullScreenEffect.gaussianBlur.frag.filepath,
-                    shaderSettings.fullScreenEffect.gaussianBlur.frag.external
+                    shaderSettings.fullScreenEffect.gaussianBlur.frag.className
             );
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         //==========
@@ -100,7 +100,7 @@ public class FullScreenEffectNaborChain {
                 };
             }
 
-            if (vertShaderModulesStorage.containsKey(naborName)) {
+            if (vertShaderModulesStorage.containsKey(naborName) && fragShaderModulesStorage.containsKey(naborName)) {
                 var vertShaderModules = vertShaderModulesStorage.get(naborName);
                 var fragShaderModules = fragShaderModulesStorage.get(naborName);
 

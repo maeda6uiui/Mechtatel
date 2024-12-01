@@ -75,49 +75,49 @@ public class PostProcessingNaborChain {
         try {
             fogVertShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.postProcessing.fog.vert.filepath,
-                    shaderSettings.postProcessing.fog.vert.external
+                    shaderSettings.postProcessing.fog.vert.className
             );
             fogFragShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.postProcessing.fog.frag.filepath,
-                    shaderSettings.postProcessing.fog.frag.external
+                    shaderSettings.postProcessing.fog.frag.className
             );
 
             parallelLightVertShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.postProcessing.parallelLight.vert.filepath,
-                    shaderSettings.postProcessing.parallelLight.vert.external
+                    shaderSettings.postProcessing.parallelLight.vert.className
             );
             parallelLightFragShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.postProcessing.parallelLight.frag.filepath,
-                    shaderSettings.postProcessing.parallelLight.frag.external
+                    shaderSettings.postProcessing.parallelLight.frag.className
             );
 
             pointLightVertShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.postProcessing.pointLight.vert.filepath,
-                    shaderSettings.postProcessing.pointLight.vert.external
+                    shaderSettings.postProcessing.pointLight.vert.className
             );
             pointLightFragShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.postProcessing.pointLight.frag.filepath,
-                    shaderSettings.postProcessing.pointLight.frag.external
+                    shaderSettings.postProcessing.pointLight.frag.className
             );
 
             spotlightVertShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.postProcessing.spotlight.vert.filepath,
-                    shaderSettings.postProcessing.spotlight.vert.external
+                    shaderSettings.postProcessing.spotlight.vert.className
             );
             spotlightFragShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.postProcessing.spotlight.frag.filepath,
-                    shaderSettings.postProcessing.spotlight.frag.external
+                    shaderSettings.postProcessing.spotlight.frag.className
             );
 
             simpleBlurVertShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.postProcessing.simpleBlur.vert.filepath,
-                    shaderSettings.postProcessing.simpleBlur.vert.external
+                    shaderSettings.postProcessing.simpleBlur.vert.className
             );
             simpleBlurFragShaderResource = MttURLUtils.getResourceURL(
                     shaderSettings.postProcessing.simpleBlur.frag.filepath,
-                    shaderSettings.postProcessing.simpleBlur.frag.external
+                    shaderSettings.postProcessing.simpleBlur.frag.className
             );
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         //==========
@@ -154,7 +154,7 @@ public class PostProcessingNaborChain {
                 };
             }
 
-            if (vertShaderModulesStorage.containsKey(naborName)) {
+            if (vertShaderModulesStorage.containsKey(naborName) && fragShaderModulesStorage.containsKey(naborName)) {
                 var vertShaderModules = vertShaderModulesStorage.get(naborName);
                 var fragShaderModules = fragShaderModulesStorage.get(naborName);
 

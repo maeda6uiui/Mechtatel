@@ -42,6 +42,7 @@ module com.github.maeda6uiui.mechtatel.core {
     exports com.github.maeda6uiui.mechtatel.core.vulkan.screen;
     exports com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
     exports com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture;
+    exports com.github.maeda6uiui.mechtatel.core.vulkan.shader;
     exports com.github.maeda6uiui.mechtatel.core.model;
     exports com.github.maeda6uiui.mechtatel.core.model.helper;
     exports com.github.maeda6uiui.mechtatel.core.postprocessing;

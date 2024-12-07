@@ -16,6 +16,9 @@
     "system": {
         "fps": 60
     },
+    "cache": {
+        "dirname": "./Mechtatel/Cache"
+    },
     "rendering": {
         "engine": "VULKAN",
         "imageFormat": "SRGB"

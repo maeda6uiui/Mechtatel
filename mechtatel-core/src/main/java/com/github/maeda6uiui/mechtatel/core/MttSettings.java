@@ -60,6 +60,14 @@ public class MttSettings {
         }
     }
 
+    public static class CacheSettings {
+        public String dirname;
+
+        public CacheSettings() {
+            dirname = "./Mechtatel/Cache";
+        }
+    }
+
     public static class RenderingSettings {
         public RenderingEngine engine;
         public MttTexture.ImageFormat imageFormat;
@@ -104,6 +112,8 @@ public class MttSettings {
     public HeadlessSettings headlessSettings;
     @JsonProperty("system")
     public SystemSettings systemSettings;
+    @JsonProperty("cache")
+    public CacheSettings cacheSettings;
     @JsonProperty("rendering")
     public RenderingSettings renderingSettings;
     @JsonProperty("textureOperation")
@@ -117,6 +127,7 @@ public class MttSettings {
         windowSettings = new WindowSettings();
         headlessSettings = new HeadlessSettings();
         systemSettings = new SystemSettings();
+        cacheSettings = new CacheSettings();
         renderingSettings = new RenderingSettings();
         textureOperation = new TextureOperationSettings();
         vulkanSettings = new VulkanSettings();

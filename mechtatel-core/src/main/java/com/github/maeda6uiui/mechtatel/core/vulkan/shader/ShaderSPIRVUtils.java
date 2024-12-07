@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan.util;
+package com.github.maeda6uiui.mechtatel.core.vulkan.shader;
 
 import org.lwjgl.system.NativeResource;
 import org.slf4j.Logger;

@@ -13,11 +13,11 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.util.shaderc.Shaderc.*;
 
 /**
- * Provides utility methods for Shaderc
+ * Provides utility methods for SPIR-V
  *
  * @author maeda6uiui
  */
-public class ShaderSPIRVUtils {
+public class SPIRVUtils {
     public enum ShaderKind {
         VERTEX_SHADER(shaderc_glsl_vertex_shader),
         GEOMETRY_SHADER(shaderc_glsl_geometry_shader),
@@ -50,7 +50,7 @@ public class ShaderSPIRVUtils {
         }
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(ShaderSPIRVUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(SPIRVUtils.class);
 
     public static SPIRV compileShader(String source, ShaderKind shaderKind) {
         long compiler = shaderc_compiler_initialize();

@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
-import com.github.maeda6uiui.mechtatel.core.vulkan.shader.ShaderSPIRVUtils;
+import com.github.maeda6uiui.mechtatel.core.vulkan.shader.SPIRVUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
@@ -721,10 +721,10 @@ public abstract class Nabor {
             throw new RuntimeException("Shader resource cannot be null");
         }
 
-        try (ShaderSPIRVUtils.SPIRV vertShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(
-                vertShaderResource, ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER);
-             ShaderSPIRVUtils.SPIRV fragShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(
-                     fragShaderResource, ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER)) {
+        try (SPIRVUtils.SPIRV vertShaderSPIRV = SPIRVUtils.compileShaderFile(
+                vertShaderResource, SPIRVUtils.ShaderKind.VERTEX_SHADER);
+             SPIRVUtils.SPIRV fragShaderSPIRV = SPIRVUtils.compileShaderFile(
+                     fragShaderResource, SPIRVUtils.ShaderKind.FRAGMENT_SHADER)) {
             long vertShaderModule = this.createShaderModule(device, vertShaderSPIRV.bytecode());
             long fragShaderModule = this.createShaderModule(device, fragShaderSPIRV.bytecode());
 

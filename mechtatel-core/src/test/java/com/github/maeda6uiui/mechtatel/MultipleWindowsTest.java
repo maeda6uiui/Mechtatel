@@ -111,11 +111,17 @@ public class MultipleWindowsTest extends Mechtatel {
 
     @Override
     public void onUpdate(MttWindow window) {
-        modelPropsMap.values().forEach(modelProps -> {
-            modelProps.position.rotateY(POSITION_UPDATE_DELTA);
-            modelProps.rotation.add(new Vector3f(ROTATION_UPDATE_DELTA));
-            modelProps.apply();
-        });
+        modelPropsMap
+                .entrySet()
+                .stream()
+                .filter(v -> v.getKey().equals(window.getWindowId()))
+                .findFirst()
+                .ifPresent(v -> {
+                    ModelProperties modelProps = v.getValue();
+                    modelProps.position.rotateY(POSITION_UPDATE_DELTA);
+                    modelProps.rotation.add(new Vector3f(ROTATION_UPDATE_DELTA));
+                    modelProps.apply();
+                });
 
         MttScreen defaultScreen = window.getDefaultScreen();
         defaultScreen.draw();

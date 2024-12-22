@@ -61,9 +61,11 @@ public class MttSettings {
     }
 
     public static class CacheSettings {
+        public boolean useCache;
         public String dirname;
 
         public CacheSettings() {
+            useCache = true;
             dirname = "./Mechtatel/Cache";
         }
     }

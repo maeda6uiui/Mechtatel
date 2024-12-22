@@ -17,6 +17,7 @@
         "fps": 60
     },
     "cache": {
+        "useCache": true,
         "dirname": "./Mechtatel/Cache"
     },
     "rendering": {

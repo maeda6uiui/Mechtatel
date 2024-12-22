@@ -29,9 +29,6 @@ public class ShaderBuildCacheManager {
         }
 
         cacheDir = Paths.get(settings.cacheSettings.dirname);
-        if (!Files.exists(cacheDir)) {
-            return;
-        }
 
         try {
             srcShaderMD5Hash = FileHashUtils.getFileHash(srcShaderContent, "MD5");

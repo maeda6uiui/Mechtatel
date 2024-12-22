@@ -43,6 +43,14 @@ public class SPIRVUtils {
             return bytecode;
         }
 
+        public byte[] bytearray() {
+            bytecode.rewind();
+            var bin = new byte[bytecode.remaining()];
+            bytecode.get(bin);
+
+            return bin;
+        }
+
         @Override
         public void free() {
             shaderc_result_release(handle);

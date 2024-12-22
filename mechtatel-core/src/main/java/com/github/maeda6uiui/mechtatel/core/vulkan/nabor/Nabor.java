@@ -1,6 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
+import com.github.maeda6uiui.mechtatel.core.util.FilenameUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.cache.ShaderBuildCacheManager;
 import com.github.maeda6uiui.mechtatel.core.vulkan.shader.SPIRVUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
@@ -715,24 +716,15 @@ public abstract class Nabor {
         }
     }
 
-    protected void setupShaderModules(boolean skipIfExists) {
-        if (skipIfExists && !vertShaderModules.isEmpty()) {
-            return;
-        }
-        if (vertShaderResource == null || fragShaderResource == null) {
-            throw new RuntimeException("Shader resource cannot be null");
-        }
-        
-        byte[] vertShaderContent;
-        byte[] fragShaderContent;
-        try (var bisVert = new BufferedInputStream(vertShaderResource.openStream());
-             var bisFrag = new BufferedInputStream(fragShaderResource.openStream())) {
-            vertShaderContent = bisVert.readAllBytes();
-            fragShaderContent = bisFrag.readAllBytes();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    private void setupSPIRVShaderModules(byte[] vertShaderContent, byte[] fragShaderContent) {
+        long vertShaderModule = this.createShaderModule(device, ByteBuffer.wrap(vertShaderContent));
+        long fragShaderModule = this.createShaderModule(device, ByteBuffer.wrap(fragShaderContent));
 
+        this.addVertShaderModule(vertShaderModule);
+        this.addFragShaderModule(fragShaderModule);
+    }
+
+    private void setupGLSLShaderModules(byte[] vertShaderContent, byte[] fragShaderContent) {
         long vertShaderModule;
         long fragShaderModule;
         try {
@@ -765,6 +757,42 @@ public abstract class Nabor {
 
         this.addVertShaderModule(vertShaderModule);
         this.addFragShaderModule(fragShaderModule);
+    }
+
+    protected void setupShaderModules(boolean skipIfExists) {
+        if (skipIfExists && !vertShaderModules.isEmpty()) {
+            return;
+        }
+        if (vertShaderResource == null || fragShaderResource == null) {
+            throw new RuntimeException("Shader resource cannot be null");
+        }
+
+        byte[] vertShaderContent;
+        byte[] fragShaderContent;
+        try (var bisVert = new BufferedInputStream(vertShaderResource.openStream());
+             var bisFrag = new BufferedInputStream(fragShaderResource.openStream())) {
+            vertShaderContent = bisVert.readAllBytes();
+            fragShaderContent = bisFrag.readAllBytes();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        String vertShaderExtension = FilenameUtils.getFileExtension(vertShaderResource.getPath());
+        String fragShaderExtension = FilenameUtils.getFileExtension(fragShaderResource.getPath());
+        if (vertShaderExtension.isEmpty() || fragShaderExtension.isEmpty()) {
+            throw new RuntimeException("Extension of shader file must not be empty");
+        }
+        //For simplicity, use of different shader languages for vertex and fragment shaders is not allowed.
+        if (!vertShaderExtension.equals(fragShaderExtension)) {
+            throw new RuntimeException(
+                    "use of different shader languages for vertex and fragment shaders is not allowed");
+        }
+
+        switch (vertShaderExtension) {
+            case "spirv" -> this.setupSPIRVShaderModules(vertShaderContent, fragShaderContent);
+            case "vert" -> this.setupGLSLShaderModules(vertShaderContent, fragShaderContent);
+            default -> throw new RuntimeException("Cannot determine shader language from shader file extension");
+        }
     }
 
     public long createUserDefImage(

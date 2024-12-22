@@ -1,4 +1,4 @@
-package com.github.maeda6uiui.mechtatel.core.vulkan.util;
+package com.github.maeda6uiui.mechtatel.core.vulkan.shader;
 
 import org.lwjgl.system.NativeResource;
 import org.slf4j.Logger;
@@ -13,23 +13,11 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.util.shaderc.Shaderc.*;
 
 /**
- * Provides utility methods for Shaderc
+ * Provides utility methods for SPIR-V
  *
  * @author maeda6uiui
  */
-public class ShaderSPIRVUtils {
-    public enum ShaderKind {
-        VERTEX_SHADER(shaderc_glsl_vertex_shader),
-        GEOMETRY_SHADER(shaderc_glsl_geometry_shader),
-        FRAGMENT_SHADER(shaderc_glsl_fragment_shader);
-
-        private final int kind;
-
-        ShaderKind(int kind) {
-            this.kind = kind;
-        }
-    }
-
+public class SPIRVUtils {
     public static final class SPIRV implements NativeResource {
         private final long handle;
         private ByteBuffer bytecode;
@@ -43,6 +31,14 @@ public class ShaderSPIRVUtils {
             return bytecode;
         }
 
+        public byte[] bytearray() {
+            bytecode.rewind();
+            var bin = new byte[bytecode.remaining()];
+            bytecode.get(bin);
+
+            return bin;
+        }
+
         @Override
         public void free() {
             shaderc_result_release(handle);
@@ -50,15 +46,15 @@ public class ShaderSPIRVUtils {
         }
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(ShaderSPIRVUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(SPIRVUtils.class);
 
-    public static SPIRV compileShader(String source, ShaderKind shaderKind) {
+    public static SPIRV compileShader(String source, ShaderKind kind) {
         long compiler = shaderc_compiler_initialize();
         if (compiler == NULL) {
             throw new RuntimeException("Failed to create a shader compiler");
         }
 
-        long result = shaderc_compile_into_spv(compiler, source, shaderKind.kind, "", "main", NULL);
+        long result = shaderc_compile_into_spv(compiler, source, kind.shaderc, "", "main", NULL);
         if (result == NULL) {
             throw new RuntimeException("Failed to compile a shader into SPIR-V");
         }
@@ -76,7 +72,12 @@ public class ShaderSPIRVUtils {
         return new SPIRV(result, shaderc_result_get_bytes(result));
     }
 
-    public static SPIRV compileShaderFile(URL shaderResource, ShaderKind shaderKind) throws IOException {
+    public static SPIRV compileShader(byte[] bin, ShaderKind kind) {
+        String source = new String(bin);
+        return compileShader(source, kind);
+    }
+
+    public static SPIRV compileShaderFile(URL shaderResource, ShaderKind kind) throws IOException {
         logger.debug("Compiling shader: {}", shaderResource.getPath());
 
         String source;
@@ -85,6 +86,6 @@ public class ShaderSPIRVUtils {
             source = new String(bs);
         }
 
-        return compileShader(source, shaderKind);
+        return compileShader(source, kind);
     }
 }

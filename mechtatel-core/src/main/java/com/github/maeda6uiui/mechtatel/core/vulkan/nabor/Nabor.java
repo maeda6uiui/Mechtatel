@@ -1,15 +1,19 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
+import com.github.maeda6uiui.mechtatel.core.util.FilenameUtils;
+import com.github.maeda6uiui.mechtatel.core.vulkan.cache.ShaderBuildCacheManager;
+import com.github.maeda6uiui.mechtatel.core.vulkan.shader.SPIRVUtils;
+import com.github.maeda6uiui.mechtatel.core.vulkan.shader.ShaderKind;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
-import com.github.maeda6uiui.mechtatel.core.vulkan.util.ShaderSPIRVUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -713,6 +717,34 @@ public abstract class Nabor {
         }
     }
 
+    private long createShaderModuleFromSPIRV(byte[] shaderContent) {
+        ByteBuffer directBuffer = ByteBuffer.allocateDirect(shaderContent.length);
+        directBuffer.put(shaderContent);
+        directBuffer.flip();
+
+        return this.createShaderModule(device, directBuffer);
+    }
+
+    private long createShaderModuleFromGLSL(byte[] shaderContent, ShaderKind kind) {
+        long shaderModule;
+        try {
+            var cacheMgr = new ShaderBuildCacheManager(shaderContent);
+            byte[] buildCache = cacheMgr.retrieve();
+            if (buildCache == null) {
+                try (SPIRVUtils.SPIRV spirv = SPIRVUtils.compileShader(shaderContent, kind)) {
+                    shaderModule = this.createShaderModule(device, spirv.bytecode());
+                    cacheMgr.save(spirv.bytearray());
+                }
+            } else {
+                shaderModule = this.createShaderModuleFromSPIRV(buildCache);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return shaderModule;
+    }
+
     protected void setupShaderModules(boolean skipIfExists) {
         if (skipIfExists && !vertShaderModules.isEmpty()) {
             return;
@@ -721,18 +753,35 @@ public abstract class Nabor {
             throw new RuntimeException("Shader resource cannot be null");
         }
 
-        try (ShaderSPIRVUtils.SPIRV vertShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(
-                vertShaderResource, ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER);
-             ShaderSPIRVUtils.SPIRV fragShaderSPIRV = ShaderSPIRVUtils.compileShaderFile(
-                     fragShaderResource, ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER)) {
-            long vertShaderModule = this.createShaderModule(device, vertShaderSPIRV.bytecode());
-            long fragShaderModule = this.createShaderModule(device, fragShaderSPIRV.bytecode());
-
-            this.addVertShaderModule(vertShaderModule);
-            this.addFragShaderModule(fragShaderModule);
+        byte[] vertShaderContent;
+        byte[] fragShaderContent;
+        try (var bisVert = new BufferedInputStream(vertShaderResource.openStream());
+             var bisFrag = new BufferedInputStream(fragShaderResource.openStream())) {
+            vertShaderContent = bisVert.readAllBytes();
+            fragShaderContent = bisFrag.readAllBytes();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        String vertShaderExtension = FilenameUtils.getFileExtension(vertShaderResource.getPath());
+        String fragShaderExtension = FilenameUtils.getFileExtension(fragShaderResource.getPath());
+        if (vertShaderExtension.isEmpty() || fragShaderExtension.isEmpty()) {
+            throw new RuntimeException("Extension of shader file must not be empty");
+        }
+
+        long vertShaderModule = switch (vertShaderExtension) {
+            case "spirv" -> this.createShaderModuleFromSPIRV(vertShaderContent);
+            case "glsl" -> this.createShaderModuleFromGLSL(vertShaderContent, ShaderKind.VERTEX);
+            default -> throw new RuntimeException("Cannot determine shader language from shader file extension");
+        };
+        long fragShaderModule = switch (fragShaderExtension) {
+            case "spirv" -> this.createShaderModuleFromSPIRV(fragShaderContent);
+            case "glsl" -> this.createShaderModuleFromGLSL(fragShaderContent, ShaderKind.FRAGMENT);
+            default -> throw new RuntimeException("Cannot determine shader language from shader file extension");
+        };
+
+        this.addVertShaderModule(vertShaderModule);
+        this.addFragShaderModule(fragShaderModule);
     }
 
     public long createUserDefImage(

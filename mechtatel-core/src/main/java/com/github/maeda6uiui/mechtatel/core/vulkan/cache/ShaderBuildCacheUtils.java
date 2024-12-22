@@ -10,11 +10,11 @@ import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Retrieves build cache of a shader
+ * Utility methods for build cache of shaders
  *
  * @author maeda6uiui
  */
-public class ShaderBuildCacheRetriever {
+public class ShaderBuildCacheUtils {
     /**
      * Returns build cache of a shader.
      * Returns {@code null} if cache use is disabled or if the cache file does not exist.

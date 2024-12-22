@@ -55,8 +55,8 @@ public class MttShaderSettings {
 
         public TextureOperationShaderInfo() {
             main = new ShaderInfo();
-            main.vert.filepath = "/Standard/Shader/TextureOperation/texture_operation.vert";
-            main.frag.filepath = "/Standard/Shader/TextureOperation/texture_operation.frag";
+            main.vert.filepath = "/Standard/Shader/TextureOperation/texture_operation.vert.glsl";
+            main.frag.filepath = "/Standard/Shader/TextureOperation/texture_operation.frag.glsl";
         }
     }
 
@@ -66,12 +66,12 @@ public class MttShaderSettings {
 
         public GBufferShaderInfo() {
             albedo = new ShaderInfo();
-            albedo.vert.filepath = "/Standard/Shader/GBuffer/albedo.vert";
-            albedo.frag.filepath = "/Standard/Shader/GBuffer/albedo.frag";
+            albedo.vert.filepath = "/Standard/Shader/GBuffer/albedo.vert.glsl";
+            albedo.frag.filepath = "/Standard/Shader/GBuffer/albedo.frag.glsl";
 
             properties = new ShaderInfo();
-            properties.vert.filepath = "/Standard/Shader/GBuffer/properties.vert";
-            properties.frag.filepath = "/Standard/Shader/GBuffer/properties.frag";
+            properties.vert.filepath = "/Standard/Shader/GBuffer/properties.vert.glsl";
+            properties.frag.filepath = "/Standard/Shader/GBuffer/properties.frag.glsl";
         }
     }
 
@@ -80,8 +80,8 @@ public class MttShaderSettings {
 
         public MergeScenesShaderInfo() {
             main = new ShaderInfo();
-            main.vert.filepath = "/Standard/Shader/MergeScenes/merge_scenes.vert";
-            main.frag.filepath = "/Standard/Shader/MergeScenes/merge_scenes.frag";
+            main.vert.filepath = "/Standard/Shader/MergeScenes/merge_scenes.vert.glsl";
+            main.frag.filepath = "/Standard/Shader/MergeScenes/merge_scenes.frag.glsl";
         }
     }
 
@@ -94,24 +94,24 @@ public class MttShaderSettings {
 
         public PostProcessingShaderInfo() {
             fog = new ShaderInfo();
-            fog.vert.filepath = "/Standard/Shader/PostProcessing/post_processing.vert";
-            fog.frag.filepath = "/Standard/Shader/PostProcessing/fog.frag";
+            fog.vert.filepath = "/Standard/Shader/PostProcessing/post_processing.vert.glsl";
+            fog.frag.filepath = "/Standard/Shader/PostProcessing/fog.frag.glsl";
 
             parallelLight = new ShaderInfo();
-            parallelLight.vert.filepath = "/Standard/Shader/PostProcessing/post_processing.vert";
-            parallelLight.frag.filepath = "/Standard/Shader/PostProcessing/parallel_light.frag";
+            parallelLight.vert.filepath = "/Standard/Shader/PostProcessing/post_processing.vert.glsl";
+            parallelLight.frag.filepath = "/Standard/Shader/PostProcessing/parallel_light.frag.glsl";
 
             pointLight = new ShaderInfo();
-            pointLight.vert.filepath = "/Standard/Shader/PostProcessing/post_processing.vert";
-            pointLight.frag.filepath = "/Standard/Shader/PostProcessing/point_light.frag";
+            pointLight.vert.filepath = "/Standard/Shader/PostProcessing/post_processing.vert.glsl";
+            pointLight.frag.filepath = "/Standard/Shader/PostProcessing/point_light.frag.glsl";
 
             simpleBlur = new ShaderInfo();
-            simpleBlur.vert.filepath = "/Standard/Shader/PostProcessing/post_processing.vert";
-            simpleBlur.frag.filepath = "/Standard/Shader/PostProcessing/simple_blur.frag";
+            simpleBlur.vert.filepath = "/Standard/Shader/PostProcessing/post_processing.vert.glsl";
+            simpleBlur.frag.filepath = "/Standard/Shader/PostProcessing/simple_blur.frag.glsl";
 
             spotlight = new ShaderInfo();
-            spotlight.vert.filepath = "/Standard/Shader/PostProcessing/post_processing.vert";
-            spotlight.frag.filepath = "/Standard/Shader/PostProcessing/spotlight.frag";
+            spotlight.vert.filepath = "/Standard/Shader/PostProcessing/post_processing.vert.glsl";
+            spotlight.frag.filepath = "/Standard/Shader/PostProcessing/spotlight.frag.glsl";
         }
     }
 
@@ -120,8 +120,8 @@ public class MttShaderSettings {
 
         public FullScreenEffectShaderInfo() {
             gaussianBlur = new ShaderInfo();
-            gaussianBlur.vert.filepath = "/Standard/Shader/FullScreenEffect/full_screen_effect.vert";
-            gaussianBlur.frag.filepath = "/Standard/Shader/FullScreenEffect/gaussian_blur.frag";
+            gaussianBlur.vert.filepath = "/Standard/Shader/FullScreenEffect/full_screen_effect.vert.glsl";
+            gaussianBlur.frag.filepath = "/Standard/Shader/FullScreenEffect/gaussian_blur.frag.glsl";
         }
     }
 
@@ -130,8 +130,8 @@ public class MttShaderSettings {
 
         public PresentShaderInfo() {
             main = new ShaderInfo();
-            main.vert.filepath = "/Standard/Shader/Present/present.vert";
-            main.frag.filepath = "/Standard/Shader/Present/present.frag";
+            main.vert.filepath = "/Standard/Shader/Present/present.vert.glsl";
+            main.frag.filepath = "/Standard/Shader/Present/present.frag.glsl";
         }
     }
 
@@ -140,8 +140,8 @@ public class MttShaderSettings {
 
         public PrimitiveShaderInfo() {
             main = new ShaderInfo();
-            main.vert.filepath = "/Standard/Shader/Primitive/primitive.vert";
-            main.frag.filepath = "/Standard/Shader/Primitive/primitive.frag";
+            main.vert.filepath = "/Standard/Shader/Primitive/primitive.vert.glsl";
+            main.frag.filepath = "/Standard/Shader/Primitive/primitive.frag.glsl";
         }
     }
 
@@ -151,12 +151,12 @@ public class MttShaderSettings {
 
         public ShadowMappingShaderInfo() {
             pass1 = new ShaderInfo();
-            pass1.vert.filepath = "/Standard/Shader/ShadowMapping/pass_1.vert";
-            pass1.frag.filepath = "/Standard/Shader/ShadowMapping/pass_1.frag";
+            pass1.vert.filepath = "/Standard/Shader/ShadowMapping/pass_1.vert.glsl";
+            pass1.frag.filepath = "/Standard/Shader/ShadowMapping/pass_1.frag.glsl";
 
             pass2 = new ShaderInfo();
-            pass2.vert.filepath = "/Standard/Shader/ShadowMapping/pass_2.vert";
-            pass2.frag.filepath = "/Standard/Shader/ShadowMapping/pass_2.frag";
+            pass2.vert.filepath = "/Standard/Shader/ShadowMapping/pass_2.vert.glsl";
+            pass2.frag.filepath = "/Standard/Shader/ShadowMapping/pass_2.frag.glsl";
         }
     }
 

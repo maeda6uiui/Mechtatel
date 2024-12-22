@@ -790,7 +790,7 @@ public abstract class Nabor {
 
         switch (vertShaderExtension) {
             case "spirv" -> this.setupSPIRVShaderModules(vertShaderContent, fragShaderContent);
-            case "vert" -> this.setupGLSLShaderModules(vertShaderContent, fragShaderContent);
+            case "glsl" -> this.setupGLSLShaderModules(vertShaderContent, fragShaderContent);
             default -> throw new RuntimeException("Cannot determine shader language from shader file extension");
         }
     }

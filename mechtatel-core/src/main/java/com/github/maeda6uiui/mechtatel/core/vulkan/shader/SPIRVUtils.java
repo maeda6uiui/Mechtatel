@@ -18,14 +18,14 @@ import static org.lwjgl.util.shaderc.Shaderc.*;
  * @author maeda6uiui
  */
 public class SPIRVUtils {
-    public enum ShaderKind {
+    public enum SPIRVShaderKind {
         VERTEX_SHADER(shaderc_glsl_vertex_shader),
         GEOMETRY_SHADER(shaderc_glsl_geometry_shader),
         FRAGMENT_SHADER(shaderc_glsl_fragment_shader);
 
         private final int kind;
 
-        ShaderKind(int kind) {
+        SPIRVShaderKind(int kind) {
             this.kind = kind;
         }
     }
@@ -60,7 +60,7 @@ public class SPIRVUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(SPIRVUtils.class);
 
-    public static SPIRV compileShader(String source, ShaderKind shaderKind) {
+    public static SPIRV compileShader(String source, SPIRVShaderKind shaderKind) {
         long compiler = shaderc_compiler_initialize();
         if (compiler == NULL) {
             throw new RuntimeException("Failed to create a shader compiler");
@@ -84,12 +84,12 @@ public class SPIRVUtils {
         return new SPIRV(result, shaderc_result_get_bytes(result));
     }
 
-    public static SPIRV compileShader(byte[] bin, ShaderKind shaderKind) {
+    public static SPIRV compileShader(byte[] bin, SPIRVShaderKind shaderKind) {
         String source = new String(bin);
         return compileShader(source, shaderKind);
     }
 
-    public static SPIRV compileShaderFile(URL shaderResource, ShaderKind shaderKind) throws IOException {
+    public static SPIRV compileShaderFile(URL shaderResource, SPIRVShaderKind shaderKind) throws IOException {
         logger.debug("Compiling shader: {}", shaderResource.getPath());
 
         String source;

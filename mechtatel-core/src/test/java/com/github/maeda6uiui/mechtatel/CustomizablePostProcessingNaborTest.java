@@ -49,11 +49,11 @@ public class CustomizablePostProcessingNaborTest extends Mechtatel {
         URL fragShaderResource;
         try {
             vertShaderResource = MttURLUtils.getResourceURL(
-                    "/Standard/Shader/PostProcessing/post_processing.vert",
+                    "/Standard/Shader/PostProcessing/post_processing.vert.glsl",
                     Mechtatel.class //Vertex shader is located inside the JAR of Mechtatel
             );
             fragShaderResource = MttURLUtils.getResourceURL(
-                    "./Mechtatel/Addon/maeda6uiui/Shader/sepia.frag",
+                    "./Mechtatel/Addon/maeda6uiui/Shader/sepia.frag.glsl",
                     (Class<?>) null //Fragment shader is located in a local directory
             );
         } catch (MalformedURLException e) {

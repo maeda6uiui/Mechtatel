@@ -1,9 +1,10 @@
 package com.github.maeda6uiui.mechtatel.core.util;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -14,13 +15,11 @@ import java.security.NoSuchAlgorithmException;
  * @author maeda6uiui
  */
 public class FileHashUtils {
-    public static String getFileMD5Hash(String filepath, String algorithmName)
-            throws IOException, NoSuchAlgorithmException {
+    public static String getFileHash(byte[] bin, String algorithmName) throws IOException, NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance(algorithmName);
 
         byte[] hash;
-        try (var dis = new DigestInputStream(
-                new BufferedInputStream(Files.newInputStream(Paths.get(filepath))), md)) {
+        try (var dis = new DigestInputStream(new BufferedInputStream(new ByteArrayInputStream(bin)), md)) {
             while (dis.read() != -1) {
             }
 
@@ -34,5 +33,10 @@ public class FileHashUtils {
         }
 
         return sb.toString();
+    }
+
+    public static String getFileHash(Path path, String algorithmName) throws IOException, NoSuchAlgorithmException {
+        byte[] bin = Files.readAllBytes(path);
+        return getFileHash(bin, algorithmName);
     }
 }

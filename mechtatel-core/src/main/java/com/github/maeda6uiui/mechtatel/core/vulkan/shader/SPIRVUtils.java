@@ -18,18 +18,6 @@ import static org.lwjgl.util.shaderc.Shaderc.*;
  * @author maeda6uiui
  */
 public class SPIRVUtils {
-    public enum SPIRVShaderKind {
-        VERTEX_SHADER(shaderc_glsl_vertex_shader),
-        GEOMETRY_SHADER(shaderc_glsl_geometry_shader),
-        FRAGMENT_SHADER(shaderc_glsl_fragment_shader);
-
-        private final int kind;
-
-        SPIRVShaderKind(int kind) {
-            this.kind = kind;
-        }
-    }
-
     public static final class SPIRV implements NativeResource {
         private final long handle;
         private ByteBuffer bytecode;
@@ -60,13 +48,13 @@ public class SPIRVUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(SPIRVUtils.class);
 
-    public static SPIRV compileShader(String source, SPIRVShaderKind shaderKind) {
+    public static SPIRV compileShader(String source, ShaderKind kind) {
         long compiler = shaderc_compiler_initialize();
         if (compiler == NULL) {
             throw new RuntimeException("Failed to create a shader compiler");
         }
 
-        long result = shaderc_compile_into_spv(compiler, source, shaderKind.kind, "", "main", NULL);
+        long result = shaderc_compile_into_spv(compiler, source, kind.shaderc, "", "main", NULL);
         if (result == NULL) {
             throw new RuntimeException("Failed to compile a shader into SPIR-V");
         }
@@ -84,12 +72,12 @@ public class SPIRVUtils {
         return new SPIRV(result, shaderc_result_get_bytes(result));
     }
 
-    public static SPIRV compileShader(byte[] bin, SPIRVShaderKind shaderKind) {
+    public static SPIRV compileShader(byte[] bin, ShaderKind kind) {
         String source = new String(bin);
-        return compileShader(source, shaderKind);
+        return compileShader(source, kind);
     }
 
-    public static SPIRV compileShaderFile(URL shaderResource, SPIRVShaderKind shaderKind) throws IOException {
+    public static SPIRV compileShaderFile(URL shaderResource, ShaderKind kind) throws IOException {
         logger.debug("Compiling shader: {}", shaderResource.getPath());
 
         String source;
@@ -98,6 +86,6 @@ public class SPIRVUtils {
             source = new String(bs);
         }
 
-        return compileShader(source, shaderKind);
+        return compileShader(source, kind);
     }
 }

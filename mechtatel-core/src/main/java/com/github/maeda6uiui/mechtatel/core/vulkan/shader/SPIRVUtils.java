@@ -76,6 +76,11 @@ public class SPIRVUtils {
         return new SPIRV(result, shaderc_result_get_bytes(result));
     }
 
+    public static SPIRV compileShader(byte[] bin, ShaderKind shaderKind) {
+        String source = new String(bin);
+        return compileShader(source, shaderKind);
+    }
+
     public static SPIRV compileShaderFile(URL shaderResource, ShaderKind shaderKind) throws IOException {
         logger.debug("Compiling shader: {}", shaderResource.getPath());
 

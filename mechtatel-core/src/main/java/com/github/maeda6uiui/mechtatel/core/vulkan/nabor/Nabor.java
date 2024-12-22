@@ -1,6 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor;
 
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
+import com.github.maeda6uiui.mechtatel.core.vulkan.cache.ShaderBuildCacheManager;
 import com.github.maeda6uiui.mechtatel.core.vulkan.shader.SPIRVUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
@@ -10,6 +11,7 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -720,19 +722,49 @@ public abstract class Nabor {
         if (vertShaderResource == null || fragShaderResource == null) {
             throw new RuntimeException("Shader resource cannot be null");
         }
-
-        try (SPIRVUtils.SPIRV vertShaderSPIRV = SPIRVUtils.compileShaderFile(
-                vertShaderResource, SPIRVUtils.ShaderKind.VERTEX_SHADER);
-             SPIRVUtils.SPIRV fragShaderSPIRV = SPIRVUtils.compileShaderFile(
-                     fragShaderResource, SPIRVUtils.ShaderKind.FRAGMENT_SHADER)) {
-            long vertShaderModule = this.createShaderModule(device, vertShaderSPIRV.bytecode());
-            long fragShaderModule = this.createShaderModule(device, fragShaderSPIRV.bytecode());
-
-            this.addVertShaderModule(vertShaderModule);
-            this.addFragShaderModule(fragShaderModule);
+        
+        byte[] vertShaderContent;
+        byte[] fragShaderContent;
+        try (var bisVert = new BufferedInputStream(vertShaderResource.openStream());
+             var bisFrag = new BufferedInputStream(fragShaderResource.openStream())) {
+            vertShaderContent = bisVert.readAllBytes();
+            fragShaderContent = bisFrag.readAllBytes();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        long vertShaderModule;
+        long fragShaderModule;
+        try {
+            var vertCacheMgr = new ShaderBuildCacheManager(vertShaderContent);
+            byte[] vertBuildCache = vertCacheMgr.retrieve();
+            if (vertBuildCache == null) {
+                try (SPIRVUtils.SPIRV vertShaderSPIRV = SPIRVUtils.compileShader(
+                        vertShaderContent, SPIRVUtils.ShaderKind.VERTEX_SHADER)) {
+                    vertShaderModule = this.createShaderModule(device, vertShaderSPIRV.bytecode());
+                    vertCacheMgr.save(vertShaderSPIRV.bytecode().array());
+                }
+            } else {
+                vertShaderModule = this.createShaderModule(device, ByteBuffer.wrap(vertBuildCache));
+            }
+
+            var fragCacheMgr = new ShaderBuildCacheManager(fragShaderContent);
+            byte[] fragBuildCache = fragCacheMgr.retrieve();
+            if (fragBuildCache == null) {
+                try (SPIRVUtils.SPIRV fragShaderSPIRV = SPIRVUtils.compileShader(
+                        fragShaderContent, SPIRVUtils.ShaderKind.FRAGMENT_SHADER)) {
+                    fragShaderModule = this.createShaderModule(device, fragShaderSPIRV.bytecode());
+                    fragCacheMgr.save(fragShaderSPIRV.bytecode().array());
+                }
+            } else {
+                fragShaderModule = this.createShaderModule(device, ByteBuffer.wrap(fragBuildCache));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        this.addVertShaderModule(vertShaderModule);
+        this.addFragShaderModule(fragShaderModule);
     }
 
     public long createUserDefImage(

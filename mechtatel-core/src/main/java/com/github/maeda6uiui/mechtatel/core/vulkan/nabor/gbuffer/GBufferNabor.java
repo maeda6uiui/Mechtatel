@@ -95,64 +95,6 @@ public class GBufferNabor extends Nabor {
     }
 
     @Override
-    public void compile(
-            int colorImageFormat,
-            int samplerFilter,
-            int samplerMipmapMode,
-            int samplerAddressMode,
-            VkExtent2D extent,
-            long commandPool,
-            VkQueue graphicsQueue,
-            int descriptorCount,
-            List<Long> vertShaderModules,
-            List<Long> fragShaderModules) {
-        super.compile(
-                colorImageFormat,
-                samplerFilter,
-                samplerMipmapMode,
-                samplerAddressMode,
-                extent,
-                commandPool,
-                graphicsQueue,
-                descriptorCount);
-
-        var albedoVertShaderModules = new ArrayList<Long>();
-        var albedoFragShaderModules = new ArrayList<Long>();
-        var propertiesVertShaderModules = new ArrayList<Long>();
-        var propertiesFragShaderModules = new ArrayList<Long>();
-
-        albedoVertShaderModules.add(vertShaderModules.get(0));
-        albedoFragShaderModules.add(fragShaderModules.get(0));
-        propertiesVertShaderModules.add(vertShaderModules.get(1));
-        propertiesFragShaderModules.add(fragShaderModules.get(1));
-
-        albedoNabor.compile(
-                colorImageFormat,
-                samplerFilter,
-                samplerMipmapMode,
-                samplerAddressMode,
-                extent,
-                commandPool,
-                graphicsQueue,
-                descriptorCount,
-                albedoVertShaderModules,
-                albedoFragShaderModules
-        );
-        propertiesNabor.compile(
-                colorImageFormat,
-                samplerFilter,
-                samplerMipmapMode,
-                samplerAddressMode,
-                extent,
-                commandPool,
-                graphicsQueue,
-                descriptorCount,
-                propertiesVertShaderModules,
-                propertiesFragShaderModules
-        );
-    }
-
-    @Override
     public void recreate(
             int colorImageFormat,
             VkExtent2D extent) {

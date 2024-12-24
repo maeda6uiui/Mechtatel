@@ -32,7 +32,10 @@ import org.lwjgl.vulkan.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -58,9 +61,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
     private PrimitiveNabor primitiveNabor;
     private PrimitiveNabor primitiveFillNabor;
     private MergeScenesNabor mergeScenesNabor;
-
-    private static Map<String, List<Long>> vertShaderModulesStorage = new HashMap<>();
-    private static Map<String, List<Long>> fragShaderModulesStorage = new HashMap<>();
 
     private ShadowMappingNabor shadowMappingNabor;
     private int depthImageFormat;
@@ -95,45 +95,21 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
 
     private void compileNabor(
             Nabor nabor,
-            String naborName,
             int colorImageFormat,
             int samplerFilter,
             int samplerMipmapMode,
             int samplerAddressMode,
             VkExtent2D extent) {
-        if (vertShaderModulesStorage.containsKey(naborName) && fragShaderModulesStorage.containsKey(naborName)) {
-            var vertShaderModules = vertShaderModulesStorage.get(naborName);
-            var fragShaderModules = fragShaderModulesStorage.get(naborName);
-
-            nabor.compile(
-                    colorImageFormat,
-                    samplerFilter,
-                    samplerMipmapMode,
-                    samplerAddressMode,
-                    extent,
-                    commandPool,
-                    graphicsQueue,
-                    1,
-                    vertShaderModules,
-                    fragShaderModules
-            );
-        } else {
-            nabor.compile(
-                    colorImageFormat,
-                    samplerFilter,
-                    samplerMipmapMode,
-                    samplerAddressMode,
-                    extent,
-                    commandPool,
-                    graphicsQueue,
-                    1
-            );
-
-            var vertShaderModules = nabor.getVertShaderModules();
-            var fragShaderModules = nabor.getFragShaderModules();
-            vertShaderModulesStorage.put(naborName, vertShaderModules);
-            fragShaderModulesStorage.put(naborName, fragShaderModules);
-        }
+        nabor.compile(
+                colorImageFormat,
+                samplerFilter,
+                samplerMipmapMode,
+                samplerAddressMode,
+                extent,
+                commandPool,
+                graphicsQueue,
+                1
+        );
     }
 
     public VkMttScreen(
@@ -207,7 +183,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         );
         this.compileNabor(
                 gBufferNabor,
-                "gbuffer",
                 colorImageFormat,
                 samplerFilter,
                 samplerMipmapMode,
@@ -237,7 +212,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         );
         this.compileNabor(
                 primitiveNabor,
-                "primitive",
                 colorImageFormat,
                 samplerFilter,
                 samplerMipmapMode,
@@ -258,7 +232,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         );
         this.compileNabor(
                 primitiveFillNabor,
-                "primitive_fill",
                 colorImageFormat,
                 samplerFilter,
                 samplerMipmapMode,
@@ -287,7 +260,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         );
         this.compileNabor(
                 mergeScenesNabor,
-                "merge_scenes",
                 colorImageFormat,
                 samplerFilter,
                 samplerMipmapMode,
@@ -326,7 +298,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             );
             this.compileNabor(
                     shadowMappingNabor,
-                    "shadow_mapping",
                     colorImageFormat,
                     samplerFilter,
                     samplerMipmapMode,
@@ -348,16 +319,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                     samplerAddressMode,
                     extent,
                     ppNaborNames,
-                    customizablePPNaborInfos,
-                    new HashMap<>(vertShaderModulesStorage),
-                    new HashMap<>(fragShaderModulesStorage)
+                    customizablePPNaborInfos
             );
-
-            var ppNaborChainVertShaderModules = ppNaborChain.getVertShaderModules();
-            vertShaderModulesStorage.putAll(ppNaborChainVertShaderModules);
-
-            var ppNaborChainFragShaderModules = ppNaborChain.getFragShaderModules();
-            fragShaderModulesStorage.putAll(ppNaborChainFragShaderModules);
         }
 
         //Full-screen effect nabors
@@ -372,16 +335,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                     VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
                     extent,
                     fseNaborNames,
-                    fseNaborInfos,
-                    new HashMap<>(vertShaderModulesStorage),
-                    new HashMap<>(fragShaderModulesStorage)
+                    fseNaborInfos
             );
-
-            var fseNaborChainVertShaderModules = fseNaborChain.getVertShaderModules();
-            vertShaderModulesStorage.putAll(fseNaborChainVertShaderModules);
-
-            var fseNaborChainFragShaderModules = fseNaborChain.getFragShaderModules();
-            fragShaderModulesStorage.putAll(fseNaborChainFragShaderModules);
         }
     }
 

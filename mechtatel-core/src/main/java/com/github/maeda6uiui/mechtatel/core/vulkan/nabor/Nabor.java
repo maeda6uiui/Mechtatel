@@ -596,32 +596,6 @@ public abstract class Nabor {
         this.createFramebuffers();
     }
 
-    public void compile(
-            int colorImageFormat,
-            int samplerFilter,
-            int samplerMipmapMode,
-            int samplerAddressMode,
-            VkExtent2D extent,
-            long commandPool,
-            VkQueue graphicsQueue,
-            int descriptorCount,
-            List<Long> vertShaderModules,
-            List<Long> fragShaderModules) {
-        this.vertShaderModules = vertShaderModules;
-        this.fragShaderModules = fragShaderModules;
-        isBorrowedShaderModules = true;
-
-        this.compile(
-                colorImageFormat,
-                samplerFilter,
-                samplerMipmapMode,
-                samplerAddressMode,
-                extent,
-                commandPool,
-                graphicsQueue,
-                descriptorCount);
-    }
-
     public void recreate(int colorImageFormat, VkExtent2D extent) {
         this.extent = extent;
 

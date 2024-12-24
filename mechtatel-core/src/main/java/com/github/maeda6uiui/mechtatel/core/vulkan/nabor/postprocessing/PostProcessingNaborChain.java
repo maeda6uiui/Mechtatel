@@ -47,9 +47,7 @@ public class PostProcessingNaborChain {
             int samplerAddressMode,
             VkExtent2D extent,
             List<String> naborNames,
-            Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos,
-            Map<String, List<Long>> vertShaderModulesStorage,
-            Map<String, List<Long>> fragShaderModulesStorage) {
+            Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos) {
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
@@ -154,34 +152,16 @@ public class PostProcessingNaborChain {
                 };
             }
 
-            if (vertShaderModulesStorage.containsKey(naborName) && fragShaderModulesStorage.containsKey(naborName)) {
-                var vertShaderModules = vertShaderModulesStorage.get(naborName);
-                var fragShaderModules = fragShaderModulesStorage.get(naborName);
-
-                ppNabor.compile(
-                        colorImageFormat,
-                        samplerFilter,
-                        samplerMipmapMode,
-                        samplerAddressMode,
-                        extent,
-                        commandPool,
-                        graphicsQueue,
-                        1,
-                        vertShaderModules,
-                        fragShaderModules
-                );
-            } else {
-                ppNabor.compile(
-                        colorImageFormat,
-                        samplerFilter,
-                        samplerMipmapMode,
-                        samplerAddressMode,
-                        extent,
-                        commandPool,
-                        graphicsQueue,
-                        1
-                );
-            }
+            ppNabor.compile(
+                    colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
+                    extent,
+                    commandPool,
+                    graphicsQueue,
+                    1
+            );
 
             ppNabors.put(naborName, ppNabor);
             lastPPNabor = ppNabor;

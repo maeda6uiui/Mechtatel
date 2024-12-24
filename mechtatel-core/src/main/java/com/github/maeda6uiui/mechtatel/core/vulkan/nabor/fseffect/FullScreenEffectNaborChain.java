@@ -46,9 +46,7 @@ public class FullScreenEffectNaborChain {
             int samplerAddressMode,
             VkExtent2D extent,
             List<String> naborNames,
-            Map<String, FullScreenEffectNaborInfo> fseNaborInfos,
-            Map<String, List<Long>> vertShaderModulesStorage,
-            Map<String, List<Long>> fragShaderModulesStorage) {
+            Map<String, FullScreenEffectNaborInfo> fseNaborInfos) {
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
@@ -100,34 +98,16 @@ public class FullScreenEffectNaborChain {
                 };
             }
 
-            if (vertShaderModulesStorage.containsKey(naborName) && fragShaderModulesStorage.containsKey(naborName)) {
-                var vertShaderModules = vertShaderModulesStorage.get(naborName);
-                var fragShaderModules = fragShaderModulesStorage.get(naborName);
-
-                fseNabor.compile(
-                        colorImageFormat,
-                        samplerFilter,
-                        samplerMipmapMode,
-                        samplerAddressMode,
-                        extent,
-                        commandPool,
-                        graphicsQueue,
-                        1,
-                        vertShaderModules,
-                        fragShaderModules
-                );
-            } else {
-                fseNabor.compile(
-                        colorImageFormat,
-                        samplerFilter,
-                        samplerMipmapMode,
-                        samplerAddressMode,
-                        extent,
-                        commandPool,
-                        graphicsQueue,
-                        1
-                );
-            }
+            fseNabor.compile(
+                    colorImageFormat,
+                    samplerFilter,
+                    samplerMipmapMode,
+                    samplerAddressMode,
+                    extent,
+                    commandPool,
+                    graphicsQueue,
+                    1
+            );
 
             fseNabors.put(naborName, fseNabor);
             lastFSENabor = fseNabor;

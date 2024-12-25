@@ -58,10 +58,6 @@ public class ParallelLight {
         this.direction = direction.normalize();
     }
 
-    public void calcDirectionFromPositionAndCenter() {
-        direction = new Vector3f(center).sub(position).normalize();
-    }
-
     public Vector3f getDiffuseColor() {
         return diffuseColor;
     }
@@ -196,5 +192,9 @@ public class ParallelLight {
 
     public void setAttenuations(Vector3f attenuations) {
         this.attenuations = attenuations;
+    }
+
+    public void calcDirectionFromPositionAndCenter() {
+        direction = new Vector3f(center).sub(position).normalize();
     }
 }

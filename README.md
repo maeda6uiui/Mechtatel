@@ -85,6 +85,11 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ## Progress report
 
+### 2024-12-25
+
+Releases `v0.0.1-alpha6`.
+Check the release note for the changes that have been made since the previous release!
+
 ### 2024-12-01
 
 Releases `v0.0.1-alpha5` with some refactoring and changes to methods.

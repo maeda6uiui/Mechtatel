@@ -32,12 +32,12 @@ God knows if I could complete this work by the time you'd think I'm no more...
     <dependency>
         <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel-core</artifactId>
-        <version>0.0.1-alpha5</version>
+        <version>0.0.1-alpha6</version>
     </dependency>
     <dependency>
         <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel-logging</artifactId>
-        <version>0.0.1-alpha5</version>
+        <version>0.0.1-alpha6</version>
     </dependency>
 </dependencies>
 ```
@@ -85,7 +85,7 @@ You can overwrite it or use another logging implementation at your discretion.
 
 ## Progress report
 
-### 2024-12-25
+### 2024-12-xx
 
 Releases `v0.0.1-alpha6`.
 Check the release note for the changes that have been made since the previous release!

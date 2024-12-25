@@ -116,15 +116,20 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
 
         MttVulkanInstance
                 .get()
-                .ifPresent(v -> {
-                    surface = SurfaceCreator.createSurface(v.getVkInstance(), window);
-                    physicalDevice = PhysicalDevicePicker.pickPhysicalDevice(
-                            v.getVkInstance(),
-                            surface,
-                            settings.vulkanSettings.preferablePhysicalDeviceIndex,
-                            true
-                    );
-                });
+                .ifPresentOrElse(
+                        v -> {
+                            surface = SurfaceCreator.createSurface(v.getVkInstance(), window);
+                            physicalDevice = PhysicalDevicePicker.pickPhysicalDevice(
+                                    v.getVkInstance(),
+                                    surface,
+                                    settings.vulkanSettings.preferablePhysicalDeviceIndex,
+                                    true
+                            );
+                        },
+                        () -> {
+                            throw new RuntimeException("Vulkan instance does not exist");
+                        }
+                );
 
         dq = LogicalDeviceCreator.createLogicalDevice(
                 physicalDevice,

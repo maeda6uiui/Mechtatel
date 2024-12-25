@@ -306,7 +306,7 @@ public class MttWindow {
         glfwFreeCallbacks(handle);
         glfwDestroyWindow(handle);
 
-        ImGui.destroyContext(imguiContext);
+        //ImGui.destroyContext(imguiContext);
 
         validWindow = false;
         logger.debug("Window ({}) cleaned up", Long.toHexString(handle));

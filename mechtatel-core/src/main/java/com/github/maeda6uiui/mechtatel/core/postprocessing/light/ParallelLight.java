@@ -58,10 +58,6 @@ public class ParallelLight {
         this.direction = direction.normalize();
     }
 
-    public void calcDirectionFromPositionAndCenter() {
-        direction = new Vector3f(center).sub(position).normalize();
-    }
-
     public Vector3f getDiffuseColor() {
         return diffuseColor;
     }

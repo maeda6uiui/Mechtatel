@@ -74,6 +74,10 @@ public class Spotlight {
         this.direction = direction.normalize();
     }
 
+    public void calcDirectionFromPositionAndCenter() {
+        direction = new Vector3f(center).sub(position).normalize();
+    }
+
     public void setCenter(Vector3f center) {
         this.center = center;
     }

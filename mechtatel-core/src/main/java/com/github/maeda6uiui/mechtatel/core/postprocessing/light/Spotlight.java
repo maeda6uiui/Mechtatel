@@ -233,4 +233,8 @@ public class Spotlight {
     public void setAttenuations(Vector3f attenuations) {
         this.attenuations = attenuations;
     }
+
+    public void calcDirectionFromPositionAndCenter() {
+        direction = new Vector3f(center).sub(position).normalize();
+    }
 }

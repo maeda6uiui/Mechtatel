@@ -83,6 +83,32 @@ You can overwrite it or use another logging implementation at your discretion.
 - [Vulkan-Tutorial-Java](https://github.com/Naitsirc98/Vulkan-Tutorial-Java)
 - [3D Game Development with LWJGL 3](https://ahbejarano.gitbook.io/lwjglgamedev/)
 
+## Screenshots
+
+Some basic primitives
+
+![Primitives](./Image/primitives.png)
+
+Physics objects
+
+![Physics objects](./Image/physics_objects.png)
+
+Spotlights
+
+![Spotlights](./Image/spotlights.png)
+
+Shadow mapping
+
+![Shadow mapping](./Image/shadow_mapping.png)
+
+Skeletal animation
+
+![Skeletal animation](./Image/skeletal_animation.png)
+
+ImGui
+
+![ImGui](./Image/imgui.png)
+
 ## Progress report
 
 ### 2024-12-xx

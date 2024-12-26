@@ -187,6 +187,8 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
 
         MttVulkanInstance.get().ifPresent(MttVulkanInstance::cleanup);
 
+        MttWindow.destroyImGuiContexts();
+
         glfwTerminate();
         this.onTerminate();
     }

@@ -69,8 +69,12 @@ public class VaryingDistanceTrackingCameraTest extends Mechtatel {
         camera.setDesiredDistance(5.0f);
         camera.setMinDistance(1.5f);
         camera.setDistanceDelta(0.1f);
+
         horizontalAngle = 0.0f;
         verticalAngle = (float) Math.toRadians(45.0f);
+        camera.setHorizontalAngle(horizontalAngle);
+        camera.setVerticalAngle(verticalAngle);
+
         rotationDelta = 0.01f;
         minRotateV = (float) Math.toRadians(-45.0f);
         maxRotateV = (float) Math.toRadians(80.0f);

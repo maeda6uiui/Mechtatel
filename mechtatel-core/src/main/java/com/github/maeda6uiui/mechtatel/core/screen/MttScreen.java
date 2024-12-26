@@ -509,6 +509,10 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     public MttImGui createImGui() {
+        if (imGuiContext == null) {
+            throw new UnsupportedOperationException();
+        }
+
         return new MttImGui(vulkanImplCommon, this, imGuiContext);
     }
 

@@ -29,7 +29,7 @@ public class MttHeadlessInstance {
     private IMechtatelHeadlessEventHandlers mtt;
     private MttVulkanImplHeadless vulkanImplHeadless;
 
-    private ImGuiContext imguiContext;
+    private ImGuiContext imGuiContext;
 
     private MttScreen defaultScreen;
     private List<MttScreen> screens;
@@ -54,8 +54,8 @@ public class MttHeadlessInstance {
         sounds3D = new ArrayList<>();
 
         //Set up ImGui =====
-        imguiContext = ImGui.createContext();
-        ImGui.setCurrentContext(imguiContext);
+        imGuiContext = ImGui.createContext();
+        ImGui.setCurrentContext(imGuiContext);
 
         ImGuiIO io = ImGui.getIO();
 
@@ -65,7 +65,7 @@ public class MttHeadlessInstance {
 
         defaultScreen = new MttScreen(
                 vulkanImplHeadless,
-                imguiContext,
+                imGuiContext,
                 new MttScreen.MttScreenCreateInfo().setScreenWidth(width).setScreenHeight(height)
         );
         screens = new ArrayList<>();
@@ -91,7 +91,7 @@ public class MttHeadlessInstance {
         vulkanImplHeadless.cleanup();
         sounds3D.forEach(MttSound::cleanup);
 
-        ImGui.destroyContext(imguiContext);
+        ImGui.destroyContext(imGuiContext);
     }
 
     public Optional<MttVulkanImplHeadless> getVulkanImplHeadless() {
@@ -115,7 +115,7 @@ public class MttHeadlessInstance {
     }
 
     public MttScreen createScreen(MttScreen.MttScreenCreateInfo createInfo) {
-        var screen = new MttScreen(vulkanImplHeadless, imguiContext, createInfo);
+        var screen = new MttScreen(vulkanImplHeadless, imGuiContext, createInfo);
         screens.add(screen);
 
         return screen;

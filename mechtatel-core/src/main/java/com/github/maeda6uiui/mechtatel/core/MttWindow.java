@@ -38,6 +38,8 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class MttWindow {
     private static final Logger logger = LoggerFactory.getLogger(MttWindow.class);
 
+    private static List<ImGuiContext> imguiContexts = new ArrayList<>();
+
     private String windowId;
     private IMechtatelWindowEventHandlers mtt;
     private MttVulkanImpl vulkanImpl;
@@ -160,6 +162,7 @@ public class MttWindow {
         //Set up ImGui =====
         imguiContext = ImGui.createContext();
         ImGui.setCurrentContext(imguiContext);
+        imguiContexts.add(imguiContext);
 
         ImGuiIO io = ImGui.getIO();
 
@@ -306,10 +309,12 @@ public class MttWindow {
         glfwFreeCallbacks(handle);
         glfwDestroyWindow(handle);
 
-        //ImGui.destroyContext(imguiContext);
-
         validWindow = false;
         logger.debug("Window ({}) cleaned up", Long.toHexString(handle));
+    }
+
+    public static void destroyImGuiContexts() {
+        imguiContexts.forEach(ImGui::destroyContext);
     }
 
     public Optional<MttVulkanImpl> getVulkanImpl() {

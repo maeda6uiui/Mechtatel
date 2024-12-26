@@ -109,6 +109,10 @@ ImGui
 
 ![ImGui](./Image/imgui.png)
 
+Rendering to multiple windows
+
+![Rendering to multiple windows](./Image/rendering_to_multiple_windows.png)
+
 ## Progress report
 
 ### 2024-12-xx

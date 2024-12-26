@@ -38,10 +38,12 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class MttWindow {
     private static final Logger logger = LoggerFactory.getLogger(MttWindow.class);
 
+    private static List<ImGuiContext> imGuiContexts = new ArrayList<>();
+
     private String windowId;
     private IMechtatelWindowEventHandlers mtt;
     private MttVulkanImpl vulkanImpl;
-    private ImGuiContext imguiContext;
+    private ImGuiContext imGuiContext;
 
     private long handle;
     private int width;
@@ -158,8 +160,9 @@ public class MttWindow {
         sounds3D = new ArrayList<>();
 
         //Set up ImGui =====
-        imguiContext = ImGui.createContext();
-        ImGui.setCurrentContext(imguiContext);
+        imGuiContext = ImGui.createContext();
+        ImGui.setCurrentContext(imGuiContext);
+        imGuiContexts.add(imGuiContext);
 
         ImGuiIO io = ImGui.getIO();
 
@@ -251,7 +254,7 @@ public class MttWindow {
         });
         //==========
 
-        defaultScreen = new MttScreen(vulkanImpl, imguiContext, new MttScreen.MttScreenCreateInfo());
+        defaultScreen = new MttScreen(vulkanImpl, imGuiContext, new MttScreen.MttScreenCreateInfo());
         screens = new ArrayList<>();
         screens.add(defaultScreen);
 
@@ -273,7 +276,7 @@ public class MttWindow {
                 }
             });
 
-            ImGui.setCurrentContext(imguiContext);
+            ImGui.setCurrentContext(imGuiContext);
             ImGuiIO io = ImGui.getIO();
             io.setDisplaySize(width, height);
 
@@ -306,10 +309,12 @@ public class MttWindow {
         glfwFreeCallbacks(handle);
         glfwDestroyWindow(handle);
 
-        //ImGui.destroyContext(imguiContext);
-
         validWindow = false;
         logger.debug("Window ({}) cleaned up", Long.toHexString(handle));
+    }
+
+    public static void destroyImGuiContexts() {
+        imGuiContexts.forEach(ImGui::destroyContext);
     }
 
     public Optional<MttVulkanImpl> getVulkanImpl() {
@@ -406,7 +411,7 @@ public class MttWindow {
     }
 
     public MttScreen createScreen(MttScreen.MttScreenCreateInfo createInfo) {
-        var screen = new MttScreen(vulkanImpl, imguiContext, createInfo);
+        var screen = new MttScreen(vulkanImpl, imGuiContext, createInfo);
         screens.add(screen);
 
         return screen;

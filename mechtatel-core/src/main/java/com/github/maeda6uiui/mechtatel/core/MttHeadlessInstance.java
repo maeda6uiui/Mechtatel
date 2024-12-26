@@ -3,9 +3,6 @@ package com.github.maeda6uiui.mechtatel.core;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.sound.MttSound;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImplHeadless;
-import imgui.ImGui;
-import imgui.ImGuiIO;
-import imgui.internal.ImGuiContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +26,6 @@ public class MttHeadlessInstance {
     private IMechtatelHeadlessEventHandlers mtt;
     private MttVulkanImplHeadless vulkanImplHeadless;
 
-    private ImGuiContext imguiContext;
-
     private MttScreen defaultScreen;
     private List<MttScreen> screens;
 
@@ -53,19 +48,9 @@ public class MttHeadlessInstance {
 
         sounds3D = new ArrayList<>();
 
-        //Set up ImGui =====
-        imguiContext = ImGui.createContext();
-        ImGui.setCurrentContext(imguiContext);
-
-        ImGuiIO io = ImGui.getIO();
-
-        io.setIniFilename(null);
-        io.setDisplaySize(width, height);
-        //==========
-
         defaultScreen = new MttScreen(
                 vulkanImplHeadless,
-                imguiContext,
+                null,
                 new MttScreen.MttScreenCreateInfo().setScreenWidth(width).setScreenHeight(height)
         );
         screens = new ArrayList<>();
@@ -90,8 +75,6 @@ public class MttHeadlessInstance {
         screens.forEach(MttScreen::cleanup);
         vulkanImplHeadless.cleanup();
         sounds3D.forEach(MttSound::cleanup);
-
-        ImGui.destroyContext(imguiContext);
     }
 
     public Optional<MttVulkanImplHeadless> getVulkanImplHeadless() {
@@ -115,7 +98,7 @@ public class MttHeadlessInstance {
     }
 
     public MttScreen createScreen(MttScreen.MttScreenCreateInfo createInfo) {
-        var screen = new MttScreen(vulkanImplHeadless, imguiContext, createInfo);
+        var screen = new MttScreen(vulkanImplHeadless, null, createInfo);
         screens.add(screen);
 
         return screen;

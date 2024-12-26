@@ -149,7 +149,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     private IMttVulkanImplCommon vulkanImplCommon;
     private VkMttScreen screen;
 
-    private ImGuiContext imguiContext;
+    private ImGuiContext imGuiContext;
 
     private Vector4f backgroundColor;
     private Camera camera;
@@ -181,7 +181,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         valid = true;
     }
 
-    public MttScreen(MttVulkanImpl vulkanImpl, ImGuiContext imguiContext, MttScreenCreateInfo createInfo) {
+    public MttScreen(MttVulkanImpl vulkanImpl, ImGuiContext imGuiContext, MttScreenCreateInfo createInfo) {
         var dq = vulkanImpl.getDeviceAndQueues();
         screen = new VkMttScreen(
                 dq.device(),
@@ -210,12 +210,12 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         );
 
         vulkanImplCommon = vulkanImpl;
-        this.imguiContext = imguiContext;
+        this.imGuiContext = imGuiContext;
 
         this.commonSetup();
     }
 
-    public MttScreen(MttVulkanImplHeadless vulkanImplHeadless, ImGuiContext imguiContext, MttScreenCreateInfo createInfo) {
+    public MttScreen(MttVulkanImplHeadless vulkanImplHeadless, ImGuiContext imGuiContext, MttScreenCreateInfo createInfo) {
         if (createInfo.screenWidth <= 0 || createInfo.screenHeight <= 0) {
             throw new RuntimeException(
                     String.format(
@@ -252,7 +252,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         );
 
         vulkanImplCommon = vulkanImplHeadless;
-        this.imguiContext = imguiContext;
+        this.imGuiContext = imGuiContext;
 
         this.commonSetup();
     }
@@ -509,7 +509,11 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     }
 
     public MttImGui createImGui() {
-        return new MttImGui(vulkanImplCommon, this, imguiContext);
+        if (imGuiContext == null) {
+            throw new UnsupportedOperationException();
+        }
+
+        return new MttImGui(vulkanImplCommon, this, imGuiContext);
     }
 
     public MttModel createModel(Path modelFile) throws IOException {

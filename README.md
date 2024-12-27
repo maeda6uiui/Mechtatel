@@ -32,12 +32,12 @@ God knows if I could complete this work by the time you'd think I'm no more...
     <dependency>
         <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel-core</artifactId>
-        <version>0.0.1-alpha5</version>
+        <version>0.0.1-alpha6</version>
     </dependency>
     <dependency>
         <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel-logging</artifactId>
-        <version>0.0.1-alpha5</version>
+        <version>0.0.1-alpha6</version>
     </dependency>
 </dependencies>
 ```
@@ -83,7 +83,42 @@ You can overwrite it or use another logging implementation at your discretion.
 - [Vulkan-Tutorial-Java](https://github.com/Naitsirc98/Vulkan-Tutorial-Java)
 - [3D Game Development with LWJGL 3](https://ahbejarano.gitbook.io/lwjglgamedev/)
 
+## Screenshots
+
+Some basic primitives
+
+![Primitives](./Image/primitives.png)
+
+Physics objects
+
+![Physics objects](./Image/physics_objects.png)
+
+Spotlights
+
+![Spotlights](./Image/spotlights.png)
+
+Shadow mapping
+
+![Shadow mapping](./Image/shadow_mapping.png)
+
+Skeletal animation
+
+![Skeletal animation](./Image/skeletal_animation.png)
+
+ImGui
+
+![ImGui](./Image/imgui.png)
+
+Rendering to multiple windows
+
+![Rendering to multiple windows](./Image/rendering_to_multiple_windows.png)
+
 ## Progress report
+
+### 2024-12-27
+
+Releases `v0.0.1-alpha6`.
+Check the release note for the changes that have been made since the previous release!
 
 ### 2024-12-01
 

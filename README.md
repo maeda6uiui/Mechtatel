@@ -115,7 +115,7 @@ Rendering to multiple windows
 
 ## Progress report
 
-### 2024-12-xx
+### 2024-12-27
 
 Releases `v0.0.1-alpha6`.
 Check the release note for the changes that have been made since the previous release!

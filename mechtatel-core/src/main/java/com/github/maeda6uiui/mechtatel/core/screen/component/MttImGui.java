@@ -86,10 +86,12 @@ public class MttImGui extends MttComponent {
     }
 
     /**
-     * Makes current the ImGui context for this component.
+     * Returns ImGui context.
+     *
+     * @return ImGui context
      */
-    public void makeCurrent() {
-        ImGui.setCurrentContext(context);
+    public ImGuiContext getImGuiContext() {
+        return context;
     }
 
     /**

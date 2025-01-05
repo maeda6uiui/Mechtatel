@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -317,8 +316,12 @@ public class MttWindow {
         imGuiContexts.forEach(ImGui::destroyContext);
     }
 
-    public Optional<MttVulkanImpl> getVulkanImpl() {
-        return Optional.ofNullable(vulkanImpl);
+    public MttVulkanImpl getVulkanImpl() {
+        return vulkanImpl;
+    }
+
+    public ImGuiContext getImGuiContext() {
+        return imGuiContext;
     }
 
     public void close() {

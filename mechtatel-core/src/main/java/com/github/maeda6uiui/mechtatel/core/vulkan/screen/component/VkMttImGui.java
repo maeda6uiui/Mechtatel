@@ -3,7 +3,6 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import imgui.ImDrawData;
 import org.joml.Vector2f;
@@ -33,7 +32,6 @@ public class VkMttImGui extends VkMttComponent {
     private long commandPool;
     private VkQueue graphicsQueue;
 
-    private VkMttTexture texture;
     private ImDrawData drawData;
 
     private Map<Integer, Long> vertexBuffers;
@@ -42,23 +40,17 @@ public class VkMttImGui extends VkMttComponent {
     private Map<Integer, Long> indexBufferMemories;
     private Map<Integer, Integer> numIndicesMap;
 
-    private boolean isExternalTexture;
-
     public VkMttImGui(
             IMttComponentForVkMttComponent mttComponent,
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            VkMttScreen screen,
-            VkMttTexture texture) {
+            VkMttScreen screen) {
         super(mttComponent, screen, "gbuffer_imgui");
 
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
-
-        this.texture = texture;
-        isExternalTexture = true;
 
         vertexBuffers = new HashMap<>();
         vertexBufferMemories = new HashMap<>();
@@ -69,10 +61,6 @@ public class VkMttImGui extends VkMttComponent {
 
     @Override
     public void cleanup() {
-        if (!isExternalTexture) {
-            texture.cleanup();
-        }
-
         vertexBuffers.values().forEach(v -> vkDestroyBuffer(device, v, null));
         vertexBufferMemories.values().forEach(v -> vkFreeMemory(device, v, null));
         indexBuffers.values().forEach(v -> vkDestroyBuffer(device, v, null));
@@ -219,7 +207,7 @@ public class VkMttImGui extends VkMttComponent {
 
     @Override
     public void draw(VkCommandBuffer commandBuffer, long pipelineLayout) {
-        if (!this.isValid() || !this.isVisible() || texture == null || drawData == null) {
+        if (!this.isValid() || !this.isVisible() || drawData == null) {
             return;
         }
 

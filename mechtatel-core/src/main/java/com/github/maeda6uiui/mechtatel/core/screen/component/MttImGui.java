@@ -79,8 +79,7 @@ public class MttImGui extends MttComponent {
                 dq.device(),
                 vulkanImplCommon.getCommandPool(),
                 dq.graphicsQueue(),
-                screen.getVulkanScreen(),
-                vkTexture
+                screen.getVulkanScreen()
         );
         this.associateVulkanComponents(vkImGui);
     }

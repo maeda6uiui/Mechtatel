@@ -8,6 +8,7 @@ import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttImGui;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import imgui.ImGui;
+import imgui.flag.ImGuiCond;
 import org.joml.Vector4f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +55,15 @@ public class ImGuiImageTest extends Mechtatel {
     @Override
     public void onUpdate(MttWindow window) {
         imgui.declare(() -> {
-            ImGui.image(texture.getVulkanTexture().getAllocationIndex(), 640, 480);
+            if (ImGui.begin("Image View")) {
+                ImGui.setWindowSize(640, 480, ImGuiCond.FirstUseEver);
+                ImGui.image(
+                        texture.getVulkanTexture().getAllocationIndex(),
+                        ImGui.getContentRegionAvailX(),
+                        ImGui.getContentRegionAvailY()
+                );
+            }
+            ImGui.end();
         });
 
         mainScreen.draw();

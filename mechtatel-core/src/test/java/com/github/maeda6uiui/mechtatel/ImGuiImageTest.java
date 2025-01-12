@@ -29,7 +29,7 @@ public class ImGuiImageTest extends Mechtatel {
                 );
     }
 
-    private MttScreen imageScreen;
+    private MttScreen mainScreen;
     private MttScreen imguiScreen;
 
     private MttImGui imgui;
@@ -37,18 +37,18 @@ public class ImGuiImageTest extends Mechtatel {
 
     @Override
     public void onInit(MttWindow initialWindow) {
-        imageScreen = initialWindow.createScreen(
+        mainScreen = initialWindow.createScreen(
                 new MttScreen.MttScreenCreateInfo()
         );
-        imageScreen.createLineSet().addAxes(10.0f).createBuffer();
-        imageScreen.createSphere(1.0f, 16, 16, new Vector4f(1.0f), false);
+        mainScreen.createLineSet().addAxes(10.0f).createBuffer();
+        mainScreen.createSphere(1.0f, 16, 16, new Vector4f(1.0f), false);
 
         imguiScreen = initialWindow.createScreen(
                 new MttScreen.MttScreenCreateInfo()
         );
         imgui = imguiScreen.createImGui();
 
-        texture = imageScreen.texturize(ScreenImageType.COLOR, imguiScreen);
+        texture = mainScreen.texturize(ScreenImageType.COLOR, imguiScreen);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class ImGuiImageTest extends Mechtatel {
             ImGui.image(texture.getVulkanTexture().getAllocationIndex(), 640, 480);
         });
 
-        imageScreen.draw();
+        mainScreen.draw();
         imguiScreen.draw();
         window.present(imguiScreen);
     }

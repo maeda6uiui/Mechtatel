@@ -127,7 +127,7 @@ public class VkMttImGui extends VkMttComponent {
         return indices;
     }
 
-    private void recordCommands(VkCommandBuffer commandBuffer) {
+    private void recordCommands(VkCommandBuffer commandBuffer, Long pipelineLayout) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             int numLists = drawData.getCmdListsCount();
             for (int i = 0; i < numLists; i++) {
@@ -189,8 +189,30 @@ public class VkMttImGui extends VkMttComponent {
                 vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
                 //Record command
-                int numIndices = numIndicesMap.get(i);
-                vkCmdDrawIndexed(commandBuffer, numIndices, 1, 0, 0, 0);
+                if (pipelineLayout != null) {
+                    int numCmds = drawData.getCmdListCmdBufferSize(i);
+                    for (int j = 0; j < numCmds; j++) {
+                        int textureAllocationIndex = (int) drawData.getCmdListCmdBufferTextureId(i, j);
+                        int elemCount = drawData.getCmdListCmdBufferElemCount(i, j);
+                        int indexBufferOffset = drawData.getCmdListCmdBufferIdxOffset(i, j);
+
+                        ByteBuffer textureAllocationIndexBuffer = stack.calloc(1 * Integer.BYTES);
+                        textureAllocationIndexBuffer.putInt(textureAllocationIndex);
+                        textureAllocationIndexBuffer.rewind();
+                        vkCmdPushConstants(
+                                commandBuffer,
+                                pipelineLayout,
+                                VK_SHADER_STAGE_FRAGMENT_BIT,
+                                1 * 16 * Float.BYTES + 1 * Integer.BYTES,
+                                textureAllocationIndexBuffer
+                        );
+
+                        vkCmdDrawIndexed(commandBuffer, elemCount, 1, indexBufferOffset, 0, 0);
+                    }
+                } else {
+                    int numIndices = numIndicesMap.get(i);
+                    vkCmdDrawIndexed(commandBuffer, numIndices, 1, 0, 0, 0);
+                }
             }
         }
     }
@@ -201,22 +223,7 @@ public class VkMttImGui extends VkMttComponent {
             return;
         }
 
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            //Bind texture
-            ByteBuffer textureAllocationIndexBuffer = stack.calloc(1 * Integer.BYTES);
-            textureAllocationIndexBuffer.putInt(texture.getAllocationIndex());
-            textureAllocationIndexBuffer.rewind();
-
-            vkCmdPushConstants(
-                    commandBuffer,
-                    pipelineLayout,
-                    VK_SHADER_STAGE_FRAGMENT_BIT,
-                    1 * 16 * Float.BYTES + 1 * Integer.BYTES,
-                    textureAllocationIndexBuffer);
-
-            //Record commands
-            this.recordCommands(commandBuffer);
-        }
+        this.recordCommands(commandBuffer, pipelineLayout);
     }
 
     @Override
@@ -225,7 +232,7 @@ public class VkMttImGui extends VkMttComponent {
             return;
         }
 
-        this.recordCommands(commandBuffer);
+        this.recordCommands(commandBuffer, null);
     }
 
     @Override

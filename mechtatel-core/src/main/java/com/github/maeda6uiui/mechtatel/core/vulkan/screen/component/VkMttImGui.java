@@ -3,7 +3,6 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.screen.component;
 import com.github.maeda6uiui.mechtatel.core.screen.component.IMttComponentForVkMttComponent;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttVertex;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.VkMttScreen;
-import com.github.maeda6uiui.mechtatel.core.vulkan.screen.texture.VkMttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import imgui.ImDrawData;
 import org.joml.Vector2f;
@@ -33,7 +32,6 @@ public class VkMttImGui extends VkMttComponent {
     private long commandPool;
     private VkQueue graphicsQueue;
 
-    private VkMttTexture texture;
     private ImDrawData drawData;
 
     private Map<Integer, Long> vertexBuffers;
@@ -42,23 +40,17 @@ public class VkMttImGui extends VkMttComponent {
     private Map<Integer, Long> indexBufferMemories;
     private Map<Integer, Integer> numIndicesMap;
 
-    private boolean isExternalTexture;
-
     public VkMttImGui(
             IMttComponentForVkMttComponent mttComponent,
             VkDevice device,
             long commandPool,
             VkQueue graphicsQueue,
-            VkMttScreen screen,
-            VkMttTexture texture) {
+            VkMttScreen screen) {
         super(mttComponent, screen, "gbuffer_imgui");
 
         this.device = device;
         this.commandPool = commandPool;
         this.graphicsQueue = graphicsQueue;
-
-        this.texture = texture;
-        isExternalTexture = true;
 
         vertexBuffers = new HashMap<>();
         vertexBufferMemories = new HashMap<>();
@@ -69,10 +61,6 @@ public class VkMttImGui extends VkMttComponent {
 
     @Override
     public void cleanup() {
-        if (!isExternalTexture) {
-            texture.cleanup();
-        }
-
         vertexBuffers.values().forEach(v -> vkDestroyBuffer(device, v, null));
         vertexBufferMemories.values().forEach(v -> vkFreeMemory(device, v, null));
         indexBuffers.values().forEach(v -> vkDestroyBuffer(device, v, null));
@@ -127,7 +115,7 @@ public class VkMttImGui extends VkMttComponent {
         return indices;
     }
 
-    private void recordCommands(VkCommandBuffer commandBuffer) {
+    private void recordCommands(VkCommandBuffer commandBuffer, Long pipelineLayout) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             int numLists = drawData.getCmdListsCount();
             for (int i = 0; i < numLists; i++) {
@@ -189,34 +177,41 @@ public class VkMttImGui extends VkMttComponent {
                 vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
                 //Record command
-                int numIndices = numIndicesMap.get(i);
-                vkCmdDrawIndexed(commandBuffer, numIndices, 1, 0, 0, 0);
+                if (pipelineLayout != null) {
+                    int numCmds = drawData.getCmdListCmdBufferSize(i);
+                    for (int j = 0; j < numCmds; j++) {
+                        int textureAllocationIndex = (int) drawData.getCmdListCmdBufferTextureId(i, j);
+                        int elemCount = drawData.getCmdListCmdBufferElemCount(i, j);
+                        int indexBufferOffset = drawData.getCmdListCmdBufferIdxOffset(i, j);
+
+                        ByteBuffer textureAllocationIndexBuffer = stack.calloc(1 * Integer.BYTES);
+                        textureAllocationIndexBuffer.putInt(textureAllocationIndex);
+                        textureAllocationIndexBuffer.rewind();
+                        vkCmdPushConstants(
+                                commandBuffer,
+                                pipelineLayout,
+                                VK_SHADER_STAGE_FRAGMENT_BIT,
+                                1 * 16 * Float.BYTES + 1 * Integer.BYTES,
+                                textureAllocationIndexBuffer
+                        );
+
+                        vkCmdDrawIndexed(commandBuffer, elemCount, 1, indexBufferOffset, 0, 0);
+                    }
+                } else {
+                    int numIndices = numIndicesMap.get(i);
+                    vkCmdDrawIndexed(commandBuffer, numIndices, 1, 0, 0, 0);
+                }
             }
         }
     }
 
     @Override
     public void draw(VkCommandBuffer commandBuffer, long pipelineLayout) {
-        if (!this.isValid() || !this.isVisible() || texture == null || drawData == null) {
+        if (!this.isValid() || !this.isVisible() || drawData == null) {
             return;
         }
 
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            //Bind texture
-            ByteBuffer textureAllocationIndexBuffer = stack.calloc(1 * Integer.BYTES);
-            textureAllocationIndexBuffer.putInt(texture.getAllocationIndex());
-            textureAllocationIndexBuffer.rewind();
-
-            vkCmdPushConstants(
-                    commandBuffer,
-                    pipelineLayout,
-                    VK_SHADER_STAGE_FRAGMENT_BIT,
-                    1 * 16 * Float.BYTES + 1 * Integer.BYTES,
-                    textureAllocationIndexBuffer);
-
-            //Record commands
-            this.recordCommands(commandBuffer);
-        }
+        this.recordCommands(commandBuffer, pipelineLayout);
     }
 
     @Override
@@ -225,7 +220,7 @@ public class VkMttImGui extends VkMttComponent {
             return;
         }
 
-        this.recordCommands(commandBuffer);
+        this.recordCommands(commandBuffer, null);
     }
 
     @Override

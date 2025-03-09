@@ -49,12 +49,12 @@ Snapshot builds are available in the Maven Snapshot Repository.
     <dependency>
         <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel-core</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel-logging</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
     </dependency>
 </dependencies>
 ```

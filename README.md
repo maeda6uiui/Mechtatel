@@ -32,12 +32,12 @@ God knows if I could complete this work by the time you'd think I'm no more...
     <dependency>
         <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel-core</artifactId>
-        <version>0.0.1-alpha8</version>
+        <version>0.0.1</version>
     </dependency>
     <dependency>
         <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel-logging</artifactId>
-        <version>0.0.1-alpha8</version>
+        <version>0.0.1</version>
     </dependency>
 </dependencies>
 ```
@@ -114,6 +114,11 @@ Rendering to multiple windows
 ![Rendering to multiple windows](./Image/rendering_to_multiple_windows.png)
 
 ## Progress report
+
+### 2025-03-09
+
+Releases `v0.0.1` with the same functionalities as the last alpha release.
+This is the first GA version of the Mechtatel engine.
 
 ### 2025-01-13
 

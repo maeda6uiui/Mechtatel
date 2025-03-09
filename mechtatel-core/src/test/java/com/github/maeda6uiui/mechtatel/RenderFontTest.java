@@ -11,10 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 
-public class DrawFontTest extends Mechtatel {
-    private static final Logger logger = LoggerFactory.getLogger(DrawFontTest.class);
+public class RenderFontTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(RenderFontTest.class);
 
-    public DrawFontTest(MttSettings settings) {
+    public RenderFontTest(MttSettings settings) {
         super(settings);
         this.run();
     }
@@ -23,7 +23,7 @@ public class DrawFontTest extends Mechtatel {
         MttSettings
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
-                        DrawFontTest::new,
+                        RenderFontTest::new,
                         () -> logger.error("Failed to load settings")
                 );
     }

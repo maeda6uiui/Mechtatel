@@ -1,9 +1,9 @@
-name: Deploy artifacts to Maven Central when pushed to GitHub repo
+name: Deploy artifacts to Maven Central when pushed to main branch
 
 on:
   push:
     branches:
-      - develop
+      - main
     paths-ignore:
       - "**.md"
   workflow_dispatch:

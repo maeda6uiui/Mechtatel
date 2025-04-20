@@ -115,6 +115,11 @@ Rendering to multiple windows
 
 ## Progress report
 
+### 2025-04-20
+
+Added a test code for audio playback using [LibSoundPlayer](https://github.com/maeda6uiui/LibSoundPlayer).
+Check the [test code](./mechtatel-core/src/test/java/com/github/maeda6uiui/mechtatel/SoundPlayerTest.java) to find out the usage!
+
 ### 2025-03-09
 
 Releases `v0.0.1` with the same functionalities as the last alpha release.

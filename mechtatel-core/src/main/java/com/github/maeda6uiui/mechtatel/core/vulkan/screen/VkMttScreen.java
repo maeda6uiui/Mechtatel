@@ -147,10 +147,10 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         this.depthImageHeight = createInfo.depthImageHeight;
         this.depthImageAspect = createInfo.depthImageAspect;
 
-        if (createInfo.numShadowMaps > ShadowMappingNabor.MAX_NUM_SHADOW_MAPS) {
+        if (createInfo.numShadowMaps <= 0 || createInfo.numShadowMaps > ShadowMappingNabor.MAX_NUM_SHADOW_MAPS) {
             throw new RuntimeException(
                     String.format(
-                            "Maximum number of shadow maps is %d, got %d",
+                            "Number of shadow maps must be between 1 and %d, got %d",
                             ShadowMappingNabor.MAX_NUM_SHADOW_MAPS,
                             createInfo.numShadowMaps
                     )

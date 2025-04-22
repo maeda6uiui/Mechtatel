@@ -55,6 +55,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
         public SamplerAddressMode samplerAddressMode;
         public boolean shouldChangeExtentOnRecreate;
         public boolean useShadowMapping;
+        public int numShadowMaps;
         public List<String> ppNaborNames;
         public Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos;
         public List<String> fseNaborNames;
@@ -70,6 +71,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
             samplerAddressMode = SamplerAddressMode.REPEAT;
             shouldChangeExtentOnRecreate = true;
             useShadowMapping = false;
+            numShadowMaps = 1;
             ppNaborNames = new ArrayList<>();
             customizablePPNaborInfos = new HashMap<>();
             fseNaborNames = new ArrayList<>();
@@ -118,6 +120,11 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
         public MttScreenCreateInfo setUseShadowMapping(boolean useShadowMapping) {
             this.useShadowMapping = useShadowMapping;
+            return this;
+        }
+
+        public MttScreenCreateInfo setNumShadowMaps(int numShadowMaps) {
+            this.numShadowMaps = numShadowMaps;
             return this;
         }
 
@@ -203,6 +210,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
                         ),
                         createInfo.shouldChangeExtentOnRecreate,
                         createInfo.useShadowMapping,
+                        createInfo.numShadowMaps,
                         createInfo.ppNaborNames,
                         createInfo.customizablePPNaborInfos,
                         createInfo.fseNaborNames,
@@ -248,6 +256,7 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
                         ),
                         createInfo.shouldChangeExtentOnRecreate,
                         createInfo.useShadowMapping,
+                        createInfo.numShadowMaps,
                         createInfo.ppNaborNames,
                         createInfo.customizablePPNaborInfos,
                         createInfo.fseNaborNames,

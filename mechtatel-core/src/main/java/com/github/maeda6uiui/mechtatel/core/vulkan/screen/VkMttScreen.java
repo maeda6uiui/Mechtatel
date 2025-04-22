@@ -61,6 +61,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             VkExtent2D extent,
             boolean shouldChangeExtentOnRecreate,
             boolean useShadowMapping,
+            int numShadowMaps,
             List<String> ppNaborNames,
             Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos,
             List<String> fseNaborNames,
@@ -90,6 +91,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
     private int depthImageWidth;
     private int depthImageHeight;
     private int depthImageAspect;
+    private int numShadowMaps;
 
     private PostProcessingNaborChain ppNaborChain;
     private FullScreenEffectNaborChain fseNaborChain;
@@ -104,7 +106,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         shadowMappingNabor.cleanupUserDefImages();
 
         //Shadow depth
-        for (int i = 0; i < ShadowMappingNabor.MAX_NUM_SHADOW_MAPS; i++) {
+        for (int i = 0; i < numShadowMaps; i++) {
             shadowMappingNabor.createUserDefImage(
                     depthImageWidth,
                     depthImageHeight,
@@ -144,6 +146,17 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         this.depthImageWidth = createInfo.depthImageWidth;
         this.depthImageHeight = createInfo.depthImageHeight;
         this.depthImageAspect = createInfo.depthImageAspect;
+
+        if (createInfo.numShadowMaps > ShadowMappingNabor.MAX_NUM_SHADOW_MAPS) {
+            throw new RuntimeException(
+                    String.format(
+                            "Maximum number of shadow maps is %d, got %d",
+                            ShadowMappingNabor.MAX_NUM_SHADOW_MAPS,
+                            createInfo.numShadowMaps
+                    )
+            );
+        }
+        this.numShadowMaps = createInfo.numShadowMaps;
 
         initialWidth = createInfo.extent.width();
         initialHeight = createInfo.extent.height();
@@ -382,6 +395,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                         extent,
                         shouldChangeExtentOnRecreate,
                         useShadowMapping,
+                        1,
                         ppNaborNames,
                         customizablePPNaborInfos,
                         fseNaborNames,

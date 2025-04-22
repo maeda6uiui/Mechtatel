@@ -45,121 +45,27 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenForVkMttComponent {
-    public static class VkMttScreenCreateInfo {
-        public VkDevice device;
-        public long commandPool;
-        public VkQueue graphicsQueue;
-        public int depthImageFormat;
-        public int depthImageWidth;
-        public int depthImageHeight;
-        public int depthImageAspect;
-        public int colorImageFormat;
-        public int albedoMSAASamples;
-        public int samplerFilter;
-        public int samplerMipmapMode;
-        public int samplerAddressMode;
-        public VkExtent2D extent;
-        public boolean shouldChangeExtentOnRecreate;
-        public boolean useShadowMapping;
-        public List<String> ppNaborNames;
-        public Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos;
-        public List<String> fseNaborNames;
-        public Map<String, FullScreenEffectNaborInfo> fseNaborInfos;
-
-        public VkMttScreenCreateInfo setDevice(VkDevice device) {
-            this.device = device;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setCommandPool(long commandPool) {
-            this.commandPool = commandPool;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setGraphicsQueue(VkQueue graphicsQueue) {
-            this.graphicsQueue = graphicsQueue;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setDepthImageFormat(int depthImageFormat) {
-            this.depthImageFormat = depthImageFormat;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setDepthImageWidth(int depthImageWidth) {
-            this.depthImageWidth = depthImageWidth;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setDepthImageHeight(int depthImageHeight) {
-            this.depthImageHeight = depthImageHeight;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setDepthImageAspect(int depthImageAspect) {
-            this.depthImageAspect = depthImageAspect;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setColorImageFormat(int colorImageFormat) {
-            this.colorImageFormat = colorImageFormat;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setAlbedoMSAASamples(int albedoMSAASamples) {
-            this.albedoMSAASamples = albedoMSAASamples;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setSamplerFilter(int samplerFilter) {
-            this.samplerFilter = samplerFilter;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setSamplerMipmapMode(int samplerMipmapMode) {
-            this.samplerMipmapMode = samplerMipmapMode;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setSamplerAddressMode(int samplerAddressMode) {
-            this.samplerAddressMode = samplerAddressMode;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setExtent(VkExtent2D extent) {
-            this.extent = extent;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setShouldChangeExtentOnRecreate(boolean shouldChangeExtentOnRecreate) {
-            this.shouldChangeExtentOnRecreate = shouldChangeExtentOnRecreate;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setUseShadowMapping(boolean useShadowMapping) {
-            this.useShadowMapping = useShadowMapping;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setPpNaborNames(List<String> ppNaborNames) {
-            this.ppNaborNames = ppNaborNames;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setCustomizablePPNaborInfos(Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos) {
-            this.customizablePPNaborInfos = customizablePPNaborInfos;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setFseNaborNames(List<String> fseNaborNames) {
-            this.fseNaborNames = fseNaborNames;
-            return this;
-        }
-
-        public VkMttScreenCreateInfo setFseNaborInfos(Map<String, FullScreenEffectNaborInfo> fseNaborInfos) {
-            this.fseNaborInfos = fseNaborInfos;
-            return this;
-        }
+    public record VkMttScreenCreateInfo(
+            VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue,
+            int depthImageFormat,
+            int depthImageWidth,
+            int depthImageHeight,
+            int depthImageAspect,
+            int colorImageFormat,
+            int albedoMSAASamples,
+            int samplerFilter,
+            int samplerMipmapMode,
+            int samplerAddressMode,
+            VkExtent2D extent,
+            boolean shouldChangeExtentOnRecreate,
+            boolean useShadowMapping,
+            List<String> ppNaborNames,
+            Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos,
+            List<String> fseNaborNames,
+            Map<String, FullScreenEffectNaborInfo> fseNaborInfos
+    ) {
     }
 
     //Number of scenes to merge to create an interim image
@@ -460,26 +366,27 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             List<String> fseNaborNames,
             Map<String, FullScreenEffectNaborInfo> fseNaborInfos) {
         this(
-                new VkMttScreenCreateInfo()
-                        .setDevice(device)
-                        .setCommandPool(commandPool)
-                        .setGraphicsQueue(graphicsQueue)
-                        .setDepthImageFormat(depthImageFormat)
-                        .setDepthImageWidth(depthImageWidth)
-                        .setDepthImageHeight(depthImageHeight)
-                        .setDepthImageAspect(depthImageAspect)
-                        .setColorImageFormat(colorImageFormat)
-                        .setAlbedoMSAASamples(albedoMSAASamples)
-                        .setSamplerFilter(samplerFilter)
-                        .setSamplerMipmapMode(samplerMipmapMode)
-                        .setSamplerAddressMode(samplerAddressMode)
-                        .setExtent(extent)
-                        .setShouldChangeExtentOnRecreate(shouldChangeExtentOnRecreate)
-                        .setUseShadowMapping(useShadowMapping)
-                        .setPpNaborNames(ppNaborNames)
-                        .setCustomizablePPNaborInfos(customizablePPNaborInfos)
-                        .setFseNaborNames(fseNaborNames)
-                        .setFseNaborInfos(fseNaborInfos)
+                new VkMttScreenCreateInfo(
+                        device,
+                        commandPool,
+                        graphicsQueue,
+                        depthImageFormat,
+                        depthImageWidth,
+                        depthImageHeight,
+                        depthImageAspect,
+                        colorImageFormat,
+                        albedoMSAASamples,
+                        samplerFilter,
+                        samplerMipmapMode,
+                        samplerAddressMode,
+                        extent,
+                        shouldChangeExtentOnRecreate,
+                        useShadowMapping,
+                        ppNaborNames,
+                        customizablePPNaborInfos,
+                        fseNaborNames,
+                        fseNaborInfos
+                )
         );
     }
 

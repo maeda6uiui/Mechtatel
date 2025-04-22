@@ -184,29 +184,32 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
     public MttScreen(MttVulkanImpl vulkanImpl, ImGuiContext imGuiContext, MttScreenCreateInfo createInfo) {
         var dq = vulkanImpl.getDeviceAndQueues();
         screen = new VkMttScreen(
-                dq.device(),
-                vulkanImpl.getCommandPool(),
-                dq.graphicsQueue(),
-                vulkanImpl.getDepthImageFormat(),
-                createInfo.depthImageWidth,
-                createInfo.depthImageHeight,
-                vulkanImpl.getDepthImageAspect(),
-                vulkanImpl.getColorImageFormat(),
-                vulkanImpl.getAlbedoMSAASamples(),
-                VkScreenCreationUtils.getISamplerFilter(createInfo.samplerFilter),
-                VkScreenCreationUtils.getISamplerMipmapMode(createInfo.samplerMipmapMode),
-                VkScreenCreationUtils.getISamplerAddressMode(createInfo.samplerAddressMode),
-                VkScreenCreationUtils.createExtent(
-                        vulkanImpl.getExtent(),
-                        createInfo.screenWidth,
-                        createInfo.screenHeight
-                ),
-                createInfo.shouldChangeExtentOnRecreate,
-                createInfo.useShadowMapping,
-                createInfo.ppNaborNames,
-                createInfo.customizablePPNaborInfos,
-                createInfo.fseNaborNames,
-                createInfo.fseNaborInfos
+                new VkMttScreen.VkMttScreenCreateInfo()
+                        .setDevice(dq.device())
+                        .setCommandPool(vulkanImpl.getCommandPool())
+                        .setGraphicsQueue(dq.graphicsQueue())
+                        .setDepthImageFormat(vulkanImpl.getDepthImageFormat())
+                        .setDepthImageWidth(createInfo.depthImageWidth)
+                        .setDepthImageHeight(createInfo.depthImageHeight)
+                        .setDepthImageAspect(vulkanImpl.getDepthImageAspect())
+                        .setColorImageFormat(vulkanImpl.getColorImageFormat())
+                        .setAlbedoMSAASamples(vulkanImpl.getAlbedoMSAASamples())
+                        .setSamplerFilter(VkScreenCreationUtils.getISamplerFilter(createInfo.samplerFilter))
+                        .setSamplerMipmapMode(VkScreenCreationUtils.getISamplerMipmapMode(createInfo.samplerMipmapMode))
+                        .setSamplerAddressMode(VkScreenCreationUtils.getISamplerAddressMode(createInfo.samplerAddressMode))
+                        .setExtent(
+                                VkScreenCreationUtils.createExtent(
+                                        vulkanImpl.getExtent(),
+                                        createInfo.screenWidth,
+                                        createInfo.screenHeight
+                                )
+                        )
+                        .setShouldChangeExtentOnRecreate(createInfo.shouldChangeExtentOnRecreate)
+                        .setUseShadowMapping(createInfo.useShadowMapping)
+                        .setPpNaborNames(createInfo.ppNaborNames)
+                        .setCustomizablePPNaborInfos(createInfo.customizablePPNaborInfos)
+                        .setFseNaborNames(createInfo.fseNaborNames)
+                        .setFseNaborInfos(createInfo.fseNaborInfos)
         );
 
         vulkanImplCommon = vulkanImpl;
@@ -230,25 +233,32 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
 
         var dq = vulkanImplHeadless.getDeviceAndQueues();
         screen = new VkMttScreen(
-                dq.device(),
-                vulkanImplHeadless.getCommandPool(),
-                dq.graphicsQueue(),
-                vulkanImplHeadless.getDepthImageFormat(),
-                createInfo.depthImageWidth,
-                createInfo.depthImageHeight,
-                vulkanImplHeadless.getDepthImageAspect(),
-                vulkanImplHeadless.getColorImageFormat(),
-                vulkanImplHeadless.getAlbedoMSAASamples(),
-                VkScreenCreationUtils.getISamplerFilter(createInfo.samplerFilter),
-                VkScreenCreationUtils.getISamplerMipmapMode(createInfo.samplerMipmapMode),
-                VkScreenCreationUtils.getISamplerAddressMode(createInfo.samplerAddressMode),
-                extent,
-                createInfo.shouldChangeExtentOnRecreate,
-                createInfo.useShadowMapping,
-                createInfo.ppNaborNames,
-                createInfo.customizablePPNaborInfos,
-                createInfo.fseNaborNames,
-                createInfo.fseNaborInfos
+                new VkMttScreen.VkMttScreenCreateInfo()
+                        .setDevice(dq.device())
+                        .setCommandPool(vulkanImplHeadless.getCommandPool())
+                        .setGraphicsQueue(dq.graphicsQueue())
+                        .setDepthImageFormat(vulkanImplHeadless.getDepthImageFormat())
+                        .setDepthImageWidth(createInfo.depthImageWidth)
+                        .setDepthImageHeight(createInfo.depthImageHeight)
+                        .setDepthImageAspect(vulkanImplHeadless.getDepthImageAspect())
+                        .setColorImageFormat(vulkanImplHeadless.getColorImageFormat())
+                        .setAlbedoMSAASamples(vulkanImplHeadless.getAlbedoMSAASamples())
+                        .setSamplerFilter(VkScreenCreationUtils.getISamplerFilter(createInfo.samplerFilter))
+                        .setSamplerMipmapMode(VkScreenCreationUtils.getISamplerMipmapMode(createInfo.samplerMipmapMode))
+                        .setSamplerAddressMode(VkScreenCreationUtils.getISamplerAddressMode(createInfo.samplerAddressMode))
+                        .setExtent(
+                                VkScreenCreationUtils.createExtent(
+                                        vulkanImplHeadless.getExtent(),
+                                        createInfo.screenWidth,
+                                        createInfo.screenHeight
+                                )
+                        )
+                        .setShouldChangeExtentOnRecreate(createInfo.shouldChangeExtentOnRecreate)
+                        .setUseShadowMapping(createInfo.useShadowMapping)
+                        .setPpNaborNames(createInfo.ppNaborNames)
+                        .setCustomizablePPNaborInfos(createInfo.customizablePPNaborInfos)
+                        .setFseNaborNames(createInfo.fseNaborNames)
+                        .setFseNaborInfos(createInfo.fseNaborInfos)
         );
 
         vulkanImplCommon = vulkanImplHeadless;

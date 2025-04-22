@@ -25,7 +25,6 @@ import imgui.ImGuiIO;
 import imgui.internal.ImGuiContext;
 import imgui.type.ImInt;
 import org.joml.*;
-import org.lwjgl.vulkan.VkExtent2D;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -226,9 +225,6 @@ public class MttScreen implements IMttScreenForMttComponent, IMttScreenForMttTex
                     )
             );
         }
-
-        VkExtent2D extent = VkExtent2D.create();
-        extent.set(createInfo.screenWidth, createInfo.screenHeight);
 
         var dq = vulkanImplHeadless.getDeviceAndQueues();
         screen = new VkMttScreen(

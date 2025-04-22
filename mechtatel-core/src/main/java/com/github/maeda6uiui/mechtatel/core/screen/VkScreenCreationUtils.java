@@ -13,15 +13,15 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class VkScreenCreationUtils {
-    public static VkExtent2D createExtent(VkExtent2D swapchainExtent, int screenWidth, int screenHeight) {
+    public static VkExtent2D createExtent(VkExtent2D defaultExtent, int screenWidth, int screenHeight) {
         VkExtent2D extent = VkExtent2D.create();
         if (screenWidth < 0) {
-            extent.width(swapchainExtent.width());
+            extent.width(defaultExtent.width());
         } else {
             extent.width(screenWidth);
         }
         if (screenHeight < 0) {
-            extent.height(swapchainExtent.height());
+            extent.height(defaultExtent.height());
         } else {
             extent.height(screenHeight);
         }

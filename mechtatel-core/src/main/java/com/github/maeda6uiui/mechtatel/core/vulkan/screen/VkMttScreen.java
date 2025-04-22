@@ -45,6 +45,29 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenForVkMttComponent {
+    public record VkMttScreenCreateInfo(
+            VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue,
+            int depthImageFormat,
+            int depthImageWidth,
+            int depthImageHeight,
+            int depthImageAspect,
+            int colorImageFormat,
+            int albedoMSAASamples,
+            int samplerFilter,
+            int samplerMipmapMode,
+            int samplerAddressMode,
+            VkExtent2D extent,
+            boolean shouldChangeExtentOnRecreate,
+            boolean useShadowMapping,
+            List<String> ppNaborNames,
+            Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos,
+            List<String> fseNaborNames,
+            Map<String, FullScreenEffectNaborInfo> fseNaborInfos
+    ) {
+    }
+
     //Number of scenes to merge to create an interim image
     //before proceeding to post-processing procedures
     //Currently, scenes from the following three nabors are merged:
@@ -112,38 +135,19 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         );
     }
 
-    public VkMttScreen(
-            VkDevice device,
-            long commandPool,
-            VkQueue graphicsQueue,
-            int depthImageFormat,
-            int depthImageWidth,
-            int depthImageHeight,
-            int depthImageAspect,
-            int colorImageFormat,
-            int albedoMSAASamples,
-            int samplerFilter,
-            int samplerMipmapMode,
-            int samplerAddressMode,
-            VkExtent2D extent,
-            boolean shouldChangeExtentOnRecreate,
-            boolean useShadowMapping,
-            List<String> ppNaborNames,
-            Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos,
-            List<String> fseNaborNames,
-            Map<String, FullScreenEffectNaborInfo> fseNaborInfos) {
-        this.device = device;
-        this.commandPool = commandPool;
-        this.graphicsQueue = graphicsQueue;
+    public VkMttScreen(VkMttScreenCreateInfo createInfo) {
+        this.device = createInfo.device;
+        this.commandPool = createInfo.commandPool;
+        this.graphicsQueue = createInfo.graphicsQueue;
 
-        this.depthImageFormat = depthImageFormat;
-        this.depthImageWidth = depthImageWidth;
-        this.depthImageHeight = depthImageHeight;
-        this.depthImageAspect = depthImageAspect;
+        this.depthImageFormat = createInfo.depthImageFormat;
+        this.depthImageWidth = createInfo.depthImageWidth;
+        this.depthImageHeight = createInfo.depthImageHeight;
+        this.depthImageAspect = createInfo.depthImageAspect;
 
-        initialWidth = extent.width();
-        initialHeight = extent.height();
-        this.shouldChangeExtentOnRecreate = shouldChangeExtentOnRecreate;
+        initialWidth = createInfo.extent.width();
+        initialHeight = createInfo.extent.height();
+        this.shouldChangeExtentOnRecreate = createInfo.shouldChangeExtentOnRecreate;
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
 
@@ -171,7 +175,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
 
         gBufferNabor = new GBufferNabor(
                 device,
-                albedoMSAASamples,
+                createInfo.albedoMSAASamples,
                 depthImageFormat,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
@@ -183,11 +187,11 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         );
         this.compileNabor(
                 gBufferNabor,
-                colorImageFormat,
-                samplerFilter,
-                samplerMipmapMode,
-                samplerAddressMode,
-                extent
+                createInfo.colorImageFormat,
+                createInfo.samplerFilter,
+                createInfo.samplerMipmapMode,
+                createInfo.samplerAddressMode,
+                createInfo.extent
         );
 
         //Primitive nabor
@@ -212,11 +216,11 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         );
         this.compileNabor(
                 primitiveNabor,
-                colorImageFormat,
-                samplerFilter,
-                samplerMipmapMode,
-                samplerAddressMode,
-                extent
+                createInfo.colorImageFormat,
+                createInfo.samplerFilter,
+                createInfo.samplerMipmapMode,
+                createInfo.samplerAddressMode,
+                createInfo.extent
         );
 
         //Primitive-Fill nabor
@@ -232,11 +236,11 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         );
         this.compileNabor(
                 primitiveFillNabor,
-                colorImageFormat,
-                samplerFilter,
-                samplerMipmapMode,
-                samplerAddressMode,
-                extent
+                createInfo.colorImageFormat,
+                createInfo.samplerFilter,
+                createInfo.samplerMipmapMode,
+                createInfo.samplerAddressMode,
+                createInfo.extent
         );
 
         //Merge-Scenes nabor
@@ -260,15 +264,15 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         );
         this.compileNabor(
                 mergeScenesNabor,
-                colorImageFormat,
-                samplerFilter,
-                samplerMipmapMode,
-                samplerAddressMode,
-                extent
+                createInfo.colorImageFormat,
+                createInfo.samplerFilter,
+                createInfo.samplerMipmapMode,
+                createInfo.samplerAddressMode,
+                createInfo.extent
         );
 
         //Shadow mapping
-        if (useShadowMapping) {
+        if (createInfo.useShadowMapping) {
             URL shadowMappingPass1VertShaderResource = MttURLUtils.mustGetResourceURL(
                     shaderSettings.shadowMapping.pass1.vert.filepath,
                     shaderSettings.shadowMapping.pass1.vert.className
@@ -298,46 +302,92 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
             );
             this.compileNabor(
                     shadowMappingNabor,
-                    colorImageFormat,
-                    samplerFilter,
-                    samplerMipmapMode,
-                    samplerAddressMode,
-                    extent
+                    createInfo.colorImageFormat,
+                    createInfo.samplerFilter,
+                    createInfo.samplerMipmapMode,
+                    createInfo.samplerAddressMode,
+                    createInfo.extent
             );
             this.createShadowMappingNaborUserDefImages(shadowMappingNabor);
         }
 
         //Post-processing nabors
-        if (!ppNaborNames.isEmpty()) {
+        if (!createInfo.ppNaborNames.isEmpty()) {
             ppNaborChain = new PostProcessingNaborChain(
                     device,
                     commandPool,
                     graphicsQueue,
-                    colorImageFormat,
-                    samplerFilter,
-                    samplerMipmapMode,
-                    samplerAddressMode,
-                    extent,
-                    ppNaborNames,
-                    customizablePPNaborInfos
+                    createInfo.colorImageFormat,
+                    createInfo.samplerFilter,
+                    createInfo.samplerMipmapMode,
+                    createInfo.samplerAddressMode,
+                    createInfo.extent,
+                    createInfo.ppNaborNames,
+                    createInfo.customizablePPNaborInfos
             );
         }
 
         //Full-screen effect nabors
-        if (!fseNaborNames.isEmpty()) {
+        if (!createInfo.fseNaborNames.isEmpty()) {
             fseNaborChain = new FullScreenEffectNaborChain(
                     device,
                     commandPool,
                     graphicsQueue,
-                    colorImageFormat,
-                    samplerFilter,
-                    samplerMipmapMode,
+                    createInfo.colorImageFormat,
+                    createInfo.samplerFilter,
+                    createInfo.samplerMipmapMode,
                     VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
-                    extent,
-                    fseNaborNames,
-                    fseNaborInfos
+                    createInfo.extent,
+                    createInfo.fseNaborNames,
+                    createInfo.fseNaborInfos
             );
         }
+    }
+
+    @Deprecated
+    public VkMttScreen(
+            VkDevice device,
+            long commandPool,
+            VkQueue graphicsQueue,
+            int depthImageFormat,
+            int depthImageWidth,
+            int depthImageHeight,
+            int depthImageAspect,
+            int colorImageFormat,
+            int albedoMSAASamples,
+            int samplerFilter,
+            int samplerMipmapMode,
+            int samplerAddressMode,
+            VkExtent2D extent,
+            boolean shouldChangeExtentOnRecreate,
+            boolean useShadowMapping,
+            List<String> ppNaborNames,
+            Map<String, CustomizablePostProcessingNaborInfo> customizablePPNaborInfos,
+            List<String> fseNaborNames,
+            Map<String, FullScreenEffectNaborInfo> fseNaborInfos) {
+        this(
+                new VkMttScreenCreateInfo(
+                        device,
+                        commandPool,
+                        graphicsQueue,
+                        depthImageFormat,
+                        depthImageWidth,
+                        depthImageHeight,
+                        depthImageAspect,
+                        colorImageFormat,
+                        albedoMSAASamples,
+                        samplerFilter,
+                        samplerMipmapMode,
+                        samplerAddressMode,
+                        extent,
+                        shouldChangeExtentOnRecreate,
+                        useShadowMapping,
+                        ppNaborNames,
+                        customizablePPNaborInfos,
+                        fseNaborNames,
+                        fseNaborInfos
+                )
+        );
     }
 
     public void recreate(int colorImageFormat, VkExtent2D extent) {

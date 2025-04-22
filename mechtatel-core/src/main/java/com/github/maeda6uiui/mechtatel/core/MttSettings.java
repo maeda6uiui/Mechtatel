@@ -98,6 +98,7 @@ public class MttSettings {
         public int preferableGraphicsFamilyIndex;
         public int preferablePresentFamilyIndex;
         public int albedoMSAASamples;
+        public int numShadowMaps;
 
         public VulkanSettings() {
             enableValidationLayer = false;
@@ -105,6 +106,7 @@ public class MttSettings {
             preferableGraphicsFamilyIndex = -1;
             preferablePresentFamilyIndex = -1;
             albedoMSAASamples = 2;
+            numShadowMaps = 1;
         }
     }
 

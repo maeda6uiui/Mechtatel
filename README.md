@@ -32,12 +32,12 @@ God knows if I could complete this work by the time you'd think I'm no more...
     <dependency>
         <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel-core</artifactId>
-        <version>0.0.1</version>
+        <version>0.1.0</version>
     </dependency>
     <dependency>
         <groupId>com.github.dabasan</groupId>
         <artifactId>mechtatel-logging</artifactId>
-        <version>0.0.1</version>
+        <version>0.1.0</version>
     </dependency>
 </dependencies>
 ```
@@ -114,6 +114,11 @@ Rendering to multiple windows
 ![Rendering to multiple windows](./Image/rendering_to_multiple_windows.png)
 
 ## Progress report
+
+### 2025-04-23
+
+Releases `v0.1.0`.
+Check the release note for the changes that have been made since the previous release!
 
 ### 2025-04-22
 

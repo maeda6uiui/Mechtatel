@@ -34,6 +34,7 @@
         "preferablePhysicalDeviceIndex": 0,
         "preferableGraphicsFamilyIndex": 0,
         "preferablePresentFamilyIndex": 0,
-        "albedoMSAASamples": 1
+        "albedoMSAASamples": 1,
+        "numShadowMaps": 1
     }
 }

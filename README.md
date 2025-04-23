@@ -115,6 +115,13 @@ Rendering to multiple windows
 
 ## Progress report
 
+### 2025-04-22
+
+Added an option to limit the number of shadow maps to be created.
+The previous implementation created 16 shadow maps regardless of whether they are used, which may cause wasteful allocation of VRAM.
+New implementation allows to specify the number of shadow maps between 1 and 16, and the default is 1.
+This value can be changed via settings.json (`vulkan.numShadowMaps`).
+
 ### 2025-04-20
 
 Added a test code for audio playback using [LibSoundPlayer](https://github.com/maeda6uiui/LibSoundPlayer).

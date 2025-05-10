@@ -27,7 +27,7 @@ God knows if I could complete this work by the time you'd think I'm no more...
 
 ## Try it out
 
-`groupId` is going to be changed to `io.github.maeda6uiui` from the next GA release.
+`groupId` is going to be changed to `io.github.maeda6uiui` in the next GA release.
 
 ```xml
 <dependencies>

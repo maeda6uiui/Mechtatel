@@ -27,6 +27,8 @@ God knows if I could complete this work by the time you'd think I'm no more...
 
 ## Try it out
 
+`groupId` is going to be changed to `io.github.maeda6uiui` from the next GA release.
+
 ```xml
 <dependencies>
     <dependency>
@@ -47,14 +49,14 @@ Snapshot builds are available in the Maven Snapshot Repository.
 ```xml
 <dependencies>
     <dependency>
-        <groupId>com.github.dabasan</groupId>
+        <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-core</artifactId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>0.1.1-SNAPSHOT</version>
     </dependency>
     <dependency>
-        <groupId>com.github.dabasan</groupId>
+        <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-logging</artifactId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>0.1.1-SNAPSHOT</version>
     </dependency>
 </dependencies>
 ```

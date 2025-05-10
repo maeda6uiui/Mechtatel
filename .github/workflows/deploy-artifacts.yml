@@ -3,9 +3,9 @@ name: Deploy artifacts to Maven Central
 on:
   workflow_call:
     secrets:
-      ossrhUsername:
+      centralUsername:
         required: true
-      ossrhPassword:
+      centralPassword:
         required: true
       gpgKeyId:
         required: true
@@ -41,9 +41,9 @@ jobs:
           <settings>
             <servers>
               <server>
-                <id>ossrh</id>
-                <username>${{secrets.ossrhUsername}}</username>
-                <password>${{secrets.ossrhPassword}}</password>
+                <id>central</id>
+                <username>${{secrets.centralUsername}}</username>
+                <password>${{secrets.centralPassword}}</password>
               </server>
             </servers>
           </settings>

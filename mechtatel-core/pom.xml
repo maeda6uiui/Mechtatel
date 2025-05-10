@@ -148,9 +148,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.dabasan</groupId>
+            <groupId>io.github.maeda6uiui</groupId>
             <artifactId>lib-sound-player-core</artifactId>
-            <version>0.0.1</version>
+            <version>0.0.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

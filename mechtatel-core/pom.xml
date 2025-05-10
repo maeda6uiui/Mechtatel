@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.github.dabasan</groupId>
+        <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel</artifactId>
-        <version>0.1.0</version>
+        <version>0.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>mechtatel-core</artifactId>
@@ -18,8 +18,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -131,26 +131,26 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.dabasan</groupId>
+            <groupId>io.github.maeda6uiui</groupId>
             <artifactId>mechtatel-natives</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.dabasan</groupId>
+            <groupId>io.github.maeda6uiui</groupId>
             <artifactId>${mechtatel.natives}</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.github.dabasan</groupId>
+            <groupId>io.github.maeda6uiui</groupId>
             <artifactId>mechtatel-logging</artifactId>
             <version>${project.parent.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.dabasan</groupId>
+            <groupId>io.github.maeda6uiui</groupId>
             <artifactId>lib-sound-player-core</artifactId>
-            <version>0.0.1</version>
+            <version>0.0.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

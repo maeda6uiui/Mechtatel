@@ -8,7 +8,6 @@
         <outputRelativeToContentRoot value="true" />
         <module name="mechtatel-core" />
         <module name="mechtatel-natives" />
-        <module name="mechtatel-natives-macos" />
         <module name="mechtatel-natives-linux" />
         <module name="mechtatel-natives-windows" />
         <module name="mechtatel-logging" />
@@ -16,6 +15,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Mechtatel" target="17" />
+      <module name="mechtatel-natives-macos" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>

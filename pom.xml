@@ -17,7 +17,6 @@
         <module>mechtatel-natives</module>
         <module>mechtatel-natives-windows</module>
         <module>mechtatel-natives-linux</module>
-        <module>mechtatel-natives-macos</module>
     </modules>
 
     <licenses>
@@ -69,27 +68,6 @@
                 <imgui.natives>imgui-java-natives-linux</imgui.natives>
                 <mechtatel.natives>mechtatel-natives-linux</mechtatel.natives>
             </properties>
-        </profile>
-        <profile>
-            <id>mechtatel-natives-macos-x86_64</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                    <arch>x86_64</arch>
-                </os>
-            </activation>
-            <properties>
-                <lwjgl.natives>natives-macos</lwjgl.natives>
-                <imgui.natives>imgui-java-natives-macos</imgui.natives>
-                <mechtatel.natives>mechtatel-natives-macos</mechtatel.natives>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.lwjgl</groupId>
-                    <artifactId>lwjgl-vulkan</artifactId>
-                    <classifier>natives-macos</classifier>
-                </dependency>
-            </dependencies>
         </profile>
         <profile>
             <id>mechtatel-natives-windows-amd64</id>

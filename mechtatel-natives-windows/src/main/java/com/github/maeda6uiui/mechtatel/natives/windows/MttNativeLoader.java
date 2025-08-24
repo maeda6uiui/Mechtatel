@@ -15,9 +15,4 @@ public class MttNativeLoader implements IMttNativeLoader {
     public void loadLibbulletjme() throws IOException {
         NativeLoaderUtils.loadNativeLibFromJar(this.getClass(), "/Bin/Windows64ReleaseSp_bulletjme.dll");
     }
-
-    @Override
-    public void loadShaderc() throws IOException {
-        NativeLoaderUtils.loadNativeLibFromJar(this.getClass(), "/Bin/shaderc_shared.dll");
-    }
 }

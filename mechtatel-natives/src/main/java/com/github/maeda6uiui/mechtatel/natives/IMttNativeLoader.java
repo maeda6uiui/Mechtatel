@@ -9,6 +9,4 @@ import java.io.IOException;
  */
 public interface IMttNativeLoader {
     void loadLibbulletjme() throws IOException;
-
-    void loadShaderc() throws IOException;
 }

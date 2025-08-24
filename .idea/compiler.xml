@@ -15,7 +15,6 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Mechtatel" target="17" />
-      <module name="mechtatel-natives-macos" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -15,9 +15,4 @@ public class MttNativeLoader implements IMttNativeLoader {
     public void loadLibbulletjme() throws IOException {
         NativeLoaderUtils.loadNativeLibFromJar(this.getClass(), "/Bin/MacOSX64ReleaseSp_libbulletjme.dylib");
     }
-
-    @Override
-    public void loadShaderc() throws IOException {
-        NativeLoaderUtils.loadNativeLibFromJar(this.getClass(), "/Bin/libshaderc_shared.dylib");
-    }
 }

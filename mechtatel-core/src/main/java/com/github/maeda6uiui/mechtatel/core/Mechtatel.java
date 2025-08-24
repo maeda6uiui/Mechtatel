@@ -85,7 +85,6 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
 
         try {
             nativeLoader.loadLibbulletjme();
-            nativeLoader.loadShaderc();
         } catch (IOException e) {
             logger.error("Failed to load native library");
             throw new RuntimeException(e);

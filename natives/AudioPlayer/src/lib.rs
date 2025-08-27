@@ -26,12 +26,12 @@ thread_local! {
 
 static INIT: Once = Once::new();
 
-struct SoundPlayer {
+struct AudioPlayer {
     _stream: OutputStream,
     sink: Sink,
 }
 
-impl SoundPlayer {
+impl AudioPlayer {
     fn play(&self) {
         self.sink.play();
     }
@@ -115,7 +115,7 @@ fn convert_string_to_c_char_ptr(v: &str) -> *const c_char {
     c_str.into_raw()
 }
 
-fn create_sound_player(input_filepath: &String) -> SoundPlayer {
+fn create_audio_player(input_filepath: &String) -> AudioPlayer {
     let (stream, handle) = OutputStream::try_default().unwrap();
     let sink = Sink::try_new(&handle).unwrap();
     sink.pause();
@@ -123,15 +123,15 @@ fn create_sound_player(input_filepath: &String) -> SoundPlayer {
     let file = File::open(input_filepath).unwrap();
     sink.append(Decoder::new(BufReader::new(file)).unwrap());
 
-    SoundPlayer {
+    AudioPlayer {
         _stream: stream,
         sink: sink,
     }
 }
 
-///Creates a new thread for sound player and returns its unique id.
+///Creates a new thread for an audio player and returns its unique id.
 #[unsafe(no_mangle)]
-pub extern "C" fn spawn_sound_player_thread(c_input_filepath: *const c_char) -> *const c_char {
+pub extern "C" fn spawn_audio_player_thread(c_input_filepath: *const c_char) -> *const c_char {
     INIT.call_once(|| {
         env_logger::init();
     });
@@ -147,7 +147,7 @@ pub extern "C" fn spawn_sound_player_thread(c_input_filepath: *const c_char) -> 
     let (command_sender, command_receiver): (Sender<String>, Receiver<String>) = mpsc::channel();
     let (response_sender, response_receiver): (Sender<String>, Receiver<String>) = mpsc::channel();
     let handle = thread::spawn(move || {
-        let player = create_sound_player(&input_filepath);
+        let player = create_audio_player(&input_filepath);
         loop {
             if let Ok(command) = command_receiver.try_recv() {
                 let args: Vec<&str> = command.split(" ").collect();
@@ -217,9 +217,9 @@ pub extern "C" fn spawn_sound_player_thread(c_input_filepath: *const c_char) -> 
     convert_string_to_c_char_ptr(&id)
 }
 
-///Sends a command to a sound player.
+///Sends a command to an audio player.
 #[unsafe(no_mangle)]
-pub extern "C" fn send_command_to_sound_player(
+pub extern "C" fn send_command_to_audio_player(
     c_id: *const c_char,
     c_command: *const c_char,
 ) -> *const c_char {

@@ -41,4 +41,12 @@
             </plugin>
         </plugins>
     </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.maeda6uiui</groupId>
+            <artifactId>mechtatel-audio-natives</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+    </dependencies>
 </project>

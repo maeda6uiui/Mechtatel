@@ -27,12 +27,12 @@ public class AudioPlayerTest extends Mechtatel {
                 );
     }
 
-    private MttAudio AudioPlayer;
+    private MttAudio audio;
 
     @Override
     public void onCreate(MttWindow window) {
         try {
-            AudioPlayer = new MttAudio("./Mechtatel/Standard/AudioPlayer/Op24.mp3");
+            audio = new MttAudio("./Mechtatel/Standard/Audio/Op24.mp3");
         } catch (FileNotFoundException e) {
             logger.error("Error", e);
             window.close();
@@ -40,18 +40,18 @@ public class AudioPlayerTest extends Mechtatel {
             return;
         }
 
-        AudioPlayer.play();
+        audio.play();
     }
 
     @Override
     public void onUpdate(MttWindow window) {
         if (window.getKeyboardPressingCount(KeyCode.F1) == 1) {
-            AudioPlayer.play();
+            audio.play();
         } else if (window.getKeyboardPressingCount(KeyCode.F2) == 1) {
-            AudioPlayer.pause();
+            audio.pause();
         }
 
-        if (AudioPlayer.isFinished()) {
+        if (audio.isFinished()) {
             window.close();
         }
     }

@@ -9,10 +9,10 @@ import java.nio.file.Paths;
  *
  * @author maeda6uiui
  */
-public class AudioPlayer {
+public class MttAudio {
     private String playerId;
 
-    public AudioPlayer(String filepath) throws FileNotFoundException {
+    public MttAudio(String filepath) throws FileNotFoundException {
         if (!Files.exists(Paths.get(filepath))) {
             throw new FileNotFoundException(filepath);
         }

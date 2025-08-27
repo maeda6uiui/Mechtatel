@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel;
 
-import com.github.maeda6uiui.mechtatel.audio.AudioPlayer;
+import com.github.maeda6uiui.mechtatel.audio.MttAudio;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
@@ -27,12 +27,12 @@ public class AudioPlayerTest extends Mechtatel {
                 );
     }
 
-    private AudioPlayer AudioPlayer;
+    private MttAudio AudioPlayer;
 
     @Override
     public void onCreate(MttWindow window) {
         try {
-            AudioPlayer = new AudioPlayer("./Mechtatel/Standard/AudioPlayer/Op24.mp3");
+            AudioPlayer = new MttAudio("./Mechtatel/Standard/AudioPlayer/Op24.mp3");
         } catch (FileNotFoundException e) {
             logger.error("Error", e);
             window.close();

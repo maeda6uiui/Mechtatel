@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="mechtatel-core" />
         <module name="mechtatel-natives" />
+        <module name="mechtatel-audio" />
         <module name="mechtatel-natives-linux" />
         <module name="mechtatel-natives-windows" />
         <module name="mechtatel-logging" />

@@ -17,6 +17,7 @@
         <module>mechtatel-natives</module>
         <module>mechtatel-natives-windows</module>
         <module>mechtatel-natives-linux</module>
+        <module>mechtatel-audio</module>
     </modules>
 
     <licenses>

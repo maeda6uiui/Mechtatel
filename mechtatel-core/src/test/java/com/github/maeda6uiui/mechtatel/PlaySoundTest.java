@@ -44,7 +44,7 @@ public class PlaySoundTest extends Mechtatel {
     public void onCreate(MttWindow window) {
         try {
             sound = window.createSound(
-                    Paths.get("./Mechtatel/Standard/Audio/440hz_sine.ogg"),
+                    Paths.get("./Mechtatel/Standard/Sound/440hz_sine.ogg"),
                     true,
                     false
             );

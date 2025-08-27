@@ -9,5 +9,5 @@ import java.io.IOException;
  * @author maeda6uiui
  */
 public interface INativeExtractor {
-    File extractLibSoundPlayer() throws IOException;
+    File extractLibAudioPlayer() throws IOException;
 }

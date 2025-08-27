@@ -13,7 +13,7 @@ import java.io.IOException;
  */
 public class NativeExtractor implements INativeExtractor {
     @Override
-    public File extractLibSoundPlayer() throws IOException {
+    public File extractLibAudioPlayer() throws IOException {
         return NativeExtractorUtils.extractNativeLibFromJar(this.getClass(), "/Bin/libsoundplayer.so");
     }
 }

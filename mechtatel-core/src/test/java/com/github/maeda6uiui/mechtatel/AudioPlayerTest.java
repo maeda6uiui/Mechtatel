@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel;
 
-import com.github.maeda6uiui.libsoundplayer.core.Sound;
+import com.github.maeda6uiui.mechtatel.audio.AudioPlayer;
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
@@ -10,10 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 
-public class SoundPlayerTest extends Mechtatel {
-    private static final Logger logger = LoggerFactory.getLogger(SoundPlayerTest.class);
+public class AudioPlayerTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(AudioPlayerTest.class);
 
-    public SoundPlayerTest(MttSettings settings) {
+    public AudioPlayerTest(MttSettings settings) {
         super(settings);
         this.run();
     }
@@ -22,17 +22,17 @@ public class SoundPlayerTest extends Mechtatel {
         MttSettings
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
-                        SoundPlayerTest::new,
+                        AudioPlayerTest::new,
                         () -> logger.error("Failed to load settings")
                 );
     }
 
-    private Sound sound;
+    private AudioPlayer AudioPlayer;
 
     @Override
     public void onCreate(MttWindow window) {
         try {
-            sound = new Sound("./Mechtatel/Standard/Sound/Op24.mp3");
+            AudioPlayer = new AudioPlayer("./Mechtatel/Standard/AudioPlayer/Op24.mp3");
         } catch (FileNotFoundException e) {
             logger.error("Error", e);
             window.close();
@@ -40,18 +40,18 @@ public class SoundPlayerTest extends Mechtatel {
             return;
         }
 
-        sound.play();
+        AudioPlayer.play();
     }
 
     @Override
     public void onUpdate(MttWindow window) {
         if (window.getKeyboardPressingCount(KeyCode.F1) == 1) {
-            sound.play();
+            AudioPlayer.play();
         } else if (window.getKeyboardPressingCount(KeyCode.F2) == 1) {
-            sound.pause();
+            AudioPlayer.pause();
         }
 
-        if (sound.isFinished()) {
+        if (AudioPlayer.isFinished()) {
             window.close();
         }
     }

@@ -34,7 +34,7 @@ public class PlaySoundTest2 extends Mechtatel {
     public void onCreate(MttWindow window) {
         try {
             sound = window.createSound(
-                    Paths.get("./Mechtatel/Standard/Audio/op_24.ogg"), false, false
+                    Paths.get("./Mechtatel/Standard/Audio/op_1.ogg"), false, false
             );
         } catch (IOException e) {
             logger.error("Error", e);

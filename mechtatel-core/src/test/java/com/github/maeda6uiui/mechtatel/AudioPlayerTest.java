@@ -32,7 +32,7 @@ public class AudioPlayerTest extends Mechtatel {
     @Override
     public void onCreate(MttWindow window) {
         try {
-            audio = new MttAudio("./Mechtatel/Standard/Audio/Op24.mp3");
+            audio = new MttAudio("./Mechtatel/Standard/Audio/op_24.flac");
         } catch (FileNotFoundException e) {
             logger.error("Error", e);
             window.close();

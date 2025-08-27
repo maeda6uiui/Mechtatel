@@ -14,7 +14,7 @@ public class TestAudioPause {
     public static void main(String[] args) {
         MttAudio sound;
         try {
-            sound = new MttAudio("./Data/Op23.mp3");
+            sound = new MttAudio("./Mechtatel/Standard/Audio/op_8.mp3");
         } catch (FileNotFoundException e) {
             System.err.println(e);
             return;

@@ -13,7 +13,7 @@ public class TestAudioMethods {
     @BeforeEach
     public void loadMttAudio() {
         assertDoesNotThrow(() -> {
-            sound = new MttAudio("../Data/Op23.mp3");
+            sound = new MttAudio("../Mechtatel/Standard/Audio/op_8.mp3");
         });
     }
 

@@ -18,4 +18,4 @@ jobs:
       - name: Publish native library to release
         uses: softprops/action-gh-release@v2
         with:
-          files: mechtatel-audio-natives/natives/lib-audio-player/natives/target/release/audioplayer.dll
+          files: mechtatel-audio-natives/natives/lib-audio-player/target/release/audioplayer.dll

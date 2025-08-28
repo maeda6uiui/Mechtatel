@@ -9,39 +9,13 @@ jobs:
   build:
     name: Build native library of audio player for Windows
     runs-on: windows-latest
-    defaults:
-      run:
-        shell: pwsh
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Get hash value of Cargo.lock
-        run: |
-          echo `
-            "CARGO_LOCK_HASH=${{hashFiles('mechtatel-audio-natives/natives/lib-audio-player/natives/Cargo.lock')}}" `
-            >> $GITHUB_ENV
-      - name: Cache
-        uses: actions/cache@v4
-        with:
-          path: mechtatel-audio-natives/natives/lib-audio-player/natives/target
-          key: ${{runner.os}}-cargo-${{env.CARGO_LOCK_HASH}}
       - name: Build native library with cargo
         working-directory: mechtatel-audio-natives/natives/lib-audio-player
         run: cargo build --release
-      - name: Copy build artifact to the resource directory
-        run: |
-          New-Item -ItemType Directory -Force -Path "mechtatel-audio-natives-windows/src/main/resources/Bin/"
-          Copy-Item `
-            -Path "mechtatel-audio-natives/natives/lib-audio-player/target/release/audioplayer.dll" `
-            -Destination "mechtatel-audio-natives-windows/src/main/resources/Bin/"
-      - name: Configure Git user
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-      - name: Add and commit changes
-        working-directory: mechtatel-audio-natives-windows/src/main/resources/Bin
-        run: |
-          git add audioplayer.dll
-          git commit -m "Add audioplayer.dll"
-      - name: Push changes
-        run: git push
+      - name: Publish native library to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mechtatel-audio-natives/natives/lib-audio-player/natives/target/release/audioplayer.dll

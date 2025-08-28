@@ -115,6 +115,16 @@ fn convert_string_to_c_char_ptr(v: &str) -> *const c_char {
     c_str.into_raw()
 }
 
+#[unsafe(no_mangle)]
+pub extern "C" fn free_str(ptr: *mut c_char) {
+    if ptr.is_null() {
+        return;
+    }
+    unsafe {
+        let _ = CString::from_raw(ptr);
+    }
+}
+
 fn create_audio_player(input_filepath: &String) -> AudioPlayer {
     let (stream, handle) = OutputStream::try_default().unwrap();
     let sink = Sink::try_new(&handle).unwrap();

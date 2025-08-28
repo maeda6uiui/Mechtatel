@@ -13,4 +13,6 @@ public interface IAudioPlayer extends Library {
     String spawn_audio_player_thread(String input_filepath);
 
     String send_command_to_audio_player(String id, String command);
+
+    void free_str(String str);
 }

@@ -29,6 +29,7 @@ public class MttAudio {
     public void play() {
         String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "play");
         this.throwExceptionOnError(resp);
+        IAudioPlayer.INSTANCE.free_str(resp);
     }
 
     /**
@@ -38,6 +39,7 @@ public class MttAudio {
     public void stop() {
         String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "stop");
         this.throwExceptionOnError(resp);
+        IAudioPlayer.INSTANCE.free_str(resp);
     }
 
     /**
@@ -47,44 +49,59 @@ public class MttAudio {
     public void pause() {
         String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "pause");
         this.throwExceptionOnError(resp);
+        IAudioPlayer.INSTANCE.free_str(resp);
     }
 
     public boolean isFinished() {
         String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "is_finished");
         this.throwExceptionOnError(resp);
 
-        return resp.equals("true");
+        boolean ret = resp.equals("true");
+        IAudioPlayer.INSTANCE.free_str(resp);
+
+        return ret;
     }
 
     public boolean isPaused() {
         String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "is_paused");
         this.throwExceptionOnError(resp);
 
-        return resp.equals("true");
+        boolean ret = resp.equals("true");
+        IAudioPlayer.INSTANCE.free_str(resp);
+
+        return ret;
     }
 
     public float getSpeed() {
         String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "get_speed");
         this.throwExceptionOnError(resp);
 
-        return Float.parseFloat(resp);
+        float ret = Float.parseFloat(resp);
+        IAudioPlayer.INSTANCE.free_str(resp);
+
+        return ret;
     }
 
     public float getVolume() {
         String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "get_volume");
         this.throwExceptionOnError(resp);
 
-        return Float.parseFloat(resp);
+        float ret = Float.parseFloat(resp);
+        IAudioPlayer.INSTANCE.free_str(resp);
+
+        return ret;
     }
 
     public void setSpeed(float speed) {
         String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, String.format("set_speed %f", speed));
         this.throwExceptionOnError(resp);
+        IAudioPlayer.INSTANCE.free_str(resp);
     }
 
     public void setVolume(float volume) {
         String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, String.format("set_volume %f", volume));
         this.throwExceptionOnError(resp);
+        IAudioPlayer.INSTANCE.free_str(resp);
     }
 
     /**
@@ -96,7 +113,10 @@ public class MttAudio {
         String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "get_pos");
         this.throwExceptionOnError(resp);
 
-        return Integer.parseInt(resp);
+        int ret = Integer.parseInt(resp);
+        IAudioPlayer.INSTANCE.free_str(resp);
+
+        return ret;
     }
 
     /**
@@ -107,5 +127,6 @@ public class MttAudio {
     public void seek(int pos) {
         String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, String.format("seek %d", pos));
         this.throwExceptionOnError(resp);
+        IAudioPlayer.INSTANCE.free_str(resp);
     }
 }

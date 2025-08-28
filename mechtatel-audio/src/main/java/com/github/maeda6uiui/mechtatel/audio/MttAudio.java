@@ -32,8 +32,8 @@ public class MttAudio {
     }
 
     /**
-     * Stops the sound.
-     * Note that methods in this class cannot be called after the sound is stopped.
+     * Stops the audio.
+     * Note that methods in this class cannot be called after the audio is stopped.
      */
     public void stop() {
         String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "stop");
@@ -41,8 +41,8 @@ public class MttAudio {
     }
 
     /**
-     * Pauses playback of this sound.
-     * A paused sound can be resumed with {@link #play()}.
+     * Pauses playback of this audio.
+     * A paused audio can be resumed with {@link #play()}.
      */
     public void pause() {
         String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "pause");
@@ -88,9 +88,9 @@ public class MttAudio {
     }
 
     /**
-     * Returns the position of the sound in millisecond.
+     * Returns the position of the audio in millisecond.
      *
-     * @return Position of the sound in millisecond
+     * @return Position of the audio in millisecond
      */
     public int getPos() {
         String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "get_pos");

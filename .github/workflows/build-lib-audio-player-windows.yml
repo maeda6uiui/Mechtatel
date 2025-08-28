@@ -15,6 +15,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Get hash value of Cargo.lock
+        run: |
+          echo `
+            "CARGO_LOCK_HASH=${{hashFiles('mechtatel-audio-natives/natives/lib-audio-player/natives/Cargo.lock')}}" `
+            >> $GITHUB_ENV
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          path: mechtatel-audio-natives/natives/lib-audio-player/natives/target
+          key: ${{runner.os}}-cargo-${{env.CARGO_LOCK_HASH}}
       - name: Build native library with cargo
         working-directory: mechtatel-audio-natives/natives/lib-audio-player
         run: cargo build --release

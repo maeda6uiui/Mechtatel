@@ -17,7 +17,9 @@ public class MttAudio {
             throw new FileNotFoundException(filepath);
         }
 
-        playerId = IAudioPlayer.INSTANCE.spawn_audio_player_thread(filepath);
+        String tmpPlayerId = IAudioPlayer.INSTANCE.spawn_audio_player_thread(filepath);
+        playerId = tmpPlayerId;
+        IAudioPlayer.INSTANCE.free_str(tmpPlayerId);
     }
 
     private void throwExceptionOnError(String resp) {

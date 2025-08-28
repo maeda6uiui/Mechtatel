@@ -1,0 +1,36 @@
+name: Build native library of audio player for Linux
+
+on:
+  push:
+    tags:
+      - "audio-natives-*"
+
+jobs:
+  build:
+    name: Build native library of audio player for Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install libasound2-dev
+        run: sudo apt install libasound2-dev
+      - name: Build native library with cargo
+        working-directory: mechtatel-audio-natives/natives/lib-audio-player
+        run: cargo build --release
+      - name: Copy build artifact to the resource directory
+        run: |
+          mkdir -p mechtatel-audio-natives-linux/src/main/resources/Bin/
+          cp \
+            mechtatel-audio-natives/natives/lib-audio-player/target/release/libaudioplayer.so \
+            mechtatel-audio-natives-linux/src/main/resources/Bin/
+      - name: Configure Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Add and commit changes
+        working-directory: mechtatel-audio-natives-linux/src/main/resources/Bin
+        run: |
+          git add libaudioplayer.so
+          git commit -m "Add libaudioplayer.so"
+      - name: Push changes
+        run: git push

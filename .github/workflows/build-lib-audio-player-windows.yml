@@ -1,0 +1,37 @@
+name: Build native library of audio player for Windows
+
+on:
+  push:
+    tags:
+      - "audio-natives-*"
+
+jobs:
+  build:
+    name: Build native library of audio player for Windows
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build native library with cargo
+        working-directory: mechtatel-audio-natives/natives/lib-audio-player
+        run: cargo build --release
+      - name: Copy build artifact to the resource directory
+        run: |
+          New-Item -ItemType Directory -Force -Path "mechtatel-audio-natives-windows/src/main/resources/Bin/"
+          Copy-Item `
+            -Path "mechtatel-audio-natives/natives/lib-audio-player/target/release/audioplayer.dll" `
+            -Destination "mechtatel-audio-natives-windows/src/main/resources/Bin/"
+      - name: Configure Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Add and commit changes
+        working-directory: mechtatel-audio-natives-windows/src/main/resources/Bin
+        run: |
+          git add audioplayer.dll
+          git commit -m "Add audioplayer.dll"
+      - name: Push changes
+        run: git push

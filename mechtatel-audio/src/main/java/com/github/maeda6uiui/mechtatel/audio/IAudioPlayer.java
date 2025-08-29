@@ -1,6 +1,7 @@
 package com.github.maeda6uiui.mechtatel.audio;
 
 import com.sun.jna.Library;
+import com.sun.jna.Pointer;
 
 /**
  * Interface to native audio player
@@ -10,9 +11,9 @@ import com.sun.jna.Library;
 public interface IAudioPlayer extends Library {
     IAudioPlayer INSTANCE = NativeLoader.load();
 
-    String spawn_audio_player_thread(String input_filepath);
+    Pointer spawn_audio_player_thread(String input_filepath);
 
-    String send_command_to_audio_player(String id, String command);
+    Pointer send_command_to_audio_player(String id, String command);
 
-    void free_str(String str);
+    void free_str(Pointer p);
 }

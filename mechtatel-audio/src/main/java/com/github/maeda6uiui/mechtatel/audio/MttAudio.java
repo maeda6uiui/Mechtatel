@@ -1,5 +1,7 @@
 package com.github.maeda6uiui.mechtatel.audio;
 
+import com.sun.jna.Pointer;
+
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -12,14 +14,18 @@ import java.nio.file.Paths;
 public class MttAudio {
     private String playerId;
 
+    private String pointerToString(Pointer p) {
+        String s = p.getString(0);
+        IAudioPlayer.INSTANCE.free_str(p);
+        return s;
+    }
+
     public MttAudio(String filepath) throws FileNotFoundException {
         if (!Files.exists(Paths.get(filepath))) {
             throw new FileNotFoundException(filepath);
         }
 
-        String tmpPlayerId = IAudioPlayer.INSTANCE.spawn_audio_player_thread(filepath);
-        playerId = tmpPlayerId;
-        IAudioPlayer.INSTANCE.free_str(tmpPlayerId);
+        playerId = this.pointerToString(IAudioPlayer.INSTANCE.spawn_audio_player_thread(filepath));
     }
 
     private void throwExceptionOnError(String resp) {
@@ -29,9 +35,9 @@ public class MttAudio {
     }
 
     public void play() {
-        String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "play");
+        String resp = this.pointerToString(
+                IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "play"));
         this.throwExceptionOnError(resp);
-        IAudioPlayer.INSTANCE.free_str(resp);
     }
 
     /**
@@ -39,9 +45,9 @@ public class MttAudio {
      * Note that methods in this class cannot be called after the audio is stopped.
      */
     public void stop() {
-        String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "stop");
+        String resp = this.pointerToString(
+                IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "stop"));
         this.throwExceptionOnError(resp);
-        IAudioPlayer.INSTANCE.free_str(resp);
     }
 
     /**
@@ -49,61 +55,53 @@ public class MttAudio {
      * A paused audio can be resumed with {@link #play()}.
      */
     public void pause() {
-        String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "pause");
+        String resp = this.pointerToString(
+                IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "pause"));
         this.throwExceptionOnError(resp);
-        IAudioPlayer.INSTANCE.free_str(resp);
     }
 
     public boolean isFinished() {
-        String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "is_finished");
+        String resp = this.pointerToString(
+                IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "is_finished"));
         this.throwExceptionOnError(resp);
 
-        boolean ret = resp.equals("true");
-        IAudioPlayer.INSTANCE.free_str(resp);
-
-        return ret;
+        return resp.equals("true");
     }
 
     public boolean isPaused() {
-        String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "is_paused");
+        String resp = this.pointerToString(
+                IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "is_paused"));
         this.throwExceptionOnError(resp);
 
-        boolean ret = resp.equals("true");
-        IAudioPlayer.INSTANCE.free_str(resp);
-
-        return ret;
+        return resp.equals("true");
     }
 
     public float getSpeed() {
-        String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "get_speed");
+        String resp = this.pointerToString(
+                IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "get_speed"));
         this.throwExceptionOnError(resp);
 
-        float ret = Float.parseFloat(resp);
-        IAudioPlayer.INSTANCE.free_str(resp);
-
-        return ret;
+        return Float.parseFloat(resp);
     }
 
     public float getVolume() {
-        String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "get_volume");
+        String resp = this.pointerToString(
+                IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "get_volume"));
         this.throwExceptionOnError(resp);
 
-        float ret = Float.parseFloat(resp);
-        IAudioPlayer.INSTANCE.free_str(resp);
-
-        return ret;
+        return Float.parseFloat(resp);
     }
 
     public void setSpeed(float speed) {
-        String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, String.format("set_speed %f", speed));
+        String resp = this.pointerToString(
+                IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, String.format("set_speed %f", speed)));
         this.throwExceptionOnError(resp);
-        IAudioPlayer.INSTANCE.free_str(resp);
     }
 
     public void setVolume(float volume) {
-        String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, String.format("set_volume %f", volume));
+        String resp = this.pointerToString(
+                IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, String.format("set_volume %f", volume)));
         this.throwExceptionOnError(resp);
-        IAudioPlayer.INSTANCE.free_str(resp);
     }
 
     /**
@@ -112,13 +110,11 @@ public class MttAudio {
      * @return Position of the audio in millisecond
      */
     public int getPos() {
-        String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "get_pos");
+        String resp = this.pointerToString(
+                IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, "get_pos"));
         this.throwExceptionOnError(resp);
 
-        int ret = Integer.parseInt(resp);
-        IAudioPlayer.INSTANCE.free_str(resp);
-
-        return ret;
+        return Integer.parseInt(resp);
     }
 
     /**
@@ -127,8 +123,8 @@ public class MttAudio {
      * @param pos Position in millisecond
      */
     public void seek(int pos) {
-        String resp = IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, String.format("seek %d", pos));
+        String resp = this.pointerToString(
+                IAudioPlayer.INSTANCE.send_command_to_audio_player(playerId, String.format("seek %d", pos)));
         this.throwExceptionOnError(resp);
-        IAudioPlayer.INSTANCE.free_str(resp);
     }
 }

@@ -1,3 +1,5 @@
+<!-- @formatter:off -->
+
 # Mechtatel
 
 Mechtatel (ru: Мечтатель en: Dreamer)
@@ -15,7 +17,7 @@ However, you could check out the [test code](./mechtatel-core/src/test/java/com/
 
 Note that this project is currently under development and is subject to drastic change.
 
-## Message from developer
+## Message from developer 
 
 It's been years since I came up with an idea like "Isn't it great if I could create a game engine and build my own game upon it?"
 If you just want to create a game, then you should take advantage of the great game engines such as Unity and Unreal Engine.
@@ -27,36 +29,19 @@ God knows if I could complete this work by the time you'd think I'm no more...
 
 ## Try it out
 
-`groupId` is going to be changed to `io.github.maeda6uiui` in the next GA release.
-
-```xml
-<dependencies>
-    <dependency>
-        <groupId>com.github.dabasan</groupId>
-        <artifactId>mechtatel-core</artifactId>
-        <version>0.1.0</version>
-    </dependency>
-    <dependency>
-        <groupId>com.github.dabasan</groupId>
-        <artifactId>mechtatel-logging</artifactId>
-        <version>0.1.0</version>
-    </dependency>
-</dependencies>
-```
-
-Snapshot builds are available in the Maven Snapshot Repository.
+### Core
 
 ```xml
 <dependencies>
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-core</artifactId>
-        <version>0.1.1-SNAPSHOT</version>
+        <version>0.2.0</version>
     </dependency>
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-logging</artifactId>
-        <version>0.1.1-SNAPSHOT</version>
+        <version>0.2.0</version>
     </dependency>
 </dependencies>
 ```
@@ -64,6 +49,22 @@ Snapshot builds are available in the Maven Snapshot Repository.
 Use of `mechtatel-logging` module is optional.
 It provides minimal logging functionality with Logback, which prints out logs above the INFO level to stdout.
 You can overwrite it or use another logging implementation at your discretion.
+
+### Audio
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>io.github.maeda6uiui</groupId>
+        <artifactId>mechtatel-audio</artifactId>
+        <version>0.2.0</version>
+    </dependency>
+</dependencies>
+```
+
+`mechtatel-audio` module provides audio playback functionality for various audio formats including MP3 and FLAC.
+The core part is written in Rust and `mechtatel-audio` works as an interface to the underlying native library.
+It can be used independently from `mechtatel-core`, but keep in mind that it currently supports only Linux x64 and Windows x64 because it's not written in pure Java.
 
 ## Currently working on
 

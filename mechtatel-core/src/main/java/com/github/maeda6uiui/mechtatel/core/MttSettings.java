@@ -20,6 +20,20 @@ import java.util.Optional;
 public class MttSettings {
     private static final Logger logger = LoggerFactory.getLogger(MttSettings.class);
 
+    public static class AppSettings {
+        public String name;
+        public int majorVersion;
+        public int minorVersion;
+        public int patchVersion;
+
+        public AppSettings() {
+            name = "MyApplication";
+            majorVersion = 0;
+            minorVersion = 0;
+            patchVersion = 0;
+        }
+    }
+
     public static class WindowSettings {
         public String title;
         public int width;
@@ -110,6 +124,8 @@ public class MttSettings {
         }
     }
 
+    @JsonProperty("app")
+    public AppSettings appSettings;
     @JsonProperty("window")
     public WindowSettings windowSettings;
     @JsonProperty("headless")
@@ -128,6 +144,7 @@ public class MttSettings {
     private static MttSettings instance;
 
     public MttSettings() {
+        appSettings = new AppSettings();
         windowSettings = new WindowSettings();
         headlessSettings = new HeadlessSettings();
         systemSettings = new SystemSettings();

@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.creator;
 
-import com.github.maeda6uiui.mechtatel.core.AppInfo;
 import com.github.maeda6uiui.mechtatel.core.EngineInfo;
+import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.PointerBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.validation.ValidationLayers;
 import org.lwjgl.PointerBuffer;
@@ -43,11 +43,15 @@ public class InstanceCreator {
         }
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
+            MttSettings settings = MttSettings.get().orElse(new MttSettings());
+
             VkApplicationInfo vkAppInfo = VkApplicationInfo.calloc(stack);
             vkAppInfo.sType(VK_STRUCTURE_TYPE_APPLICATION_INFO);
-            vkAppInfo.pApplicationName(stack.UTF8Safe(AppInfo.NAME));
+            vkAppInfo.pApplicationName(stack.UTF8Safe(settings.appSettings.name));
             vkAppInfo.applicationVersion(VK_MAKE_VERSION(
-                    AppInfo.MAJOR_VERSION, AppInfo.MINOR_VERSION, AppInfo.PATCH_VERSION));
+                    settings.appSettings.majorVersion,
+                    settings.appSettings.minorVersion,
+                    settings.appSettings.patchVersion));
             vkAppInfo.pEngineName(stack.UTF8Safe(EngineInfo.NAME));
             vkAppInfo.engineVersion(VK_MAKE_VERSION(
                     EngineInfo.MAJOR_VERSION, EngineInfo.MINOR_VERSION, EngineInfo.PATCH_VERSION));

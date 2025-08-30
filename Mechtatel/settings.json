@@ -1,4 +1,10 @@
 {
+    "app": {
+        "name": "MyApplication",
+        "majorVersion": 0,
+        "minorVersion": 0,
+        "patchVersion": 0
+    },
     "window": {
         "title": "Mechtatel",
         "width": 1280,

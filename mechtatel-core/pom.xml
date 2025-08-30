@@ -149,8 +149,8 @@
         </dependency>
         <dependency>
             <groupId>io.github.maeda6uiui</groupId>
-            <artifactId>lib-sound-player-core</artifactId>
-            <version>0.0.2</version>
+            <artifactId>mechtatel-audio</artifactId>
+            <version>${project.parent.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

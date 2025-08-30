@@ -17,6 +17,10 @@
         <module>mechtatel-natives</module>
         <module>mechtatel-natives-windows</module>
         <module>mechtatel-natives-linux</module>
+        <module>mechtatel-audio</module>
+        <module>mechtatel-audio-natives</module>
+        <module>mechtatel-audio-natives-linux</module>
+        <module>mechtatel-audio-natives-windows</module>
     </modules>
 
     <licenses>
@@ -67,6 +71,7 @@
                 <lwjgl.natives>natives-linux</lwjgl.natives>
                 <imgui.natives>imgui-java-natives-linux</imgui.natives>
                 <mechtatel.natives>mechtatel-natives-linux</mechtatel.natives>
+                <mechtatel.audio.natives>mechtatel-audio-natives-linux</mechtatel.audio.natives>
             </properties>
         </profile>
         <profile>
@@ -81,6 +86,7 @@
                 <lwjgl.natives>natives-windows</lwjgl.natives>
                 <imgui.natives>imgui-java-natives-windows</imgui.natives>
                 <mechtatel.natives>mechtatel-natives-windows</mechtatel.natives>
+                <mechtatel.audio.natives>mechtatel-audio-natives-windows</mechtatel.audio.natives>
             </properties>
         </profile>
     </profiles>

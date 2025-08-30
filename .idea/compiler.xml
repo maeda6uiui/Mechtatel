@@ -6,11 +6,15 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="mechtatel-audio" />
+        <module name="mechtatel-audio-natives" />
+        <module name="mechtatel-audio-natives-windows" />
+        <module name="mechtatel-audio-natives-linux" />
+        <module name="mechtatel-natives-windows" />
+        <module name="mechtatel-logging" />
         <module name="mechtatel-core" />
         <module name="mechtatel-natives" />
         <module name="mechtatel-natives-linux" />
-        <module name="mechtatel-natives-windows" />
-        <module name="mechtatel-logging" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

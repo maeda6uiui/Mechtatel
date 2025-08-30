@@ -70,15 +70,9 @@ It can be used independently from `mechtatel-core`, but keep in mind that it cur
 
 ## Todo
 
-### Will certainly do
-
-### Probably...
-
-- Investigate the methods to reproduce water surface
-- Implement functionality to simulate sea waves
-- Design and implement API that can be invoked from external applications
-  - Establish connection between Mechtatel (server) and client app
-  - Build client app in any language (Go, Rust, etc.)
+- Reflection mapping
+- Normal mapping
+- Water surface
 
 ## Special thanks to
 

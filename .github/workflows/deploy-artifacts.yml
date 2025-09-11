@@ -7,8 +7,6 @@ on:
         required: true
       centralPassword:
         required: true
-      gpgKeyId:
-        required: true
       gpgPrivateKey:
         required: true
       gpgPassphrase:
@@ -21,37 +19,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 21
-      - name: Configure GPG
-        run: |
-          mkdir -p ~/.gnupg
-          chmod 700 ~/.gnupg
-          echo "use-agent" > ~/.gnupg/gpg.conf
-          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
-          echo "allow-loopback-pinentry" > ~/.gnupg/gpg-agent.conf
-      - name: Import GPG private key
-        run: echo "${{secrets.gpgPrivateKey}}" | base64 --decode | gpg --batch --yes --import
-      - name: Configure Maven settings
-        run: |
-          mkdir -p ~/.m2
-          cat <<EOF > ~/.m2/settings.xml
-          <settings>
-            <servers>
-              <server>
-                <id>central</id>
-                <username>${{secrets.centralUsername}}</username>
-                <password>${{secrets.centralPassword}}</password>
-              </server>
-            </servers>
-          </settings>
-          EOF
+          server-id: central
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_CENTRAL_TOKEN
+          gpg-private-key: ${{secrets.gpgPrivateKey}}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - name: Deploy to Maven Central
-        run: |
-          mvn clean deploy \
-            -Dgpg.executable=gpg \
-            -Dgpg.passphrase=${{secrets.gpgPassphrase}} \
-            -Dgpg.pinentry-mode=loopback \
-            -Dskip.audio.tests=true
+        run: mvn deploy -Dskip.audio.tests=true
+        env:
+          MAVEN_USERNAME: ${{secrets.centralUsername}}
+          MAVEN_CENTRAL_TOKEN: ${{secrets.centralPassword}}
+          MAVEN_GPG_PASSPHRASE: ${{secrets.gpgPassphrase}}

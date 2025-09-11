@@ -14,6 +14,5 @@ jobs:
     secrets:
       centralUsername: ${{secrets.CENTRAL_USERNAME}}
       centralPassword: ${{secrets.CENTRAL_PASSWORD}}
-      gpgKeyId: ${{secrets.GPG_KEY_ID}}
       gpgPrivateKey: ${{secrets.GPG_PRIVATE_KEY}}
       gpgPassphrase: ${{secrets.GPG_PASSPHRASE}}

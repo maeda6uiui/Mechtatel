@@ -15,6 +15,7 @@
         <module name="mechtatel-core" />
         <module name="mechtatel-natives" />
         <module name="mechtatel-natives-linux" />
+        <module name="mechtatel-common-utils" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

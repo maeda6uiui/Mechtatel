@@ -43,10 +43,5 @@
             <artifactId>mechtatel-natives</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.stephengold</groupId>
-            <artifactId>Libbulletjme</artifactId>
-            <version>${libbulletjme.version}</version>
-        </dependency>
     </dependencies>
 </project>

@@ -27,7 +27,7 @@ public:
 };
 
 //===== C interface =====
-extern "C" int mtt_slangc_compile_to_spirv(
+extern "C" int mttSlangcCompileIntoSpirv(
     const char *moduleName,
     const char *modulePath,
     const char *source,
@@ -35,5 +35,5 @@ extern "C" int mtt_slangc_compile_to_spirv(
     uint8_t **outSpirv,
     size_t *outSize,
     char **outErrorMsg);
-extern "C" void mtt_slangc_free_uint8_t(const uint8_t *p);
-extern "C" void mtt_slangc_free_str(const char *p);
+extern "C" void mttSlangcFreeUint8t(const uint8_t *p);
+extern "C" void mttSlangcFreeStr(const char *p);

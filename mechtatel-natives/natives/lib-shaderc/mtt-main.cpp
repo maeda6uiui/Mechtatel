@@ -132,7 +132,7 @@ int MttSlangc::compile(
 //===== C interface =====
 const static auto slangcInstance = new MttSlangc();
 
-int mtt_slangc_compile_to_spirv(
+int mttSlangcCompileIntoSpirv(
     const char *moduleName,
     const char *modulePath,
     const char *source,
@@ -145,12 +145,12 @@ int mtt_slangc_compile_to_spirv(
         moduleName, modulePath, source, entryPointName, outSpirv, outSize, outErrorMsg);
 }
 
-void mtt_slangc_free_uint8_t(const uint8_t *p)
+void mttSlangcFreeUint8t(const uint8_t *p)
 {
     slangcInstance->free(p);
 }
 
-void mtt_slangc_free_str(const char *p)
+void mttSlangcFreeStr(const char *p)
 {
     slangcInstance->free(p);
 }

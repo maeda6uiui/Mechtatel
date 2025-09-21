@@ -1,4 +1,5 @@
-struct MonochromeInfoUBO{
+struct MonochromeInfoUBO {
+    int dummy;
 };
 ConstantBuffer<MonochromeInfoUBO> monochromeInfo : register(b0, space0);
 

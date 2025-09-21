@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.natives.linux;
 
+import com.github.maeda6uiui.mechtatel.common.utils.MttResourceFileUtils;
 import com.github.maeda6uiui.mechtatel.natives.IMttNativeLoader;
-import com.github.maeda6uiui.mechtatel.natives.NativeLoaderUtils;
 
 import java.io.IOException;
 
@@ -13,6 +13,6 @@ import java.io.IOException;
 public class MttNativeLoader implements IMttNativeLoader {
     @Override
     public void loadLibbulletjme() throws IOException {
-        NativeLoaderUtils.loadNativeLibFromJar(this.getClass(), "/Bin/Linux64ReleaseSp_libbulletjme.so");
+        MttResourceFileUtils.loadNativeLib(this.getClass(), "/Bin/Linux64ReleaseSp_libbulletjme.so");
     }
 }

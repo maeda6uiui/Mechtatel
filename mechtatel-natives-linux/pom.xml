@@ -44,6 +44,11 @@
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.github.maeda6uiui</groupId>
+            <artifactId>mechtatel-common-utils</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.stephengold</groupId>
             <artifactId>Libbulletjme</artifactId>
             <version>${libbulletjme.version}</version>

@@ -75,7 +75,10 @@ int MttSlangc::compile(
         slangModule = session->loadModuleFromSourceString(moduleName, modulePath, source, diagnosticsBlob.writeRef());
         if (!slangModule)
         {
-            *outErrorMsg = this->leak<char>(diagnosticsBlob);
+            if (diagnosticsBlob != nullptr)
+            {
+                *outErrorMsg = this->leak<char>(diagnosticsBlob);
+            }
             return -1;
         }
     }
@@ -86,7 +89,10 @@ int MttSlangc::compile(
         slangModule->findEntryPointByName(entryPointName, entryPoint.writeRef());
         if (!entryPoint)
         {
-            *outErrorMsg = this->leak_from_str("Error getting entry point");
+            auto errorMsg = std::string("Error getting entry point: ");
+            errorMsg += std::string(entryPointName);
+            *outErrorMsg = this->leak_from_str(errorMsg.c_str());
+
             return -1;
         }
     }
@@ -102,7 +108,10 @@ int MttSlangc::compile(
             componentTypes.size(),
             composedProgram.writeRef(),
             diagnosticsBlob.writeRef());
-        *outErrorMsg = this->leak<char>(diagnosticsBlob);
+        if (diagnosticsBlob != nullptr)
+        {
+            *outErrorMsg = this->leak<char>(diagnosticsBlob);
+        }
         SLANG_RETURN_ON_FAIL(result);
     }
 
@@ -111,7 +120,10 @@ int MttSlangc::compile(
     {
         Slang::ComPtr<slang::IBlob> diagnosticsBlob;
         SlangResult result = composedProgram->link(linkedProgram.writeRef(), diagnosticsBlob.writeRef());
-        *outErrorMsg = this->leak<char>(diagnosticsBlob);
+        if (diagnosticsBlob != nullptr)
+        {
+            *outErrorMsg = this->leak<char>(diagnosticsBlob);
+        }
         SLANG_RETURN_ON_FAIL(result);
     }
 
@@ -120,7 +132,10 @@ int MttSlangc::compile(
     {
         Slang::ComPtr<slang::IBlob> diagnosticsBlob;
         SlangResult result = linkedProgram->getEntryPointCode(0, 0, spirvCode.writeRef(), diagnosticsBlob.writeRef());
-        *outErrorMsg = this->leak<char>(diagnosticsBlob);
+        if (diagnosticsBlob != nullptr)
+        {
+            *outErrorMsg = this->leak<char>(diagnosticsBlob);
+        }
         SLANG_RETURN_ON_FAIL(result);
     }
     *outSpirv = this->leak<uint8_t>(spirvCode);

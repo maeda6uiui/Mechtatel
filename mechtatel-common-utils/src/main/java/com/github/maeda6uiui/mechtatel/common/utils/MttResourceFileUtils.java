@@ -36,4 +36,19 @@ public class MttResourceFileUtils {
             return tempFile;
         }
     }
+
+    /**
+     * Loads a native library contained in a JAR.
+     *
+     * @param clazz          Class to call {@link Class#getResourceAsStream(String)}
+     * @param filepath       Filepath of the native library
+     * @param tempFilePrefix Prefix for the filename of the temporary file
+     * @param tempFileSuffix Suffix for the filename of the temporary file
+     * @throws IOException If it fails to extract the file
+     */
+    public static void loadNativeLib(
+            Class<?> clazz, String filepath, String tempFilePrefix, String tempFileSuffix) throws IOException {
+        File tempFile = extractFile(clazz, filepath, tempFilePrefix, tempFileSuffix);
+        System.load(tempFile.getAbsolutePath());
+    }
 }

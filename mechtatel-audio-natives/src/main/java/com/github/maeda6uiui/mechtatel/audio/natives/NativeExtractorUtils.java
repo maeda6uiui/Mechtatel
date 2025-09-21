@@ -8,6 +8,7 @@ import java.util.Objects;
  *
  * @author maeda6uiui
  */
+@Deprecated
 public class NativeExtractorUtils {
     /**
      * Extracts a native library contained in a JAR file.

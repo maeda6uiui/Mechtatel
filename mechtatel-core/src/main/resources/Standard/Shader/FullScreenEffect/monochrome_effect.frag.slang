@@ -13,6 +13,7 @@ struct PSOutput {
     float4 outColor : SV_Target0;
 };
 
+[shader("fragment")]
 PSOutput main(PSInput input) {
     PSOutput output;
 

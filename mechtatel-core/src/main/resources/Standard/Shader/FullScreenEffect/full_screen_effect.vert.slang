@@ -8,6 +8,7 @@ struct VSOutput {
     float2 fragTexCoords : TEXCOORD0;
 };
 
+[shader("vertex")]
 VSOutput main(VSInput input) {
     VSOutput output;
     output.position = float4(input.inPosition, 0.0, 1.0);

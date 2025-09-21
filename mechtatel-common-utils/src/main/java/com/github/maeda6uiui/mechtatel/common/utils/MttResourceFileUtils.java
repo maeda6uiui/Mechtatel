@@ -23,11 +23,7 @@ public class MttResourceFileUtils {
             tempFile.deleteOnExit();
 
             try (var bos = new BufferedOutputStream(new FileOutputStream(tempFile))) {
-                var buffer = new byte[4096];
-                int bytesRead;
-                while ((bytesRead = bis.read(buffer)) != -1) {
-                    bos.write(buffer, 0, bytesRead);
-                }
+                bis.transferTo(bos);
             }
 
             return tempFile;

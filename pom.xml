@@ -6,7 +6,7 @@
 
     <groupId>io.github.maeda6uiui</groupId>
     <artifactId>mechtatel</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Mechtatel</name>
     <description>Yet unfinished Vulkan-based game engine written in Java</description>
@@ -21,6 +21,7 @@
         <module>mechtatel-audio-natives</module>
         <module>mechtatel-audio-natives-linux</module>
         <module>mechtatel-audio-natives-windows</module>
+        <module>mechtatel-common-utils</module>
     </modules>
 
     <licenses>

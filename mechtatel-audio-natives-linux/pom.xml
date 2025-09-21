@@ -7,7 +7,7 @@
     <parent>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel</artifactId>
-        <version>0.2.0</version>
+        <version>0.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>mechtatel-audio-natives-linux</artifactId>
@@ -47,6 +47,11 @@
         <dependency>
             <groupId>io.github.maeda6uiui</groupId>
             <artifactId>mechtatel-audio-natives</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.maeda6uiui</groupId>
+            <artifactId>mechtatel-common-utils</artifactId>
             <version>${parent.version}</version>
         </dependency>
     </dependencies>

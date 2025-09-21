@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.audio.natives.linux;
 
 import com.github.maeda6uiui.mechtatel.audio.natives.INativeExtractor;
-import com.github.maeda6uiui.mechtatel.audio.natives.NativeExtractorUtils;
+import com.github.maeda6uiui.mechtatel.common.utils.MttResourceFileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +14,6 @@ import java.io.IOException;
 public class NativeExtractor implements INativeExtractor {
     @Override
     public File extractLibAudioPlayer() throws IOException {
-        return NativeExtractorUtils.extractNativeLibFromJar(this.getClass(), "/Bin/libaudioplayer.so");
+        return MttResourceFileUtils.extractFile(this.getClass(), "/Bin/libaudioplayer.so");
     }
 }

@@ -1,0 +1,3 @@
+[submodule "mechtatel-natives/natives/lib-slangc/slang"]
+	path = mechtatel-natives/natives/lib-slangc/slang
+	url = https://github.com/shader-slang/slang

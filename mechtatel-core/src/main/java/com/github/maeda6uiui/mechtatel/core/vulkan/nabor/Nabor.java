@@ -5,6 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.util.FilenameUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.cache.ShaderBuildCacheManager;
 import com.github.maeda6uiui.mechtatel.core.vulkan.shader.SPIRVUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.shader.ShaderKind;
+import com.github.maeda6uiui.mechtatel.core.vulkan.shader.slang.MttSlangc;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
@@ -719,6 +720,40 @@ public abstract class Nabor {
         return shaderModule;
     }
 
+    private long createShaderModuleFromSlang(byte[] shaderContent) {
+        long shaderModule;
+        try {
+            var cacheMgr = new ShaderBuildCacheManager(shaderContent);
+            byte[] buildCache = cacheMgr.retrieve();
+            if (buildCache == null) {
+                var compiler = new MttSlangc();
+                int ret = compiler.compile(
+                        "main",
+                        null,
+                        new String(shaderContent),
+                        "main"
+                );
+                if (ret != 0) {
+                    throw new RuntimeException(String.format("Failed to compile Slang shader: code=%d", ret));
+                }
+
+                byte[] spirvCode = compiler.getSpirvCode();
+                ByteBuffer bufSpirvCode = ByteBuffer.allocateDirect(spirvCode.length);
+                bufSpirvCode.put(spirvCode);
+                bufSpirvCode.flip();
+
+                shaderModule = this.createShaderModule(device, bufSpirvCode);
+                cacheMgr.save(spirvCode);
+            } else {
+                shaderModule = this.createShaderModuleFromSPIRV(buildCache);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return shaderModule;
+    }
+
     protected void setupShaderModules(boolean skipIfExists) {
         if (skipIfExists && !vertShaderModules.isEmpty()) {
             return;
@@ -746,11 +781,13 @@ public abstract class Nabor {
         long vertShaderModule = switch (vertShaderExtension) {
             case "spirv" -> this.createShaderModuleFromSPIRV(vertShaderContent);
             case "glsl" -> this.createShaderModuleFromGLSL(vertShaderContent, ShaderKind.VERTEX);
+            case "slang" -> this.createShaderModuleFromSlang(vertShaderContent);
             default -> throw new RuntimeException("Cannot determine shader language from shader file extension");
         };
         long fragShaderModule = switch (fragShaderExtension) {
             case "spirv" -> this.createShaderModuleFromSPIRV(fragShaderContent);
             case "glsl" -> this.createShaderModuleFromGLSL(fragShaderContent, ShaderKind.FRAGMENT);
+            case "slang" -> this.createShaderModuleFromSlang(fragShaderContent);
             default -> throw new RuntimeException("Cannot determine shader language from shader file extension");
         };
 

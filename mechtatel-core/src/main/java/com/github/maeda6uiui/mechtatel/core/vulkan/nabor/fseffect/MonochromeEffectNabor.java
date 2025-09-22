@@ -100,10 +100,10 @@ public class MonochromeEffectNabor extends FullScreenEffectNabor {
 
             VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.calloc(1, stack);
 
-            VkDescriptorBufferInfo blurUBOInfo = uboInfos.get(0);
-            blurUBOInfo.buffer(this.getUniformBuffer(0));
-            blurUBOInfo.offset(0);
-            blurUBOInfo.range(MonochromeEffectInfoUBO.SIZEOF);
+            VkDescriptorBufferInfo effectUBOInfo = uboInfos.get(0);
+            effectUBOInfo.buffer(this.getUniformBuffer(0));
+            effectUBOInfo.offset(0);
+            effectUBOInfo.range(MonochromeEffectInfoUBO.SIZEOF);
 
             VkWriteDescriptorSet uboDescriptorWrite = descriptorWrites.get(0);
             uboDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);

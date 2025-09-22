@@ -22,7 +22,7 @@ public class MttSlangc {
     private byte[] spirvCode;
     private String errorMsg;
 
-    private void freePointer(PointerByReference pRef, DataType dType) {
+    private void freeMemory(PointerByReference pRef, DataType dType) {
         Pointer p = pRef.getValue();
         switch (dType) {
             case BYTE_ARRAY -> IMttSlangc.INSTANCE.mttSlangcFreeUint8t(p);
@@ -58,8 +58,8 @@ public class MttSlangc {
             spirvCode = pSpirv.getByteArray(0, (int) size);
         }
 
-        this.freePointer(outSpirv, DataType.BYTE_ARRAY);
-        this.freePointer(outErrorMsg, DataType.STRING);
+        this.freeMemory(outSpirv, DataType.BYTE_ARRAY);
+        this.freeMemory(outErrorMsg, DataType.STRING);
 
         return result;
     }

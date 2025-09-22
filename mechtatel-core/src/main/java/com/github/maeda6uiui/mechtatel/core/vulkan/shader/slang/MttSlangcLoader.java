@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
  *
  * @author maeda6uiui
  */
-public class MttSlangcLoader {
+class MttSlangcLoader {
     public static IMttSlangc load() {
         String platform;
         if (Platform.isWindows()) {

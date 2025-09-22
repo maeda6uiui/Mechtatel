@@ -10,7 +10,7 @@ import com.sun.jna.ptr.PointerByReference;
  *
  * @author maeda6uiui
  */
-public interface IMttSlangc extends Library {
+interface IMttSlangc extends Library {
     IMttSlangc INSTANCE = MttSlangcLoader.load();
 
     int mttSlangcCompileIntoSpirv(

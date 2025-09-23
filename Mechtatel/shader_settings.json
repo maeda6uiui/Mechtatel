@@ -1,13 +1,27 @@
 {
     "present": {
-        "main": {
-            "vert": {
-                "filepath": "./Mechtatel/Addon/maeda6uiui/Shader/custom_present.vert.glsl",
-                "className": "local"
-            },
-            "frag": {
-                "filepath": "./Mechtatel/Addon/maeda6uiui/Shader/custom_present.frag.glsl",
-                "className": "local"
+        "vertex": {
+            "modules": {
+                "main": {
+                    "shaders": [
+                        {
+                            "filepath": "./Mechtatel/Addon/maeda6uiui/Shader/custom_present.vert.glsl",
+                            "location": "local"
+                        }
+                    ]
+                }
+            }
+        },
+        "fragment": {
+            "modules": {
+                "main": {
+                    "shaders": [
+                        {
+                            "filepath": "./Mechtatel/Addon/maeda6uiui/Shader/custom_present.frag.glsl",
+                            "location": "local"
+                        }
+                    ]
+                }
             }
         }
     }

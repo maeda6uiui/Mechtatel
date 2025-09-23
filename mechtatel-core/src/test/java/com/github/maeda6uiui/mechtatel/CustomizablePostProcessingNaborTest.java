@@ -63,7 +63,8 @@ public class CustomizablePostProcessingNaborTest extends Mechtatel {
             return;
         }
 
-        var naborInfo = new CustomizablePostProcessingNaborInfo(vertShaderResource, fragShaderResource);
+        var naborInfo = new CustomizablePostProcessingNaborInfo(
+                List.of(vertShaderResource), List.of(fragShaderResource));
         naborInfo.setLightingType(CustomizablePostProcessingNaborInfo.LightingType.PARALLEL);
 
         mainScreen = window.createScreen(

@@ -773,7 +773,7 @@ public abstract class Nabor {
                         moduleName = matcher.group(1);
                     }
 
-                    compiler.pushSource(moduleName, source);
+                    compiler.addModuleSource(moduleName, source);
                 });
 
                 int ret = compiler.compile("main");

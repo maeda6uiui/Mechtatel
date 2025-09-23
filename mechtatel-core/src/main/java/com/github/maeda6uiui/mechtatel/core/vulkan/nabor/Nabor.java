@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -751,20 +752,20 @@ public abstract class Nabor {
     private long createShaderModuleFromSlang(List<byte[]> shaderContents) {
         StringBuilder sb = new StringBuilder();
         for (var shaderContent : shaderContents) {
-            sb.append(new String(shaderContent));
+            sb.append(new String(shaderContent, StandardCharsets.UTF_8));
         }
         String allSourceConcat = sb.toString();
 
         long shaderModule;
         try {
-            var cacheMgr = new ShaderBuildCacheManager(allSourceConcat.getBytes());
+            var cacheMgr = new ShaderBuildCacheManager(allSourceConcat.getBytes(StandardCharsets.UTF_8));
             byte[] buildCache = cacheMgr.retrieve();
             if (buildCache == null) {
                 Pattern moduleNamePattern = Pattern.compile("module\\s+(\\w+)\\s*;");
                 var compiler = new MttSlangc();
 
                 shaderContents.forEach(v -> {
-                    String source = new String(v);
+                    String source = new String(v, StandardCharsets.UTF_8);
                     Matcher matcher = moduleNamePattern.matcher(source);
 
                     String moduleName = null;

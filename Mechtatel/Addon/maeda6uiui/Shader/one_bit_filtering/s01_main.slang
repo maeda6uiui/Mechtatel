@@ -1,6 +1,6 @@
-module main;
+module s01_main;
 
-import filter;
+import s00_filter;
 
 struct DummyUBO {
     int dummy;

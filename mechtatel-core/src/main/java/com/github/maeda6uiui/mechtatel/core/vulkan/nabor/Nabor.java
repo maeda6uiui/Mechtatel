@@ -802,11 +802,13 @@ public abstract class Nabor {
         if (shaderResources.isEmpty()) {
             throw new RuntimeException("At least one shader resource must be provided");
         }
-        for (var shaderResource : shaderResources) {
-            String extension = FilenameUtils.getFileExtension(shaderResource.getPath());
-            if (!extension.equals("slang")) {
-                throw new RuntimeException(
-                        "All shaders must be in Slang format if more than one shaders are provided for compilation");
+        if (shaderResources.size() > 1) {
+            for (var shaderResource : shaderResources) {
+                String extension = FilenameUtils.getFileExtension(shaderResource.getPath());
+                if (!extension.equals("slang")) {
+                    throw new RuntimeException(
+                            "All shaders must be in Slang format if more than one shaders are provided for compilation");
+                }
             }
         }
 

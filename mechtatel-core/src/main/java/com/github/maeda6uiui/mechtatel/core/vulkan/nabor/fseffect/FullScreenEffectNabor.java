@@ -130,12 +130,12 @@ public class FullScreenEffectNabor extends Nabor {
 
             VkDescriptorSetLayoutBinding.Buffer uboLayoutBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
 
-            VkDescriptorSetLayoutBinding blurInfoUBOLayoutBinding = uboLayoutBindings.get(0);
-            blurInfoUBOLayoutBinding.binding(0);
-            blurInfoUBOLayoutBinding.descriptorCount(1);
-            blurInfoUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            blurInfoUBOLayoutBinding.pImmutableSamplers(null);
-            blurInfoUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+            VkDescriptorSetLayoutBinding dummyUBOLayoutBinding = uboLayoutBindings.get(0);
+            dummyUBOLayoutBinding.binding(0);
+            dummyUBOLayoutBinding.descriptorCount(1);
+            dummyUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            dummyUBOLayoutBinding.pImmutableSamplers(null);
+            dummyUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
 
             VkDescriptorSetLayoutCreateInfo.Buffer layoutCreateInfos = VkDescriptorSetLayoutCreateInfo.calloc(1, stack);
 
@@ -214,9 +214,9 @@ public class FullScreenEffectNabor extends Nabor {
 
             VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.calloc(1, stack);
 
-            VkDescriptorPoolSize blurInfoUBOPoolSize = uboPoolSizes.get(0);
-            blurInfoUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            blurInfoUBOPoolSize.descriptorCount(descriptorCount);
+            VkDescriptorPoolSize dummyUBOPoolSize = uboPoolSizes.get(0);
+            dummyUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            dummyUBOPoolSize.descriptorCount(descriptorCount);
 
             VkDescriptorPoolCreateInfo.Buffer poolInfos = VkDescriptorPoolCreateInfo.calloc(1, stack);
 
@@ -335,10 +335,10 @@ public class FullScreenEffectNabor extends Nabor {
 
             VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.calloc(1, stack);
 
-            VkDescriptorBufferInfo blurUBOInfo = uboInfos.get(0);
-            blurUBOInfo.buffer(this.getUniformBuffer(0));
-            blurUBOInfo.offset(0);
-            blurUBOInfo.range(DummyUBO.SIZEOF);
+            VkDescriptorBufferInfo dummyUBOInfo = uboInfos.get(0);
+            dummyUBOInfo.buffer(this.getUniformBuffer(0));
+            dummyUBOInfo.offset(0);
+            dummyUBOInfo.range(DummyUBO.SIZEOF);
 
             VkWriteDescriptorSet uboDescriptorWrite = descriptorWrites.get(0);
             uboDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);

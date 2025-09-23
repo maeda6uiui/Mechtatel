@@ -1,10 +1,12 @@
 package com.github.maeda6uiui.mechtatel.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -47,6 +49,23 @@ public class MttShaderConfig {
 
         public void addSingleShaderModule(String shaderFilepath) {
             this.addSingleShaderModule(shaderFilepath, ShaderModulesInfo.class.getName());
+        }
+
+        public List<ShaderInfo> getAllShaderInfos() {
+            var ret = new ArrayList<ShaderInfo>();
+            modules.values().forEach(v -> ret.addAll(v.shaders));
+            return ret;
+        }
+
+        public List<URL> mustGetResourceURLs() {
+            List<ShaderInfo> shaderInfos = this.getAllShaderInfos();
+            var shaderResources = new ArrayList<URL>();
+            for (var shaderInfo : shaderInfos) {
+                URL shaderResource = MttURLUtils.mustGetResourceURL(shaderInfo.filepath, shaderInfo.location);
+                shaderResources.add(shaderResource);
+            }
+
+            return shaderResources;
         }
     }
 

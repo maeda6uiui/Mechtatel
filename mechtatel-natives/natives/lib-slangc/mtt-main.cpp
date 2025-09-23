@@ -118,7 +118,7 @@ int MttSlangc::compile(
         for (auto slangModule : slangModules)
         {
             slangModule->findEntryPointByName(entryPointName, entryPoint.writeRef());
-            if (!entryPoint)
+            if (entryPoint)
             {
                 break;
             }

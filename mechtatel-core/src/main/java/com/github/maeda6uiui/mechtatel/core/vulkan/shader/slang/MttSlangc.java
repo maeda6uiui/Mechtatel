@@ -30,19 +30,16 @@ public class MttSlangc {
         }
     }
 
-    public int compile(
-            String moduleName,
-            String modulePath,
-            String source,
-            String entryPointName) {
+    public void pushSource(String moduleName, byte[] source) {
+        IMttSlangc.INSTANCE.mttSlangcPushSource(moduleName, new String(source));
+    }
+
+    public int compile(String entryPointName) {
         var outSpirv = new PointerByReference();
         var outSize = new LongByReference();
         var outErrorMsg = new PointerByReference();
 
         int result = IMttSlangc.INSTANCE.mttSlangcCompileIntoSpirv(
-                moduleName,
-                modulePath,
-                source,
                 entryPointName,
                 outSpirv,
                 outSize,

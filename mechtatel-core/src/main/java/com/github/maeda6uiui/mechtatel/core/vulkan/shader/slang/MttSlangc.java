@@ -31,7 +31,7 @@ public class MttSlangc {
     }
 
     public void pushSource(String moduleName, String source) {
-        IMttSlangc.INSTANCE.mttSlangcPushSource(moduleName, source);
+        IMttSlangc.INSTANCE.mttSlangcAddModuleSource(moduleName, source);
     }
 
     public int compile(String entryPointName) {

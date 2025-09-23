@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.screen;
 
-import com.github.maeda6uiui.mechtatel.core.MttShaderSettings;
+import com.github.maeda6uiui.mechtatel.core.MttShaderConfig;
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectNaborInfo;
@@ -9,7 +9,6 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizablePostProce
 import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.screen.ScreenImageType;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
-import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.MergeScenesNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
@@ -164,27 +163,15 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
 
-        MttShaderSettings shaderSettings = MttShaderSettings
+        MttShaderConfig shaderConfig = MttShaderConfig
                 .get()
-                .orElse(MttShaderSettings.create());
+                .orElse(MttShaderConfig.create());
 
         //GBuffer nabor
-        URL gBufferAlbedoVertShaderResource = MttURLUtils.mustGetResourceURL(
-                shaderSettings.gBuffer.albedo.vert.filepath,
-                shaderSettings.gBuffer.albedo.vert.className
-        );
-        URL gBufferAlbedoFragShaderResource = MttURLUtils.mustGetResourceURL(
-                shaderSettings.gBuffer.albedo.frag.filepath,
-                shaderSettings.gBuffer.albedo.frag.className
-        );
-        URL gBufferPropertiesVertShaderResource = MttURLUtils.mustGetResourceURL(
-                shaderSettings.gBuffer.properties.vert.filepath,
-                shaderSettings.gBuffer.properties.vert.className
-        );
-        URL gBufferPropertiesFragShaderResource = MttURLUtils.mustGetResourceURL(
-                shaderSettings.gBuffer.properties.frag.filepath,
-                shaderSettings.gBuffer.properties.frag.className
-        );
+        List<URL> gBufferAlbedoVertShaderResources = shaderConfig.gBuffer.albedo.vertex.mustGetResourceURLs();
+        List<URL> gBufferAlbedoFragShaderResources = shaderConfig.gBuffer.albedo.fragment.mustGetResourceURLs();
+        List<URL> gBufferPropertiesVertShaderResources = shaderConfig.gBuffer.properties.vertex.mustGetResourceURLs();
+        List<URL> gBufferPropertiesFragShaderResources = shaderConfig.gBuffer.properties.fragment.mustGetResourceURLs();
 
         gBufferNabor = new GBufferNabor(
                 device,
@@ -193,10 +180,10 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16_SFLOAT,
-                gBufferAlbedoVertShaderResource,
-                gBufferAlbedoFragShaderResource,
-                gBufferPropertiesVertShaderResource,
-                gBufferPropertiesFragShaderResource
+                gBufferAlbedoVertShaderResources,
+                gBufferAlbedoFragShaderResources,
+                gBufferPropertiesVertShaderResources,
+                gBufferPropertiesFragShaderResources
         );
         this.compileNabor(
                 gBufferNabor,
@@ -208,14 +195,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         );
 
         //Primitive nabor
-        URL primitiveVertShaderResource = MttURLUtils.mustGetResourceURL(
-                shaderSettings.primitive.main.vert.filepath,
-                shaderSettings.primitive.main.vert.className
-        );
-        URL primitiveFragShaderResource = MttURLUtils.mustGetResourceURL(
-                shaderSettings.primitive.main.frag.filepath,
-                shaderSettings.primitive.main.frag.className
-        );
+        List<URL> primitiveVertShaderResources = shaderConfig.primitive.vertex.mustGetResourceURLs();
+        List<URL> primitiveFragShaderResources = shaderConfig.primitive.fragment.mustGetResourceURLs();
 
         primitiveNabor = new PrimitiveNabor(
                 device,
@@ -224,8 +205,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16_SFLOAT,
                 false,
-                primitiveVertShaderResource,
-                primitiveFragShaderResource
+                primitiveVertShaderResources,
+                primitiveFragShaderResources
         );
         this.compileNabor(
                 primitiveNabor,
@@ -244,8 +225,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16_SFLOAT,
                 true,
-                primitiveVertShaderResource,
-                primitiveFragShaderResource
+                primitiveVertShaderResources,
+                primitiveFragShaderResources
         );
         this.compileNabor(
                 primitiveFillNabor,
@@ -257,14 +238,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         );
 
         //Merge-Scenes nabor
-        URL mergeScenesVertShaderResource = MttURLUtils.mustGetResourceURL(
-                shaderSettings.mergeScenes.main.vert.filepath,
-                shaderSettings.mergeScenes.main.vert.className
-        );
-        URL mergeScenesFragShaderResource = MttURLUtils.mustGetResourceURL(
-                shaderSettings.mergeScenes.main.frag.filepath,
-                shaderSettings.mergeScenes.main.frag.className
-        );
+        List<URL> mergeScenesVertShaderResources = shaderConfig.mergeScenes.vertex.mustGetResourceURLs();
+        List<URL> mergeScenesFragShaderResources = shaderConfig.mergeScenes.fragment.mustGetResourceURLs();
 
         mergeScenesNabor = new MergeScenesNabor(
                 device,
@@ -272,8 +247,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
                 VK_FORMAT_R16G16B16A16_SFLOAT,
-                mergeScenesVertShaderResource,
-                mergeScenesFragShaderResource
+                mergeScenesVertShaderResources,
+                mergeScenesFragShaderResources
         );
         this.compileNabor(
                 mergeScenesNabor,
@@ -286,32 +261,20 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
 
         //Shadow mapping
         if (createInfo.useShadowMapping) {
-            URL shadowMappingPass1VertShaderResource = MttURLUtils.mustGetResourceURL(
-                    shaderSettings.shadowMapping.pass1.vert.filepath,
-                    shaderSettings.shadowMapping.pass1.vert.className
-            );
-            URL shadowMappingPass1FragShaderResource = MttURLUtils.mustGetResourceURL(
-                    shaderSettings.shadowMapping.pass1.frag.filepath,
-                    shaderSettings.shadowMapping.pass1.frag.className
-            );
-            URL shadowMappingPass2VertShaderResource = MttURLUtils.mustGetResourceURL(
-                    shaderSettings.shadowMapping.pass2.vert.filepath,
-                    shaderSettings.shadowMapping.pass2.vert.className
-            );
-            URL shadowMappingPass2FragShaderResource = MttURLUtils.mustGetResourceURL(
-                    shaderSettings.shadowMapping.pass2.frag.filepath,
-                    shaderSettings.shadowMapping.pass2.frag.className
-            );
+            List<URL> shadowMappingPass1VertShaderResources = shaderConfig.shadowMapping.pass1.vertex.mustGetResourceURLs();
+            List<URL> shadowMappingPass1FragShaderResources = shaderConfig.shadowMapping.pass1.fragment.mustGetResourceURLs();
+            List<URL> shadowMappingPass2VertShaderResources = shaderConfig.shadowMapping.pass2.vertex.mustGetResourceURLs();
+            List<URL> shadowMappingPass2FragShaderResources = shaderConfig.shadowMapping.pass2.fragment.mustGetResourceURLs();
 
             shadowMappingNabor = new ShadowMappingNabor(
                     device,
                     depthImageFormat,
                     depthImageWidth,
                     depthImageHeight,
-                    shadowMappingPass1VertShaderResource,
-                    shadowMappingPass1FragShaderResource,
-                    shadowMappingPass2VertShaderResource,
-                    shadowMappingPass2FragShaderResource
+                    shadowMappingPass1VertShaderResources,
+                    shadowMappingPass1FragShaderResources,
+                    shadowMappingPass2VertShaderResources,
+                    shadowMappingPass2FragShaderResources
             );
             this.compileNabor(
                     shadowMappingNabor,

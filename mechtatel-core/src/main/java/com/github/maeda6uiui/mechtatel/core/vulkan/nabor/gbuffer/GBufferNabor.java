@@ -34,7 +34,7 @@ public class GBufferNabor extends Nabor {
             URL albedoFragShaderResource,
             URL propertiesVertShaderResource,
             URL propertiesFragShaderResource) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, true, null, null);
+        super(device, VK_SAMPLE_COUNT_1_BIT, true, (URL) null, null);
 
         albedoNabor = new AlbedoNabor(
                 device,

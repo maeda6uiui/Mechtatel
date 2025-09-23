@@ -41,7 +41,7 @@ public class ShadowMappingNabor extends Nabor {
             URL pass1FragShaderResource,
             URL pass2VertShaderResource,
             URL pass2FragShaderResource) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, true, null, null);
+        super(device, VK_SAMPLE_COUNT_1_BIT, true, (URL) null, null);
 
         this.depthImageWidth = depthImageWidth;
         this.depthImageHeight = depthImageHeight;

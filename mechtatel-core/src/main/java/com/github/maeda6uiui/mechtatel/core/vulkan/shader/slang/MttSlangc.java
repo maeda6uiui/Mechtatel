@@ -30,8 +30,8 @@ public class MttSlangc {
         }
     }
 
-    public void pushSource(String moduleName, byte[] source) {
-        IMttSlangc.INSTANCE.mttSlangcPushSource(moduleName, new String(source));
+    public void pushSource(String moduleName, String source) {
+        IMttSlangc.INSTANCE.mttSlangcPushSource(moduleName, source);
     }
 
     public int compile(String entryPointName) {

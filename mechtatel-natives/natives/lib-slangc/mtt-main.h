@@ -23,6 +23,7 @@ private:
 public:
     MttSlangc();
     void addModuleSource(const char *moduleName, const char *source);
+    void clearModuleSources();
     int compile(
         const char *entryPointName,
         uint8_t **outSpirv,
@@ -35,6 +36,7 @@ public:
 
 //===== C interface =====
 extern "C" void mttSlangcAddModuleSource(const char *moduleName, const char *source);
+extern "C" void mttSlangcClearModuleSources();
 extern "C" int mttSlangcCompileIntoSpirv(
     const char *entryPointName,
     uint8_t **outSpirv,

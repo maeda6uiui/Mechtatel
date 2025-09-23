@@ -22,6 +22,10 @@ public class MttSlangc {
     private byte[] spirvCode;
     private String errorMsg;
 
+    public MttSlangc() {
+        IMttSlangc.INSTANCE.mttSlangcClearModuleSources();
+    }
+
     private void freeMemory(PointerByReference pRef, DataType dType) {
         Pointer p = pRef.getValue();
         switch (dType) {

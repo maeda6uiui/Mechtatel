@@ -56,6 +56,11 @@ void MttSlangc::addModuleSource(const char *moduleName, const char *source)
     this->moduleSources.push_back(moduleSource);
 }
 
+void MttSlangc::clearModuleSources()
+{
+    this->moduleSources.clear();
+}
+
 int MttSlangc::compile(
     const char *entryPointName,
     uint8_t **outSpirv,
@@ -186,6 +191,11 @@ const static auto slangcInstance = new MttSlangc();
 void mttSlangcAddModuleSource(const char *moduleName, const char *source)
 {
     slangcInstance->addModuleSource(moduleName, source);
+}
+
+void mttSlangcClearModuleSources()
+{
+    slangcInstance->clearModuleSources();
 }
 
 int mttSlangcCompileIntoSpirv(

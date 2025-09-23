@@ -15,6 +15,8 @@ interface IMttSlangc extends Library {
 
     void mttSlangcAddModuleSource(String moduleName, String source);
 
+    void mttSlangcClearModuleSources();
+
     int mttSlangcCompileIntoSpirv(
             String entryPointName,
             PointerByReference outSpirv,

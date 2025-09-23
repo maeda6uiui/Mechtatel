@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel;
 
 import com.github.maeda6uiui.mechtatel.core.Mechtatel;
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import com.github.maeda6uiui.mechtatel.core.MttShaderSettings;
+import com.github.maeda6uiui.mechtatel.core.MttShaderConfig;
 import com.github.maeda6uiui.mechtatel.core.MttWindow;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import org.slf4j.Logger;
@@ -20,18 +20,7 @@ public class OverwriteDefaultShadersTest extends Mechtatel {
     }
 
     public static void main(String[] args) {
-        //Overwrite default shaders from code
-        /*
-        MttShaderSettings shaderSettings = MttShaderSettings.create();
-        shaderSettings.present.main.vert.filepath = "./Mechtatel/Addon/maeda6uiui/Shader/custom_present.vert.glsl";
-        shaderSettings.present.main.vert.className = "local";
-        shaderSettings.present.main.frag.filepath = "./Mechtatel/Addon/maeda6uiui/Shader/custom_present.frag.glsl";
-        shaderSettings.present.main.frag.className = "local";
-         */
-
-        //Overwrite default shaders from setting file
-        MttShaderSettings.load("./Mechtatel/shader_settings.json");
-
+        MttShaderConfig.load(Paths.get("./Mechtatel/shader_config.json"));
         MttSettings
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(

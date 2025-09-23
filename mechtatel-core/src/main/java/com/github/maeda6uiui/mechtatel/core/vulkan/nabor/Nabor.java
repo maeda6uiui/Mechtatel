@@ -19,8 +19,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -35,8 +38,8 @@ public abstract class Nabor {
     private int msaaSamples;
     private VkExtent2D extent;
 
-    private URL vertShaderResource;
-    private URL fragShaderResource;
+    private List<URL> vertShaderResources;
+    private List<URL> fragShaderResources;
 
     private boolean isContainer;
     private boolean isBorrowedShaderModules;
@@ -74,16 +77,16 @@ public abstract class Nabor {
             VkDevice device,
             int msaaSamples,
             boolean isContainer,
-            URL vertShaderResource,
-            URL fragShaderResource) {
+            List<URL> vertShaderResources,
+            List<URL> fragShaderResources) {
         this.device = device;
 
         this.msaaSamples = msaaSamples;
         this.isContainer = isContainer;
         isBorrowedShaderModules = false;
 
-        this.vertShaderResource = vertShaderResource;
-        this.fragShaderResource = fragShaderResource;
+        this.vertShaderResources = vertShaderResources;
+        this.fragShaderResources = fragShaderResources;
 
         textureSamplers = new ArrayList<>();
 
@@ -108,6 +111,22 @@ public abstract class Nabor {
         userDefImageViews = new ArrayList<>();
     }
 
+    @Deprecated
+    public Nabor(
+            VkDevice device,
+            int msaaSamples,
+            boolean isContainer,
+            URL vertShaderResource,
+            URL fragShaderResource) {
+        this(
+                device,
+                msaaSamples,
+                isContainer,
+                List.of(vertShaderResource),
+                List.of(fragShaderResource)
+        );
+    }
+
     //===== Getters and setters =====
     protected VkDevice getDevice() {
         return device;
@@ -129,12 +148,22 @@ public abstract class Nabor {
         throw new UnsupportedOperationException();
     }
 
+    @Deprecated
     public URL getVertShaderResource() {
-        return vertShaderResource;
+        return vertShaderResources.getFirst();
     }
 
+    public List<URL> getVertShaderResources() {
+        return vertShaderResources;
+    }
+
+    @Deprecated
     public URL getFragShaderResource() {
-        return fragShaderResource;
+        return fragShaderResources.getFirst();
+    }
+
+    public List<URL> getFragShaderResources() {
+        return fragShaderResources;
     }
 
     public boolean isContainer() {
@@ -720,19 +749,34 @@ public abstract class Nabor {
         return shaderModule;
     }
 
-    private long createShaderModuleFromSlang(byte[] shaderContent) {
+    private long createShaderModuleFromSlang(List<byte[]> shaderContents) {
+        StringBuilder sb = new StringBuilder();
+        for (var shaderContent : shaderContents) {
+            sb.append(new String(shaderContent, StandardCharsets.UTF_8));
+        }
+        String allSourceConcat = sb.toString();
+
         long shaderModule;
         try {
-            var cacheMgr = new ShaderBuildCacheManager(shaderContent);
+            var cacheMgr = new ShaderBuildCacheManager(allSourceConcat.getBytes(StandardCharsets.UTF_8));
             byte[] buildCache = cacheMgr.retrieve();
             if (buildCache == null) {
+                Pattern moduleNamePattern = Pattern.compile("module\\s+(\\w+)\\s*;");
                 var compiler = new MttSlangc();
-                int ret = compiler.compile(
-                        "main",
-                        null,
-                        new String(shaderContent),
-                        "main"
-                );
+
+                shaderContents.forEach(v -> {
+                    String source = new String(v, StandardCharsets.UTF_8);
+                    Matcher matcher = moduleNamePattern.matcher(source);
+
+                    String moduleName = null;
+                    if (matcher.find()) {
+                        moduleName = matcher.group(1);
+                    }
+
+                    compiler.addModuleSource(moduleName, source);
+                });
+
+                int ret = compiler.compile("main");
                 if (ret != 0) {
                     throw new RuntimeException(String.format("Failed to compile Slang shader: code=%d", ret));
                 }
@@ -754,42 +798,72 @@ public abstract class Nabor {
         return shaderModule;
     }
 
+    private long compileShaders(List<URL> shaderResources, ShaderKind kind) {
+        //Pre-checks
+        if (shaderResources.isEmpty()) {
+            throw new RuntimeException("At least one shader resource must be provided");
+        }
+        if (shaderResources.size() > 1) {
+            for (var shaderResource : shaderResources) {
+                String extension = FilenameUtils.getFileExtension(shaderResource.getPath());
+                if (!extension.equals("slang")) {
+                    throw new RuntimeException(
+                            "All shaders must be in Slang format if more than one shaders are provided for compilation");
+                }
+            }
+        }
+
+        //Single shader file is provided
+        long shaderModule;
+        if (shaderResources.size() == 1) {
+            URL shaderResource = shaderResources.getFirst();
+
+            byte[] shaderContent;
+            try (var bis = new BufferedInputStream(shaderResource.openStream())) {
+                shaderContent = bis.readAllBytes();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            String shaderExtension = FilenameUtils.getFileExtension(shaderResource.getPath());
+            if (shaderExtension.isEmpty()) {
+                throw new RuntimeException("Extension of shader file must not be empty");
+            }
+
+            shaderModule = switch (shaderExtension) {
+                case "spirv" -> this.createShaderModuleFromSPIRV(shaderContent);
+                case "glsl" -> this.createShaderModuleFromGLSL(shaderContent, kind);
+                case "slang" -> this.createShaderModuleFromSlang(List.of(shaderContent));
+                default -> throw new RuntimeException("Cannot determine shader language from shader file extension");
+            };
+        }
+        //Multiple shader files are provided (Slang shaders)
+        else {
+            var shaderContents = new ArrayList<byte[]>();
+            for (var shaderResource : shaderResources) {
+                byte[] shaderContent;
+                try (var bis = new BufferedInputStream(shaderResource.openStream())) {
+                    shaderContent = bis.readAllBytes();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                shaderContents.add(shaderContent);
+            }
+
+            shaderModule = this.createShaderModuleFromSlang(shaderContents);
+        }
+
+        return shaderModule;
+    }
+
     protected void setupShaderModules(boolean skipIfExists) {
         if (skipIfExists && !vertShaderModules.isEmpty()) {
             return;
         }
-        if (vertShaderResource == null || fragShaderResource == null) {
-            throw new RuntimeException("Shader resource cannot be null");
-        }
 
-        byte[] vertShaderContent;
-        byte[] fragShaderContent;
-        try (var bisVert = new BufferedInputStream(vertShaderResource.openStream());
-             var bisFrag = new BufferedInputStream(fragShaderResource.openStream())) {
-            vertShaderContent = bisVert.readAllBytes();
-            fragShaderContent = bisFrag.readAllBytes();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        String vertShaderExtension = FilenameUtils.getFileExtension(vertShaderResource.getPath());
-        String fragShaderExtension = FilenameUtils.getFileExtension(fragShaderResource.getPath());
-        if (vertShaderExtension.isEmpty() || fragShaderExtension.isEmpty()) {
-            throw new RuntimeException("Extension of shader file must not be empty");
-        }
-
-        long vertShaderModule = switch (vertShaderExtension) {
-            case "spirv" -> this.createShaderModuleFromSPIRV(vertShaderContent);
-            case "glsl" -> this.createShaderModuleFromGLSL(vertShaderContent, ShaderKind.VERTEX);
-            case "slang" -> this.createShaderModuleFromSlang(vertShaderContent);
-            default -> throw new RuntimeException("Cannot determine shader language from shader file extension");
-        };
-        long fragShaderModule = switch (fragShaderExtension) {
-            case "spirv" -> this.createShaderModuleFromSPIRV(fragShaderContent);
-            case "glsl" -> this.createShaderModuleFromGLSL(fragShaderContent, ShaderKind.FRAGMENT);
-            case "slang" -> this.createShaderModuleFromSlang(fragShaderContent);
-            default -> throw new RuntimeException("Cannot determine shader language from shader file extension");
-        };
+        long vertShaderModule = this.compileShaders(vertShaderResources, ShaderKind.VERTEX);
+        long fragShaderModule = this.compileShaders(fragShaderResources, ShaderKind.FRAGMENT);
 
         this.addVertShaderModule(vertShaderModule);
         this.addFragShaderModule(fragShaderModule);

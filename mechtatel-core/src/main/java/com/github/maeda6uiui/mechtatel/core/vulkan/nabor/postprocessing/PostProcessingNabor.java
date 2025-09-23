@@ -22,8 +22,13 @@ import static org.lwjgl.vulkan.VK10.*;
 public abstract class PostProcessingNabor extends Nabor {
     public static final int COLOR_ATTACHMENT_INDEX = 0;
 
+    public PostProcessingNabor(VkDevice device, List<URL> vertShaderResources, List<URL> fragShaderResources) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResources, fragShaderResources);
+    }
+
+    @Deprecated
     public PostProcessingNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
+        this(device, List.of(vertShaderResource), List.of(fragShaderResource));
     }
 
     public void transitionColorImageLayout(long commandPool, VkQueue graphicsQueue) {

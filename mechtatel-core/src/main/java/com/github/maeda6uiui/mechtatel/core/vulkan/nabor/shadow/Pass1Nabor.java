@@ -24,8 +24,9 @@ import static org.lwjgl.vulkan.VK10.*;
 class Pass1Nabor extends Nabor {
     private int depthImageFormat;
 
-    public Pass1Nabor(VkDevice device, int depthImageFormat, URL vertShaderResource, URL fragShaderResource) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
+    public Pass1Nabor(
+            VkDevice device, int depthImageFormat, List<URL> vertShaderResources, List<URL> fragShaderResources) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResources, fragShaderResources);
 
         this.depthImageFormat = depthImageFormat;
     }

@@ -1,12 +1,11 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 
-import com.github.maeda6uiui.mechtatel.core.MttShaderSettings;
+import com.github.maeda6uiui.mechtatel.core.MttShaderConfig;
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.CustomizablePostProcessingNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.LightingInfo;
-import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.*;
@@ -15,7 +14,6 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.awt.image.BufferedImage;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -55,70 +53,20 @@ public class PostProcessingNaborChain {
         ppNabors = new LinkedHashMap<>();
         this.customizablePPNaborInfos = customizablePPNaborInfos;
 
-        //Get shader URLs =====
-        MttShaderSettings shaderSettings = MttShaderSettings
+        MttShaderConfig shaderConfig = MttShaderConfig
                 .get()
-                .orElse(MttShaderSettings.create());
+                .orElse(MttShaderConfig.create());
 
-        URL fogVertShaderResource;
-        URL fogFragShaderResource;
-        URL parallelLightVertShaderResource;
-        URL parallelLightFragShaderResource;
-        URL pointLightVertShaderResource;
-        URL pointLightFragShaderResource;
-        URL spotlightVertShaderResource;
-        URL spotlightFragShaderResource;
-        URL simpleBlurVertShaderResource;
-        URL simpleBlurFragShaderResource;
-        try {
-            fogVertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.postProcessing.fog.vert.filepath,
-                    shaderSettings.postProcessing.fog.vert.className
-            );
-            fogFragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.postProcessing.fog.frag.filepath,
-                    shaderSettings.postProcessing.fog.frag.className
-            );
-
-            parallelLightVertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.postProcessing.parallelLight.vert.filepath,
-                    shaderSettings.postProcessing.parallelLight.vert.className
-            );
-            parallelLightFragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.postProcessing.parallelLight.frag.filepath,
-                    shaderSettings.postProcessing.parallelLight.frag.className
-            );
-
-            pointLightVertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.postProcessing.pointLight.vert.filepath,
-                    shaderSettings.postProcessing.pointLight.vert.className
-            );
-            pointLightFragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.postProcessing.pointLight.frag.filepath,
-                    shaderSettings.postProcessing.pointLight.frag.className
-            );
-
-            spotlightVertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.postProcessing.spotlight.vert.filepath,
-                    shaderSettings.postProcessing.spotlight.vert.className
-            );
-            spotlightFragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.postProcessing.spotlight.frag.filepath,
-                    shaderSettings.postProcessing.spotlight.frag.className
-            );
-
-            simpleBlurVertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.postProcessing.simpleBlur.vert.filepath,
-                    shaderSettings.postProcessing.simpleBlur.vert.className
-            );
-            simpleBlurFragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.postProcessing.simpleBlur.frag.filepath,
-                    shaderSettings.postProcessing.simpleBlur.frag.className
-            );
-        } catch (MalformedURLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        //==========
+        List<URL> fogVertShaderResources = shaderConfig.postProcessing.fog.vertex.mustGetResourceURLs();
+        List<URL> fogFragShaderResources = shaderConfig.postProcessing.fog.fragment.mustGetResourceURLs();
+        List<URL> parallelLightVertShaderResources = shaderConfig.postProcessing.parallelLight.vertex.mustGetResourceURLs();
+        List<URL> parallelLightFragShaderResources = shaderConfig.postProcessing.parallelLight.fragment.mustGetResourceURLs();
+        List<URL> pointLightVertShaderResources = shaderConfig.postProcessing.pointLight.vertex.mustGetResourceURLs();
+        List<URL> pointLightFragShaderResources = shaderConfig.postProcessing.pointLight.fragment.mustGetResourceURLs();
+        List<URL> spotlightVertShaderResources = shaderConfig.postProcessing.spotlight.vertex.mustGetResourceURLs();
+        List<URL> spotlightFragShaderResources = shaderConfig.postProcessing.spotlight.fragment.mustGetResourceURLs();
+        List<URL> simpleBlurVertShaderResources = shaderConfig.postProcessing.simpleBlur.vertex.mustGetResourceURLs();
+        List<URL> simpleBlurFragShaderResources = shaderConfig.postProcessing.simpleBlur.fragment.mustGetResourceURLs();
 
         for (var naborName : naborNames) {
             PostProcessingNabor ppNabor;
@@ -133,21 +81,21 @@ public class PostProcessingNaborChain {
             if (customizablePPNaborInfo != null) {
                 ppNabor = new CustomizablePostProcessingNabor(
                         device,
-                        customizablePPNaborInfo.getVertShaderResource(),
-                        customizablePPNaborInfo.getFragShaderResource(),
+                        customizablePPNaborInfo.getVertShaderResources(),
+                        customizablePPNaborInfo.getFragShaderResources(),
                         customizablePPNaborInfo.getUniformResourceTypes()
                 );
             } else {
                 ppNabor = switch (naborName) {
-                    case "pp.fog" -> new FogNabor(device, fogVertShaderResource, fogFragShaderResource);
+                    case "pp.fog" -> new FogNabor(device, fogVertShaderResources, fogFragShaderResources);
                     case "pp.parallel_light" ->
-                            new ParallelLightNabor(device, parallelLightVertShaderResource, parallelLightFragShaderResource);
+                            new ParallelLightNabor(device, parallelLightVertShaderResources, parallelLightFragShaderResources);
                     case "pp.point_light" ->
-                            new PointLightNabor(device, pointLightVertShaderResource, pointLightFragShaderResource);
+                            new PointLightNabor(device, pointLightVertShaderResources, pointLightFragShaderResources);
                     case "pp.spotlight" ->
-                            new SpotlightNabor(device, spotlightVertShaderResource, spotlightFragShaderResource);
+                            new SpotlightNabor(device, spotlightVertShaderResources, spotlightFragShaderResources);
                     case "pp.simple_blur" ->
-                            new SimpleBlurNabor(device, simpleBlurVertShaderResource, simpleBlurFragShaderResource);
+                            new SimpleBlurNabor(device, simpleBlurVertShaderResources, simpleBlurFragShaderResources);
                     default -> throw new IllegalArgumentException("Unknown nabor name specified: " + naborName);
                 };
             }

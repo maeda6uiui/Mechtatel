@@ -41,14 +41,34 @@ public class MergeScenesNabor extends Nabor {
             int positionImageFormat,
             int normalImageFormat,
             int stencilImageFormat,
-            URL vertShaderResource,
-            URL fragShaderResource) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
+            List<URL> vertShaderResources,
+            List<URL> fragShaderResources) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResources, fragShaderResources);
 
         this.depthImageFormat = depthImageFormat;
         this.positionImageFormat = positionImageFormat;
         this.normalImageFormat = normalImageFormat;
         this.stencilImageFormat = stencilImageFormat;
+    }
+
+    @Deprecated
+    public MergeScenesNabor(
+            VkDevice device,
+            int depthImageFormat,
+            int positionImageFormat,
+            int normalImageFormat,
+            int stencilImageFormat,
+            URL vertShaderResource,
+            URL fragShaderResource) {
+        this(
+                device,
+                depthImageFormat,
+                positionImageFormat,
+                normalImageFormat,
+                stencilImageFormat,
+                List.of(vertShaderResource),
+                List.of(fragShaderResource)
+        );
     }
 
     public void transitionAlbedoImageLayout(long commandPool, VkQueue graphicsQueue) {

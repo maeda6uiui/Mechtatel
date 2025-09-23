@@ -38,9 +38,9 @@ class PropertiesNabor extends Nabor {
             int positionImageFormat,
             int normalImageFormat,
             int stencilImageFormat,
-            URL vertShaderResource,
-            URL fragShaderResource) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
+            List<URL> vertShaderResources,
+            List<URL> fragShaderResources) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResources, fragShaderResources);
 
         this.depthImageFormat = depthImageFormat;
         this.positionImageFormat = positionImageFormat;

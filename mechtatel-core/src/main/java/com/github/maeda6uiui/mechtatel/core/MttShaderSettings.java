@@ -17,6 +17,7 @@ import java.util.Optional;
  *
  * @author maeda6uiui
  */
+@Deprecated
 public class MttShaderSettings {
     private static final Logger logger = LoggerFactory.getLogger(MttShaderSettings.class);
 

@@ -22,6 +22,14 @@ public class MttSlangc {
     private byte[] spirvCode;
     private String errorMsg;
 
+    /**
+     * Creates a new instance.
+     * Module sources stored in the underlying native library are cleared upon new creation of this instance.
+     */
+    public MttSlangc() {
+        IMttSlangc.INSTANCE.mttSlangcClearModuleSources();
+    }
+
     private void freeMemory(PointerByReference pRef, DataType dType) {
         Pointer p = pRef.getValue();
         switch (dType) {
@@ -30,19 +38,29 @@ public class MttSlangc {
         }
     }
 
-    public int compile(
-            String moduleName,
-            String modulePath,
-            String source,
-            String entryPointName) {
+    /**
+     * Adds a module source to the underlying native library.
+     *
+     * @param moduleName Module name
+     * @param source     Source code of the shader module
+     */
+    public void addModuleSource(String moduleName, String source) {
+        IMttSlangc.INSTANCE.mttSlangcAddModuleSource(moduleName, source);
+    }
+
+    /**
+     * Compiles module sources stored in the underlying native library.
+     * Module sources must be added via {@link #addModuleSource(String, String)} before calling this method.
+     *
+     * @param entryPointName Name of the entry point (e.g. main)
+     * @return Non-zero value on error, zero on success
+     */
+    public int compile(String entryPointName) {
         var outSpirv = new PointerByReference();
         var outSize = new LongByReference();
         var outErrorMsg = new PointerByReference();
 
         int result = IMttSlangc.INSTANCE.mttSlangcCompileIntoSpirv(
-                moduleName,
-                modulePath,
-                source,
                 entryPointName,
                 outSpirv,
                 outSize,

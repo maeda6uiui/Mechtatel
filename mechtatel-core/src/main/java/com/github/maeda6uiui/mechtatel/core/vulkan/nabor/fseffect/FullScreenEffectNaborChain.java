@@ -1,10 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.fseffect;
 
-import com.github.maeda6uiui.mechtatel.core.MttShaderSettings;
+import com.github.maeda6uiui.mechtatel.core.MttShaderConfig;
 import com.github.maeda6uiui.mechtatel.core.PixelFormat;
 import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectProperties;
-import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.fseffect.GaussianBlurInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.fseffect.MonochromeEffectInfoUBO;
@@ -13,7 +12,6 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.awt.image.BufferedImage;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -54,36 +52,14 @@ public class FullScreenEffectNaborChain {
 
         fseNabors = new LinkedHashMap<>();
 
-        //Get shader URLs =====
-        MttShaderSettings shaderSettings = MttShaderSettings
+        MttShaderConfig shaderConfig = MttShaderConfig
                 .get()
-                .orElse(MttShaderSettings.create());
+                .orElse(MttShaderConfig.create());
 
-        URL gaussianBlurVertShaderResource;
-        URL gaussianBlurFragShaderResource;
-        URL monochromeEffectVertShaderResource;
-        URL monochromeEffectFragShaderResource;
-        try {
-            gaussianBlurVertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.fullScreenEffect.gaussianBlur.vert.filepath,
-                    shaderSettings.fullScreenEffect.gaussianBlur.vert.className
-            );
-            gaussianBlurFragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.fullScreenEffect.gaussianBlur.frag.filepath,
-                    shaderSettings.fullScreenEffect.gaussianBlur.frag.className
-            );
-            monochromeEffectVertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.fullScreenEffect.monochromeEffect.vert.filepath,
-                    shaderSettings.fullScreenEffect.monochromeEffect.vert.className
-            );
-            monochromeEffectFragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.fullScreenEffect.monochromeEffect.frag.filepath,
-                    shaderSettings.fullScreenEffect.monochromeEffect.frag.className
-            );
-        } catch (MalformedURLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        //==========
+        List<URL> gaussianBlurVertShaderResources = shaderConfig.fullScreenEffect.gaussianBlur.vertex.mustGetResourceURLs();
+        List<URL> gaussianBlurFragShaderResources = shaderConfig.fullScreenEffect.gaussianBlur.fragment.mustGetResourceURLs();
+        List<URL> monochromeEffectVertShaderResources = shaderConfig.fullScreenEffect.monochromeEffect.vertex.mustGetResourceURLs();
+        List<URL> monochromeEffectFragShaderResources = shaderConfig.fullScreenEffect.monochromeEffect.fragment.mustGetResourceURLs();
 
         for (var naborName : naborNames) {
             FullScreenEffectNabor fseNabor;
@@ -98,15 +74,15 @@ public class FullScreenEffectNaborChain {
             if (fseNaborInfo != null) {
                 fseNabor = new FullScreenEffectNabor(
                         device,
-                        fseNaborInfo.getVertShaderResource(),
-                        fseNaborInfo.getFragShaderResource()
+                        fseNaborInfo.getVertShaderResources(),
+                        fseNaborInfo.getFragShaderResources()
                 );
             } else {
                 fseNabor = switch (naborName) {
                     case "fse.gaussian_blur" ->
-                            new GaussianBlurNabor(device, gaussianBlurVertShaderResource, gaussianBlurFragShaderResource);
+                            new GaussianBlurNabor(device, gaussianBlurVertShaderResources, gaussianBlurFragShaderResources);
                     case "fse.monochrome_effect" -> new MonochromeEffectNabor(
-                            device, monochromeEffectVertShaderResource, monochromeEffectFragShaderResource);
+                            device, monochromeEffectVertShaderResources, monochromeEffectFragShaderResources);
                     default -> throw new IllegalArgumentException("Unknown nabor name specified: " + naborName);
                 };
             }

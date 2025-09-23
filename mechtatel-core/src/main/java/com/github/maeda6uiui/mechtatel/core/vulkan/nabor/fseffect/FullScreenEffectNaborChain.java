@@ -74,8 +74,8 @@ public class FullScreenEffectNaborChain {
             if (fseNaborInfo != null) {
                 fseNabor = new FullScreenEffectNabor(
                         device,
-                        fseNaborInfo.getVertShaderResource(),
-                        fseNaborInfo.getFragShaderResource()
+                        fseNaborInfo.getVertShaderResources(),
+                        fseNaborInfo.getFragShaderResources()
                 );
             } else {
                 fseNabor = switch (naborName) {

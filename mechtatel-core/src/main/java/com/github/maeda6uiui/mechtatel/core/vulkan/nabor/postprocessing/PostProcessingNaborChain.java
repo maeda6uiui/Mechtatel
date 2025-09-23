@@ -81,8 +81,8 @@ public class PostProcessingNaborChain {
             if (customizablePPNaborInfo != null) {
                 ppNabor = new CustomizablePostProcessingNabor(
                         device,
-                        customizablePPNaborInfo.getVertShaderResource(),
-                        customizablePPNaborInfo.getFragShaderResource(),
+                        customizablePPNaborInfo.getVertShaderResources(),
+                        customizablePPNaborInfo.getFragShaderResources(),
                         customizablePPNaborInfo.getUniformResourceTypes()
                 );
             } else {

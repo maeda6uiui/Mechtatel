@@ -7,9 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Configuration for shaders
@@ -22,11 +20,9 @@ public class MttShaderConfig {
     }
 
     public static class ShaderModuleInfo {
-        public String name;
         public List<ShaderInfo> shaders;
 
         public ShaderModuleInfo() {
-            name = "main";
             shaders = new ArrayList<>();
         }
 
@@ -37,16 +33,16 @@ public class MttShaderConfig {
     }
 
     public static class ShaderModulesInfo {
-        public List<ShaderModuleInfo> modules;
+        public Map<String, ShaderModuleInfo> modules;
 
         public ShaderModulesInfo() {
-            modules = new ArrayList<>();
+            modules = new HashMap<>();
         }
 
         public void addSingleShaderModule(String shaderFilepath, String shaderLocation) {
             var module = new ShaderModuleInfo();
             module.addShader(shaderFilepath, shaderLocation);
-            modules.add(module);
+            modules.put("main", module);
         }
 
         public void addSingleShaderModule(String shaderFilepath) {

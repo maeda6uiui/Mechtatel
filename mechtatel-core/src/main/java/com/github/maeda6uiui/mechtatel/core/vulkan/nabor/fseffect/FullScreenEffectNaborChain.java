@@ -6,7 +6,6 @@ import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectNaborInfo;
 import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectProperties;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.fseffect.GaussianBlurInfoUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.fseffect.MonochromeEffectInfoUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.CommandBufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -81,7 +80,7 @@ public class FullScreenEffectNaborChain {
                 fseNabor = switch (naborName) {
                     case "fse.gaussian_blur" ->
                             new GaussianBlurNabor(device, gaussianBlurVertShaderResources, gaussianBlurFragShaderResources);
-                    case "fse.monochrome_effect" -> new MonochromeEffectNabor(
+                    case "fse.monochrome_effect" -> new FullScreenEffectNabor(
                             device, monochromeEffectVertShaderResources, monochromeEffectFragShaderResources);
                     default -> throw new IllegalArgumentException("Unknown nabor name specified: " + naborName);
                 };
@@ -124,10 +123,6 @@ public class FullScreenEffectNaborChain {
             long gaussianBlurInfoUBOMemory = fseNabor.getUniformBufferMemory(0);
             var gaussianBlurInfoUBO = new GaussianBlurInfoUBO(fseProperties.gaussianBlurInfo);
             gaussianBlurInfoUBO.update(device, gaussianBlurInfoUBOMemory);
-        } else if (naborName.equals("fse.monochrome_effect")) {
-            long monochromeEffectInfoUBOMemory = fseNabor.getUniformBufferMemory(0);
-            var monochromeEffectInfoUBO = new MonochromeEffectInfoUBO(fseProperties.monochromeEffectInfo);
-            monochromeEffectInfoUBO.update(device, monochromeEffectInfoUBOMemory);
         }
     }
 

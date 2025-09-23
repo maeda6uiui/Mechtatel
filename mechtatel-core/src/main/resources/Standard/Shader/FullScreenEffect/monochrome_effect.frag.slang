@@ -1,7 +1,7 @@
-struct MonochromeInfoUBO {
+struct DummyUBO {
     int dummy;
 };
-ConstantBuffer<MonochromeInfoUBO> monochromeInfo : register(b0, space0);
+ConstantBuffer<DummyUBO> dummy : register(b0, space0);
 
 Texture2D colorTexture : register(t0, space1);
 SamplerState textureSampler : register(s0, space2);

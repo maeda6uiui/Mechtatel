@@ -1,11 +1,20 @@
+#include <string>
+#include <vector>
 #include "slang.h"
 #include "slang-com-ptr.h"
 #include "slang-com-helper.h"
+
+struct MttSlangModuleSource
+{
+    std::string moduleName;
+    std::string source;
+};
 
 class MttSlangc
 {
 private:
     Slang::ComPtr<slang::IGlobalSession> globalSession;
+    std::vector<MttSlangModuleSource> moduleSources;
 
     template <class T>
     T *leak(Slang::ComPtr<slang::IBlob> blob);
@@ -13,10 +22,8 @@ private:
 
 public:
     MttSlangc();
+    void addModuleSource(const char *moduleName, const char *source);
     int compile(
-        const char *moduleName,
-        const char *modulePath,
-        const char *source,
         const char *entryPointName,
         uint8_t **outSpirv,
         size_t *outSize,
@@ -27,10 +34,8 @@ public:
 };
 
 //===== C interface =====
+extern "C" void mttSlangcAddModuleSource(const char *moduleName, const char *source);
 extern "C" int mttSlangcCompileIntoSpirv(
-    const char *moduleName,
-    const char *modulePath,
-    const char *source,
     const char *entryPointName,
     uint8_t **outSpirv,
     size_t *outSize,

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <cstring>
+#include <vector>
 #include "slang.h"
 #include "slang-com-ptr.h"
 #include "slang-com-helper.h"
@@ -40,10 +41,22 @@ void MttSlangc::free(const T *p)
     delete[] p;
 }
 
+void MttSlangc::addModuleSource(const char *moduleName, const char *source)
+{
+    auto moduleSource = MttSlangModuleSource{};
+    if (moduleName == nullptr)
+    {
+        moduleSource.moduleName = std::string("");
+    }
+    else
+    {
+        moduleSource.moduleName = std::string(moduleName);
+    }
+    moduleSource.source = std::string(source);
+    this->moduleSources.push_back(moduleSource);
+}
+
 int MttSlangc::compile(
-    const char *moduleName,
-    const char *modulePath,
-    const char *source,
     const char *entryPointName,
     uint8_t **outSpirv,
     size_t *outSize,
@@ -69,37 +82,58 @@ int MttSlangc::compile(
     globalSession->createSession(sessionDesc, session.writeRef());
 
     // Load modules
-    Slang::ComPtr<slang::IModule> slangModule;
+    std::vector<Slang::ComPtr<slang::IModule>> slangModules;
     {
-        Slang::ComPtr<slang::IBlob> diagnosticsBlob;
-        slangModule = session->loadModuleFromSourceString(moduleName, modulePath, source, diagnosticsBlob.writeRef());
-        if (!slangModule)
+        for (const MttSlangModuleSource &moduleSource : this->moduleSources)
         {
-            if (diagnosticsBlob != nullptr)
+            Slang::ComPtr<slang::IModule> slangModule;
+            Slang::ComPtr<slang::IBlob> diagnosticsBlob;
+
+            slangModule = session->loadModuleFromSourceString(
+                moduleSource.moduleName.c_str(),
+                nullptr,
+                moduleSource.source.c_str(),
+                diagnosticsBlob.writeRef());
+            if (!slangModule)
             {
-                *outErrorMsg = this->leak<char>(diagnosticsBlob);
+                if (diagnosticsBlob != nullptr)
+                {
+                    *outErrorMsg = this->leak<char>(diagnosticsBlob);
+                }
+                return -1;
             }
-            return -1;
         }
     }
 
     // Query entry points
     Slang::ComPtr<slang::IEntryPoint> entryPoint;
     {
-        slangModule->findEntryPointByName(entryPointName, entryPoint.writeRef());
-        if (!entryPoint)
+        for (auto slangModule : slangModules)
         {
-            auto errorMsg = std::string("Error getting entry point: ");
-            errorMsg += std::string(entryPointName);
-            *outErrorMsg = this->leak_from_str(errorMsg.c_str());
-
-            return -1;
+            slangModule->findEntryPointByName(entryPointName, entryPoint.writeRef());
+            if (!entryPoint)
+            {
+                break;
+            }
         }
+    }
+    if (!entryPoint)
+    {
+        auto errorMsg = std::string("Error getting entry point: ");
+        errorMsg += std::string(entryPointName);
+        *outErrorMsg = this->leak_from_str(errorMsg.c_str());
+
+        return -1;
     }
 
     // Compose modules and entry points
-    std::array<slang::IComponentType *, 2> componentTypes = {
-        slangModule, entryPoint};
+    std::vector<slang::IComponentType *> componentTypes;
+    for (auto slangModule : slangModules)
+    {
+        componentTypes.push_back(slangModule);
+    }
+    componentTypes.push_back(entryPoint);
+
     Slang::ComPtr<slang::IComponentType> composedProgram;
     {
         Slang::ComPtr<slang::IBlob> diagnosticsBlob;
@@ -147,17 +181,19 @@ int MttSlangc::compile(
 //===== C interface =====
 const static auto slangcInstance = new MttSlangc();
 
+void mttSlangcAddModuleSource(const char *moduleName, const char *source)
+{
+    slangcInstance->addModuleSource(moduleName, source);
+}
+
 int mttSlangcCompileIntoSpirv(
-    const char *moduleName,
-    const char *modulePath,
-    const char *source,
     const char *entryPointName,
     uint8_t **outSpirv,
     size_t *outSize,
     char **outErrorMsg)
 {
     return slangcInstance->compile(
-        moduleName, modulePath, source, entryPointName, outSpirv, outSize, outErrorMsg);
+        entryPointName, outSpirv, outSize, outErrorMsg);
 }
 
 void mttSlangcFreeUint8t(const uint8_t *p)

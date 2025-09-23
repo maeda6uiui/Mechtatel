@@ -33,15 +33,25 @@ class AlbedoNabor extends Nabor {
             VkDevice device,
             int msaaSamples,
             int depthImageFormat,
-            URL vertShaderResource,
-            URL fragShaderResource) {
-        super(device, msaaSamples, false, vertShaderResource, fragShaderResource);
+            List<URL> vertShaderResources,
+            List<URL> fragShaderResources) {
+        super(device, msaaSamples, false, vertShaderResources, fragShaderResources);
 
         this.depthImageFormat = depthImageFormat;
         depthImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
         if (DepthResourceUtils.hasStencilComponent(depthImageFormat)) {
             depthImageAspect |= VK_IMAGE_ASPECT_STENCIL_BIT;
         }
+    }
+
+    @Deprecated
+    public AlbedoNabor(
+            VkDevice device,
+            int msaaSamples,
+            int depthImageFormat,
+            URL vertShaderResource,
+            URL fragShaderResource) {
+        this(device, msaaSamples, depthImageFormat, List.of(vertShaderResource), List.of(fragShaderResource));
     }
 
     public void transitionDepthImageLayout(long commandPool, VkQueue graphicsQueue) {

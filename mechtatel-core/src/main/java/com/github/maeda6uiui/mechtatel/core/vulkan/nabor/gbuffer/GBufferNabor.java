@@ -30,18 +30,18 @@ public class GBufferNabor extends Nabor {
             int positionImageFormat,
             int normalImageFormat,
             int stencilImageFormat,
-            URL albedoVertShaderResource,
-            URL albedoFragShaderResource,
-            URL propertiesVertShaderResource,
-            URL propertiesFragShaderResource) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, true, (URL) null, null);
+            List<URL> albedoVertShaderResources,
+            List<URL> albedoFragShaderResources,
+            List<URL> propertiesVertShaderResources,
+            List<URL> propertiesFragShaderResources) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, true, (List<URL>) null, null);
 
         albedoNabor = new AlbedoNabor(
                 device,
                 albedoMSAASamples,
                 depthImageFormat,
-                albedoVertShaderResource,
-                albedoFragShaderResource
+                albedoVertShaderResources,
+                albedoFragShaderResources
         );
         propertiesNabor = new PropertiesNabor(
                 device,
@@ -49,8 +49,34 @@ public class GBufferNabor extends Nabor {
                 positionImageFormat,
                 normalImageFormat,
                 stencilImageFormat,
-                propertiesVertShaderResource,
-                propertiesFragShaderResource
+                propertiesVertShaderResources,
+                propertiesFragShaderResources
+        );
+    }
+
+    @Deprecated
+    public GBufferNabor(
+            VkDevice device,
+            int albedoMSAASamples,
+            int depthImageFormat,
+            int positionImageFormat,
+            int normalImageFormat,
+            int stencilImageFormat,
+            URL albedoVertShaderResource,
+            URL albedoFragShaderResource,
+            URL propertiesVertShaderResource,
+            URL propertiesFragShaderResource) {
+        this(
+                device,
+                albedoMSAASamples,
+                depthImageFormat,
+                positionImageFormat,
+                normalImageFormat,
+                stencilImageFormat,
+                List.of(albedoVertShaderResource),
+                List.of(albedoFragShaderResource),
+                List.of(propertiesVertShaderResource),
+                List.of(propertiesFragShaderResource)
         );
     }
 

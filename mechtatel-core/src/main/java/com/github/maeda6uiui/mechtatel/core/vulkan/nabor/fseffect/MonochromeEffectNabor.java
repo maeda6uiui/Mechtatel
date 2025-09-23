@@ -17,8 +17,13 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class MonochromeEffectNabor extends FullScreenEffectNabor {
-    public MonochromeEffectNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
-        super(device, vertShaderResource, fragShaderResource);
+    public MonochromeEffectNabor(VkDevice device, List<URL> vertShaderResources, List<URL> fragShaderResources) {
+        super(device, vertShaderResources, fragShaderResources);
+    }
+
+    @Deprecated
+    public MonochromeEffectNabor(VkDevice device, URL vertShaderResources, URL fragShaderResource) {
+        this(device, List.of(vertShaderResources), List.of(fragShaderResource));
     }
 
     @Override

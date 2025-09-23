@@ -110,6 +110,7 @@ public abstract class Nabor {
         userDefImageViews = new ArrayList<>();
     }
 
+    @Deprecated
     public Nabor(
             VkDevice device,
             int msaaSamples,

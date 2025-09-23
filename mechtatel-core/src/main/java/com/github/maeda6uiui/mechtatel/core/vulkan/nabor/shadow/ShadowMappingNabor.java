@@ -37,17 +37,39 @@ public class ShadowMappingNabor extends Nabor {
             int depthImageFormat,
             int depthImageWidth,
             int depthImageHeight,
-            URL pass1VertShaderResource,
-            URL pass1FragShaderResource,
-            URL pass2VertShaderResource,
-            URL pass2FragShaderResource) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, true, (URL) null, null);
+            List<URL> pass1VertShaderResources,
+            List<URL> pass1FragShaderResources,
+            List<URL> pass2VertShaderResources,
+            List<URL> pass2FragShaderResources) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, true, (List<URL>) null, null);
 
         this.depthImageWidth = depthImageWidth;
         this.depthImageHeight = depthImageHeight;
 
-        pass1 = new Pass1Nabor(device, depthImageFormat, pass1VertShaderResource, pass1FragShaderResource);
-        pass2 = new Pass2Nabor(device, pass2VertShaderResource, pass2FragShaderResource);
+        pass1 = new Pass1Nabor(device, depthImageFormat, pass1VertShaderResources, pass1FragShaderResources);
+        pass2 = new Pass2Nabor(device, pass2VertShaderResources, pass2FragShaderResources);
+    }
+
+    @Deprecated
+    public ShadowMappingNabor(
+            VkDevice device,
+            int depthImageFormat,
+            int depthImageWidth,
+            int depthImageHeight,
+            URL pass1VertShaderResource,
+            URL pass1FragShaderResource,
+            URL pass2VertShaderResource,
+            URL pass2FragShaderResource) {
+        this(
+                device,
+                depthImageFormat,
+                depthImageWidth,
+                depthImageHeight,
+                List.of(pass1VertShaderResource),
+                List.of(pass1FragShaderResource),
+                List.of(pass2VertShaderResource),
+                List.of(pass2FragShaderResource)
+        );
     }
 
     @Override

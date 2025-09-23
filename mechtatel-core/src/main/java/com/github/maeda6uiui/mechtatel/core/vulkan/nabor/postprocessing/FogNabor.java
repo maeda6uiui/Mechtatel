@@ -18,8 +18,13 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class FogNabor extends PostProcessingNabor {
+    public FogNabor(VkDevice device, List<URL> vertShaderResources, List<URL> fragShaderResources) {
+        super(device, vertShaderResources, fragShaderResources);
+    }
+
+    @Deprecated
     public FogNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
-        super(device, vertShaderResource, fragShaderResource);
+        this(device, List.of(vertShaderResource), List.of(fragShaderResource));
     }
 
     @Override

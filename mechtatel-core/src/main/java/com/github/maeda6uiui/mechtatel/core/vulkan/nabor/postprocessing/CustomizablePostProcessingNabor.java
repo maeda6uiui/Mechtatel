@@ -29,12 +29,21 @@ public class CustomizablePostProcessingNabor extends PostProcessingNabor {
 
     public CustomizablePostProcessingNabor(
             VkDevice device,
+            List<URL> vertShaderResources,
+            List<URL> fragShaderResources,
+            List<CustomizablePostProcessingNaborInfo.UniformResourceType> uniformResourceTypes) {
+        super(device, vertShaderResources, fragShaderResources);
+
+        this.uniformResourceTypes = uniformResourceTypes;
+    }
+
+    @Deprecated
+    public CustomizablePostProcessingNabor(
+            VkDevice device,
             URL vertShaderResource,
             URL fragShaderResource,
             List<CustomizablePostProcessingNaborInfo.UniformResourceType> uniformResourceTypes) {
-        super(device, vertShaderResource, fragShaderResource);
-
-        this.uniformResourceTypes = uniformResourceTypes;
+        this(device, List.of(vertShaderResource), List.of(fragShaderResource), uniformResourceTypes);
     }
 
     @Override

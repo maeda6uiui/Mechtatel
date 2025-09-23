@@ -7,6 +7,7 @@ import org.lwjgl.vulkan.*;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
+import java.util.List;
 
 import static org.lwjgl.vulkan.KHRSwapchain.VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 import static org.lwjgl.vulkan.VK10.*;
@@ -17,8 +18,13 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class PresentNabor extends Nabor {
+    public PresentNabor(VkDevice device, List<URL> vertShaderResources, List<URL> fragShaderResources) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResources, fragShaderResources);
+    }
+
+    @Deprecated
     public PresentNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
+        this(device, List.of(vertShaderResource), List.of(fragShaderResource));
     }
 
     @Override

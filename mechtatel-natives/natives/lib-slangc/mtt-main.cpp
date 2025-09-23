@@ -102,6 +102,8 @@ int MttSlangc::compile(
                 }
                 return -1;
             }
+
+            slangModules.push_back(slangModule);
         }
     }
 

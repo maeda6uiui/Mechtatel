@@ -1,7 +1,7 @@
 #include <array>
+#include <cstring>
 #include <iostream>
 #include <string>
-#include <cstring>
 #include <vector>
 #include "slang.h"
 #include "slang-com-ptr.h"

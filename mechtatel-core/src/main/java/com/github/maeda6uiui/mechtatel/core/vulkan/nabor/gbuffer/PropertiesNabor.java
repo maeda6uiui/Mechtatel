@@ -53,26 +53,6 @@ class PropertiesNabor extends Nabor {
         }
     }
 
-    @Deprecated
-    public PropertiesNabor(
-            VkDevice device,
-            int depthImageFormat,
-            int positionImageFormat,
-            int normalImageFormat,
-            int stencilImageFormat,
-            URL vertShaderResource,
-            URL fragShaderResource) {
-        this(
-                device,
-                depthImageFormat,
-                positionImageFormat,
-                normalImageFormat,
-                stencilImageFormat,
-                List.of(vertShaderResource),
-                List.of(fragShaderResource)
-        );
-    }
-
     public int getDepthImageFormat() {
         return depthImageFormat;
     }

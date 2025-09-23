@@ -44,16 +44,6 @@ class AlbedoNabor extends Nabor {
         }
     }
 
-    @Deprecated
-    public AlbedoNabor(
-            VkDevice device,
-            int msaaSamples,
-            int depthImageFormat,
-            URL vertShaderResource,
-            URL fragShaderResource) {
-        this(device, msaaSamples, depthImageFormat, List.of(vertShaderResource), List.of(fragShaderResource));
-    }
-
     public void transitionDepthImageLayout(long commandPool, VkQueue graphicsQueue) {
         VkDevice device = this.getDevice();
         long depthImage = this.getImage(DEPTH_ATTACHMENT_INDEX);

@@ -58,9 +58,7 @@ public class SlangModuleTest extends Mechtatel {
             return;
         }
 
-        var naborInfo = new FullScreenEffectNaborInfo(
-                List.of(vertShaderResource),
-                List.of(fragShaderResources.get(0), fragShaderResources.get(1)));
+        var naborInfo = new FullScreenEffectNaborInfo(List.of(vertShaderResource), fragShaderResources);
 
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()

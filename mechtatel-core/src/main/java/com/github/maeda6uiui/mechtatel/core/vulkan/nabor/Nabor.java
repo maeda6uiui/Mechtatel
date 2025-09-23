@@ -21,6 +21,8 @@ import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -757,10 +759,21 @@ public abstract class Nabor {
             var cacheMgr = new ShaderBuildCacheManager(allSourceConcat.getBytes());
             byte[] buildCache = cacheMgr.retrieve();
             if (buildCache == null) {
+                Pattern moduleNamePattern = Pattern.compile("module\\s+(\\w+)\\s*;");
                 var compiler = new MttSlangc();
+
                 shaderContents.forEach(v -> {
-                    compiler.pushSource("main", v);
+                    String source = new String(v);
+                    Matcher matcher = moduleNamePattern.matcher(source);
+
+                    String moduleName = null;
+                    if (matcher.find()) {
+                        moduleName = matcher.group(1);
+                    }
+
+                    compiler.pushSource(moduleName, source);
                 });
+
                 int ret = compiler.compile("main");
                 if (ret != 0) {
                     throw new RuntimeException(String.format("Failed to compile Slang shader: code=%d", ret));
@@ -822,8 +835,19 @@ public abstract class Nabor {
         }
         //Multiple shader files are provided (Slang shaders)
         else {
-            //Todo
-            shaderModule = 0;
+            var shaderContents = new ArrayList<byte[]>();
+            for (var shaderResource : shaderResources) {
+                byte[] shaderContent;
+                try (var bis = new BufferedInputStream(shaderResource.openStream())) {
+                    shaderContent = bis.readAllBytes();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                shaderContents.add(shaderContent);
+            }
+
+            shaderModule = this.createShaderModuleFromSlang(shaderContents);
         }
 
         return shaderModule;

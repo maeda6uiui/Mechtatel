@@ -81,7 +81,7 @@ public class MttURLUtils {
     public static List<URL> getMatchedResourceURLs(Path startDir, PathMatcher matcher) throws IOException {
         var targetPaths = new ArrayList<Path>();
         try (Stream<Path> stream = Files.walk(startDir)) {
-            stream.filter(matcher::matches).sorted().forEach(targetPaths::add);
+            stream.filter(matcher::matches).forEach(targetPaths::add);
         }
 
         var ret = new ArrayList<URL>();

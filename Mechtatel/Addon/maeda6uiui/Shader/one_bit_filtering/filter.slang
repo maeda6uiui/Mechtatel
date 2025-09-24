@@ -1,4 +1,4 @@
-module s00_filter;
+module filter;
 
 public float getFilteredValue(float3 color) {
     if (length(color) < 0.5) {

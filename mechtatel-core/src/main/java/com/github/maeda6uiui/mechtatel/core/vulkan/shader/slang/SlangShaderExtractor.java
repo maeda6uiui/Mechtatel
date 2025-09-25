@@ -94,6 +94,7 @@ public class SlangShaderExtractor implements ISlangShaderExtractorGetters {
             String source = entry.getValue();
 
             Path sourceFile = tempDir.resolve(extractionPath);
+            logger.debug("Extracting {}", sourceFile);
             if (!this.isFileInsideDirectory(sourceFile, tempDir)) {
                 throw new RuntimeException("Extraction path cannot traverse its root directory: " + extractionPath);
             }

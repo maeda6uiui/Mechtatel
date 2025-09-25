@@ -1,3 +1,4 @@
+//@mtt.extractionPath "filter.slang"
 module filter;
 
 public float getFilteredValue(float3 color) {

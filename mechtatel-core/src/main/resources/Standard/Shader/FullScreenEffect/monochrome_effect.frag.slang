@@ -1,3 +1,5 @@
+//@mtt.extractionPath "monochrome_effect.frag.slang"
+//@mtt.entryPoint
 struct DummyUBO {
     int dummy;
 };

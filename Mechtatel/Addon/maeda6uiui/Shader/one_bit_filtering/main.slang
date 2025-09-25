@@ -1,3 +1,5 @@
+//@mtt.extractionPath "main.slang"
+//@mtt.entryPoint
 module main;
 
 import filter;

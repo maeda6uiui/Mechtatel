@@ -69,8 +69,8 @@ public class SlangShaderExtractor implements ISlangShaderExtractorGetters {
             String source = sources.get(i);
             Matcher matcher = ptnExtractionPath.matcher(source);
             if (!matcher.find()) {
-                logger.error("No extraction path annotation found in {}", shaderResources.get(i).getPath());
-                throw new RuntimeException("One of the sources doesn't have an extraction path annotation");
+                throw new RuntimeException(
+                        String.format("No extraction path annotation found in %s", shaderResources.get(i).getPath()));
             }
 
             String extractionPath = matcher.group(1);
@@ -87,6 +87,7 @@ public class SlangShaderExtractor implements ISlangShaderExtractorGetters {
         //Create a temporary file for each shader source and write shader source to it
         Path tempDir = Files.createTempDirectory(null);
         tempDir.toFile().deleteOnExit();
+        logger.debug("Slang shaders will be extracted to {}", tempDir);
 
         for (var entry : mSources.entrySet()) {
             String extractionPath = entry.getKey();
@@ -94,7 +95,7 @@ public class SlangShaderExtractor implements ISlangShaderExtractorGetters {
 
             Path sourceFile = tempDir.resolve(extractionPath);
             if (!this.isFileInsideDirectory(sourceFile, tempDir)) {
-                throw new RuntimeException("Extraction path cannot traverse its root directory");
+                throw new RuntimeException("Extraction path cannot traverse its root directory: " + extractionPath);
             }
 
             Files.writeString(sourceFile, source, StandardCharsets.UTF_8);

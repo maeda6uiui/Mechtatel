@@ -61,7 +61,7 @@ public class SlangShaderExtractor implements ISlangShaderExtractorGetters {
 
         //Associate shader source to its extraction path
         //Also, find the extraction path that has the entrypoint
-        Pattern ptnExtractionPath = Pattern.compile("@mtt.extractionPath\\s+\"(\\w+)\"");
+        Pattern ptnExtractionPath = Pattern.compile("@mtt\\.extractionPath\\s+\"([^\"]+)\"");
 
         String entryPointExtractionPath = "";
         var mSources = new HashMap<String, String>();  //(extraction path, source)

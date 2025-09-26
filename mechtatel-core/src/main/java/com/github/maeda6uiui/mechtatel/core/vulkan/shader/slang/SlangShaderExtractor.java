@@ -102,6 +102,12 @@ public class SlangShaderExtractor implements ISlangShaderExtractorGetters {
                 throw new RuntimeException("File already exists: " + sourceFile);
             }
 
+            Path sourceParentDir = sourceFile.getParent();
+            if (!Files.exists(sourceParentDir)) {
+                Files.createDirectories(sourceParentDir);
+                sourceParentDir.toFile().deleteOnExit();
+            }
+
             Files.writeString(sourceFile, source, StandardCharsets.UTF_8);
             sourceFile.toFile().deleteOnExit();
         }

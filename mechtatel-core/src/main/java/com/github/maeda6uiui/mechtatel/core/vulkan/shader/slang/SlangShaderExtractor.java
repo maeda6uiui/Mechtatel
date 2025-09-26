@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.shader.slang;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,8 +87,15 @@ public class SlangShaderExtractor implements ISlangShaderExtractorGetters {
 
         //Create a temporary file for each shader source and write shader source to it
         Path tempDir = Files.createTempDirectory(null);
-        tempDir.toFile().deleteOnExit();
         logger.debug("Slang shaders will be extracted to {}", tempDir);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                FileUtils.deleteDirectory(tempDir.toFile());
+            } catch (IOException e) {
+                logger.error("Error", e);
+            }
+        }));
 
         for (var entry : mSources.entrySet()) {
             String extractionPath = entry.getKey();
@@ -105,11 +113,9 @@ public class SlangShaderExtractor implements ISlangShaderExtractorGetters {
             Path sourceParentDir = sourceFile.getParent();
             if (!Files.exists(sourceParentDir)) {
                 Files.createDirectories(sourceParentDir);
-                sourceParentDir.toFile().deleteOnExit();
             }
 
             Files.writeString(sourceFile, source, StandardCharsets.UTF_8);
-            sourceFile.toFile().deleteOnExit();
         }
 
         entryPointPath = tempDir.resolve(entryPointExtractionPath).toAbsolutePath().normalize();

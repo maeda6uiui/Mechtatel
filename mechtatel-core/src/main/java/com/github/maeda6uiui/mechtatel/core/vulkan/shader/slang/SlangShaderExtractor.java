@@ -86,7 +86,7 @@ public class SlangShaderExtractor implements ISlangShaderExtractorGetters {
         }
 
         //Create a temporary file for each shader source and write shader source to it
-        Path tempDir = Files.createTempDirectory(null);
+        Path tempDir = Files.createTempDirectory("mtt");
         logger.debug("Slang shaders will be extracted to {}", tempDir);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

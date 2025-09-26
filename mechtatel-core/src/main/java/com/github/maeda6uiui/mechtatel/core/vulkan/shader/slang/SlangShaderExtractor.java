@@ -98,6 +98,9 @@ public class SlangShaderExtractor implements ISlangShaderExtractorGetters {
             if (!this.isFileInsideDirectory(sourceFile, tempDir)) {
                 throw new RuntimeException("Extraction path cannot traverse its root directory: " + extractionPath);
             }
+            if (Files.exists(sourceFile)) {
+                throw new RuntimeException("File already exists: " + sourceFile);
+            }
 
             Files.writeString(sourceFile, source, StandardCharsets.UTF_8);
             sourceFile.toFile().deleteOnExit();

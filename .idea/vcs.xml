@@ -2,22 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-slangc/slang" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-slangc/slang/external/WindowsToolchain" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-slangc/slang/external/glm" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-slangc/slang/external/glslang" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-slangc/slang/external/imgui" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-slangc/slang/external/lua" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-slangc/slang/external/lz4" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-slangc/slang/external/metal-cpp" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-slangc/slang/external/miniz" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-slangc/slang/external/optix-dev" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-slangc/slang/external/slang-binaries" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-slangc/slang/external/slang-rhi" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-slangc/slang/external/spirv-headers" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-slangc/slang/external/spirv-tools" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-slangc/slang/external/tinyobjloader" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-slangc/slang/external/unordered_dense" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-slangc/slang/external/vulkan" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/mechtatel-natives/natives/lib-mttslangc/slang" vcs="Git" />
   </component>
 </project>

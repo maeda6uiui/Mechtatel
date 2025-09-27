@@ -18,9 +18,9 @@ jobs:
         working-directory: mechtatel-natives/natives/lib-mttslangc
         run: |
           mkdir build; cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release
-          cmake --build .
+          cmake ..
+          cmake --build . --config Release
       - name: Publish build artifact to release
         uses: softprops/action-gh-release@v2
         with:
-          files: mechtatel-natives/natives/lib-mttslangc/build/mttslangc.dll
+          files: mechtatel-natives/natives/lib-mttslangc/build/Release/mttslangc.dll

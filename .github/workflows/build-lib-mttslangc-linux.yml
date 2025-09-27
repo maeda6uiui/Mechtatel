@@ -1,0 +1,24 @@
+name: Build native library of libmttslangc for Linux
+
+on:
+  push:
+    tags:
+      - "mttslangc-natives-*"
+
+jobs:
+  build:
+    name: Build native library of libmttslangc for Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Build libmttslangc
+        working-directory: mechtatel-natives/natives/lib-mttslangc
+        run: |
+          mkdir build && cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          cmake --build .
+      - name: Publish build artifact to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mechtatel-natives/natives/lib-mttslangc/build/libmttslangc.so

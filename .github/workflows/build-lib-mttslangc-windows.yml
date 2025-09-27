@@ -1,0 +1,41 @@
+name: Build native library of libmttslangc for Windows
+
+on:
+  push:
+    tags:
+      - "mttslangc-natives-*"
+
+jobs:
+  build:
+    name: Build native library of libmttslangc for Windows
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: mechtatel-natives/natives/lib-mttslangc
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Init and update submodules
+        run: git submodule update --init
+      - name: Download Slang release
+        run: |
+          mkdir Download; cd Download
+          Invoke-WebRequest `
+            https://github.com/shader-slang/slang/releases/download/v2025.17/slang-2025.17-windows-x86_64.tar.gz `
+            -OutFile slang-2025.17-windows-x86_64.tar.gz
+          tar -xf slang-2025.17-windows-x86_64.tar.gz
+      - name: Copy slang.dll and slang.lib to lib directory
+        run: |
+          mkdir lib
+          cp ./Download/bin/slang.dll ./lib/
+          cp ./Download/lib/slang.lib ./lib/
+      - name: Build libmttslangc
+        working-directory: mechtatel-natives/natives/lib-mttslangc
+        run: |
+          mkdir build; cd build
+          cmake ..
+          cmake --build . --config Release
+      - name: Publish build artifact to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mechtatel-natives/natives/lib-mttslangc/build/Release/mttslangc.dll

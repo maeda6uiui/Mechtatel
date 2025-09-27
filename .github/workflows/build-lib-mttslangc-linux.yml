@@ -1,0 +1,44 @@
+name: Build native library of libmttslangc for Linux
+
+on:
+  push:
+    tags:
+      - "mttslangc-natives-*"
+
+jobs:
+  build:
+    name: Build native library of libmttslangc for Linux
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mechtatel-natives/natives/lib-mttslangc
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Init and update submodules
+        run: git submodule update --init
+      - name: Download Slang release
+        run: |
+          mkdir Download && cd Download
+          wget https://github.com/shader-slang/slang/releases/download/v2025.17/slang-2025.17-linux-x86_64.tar.gz
+          tar -xf slang-2025.17-linux-x86_64.tar.gz
+      - name: Copy libslang.so to lib directory
+        run: |
+          mkdir lib
+          cp ./Download/lib/libslang.so ./lib/
+      - name: Install gcc-11 and g++-11
+        run: |
+          sudo apt update
+          sudo apt install gcc-11 g++-11
+      - name: Build libmttslangc
+        env:
+          CC: gcc-11
+          CXX: g++-11
+        run: |
+          mkdir build && cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          cmake --build .
+      - name: Publish build artifact to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mechtatel-natives/natives/lib-mttslangc/build/libmttslangc.so

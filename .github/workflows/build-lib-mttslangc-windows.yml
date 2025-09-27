@@ -12,6 +12,7 @@ jobs:
     defaults:
       run:
         working-directory: mechtatel-natives/natives/lib-mttslangc
+        shell: pwsh
     steps:
       - name: Checkout
         uses: actions/checkout@v5

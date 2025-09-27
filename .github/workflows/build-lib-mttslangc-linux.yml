@@ -27,6 +27,9 @@ jobs:
           mkdir lib
           cp ./Download/lib/libslang.so ./lib/
       - name: Build libmttslangc
+        env:
+          CC: gcc-11
+          CXX: g++-11
         run: |
           mkdir build && cd build
           cmake .. -DCMAKE_BUILD_TYPE=Release

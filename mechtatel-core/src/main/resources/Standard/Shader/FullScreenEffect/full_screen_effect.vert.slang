@@ -1,3 +1,5 @@
+//@mtt.extractionPath "full_screen_effect.vert.slang"
+//@mtt.entryPoint
 struct VSInput {
     float2 inPosition : POSITION;
     float4 inColor : COLOR0;

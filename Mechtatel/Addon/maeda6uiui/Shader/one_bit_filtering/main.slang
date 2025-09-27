@@ -1,9 +1,13 @@
-//@mtt.extractionPath "monochrome_effect.frag.slang"
+//@mtt.extractionPath "main.slang"
 //@mtt.entryPoint
+module main;
+
+import filter;
+
 struct DummyUBO {
     int dummy;
 };
-ConstantBuffer<DummyUBO> dummy : register(b0, space0);
+ConstantBuffer<DummyUBO> monochromeInfo : register(b0, space0);
 
 Texture2D colorTexture : register(t0, space1);
 SamplerState textureSampler : register(s0, space2);
@@ -20,8 +24,8 @@ PSOutput main(PSInput input) {
     PSOutput output;
 
     float3 color = colorTexture.Sample(textureSampler, input.fragTexCoords).rgb;
-    float gray = length(color);
-    output.outColor = float4(gray, gray, gray, 1.0);
+    float filteredVal = getFilteredValue(color);
+    output.outColor = float4(filteredVal, filteredVal, filteredVal, 1.0);
 
     return output;
 }

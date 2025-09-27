@@ -16,6 +16,7 @@ module com.github.maeda6uiui.mechtatel.core {
     requires transitive imgui.binding;
     requires com.github.maeda6uiui.mechtatel.natives;
     requires com.sun.jna;
+    requires org.apache.commons.io;
 
     exports com.github.maeda6uiui.mechtatel.core;
     exports com.github.maeda6uiui.mechtatel.core.fseffect;

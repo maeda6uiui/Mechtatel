@@ -2,6 +2,8 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.cache;
 
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
 import com.github.maeda6uiui.mechtatel.core.util.FileHashUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,6 +17,8 @@ import java.security.NoSuchAlgorithmException;
  * @author maeda6uiui
  */
 public class ShaderBuildCacheManager {
+    private static final Logger logger = LoggerFactory.getLogger(ShaderBuildCacheManager.class);
+
     private boolean useCache;
     private Path cacheDir;
     private String srcShaderMD5Hash;
@@ -57,6 +61,8 @@ public class ShaderBuildCacheManager {
             return null;
         }
 
+        logger.debug("Cache found: {}", srcShaderMD5Hash);
+
         return Files.readAllBytes(cacheFile);
     }
 
@@ -76,5 +82,7 @@ public class ShaderBuildCacheManager {
 
         Path cacheFile = cacheDir.resolve(String.format("%s.cache", srcShaderMD5Hash));
         Files.write(cacheFile, buildCacheContent);
+
+        logger.debug("Cache saved: {}", srcShaderMD5Hash);
     }
 }

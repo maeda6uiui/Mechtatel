@@ -13,12 +13,8 @@ import com.sun.jna.ptr.PointerByReference;
 interface IMttSlangc extends Library {
     IMttSlangc INSTANCE = MttSlangcLoader.load();
 
-    void mttSlangcAddModuleSource(String moduleName, String source);
-
-    void mttSlangcClearModuleSources();
-
     int mttSlangcCompileIntoSpirv(
-            String entryPointName,
+            String mainModuleFilepath,
             PointerByReference outSpirv,
             LongByReference outSize,
             PointerByReference outErrorMsg);

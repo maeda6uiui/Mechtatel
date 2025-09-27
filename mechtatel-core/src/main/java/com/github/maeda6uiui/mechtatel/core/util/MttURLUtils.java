@@ -1,8 +1,15 @@
 package com.github.maeda6uiui.mechtatel.core.util;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Utility methods related to URL
@@ -61,5 +68,28 @@ public class MttURLUtils {
         } catch (MalformedURLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Searches in a directory with a path matcher and returns URLs of matched files.
+     *
+     * @param startDir Directory to start searching in
+     * @param matcher  Path matcher
+     * @return URLs of matched files
+     * @throws IOException If it fails to enumerate paths or acquire its URL
+     */
+    public static List<URL> getMatchedResourceURLs(Path startDir, PathMatcher matcher) throws IOException {
+        var targetPaths = new ArrayList<Path>();
+        try (Stream<Path> stream = Files.walk(startDir)) {
+            stream.filter(matcher::matches).sorted().forEach(targetPaths::add);
+        }
+
+        var ret = new ArrayList<URL>();
+        for (var path : targetPaths) {
+            URL url = path.toUri().toURL();
+            ret.add(url);
+        }
+
+        return ret;
     }
 }

@@ -80,5 +80,11 @@
             <version>5.12.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.github.maeda6uiui</groupId>
+            <artifactId>mechtatel-logging</artifactId>
+            <version>${parent.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

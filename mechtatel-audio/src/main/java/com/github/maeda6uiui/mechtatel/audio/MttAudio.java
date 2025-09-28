@@ -1,8 +1,6 @@
 package com.github.maeda6uiui.mechtatel.audio;
 
 import com.sun.jna.Pointer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
@@ -14,8 +12,6 @@ import java.nio.file.Paths;
  * @author maeda6uiui
  */
 public class MttAudio {
-    private static final Logger logger = LoggerFactory.getLogger(MttAudio.class);
-
     private String playerId;
 
     private String pointerToString(Pointer p) {

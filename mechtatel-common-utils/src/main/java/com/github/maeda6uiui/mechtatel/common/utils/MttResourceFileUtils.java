@@ -45,7 +45,7 @@ public class MttResourceFileUtils {
      */
     public static File extractFileIntoDir(Class<?> clazz, String filepath, Path targetDir) throws IOException {
         Path file = Paths.get(filepath);
-        String filename = file.getFileName().toString();
+        Path filename = file.getFileName();
         Path targetPath = targetDir.resolve(filename);
 
         try (var bis = new BufferedInputStream(Objects.requireNonNull(clazz.getResourceAsStream(filepath)))) {

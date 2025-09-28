@@ -1,8 +1,10 @@
 package com.github.maeda6uiui.mechtatel.common.utils;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -89,5 +91,29 @@ public class MttResourceFileUtils {
     public static void loadNativeLib(Class<?> clazz, String filepath) throws IOException {
         File tempFile = extractFile(clazz, filepath, "mttnatives", false);
         System.load(tempFile.getAbsolutePath());
+    }
+
+    /**
+     * Deletes temporary files that have a prefix specified.
+     *
+     * @param prefix            Prefix for the temporary files
+     * @param deleteDirectories Deletes directories as well if true
+     * @throws IOException If it fails to enumerate files or to delete them
+     */
+    public static void deleteTemporaryFiles(String prefix, boolean deleteDirectories) throws IOException {
+        Path tempRoot = Paths.get(System.getProperty("java.io.tmpdir"));
+
+        var tempFilePaths = new ArrayList<Path>();
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(tempRoot, prefix + "*")) {
+            stream.forEach(tempFilePaths::add);
+        }
+
+        for (var path : tempFilePaths) {
+            if (Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS) && deleteDirectories) {
+                FileUtils.deleteDirectory(path.toFile());
+            } else if (Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS)) {
+                Files.delete(path);
+            }
+        }
     }
 }

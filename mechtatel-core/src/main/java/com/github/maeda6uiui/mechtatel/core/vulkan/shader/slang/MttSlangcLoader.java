@@ -11,10 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 
 /**
  * Native library loader for the Slang compiler
@@ -40,10 +37,12 @@ class MttSlangcLoader {
         Path tempRoot = Paths.get(System.getProperty("java.io.tmpdir"));
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(tempRoot, tmpDirPrefix + "*")) {
             stream.forEach(p -> {
-                try {
-                    FileUtils.deleteDirectory(p.toFile());
-                } catch (IOException e) {
-                    logger.warn("Failed to delete temporary directory", e);
+                if (Files.isDirectory(p, LinkOption.NOFOLLOW_LINKS) && p.startsWith(tempRoot)) {
+                    try {
+                        FileUtils.deleteDirectory(p.toFile());
+                    } catch (IOException e) {
+                        logger.warn("Failed to delete temporary directory", e);
+                    }
                 }
             });
         } catch (IOException e) {

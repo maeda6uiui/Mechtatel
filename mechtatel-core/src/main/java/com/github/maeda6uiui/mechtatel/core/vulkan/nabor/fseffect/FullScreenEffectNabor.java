@@ -2,6 +2,8 @@ package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.fseffect;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.Nabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.screen.component.VkMttVertex2D;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.fseffect.DummyUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -22,8 +24,13 @@ import static org.lwjgl.vulkan.VK10.*;
 public class FullScreenEffectNabor extends Nabor {
     public static final int COLOR_ATTACHMENT_INDEX = 0;
 
+    public FullScreenEffectNabor(VkDevice device, List<URL> vertShaderResources, List<URL> fragShaderResources) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResources, fragShaderResources);
+    }
+
+    @Deprecated
     public FullScreenEffectNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
+        this(device, List.of(vertShaderResource), List.of(fragShaderResource));
     }
 
     public void transitionColorImageLayout(long commandPool, VkQueue graphicsQueue) {
@@ -48,6 +55,17 @@ public class FullScreenEffectNabor extends Nabor {
     @Override
     public void cleanup(boolean reserveForRecreation) {
         super.cleanup(reserveForRecreation);
+    }
+
+    @Override
+    protected void createUniformBuffers(int descriptorCount) {
+        VkDevice device = this.getDevice();
+
+        var uboInfos = BufferUtils.createUBOBuffers(device, descriptorCount, DummyUBO.SIZEOF);
+        uboInfos.forEach(v -> {
+            this.getUniformBuffers().add(v.buffer);
+            this.getUniformBufferMemories().add(v.bufferMemory);
+        });
     }
 
     @Override
@@ -107,7 +125,32 @@ public class FullScreenEffectNabor extends Nabor {
     }
 
     protected void createDescriptorSetLayoutSet0() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDevice device = this.getDevice();
 
+            VkDescriptorSetLayoutBinding.Buffer uboLayoutBindings = VkDescriptorSetLayoutBinding.calloc(1, stack);
+
+            VkDescriptorSetLayoutBinding dummyUBOLayoutBinding = uboLayoutBindings.get(0);
+            dummyUBOLayoutBinding.binding(0);
+            dummyUBOLayoutBinding.descriptorCount(1);
+            dummyUBOLayoutBinding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            dummyUBOLayoutBinding.pImmutableSamplers(null);
+            dummyUBOLayoutBinding.stageFlags(VK_SHADER_STAGE_FRAGMENT_BIT);
+
+            VkDescriptorSetLayoutCreateInfo.Buffer layoutCreateInfos = VkDescriptorSetLayoutCreateInfo.calloc(1, stack);
+
+            VkDescriptorSetLayoutCreateInfo uboLayoutCreateInfo = layoutCreateInfos.get(0);
+            uboLayoutCreateInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+            uboLayoutCreateInfo.pBindings(uboLayoutBindings);
+
+            LongBuffer pDescriptorSetLayout = stack.mallocLong(1);
+            if (vkCreateDescriptorSetLayout(device, layoutCreateInfos.get(0), null, pDescriptorSetLayout) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create a descriptor set layout");
+            }
+
+            long descriptorSetLayout = pDescriptorSetLayout.get(0);
+            this.getDescriptorSetLayouts().add(descriptorSetLayout);
+        }
     }
 
     protected void createDescriptorSetLayoutsSet1And2() {
@@ -166,7 +209,30 @@ public class FullScreenEffectNabor extends Nabor {
     }
 
     protected void createDescriptorPoolSet0(int descriptorCount) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDevice device = this.getDevice();
 
+            VkDescriptorPoolSize.Buffer uboPoolSizes = VkDescriptorPoolSize.calloc(1, stack);
+
+            VkDescriptorPoolSize dummyUBOPoolSize = uboPoolSizes.get(0);
+            dummyUBOPoolSize.type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            dummyUBOPoolSize.descriptorCount(descriptorCount);
+
+            VkDescriptorPoolCreateInfo.Buffer poolInfos = VkDescriptorPoolCreateInfo.calloc(1, stack);
+
+            VkDescriptorPoolCreateInfo uboPoolInfo = poolInfos.get(0);
+            uboPoolInfo.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO);
+            uboPoolInfo.pPoolSizes(uboPoolSizes);
+            uboPoolInfo.maxSets(descriptorCount);
+
+            LongBuffer pDescriptorPool = stack.mallocLong(1);
+            if (vkCreateDescriptorPool(device, poolInfos.get(0), null, pDescriptorPool) != VK_SUCCESS) {
+                throw new RuntimeException("Failed to create a descriptor pool");
+            }
+
+            long descriptorPool = pDescriptorPool.get(0);
+            this.getDescriptorPools().add(descriptorPool);
+        }
     }
 
     protected void createDescriptorPoolsSet1And2(int descriptorCount) {
@@ -262,7 +328,32 @@ public class FullScreenEffectNabor extends Nabor {
     }
 
     protected void updateDescriptorSet0(int descriptorCount, long commandPool, VkQueue graphicsQueue) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            VkDevice device = this.getDevice();
 
+            VkWriteDescriptorSet.Buffer descriptorWrites = VkWriteDescriptorSet.calloc(1, stack);
+
+            VkDescriptorBufferInfo.Buffer uboInfos = VkDescriptorBufferInfo.calloc(1, stack);
+
+            VkDescriptorBufferInfo dummyUBOInfo = uboInfos.get(0);
+            dummyUBOInfo.buffer(this.getUniformBuffer(0));
+            dummyUBOInfo.offset(0);
+            dummyUBOInfo.range(DummyUBO.SIZEOF);
+
+            VkWriteDescriptorSet uboDescriptorWrite = descriptorWrites.get(0);
+            uboDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);
+            uboDescriptorWrite.dstBinding(0);
+            uboDescriptorWrite.dstArrayElement(0);
+            uboDescriptorWrite.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+            uboDescriptorWrite.descriptorCount(1);
+            uboDescriptorWrite.pBufferInfo(uboInfos);
+
+            List<Long> descriptorSets = this.getDescriptorSets();
+            for (int i = 0; i < descriptorCount; i++) {
+                uboDescriptorWrite.dstSet(descriptorSets.get(i));
+                vkUpdateDescriptorSets(device, descriptorWrites, null);
+            }
+        }
     }
 
     protected void updateDescriptorSets1And2(int descriptorCount, long commandPool, VkQueue graphicsQueue) {

@@ -1,12 +1,11 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import com.github.maeda6uiui.mechtatel.core.MttShaderSettings;
+import com.github.maeda6uiui.mechtatel.core.MttShaderConfig;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectProperties;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
-import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.CommandPoolCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.LogicalDeviceCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.SurfaceCreator;
@@ -24,7 +23,6 @@ import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
@@ -161,39 +159,16 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
             depthImageAspect |= VK_IMAGE_ASPECT_STENCIL_BIT;
         }
 
-        //Get shader URLs =====
-        MttShaderSettings shaderSettings = MttShaderSettings
+        MttShaderConfig shaderConfig = MttShaderConfig
                 .get()
-                .orElse(MttShaderSettings.create());
+                .orElse(MttShaderConfig.create());
 
-        URL presentVertShaderResource;
-        URL presentFragShaderResource;
-        URL textureOperationVertShaderResource;
-        URL textureOperationFragShaderResource;
-        try {
-            presentVertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.present.main.vert.filepath,
-                    shaderSettings.present.main.vert.className
-            );
-            presentFragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.present.main.frag.filepath,
-                    shaderSettings.present.main.frag.className
-            );
+        List<URL> presentVertShaderResources = shaderConfig.present.vertex.mustGetResourceURLs();
+        List<URL> presentFragShaderResources = shaderConfig.present.fragment.mustGetResourceURLs();
+        List<URL> textureOperationVertShaderResources = shaderConfig.textureOperation.vertex.mustGetResourceURLs();
+        List<URL> textureOperationFragShaderResources = shaderConfig.textureOperation.fragment.mustGetResourceURLs();
 
-            textureOperationVertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.textureOperation.main.vert.filepath,
-                    shaderSettings.textureOperation.main.vert.className
-            );
-            textureOperationFragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.textureOperation.main.frag.filepath,
-                    shaderSettings.textureOperation.main.frag.className
-            );
-        } catch (MalformedURLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        //==========
-
-        presentNabor = new PresentNabor(dq.device(), presentVertShaderResource, presentFragShaderResource);
+        presentNabor = new PresentNabor(dq.device(), presentVertShaderResources, presentFragShaderResources);
         presentNabor.compile(
                 swapchain.getSwapchainImageFormat(),
                 VK_FILTER_NEAREST,
@@ -223,7 +198,7 @@ public class MttVulkanImpl implements IMttVulkanImplCommon {
         textureOperationInitialExtent = textureOperationExtent;
 
         textureOperationNabor = new TextureOperationNabor(
-                dq.device(), textureOperationVertShaderResource, textureOperationFragShaderResource);
+                dq.device(), textureOperationVertShaderResources, textureOperationFragShaderResources);
         textureOperationNabor.compile(
                 swapchain.getSwapchainImageFormat(),
                 VK_FILTER_NEAREST,

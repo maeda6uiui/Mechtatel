@@ -17,8 +17,13 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class GaussianBlurNabor extends FullScreenEffectNabor {
+    public GaussianBlurNabor(VkDevice device, List<URL> vertShaderResources, List<URL> fragShaderResources) {
+        super(device, vertShaderResources, fragShaderResources);
+    }
+
+    @Deprecated
     public GaussianBlurNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
-        super(device, vertShaderResource, fragShaderResource);
+        this(device, List.of(vertShaderResource), List.of(fragShaderResource));
     }
 
     @Override

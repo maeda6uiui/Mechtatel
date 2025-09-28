@@ -27,8 +27,8 @@ class Pass2Nabor extends Nabor {
 
     public static final int COLOR_ATTACHMENT_INDEX = 0;
 
-    public Pass2Nabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
+    public Pass2Nabor(VkDevice device, List<URL> vertShaderResources, List<URL> fragShaderResources) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResources, fragShaderResources);
     }
 
     public void transitionColorImageLayout(long commandPool, VkQueue graphicsQueue) {

@@ -28,16 +28,16 @@ public class CustomizablePostProcessingNaborInfo {
         SPOTLIGHT
     }
 
-    private URL vertShaderResource;
-    private URL fragShaderResource;
+    private List<URL> vertShaderResources;
+    private List<URL> fragShaderResources;
     private List<UniformResourceType> uniformResourceTypes;
     private LightingType lightingType;
     private Vector3f lightingClampMin;
     private Vector3f lightingClampMax;
 
-    public CustomizablePostProcessingNaborInfo(URL vertShaderResource, URL fragShaderResource) {
-        this.vertShaderResource = vertShaderResource;
-        this.fragShaderResource = fragShaderResource;
+    public CustomizablePostProcessingNaborInfo(List<URL> vertShaderResources, List<URL> fragShaderResources) {
+        this.vertShaderResources = vertShaderResources;
+        this.fragShaderResources = fragShaderResources;
         uniformResourceTypes = new ArrayList<>();
         uniformResourceTypes.add(UniformResourceType.CAMERA);
         lightingType = LightingType.PARALLEL;
@@ -45,12 +45,27 @@ public class CustomizablePostProcessingNaborInfo {
         lightingClampMax = new Vector3f(1.0f, 1.0f, 1.0f);
     }
 
-    public URL getVertShaderResource() {
-        return vertShaderResource;
+    @Deprecated
+    public CustomizablePostProcessingNaborInfo(URL vertShaderResource, URL fragShaderResource) {
+        this(List.of(vertShaderResource), List.of(fragShaderResource));
     }
 
+    @Deprecated
+    public URL getVertShaderResource() {
+        return vertShaderResources.getFirst();
+    }
+
+    public List<URL> getVertShaderResources() {
+        return vertShaderResources;
+    }
+
+    @Deprecated
     public URL getFragShaderResource() {
-        return fragShaderResource;
+        return fragShaderResources.getFirst();
+    }
+
+    public List<URL> getFragShaderResources() {
+        return fragShaderResources;
     }
 
     public List<UniformResourceType> getUniformResourceTypes() {

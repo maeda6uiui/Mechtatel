@@ -27,8 +27,13 @@ public class TextureOperationNabor extends Nabor {
     public static final int MAX_NUM_TEXTURES = TextureOperationParametersUBO.MAX_NUM_TEXTURES;
     public static final int COLOR_ATTACHMENT_INDEX = 0;
 
+    public TextureOperationNabor(VkDevice device, List<URL> vertShaderResources, List<URL> fragShaderResources) {
+        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResources, fragShaderResources);
+    }
+
+    @Deprecated
     public TextureOperationNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
-        super(device, VK_SAMPLE_COUNT_1_BIT, false, vertShaderResource, fragShaderResource);
+        this(device, List.of(vertShaderResource), List.of(fragShaderResource));
     }
 
     public void transitionColorImage(long commandPool, VkQueue graphicsQueue) {

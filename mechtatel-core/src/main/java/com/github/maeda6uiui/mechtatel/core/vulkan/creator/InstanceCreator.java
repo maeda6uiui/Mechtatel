@@ -14,6 +14,7 @@ import org.lwjgl.vulkan.VkInstanceCreateInfo;
 import static org.lwjgl.glfw.GLFWVulkan.glfwGetRequiredInstanceExtensions;
 import static org.lwjgl.vulkan.EXTDebugUtils.VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
 import static org.lwjgl.vulkan.VK10.*;
+import static org.lwjgl.vulkan.VK14.VK_API_VERSION_1_4;
 
 /**
  * Creates Vulkan instances
@@ -55,7 +56,7 @@ public class InstanceCreator {
             vkAppInfo.pEngineName(stack.UTF8Safe(EngineInfo.NAME));
             vkAppInfo.engineVersion(VK_MAKE_VERSION(
                     EngineInfo.MAJOR_VERSION, EngineInfo.MINOR_VERSION, EngineInfo.PATCH_VERSION));
-            vkAppInfo.apiVersion(VK_API_VERSION_1_0);
+            vkAppInfo.apiVersion(VK_API_VERSION_1_4);
 
             VkInstanceCreateInfo createInfo = VkInstanceCreateInfo.calloc(stack);
             createInfo.sType(VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO);

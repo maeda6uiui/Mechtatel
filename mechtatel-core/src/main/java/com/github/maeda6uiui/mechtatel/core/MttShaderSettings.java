@@ -17,6 +17,7 @@ import java.util.Optional;
  *
  * @author maeda6uiui
  */
+@Deprecated
 public class MttShaderSettings {
     private static final Logger logger = LoggerFactory.getLogger(MttShaderSettings.class);
 
@@ -117,11 +118,16 @@ public class MttShaderSettings {
 
     public static class FullScreenEffectShaderInfo {
         public ShaderInfo gaussianBlur;
+        public ShaderInfo monochromeEffect;
 
         public FullScreenEffectShaderInfo() {
             gaussianBlur = new ShaderInfo();
             gaussianBlur.vert.filepath = "/Standard/Shader/FullScreenEffect/full_screen_effect.vert.glsl";
             gaussianBlur.frag.filepath = "/Standard/Shader/FullScreenEffect/gaussian_blur.frag.glsl";
+
+            monochromeEffect = new ShaderInfo();
+            monochromeEffect.vert.filepath = "/Standard/Shader/FullScreenEffect/full_screen_effect.vert.slang";
+            monochromeEffect.frag.filepath = "/Standard/Shader/FullScreenEffect/monochrome_effect.frag.slang";
         }
     }
 

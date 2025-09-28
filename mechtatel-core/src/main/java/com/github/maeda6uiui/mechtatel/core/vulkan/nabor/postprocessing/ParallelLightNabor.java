@@ -21,8 +21,13 @@ import static org.lwjgl.vulkan.VK10.*;
 public class ParallelLightNabor extends PostProcessingNabor {
     public static final int MAX_NUM_LIGHTS = 4;
 
+    public ParallelLightNabor(VkDevice device, List<URL> vertShaderResources, List<URL> fragShaderResources) {
+        super(device, vertShaderResources, fragShaderResources);
+    }
+
+    @Deprecated
     public ParallelLightNabor(VkDevice device, URL vertShaderResource, URL fragShaderResource) {
-        super(device, vertShaderResource, fragShaderResource);
+        this(device, List.of(vertShaderResource), List.of(fragShaderResource));
     }
 
     @Override

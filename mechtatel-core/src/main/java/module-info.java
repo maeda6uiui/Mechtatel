@@ -15,6 +15,8 @@ module com.github.maeda6uiui.mechtatel.core {
     requires org.lwjgl.openal;
     requires transitive imgui.binding;
     requires com.github.maeda6uiui.mechtatel.natives;
+    requires com.sun.jna;
+    requires org.apache.commons.io;
 
     exports com.github.maeda6uiui.mechtatel.core;
     exports com.github.maeda6uiui.mechtatel.core.fseffect;
@@ -46,4 +48,5 @@ module com.github.maeda6uiui.mechtatel.core {
     exports com.github.maeda6uiui.mechtatel.core.model;
     exports com.github.maeda6uiui.mechtatel.core.model.helper;
     exports com.github.maeda6uiui.mechtatel.core.postprocessing;
+    exports com.github.maeda6uiui.mechtatel.core.vulkan.shader.slang;
 }

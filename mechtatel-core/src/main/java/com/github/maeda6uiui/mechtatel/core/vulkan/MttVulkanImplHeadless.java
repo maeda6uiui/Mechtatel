@@ -1,12 +1,11 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan;
 
 import com.github.maeda6uiui.mechtatel.core.MttSettings;
-import com.github.maeda6uiui.mechtatel.core.MttShaderSettings;
+import com.github.maeda6uiui.mechtatel.core.MttShaderConfig;
 import com.github.maeda6uiui.mechtatel.core.camera.Camera;
 import com.github.maeda6uiui.mechtatel.core.fseffect.FullScreenEffectProperties;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
 import com.github.maeda6uiui.mechtatel.core.shadow.ShadowMappingSettings;
-import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.CommandPoolCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.creator.LogicalDeviceCreator;
 import com.github.maeda6uiui.mechtatel.core.vulkan.drawer.QuadDrawer;
@@ -20,7 +19,6 @@ import org.joml.Vector4f;
 import org.lwjgl.vulkan.VkExtent2D;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
@@ -82,26 +80,12 @@ public class MttVulkanImplHeadless implements IMttVulkanImplCommon {
             depthImageAspect |= VK_IMAGE_ASPECT_STENCIL_BIT;
         }
 
-        //Get shader URLs =====
-        MttShaderSettings shaderSettings = MttShaderSettings
+        MttShaderConfig shaderConfig = MttShaderConfig
                 .get()
-                .orElse(MttShaderSettings.create());
+                .orElse(MttShaderConfig.create());
 
-        URL textureOperationVertShaderResource;
-        URL textureOperationFragShaderResource;
-        try {
-            textureOperationVertShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.textureOperation.main.vert.filepath,
-                    shaderSettings.textureOperation.main.vert.className
-            );
-            textureOperationFragShaderResource = MttURLUtils.getResourceURL(
-                    shaderSettings.textureOperation.main.frag.filepath,
-                    shaderSettings.textureOperation.main.frag.className
-            );
-        } catch (MalformedURLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        //==========
+        List<URL> textureOperationVertShaderResources = shaderConfig.textureOperation.vertex.mustGetResourceURLs();
+        List<URL> textureOperationFragShaderResources = shaderConfig.textureOperation.fragment.mustGetResourceURLs();
 
         int textureOperationWidth;
         if (settings.textureOperation.width < 0) {
@@ -120,7 +104,7 @@ public class MttVulkanImplHeadless implements IMttVulkanImplCommon {
         VkExtent2D textureOperationExtent = VkExtent2D.create().set(textureOperationWidth, textureOperationHeight);
 
         textureOperationNabor = new TextureOperationNabor(
-                dq.device(), textureOperationVertShaderResource, textureOperationFragShaderResource);
+                dq.device(), textureOperationVertShaderResources, textureOperationFragShaderResources);
         textureOperationNabor.compile(
                 COLOR_IMAGE_FORMAT,
                 VK_FILTER_NEAREST,

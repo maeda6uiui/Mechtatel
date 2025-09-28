@@ -1,5 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core;
 
+import com.github.maeda6uiui.mechtatel.common.utils.MttResourceFileUtils;
 import com.github.maeda6uiui.mechtatel.core.physics.MttDefaultPhysicsSpace;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
@@ -69,6 +70,13 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
         alcMakeContextCurrent(alcContext);
         AL.createCapabilities(deviceCaps);
         //==========
+
+        //Delete previously created temporary files for native libraries
+        try {
+            MttResourceFileUtils.deleteTemporaryFiles("mttnatives", true);
+        } catch (IOException e) {
+            logger.warn("Failed to delete temporary files", e);
+        }
 
         //Load native libraries
         IMttNativeLoader nativeLoader;

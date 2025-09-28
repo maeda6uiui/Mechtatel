@@ -14,6 +14,7 @@ import java.io.IOException;
 public class NativeExtractor implements INativeExtractor {
     @Override
     public File extractLibAudioPlayer() throws IOException {
-        return MttResourceFileUtils.extractFile(this.getClass(), "/Bin/audioplayer.dll");
+        return MttResourceFileUtils.extractFile(
+                this.getClass(), "/Bin/audioplayer.dll", "mttaudionatives", false);
     }
 }

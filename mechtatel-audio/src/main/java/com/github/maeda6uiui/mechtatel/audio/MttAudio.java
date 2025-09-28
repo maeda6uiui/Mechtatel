@@ -1,8 +1,12 @@
 package com.github.maeda6uiui.mechtatel.audio;
 
+import com.github.maeda6uiui.mechtatel.common.utils.MttResourceFileUtils;
 import com.sun.jna.Pointer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -12,6 +16,8 @@ import java.nio.file.Paths;
  * @author maeda6uiui
  */
 public class MttAudio {
+    private static final Logger logger = LoggerFactory.getLogger(MttAudio.class);
+
     private String playerId;
 
     private String pointerToString(Pointer p) {
@@ -23,6 +29,12 @@ public class MttAudio {
     public MttAudio(String filepath) throws FileNotFoundException {
         if (!Files.exists(Paths.get(filepath))) {
             throw new FileNotFoundException(filepath);
+        }
+
+        try {
+            MttResourceFileUtils.deleteTemporaryFiles("mttaudionatives", false);
+        } catch (IOException e) {
+            logger.warn("Failed to delete temporary files", e);
         }
 
         playerId = this.pointerToString(IAudioPlayer.INSTANCE.spawn_audio_player_thread(filepath));

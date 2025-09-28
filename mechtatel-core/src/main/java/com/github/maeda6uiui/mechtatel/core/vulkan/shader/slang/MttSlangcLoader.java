@@ -40,10 +40,12 @@ class MttSlangcLoader {
         Path tempRoot = Paths.get(System.getProperty("java.io.tmpdir"));
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(tempRoot, tmpDirPrefix + "*")) {
             stream.forEach(p -> {
-                try {
-                    FileUtils.deleteDirectory(p.toFile());
-                } catch (IOException e) {
-                    logger.warn("Failed to delete temporary directory", e);
+                if (Files.isDirectory(p)) {
+                    try {
+                        FileUtils.deleteDirectory(p.toFile());
+                    } catch (IOException e) {
+                        logger.warn("Failed to delete temporary directory", e);
+                    }
                 }
             });
         } catch (IOException e) {

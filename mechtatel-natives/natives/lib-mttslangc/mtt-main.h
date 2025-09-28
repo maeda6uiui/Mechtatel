@@ -24,10 +24,16 @@ public:
 };
 
 //===== C interface =====
-extern "C" int mttSlangcCompileIntoSpirv(
+#ifdef _WIN32
+#define DLL_EXPORT __declspec(dllexport)
+#else
+#define DLL_EXPORT
+#endif
+
+extern "C" DLL_EXPORT int mttSlangcCompileIntoSpirv(
     const char *mainModuleFilepath,
     uint8_t **outSpirv,
     size_t *outSize,
     char **outErrorMsg);
-extern "C" void mttSlangcFreeUint8t(const uint8_t *p);
-extern "C" void mttSlangcFreeStr(const char *p);
+extern "C" DLL_EXPORT void mttSlangcFreeUint8t(const uint8_t *p);
+extern "C" DLL_EXPORT void mttSlangcFreeStr(const char *p);

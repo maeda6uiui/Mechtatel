@@ -9,6 +9,7 @@ import java.nio.file.Path;
  *
  * @author maeda6uiui
  */
+@Deprecated
 public interface IMttNativeLoader {
     void loadLibbulletjme() throws IOException;
 

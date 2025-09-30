@@ -20,14 +20,16 @@ public abstract class MttNativeLoaderBase {
 
     private Path tempDir;
 
-    public MttNativeLoaderBase() {
+    static {
         //Delete previously created temporary files and directories
         try {
             MttResourceFileUtils.deleteTemporaryFiles(TEMP_FILENAME_PREFIX, true);
         } catch (IOException e) {
             logger.warn("Failed to delete temporary files", e);
         }
+    }
 
+    public MttNativeLoaderBase() {
         //Create a new temporary directory to extract native libraries into
         try {
             tempDir = Files.createTempDirectory(TEMP_FILENAME_PREFIX);

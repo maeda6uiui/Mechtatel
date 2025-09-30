@@ -80,6 +80,24 @@ public class MttResourceFileUtils {
      * Loads a native library contained in a JAR.
      * This method first extracts the native library from inside a JAR to a temporary file,
      * and then loads it with {@link System#load(String)}.
+     * The temporary file is created under the OS-dependent temp directory.
+     * Note that delete-on-exit method does not work on Windows
+     * because it seems that the DLL file is locked even at the moment of JVM shutdown.
+     *
+     * @param clazz    Class to call {@link Class#getResourceAsStream(String)}
+     * @param filepath Filepath of the native library
+     * @throws IOException If it fails to extract the file
+     */
+    public static void loadNativeLib(
+            Class<?> clazz, String filepath, String tempFilePrefix, boolean deleteOnExit) throws IOException {
+        File tempFile = extractFile(clazz, filepath, tempFilePrefix, deleteOnExit);
+        System.load(tempFile.getAbsolutePath());
+    }
+
+    /**
+     * Loads a native library contained in a JAR.
+     * This method first extracts the native library from inside a JAR to a temporary file,
+     * and then loads it with {@link System#load(String)}.
      * This method does not delete the temporary file because {@link File#deleteOnExit()} does not work
      * on Windows probably because Windows still locks the DLL file even at the moment of JVM shutdown.
      * The temporary file is created with a prefix of "mttnatives" under the OS-dependent temp directory.
@@ -88,9 +106,9 @@ public class MttResourceFileUtils {
      * @param filepath Filepath of the native library
      * @throws IOException If it fails to extract the file
      */
+    @Deprecated
     public static void loadNativeLib(Class<?> clazz, String filepath) throws IOException {
-        File tempFile = extractFile(clazz, filepath, "mttnatives", false);
-        System.load(tempFile.getAbsolutePath());
+        loadNativeLib(clazz, filepath, "mttnatives", false);
     }
 
     /**

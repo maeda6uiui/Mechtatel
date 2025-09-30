@@ -16,10 +16,16 @@ import java.nio.file.Path;
 public class MttNativeLoader extends MttNativeLoaderBase implements IMttNativeLoader {
     @Override
     public void loadLibbulletjme() throws IOException {
-        MttResourceFileUtils.loadNativeLib(this.getClass(), "/Bin/Windows64ReleaseSp_bulletjme.dll");
+        MttResourceFileUtils.loadNativeLib(
+                this.getClass(),
+                "/Bin/Windows64ReleaseSp_bulletjme.dll",
+                "mttnatives",
+                false
+        );
     }
 
     @Override
+    @Deprecated
     public File extractLibMttSlangc() throws IOException {
         return MttResourceFileUtils.extractFile(this.getClass(), "/Bin/mttslangc.dll");
     }
@@ -35,6 +41,7 @@ public class MttNativeLoader extends MttNativeLoaderBase implements IMttNativeLo
     }
 
     @Override
+    @Deprecated
     public void loadLibSlang() throws IOException {
         MttResourceFileUtils.loadNativeLib(this.getClass(), "/Bin/slang.dll");
     }

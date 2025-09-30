@@ -1,11 +1,10 @@
 package com.github.maeda6uiui.mechtatel.core;
 
-import com.github.maeda6uiui.mechtatel.common.utils.MttResourceFileUtils;
 import com.github.maeda6uiui.mechtatel.core.physics.MttDefaultPhysicsSpace;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
-import com.github.maeda6uiui.mechtatel.natives.IMttNativeLoader;
-import com.github.maeda6uiui.mechtatel.natives.MttNativeLoaderFactory;
+import com.github.maeda6uiui.mechtatel.natives.MttNativeLoaderBase;
+import com.github.maeda6uiui.mechtatel.natives.MttNativeLoaderFactory2;
 import com.jme3.bullet.PhysicsSpace;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
@@ -71,17 +70,10 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
         AL.createCapabilities(deviceCaps);
         //==========
 
-        //Delete previously created temporary files for native libraries
-        try {
-            MttResourceFileUtils.deleteTemporaryFiles("mttnatives", true);
-        } catch (IOException e) {
-            logger.warn("Failed to delete temporary files", e);
-        }
-
         //Load native libraries
-        IMttNativeLoader nativeLoader;
+        MttNativeLoaderBase nativeLoader;
         try {
-            nativeLoader = MttNativeLoaderFactory.createNativeLoader(PlatformInfo.PLATFORM);
+            nativeLoader = MttNativeLoaderFactory2.createNativeLoader(PlatformInfo.PLATFORM);
         } catch (ClassNotFoundException
                  | NoSuchMethodException
                  | InstantiationException

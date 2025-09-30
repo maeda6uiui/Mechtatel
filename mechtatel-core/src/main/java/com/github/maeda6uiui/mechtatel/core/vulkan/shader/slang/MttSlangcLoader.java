@@ -1,17 +1,13 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.shader.slang;
 
-import com.github.maeda6uiui.mechtatel.natives.IMttNativeLoader;
-import com.github.maeda6uiui.mechtatel.natives.MttNativeLoaderFactory;
+import com.github.maeda6uiui.mechtatel.natives.MttNativeLoaderBase;
+import com.github.maeda6uiui.mechtatel.natives.MttNativeLoaderFactory2;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 /**
  * Native library loader for the Slang compiler
@@ -19,8 +15,6 @@ import java.nio.file.Path;
  * @author maeda6uiui
  */
 class MttSlangcLoader {
-    private static final Logger logger = LoggerFactory.getLogger(MttSlangcLoader.class);
-
     public static IMttSlangc load() {
         String platform;
         if (Platform.isWindows()) {
@@ -31,21 +25,13 @@ class MttSlangcLoader {
             throw new RuntimeException("Unsupported platform");
         }
 
-        //Create a temporary directory to extract native libs into
-        Path tempDir;
-        try {
-            tempDir = Files.createTempDirectory("mttnatives");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
         //Extract native libs
         File slangLibFile;
         File mttslangcLibFile;
         try {
-            IMttNativeLoader loader = MttNativeLoaderFactory.createNativeLoader(platform);
-            slangLibFile = loader.extractLibSlang(tempDir);
-            mttslangcLibFile = loader.extractLibMttSlangc(tempDir);
+            MttNativeLoaderBase loader = MttNativeLoaderFactory2.createNativeLoader(platform);
+            slangLibFile = loader.extractLibSlang();
+            mttslangcLibFile = loader.extractLibMttSlangc();
         } catch (
                 ClassNotFoundException
                 | NoSuchMethodException

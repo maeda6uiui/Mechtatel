@@ -17,7 +17,6 @@ module com.github.maeda6uiui.mechtatel.core {
     requires com.github.maeda6uiui.mechtatel.natives;
     requires com.sun.jna;
     requires org.apache.commons.io;
-    requires com.github.maeda6uiui.mechtatel.common.utils;
 
     exports com.github.maeda6uiui.mechtatel.core;
     exports com.github.maeda6uiui.mechtatel.core.fseffect;

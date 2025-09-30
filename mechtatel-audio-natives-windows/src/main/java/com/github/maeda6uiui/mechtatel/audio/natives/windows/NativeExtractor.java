@@ -11,6 +11,7 @@ import java.io.IOException;
  *
  * @author maeda6uiui
  */
+@Deprecated
 public class NativeExtractor implements INativeExtractor {
     @Override
     public File extractLibAudioPlayer() throws IOException {

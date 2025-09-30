@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
  *
  * @author maeda6uiui
  */
+@Deprecated
 public class NativeExtractorFactory {
     private static final String NATIVE_EXTRACTOR_CLASS_NAME = "NativeExtractor";
     private static final String WINDOWS_PACKAGE_PATH = "com.github.maeda6uiui.mechtatel.audio.natives.windows";

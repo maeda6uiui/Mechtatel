@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
  *
  * @author maeda6uiui
  */
+@Deprecated
 public class MttNativeLoaderFactory {
     private static final String NATIVE_LOADER_CLASS_NAME = "MttNativeLoader";
     private static final String WINDOWS_PACKAGE_PATH = "com.github.maeda6uiui.mechtatel.natives.windows";

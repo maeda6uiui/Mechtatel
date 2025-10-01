@@ -12,26 +12,26 @@ public class TestAudioPause {
     }
 
     public static void main(String[] args) {
-        MttAudio sound;
+        MttAudio audio;
         try {
-            sound = new MttAudio("./Mechtatel/Standard/Audio/op_8.mp3");
+            audio = new MttAudio("./Mechtatel/Standard/Audio/op_8.mp3");
         } catch (FileNotFoundException e) {
             System.err.println(e);
             return;
         }
 
-        sound.play();
-        System.out.printf("isPaused: %b\n", sound.isPaused());
+        audio.play();
+        System.out.printf("isPaused: %b\n", audio.isPaused());
         sleep(10000);
 
-        sound.pause();
-        System.out.printf("isPaused: %b\n", sound.isPaused());
+        audio.pause();
+        System.out.printf("isPaused: %b\n", audio.isPaused());
         sleep(3000);
 
-        sound.play();
-        System.out.printf("isPaused: %b\n", sound.isPaused());
+        audio.play();
+        System.out.printf("isPaused: %b\n", audio.isPaused());
         sleep(10000);
 
-        sound.stop();
+        audio.stop();
     }
 }

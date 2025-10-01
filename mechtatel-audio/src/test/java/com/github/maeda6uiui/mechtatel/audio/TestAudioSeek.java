@@ -4,18 +4,18 @@ import java.io.FileNotFoundException;
 
 public class TestAudioSeek {
     public static void main(String[] args) {
-        MttAudio sound;
+        MttAudio audio;
         try {
-            sound = new MttAudio("./Mechtatel/Standard/Audio/op_8.mp3");
+            audio = new MttAudio("./Mechtatel/Standard/Audio/op_8.mp3");
         } catch (FileNotFoundException e) {
             System.err.println(e);
             return;
         }
 
-        sound.seek(10000);
-        System.out.printf("Current position: %f s\n", sound.getPos() / 1000.0);
+        audio.seek(10000);
+        System.out.printf("Current position: %f s\n", audio.getPos() / 1000.0);
 
-        sound.play();
+        audio.play();
 
         try {
             Thread.sleep(10000);

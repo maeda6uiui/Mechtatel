@@ -8,46 +8,46 @@ import java.io.FileNotFoundException;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestAudioMethods {
-    private MttAudio sound;
+    private MttAudio audio;
 
     @BeforeEach
     public void loadMttAudio() {
         assertDoesNotThrow(() -> {
-            sound = new MttAudio("../Mechtatel/Standard/Audio/op_8.mp3");
+            audio = new MttAudio("../Mechtatel/Standard/Audio/op_8.mp3");
         });
     }
 
     @Test
     public void testFileNotFound() {
         assertThrows(FileNotFoundException.class, () -> {
-            sound = new MttAudio("example.mp3");
+            audio = new MttAudio("example.mp3");
         });
     }
 
     @Test
     public void testGetSpeed() {
-        assertEquals(1.0f, sound.getSpeed());
-        sound.setSpeed(1.5f);
-        assertEquals(1.5f, sound.getSpeed());
+        assertEquals(1.0f, audio.getSpeed());
+        audio.setSpeed(1.5f);
+        assertEquals(1.5f, audio.getSpeed());
     }
 
     @Test
     public void testGetVolume() {
-        assertEquals(1.0f, sound.getVolume());
-        sound.setVolume(1.5f);
-        assertEquals(1.5f, sound.getVolume());
+        assertEquals(1.0f, audio.getVolume());
+        audio.setVolume(1.5f);
+        assertEquals(1.5f, audio.getVolume());
     }
 
     @Test
     public void testGetPos() {
-        assertEquals(0, sound.getPos());
+        assertEquals(0, audio.getPos());
     }
 
     @Test
     public void testCallMethodAfterStop() {
-        sound.stop();
+        audio.stop();
         assertThrows(RuntimeException.class, () -> {
-            sound.isFinished();
+            audio.isFinished();
         });
     }
 }

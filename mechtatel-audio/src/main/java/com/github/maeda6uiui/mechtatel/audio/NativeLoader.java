@@ -27,7 +27,7 @@ public class NativeLoader {
 
         File libFile;
         try {
-            MttNativeLoaderBase loader = MttNativeLoaderFactory.createNativeExtractor(platform);
+            MttNativeLoaderBase loader = MttNativeLoaderFactory.createNativeLoader(platform);
             libFile = loader.extractLibAudioPlayer();
         } catch (
                 ClassNotFoundException

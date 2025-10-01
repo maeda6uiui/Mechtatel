@@ -3,17 +3,16 @@ package com.github.maeda6uiui.mechtatel.natives;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Factory for native loader
+ * Factory of native loader
  *
  * @author maeda6uiui
  */
-@Deprecated
-public class MttNativeLoaderFactory {
-    private static final String NATIVE_LOADER_CLASS_NAME = "MttNativeLoader";
+public class MttNativeLoaderFactory2 {
+    private static final String NATIVE_LOADER_CLASS_NAME = "MttNativeLoader2";
     private static final String WINDOWS_PACKAGE_PATH = "com.github.maeda6uiui.mechtatel.natives.windows";
     private static final String LINUX_PACKAGE_PATH = "com.github.maeda6uiui.mechtatel.natives.linux";
 
-    public static IMttNativeLoader createNativeLoader(String platform)
+    public static MttNativeLoaderBase createNativeLoader(String platform)
             throws ClassNotFoundException, NoSuchMethodException,
             InstantiationException, IllegalAccessException, InvocationTargetException {
         String className = switch (platform) {
@@ -23,6 +22,6 @@ public class MttNativeLoaderFactory {
         };
 
         Class<?> clazz = Class.forName(className);
-        return (IMttNativeLoader) clazz.getDeclaredConstructor().newInstance();
+        return (MttNativeLoaderBase) clazz.getDeclaredConstructor().newInstance();
     }
 }

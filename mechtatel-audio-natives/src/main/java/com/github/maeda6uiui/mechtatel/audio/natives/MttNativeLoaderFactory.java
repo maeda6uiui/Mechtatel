@@ -3,26 +3,25 @@ package com.github.maeda6uiui.mechtatel.audio.natives;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Factory for native extractor
+ * Factory for native loader
  *
  * @author maeda6uiui
  */
-@Deprecated
-public class NativeExtractorFactory {
-    private static final String NATIVE_EXTRACTOR_CLASS_NAME = "NativeExtractor";
+public class MttNativeLoaderFactory {
+    private static final String NATIVE_LOADER_CLASS_NAME = "MttNativeLoader";
     private static final String WINDOWS_PACKAGE_PATH = "com.github.maeda6uiui.mechtatel.audio.natives.windows";
     private static final String LINUX_PACKAGE_PATH = "com.github.maeda6uiui.mechtatel.audio.natives.linux";
 
-    public static INativeExtractor createNativeExtractor(String platform)
+    public static MttNativeLoaderBase createNativeLoader(String platform)
             throws ClassNotFoundException, NoSuchMethodException,
             InstantiationException, IllegalAccessException, InvocationTargetException {
         String className = switch (platform) {
-            case "windows" -> WINDOWS_PACKAGE_PATH + "." + NATIVE_EXTRACTOR_CLASS_NAME;
-            case "linux" -> LINUX_PACKAGE_PATH + "." + NATIVE_EXTRACTOR_CLASS_NAME;
+            case "windows" -> WINDOWS_PACKAGE_PATH + "." + NATIVE_LOADER_CLASS_NAME;
+            case "linux" -> LINUX_PACKAGE_PATH + "." + NATIVE_LOADER_CLASS_NAME;
             default -> throw new IllegalArgumentException("Unsupported platform: " + platform);
         };
 
         Class<?> clazz = Class.forName(className);
-        return (INativeExtractor) clazz.getDeclaredConstructor().newInstance();
+        return (MttNativeLoaderBase) clazz.getDeclaredConstructor().newInstance();
     }
 }

@@ -12,6 +12,7 @@ import java.nio.file.Path;
  *
  * @author maeda6uiui
  */
+@Deprecated
 public class MttNativeLoader implements IMttNativeLoader {
     @Override
     public void loadLibbulletjme() throws IOException {

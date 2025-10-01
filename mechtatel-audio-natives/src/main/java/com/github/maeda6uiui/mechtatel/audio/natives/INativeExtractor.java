@@ -8,6 +8,7 @@ import java.io.IOException;
  *
  * @author maeda6uiui
  */
+@Deprecated
 public interface INativeExtractor {
     File extractLibAudioPlayer() throws IOException;
 }

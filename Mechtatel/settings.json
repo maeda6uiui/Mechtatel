@@ -36,6 +36,7 @@
         "changeExtentOnRecreate": true
     },
     "vulkan": {
+        "apiVersion": "1.3",
         "enableValidationLayer": true,
         "preferablePhysicalDeviceIndex": 0,
         "preferableGraphicsFamilyIndex": 0,

@@ -8,6 +8,7 @@
         <artifactId>mechtatel</artifactId>
         <version>0.3.0</version>
     </parent>
+    <name>mechtatel-common-utils</name>
 
     <artifactId>mechtatel-common-utils</artifactId>
 

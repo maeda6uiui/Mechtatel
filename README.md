@@ -32,7 +32,7 @@ Its somewhat cheap taste of 20-year-old gameplay still captivates me.
 - Java ≥ 21
 - Vulkan ≥ 1.0
   - Current default for this engine is Vulkan 1.3
-  - Configurable with settings.json
+  - Configurable via settings.json
   - Specifying older version of Vulkan API reports a validation error when using Slang shaders
 
 ### Supported platforms

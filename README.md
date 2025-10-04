@@ -22,10 +22,23 @@ It's been years since I came up with an idea like "Isn't it great if I could cre
 If you just want to create a game, then you should take advantage of the great game engines such as Unity and Unreal Engine.
 As for me, I simply love to write code, and want to develop a game starting from the lowest level possible.
 
-I've been a big fan of an old good game called [X operations](https://rucsgames.net/se/xops/).
+I've been a big fan of a good old game called [X operations](https://rucsgames.net/se/xops/).
 It's a shooter game developed for Windows and first released in 2003.
 I always have this game in mind when developing the Mechtatel engine, thinking about what kind of features will be required to develop a modernized cross-platform version of it.
 Its somewhat cheap taste of 20-year-old gameplay still captivates me. 
+
+## Requirements
+
+- Java ≥ 21
+- Vulkan ≥ 1.0
+  - Current default for this engine is Vulkan 1.3
+  - Configurable via settings.json
+  - Specifying older version of Vulkan API reports a validation error when using Slang shaders
+
+### Supported platforms
+
+- Linux x64
+- Windows x64
 
 ## Try it out!
 
@@ -36,12 +49,12 @@ Its somewhat cheap taste of 20-year-old gameplay still captivates me.
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-core</artifactId>
-        <version>0.2.0</version>
+        <version>0.3.0</version>
     </dependency>
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-logging</artifactId>
-        <version>0.2.0</version>
+        <version>0.3.0</version>
     </dependency>
 </dependencies>
 ```
@@ -57,7 +70,7 @@ You can overwrite it or use another logging implementation at your discretion.
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-audio</artifactId>
-        <version>0.2.0</version>
+        <version>0.3.0</version>
     </dependency>
 </dependencies>
 ```
@@ -71,10 +84,33 @@ It can be used independently from `mechtatel-core`, but keep in mind that it cur
 Unfortunately, there are no elaborate documents for this project so far.
 However, you could still check out the [test code](./mechtatel-core/src/test/java/com/github/maeda6uiui/mechtatel/) and hopefully get to know what Mechtatel has to offer!
 
+## Settings
+
+You can change some values pertaining to this engine via settings.json.
+Its default location is "./Mechtatel/settings.json", but you could rename it as per your need.
+
+Below is an excerpt from a test code.
+You pass the filepath of the setting file to the `MttSettings.load` method.
+
+```java
+public SpotlightTest(MttSettings settings) {
+    super(settings);
+    this.run();
+}
+
+public static void main(String[] args) {
+    MttSettings
+            .load("./Mechtatel/settings.json")
+            .ifPresentOrElse(
+                    SpotlightTest::new,
+                    () -> logger.error("Failed to load settings")
+            );
+}
+```
+
 ## Todo
 
 - Reflection mapping
-- Normal mapping
 - Water surface
 
 ## Special thanks to

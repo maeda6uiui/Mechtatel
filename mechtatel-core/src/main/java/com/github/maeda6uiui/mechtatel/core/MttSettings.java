@@ -107,6 +107,7 @@ public class MttSettings {
     }
 
     public static class VulkanSettings {
+        public String apiVersion;
         public boolean enableValidationLayer;
         public int preferablePhysicalDeviceIndex;
         public int preferableGraphicsFamilyIndex;
@@ -115,6 +116,7 @@ public class MttSettings {
         public int numShadowMaps;
 
         public VulkanSettings() {
+            apiVersion = "1.3";
             enableValidationLayer = false;
             preferablePhysicalDeviceIndex = 0;
             preferableGraphicsFamilyIndex = -1;

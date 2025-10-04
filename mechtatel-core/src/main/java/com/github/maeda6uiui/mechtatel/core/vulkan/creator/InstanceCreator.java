@@ -14,6 +14,9 @@ import org.lwjgl.vulkan.VkInstanceCreateInfo;
 import static org.lwjgl.glfw.GLFWVulkan.glfwGetRequiredInstanceExtensions;
 import static org.lwjgl.vulkan.EXTDebugUtils.VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
 import static org.lwjgl.vulkan.VK10.*;
+import static org.lwjgl.vulkan.VK11.VK_API_VERSION_1_1;
+import static org.lwjgl.vulkan.VK12.VK_API_VERSION_1_2;
+import static org.lwjgl.vulkan.VK13.VK_API_VERSION_1_3;
 import static org.lwjgl.vulkan.VK14.VK_API_VERSION_1_4;
 
 /**
@@ -56,7 +59,17 @@ public class InstanceCreator {
             vkAppInfo.pEngineName(stack.UTF8Safe(EngineInfo.NAME));
             vkAppInfo.engineVersion(VK_MAKE_VERSION(
                     EngineInfo.MAJOR_VERSION, EngineInfo.MINOR_VERSION, EngineInfo.PATCH_VERSION));
-            vkAppInfo.apiVersion(VK_API_VERSION_1_4);
+
+            int apiVersion = switch (settings.vulkanSettings.apiVersion) {
+                case "1.0" -> VK_API_VERSION_1_0;
+                case "1.1" -> VK_API_VERSION_1_1;
+                case "1.2" -> VK_API_VERSION_1_2;
+                case "1.3" -> VK_API_VERSION_1_3;
+                case "1.4" -> VK_API_VERSION_1_4;
+                default -> throw new RuntimeException(
+                        "Unknown Vulkan API version specified: " + settings.vulkanSettings.apiVersion);
+            };
+            vkAppInfo.apiVersion(apiVersion);
 
             VkInstanceCreateInfo createInfo = VkInstanceCreateInfo.calloc(stack);
             createInfo.sType(VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO);

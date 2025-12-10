@@ -31,9 +31,11 @@ public class TestMttResourceFileUtils {
         assertFalse(Files.exists(tempFile));
         assertTrue(Files.exists(tempDir));
 
-        Path tempFile2 = Files.createTempFile(PREFIX, ".tmp");
-        MttResourceFileUtils.deleteTemporaryFiles(PREFIX, true);
+        final String PREFIX_2 = "mtttest2";
+        Path tempFile2 = Files.createTempFile(PREFIX_2, ".tmp");
+        Path tempDir2 = Files.createTempDirectory(PREFIX_2);
+        MttResourceFileUtils.deleteTemporaryFiles(PREFIX_2, true);
         assertFalse(Files.exists(tempFile2));
-        assertFalse(Files.exists(tempDir));
+        assertFalse(Files.exists(tempDir2));
     }
 }

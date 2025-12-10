@@ -127,8 +127,12 @@ public class MttResourceFileUtils {
         Path tempRoot = Paths.get(System.getProperty("java.io.tmpdir"));
 
         var tempFilePaths = new ArrayList<Path>();
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(tempRoot, prefix + "*")) {
-            stream.forEach(tempFilePaths::add);
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(tempRoot)) {
+            for (Path path : stream) {
+                if (path.getFileName().toString().startsWith(prefix)) {
+                    tempFilePaths.add(path);
+                }
+            }
         }
 
         for (var path : tempFilePaths) {

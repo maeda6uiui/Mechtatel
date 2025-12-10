@@ -113,17 +113,26 @@ public class MttResourceFileUtils {
 
     /**
      * Deletes temporary files that have a prefix specified.
+     * The prefix cannot be null, empty or blank.
      *
      * @param prefix            Prefix for the temporary files
      * @param deleteDirectories Deletes directories as well if true
      * @throws IOException If it fails to enumerate files or to delete them
      */
     public static void deleteTemporaryFiles(String prefix, boolean deleteDirectories) throws IOException {
+        if (prefix == null || prefix.isBlank()) {
+            throw new IllegalArgumentException("Prefix cannot be null, empty or blank");
+        }
+
         Path tempRoot = Paths.get(System.getProperty("java.io.tmpdir"));
 
         var tempFilePaths = new ArrayList<Path>();
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(tempRoot, prefix + "*")) {
-            stream.forEach(tempFilePaths::add);
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(tempRoot)) {
+            for (Path path : stream) {
+                if (path.getFileName().toString().startsWith(prefix)) {
+                    tempFilePaths.add(path);
+                }
+            }
         }
 
         for (var path : tempFilePaths) {

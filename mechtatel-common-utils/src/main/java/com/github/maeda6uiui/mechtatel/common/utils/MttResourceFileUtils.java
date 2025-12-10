@@ -113,6 +113,7 @@ public class MttResourceFileUtils {
 
     /**
      * Deletes temporary files that have a prefix specified.
+     * The prefix cannot be null, empty or blank.
      *
      * @param prefix            Prefix for the temporary files
      * @param deleteDirectories Deletes directories as well if true

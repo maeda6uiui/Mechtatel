@@ -11,12 +11,15 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestMttResourceFileUtils {
     @Test
     public void testDeleteTemporaryFiles() throws IOException {
-        //Exception is thrown if prefix is null or empty
+        //Exception is thrown if prefix is null, empty or blank
         assertThrows(IllegalArgumentException.class, () -> {
             MttResourceFileUtils.deleteTemporaryFiles(null, false);
         });
         assertThrows(IllegalArgumentException.class, () -> {
             MttResourceFileUtils.deleteTemporaryFiles("", true);
+        });
+        assertThrows(IllegalArgumentException.class, () -> {
+            MttResourceFileUtils.deleteTemporaryFiles(" ", true);
         });
 
         //Check if temporary files and directories are deleted

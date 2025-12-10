@@ -22,7 +22,7 @@ public class TestMttResourceFileUtils {
             MttResourceFileUtils.deleteTemporaryFiles(" ", true);
         });
 
-        //Check if temporary files and directories are deleted
+        //Check if temporary files are deleted
         final String PREFIX = "mtttest";
         Path tempFile = Files.createTempFile(PREFIX, ".tmp");
         Path tempDir = Files.createTempDirectory(PREFIX);
@@ -31,6 +31,7 @@ public class TestMttResourceFileUtils {
         assertFalse(Files.exists(tempFile));
         assertTrue(Files.exists(tempDir));
 
+        //Check if temporary files and directories are deleted
         final String PREFIX_2 = "mtttest2";
         Path tempFile2 = Files.createTempFile(PREFIX_2, ".tmp");
         Path tempDir2 = Files.createTempDirectory(PREFIX_2);

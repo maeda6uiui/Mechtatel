@@ -1,6 +1,5 @@
-package com.github.maeda6uiui.mechtatel.utils;
+package com.github.maeda6uiui.mechtatel.common.utils;
 
-import com.github.maeda6uiui.mechtatel.common.utils.MttResourceFileUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

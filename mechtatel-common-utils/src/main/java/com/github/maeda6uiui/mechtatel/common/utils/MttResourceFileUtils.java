@@ -119,8 +119,8 @@ public class MttResourceFileUtils {
      * @throws IOException If it fails to enumerate files or to delete them
      */
     public static void deleteTemporaryFiles(String prefix, boolean deleteDirectories) throws IOException {
-        if (prefix == null || prefix.isEmpty()) {
-            throw new IllegalArgumentException("Prefix cannot be null or empty");
+        if (prefix == null || prefix.isBlank()) {
+            throw new IllegalArgumentException("Prefix cannot be null, empty or blank");
         }
 
         Path tempRoot = Paths.get(System.getProperty("java.io.tmpdir"));

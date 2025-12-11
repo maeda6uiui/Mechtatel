@@ -110,9 +110,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.dabasan</groupId>
+            <groupId>io.github.maeda6uiui</groupId>
             <artifactId>jxm-bd1</artifactId>
-            <version>2.2.0</version>
+            <version>3.0.0</version>
         </dependency>
 
         <dependency>

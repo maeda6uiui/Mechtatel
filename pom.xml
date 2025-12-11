@@ -54,7 +54,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <lwjgl.version>3.3.6</lwjgl.version>
-        <imgui.java.version>1.88.0</imgui.java.version>
+        <imgui.java.version>1.90.0</imgui.java.version>
         <libbulletjme.version>21.2.1</libbulletjme.version>
     </properties>
 

@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class JXMModelLoader {
     public static MttModelData load(Path modelFile) throws IOException {
-        var manipulator = new BD1Manipulator(modelFile.toFile());
+        var manipulator = new BD1Manipulator(modelFile);
 
         //Rescale the model so that 1 coord represents 1 meter
         final float RESCALE_FACTOR = 1.7f / 20.0f;

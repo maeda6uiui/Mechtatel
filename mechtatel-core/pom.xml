@@ -110,9 +110,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.dabasan</groupId>
+            <groupId>io.github.maeda6uiui</groupId>
             <artifactId>jxm-bd1</artifactId>
-            <version>2.2.0</version>
+            <version>3.0.0</version>
         </dependency>
 
         <dependency>
@@ -134,12 +134,12 @@
         <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
-            <version>5.17.0</version>
+            <version>5.18.1</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.20.0</version>
+            <version>2.21.0</version>
         </dependency>
 
         <dependency>

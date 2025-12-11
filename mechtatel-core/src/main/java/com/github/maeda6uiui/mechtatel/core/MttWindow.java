@@ -184,7 +184,7 @@ public class MttWindow {
             case GLFW_KEY_SPACE -> ImGuiKey.Space;
             case GLFW_KEY_ENTER -> ImGuiKey.Enter;
             case GLFW_KEY_ESCAPE -> ImGuiKey.Escape;
-            case GLFW_KEY_KP_ENTER -> ImGuiKey.KeyPadEnter;
+            case GLFW_KEY_KP_ENTER -> ImGuiKey.KeypadEnter;
             default -> ImGuiKey.None;
         };
         BiConsumer<Integer, Boolean> cSetSpecialKey = (glfwKey, value) -> {

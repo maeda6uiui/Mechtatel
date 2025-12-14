@@ -16,7 +16,7 @@ public class MttNativeLoader2 extends MttNativeLoaderBase {
     public void loadLibbulletjme() throws IOException {
         MttResourceFileUtils.loadNativeLib(
                 this.getClass(),
-                "/Bin/Linux64ReleaseSp_libbulletjme.so",
+                "/Bin/Linux_ARM64ReleaseSp_libbulletjme.so",
                 TEMP_FILENAME_PREFIX,
                 false
         );

@@ -79,6 +79,7 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
 
         try {
             nativeLoader.loadLibbulletjme();
+            nativeLoader.loadLibImguiJava();
         } catch (IOException e) {
             logger.error("Failed to load native library");
             throw new RuntimeException(e);

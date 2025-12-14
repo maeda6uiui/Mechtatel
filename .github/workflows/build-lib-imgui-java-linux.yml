@@ -1,0 +1,30 @@
+name: Build native library of imgui-java for Linux
+
+on:
+  push:
+    tags:
+      - "mtt-imgui-java-natives-all-*"
+      - "mtt-imgui-java-natives-linux-*"
+
+jobs:
+  build:
+    name: Build native library of imgui-java for Linux
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Misc/imgui-java
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Run `git submodule update --init` for imgui-java
+        run: git submodule update --init
+      - name: Install gcc-11 and g++-11
+        run: |
+          sudo apt update
+          sudo apt install gcc-11 g++-11
+      - name: Build lib-imgui-java
+        run: ./gradlew imgui-binding:generateLibs -Denvs=linux -Dlocal -DcompilerSuffix=-11
+      - name: Publish build artifact to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Misc/imgui-java/imgui-binding/build/libsNative/linux64/libimgui-java64.so

@@ -1,0 +1,34 @@
+name: Build native library of imgui-java for Linux arm64
+
+on:
+  push:
+    tags:
+      - "mtt-imgui-java-natives-all-*"
+      - "mtt-imgui-java-natives-linuxarm64-*"
+
+jobs:
+  build:
+    name: Build native library of imgui-java for Linux arm64
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Misc/imgui-java
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Run `git submodule update --init` for imgui-java
+        run: git submodule update --init
+      - name: Install gcc-11 and g++-11 for arm64 platform
+        run: |
+          sudo apt update
+          sudo apt install gcc-11-aarch64-linux-gnu g++-11-aarch64-linux-gnu
+      - name: Build lib-imgui-java
+        run: ./gradlew imgui-binding:generateLibs -Denvs=linuxarm64 -Dlocal -DcompilerSuffix=-11-aarch64-linux-gnu
+      - name: Rename build artifact to prevent name collision
+        run: |
+          cd imgui-binding/libsNative/linuxarm64
+          mv libimgui-java64.so libimgui-java-arm64.so
+      - name: Publish build artifact to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Misc/imgui-java/imgui-binding/build/libsNative/linuxarm64/libimgui-java-arm64.so

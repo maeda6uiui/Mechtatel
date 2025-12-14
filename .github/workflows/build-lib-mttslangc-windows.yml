@@ -3,7 +3,8 @@ name: Build native library of libmttslangc for Windows
 on:
   push:
     tags:
-      - "mttslangc-natives-*"
+      - "mttslangc-natives-all-*"
+      - "mttslangc-natives-windows-*"
 
 jobs:
   build:

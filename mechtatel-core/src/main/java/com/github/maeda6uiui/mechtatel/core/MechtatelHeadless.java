@@ -67,7 +67,7 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
         //Load native libraries
         MttNativeLoaderBase nativeLoader;
         try {
-            nativeLoader = MttNativeLoaderFactory2.createNativeLoader(PlatformInfo.PLATFORM);
+            nativeLoader = MttNativeLoaderFactory2.createNativeLoader(PlatformInfo.PLATFORM_WITH_ARCH);
         } catch (ClassNotFoundException
                  | NoSuchMethodException
                  | InstantiationException

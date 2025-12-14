@@ -47,4 +47,6 @@ public abstract class MttNativeLoaderBase {
     public abstract File extractLibMttSlangc() throws IOException;
 
     public abstract File extractLibSlang() throws IOException;
+
+    public abstract void loadLibImguiJava() throws IOException;
 }

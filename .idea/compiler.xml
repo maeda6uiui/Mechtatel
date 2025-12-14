@@ -12,6 +12,7 @@
         <module name="mechtatel-audio-natives-linux" />
         <module name="mechtatel-natives-windows" />
         <module name="mechtatel-logging" />
+        <module name="mechtatel-natives-linux-arm64" />
         <module name="mechtatel-core" />
         <module name="mechtatel-natives" />
         <module name="mechtatel-natives-linux" />

@@ -36,11 +36,8 @@ public class MttNativeLoader2 extends MttNativeLoaderBase {
 
     @Override
     public void loadLibImguiJava() throws IOException {
-        MttResourceFileUtils.loadNativeLib(
-                this.getClass(),
-                "/Bin/libimgui-java64.so",
-                TEMP_FILENAME_PREFIX,
-                false
-        );
+        File nativeLibFile = MttResourceFileUtils.extractFileIntoDir(
+                this.getClass(), "/Bin/libimgui-java64.so", this.getTempDir());
+        System.setProperty("imgui.library.path", nativeLibFile.getParent());
     }
 }

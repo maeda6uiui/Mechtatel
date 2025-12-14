@@ -16,8 +16,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Run `git submodule update --init` for imgui-java
-        run: git submodule update --init
+        with:
+          submodules: recursive
       - name: Install gcc-11 and g++-11
         run: |
           sudo apt update

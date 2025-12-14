@@ -26,7 +26,7 @@ jobs:
         run: ./gradlew imgui-binding:generateLibs -Denvs=linuxarm64 -Dlocal -DcompilerSuffix=-11
       - name: Rename build artifact to prevent name collision
         run: |
-          cd imgui-binding/libsNative/linuxarm64
+          cd imgui-binding/build/libsNative/linuxarm64
           mv libimgui-java64.so libimgui-java-arm64.so
       - name: Publish build artifact to release
         uses: softprops/action-gh-release@v2

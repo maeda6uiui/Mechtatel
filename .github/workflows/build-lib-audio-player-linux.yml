@@ -14,7 +14,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install libasound2-dev
-        run: sudo apt install libasound2-dev
+        run: |
+          sudo apt update
+          sudo apt install libasound2-dev
       - name: Build native library with cargo
         working-directory: mechtatel-audio-natives/natives/lib-audio-player
         run: cargo build --release

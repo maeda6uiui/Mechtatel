@@ -3,7 +3,8 @@ name: Build native library of audio player for Windows
 on:
   push:
     tags:
-      - "audio-natives-*"
+      - "audio-natives-all-*"
+      - "audio-natives-windows-*"
 
 jobs:
   build:

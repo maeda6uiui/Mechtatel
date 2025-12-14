@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Build native library of imgui-java for Linux arm64
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     defaults:
       run:
         working-directory: Misc/imgui-java
@@ -18,12 +18,12 @@ jobs:
         uses: actions/checkout@v6
         with:
           submodules: recursive
-      - name: Install gcc-11 and g++-11 for arm64 platform
+      - name: Install gcc and g++ for arm64 platform
         run: |
           sudo apt update
-          sudo apt install gcc-11-aarch64-linux-gnu g++-11-aarch64-linux-gnu
+          sudo apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
       - name: Build lib-imgui-java
-        run: ./gradlew imgui-binding:generateLibs -Denvs=linuxarm64 -Dlocal -DcompilerSuffix=-11
+        run: ./gradlew imgui-binding:generateLibs -Denvs=linuxarm64 -Dlocal
       - name: Rename build artifact to prevent name collision
         run: |
           cd imgui-binding/build/libsNative/linuxarm64

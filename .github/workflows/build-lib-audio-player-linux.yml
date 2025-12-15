@@ -6,12 +6,11 @@ on:
       - "audio-natives-all-*"
       - "audio-natives-linux-*"
 
-permissions:
-  contents: write
-
 jobs:
   build:
     name: Build native library of audio player for Linux
+    permissions:
+      contents: write
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout

@@ -6,6 +6,9 @@ on:
       - "mttslangc-natives-all-*"
       - "mttslangc-natives-windows-*"
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build native library of libmttslangc for Windows

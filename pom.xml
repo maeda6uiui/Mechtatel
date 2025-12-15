@@ -76,6 +76,21 @@
             </properties>
         </profile>
         <profile>
+            <id>mechtatel-natives-linux-aarch64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <name>linux</name>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <lwjgl.natives>natives-linux-arm64</lwjgl.natives>
+                <mechtatel.natives>mechtatel-natives-linux-arm64</mechtatel.natives>
+                <mechtatel.audio.natives>mechtatel-audio-natives-linux-arm64</mechtatel.audio.natives>
+            </properties>
+        </profile>
+        <profile>
             <id>mechtatel-natives-windows-amd64</id>
             <activation>
                 <os>

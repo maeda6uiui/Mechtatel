@@ -20,7 +20,13 @@ public class NativeLoader {
         if (Platform.isWindows()) {
             platform = "windows";
         } else if (Platform.isLinux()) {
-            platform = "linux";
+            if (Platform.isIntel()) {
+                platform = "linux";
+            } else if (Platform.isARM()) {
+                platform = "linuxarm64";
+            } else {
+                throw new RuntimeException("Unsupported platform");
+            }
         } else {
             throw new RuntimeException("Unsupported platform");
         }

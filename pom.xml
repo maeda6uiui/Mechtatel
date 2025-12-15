@@ -22,6 +22,8 @@
         <module>mechtatel-audio-natives-linux</module>
         <module>mechtatel-audio-natives-windows</module>
         <module>mechtatel-common-utils</module>
+        <module>mechtatel-audio-natives-linux-arm64</module>
+        <module>mechtatel-natives-linux-arm64</module>
     </modules>
 
     <licenses>

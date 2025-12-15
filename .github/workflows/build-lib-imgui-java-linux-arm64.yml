@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     name: Build native library of imgui-java for Linux arm64
+    permissions:
+      contents: write
     runs-on: ubuntu-22.04
     defaults:
       run:

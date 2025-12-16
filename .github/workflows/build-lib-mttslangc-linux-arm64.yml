@@ -1,0 +1,48 @@
+name: Build native library of libmttslangc for Linux arm64
+
+on:
+  push:
+    tags:
+      - "mttslangc-natives-all-*"
+      - "mttslangc-natives-linuxarm64-*"
+
+jobs:
+  build:
+    name: Build native library of libmttslangc for Linux arm64
+    permissions:
+      contents: write
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: mechtatel-natives/natives/lib-mttslangc
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Init and update submodules
+        run: git submodule update --init
+      - name: Download Slang release
+        run: |
+          mkdir Download && cd Download
+          wget https://github.com/shader-slang/slang/releases/download/v2025.17/slang-2025.17-linux-aarch64.tar.gz
+          tar -xf slang-2025.17-linux-aarch64.tar.gz
+      - name: Copy libslang.so to lib directory
+        run: |
+          mkdir lib
+          cp ./Download/lib/libslang.so ./lib/
+      - name: Install gcc and g++ for arm64 platform
+        run: |
+          sudo apt update
+          sudo apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+      - name: Build libmttslangc
+        run: |
+          mkdir build && cd build
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=../toolchains/aarch64-linux.cmake -DCMAKE_BUILD_TYPE=Release
+          cmake --build .
+      - name: Rename the build artifact to prevent name collision
+        run: |
+          cd build
+          mv libmttslangc.so libmttslangc-arm64.so
+      - name: Publish build artifact to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mechtatel-natives/natives/lib-mttslangc/build/libmttslangc-arm64.so

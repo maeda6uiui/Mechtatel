@@ -73,7 +73,7 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
         //Load native libraries
         MttNativeLoaderBase nativeLoader;
         try {
-            nativeLoader = MttNativeLoaderFactory2.createNativeLoader(PlatformInfo.PLATFORM);
+            nativeLoader = MttNativeLoaderFactory2.createNativeLoader(PlatformInfo.PLATFORM_WITH_ARCH);
         } catch (ClassNotFoundException
                  | NoSuchMethodException
                  | InstantiationException
@@ -85,6 +85,7 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
 
         try {
             nativeLoader.loadLibbulletjme();
+            nativeLoader.loadLibImguiJava();
         } catch (IOException e) {
             logger.error("Failed to load native library");
             throw new RuntimeException(e);

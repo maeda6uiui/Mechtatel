@@ -1,3 +1,6 @@
 [submodule "mechtatel-natives/natives/lib-mttslangc/slang"]
 	path = mechtatel-natives/natives/lib-mttslangc/slang
 	url = https://github.com/shader-slang/slang
+[submodule "Misc/imgui-java"]
+	path = Misc/imgui-java
+	url = https://github.com/maeda6uiui/imgui-java

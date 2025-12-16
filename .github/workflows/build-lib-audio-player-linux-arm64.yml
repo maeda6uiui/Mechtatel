@@ -1,0 +1,32 @@
+name: Build native library of audio player for Linux arm64
+
+on:
+  push:
+    tags:
+      - "audio-natives-all-*"
+      - "audio-natives-linuxarm64-*"
+
+jobs:
+  build:
+    name: Build native library of audio player for Linux arm64
+    permissions:
+      contents: write
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: mechtatel-audio-natives/natives/lib-audio-player
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install cross
+        run: cargo install cross --git https://github.com/cross-rs/cross
+      - name: Build native library with cross
+        run: cross build --target aarch64-unknown-linux-gnu --release
+      - name: Rename build artifact to prevent name collision
+        run: |
+          cd target/aarch64-unknown-linux-gnu/release
+          mv libaudioplayer.so libaudioplayer-arm64.so
+      - name: Publish native library to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mechtatel-audio-natives/natives/lib-audio-player/target/aarch64-unknown-linux-gnu/release/libaudioplayer-arm64.so

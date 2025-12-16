@@ -33,4 +33,11 @@ public class MttNativeLoader2 extends MttNativeLoaderBase {
         return MttResourceFileUtils.extractFileIntoDir(
                 this.getClass(), "/Bin/slang.dll", this.getTempDir());
     }
+
+    @Override
+    public void loadLibImguiJava() throws IOException {
+        File nativeLibFile = MttResourceFileUtils.extractFileIntoDir(
+                this.getClass(), "/Bin/imgui-java64.dll", this.getTempDir());
+        System.setProperty("imgui.library.path", nativeLibFile.getParent());
+    }
 }

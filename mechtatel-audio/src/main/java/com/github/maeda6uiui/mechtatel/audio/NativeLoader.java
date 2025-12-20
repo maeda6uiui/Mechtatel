@@ -15,7 +15,7 @@ import java.lang.reflect.InvocationTargetException;
  * @author maeda6uiui
  */
 public class NativeLoader {
-    public static IAudioPlayer load() {
+    private static String getPlatform() {
         String platform;
         if (Platform.isWindows()) {
             platform = "windows";
@@ -27,9 +27,20 @@ public class NativeLoader {
             } else {
                 throw new RuntimeException("Unsupported platform");
             }
+        } else if (Platform.isMac()) {
+            if (Platform.isARM()) {
+                platform = "macosarm64";
+            } else {
+                throw new RuntimeException("Unsupported platform");
+            }
         } else {
             throw new RuntimeException("Unsupported platform");
         }
+        return platform;
+    }
+
+    public static IAudioPlayer load() {
+        String platform = getPlatform();
 
         File libFile;
         try {

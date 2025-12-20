@@ -15,6 +15,7 @@
         <module name="mechtatel-natives-macos-arm64" />
         <module name="mechtatel-logging" />
         <module name="mechtatel-natives-linux-arm64" />
+        <module name="mechtatel-audio-natives-macos-arm64" />
         <module name="mechtatel-core" />
         <module name="mechtatel-natives" />
         <module name="mechtatel-audio-natives-linux-arm64" />

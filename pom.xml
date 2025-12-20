@@ -24,6 +24,7 @@
         <module>mechtatel-common-utils</module>
         <module>mechtatel-audio-natives-linux-arm64</module>
         <module>mechtatel-natives-linux-arm64</module>
+        <module>mechtatel-audio-natives-macos-arm64</module>
         <module>mechtatel-natives-macos-arm64</module>
     </modules>
 

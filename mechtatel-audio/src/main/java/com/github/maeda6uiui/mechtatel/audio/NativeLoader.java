@@ -27,6 +27,12 @@ public class NativeLoader {
             } else {
                 throw new RuntimeException("Unsupported platform");
             }
+        } else if (Platform.isMac()) {
+            if (Platform.isARM()) {
+                platform = "macosarm64";
+            } else {
+                throw new RuntimeException("Unsupported platform");
+            }
         } else {
             throw new RuntimeException("Unsupported platform");
         }

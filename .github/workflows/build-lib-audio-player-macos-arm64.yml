@@ -1,0 +1,24 @@
+name: Build native library of audio player for macOS arm64
+
+on:
+  push:
+    tags:
+      - "audio-natives-all-*"
+      - "audio-natives-macosarm64-*"
+
+jobs:
+  build:
+    name: Build native library of audio player for macOS arm64
+    permissions:
+      contents: write
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build native library with cargo
+        working-directory: mechtatel-audio-natives/natives/lib-audio-player
+        run: cargo build --release
+      - name: Publish native library to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mechtatel-audio-natives/natives/lib-audio-player/target/release/libaudioplayer.dylib

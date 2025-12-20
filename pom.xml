@@ -24,6 +24,8 @@
         <module>mechtatel-common-utils</module>
         <module>mechtatel-audio-natives-linux-arm64</module>
         <module>mechtatel-natives-linux-arm64</module>
+        <module>mechtatel-audio-natives-macos-arm64</module>
+        <module>mechtatel-natives-macos-arm64</module>
     </modules>
 
     <licenses>
@@ -103,6 +105,27 @@
                 <mechtatel.natives>mechtatel-natives-windows</mechtatel.natives>
                 <mechtatel.audio.natives>mechtatel-audio-natives-windows</mechtatel.audio.natives>
             </properties>
+        </profile>
+        <profile>
+            <id>mechtatel-natives-macos-aarch64</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <lwjgl.natives>natives-macos-arm64</lwjgl.natives>
+                <mechtatel.natives>mechtatel-natives-macos-arm64</mechtatel.natives>
+                <mechtatel.audio.natives>mechtatel-audio-natives-macos-arm64</mechtatel.audio.natives>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.lwjgl</groupId>
+                    <artifactId>lwjgl-vulkan</artifactId>
+                    <classifier>natives-macos-arm64</classifier>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 

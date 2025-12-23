@@ -180,6 +180,8 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
 
         MttVulkanInstance.get().ifPresent(MttVulkanInstance::cleanup);
 
+        MttHeadlessInstance.destroyImGuiContexts();
+
         glfwTerminate();
         this.onTerminate();
     }

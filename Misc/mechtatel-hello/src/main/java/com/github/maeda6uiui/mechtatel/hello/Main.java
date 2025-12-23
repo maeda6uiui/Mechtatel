@@ -10,7 +10,7 @@ import picocli.CommandLine;
  *
  * @author maeda6uiui
  */
-@CommandLine.Command.Command(name = "mechtatel-hello", mixinStandardHelpOptions = true)
+@CommandLine.Command(name = "mechtatel-hello", mixinStandardHelpOptions = true)
 public class Main implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 

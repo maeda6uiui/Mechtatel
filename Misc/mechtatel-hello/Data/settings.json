@@ -1,0 +1,47 @@
+{
+    "app": {
+        "name": "mechtatel-hello",
+        "majorVersion": 0,
+        "minorVersion": 0,
+        "patchVersion": 0
+    },
+    "window": {
+        "title": "mechtatel-hello",
+        "width": 1280,
+        "height": 720,
+        "resizable": false,
+        "fullScreen": false,
+        "windowedFullScreen": false,
+        "monitorIndex": 0
+    },
+    "headless": {
+        "width": 1280,
+        "height": 720,
+        "useOpenAL": false
+    },
+    "system": {
+        "fps": 60
+    },
+    "cache": {
+        "useCache": true,
+        "dirname": "./Data/Cache"
+    },
+    "rendering": {
+        "engine": "VULKAN",
+        "imageFormat": "SRGB"
+    },
+    "textureOperation": {
+        "width": -1,
+        "height": -1,
+        "changeExtentOnRecreate": true
+    },
+    "vulkan": {
+        "apiVersion": "1.3",
+        "enableValidationLayer": false,
+        "preferablePhysicalDeviceIndex": 0,
+        "preferableGraphicsFamilyIndex": 0,
+        "preferablePresentFamilyIndex": 0,
+        "albedoMSAASamples": 1,
+        "numShadowMaps": 1
+    }
+}

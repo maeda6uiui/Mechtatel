@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/../.." vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../imgui-java" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../imgui-java/include/ImGuiColorTextEdit" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../imgui-java/include/ImGuiFileDialog" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../imgui-java/include/imgui" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../imgui-java/include/imgui-knobs" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../imgui-java/include/imgui-node-editor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../imgui-java/include/imgui_club" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../imgui-java/include/imguizmo" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../imgui-java/include/imnodes" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../imgui-java/include/imnodes/vcpkg" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../imgui-java/include/implot" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../mechtatel-natives/natives/lib-mttslangc/slang" vcs="Git" />
+  </component>
+</project>

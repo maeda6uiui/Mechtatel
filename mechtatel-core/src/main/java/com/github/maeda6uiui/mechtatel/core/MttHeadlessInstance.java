@@ -3,6 +3,9 @@ package com.github.maeda6uiui.mechtatel.core;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.sound.MttSound;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanImplHeadless;
+import imgui.ImGui;
+import imgui.ImGuiIO;
+import imgui.internal.ImGuiContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,10 +24,13 @@ import java.util.UUID;
 public class MttHeadlessInstance {
     private static final Logger logger = LoggerFactory.getLogger(MttHeadlessInstance.class);
 
+    private static List<ImGuiContext> imGuiContexts = new ArrayList<>();
+
     private boolean shouldClose;
     private String instanceId;
     private IMechtatelHeadlessEventHandlers mtt;
     private MttVulkanImplHeadless vulkanImplHeadless;
+    private ImGuiContext imGuiContext;
 
     private MttScreen defaultScreen;
     private List<MttScreen> screens;
@@ -48,9 +54,21 @@ public class MttHeadlessInstance {
 
         sounds3D = new ArrayList<>();
 
+        //Set up ImGui =====
+        //No setup for keyboard and mouse input
+        imGuiContext = ImGui.createContext();
+        ImGui.setCurrentContext(imGuiContext);
+        imGuiContexts.add(imGuiContext);
+
+        ImGuiIO io = ImGui.getIO();
+
+        io.setIniFilename(null);
+        io.setDisplaySize(width, height);
+        //==========
+
         defaultScreen = new MttScreen(
                 vulkanImplHeadless,
-                null,
+                imGuiContext,
                 new MttScreen.MttScreenCreateInfo().setScreenWidth(width).setScreenHeight(height)
         );
         screens = new ArrayList<>();
@@ -77,6 +95,10 @@ public class MttHeadlessInstance {
         sounds3D.forEach(MttSound::cleanup);
     }
 
+    public static void destroyImGuiContexts() {
+        imGuiContexts.forEach(ImGui::destroyContext);
+    }
+
     public Optional<MttVulkanImplHeadless> getVulkanImplHeadless() {
         return Optional.ofNullable(vulkanImplHeadless);
     }
@@ -98,7 +120,7 @@ public class MttHeadlessInstance {
     }
 
     public MttScreen createScreen(MttScreen.MttScreenCreateInfo createInfo) {
-        var screen = new MttScreen(vulkanImplHeadless, null, createInfo);
+        var screen = new MttScreen(vulkanImplHeadless, imGuiContext, createInfo);
         screens.add(screen);
 
         return screen;

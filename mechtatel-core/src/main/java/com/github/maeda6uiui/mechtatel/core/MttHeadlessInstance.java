@@ -68,7 +68,7 @@ public class MttHeadlessInstance {
 
         defaultScreen = new MttScreen(
                 vulkanImplHeadless,
-                null,
+                imGuiContext,
                 new MttScreen.MttScreenCreateInfo().setScreenWidth(width).setScreenHeight(height)
         );
         screens = new ArrayList<>();
@@ -120,7 +120,7 @@ public class MttHeadlessInstance {
     }
 
     public MttScreen createScreen(MttScreen.MttScreenCreateInfo createInfo) {
-        var screen = new MttScreen(vulkanImplHeadless, null, createInfo);
+        var screen = new MttScreen(vulkanImplHeadless, imGuiContext, createInfo);
         screens.add(screen);
 
         return screen;

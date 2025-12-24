@@ -2,3 +2,4 @@ target
 *.log
 /screenshot.png
 /screenshot_*.png
+/.idea

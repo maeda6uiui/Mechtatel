@@ -6,6 +6,7 @@ target/
 
 /*.jar
 /dependency-reduced-pom.xml
+/.idea
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

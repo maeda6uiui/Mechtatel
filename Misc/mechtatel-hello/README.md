@@ -4,9 +4,9 @@
 
 ## Overview
 
-mechtatel-hello is a test kit to check if the Mechtatel engine works on your machine.
+mechtatel-hello is a test kit to check if the Mechtatel engine works on your system.
 It basically does off-screen rendering and outputs the resulting image to a file.
-It doesn't guarantee that the Mechtatel engine is fully functional on your machine even if mechtatel-hello works properly, but I assume it will in most cases.
+It doesn't guarantee that the Mechtatel engine is fully functional on your system even if mechtatel-hello works properly, but I assume it will in most cases.
 
 ## How to run it
 
@@ -26,7 +26,7 @@ Copy the uber JAR to the root directory of the mechtatel-hello project (one leve
 Then you can run it with the following command:
 
 ```
-java -jar mechtatel-hello-0.3.1-SNAPSHOT-2025.12.0.jar
+java -jar {filename of the JAR file}
 ```
 
 Rendering result is written to `./Data/rendering.png` by default.

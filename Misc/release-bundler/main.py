@@ -111,8 +111,7 @@ class ReleaseBundler:
         
         dest_jar_file=self.__package_dir.joinpath(f"{artifact_id}-{version}.jar")
         shutil.copy(src_jar_file,dest_jar_file)
-
-        self.__logger.info(f"Jar file is copied: {src_jar_file} -> {dest_jar_file}")
+        self.__logger.info(f"JAR file was copied: {src_jar_file} -> {dest_jar_file}")
 
         return dest_jar_file
     
@@ -195,7 +194,6 @@ class ReleaseBundler:
         jar_file=self.__copy_uber_jar(project_info["artifactId"],project_info["version"])
         self.__generate_start_scripts(jar_file)
         self.__copy_files_to_package()
-
         self.__create_release_archive()
 
 def main(args):

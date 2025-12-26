@@ -26,6 +26,10 @@
         <module>mechtatel-natives-linux-arm64</module>
         <module>mechtatel-audio-natives-macos-arm64</module>
         <module>mechtatel-natives-macos-arm64</module>
+        <module>mechtatel-platform-pack-windows</module>
+        <module>mechtatel-platform-pack-linux</module>
+        <module>mechtatel-platform-pack-linux-arm64</module>
+        <module>mechtatel-platform-pack-macos-arm64</module>
     </modules>
 
     <licenses>
@@ -71,8 +75,7 @@
                 </os>
             </activation>
             <properties>
-                <lwjgl.natives>natives-linux</lwjgl.natives>
-                <mechtatel.natives>mechtatel-natives-linux</mechtatel.natives>
+                <mechtatel.platformPack>mechtatel-platform-pack-linux</mechtatel.platformPack>
                 <mechtatel.audio.natives>mechtatel-audio-natives-linux</mechtatel.audio.natives>
             </properties>
         </profile>
@@ -86,8 +89,7 @@
                 </os>
             </activation>
             <properties>
-                <lwjgl.natives>natives-linux-arm64</lwjgl.natives>
-                <mechtatel.natives>mechtatel-natives-linux-arm64</mechtatel.natives>
+                <mechtatel.platformPack>mechtatel-platform-pack-linux-arm64</mechtatel.platformPack>
                 <mechtatel.audio.natives>mechtatel-audio-natives-linux-arm64</mechtatel.audio.natives>
             </properties>
         </profile>
@@ -100,8 +102,7 @@
                 </os>
             </activation>
             <properties>
-                <lwjgl.natives>natives-windows</lwjgl.natives>
-                <mechtatel.natives>mechtatel-natives-windows</mechtatel.natives>
+                <mechtatel.platformPack>mechtatel-platform-pack-windows</mechtatel.platformPack>
                 <mechtatel.audio.natives>mechtatel-audio-natives-windows</mechtatel.audio.natives>
             </properties>
         </profile>
@@ -114,17 +115,9 @@
                 </os>
             </activation>
             <properties>
-                <lwjgl.natives>natives-macos-arm64</lwjgl.natives>
-                <mechtatel.natives>mechtatel-natives-macos-arm64</mechtatel.natives>
+                <mechtatel.platformPack>mechtatel-platform-pack-macos-arm64</mechtatel.platformPack>
                 <mechtatel.audio.natives>mechtatel-audio-natives-macos-arm64</mechtatel.audio.natives>
             </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.lwjgl</groupId>
-                    <artifactId>lwjgl-vulkan</artifactId>
-                    <classifier>natives-macos-arm64</classifier>
-                </dependency>
-            </dependencies>
         </profile>
     </profiles>
 

@@ -27,9 +27,7 @@
                 </os>
             </activation>
             <properties>
-                <lwjgl.natives>natives-linux</lwjgl.natives>
-                <mechtatel.natives>mechtatel-natives-linux</mechtatel.natives>
-                <mechtatel.audio.natives>mechtatel-audio-natives-linux</mechtatel.audio.natives>
+                <mechtatel.platformPack>mechtatel-platform-pack-linux</mechtatel.platformPack>
             </properties>
         </profile>
         <profile>
@@ -42,9 +40,7 @@
                 </os>
             </activation>
             <properties>
-                <lwjgl.natives>natives-linux-arm64</lwjgl.natives>
-                <mechtatel.natives>mechtatel-natives-linux-arm64</mechtatel.natives>
-                <mechtatel.audio.natives>mechtatel-audio-natives-linux-arm64</mechtatel.audio.natives>
+                <mechtatel.platformPack>mechtatel-platform-pack-linux-arm64</mechtatel.platformPack>
             </properties>
         </profile>
         <profile>
@@ -56,9 +52,7 @@
                 </os>
             </activation>
             <properties>
-                <lwjgl.natives>natives-windows</lwjgl.natives>
-                <mechtatel.natives>mechtatel-natives-windows</mechtatel.natives>
-                <mechtatel.audio.natives>mechtatel-audio-natives-windows</mechtatel.audio.natives>
+                <mechtatel.platformPack>mechtatel-platform-pack-windows</mechtatel.platformPack>
             </properties>
         </profile>
         <profile>
@@ -70,18 +64,8 @@
                 </os>
             </activation>
             <properties>
-                <lwjgl.natives>natives-macos-arm64</lwjgl.natives>
-                <mechtatel.natives>mechtatel-natives-macos-arm64</mechtatel.natives>
-                <mechtatel.audio.natives>mechtatel-audio-natives-macos-arm64</mechtatel.audio.natives>
+                <mechtatel.platformPack>mechtatel-platform-pack-macos-arm64</mechtatel.platformPack>
             </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.lwjgl</groupId>
-                    <artifactId>lwjgl-vulkan</artifactId>
-                    <version>${lwjgl.version}</version>
-                    <classifier>natives-macos-arm64</classifier>
-                </dependency>
-            </dependencies>
         </profile>
     </profiles>
 
@@ -133,7 +117,7 @@
         </dependency>
         <dependency>
             <groupId>io.github.maeda6uiui</groupId>
-            <artifactId>${mechtatel.natives}</artifactId>
+            <artifactId>${mechtatel.platformPack}</artifactId>
             <version>${mechtatel.version}</version>
         </dependency>
 
@@ -141,43 +125,6 @@
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
             <version>4.7.7</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl</artifactId>
-            <version>${lwjgl.version}</version>
-            <classifier>${lwjgl.natives}</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-assimp</artifactId>
-            <version>${lwjgl.version}</version>
-            <classifier>${lwjgl.natives}</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-glfw</artifactId>
-            <version>${lwjgl.version}</version>
-            <classifier>${lwjgl.natives}</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-openal</artifactId>
-            <version>${lwjgl.version}</version>
-            <classifier>${lwjgl.natives}</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-shaderc</artifactId>
-            <version>${lwjgl.version}</version>
-            <classifier>${lwjgl.natives}</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-stb</artifactId>
-            <version>${lwjgl.version}</version>
-            <classifier>${lwjgl.natives}</classifier>
         </dependency>
     </dependencies>
 </project>

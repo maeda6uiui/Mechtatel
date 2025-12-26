@@ -9,7 +9,7 @@ from logging import getLogger, config, Logger
 from pathlib import Path
 
 
-class ReleaseBundler:
+class ReleaseCreator:
     def __init__(
         self,
         openjdk_download_url: str,
@@ -223,8 +223,8 @@ def main(args):
 
     logger = getLogger(__name__)
 
-    # Run release bundler
-    release_bundler = ReleaseBundler(
+    # Run release creator
+    release_creator = ReleaseCreator(
         openjdk_download_url,
         project_filepath,
         package_dirname,
@@ -235,9 +235,9 @@ def main(args):
         logger=logger,
     )
     try:
-        release_bundler.run()
+        release_creator.run()
     except Exception as e:
-        logger.error(f"Failed to run release bundler: {e}")
+        logger.error(f"Failed to run release creator: {e}")
 
 
 if __name__ == "__main__":

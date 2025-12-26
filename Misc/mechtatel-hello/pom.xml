@@ -13,7 +13,6 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mechtatel.version>0.3.1-SNAPSHOT</mechtatel.version>
-        <lwjgl.version>3.3.6</lwjgl.version>
     </properties>
 
     <profiles>

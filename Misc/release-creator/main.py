@@ -2,6 +2,7 @@ import argparse
 import os
 import requests
 import shutil
+import sys
 import uuid
 import xml.etree.ElementTree as ET
 import yaml
@@ -238,6 +239,7 @@ def main(args):
         release_creator.run()
     except Exception as e:
         logger.error(f"Failed to run release creator: {e}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

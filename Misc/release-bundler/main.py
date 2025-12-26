@@ -196,6 +196,10 @@ class ReleaseBundler:
         self.__copy_files_to_package()
         self.__create_release_archive()
 
+        if self.__delete_package_dir_on_exit:
+            self.__logger.info(f"Removing directory: {self.__package_dir}")
+            shutil.rmtree(self.__package_dir)
+
 def main(args):
     openjdk_download_url:str=args.openjdk_download_url
     project_filepath:str=args.project_filepath

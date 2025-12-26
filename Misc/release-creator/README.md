@@ -14,3 +14,6 @@ uv run main.py \
     -o release_linux_x64.tar.gz \
     --remove-package-dir-on-exit
 ```
+
+The above command doesn't package the JAR of the target project.
+It only fetches the JAR that already exists in the target project.

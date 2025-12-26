@@ -111,7 +111,7 @@
         <dependency>
             <groupId>com.github.stephengold</groupId>
             <artifactId>Libbulletjme</artifactId>
-            <version>${libbulletjme.version}</version>
+            <version>21.2.1</version>
         </dependency>
 
         <dependency>

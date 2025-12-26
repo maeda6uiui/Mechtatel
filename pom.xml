@@ -58,7 +58,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <lwjgl.version>3.3.6</lwjgl.version>
-        <libbulletjme.version>21.2.1</libbulletjme.version>
     </properties>
 
     <profiles>

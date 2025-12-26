@@ -14,7 +14,6 @@
     <properties>
         <lwjgl.natives>natives-windows</lwjgl.natives>
         <mechtatel.natives>mechtatel-natives-windows</mechtatel.natives>
-        <mechtatel.audio.natives>mechtatel-audio-natives-windows</mechtatel.audio.natives>
     </properties>
 
     <dependencies>
@@ -52,11 +51,6 @@
         <dependency>
             <groupId>io.github.maeda6uiui</groupId>
             <artifactId>${mechtatel.natives}</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.maeda6uiui</groupId>
-            <artifactId>${mechtatel.audio.natives}</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>

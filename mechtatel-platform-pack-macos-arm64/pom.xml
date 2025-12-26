@@ -14,7 +14,6 @@
     <properties>
         <lwjgl.natives>natives-macos-arm64</lwjgl.natives>
         <mechtatel.natives>mechtatel-natives-macos-arm64</mechtatel.natives>
-        <mechtatel.audio.natives>mechtatel-audio-natives-macos-arm64</mechtatel.audio.natives>
     </properties>
 
     <dependencies>
@@ -58,11 +57,6 @@
         <dependency>
             <groupId>io.github.maeda6uiui</groupId>
             <artifactId>${mechtatel.natives}</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.maeda6uiui</groupId>
-            <artifactId>${mechtatel.audio.natives}</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>

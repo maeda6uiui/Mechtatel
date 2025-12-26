@@ -82,6 +82,7 @@
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-glfw</artifactId>
             <classifier>${lwjgl.natives}</classifier>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>

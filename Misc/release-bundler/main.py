@@ -15,13 +15,13 @@ class ReleaseBundler:
         project_filepath:str,
         package_dirname:str,
         output_filename:str,
-        delete_package_dir_on_exit:bool,
+        remove_package_dir_on_exit:bool,
         existing_openjdk_dirname:str|None=None,
         filenames_to_package:list[str]|None=None,
         logger:Logger|None=None):
         self.__openjdk_download_url=openjdk_download_url
         self.__output_filename=output_filename
-        self.__delete_package_dir_on_exit=delete_package_dir_on_exit
+        self.__remove_package_dir_on_exit=remove_package_dir_on_exit
         self.__existing_openjdk_dirname=existing_openjdk_dirname
         self.__filenames_to_package=filenames_to_package
 
@@ -196,7 +196,7 @@ class ReleaseBundler:
         self.__copy_files_to_package()
         self.__create_release_archive()
 
-        if self.__delete_package_dir_on_exit:
+        if self.__remove_package_dir_on_exit:
             self.__logger.info(f"Removing directory: {self.__package_dir}")
             shutil.rmtree(self.__package_dir)
 
@@ -205,7 +205,7 @@ def main(args):
     project_filepath:str=args.project_filepath
     package_dirname:str=args.package_dirname
     output_filename:str=args.output_filename
-    delete_package_dir_on_exit:bool=args.delete_package_dir_on_exit
+    remove_package_dir_on_exit:bool=args.remove_package_dir_on_exit
     existing_openjdk_dirname:str|None=args.existing_openjdk_dirname
     filenames_to_package:list[str]|None=args.filenames_to_package
 
@@ -223,7 +223,7 @@ def main(args):
         project_filepath,
         package_dirname,
         output_filename,
-        delete_package_dir_on_exit,
+        remove_package_dir_on_exit,
         existing_openjdk_dirname=existing_openjdk_dirname,
         filenames_to_package=filenames_to_package,
         logger=logger
@@ -239,7 +239,7 @@ if __name__ == "__main__":
     parser.add_argument("-p","--project-filepath",type=str)
     parser.add_argument("-d","--package-dirname",type=str)
     parser.add_argument("-o","--output-filename",type=str)
-    parser.add_argument("--delete-package-dir-on-exit",action="store_true")
+    parser.add_argument("--remove-package-dir-on-exit",action="store_true")
     parser.add_argument("-j","--existing-openjdk-dirname",type=str)
     parser.add_argument("-f","--filenames-to-package",type=str,nargs="*")
     args=parser.parse_args()

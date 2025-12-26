@@ -12,7 +12,61 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <mechtatel.version>0.3.1-SNAPSHOT</mechtatel.version>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>mechtatel-natives-linux-amd64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <name>linux</name>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <mechtatel.platformPack>mechtatel-platform-pack-linux</mechtatel.platformPack>
+            </properties>
+        </profile>
+        <profile>
+            <id>mechtatel-natives-linux-aarch64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <name>linux</name>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <mechtatel.platformPack>mechtatel-platform-pack-linux-arm64</mechtatel.platformPack>
+            </properties>
+        </profile>
+        <profile>
+            <id>mechtatel-natives-windows-amd64</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <mechtatel.platformPack>mechtatel-platform-pack-windows</mechtatel.platformPack>
+            </properties>
+        </profile>
+        <profile>
+            <id>mechtatel-natives-macos-aarch64</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <mechtatel.platformPack>mechtatel-platform-pack-macos-arm64</mechtatel.platformPack>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
@@ -53,12 +107,17 @@
         <dependency>
             <groupId>io.github.maeda6uiui</groupId>
             <artifactId>mechtatel-core</artifactId>
-            <version>0.3.1-SNAPSHOT</version>
+            <version>${mechtatel.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.maeda6uiui</groupId>
             <artifactId>mechtatel-logging</artifactId>
-            <version>0.3.1-SNAPSHOT</version>
+            <version>${mechtatel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.maeda6uiui</groupId>
+            <artifactId>${mechtatel.platformPack}</artifactId>
+            <version>${mechtatel.version}</version>
         </dependency>
 
         <dependency>

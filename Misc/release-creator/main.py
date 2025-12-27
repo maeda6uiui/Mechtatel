@@ -16,14 +16,16 @@ class ReleaseCreator:
         openjdk_download_url: str,
         project_filepath: str,
         package_dirname: str,
-        output_filename: str,
+        output_archive_filename: str,
+        output_jar_filename:str,
         remove_package_dir_on_exit: bool,
         existing_openjdk_dirname: str | None = None,
         filenames_to_package: list[str] | None = None,
         logger: Logger | None = None,
     ):
         self.__openjdk_download_url = openjdk_download_url
-        self.__output_filename = output_filename
+        self.__output_archive_filename = output_archive_filename
+        self.__output_jar_filename=output_jar_filename
         self.__remove_package_dir_on_exit = remove_package_dir_on_exit
         self.__existing_openjdk_dirname = existing_openjdk_dirname
         self.__filenames_to_package = filenames_to_package
@@ -120,7 +122,7 @@ class ReleaseCreator:
         if not src_jar_file.exists():
             raise RuntimeError(f"JAR file not found: {src_jar_file}")
 
-        dest_jar_file = self.__package_dir.joinpath(f"{artifact_id}-{version}.jar")
+        dest_jar_file = self.__package_dir.joinpath(self.__output_jar_filename)
         shutil.copy(src_jar_file, dest_jar_file)
         self.__logger.info(f"JAR file was copied: {src_jar_file} -> {dest_jar_file}")
 
@@ -182,16 +184,16 @@ class ReleaseCreator:
 
         archive_format: str = ""
         base_name: str = ""
-        if ".tar.gz" in self.__output_filename:
+        if ".tar.gz" in self.__output_archive_filename:
             archive_format = "gztar"
-            base_name = self.__output_filename.replace(".tar.gz", "")
-        elif ".zip" in self.__output_filename:
+            base_name = self.__output_archive_filename.replace(".tar.gz", "")
+        elif ".zip" in self.__output_archive_filename:
             archive_format = "zip"
-            base_name = self.__output_filename.replace(".zip", "")
+            base_name = self.__output_archive_filename.replace(".zip", "")
         else:
             self.__logger.warning(f"Cannot infer archive format, defaults to 'gztar'")
             archive_format = "gztar"
-            base_name = self.__output_filename
+            base_name = self.__output_archive_filename
 
         cwd = os.getcwd()
         os.chdir(self.__package_dir.parent)
@@ -205,6 +207,13 @@ class ReleaseCreator:
         self.__logger.info(f"Created release archive: {archive_file}")
 
         return archive_file
+    
+    def __copy_uber_jar_to_working_dir(self,jar_file:Path)->Path:
+        copy_to=self.__working_dir.joinpath(self.__output_jar_filename)
+        shutil.copy(jar_file,copy_to)
+        self.__logger.info(f"JAR file was copied: {jar_file} -> {copy_to}")
+
+        return copy_to
 
     def run(self):
         openjdk_dir: Path | None = None
@@ -224,6 +233,7 @@ class ReleaseCreator:
         self.__generate_start_scripts(jar_file)
         self.__copy_files_to_package()
         self.__create_release_archive()
+        self.__copy_uber_jar_to_working_dir(jar_file)
 
         if self.__remove_package_dir_on_exit:
             self.__logger.info(f"Removing directory: {self.__package_dir}")
@@ -234,7 +244,8 @@ def main(args):
     openjdk_download_url: str = args.openjdk_download_url
     project_filepath: str = args.project_filepath
     package_dirname: str = args.package_dirname
-    output_filename: str = args.output_filename
+    output_archive_filename: str = args.output_archive_filename
+    output_jar_filename:str=args.output_jar_filename
     remove_package_dir_on_exit: bool = args.remove_package_dir_on_exit
     existing_openjdk_dirname: str | None = args.existing_openjdk_dirname
     filenames_to_package: list[str] | None = args.filenames_to_package
@@ -252,7 +263,8 @@ def main(args):
         openjdk_download_url,
         project_filepath,
         package_dirname,
-        output_filename,
+        output_archive_filename,
+        output_jar_filename,
         remove_package_dir_on_exit,
         existing_openjdk_dirname=existing_openjdk_dirname,
         filenames_to_package=filenames_to_package,
@@ -270,7 +282,8 @@ if __name__ == "__main__":
     parser.add_argument("-u", "--openjdk-download-url", type=str)
     parser.add_argument("-p", "--project-filepath", type=str)
     parser.add_argument("-d", "--package-dirname", type=str)
-    parser.add_argument("-o", "--output-filename", type=str)
+    parser.add_argument("-oa", "--output-archive-filename", type=str)
+    parser.add_argument("-oj","--output-jar-filename",type=str)
     parser.add_argument("--remove-package-dir-on-exit", action="store_true")
     parser.add_argument("-j", "--existing-openjdk-dirname", type=str)
     parser.add_argument("-f", "--filenames-to-package", type=str, nargs="*")

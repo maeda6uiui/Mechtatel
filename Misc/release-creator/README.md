@@ -18,3 +18,16 @@ uv run main.py \
 
 The above command doesn't run `mvn package` in the target project.
 You have to create an uber JAR before executing release-creator.
+
+Alternatively, you can specify the archive file of OpenJDK if you have already downloaded it:
+
+```
+uv run main.py \
+    -p ../mechtatel-hello \
+    -d mechtatel-hello \
+    -oa mechtatel-hello_linux_x64.tar.gz \
+    -oj mechtatel-hello_linux_x64.jar \
+    --remove-package-dir-on-exit \
+    -j ./WorkingDir/Cache/openjdk-21_linux-x64_bin.tar.gz \
+    -f Data README.md
+```

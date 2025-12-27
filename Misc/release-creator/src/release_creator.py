@@ -201,11 +201,11 @@ class ReleaseCreator:
             base_name = self.__output_archive_filename
 
         cwd = os.getcwd()
-        os.chdir(self.__package_dir.parent)
+        os.chdir(self.__package_root_dir)
         archive_filename = shutil.make_archive(base_name, archive_format)
         os.chdir(cwd)
 
-        archive_file = self.__package_dir.parent.joinpath(archive_filename)
+        archive_file = self.__package_root_dir.joinpath(archive_filename)
         archive_file = archive_file.rename(
             self.__working_dir.joinpath(archive_file.name)
         )

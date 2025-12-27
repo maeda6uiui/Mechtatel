@@ -16,7 +16,7 @@ class ReleaseCreator:
         output_archive_filename: str,
         output_jar_filename:str,
         remove_package_dir_on_exit: bool,
-        existing_openjdk_dirname: str | None = None,
+        existing_openjdk_archive_filepath: str | None = None,
         filenames_to_package: list[str] | None = None,
         logger: Logger | None = None,
     ):
@@ -24,7 +24,7 @@ class ReleaseCreator:
         self.__output_archive_filename = output_archive_filename
         self.__output_jar_filename=output_jar_filename
         self.__remove_package_dir_on_exit = remove_package_dir_on_exit
-        self.__existing_openjdk_dirname = existing_openjdk_dirname
+        self.__existing_openjdk_archive_filepath = existing_openjdk_archive_filepath
         self.__filenames_to_package = filenames_to_package
 
         if logger is not None:
@@ -225,14 +225,11 @@ class ReleaseCreator:
 
 
     def run(self)->dict[str,object]:
-        openjdk_dir: Path | None = None
-        if self.__existing_openjdk_dirname:
-            existing_openjdk_dir = Path(self.__existing_openjdk_dirname)
-            openjdk_dir = self.__package_dir.joinpath("OpenJDK")
-            shutil.copytree(existing_openjdk_dir, openjdk_dir)
+        if self.__existing_openjdk_archive_filepath:
+            self.__extract_openjdk(Path(self.__existing_openjdk_archive_filepath))
         else:
             openjdk_archive_file = self.__download_openjdk()
-            openjdk_dir = self.__extract_openjdk(openjdk_archive_file)
+            self.__extract_openjdk(openjdk_archive_file)
             self.__move_openjdk_archive_to_cache(openjdk_archive_file)
 
         project_info = self.__get_project_info()

@@ -12,7 +12,7 @@ def main(args):
     output_archive_filename: str = args.output_archive_filename
     output_jar_filename:str=args.output_jar_filename
     remove_package_dir_on_exit: bool = args.remove_package_dir_on_exit
-    existing_openjdk_dirname: str | None = args.existing_openjdk_dirname
+    existing_openjdk_archive_filepath: str | None = args.existing_openjdk_filepath
     filenames_to_package: list[str] | None = args.filenames_to_package
 
     # Set up logger
@@ -31,7 +31,7 @@ def main(args):
         output_archive_filename,
         output_jar_filename,
         remove_package_dir_on_exit,
-        existing_openjdk_dirname=existing_openjdk_dirname,
+        existing_openjdk_archive_filepath=existing_openjdk_archive_filepath,
         filenames_to_package=filenames_to_package,
         logger=logger,
     )
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     parser.add_argument("-oa", "--output-archive-filename", type=str)
     parser.add_argument("-oj","--output-jar-filename",type=str)
     parser.add_argument("--remove-package-dir-on-exit", action="store_true")
-    parser.add_argument("-j", "--existing-openjdk-dirname", type=str)
+    parser.add_argument("-j", "--existing-openjdk-archive-filepath", type=str)
     parser.add_argument("-f", "--filenames-to-package", type=str, nargs="*")
     args = parser.parse_args()
 

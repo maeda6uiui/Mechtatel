@@ -39,6 +39,10 @@ class ReleaseCreator:
         self.__working_dir = Path("./WorkingDir")
         self.__working_dir.mkdir(exist_ok=True)
 
+        #Create cache directory
+        self.__cache_dir=self.__working_dir.joinpath("Cache")
+        self.__cache_dir.mkdir(exist_ok=True)
+
         # Create package directory
         package_root_dirname = str(uuid.uuid4())
         self.__package_dir = self.__working_dir.joinpath(package_root_dirname).joinpath(
@@ -79,6 +83,11 @@ class ReleaseCreator:
         # Rename the directory to "OpenJDK"
         openjdk_dir = openjdk_dir.rename(self.__package_dir.joinpath("OpenJDK"))
         return openjdk_dir
+    
+    def __move_openjdk_archive_to_cache(self,openjdk_archive_file:Path)->Path:
+        move_to=self.__cache_dir.joinpath(openjdk_archive_file.name)
+        openjdk_archive_file.rename(move_to)
+        return move_to
 
     def __get_project_info(self) -> dict[str, str]:
         pom_file = self.__project_dir.joinpath("pom.xml")
@@ -206,6 +215,7 @@ class ReleaseCreator:
         else:
             openjdk_archive_file = self.__download_openjdk()
             openjdk_dir = self.__extract_openjdk(openjdk_archive_file)
+            self.__move_openjdk_archive_to_cache(openjdk_archive_file)
 
         project_info = self.__get_project_info()
         jar_file = self.__copy_uber_jar(

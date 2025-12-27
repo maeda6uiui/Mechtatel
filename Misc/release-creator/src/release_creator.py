@@ -214,8 +214,17 @@ class ReleaseCreator:
         self.__logger.info(f"JAR file was copied: {jar_file} -> {copy_to}")
 
         return copy_to
+    
+    def __list_files_in_package_dir(self)->set[str]:
+        filenames=set()
+        files=self.__package_dir.glob("*")
+        for file in files:
+            filenames.add(file.name)
+        
+        return filenames
 
-    def run(self):
+
+    def run(self)->dict[str,object]:
         openjdk_dir: Path | None = None
         if self.__existing_openjdk_dirname:
             existing_openjdk_dir = Path(self.__existing_openjdk_dirname)
@@ -235,6 +244,13 @@ class ReleaseCreator:
         self.__create_release_archive()
         self.__copy_uber_jar_to_working_dir(jar_file)
 
+        packaged_filenames=self.__list_files_in_package_dir()
+
         if self.__remove_package_dir_on_exit:
             self.__logger.info(f"Removing directory: {self.__package_root_dir}")
             shutil.rmtree(self.__package_root_dir)
+
+        return {
+            "packageDir": str(self.__package_dir),
+            "packagedFiles": packaged_filenames
+        }

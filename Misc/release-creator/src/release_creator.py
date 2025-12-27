@@ -10,22 +10,25 @@ from pathlib import Path
 class ReleaseCreator:
     def __init__(
         self,
-        openjdk_download_url: str,
         project_filepath: str,
         package_dirname: str,
         output_archive_filename: str,
         output_jar_filename:str,
         remove_package_dir_on_exit: bool,
+        openjdk_download_url: str|None=None,
         existing_openjdk_archive_filepath: str | None = None,
         filenames_to_package: list[str] | None = None,
         logger: Logger | None = None,
     ):
-        self.__openjdk_download_url = openjdk_download_url
         self.__output_archive_filename = output_archive_filename
         self.__output_jar_filename=output_jar_filename
         self.__remove_package_dir_on_exit = remove_package_dir_on_exit
+        self.__openjdk_download_url = openjdk_download_url
         self.__existing_openjdk_archive_filepath = existing_openjdk_archive_filepath
         self.__filenames_to_package = filenames_to_package
+
+        if openjdk_download_url is None and existing_openjdk_archive_filepath is None:
+            raise RuntimeError("Either 'openjdk_download_url' or 'existing_openjdk_archive_filepath' must be specified")
 
         if logger is not None:
             self.__logger = logger
@@ -56,10 +59,10 @@ class ReleaseCreator:
     def __download_openjdk(self) -> Path:
         self.__logger.info(f"Start downloading JDK from {self.__openjdk_download_url}")
 
-        openjdk_filename = self.__openjdk_download_url.split("/")[-1]
+        openjdk_filename = self.__openjdk_download_url.split("/")[-1] # type: ignore
         openjdk_archive_file = self.__package_dir.joinpath(openjdk_filename)
 
-        data = requests.get(self.__openjdk_download_url).content
+        data = requests.get(self.__openjdk_download_url).content # type: ignore
         with openjdk_archive_file.open("wb") as w:
             w.write(data)
 

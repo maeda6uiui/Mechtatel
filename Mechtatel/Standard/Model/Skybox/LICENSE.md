@@ -1,4 +1,4 @@
-I remember downloading the textures in the `Hill` directory from [HDRI Haven](https://hdri-haven.com/).
+The textures in the `Hill` directory were originally downloaded from [HDRI Haven](https://hdri-haven.com/).
 The site has apparently moved to [Poly Haven](https://polyhaven.com/).
 And it says their works are licensed under [CC0](https://creativecommons.org/publicdomain/zero/1.0/).
 Check their [Asset License](https://polyhaven.com/license) for further information.

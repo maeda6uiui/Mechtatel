@@ -3,7 +3,7 @@ import requests
 import shutil
 import uuid
 import xml.etree.ElementTree as ET
-from logging import getLogger,Logger
+from logging import getLogger, Logger
 from pathlib import Path
 
 
@@ -13,22 +13,24 @@ class ReleaseCreator:
         project_filepath: str,
         package_dirname: str,
         output_archive_filename: str,
-        output_jar_filename:str,
+        output_jar_filename: str,
         remove_package_dir_on_exit: bool,
-        openjdk_download_url: str|None=None,
+        openjdk_download_url: str | None = None,
         existing_openjdk_archive_filepath: str | None = None,
         filenames_to_package: list[str] | None = None,
         logger: Logger | None = None,
     ):
         self.__output_archive_filename = output_archive_filename
-        self.__output_jar_filename=output_jar_filename
+        self.__output_jar_filename = output_jar_filename
         self.__remove_package_dir_on_exit = remove_package_dir_on_exit
         self.__openjdk_download_url = openjdk_download_url
         self.__existing_openjdk_archive_filepath = existing_openjdk_archive_filepath
         self.__filenames_to_package = filenames_to_package
 
         if openjdk_download_url is None and existing_openjdk_archive_filepath is None:
-            raise RuntimeError("Either 'openjdk_download_url' or 'existing_openjdk_archive_filepath' must be specified")
+            raise RuntimeError(
+                "Either 'openjdk_download_url' or 'existing_openjdk_archive_filepath' must be specified"
+            )
 
         if logger is not None:
             self.__logger = logger
@@ -41,28 +43,26 @@ class ReleaseCreator:
         self.__working_dir = Path("./WorkingDir")
         self.__working_dir.mkdir(exist_ok=True)
 
-        #Create cache directory
-        self.__cache_dir=self.__working_dir.joinpath("Cache")
+        # Create cache directory
+        self.__cache_dir = self.__working_dir.joinpath("Cache")
         self.__cache_dir.mkdir(exist_ok=True)
 
         # Create package directory
         package_root_dirname = str(uuid.uuid4())
-        self.__package_root_dir=self.__working_dir.joinpath(package_root_dirname)
+        self.__package_root_dir = self.__working_dir.joinpath(package_root_dirname)
         self.__package_root_dir.mkdir()
 
-        self.__package_dir = self.__package_root_dir.joinpath(
-            package_dirname
-        )
+        self.__package_dir = self.__package_root_dir.joinpath(package_dirname)
         self.__package_dir.mkdir()
         self.__logger.info(f"Created a package directory: {self.__package_dir}")
 
     def __download_openjdk(self) -> Path:
         self.__logger.info(f"Start downloading JDK from {self.__openjdk_download_url}")
 
-        openjdk_filename = self.__openjdk_download_url.split("/")[-1] # type: ignore
+        openjdk_filename = self.__openjdk_download_url.split("/")[-1]  # type: ignore
         openjdk_archive_file = self.__package_dir.joinpath(openjdk_filename)
 
-        data = requests.get(self.__openjdk_download_url).content # type: ignore
+        data = requests.get(self.__openjdk_download_url).content  # type: ignore
         with openjdk_archive_file.open("wb") as w:
             w.write(data)
 
@@ -88,9 +88,9 @@ class ReleaseCreator:
         # Rename the directory to "OpenJDK"
         openjdk_dir = openjdk_dir.rename(self.__package_dir.joinpath("OpenJDK"))
         return openjdk_dir
-    
-    def __move_openjdk_archive_to_cache(self,openjdk_archive_file:Path)->Path:
-        move_to=self.__cache_dir.joinpath(openjdk_archive_file.name)
+
+    def __move_openjdk_archive_to_cache(self, openjdk_archive_file: Path) -> Path:
+        move_to = self.__cache_dir.joinpath(openjdk_archive_file.name)
         openjdk_archive_file.rename(move_to)
         return move_to
 
@@ -153,12 +153,12 @@ class ReleaseCreator:
         os.chmod(sh_file, 0o755)
         os.chmod(bat_file, 0o755)
 
-    def __is_file_inside_dir(self,file:Path,dir:Path)->bool:
-        abs_file=file.resolve()
-        abs_dir=dir.resolve()
+    def __is_file_inside_dir(self, file: Path, dir: Path) -> bool:
+        abs_file = file.resolve()
+        abs_dir = dir.resolve()
 
-        filepath=str(abs_file)
-        dirpath=str(abs_dir)
+        filepath = str(abs_file)
+        dirpath = str(abs_dir)
 
         return filepath.startswith(dirpath)
 
@@ -170,8 +170,10 @@ class ReleaseCreator:
 
         for filename in self.__filenames_to_package:
             src_file = self.__project_dir.joinpath(filename)
-            if not self.__is_file_inside_dir(src_file,self.__project_dir):
-                self.__logger.warning(f"Skip copying because it cannot traverse project directory: {src_file}")
+            if not self.__is_file_inside_dir(src_file, self.__project_dir):
+                self.__logger.warning(
+                    f"Skip copying because it cannot traverse project directory: {src_file}"
+                )
                 continue
 
             dest_file = self.__package_dir.joinpath(filename)
@@ -210,24 +212,23 @@ class ReleaseCreator:
         self.__logger.info(f"Created release archive: {archive_file}")
 
         return archive_file
-    
-    def __copy_uber_jar_to_working_dir(self,jar_file:Path)->Path:
-        copy_to=self.__working_dir.joinpath(self.__output_jar_filename)
-        shutil.copy(jar_file,copy_to)
+
+    def __copy_uber_jar_to_working_dir(self, jar_file: Path) -> Path:
+        copy_to = self.__working_dir.joinpath(self.__output_jar_filename)
+        shutil.copy(jar_file, copy_to)
         self.__logger.info(f"JAR file was copied: {jar_file} -> {copy_to}")
 
         return copy_to
-    
-    def __list_files_in_package_dir(self)->set[str]:
-        filenames=set()
-        files=self.__package_dir.glob("*")
+
+    def __list_files_in_package_dir(self) -> set[str]:
+        filenames = set()
+        files = self.__package_dir.glob("*")
         for file in files:
             filenames.add(file.name)
-        
+
         return filenames
 
-
-    def run(self)->dict[str,object]:
+    def run(self) -> dict[str, object]:
         if self.__existing_openjdk_archive_filepath:
             self.__extract_openjdk(Path(self.__existing_openjdk_archive_filepath))
         else:
@@ -244,7 +245,7 @@ class ReleaseCreator:
         self.__create_release_archive()
         self.__copy_uber_jar_to_working_dir(jar_file)
 
-        packaged_filenames=self.__list_files_in_package_dir()
+        packaged_filenames = self.__list_files_in_package_dir()
 
         if self.__remove_package_dir_on_exit:
             self.__logger.info(f"Removing directory: {self.__package_root_dir}")
@@ -252,5 +253,5 @@ class ReleaseCreator:
 
         return {
             "packageDir": str(self.__package_dir),
-            "packagedFiles": packaged_filenames
+            "packagedFiles": packaged_filenames,
         }

@@ -5,13 +5,14 @@ from logging import getLogger, config
 
 from src.release_creator import ReleaseCreator
 
+
 def main(args):
     project_filepath: str = args.project_filepath
     package_dirname: str = args.package_dirname
     output_archive_filename: str = args.output_archive_filename
-    output_jar_filename:str=args.output_jar_filename
+    output_jar_filename: str = args.output_jar_filename
     remove_package_dir_on_exit: bool = args.remove_package_dir_on_exit
-    openjdk_download_url: str|None = args.openjdk_download_url
+    openjdk_download_url: str | None = args.openjdk_download_url
     existing_openjdk_archive_filepath: str | None = args.existing_openjdk_filepath
     filenames_to_package: list[str] | None = args.filenames_to_package
 
@@ -47,7 +48,7 @@ if __name__ == "__main__":
     parser.add_argument("-p", "--project-filepath", type=str)
     parser.add_argument("-d", "--package-dirname", type=str)
     parser.add_argument("-oa", "--output-archive-filename", type=str)
-    parser.add_argument("-oj","--output-jar-filename",type=str)
+    parser.add_argument("-oj", "--output-jar-filename", type=str)
     parser.add_argument("--remove-package-dir-on-exit", action="store_true")
     parser.add_argument("-u", "--openjdk-download-url", type=str)
     parser.add_argument("-j", "--existing-openjdk-archive-filepath", type=str)

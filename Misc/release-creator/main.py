@@ -115,7 +115,7 @@ class ReleaseCreator:
 
         return {"artifactId": artifact_id.text, "version": version.text}
 
-    def __copy_uber_jar(self, artifact_id: str, version: str) -> Path:
+    def __copy_uber_jar_to_package_dir(self, artifact_id: str, version: str) -> Path:
         self.__logger.info("Copying JAR file")
 
         src_jar_file = self.__project_dir.joinpath(f"{artifact_id}-{version}.jar")
@@ -227,7 +227,7 @@ class ReleaseCreator:
             self.__move_openjdk_archive_to_cache(openjdk_archive_file)
 
         project_info = self.__get_project_info()
-        jar_file = self.__copy_uber_jar(
+        jar_file = self.__copy_uber_jar_to_package_dir(
             project_info["artifactId"], project_info["version"]
         )
         self.__generate_start_scripts(jar_file)

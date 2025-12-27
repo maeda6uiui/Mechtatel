@@ -16,5 +16,5 @@ uv run main.py \
     -f Data README.md 
 ```
 
-The above command doesn't package the JAR of the target project.
-It only fetches the JAR that already exists in the target project.
+The above command doesn't run `mvn package` in the target project.
+You have to create an uber JAR before executing release-creator.

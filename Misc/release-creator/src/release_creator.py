@@ -154,13 +154,11 @@ class ReleaseCreator:
         os.chmod(bat_file, 0o755)
 
     def __is_file_inside_dir(self, file: Path, dir: Path) -> bool:
-        abs_file = file.resolve()
-        abs_dir = dir.resolve()
-
-        filepath = str(abs_file)
-        dirpath = str(abs_dir)
-
-        return filepath.startswith(dirpath)
+        try:
+            file.resolve().relative_to(dir.resolve())
+            return True
+        except ValueError:
+            return False
 
     def __copy_files_to_package(self):
         self.__logger.info("Copying files to the package")

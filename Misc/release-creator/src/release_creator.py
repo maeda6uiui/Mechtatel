@@ -44,10 +44,13 @@ class ReleaseCreator:
 
         # Create package directory
         package_root_dirname = str(uuid.uuid4())
-        self.__package_dir = self.__working_dir.joinpath(package_root_dirname).joinpath(
+        self.__package_root_dir=self.__working_dir.joinpath(package_root_dirname)
+        self.__package_root_dir.mkdir()
+
+        self.__package_dir = self.__package_root_dir.joinpath(
             package_dirname
         )
-        self.__package_dir.mkdir(parents=True)
+        self.__package_dir.mkdir()
         self.__logger.info(f"Created a package directory: {self.__package_dir}")
 
     def __download_openjdk(self) -> Path:
@@ -233,5 +236,5 @@ class ReleaseCreator:
         self.__copy_uber_jar_to_working_dir(jar_file)
 
         if self.__remove_package_dir_on_exit:
-            self.__logger.info(f"Removing directory: {self.__package_dir}")
-            shutil.rmtree(self.__package_dir)
+            self.__logger.info(f"Removing directory: {self.__package_root_dir}")
+            shutil.rmtree(self.__package_root_dir)

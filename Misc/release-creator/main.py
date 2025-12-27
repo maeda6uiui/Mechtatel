@@ -139,6 +139,15 @@ class ReleaseCreator:
         os.chmod(sh_file, 0o755)
         os.chmod(bat_file, 0o755)
 
+    def __is_file_inside_dir(self,file:Path,dir:Path)->bool:
+        abs_file=file.resolve()
+        abs_dir=dir.resolve()
+
+        filepath=str(abs_file)
+        dirpath=str(abs_dir)
+
+        return filepath.startswith(dirpath)
+
     def __copy_files_to_package(self):
         self.__logger.info("Copying files to the package")
         if self.__filenames_to_package is None or len(self.__filenames_to_package) == 0:
@@ -147,6 +156,10 @@ class ReleaseCreator:
 
         for filename in self.__filenames_to_package:
             src_file = self.__project_dir.joinpath(filename)
+            if not self.__is_file_inside_dir(src_file,self.__project_dir):
+                self.__logger.warning(f"Skip copying because it cannot traverse project directory: {src_file}")
+                continue
+
             dest_file = self.__package_dir.joinpath(filename)
             self.__logger.info(f"Copying file: {src_file} -> {dest_file}")
 

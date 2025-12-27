@@ -47,14 +47,22 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--project-filepath", type=str)
-    parser.add_argument("-d", "--package-dirname", type=str)
-    parser.add_argument("-oa", "--output-archive-filename", type=str)
-    parser.add_argument("-oj", "--output-jar-filename", type=str)
+    parser.add_argument("-p", "--project-filepath", type=str, required=True)
+    parser.add_argument("-d", "--package-dirname", type=str, required=True)
+    parser.add_argument("-oa", "--output-archive-filename", type=str, required=True)
+    parser.add_argument("-oj", "--output-jar-filename", type=str, required=True)
     parser.add_argument("--remove-package-dir-on-exit", action="store_true")
     parser.add_argument("-u", "--openjdk-download-url", type=str)
     parser.add_argument("-j", "--existing-openjdk-archive-filepath", type=str)
     parser.add_argument("-f", "--filenames-to-package", type=str, nargs="*")
     args = parser.parse_args()
+
+    if (
+        args.openjdk_download_url is None
+        and args.existing_openjdk_archive_filepath is None
+    ):
+        parser.error(
+            "Specify exactly one of --openjdk-download-url or --existing-openjdk-archive-filepath"
+        )
 
     main(args)

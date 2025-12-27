@@ -13,7 +13,9 @@ def main(args):
     output_jar_filename: str = args.output_jar_filename
     remove_package_dir_on_exit: bool = args.remove_package_dir_on_exit
     openjdk_download_url: str | None = args.openjdk_download_url
-    existing_openjdk_archive_filepath: str | None = args.existing_openjdk_filepath
+    existing_openjdk_archive_filepath: str | None = (
+        args.existing_openjdk_archive_filepath
+    )
     filenames_to_package: list[str] | None = args.filenames_to_package
 
     # Set up logger

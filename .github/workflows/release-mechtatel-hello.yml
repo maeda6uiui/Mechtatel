@@ -22,7 +22,7 @@ jobs:
             openJdkUrl: https://download.java.net/java/GA/jdk21/fd2272bbf8e04c3dbaee13770090416c/35/GPL/openjdk-21_linux-aarch64_bin.tar.gz
           - name: Windows amd64
             mvnProfile: mechtatel-natives-windows-amd64
-            archiveFilename: mechtatel-hello_windows_amd64.tar.gz
+            archiveFilename: mechtatel-hello_windows_amd64.zip
             jarFilename: mechtatel-hello_windows_amd64.jar
             openJdkUrl: https://download.java.net/java/GA/jdk21/fd2272bbf8e04c3dbaee13770090416c/35/GPL/openjdk-21_windows-x64_bin.zip
           - name: macOS arm64

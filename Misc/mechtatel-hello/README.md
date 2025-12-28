@@ -16,9 +16,13 @@ It doesn't guarantee that the Mechtatel engine is fully functional on your syste
 
 There are release packages available in releases of this repo.
 
-If you already have Java 21 or higher installed, download the JAR file for your platform and execute it with `java -jar` command.
-If you don't have Java installed or if you're not sure, download the archive file for your platform (`.tar.gz` for Linux and macOS, `.zip` for Windows), extract it, and then execute `start.sh` (Linux and macOS) or `start.bat` (Windows).
-That should output a rendering result to `./Data/rendering.png` by default.
+The easiest way is to download a release package for your platform (`.tar.gz` for Linux and macOS, `.zip` for Windows), extract it, and then execute `start.sh` (Linux and macOS) or `start.bat` (Windows).
+It includes OpenJDK, so you don't have to install Java on your system.
+
+If you already have Java 21 or higher installed, you can use the JAR file for your platform and execute it with `java -jar` command.
+In this case, you also have to download `data.zip` from the release and extract it to the same directory as the JAR file.
+
+In either case, rendering result is written to `./Data/rendering.png` by default.
 
 ### Build it yourself
 

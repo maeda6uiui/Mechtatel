@@ -67,3 +67,21 @@ jobs:
           files: |
             Misc/release-creator/WorkingDir/${{matrix.archiveFilename}}
             Misc/release-creator/WorkingDir/${{matrix.jarFilename}}
+  uploadData:
+    name: Upload an archive file of Data directory
+    needs: release
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Misc/mechtatel-hello
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Create an archive file of Data directory
+        run: zip -r data.zip Data
+      - name: Publish data.zip to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Misc/mechtatel-hello/data.zip

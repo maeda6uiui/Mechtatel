@@ -1,0 +1,50 @@
+name: Release mechtatel-hello
+
+on:
+  push:
+    tags:
+      - "mechtatel-hello-*"
+
+jobs:
+  release:
+    name: Release mechtatel-hello
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - mvnProfile: mechtatel-natives-linux-amd64
+            archiveFilename: mechtatel-hello_linux_x64.tar.gz
+            jarFilename: mechtatel-hello_linux_x64.jar
+            openJdkUrl: https://download.java.net/java/GA/jdk21/fd2272bbf8e04c3dbaee13770090416c/35/GPL/openjdk-21_linux-x64_bin.tar.gz
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Create an uber JAR
+        working-directory: Misc/mechtatel-hello
+        run: mvn clean package -P ${{matrix.mvnProfile}}
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      - name: Create release artifacts
+        working-directory: Misc/release-creator
+        run: |
+          uv run main.py \
+              -p ../mechtatel-hello \
+              -d mechtatel-hello \
+              -oa ${{matrix.archiveFilename}} \
+              -oj ${{matrix.jarFilename}} \
+              --remove-package-dir-on-exit \
+              -u ${{matrix.openJdkUrl}} \
+              -f Data README.md LICENSE.txt
+      - name: Publish artifacts to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            Misc/release-creator/WorkingDir/${{matrix.archiveFilename}}
+            Misc/release-creator/WorkingDir/${{matrix.jarFilename}}

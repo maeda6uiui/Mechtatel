@@ -28,7 +28,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - name: Install Mechtatel
-        run: mvn clean install
+        run: mvn clean install -Dgpg.skip
       - name: Create an uber JAR
         working-directory: Misc/mechtatel-hello
         run: mvn clean package -P ${{matrix.mvnProfile}}

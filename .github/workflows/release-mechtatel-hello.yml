@@ -7,17 +7,18 @@ on:
 
 jobs:
   release:
-    name: Release mechtatel-hello
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         include:
-          - mvnProfile: mechtatel-natives-linux-amd64
+          - name: Linux x64
+            mvnProfile: mechtatel-natives-linux-amd64
             archiveFilename: mechtatel-hello_linux_x64.tar.gz
             jarFilename: mechtatel-hello_linux_x64.jar
             openJdkUrl: https://download.java.net/java/GA/jdk21/fd2272bbf8e04c3dbaee13770090416c/35/GPL/openjdk-21_linux-x64_bin.tar.gz
+    name: Release mechtatel-hello for ${{matrix.name}}
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -29,6 +30,9 @@ jobs:
       - name: Create an uber JAR
         working-directory: Misc/mechtatel-hello
         run: mvn clean package -P ${{matrix.mvnProfile}}
+      - name: Set tag name (${{github.ref_name}}) to README.md
+        working-directory: Misc/mechtatel-hello
+        run: sed -i "s/\${releaseTag}/${{github.ref_name}}/" README.md
       - name: Install uv
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
       - name: Create release artifacts

@@ -38,6 +38,7 @@ class ReleaseCreator:
             self.__logger = getLogger(__name__)
 
         self.__project_dir = Path(project_filepath)
+        self.__project_target_dir = self.__project_dir.joinpath("target")
 
         # Create working directory
         self.__working_dir = Path("./WorkingDir")
@@ -121,7 +122,9 @@ class ReleaseCreator:
     def __copy_uber_jar_to_package_dir(self, artifact_id: str, version: str) -> Path:
         self.__logger.info("Copying JAR file")
 
-        src_jar_file = self.__project_dir.joinpath(f"{artifact_id}-{version}.jar")
+        src_jar_file = self.__project_target_dir.joinpath(
+            f"{artifact_id}-{version}.jar"
+        )
         if not src_jar_file.exists():
             raise RuntimeError(f"JAR file not found: {src_jar_file}")
 

@@ -1,0 +1,69 @@
+name: Release mechtatel-hello
+
+on:
+  push:
+    tags:
+      - "mechtatel-hello-*"
+
+jobs:
+  release:
+    strategy:
+      matrix:
+        include:
+          - name: Linux amd64
+            mvnProfile: mechtatel-natives-linux-amd64
+            archiveFilename: mechtatel-hello_linux_amd64.tar.gz
+            jarFilename: mechtatel-hello_linux_amd64.jar
+            openJdkUrl: https://download.java.net/java/GA/jdk21/fd2272bbf8e04c3dbaee13770090416c/35/GPL/openjdk-21_linux-x64_bin.tar.gz
+          - name: Linux arm64
+            mvnProfile: mechtatel-natives-linux-aarch64
+            archiveFilename: mechtatel-hello_linux_arm64.tar.gz
+            jarFilename: mechtatel-hello_linux_arm64.jar
+            openJdkUrl: https://download.java.net/java/GA/jdk21/fd2272bbf8e04c3dbaee13770090416c/35/GPL/openjdk-21_linux-aarch64_bin.tar.gz
+          - name: Windows amd64
+            mvnProfile: mechtatel-natives-windows-amd64
+            archiveFilename: mechtatel-hello_windows_amd64.zip
+            jarFilename: mechtatel-hello_windows_amd64.jar
+            openJdkUrl: https://download.java.net/java/GA/jdk21/fd2272bbf8e04c3dbaee13770090416c/35/GPL/openjdk-21_windows-x64_bin.zip
+          - name: macOS arm64
+            mvnProfile: mechtatel-natives-macos-aarch64
+            archiveFilename: mechtatel-hello_macos_arm64.tar.gz
+            jarFilename: mechtatel-hello_macos_arm64.jar
+            openJdkUrl: https://download.java.net/java/GA/jdk21/fd2272bbf8e04c3dbaee13770090416c/35/GPL/openjdk-21_macos-aarch64_bin.tar.gz
+    name: Release mechtatel-hello for ${{matrix.name}}
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Create an uber JAR
+        working-directory: Misc/mechtatel-hello
+        run: mvn -B -ntp clean package -P ${{matrix.mvnProfile}}
+      - name: Set tag name (${{github.ref_name}}) to README.md
+        working-directory: Misc/mechtatel-hello
+        run: sed -i "s/\${releaseTag}/${{github.ref_name}}/" README.md
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      - name: Create release artifacts
+        working-directory: Misc/release-creator
+        run: |
+          uv run main.py \
+              -p ../mechtatel-hello \
+              -d mechtatel-hello \
+              -oa ${{matrix.archiveFilename}} \
+              -oj ${{matrix.jarFilename}} \
+              --remove-package-dir-on-exit \
+              -u ${{matrix.openJdkUrl}} \
+              -f Data README.md LICENSE.txt
+      - name: Publish artifacts to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            Misc/release-creator/WorkingDir/${{matrix.archiveFilename}}
+            Misc/release-creator/WorkingDir/${{matrix.jarFilename}}

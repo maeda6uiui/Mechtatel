@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: Linux x64
+          - name: Linux amd64
             mvnProfile: mechtatel-natives-linux-amd64
             archiveFilename: mechtatel-hello_linux_amd64.tar.gz
             jarFilename: mechtatel-hello_linux_amd64.jar
@@ -20,7 +20,7 @@ jobs:
             archiveFilename: mechtatel-hello_linux_arm64.tar.gz
             jarFilename: mechtatel-hello_linux_arm64.jar
             openJdkUrl: https://download.java.net/java/GA/jdk21/fd2272bbf8e04c3dbaee13770090416c/35/GPL/openjdk-21_linux-aarch64_bin.tar.gz
-          - name: Windows x64
+          - name: Windows amd64
             mvnProfile: mechtatel-natives-windows-amd64
             archiveFilename: mechtatel-hello_windows_amd64.tar.gz
             jarFilename: mechtatel-hello_windows_amd64.jar

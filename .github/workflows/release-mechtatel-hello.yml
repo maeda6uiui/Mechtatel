@@ -31,7 +31,7 @@ jobs:
         run: mvn -B -ntp clean install -Dgpg.skip -Dskip.audio.tests=true
       - name: Create an uber JAR
         working-directory: Misc/mechtatel-hello
-        run: mvn clean package -P ${{matrix.mvnProfile}}
+        run: mvn -B -ntp clean package -P ${{matrix.mvnProfile}}
       - name: Set tag name (${{github.ref_name}}) to README.md
         working-directory: Misc/mechtatel-hello
         run: sed -i "s/\${releaseTag}/${{github.ref_name}}/" README.md

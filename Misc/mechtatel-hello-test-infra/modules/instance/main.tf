@@ -34,8 +34,10 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_egress_traffic_ipv4" {
 }
 
 resource "aws_network_interface" "main" {
-  subnet_id   = aws_subnet.public["main"].id
-  private_ips = var.private_ips
+  for_each = aws_subnet.public
+
+  subnet_id   = each.value.id
+  private_ips = var.private_ips[each.key]
 }
 
 resource "aws_key_pair" "main" {
@@ -48,7 +50,7 @@ resource "aws_instance" "main" {
   instance_type = var.instance_config.instance_type
 
   primary_network_interface {
-    network_interface_id = aws_network_interface.main.id
+    network_interface_id = aws_network_interface.main[var.instance_config.subnet_key].id
   }
 
   root_block_device {

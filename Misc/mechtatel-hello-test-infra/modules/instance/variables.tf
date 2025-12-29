@@ -34,7 +34,7 @@ variable "route_table" {
 }
 
 variable "private_ips" {
-  type = list(string)
+  type = map(list(string))
 }
 
 variable "key_pair" {
@@ -49,5 +49,6 @@ variable "instance_config" {
     ami           = string
     instance_type = string
     volume_size   = number
+    subnet_key=string
   })
 }

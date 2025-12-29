@@ -34,9 +34,17 @@ module "instance" {
   vpc = module.network.vpc
   subnet = {
     public = {
-      "main" = {
+      "1a" = {
         cidr_block        = "172.17.0.0/24"
         availability_zone = "ap-northeast-1a"
+      }
+      "1c"={
+        cidr_block="172.17.1.0/24"
+        availability_zone="ap-northeast-1c"
+      }
+      "1d"={
+        cidr_block="172.17.2.0/24"
+        availability_zone="ap-northeast-1d"
       }
     }
   }
@@ -46,7 +54,11 @@ module "instance" {
     }
   }
   route_table = module.network.route_table
-  private_ips = ["172.17.0.10"]
+  private_ips = {
+    "1a"=["172.17.0.10"]
+    "1c"=["172.17.1.10"]
+    "1d"=["172.17.2.10"]
+  }
   key_pair = {
     key_name   = "mechtatel-hello-test"
     public_key = file("mechtatel-hello-test.pub")
@@ -55,5 +67,6 @@ module "instance" {
     ami           = data.aws_ami.al2023_arm64.id
     instance_type = "g5g.xlarge"
     volume_size   = 32
+    subnet_key = "1c"
   }
 }

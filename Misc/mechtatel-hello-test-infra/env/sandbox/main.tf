@@ -1,5 +1,23 @@
 locals {
   env = "sandbox"
+
+  vpc_cidr_block= "172.17.0.0/20"
+  subnet = {
+    public = {
+      "1a" = {
+        cidr_block        = cidrsubnet(local.vpc_cidr_block,4,0)
+        availability_zone = "ap-northeast-1a"
+      }
+      "1c"={
+        cidr_block=cidrsubnet(local.vpc_cidr_block,4,1)
+        availability_zone="ap-northeast-1c"
+      }
+      "1d"={
+        cidr_block=cidrsubnet(local.vpc_cidr_block,4,2)
+        availability_zone="ap-northeast-1d"
+      }
+    }
+  }
 }
 
 data "aws_ami" "al2023_arm64" {
@@ -23,7 +41,7 @@ data "aws_ami" "al2023_arm64" {
 module "network" {
   source = "../../modules/network"
 
-  cidr_block = "172.17.0.0/20"
+  cidr_block = local.vpc_cidr_block
 }
 
 module "instance" {
@@ -32,22 +50,7 @@ module "instance" {
   env = local.env
 
   vpc = module.network.vpc
-  subnet = {
-    public = {
-      "1a" = {
-        cidr_block        = "172.17.0.0/24"
-        availability_zone = "ap-northeast-1a"
-      }
-      "1c"={
-        cidr_block="172.17.1.0/24"
-        availability_zone="ap-northeast-1c"
-      }
-      "1d"={
-        cidr_block="172.17.2.0/24"
-        availability_zone="ap-northeast-1d"
-      }
-    }
-  }
+  subnet = local.subnet
   security_group = {
     allow_ssh = {
       ipv4_cidrs = [var.ssh_cidr]
@@ -55,9 +58,9 @@ module "instance" {
   }
   route_table = module.network.route_table
   private_ips = {
-    "1a"=["172.17.0.10"]
-    "1c"=["172.17.1.10"]
-    "1d"=["172.17.2.10"]
+    for k,v in local.subnet.public: k=>[
+      cidrhost(v.cidr_block,10)
+    ]
   }
   key_pair = {
     key_name   = "mechtatel-hello-test"

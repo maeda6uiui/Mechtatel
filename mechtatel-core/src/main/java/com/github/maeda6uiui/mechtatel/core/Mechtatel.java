@@ -6,6 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
 import com.github.maeda6uiui.mechtatel.natives.MttNativeLoaderBase;
 import com.github.maeda6uiui.mechtatel.natives.MttNativeLoaderFactory2;
 import com.jme3.bullet.PhysicsSpace;
+import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
@@ -41,6 +42,12 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
     private List<MttWindow> newWindowsQueue;
 
     private void initMechtatel(MttSettings settings) {
+        //Set error callback
+        glfwSetErrorCallback((error, description) -> {
+            String errorMsg = GLFWErrorCallback.getDescription(description);
+            logger.error("Error: {} Message: {}", error, errorMsg);
+        });
+
         //Initialize GLFW =====
         if (!glfwInit()) {
             throw new RuntimeException("Failed to initialize GLFW");

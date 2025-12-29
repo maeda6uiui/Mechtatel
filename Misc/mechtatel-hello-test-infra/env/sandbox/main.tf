@@ -54,6 +54,6 @@ module "instance" {
   instance_config = {
     ami           = data.aws_ami.al2023_arm64.id
     instance_type = "g5g.xlarge"
-    volume_size   = 24
+    volume_size   = 32
   }
 }

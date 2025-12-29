@@ -49,6 +49,6 @@ variable "instance_config" {
     ami           = string
     instance_type = string
     volume_size   = number
-    subnet_key=string
+    subnet_key    = string
   })
 }

@@ -1,20 +1,20 @@
 locals {
   env = "sandbox"
 
-  vpc_cidr_block= "172.17.0.0/20"
+  vpc_cidr_block = "172.17.0.0/20"
   subnet = {
     public = {
       "1a" = {
-        cidr_block        = cidrsubnet(local.vpc_cidr_block,4,0)
+        cidr_block        = cidrsubnet(local.vpc_cidr_block, 4, 0)
         availability_zone = "ap-northeast-1a"
       }
-      "1c"={
-        cidr_block=cidrsubnet(local.vpc_cidr_block,4,1)
-        availability_zone="ap-northeast-1c"
+      "1c" = {
+        cidr_block        = cidrsubnet(local.vpc_cidr_block, 4, 1)
+        availability_zone = "ap-northeast-1c"
       }
-      "1d"={
-        cidr_block=cidrsubnet(local.vpc_cidr_block,4,2)
-        availability_zone="ap-northeast-1d"
+      "1d" = {
+        cidr_block        = cidrsubnet(local.vpc_cidr_block, 4, 2)
+        availability_zone = "ap-northeast-1d"
       }
     }
   }
@@ -49,7 +49,7 @@ module "instance" {
 
   env = local.env
 
-  vpc = module.network.vpc
+  vpc    = module.network.vpc
   subnet = local.subnet
   security_group = {
     allow_ssh = {
@@ -58,8 +58,8 @@ module "instance" {
   }
   route_table = module.network.route_table
   private_ips = {
-    for k,v in local.subnet.public: k=>[
-      cidrhost(v.cidr_block,10)
+    for k, v in local.subnet.public : k => [
+      cidrhost(v.cidr_block, 10)
     ]
   }
   key_pair = {
@@ -70,6 +70,6 @@ module "instance" {
     ami           = data.aws_ami.al2023_arm64.id
     instance_type = "g5g.xlarge"
     volume_size   = 32
-    subnet_key = "1c"
+    subnet_key    = "1c"
   }
 }

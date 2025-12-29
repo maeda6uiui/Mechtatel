@@ -20,24 +20,6 @@ locals {
   }
 }
 
-data "aws_ami" "al2023_arm64" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["al2023-ami-*-kernel-6.*-arm64"]
-  }
-  filter {
-    name   = "architecture"
-    values = ["arm64"]
-  }
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-}
-
 module "network" {
   source = "../../modules/network"
 
@@ -67,7 +49,7 @@ module "instance" {
     public_key = file("mechtatel-hello-test.pub")
   }
   instance_config = {
-    ami           = data.aws_ami.al2023_arm64.id
+    ami           = "ami-0cf8decb2a7ae7588" #Deep Learning ARM64 AMI OSS Nvidia Driver GPU PyTorch 2.9 (Amazon Linux 2023) 20251226
     instance_type = "g5g.xlarge"
     volume_size   = 32
     subnet_key    = "1c"

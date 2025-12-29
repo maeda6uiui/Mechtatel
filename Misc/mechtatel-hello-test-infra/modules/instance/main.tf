@@ -65,7 +65,7 @@ resource "aws_instance" "main" {
     }
   }
 
-  user_data = file("user_data.sh")
+  user_data = file("${path.module}/user_data.sh")
 
   tags = {
     Name = "mechtatel-hello-test-${var.env}"

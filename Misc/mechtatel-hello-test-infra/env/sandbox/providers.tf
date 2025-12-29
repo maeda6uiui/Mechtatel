@@ -7,7 +7,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "maeda6uiui-sandbox-infra"
+    bucket = "maeda6uiui-terraform-sandbox"
     region = "ap-northeast-1"
     key    = "mechtatel-hello-test.tfstate"
   }

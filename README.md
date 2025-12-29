@@ -40,9 +40,11 @@ Its somewhat cheap taste of 20-year-old gameplay still captivates me.
 | Platform    | Tested |
 |-------------|--------|
 | Linux x64   | Yes    |
-| Linux arm64 | TBD    |
-| Windows x64 | TBD    |
+| Linux arm64 | No     |
+| Windows x64 | Yes    |
 | macOS arm64 | No     |
+
+Support for Linux arm64 is partly tested on a `g5g.xlarge` instance of AWS EC2.
 
 ## Try it out!
 

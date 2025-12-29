@@ -129,7 +129,7 @@ public class MechtatelHeadless implements IMechtatelHeadlessEventHandlers {
 
     public void run() {
         if (!mechtatelReady) {
-            logger.error("Mechtatel engine is not ready to be run");
+            logger.error("Mechtatel engine is not ready");
             return;
         }
 

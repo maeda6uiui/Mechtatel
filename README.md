@@ -37,8 +37,14 @@ Its somewhat cheap taste of 20-year-old gameplay still captivates me.
 
 ### Supported platforms
 
-- Linux x64
-- Windows x64
+| Platform    | Tested |
+|-------------|--------|
+| Linux x64   | Yes    |
+| Linux arm64 | No     |
+| Windows x64 | Yes    |
+| macOS arm64 | No     |
+
+Support for Linux arm64 is partly tested on a `g5g.xlarge` instance of AWS EC2.
 
 ## Try it out!
 
@@ -49,15 +55,32 @@ Its somewhat cheap taste of 20-year-old gameplay still captivates me.
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-core</artifactId>
-        <version>0.3.0</version>
+        <version>0.4.0</version>
+    </dependency>
+    <dependency>
+        <groupId>io.github.maeda6uiui</groupId>
+        <artifactId>mechtatel-platform-pack-linux</artifactId>
+        <version>0.4.0</version>
     </dependency>
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-logging</artifactId>
-        <version>0.3.0</version>
+        <version>0.4.0</version>
     </dependency>
 </dependencies>
 ```
+
+`mechtatel-platform-pack-linux` module loads platform-dependent dependencies for Linux x64.
+You have to change it according to your target platform.
+
+| Platform    | Module name                         |
+|-------------|-------------------------------------|
+| Linux x64   | mechtatel-platform-pack-linux       |
+| Linux arm64 | mechtatel-platform-pack-linux-arm64 |
+| Windows x64 | mechtatel-platform-pack-windows     |
+| macOS arm64 | mechtatel-platform-pack-macos-arm64 |
+
+pom.xml in the [mechtatel-hello](./Misc/mechtatel-hello) project might be a good starting point if you want to dynamically load a platform-pack module according to the target platform.
 
 Use of `mechtatel-logging` module is optional.
 It provides minimal logging functionality with Logback, which prints out logs above the INFO level to stdout.
@@ -70,14 +93,28 @@ You can overwrite it or use another logging implementation at your discretion.
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-audio</artifactId>
-        <version>0.3.0</version>
+        <version>0.4.0</version>
+    </dependency>
+    <dependency>
+        <groupId>io.github.maeda6uiui</groupId>
+        <artifactId>mechtatel-audio-natives-linux</artifactId>
+        <version>0.4.0</version>
     </dependency>
 </dependencies>
 ```
 
 `mechtatel-audio` module provides audio playback functionality for various audio formats including MP3 and FLAC.
 The core part is written in Rust and `mechtatel-audio` works as an interface to the underlying native library.
-It can be used independently from `mechtatel-core`, but keep in mind that it currently supports only Linux x64 and Windows x64 because it's not written in pure Java.
+It can be used independently from `mechtatel-core`.
+
+As with the `mechtatel-core` module, you have to add a platform-dependent module to dependencies according to the target platform.
+
+| Platform    | Module name                         |
+|-------------|-------------------------------------|
+| Linux x64   | mechtatel-audio-natives-linux       |
+| Linux arm64 | mechtatel-audio-natives-linux-arm64 |
+| Windows x64 | mechtatel-audio-natives-windows     |
+| macOS arm64 | mechtatel-audio-natives-macos-arm64 |
 
 ## Documentation
 

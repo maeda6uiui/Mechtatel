@@ -13,7 +13,6 @@ import imgui.flag.ImGuiKey;
 import imgui.internal.ImGuiContext;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.system.MemoryUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,8 +99,6 @@ public class MttWindow {
             while (pbMonitors.hasRemaining()) {
                 monitors.add(pbMonitors.get());
             }
-
-            MemoryUtil.memFree(pbMonitors);
 
             int monitorIndex = settings.windowSettings.monitorIndex;
             if (monitorIndex == -1) {

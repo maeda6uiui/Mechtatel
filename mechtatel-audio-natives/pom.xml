@@ -7,7 +7,7 @@
     <parent>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel</artifactId>
-        <version>0.4.0</version>
+        <version>0.4.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>mechtatel-audio-natives</artifactId>

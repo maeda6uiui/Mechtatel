@@ -20,7 +20,8 @@
         "useOpenAL": false
     },
     "system": {
-        "fps": 60
+        "fps": 60,
+        "stackSize": 16384
     },
     "cache": {
         "useCache": true,

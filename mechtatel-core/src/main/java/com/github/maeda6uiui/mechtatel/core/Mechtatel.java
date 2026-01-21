@@ -10,6 +10,7 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
+import org.lwjgl.system.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +43,9 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
     private List<MttWindow> newWindowsQueue;
 
     private void initMechtatel(MttSettings settings) {
+        //Set stack size
+        Configuration.STACK_SIZE.set(settings.systemSettings.stackSize);
+
         //Set error callback
         glfwSetErrorCallback((error, description) -> {
             String errorMsg = GLFWErrorCallback.getDescription(description);

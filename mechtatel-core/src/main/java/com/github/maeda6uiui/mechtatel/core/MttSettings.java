@@ -68,9 +68,11 @@ public class MttSettings {
 
     public static class SystemSettings {
         public int fps;
+        public int stackSize;
 
         public SystemSettings() {
             fps = 60;
+            stackSize = 16 * 1024;
         }
     }
 

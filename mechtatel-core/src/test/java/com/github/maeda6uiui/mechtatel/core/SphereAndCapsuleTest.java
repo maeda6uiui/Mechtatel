@@ -1,0 +1,129 @@
+package com.github.maeda6uiui.mechtatel.core;
+
+import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttCapsule;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttSphere;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.List;
+
+public class SphereAndCapsuleTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(SphereAndCapsuleTest.class);
+
+    public SphereAndCapsuleTest(MttSettings settings) {
+        super(settings);
+        this.run();
+    }
+
+    public static void main(String[] args) {
+        MttSettings
+                .load("./Mechtatel/settings.json")
+                .ifPresentOrElse(
+                        SphereAndCapsuleTest::new,
+                        () -> logger.error("Failed to load settings")
+                );
+    }
+
+    private MttScreen mainScreen;
+    private FreeCamera camera;
+
+    private MttSphere sphere;
+    private MttCapsule capsule;
+    private MttSphere filledSphere;
+    private MttCapsule filledCapsule;
+    private MttModel cube;
+
+    @Override
+    public void onCreate(MttWindow window) {
+        mainScreen = window.createScreen(
+                new MttScreen.MttScreenCreateInfo()
+                        .setPostProcessingNaborNames(List.of("pp.parallel_light"))
+        );
+
+        PostProcessingProperties ppProp = mainScreen.getPostProcessingProperties();
+        ppProp.createParallelLight();
+
+        mainScreen.createLineSet().addPositiveAxes(10.0f).createBuffer();
+
+        sphere = mainScreen.createSphere(
+                1.0f,
+                16,
+                16,
+                new Vector4f(1.0f, 0.0f, 0.0f, 1.0f),
+                false
+        );
+        sphere.translate(new Vector3f(0.0f, 0.0f, 3.0f));
+        capsule = mainScreen.createCapsule(
+                1.0f,
+                1.0f,
+                16,
+                16,
+                new Vector4f(0.0f, 1.0f, 0.0f, 1.0f),
+                false
+        );
+        capsule.translate(new Vector3f(0.0f, 0.0f, 6.0f));
+        filledSphere = mainScreen.createSphere(
+                1.0f,
+                16,
+                16,
+                new Vector4f(0.0f, 0.0f, 1.0f, 1.0f),
+                true
+        );
+        filledSphere.translate(new Vector3f(3.0f, 0.0f, 0.0f));
+        filledCapsule = mainScreen.createCapsule(
+                1.0f,
+                1.0f,
+                16,
+                16,
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
+                true
+        );
+        filledCapsule.translate(new Vector3f(6.0f, 0.0f, 0.0f));
+
+        try {
+            cube = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
+            cube.translate(new Vector3f(5.0f, 0.0f, 5.0f));
+        } catch (IOException e) {
+            logger.error("Error", e);
+            window.close();
+
+            return;
+        }
+
+        camera = new FreeCamera(mainScreen.getCamera());
+    }
+
+    @Override
+    public void onUpdate(MttWindow window) {
+        camera.translate(
+                window.getKeyboardPressingCount(KeyCode.W),
+                window.getKeyboardPressingCount(KeyCode.S),
+                window.getKeyboardPressingCount(KeyCode.A),
+                window.getKeyboardPressingCount(KeyCode.D)
+        );
+        camera.rotate(
+                window.getKeyboardPressingCount(KeyCode.UP),
+                window.getKeyboardPressingCount(KeyCode.DOWN),
+                window.getKeyboardPressingCount(KeyCode.LEFT),
+                window.getKeyboardPressingCount(KeyCode.RIGHT)
+        );
+
+        sphere.rotY(0.01f);
+        filledSphere.rotY(0.01f);
+        capsule.rotZ(0.01f);
+        filledCapsule.rotX(0.01f);
+        cube.rotY(0.01f);
+
+        mainScreen.draw();
+        window.present(mainScreen);
+    }
+}

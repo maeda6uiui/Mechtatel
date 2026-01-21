@@ -55,17 +55,17 @@ Support for Linux arm64 is partly tested on a `g5g.xlarge` instance of AWS EC2.
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-core</artifactId>
-        <version>0.4.0</version>
+        <version>0.4.1</version>
     </dependency>
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-platform-pack-linux</artifactId>
-        <version>0.4.0</version>
+        <version>0.4.1</version>
     </dependency>
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-logging</artifactId>
-        <version>0.4.0</version>
+        <version>0.4.1</version>
     </dependency>
 </dependencies>
 ```
@@ -93,12 +93,12 @@ You can overwrite it or use another logging implementation at your discretion.
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-audio</artifactId>
-        <version>0.4.0</version>
+        <version>0.4.1</version>
     </dependency>
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-audio-natives-linux</artifactId>
-        <version>0.4.0</version>
+        <version>0.4.1</version>
     </dependency>
 </dependencies>
 ```

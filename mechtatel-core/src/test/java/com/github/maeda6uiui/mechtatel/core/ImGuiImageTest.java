@@ -55,7 +55,7 @@ public class ImGuiImageTest extends Mechtatel {
             if (ImGui.begin("Image View")) {
                 ImGui.setWindowSize(640, 480, ImGuiCond.FirstUseEver);
                 ImGui.image(
-                        texture.getVulkanTexture().getAllocationIndex(),
+                        texture.getVulkanTexture().getImGuiTextureId(),
                         ImGui.getContentRegionAvailX(),
                         ImGui.getContentRegionAvailY()
                 );

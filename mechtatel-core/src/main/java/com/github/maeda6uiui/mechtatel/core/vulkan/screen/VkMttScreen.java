@@ -73,34 +73,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
     // - PrimitiveNabor (fill)
     private static final int NUM_SCENES_TO_MERGE = 3;
 
-    private static final Map<Integer, Boolean> allocationStatus;
-
-    static {
-        allocationStatus = new HashMap<>();
-        for (int i = 0; i < GBufferNabor.MAX_NUM_TEXTURES; i++) {
-            allocationStatus.put(i, false);
-        }
-    }
-
-    public static int allocateTextureIndex() {
-        int index = -1;
-
-        for (var entry : allocationStatus.entrySet()) {
-            if (!entry.getValue()) {
-                index = entry.getKey();
-                allocationStatus.put(index, true);
-
-                break;
-            }
-        }
-
-        return index;
-    }
-
-    public static void deallocateTexture(int allocationIndex) {
-        allocationStatus.put(allocationIndex, false);
-    }
-
     private VkDevice device;
     private long commandPool;
     private VkQueue graphicsQueue;
@@ -125,6 +97,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
     private boolean shouldChangeExtentOnRecreate;
 
     private QuadDrawer quadDrawer;
+
+    private Map<Integer, Boolean> allocationStatus;
 
     private void createShadowMappingNaborUserDefImages(ShadowMappingNabor shadowMappingNabor) {
         shadowMappingNabor.cleanupUserDefImages();
@@ -187,6 +161,11 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         this.shouldChangeExtentOnRecreate = createInfo.shouldChangeExtentOnRecreate;
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
+
+        allocationStatus = new HashMap<>();
+        for (int i = 0; i < GBufferNabor.MAX_NUM_TEXTURES; i++) {
+            allocationStatus.put(i, false);
+        }
 
         MttShaderConfig shaderConfig = MttShaderConfig
                 .get()
@@ -1079,5 +1058,24 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         }
 
         return textureDescriptorSets;
+    }
+
+    public int allocateTextureIndex() {
+        int index = -1;
+
+        for (var entry : allocationStatus.entrySet()) {
+            if (!entry.getValue()) {
+                index = entry.getKey();
+                allocationStatus.put(index, true);
+
+                break;
+            }
+        }
+
+        return index;
+    }
+
+    public void deallocateTexture(int allocationIndex) {
+        allocationStatus.put(allocationIndex, false);
     }
 }

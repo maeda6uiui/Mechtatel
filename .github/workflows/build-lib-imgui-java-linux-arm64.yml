@@ -30,12 +30,12 @@ jobs:
           distribution: temurin
           java-version: 21
       - name: Build lib-imgui-java
-        run: ./buildSrc/scripts/build.sh linuxarm64
+        run: ./gradlew imgui-binding:generateLibs -Denvs=linuxarm64 -Dlocal
       - name: Rename build artifact to prevent name collision
         run: |
-          cd /tmp/imgui/dst/
+          cd imgui-binding/build/libsNative/linuxarm64
           mv libimgui-java64.so libimgui-java-arm64.so
       - name: Publish build artifact to release
         uses: softprops/action-gh-release@v2
         with:
-          files: /tmp/imgui/dst/libimgui-java-arm64.so
+          files: Misc/imgui-java/imgui-binding/build/libsNative/linuxarm64/libimgui-java-arm64.so

@@ -30,8 +30,8 @@ jobs:
           distribution: temurin
           java-version: 21
       - name: Build lib-imgui-java
-        run: ./buildSrc/scripts/build.sh linux
+        run: ./gradlew imgui-binding:generateLibs -Denvs=linux -Dlocal
       - name: Publish build artifact to release
         uses: softprops/action-gh-release@v2
         with:
-          files: /tmp/imgui/dst/libimgui-java64.so
+          files: Misc/imgui-java/imgui-binding/build/libsNative/linux64/libimgui-java64.so

@@ -16,8 +16,6 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.lwjgl.stb.STBImage.*;
 import static org.lwjgl.vulkan.VK10.*;
@@ -28,31 +26,10 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class VkMttTexture {
-    private static final Map<Integer, Boolean> allocationStatus;
     private static int imageFormat;
 
     static {
-        allocationStatus = new HashMap<>();
-        for (int i = 0; i < GBufferNabor.MAX_NUM_TEXTURES; i++) {
-            allocationStatus.put(i, false);
-        }
-
         imageFormat = VK_FORMAT_R8G8B8A8_SRGB;
-    }
-
-    private synchronized static int allocateTextureIndex() {
-        int index = -1;
-
-        for (var entry : allocationStatus.entrySet()) {
-            if (!entry.getValue()) {
-                index = entry.getKey();
-                allocationStatus.put(index, true);
-
-                break;
-            }
-        }
-
-        return index;
     }
 
     public static void setImageFormatToSRGB() {
@@ -339,7 +316,7 @@ public class VkMttTexture {
             VkMttScreen screen,
             Path textureFile,
             boolean generateMipmaps) {
-        allocationIndex = allocateTextureIndex();
+        allocationIndex = VkMttScreen.allocateTextureIndex();
         if (allocationIndex < 0) {
             String msg = String.format("Cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
             throw new RuntimeException(msg);
@@ -370,7 +347,7 @@ public class VkMttTexture {
             int width,
             int height,
             boolean generateMipmaps) {
-        allocationIndex = allocateTextureIndex();
+        allocationIndex = VkMttScreen.allocateTextureIndex();
         if (allocationIndex < 0) {
             String msg = String.format("Cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
             throw new RuntimeException(msg);
@@ -392,7 +369,7 @@ public class VkMttTexture {
     }
 
     public VkMttTexture(VkDevice device, VkMttScreen screen, long imageView) {
-        allocationIndex = allocateTextureIndex();
+        allocationIndex = VkMttScreen.allocateTextureIndex();
         if (allocationIndex < 0) {
             String msg = String.format("Cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
             throw new RuntimeException(msg);
@@ -415,9 +392,7 @@ public class VkMttTexture {
             vkDestroyImageView(device, textureImageView, null);
         }
 
-        synchronized (allocationStatus) {
-            allocationStatus.put(allocationIndex, false);
-        }
+        VkMttScreen.deallocateTexture(allocationIndex);
         screen.resetTextureDescriptorSets(allocationIndex);
     }
 

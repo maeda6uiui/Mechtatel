@@ -10,11 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SlangShaderExtractorTest {
     private static final String VERT_SOURCE = """
@@ -125,6 +121,21 @@ class SlangShaderExtractorTest {
     void extract_throwsWhenExtractionPathTraversesRoot(@TempDir Path inputDir) throws IOException {
         String traversal = """
                 //@mtt.extractionPath "../escape.slang"
+                //@mtt.entryPoint
+                void main() {}
+                """;
+        URL bad = writeSource(inputDir, "traversal.slang", traversal);
+
+        var extractor = new SlangShaderExtractor(List.of(bad));
+        RuntimeException ex = assertThrows(RuntimeException.class, extractor::extract);
+        assertTrue(ex.getMessage().contains("traverse"),
+                "Message should mention path traversal: " + ex.getMessage());
+    }
+
+    @Test
+    void extract_throwsWhenExtractionPathTraversesRoot_AbsolutePath(@TempDir Path inputDir) throws IOException {
+        String traversal = """
+                //@mtt.extractionPath "/escape.slang"
                 //@mtt.entryPoint
                 void main() {}
                 """;

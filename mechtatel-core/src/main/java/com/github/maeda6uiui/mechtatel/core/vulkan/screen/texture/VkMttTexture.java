@@ -420,6 +420,20 @@ public class VkMttTexture {
         return allocationIndex;
     }
 
+    /**
+     * Returns the texture id to use when referencing this texture from ImGui
+     * (e.g. for {@code ImGui.image(...)} or as the font atlas tex id).
+     *
+     * <p>The value is {@code allocationIndex + 1}. The +1 offset is required
+     * because ImGui 1.92 treats id {@code 0} as {@code ImTextureID_Invalid}
+     * and aborts in {@code ImDrawCmd::GetTexID()} otherwise. The renderer
+     * ({@code VkMttImGui}) subtracts 1 before using the value as a descriptor
+     * array index.
+     */
+    public int getImGuiTextureId() {
+        return allocationIndex + 1;
+    }
+
     public long getTextureImageView() {
         return textureImageView;
     }

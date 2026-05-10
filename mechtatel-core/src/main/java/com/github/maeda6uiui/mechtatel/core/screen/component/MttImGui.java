@@ -73,6 +73,13 @@ public class MttImGui extends MttComponent {
         );
         this.associateVulkanTextures(vkTexture);
 
+        //Register the uploaded texture handle with the font atlas.
+        //Required since ImGui 1.92: ImDrawCmd validates that the referenced
+        //texture id is non-invalid before recording draw calls. The id is
+        //offset by +1 (see VkMttTexture#getImGuiTextureId) because ImGui
+        //treats 0 as ImTextureID_Invalid.
+        fontAtlas.setTexID(vkTexture.getImGuiTextureId());
+
         //Create ImGui instance for rendering with Vulkan
         vkImGui = new VkMttImGui(
                 this,

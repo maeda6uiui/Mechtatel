@@ -99,4 +99,12 @@ public class MttTexture {
     public boolean isValid() {
         return isValid;
     }
+
+    /**
+     * Returns the texture id to use when referencing this texture from ImGui
+     * (e.g. for {@code ImGui.image(...)} or as the font atlas tex id).
+     */
+    public int getImGuiTextureId() {
+        return texture.getImGuiTextureId();
+    }
 }

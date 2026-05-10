@@ -88,7 +88,7 @@
         <dependency>
             <groupId>io.github.spair</groupId>
             <artifactId>imgui-java-binding</artifactId>
-            <version>1.90.0</version>
+            <version>1.92.0</version>
         </dependency>
 
         <dependency>

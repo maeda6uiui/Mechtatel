@@ -180,7 +180,14 @@ public class VkMttImGui extends VkMttComponent {
                 if (pipelineLayout != null) {
                     int numCmds = drawData.getCmdListCmdBufferSize(i);
                     for (int j = 0; j < numCmds; j++) {
-                        int textureAllocationIndex = (int) drawData.getCmdListCmdBufferTextureId(i, j);
+                        //Texture id from ImGui is offset by +1 (see VkMttTexture#getImGuiTextureId)
+                        //to avoid colliding with ImGui 1.92's ImTextureID_Invalid == 0. Subtract
+                        //it back here to get the descriptor array index.
+                        int textureAllocationIndex = (int) drawData.getCmdListCmdBufferTextureId(i, j) - 1;
+                        if (textureAllocationIndex < 0) {
+                            throw new RuntimeException("Invalid texture allocation index: " + textureAllocationIndex);
+                        }
+
                         int elemCount = drawData.getCmdListCmdBufferElemCount(i, j);
                         int indexBufferOffset = drawData.getCmdListCmdBufferIdxOffset(i, j);
 

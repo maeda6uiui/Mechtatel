@@ -11,13 +11,13 @@ import com.github.maeda6uiui.mechtatel.core.vulkan.util.ImageUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.lwjgl.stb.STBImage.*;
 import static org.lwjgl.vulkan.VK10.*;
@@ -28,31 +28,12 @@ import static org.lwjgl.vulkan.VK10.*;
  * @author maeda6uiui
  */
 public class VkMttTexture {
-    private static final Map<Integer, Boolean> allocationStatus;
+    private static final Logger logger = LoggerFactory.getLogger(VkMttTexture.class);
+
     private static int imageFormat;
 
     static {
-        allocationStatus = new HashMap<>();
-        for (int i = 0; i < GBufferNabor.MAX_NUM_TEXTURES; i++) {
-            allocationStatus.put(i, false);
-        }
-
         imageFormat = VK_FORMAT_R8G8B8A8_SRGB;
-    }
-
-    private synchronized static int allocateTextureIndex() {
-        int index = -1;
-
-        for (var entry : allocationStatus.entrySet()) {
-            if (!entry.getValue()) {
-                index = entry.getKey();
-                allocationStatus.put(index, true);
-
-                break;
-            }
-        }
-
-        return index;
     }
 
     public static void setImageFormatToSRGB() {
@@ -80,6 +61,8 @@ public class VkMttTexture {
 
     private Path textureFile;
     private boolean generateMipmaps;
+
+    private Runnable fDeallocateTexture;
 
     private void memcpy(ByteBuffer dst, ByteBuffer src, long size) {
         src.limit((int) size);
@@ -339,11 +322,14 @@ public class VkMttTexture {
             VkMttScreen screen,
             Path textureFile,
             boolean generateMipmaps) {
-        allocationIndex = allocateTextureIndex();
+        allocationIndex = screen.allocateTextureIndex();
         if (allocationIndex < 0) {
             String msg = String.format("Cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
             throw new RuntimeException(msg);
         }
+        fDeallocateTexture = () -> {
+            screen.deallocateTexture(allocationIndex);
+        };
 
         this.device = device;
 
@@ -370,11 +356,14 @@ public class VkMttTexture {
             int width,
             int height,
             boolean generateMipmaps) {
-        allocationIndex = allocateTextureIndex();
+        allocationIndex = screen.allocateTextureIndex();
         if (allocationIndex < 0) {
             String msg = String.format("Cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
             throw new RuntimeException(msg);
         }
+        fDeallocateTexture = () -> {
+            screen.deallocateTexture(allocationIndex);
+        };
 
         this.device = device;
 
@@ -392,11 +381,14 @@ public class VkMttTexture {
     }
 
     public VkMttTexture(VkDevice device, VkMttScreen screen, long imageView) {
-        allocationIndex = allocateTextureIndex();
+        allocationIndex = screen.allocateTextureIndex();
         if (allocationIndex < 0) {
             String msg = String.format("Cannot create more than %d textures", GBufferNabor.MAX_NUM_TEXTURES);
             throw new RuntimeException(msg);
         }
+        fDeallocateTexture = () -> {
+            screen.deallocateTexture(allocationIndex);
+        };
 
         this.device = device;
         this.textureImageView = imageView;
@@ -415,9 +407,12 @@ public class VkMttTexture {
             vkDestroyImageView(device, textureImageView, null);
         }
 
-        synchronized (allocationStatus) {
-            allocationStatus.put(allocationIndex, false);
+        if (fDeallocateTexture != null) {
+            fDeallocateTexture.run();
+        } else {
+            logger.warn("Cannot deallocate texture because fDeallocateTexture is null");
         }
+
         screen.resetTextureDescriptorSets(allocationIndex);
     }
 

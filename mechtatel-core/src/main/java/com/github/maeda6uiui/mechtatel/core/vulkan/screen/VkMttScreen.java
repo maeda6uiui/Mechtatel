@@ -101,6 +101,8 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
 
     private QuadDrawer quadDrawer;
 
+    private boolean[] allocationStatuses;
+
     private void createShadowMappingNaborUserDefImages(ShadowMappingNabor shadowMappingNabor) {
         shadowMappingNabor.cleanupUserDefImages();
 
@@ -162,6 +164,11 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         this.shouldChangeExtentOnRecreate = createInfo.shouldChangeExtentOnRecreate;
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
+
+        allocationStatuses = new boolean[GBufferNabor.MAX_NUM_TEXTURES];
+        for (int i = 0; i < allocationStatuses.length; i++) {
+            allocationStatuses[i] = false;
+        }
 
         MttShaderConfig shaderConfig = MttShaderConfig
                 .get()
@@ -1054,5 +1061,23 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
         }
 
         return textureDescriptorSets;
+    }
+
+    public int allocateTextureIndex() {
+        int index = -1;
+
+        for (int i = 0; i < allocationStatuses.length; i++) {
+            if (!allocationStatuses[i]) {
+                index = i;
+                allocationStatuses[i] = true;
+                break;
+            }
+        }
+
+        return index;
+    }
+
+    public void deallocateTexture(int allocationIndex) {
+        allocationStatuses[allocationIndex] = false;
     }
 }

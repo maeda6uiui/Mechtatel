@@ -31,7 +31,10 @@ import org.lwjgl.vulkan.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -98,7 +101,7 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
 
     private QuadDrawer quadDrawer;
 
-    private Map<Integer, Boolean> allocationStatus;
+    private boolean[] allocationStatuses;
 
     private void createShadowMappingNaborUserDefImages(ShadowMappingNabor shadowMappingNabor) {
         shadowMappingNabor.cleanupUserDefImages();
@@ -162,9 +165,9 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
 
         quadDrawer = new QuadDrawer(device, commandPool, graphicsQueue);
 
-        allocationStatus = new HashMap<>();
-        for (int i = 0; i < GBufferNabor.MAX_NUM_TEXTURES; i++) {
-            allocationStatus.put(i, false);
+        allocationStatuses = new boolean[GBufferNabor.MAX_NUM_TEXTURES];
+        for (int i = 0; i < allocationStatuses.length; i++) {
+            allocationStatuses[i] = false;
         }
 
         MttShaderConfig shaderConfig = MttShaderConfig
@@ -1063,11 +1066,10 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
     public int allocateTextureIndex() {
         int index = -1;
 
-        for (var entry : allocationStatus.entrySet()) {
-            if (!entry.getValue()) {
-                index = entry.getKey();
-                allocationStatus.put(index, true);
-
+        for (int i = 0; i < allocationStatuses.length; i++) {
+            if (!allocationStatuses[i]) {
+                index = i;
+                allocationStatuses[i] = true;
                 break;
             }
         }
@@ -1076,6 +1078,6 @@ public class VkMttScreen implements IVkMttScreenForVkMttTexture, IVkMttScreenFor
     }
 
     public void deallocateTexture(int allocationIndex) {
-        allocationStatus.put(allocationIndex, false);
+        allocationStatuses[allocationIndex] = false;
     }
 }

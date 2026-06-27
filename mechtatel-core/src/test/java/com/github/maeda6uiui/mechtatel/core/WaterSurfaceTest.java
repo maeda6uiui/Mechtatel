@@ -1,0 +1,104 @@
+package com.github.maeda6uiui.mechtatel.core;
+
+import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
+import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.water.WaterSurface;
+import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
+import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
+import org.joml.Vector3f;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.List;
+
+public class WaterSurfaceTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(WaterSurfaceTest.class);
+
+    public WaterSurfaceTest(MttSettings settings) {
+        super(settings);
+        this.run();
+    }
+
+    public static void main(String[] args) {
+        MttSettings
+                .load("./Mechtatel/settings.json")
+                .ifPresentOrElse(
+                        WaterSurfaceTest::new,
+                        () -> logger.error("Failed to load settings")
+                );
+    }
+
+    private MttScreen mainScreen;
+    private FreeCamera camera;
+
+    @Override
+    public void onCreate(MttWindow window) {
+        mainScreen = window.createScreen(
+                new MttScreen.MttScreenCreateInfo()
+                        .setPostProcessingNaborNames(List.of("pp.water_surface"))
+        );
+
+        PostProcessingProperties ppProp = mainScreen.getPostProcessingProperties();
+        WaterSurface water = ppProp.waterSurface;
+        water.setWaterLevel(0.5f);
+        water.setShallowColor(new Vector3f(0.3f, 0.7f, 0.75f));
+        water.setDeepColor(new Vector3f(0.0f, 0.1f, 0.25f));
+        water.setWaveAmplitude(0.15f);
+        water.setWaveFrequency(0.6f);
+        water.setWaveSpeed(1.5f);
+        water.setDistortionStrength(0.025f);
+        water.setAbsorptionCoefficient(0.2f);
+        water.setSpecularStrength(0.8f);
+        water.setSunDirection(new Vector3f(-0.4f, -1.0f, -0.3f).normalize());
+
+        MttModel floor;
+        MttModel cube;
+        try {
+            floor = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Plane/plane.obj"));
+            cube = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
+        } catch (IOException e) {
+            logger.error("Error", e);
+            window.close();
+
+            return;
+        }
+
+        floor.translate(new Vector3f(0.0f, -2.0f, 0.0f));
+
+        cube.rescale(new Vector3f(0.5f));
+        cube.translate(new Vector3f(0.0f, -1.0f, 0.0f));
+
+        MttModel cubeR = mainScreen.duplicateModel(cube);
+        cubeR.translate(new Vector3f(-3.0f, 0.0f, -3.0f));
+
+        MttModel cubeG = mainScreen.duplicateModel(cube);
+        cubeG.translate(new Vector3f(3.0f, 0.5f, -2.0f));
+
+        MttModel cubeB = mainScreen.duplicateModel(cube);
+        cubeB.translate(new Vector3f(-1.0f, -0.5f, 3.0f));
+
+        camera = new FreeCamera(mainScreen.getCamera());
+    }
+
+    @Override
+    public void onUpdate(MttWindow window) {
+        camera.translate(
+                window.getKeyboardPressingCount(KeyCode.W),
+                window.getKeyboardPressingCount(KeyCode.S),
+                window.getKeyboardPressingCount(KeyCode.A),
+                window.getKeyboardPressingCount(KeyCode.D)
+        );
+        camera.rotate(
+                window.getKeyboardPressingCount(KeyCode.UP),
+                window.getKeyboardPressingCount(KeyCode.DOWN),
+                window.getKeyboardPressingCount(KeyCode.LEFT),
+                window.getKeyboardPressingCount(KeyCode.RIGHT)
+        );
+
+        mainScreen.draw();
+        window.present(mainScreen);
+    }
+}

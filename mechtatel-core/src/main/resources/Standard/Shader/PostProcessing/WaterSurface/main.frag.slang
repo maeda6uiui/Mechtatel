@@ -98,13 +98,19 @@ PSOutput main(PSInput input) {
     float3 refractedFragPos = positionTexture.Sample(textureSampler, refractedUV).rgb;
     float refractedStencil = stencilTexture.Sample(textureSampler, refractedUV).r;
     float4 refractedAlbedo = albedo;
+    float3 sampledFragPos = fragPos;
+    float sampledDist = fragDist;
     if (refractedStencil < 0.5 && refractedFragPos.y <= water.waterLevel + 0.05) {
         refractedAlbedo = albedoTexture.Sample(textureSampler, refractedUV);
+        sampledFragPos = refractedFragPos;
+        sampledDist = length(refractedFragPos - eye);
     }
 
     //In-water path length: distance the view ray travels through water
-    //before reaching the visible (underwater) geometry.
-    float depthInWater = max(fragDist - tWater, 0.0);
+    //before reaching the visible (underwater) geometry. We base this on the
+    //fragment we actually shade (refracted tap when accepted), so the
+    //absorption matches what the user sees through the surface.
+    float depthInWater = max(sampledDist - tWater, 0.0);
     float3 tinted = underwaterColor(
             refractedAlbedo.rgb,
             water.shallowColor,

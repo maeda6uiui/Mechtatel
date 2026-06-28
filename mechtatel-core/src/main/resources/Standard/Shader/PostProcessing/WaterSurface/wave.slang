@@ -7,17 +7,19 @@ static const float2 WAVE_DIRS[4] = {
     float2(0.707, 0.707),
     float2(-0.707, 0.707)
 };
-static const float WAVE_WEIGHTS[4] = {1.0, 0.85, 0.6, 0.45};
-static const float WAVE_FREQ_MULTIPLIERS[4] = {1.0, 1.7, 2.3, 3.1};
+static const float WAVE_WEIGHTS[4] = { 1.0, 0.85, 0.6, 0.45 };
+static const float WAVE_FREQ_MULTIPLIERS[4] = { 1.0, 1.7, 2.3, 3.1 };
 
 public float sampleWaveHeight(
-        float2 worldXZ,
-        float amplitude,
-        float frequency,
-        float speed,
-        float time) {
+    float2 worldXZ,
+    float amplitude,
+    float frequency,
+    float speed,
+    float time)
+{
     float h = 0.0;
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; ++i)
+    {
         float k = frequency * WAVE_FREQ_MULTIPLIERS[i];
         float phase = dot(WAVE_DIRS[i], worldXZ) * k + time * speed * (1.0 + 0.2 * i);
         h += amplitude * WAVE_WEIGHTS[i] * sin(phase);
@@ -26,14 +28,16 @@ public float sampleWaveHeight(
 }
 
 public float3 sampleWaveNormal(
-        float2 worldXZ,
-        float amplitude,
-        float frequency,
-        float speed,
-        float time) {
+    float2 worldXZ,
+    float amplitude,
+    float frequency,
+    float speed,
+    float time)
+{
     float dhdx = 0.0;
     float dhdz = 0.0;
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; ++i)
+    {
         float k = frequency * WAVE_FREQ_MULTIPLIERS[i];
         float phase = dot(WAVE_DIRS[i], worldXZ) * k + time * speed * (1.0 + 0.2 * i);
         float c = cos(phase);

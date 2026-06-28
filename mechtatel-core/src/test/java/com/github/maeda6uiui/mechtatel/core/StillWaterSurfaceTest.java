@@ -42,6 +42,7 @@ public class StillWaterSurfaceTest extends Mechtatel {
                         .setPostProcessingNaborNames(List.of("pp.still_water_surface"))
         );
 
+        //It will generate undesirable artifacts if distortion is too strong.
         PostProcessingProperties ppProp = mainScreen.getPostProcessingProperties();
         StillWaterSurface water = ppProp.stillWaterSurface;
         water.setWaterLevel(0.5f);

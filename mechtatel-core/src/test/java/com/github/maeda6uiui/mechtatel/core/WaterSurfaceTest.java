@@ -48,9 +48,9 @@ public class WaterSurfaceTest extends Mechtatel {
         water.setShallowColor(new Vector3f(0.3f, 0.7f, 0.75f));
         water.setDeepColor(new Vector3f(0.0f, 0.1f, 0.25f));
         water.setWaveAmplitude(0.15f);
-        water.setWaveFrequency(0.6f);
+        water.setWaveFrequency(1.2f);
         water.setWaveSpeed(1.5f);
-        water.setDistortionStrength(0.025f);
+        water.setDistortionStrength(0.01f);
         water.setAbsorptionCoefficient(0.2f);
         water.setSpecularStrength(0.8f);
         water.setSunDirection(new Vector3f(-0.4f, -1.0f, -0.3f).normalize());

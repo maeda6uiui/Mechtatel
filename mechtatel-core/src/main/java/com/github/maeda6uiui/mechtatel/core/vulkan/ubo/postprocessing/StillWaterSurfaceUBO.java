@@ -1,6 +1,6 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing;
 
-import com.github.maeda6uiui.mechtatel.core.postprocessing.water.WaterSurface;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.water.StillWaterSurface;
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.UBO;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -11,11 +11,11 @@ import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_
 import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_VEC4;
 
 /**
- * Uniform buffer object for water surface
+ * Uniform buffer object for still water surface
  *
  * @author maeda6uiui
  */
-public class WaterSurfaceUBO extends UBO {
+public class StillWaterSurfaceUBO extends UBO {
     public static final int SIZEOF = SIZEOF_VEC4 * 5;
 
     private Vector3f shallowColor;
@@ -30,17 +30,17 @@ public class WaterSurfaceUBO extends UBO {
     private float specularStrength;
     private float time;
 
-    public WaterSurfaceUBO(WaterSurface waterSurface) {
-        shallowColor = waterSurface.getShallowColor();
-        waterLevel = waterSurface.getWaterLevel();
-        deepColor = waterSurface.getDeepColor();
-        distortionStrength = waterSurface.getDistortionStrength();
-        sunDirection = waterSurface.getSunDirection();
-        waveAmplitude = waterSurface.getWaveAmplitude();
-        waveFrequency = waterSurface.getWaveFrequency();
-        waveSpeed = waterSurface.getWaveSpeed();
-        absorptionCoefficient = waterSurface.getAbsorptionCoefficient();
-        specularStrength = waterSurface.getSpecularStrength();
+    public StillWaterSurfaceUBO(StillWaterSurface stillWaterSurface) {
+        shallowColor = stillWaterSurface.getShallowColor();
+        waterLevel = stillWaterSurface.getWaterLevel();
+        deepColor = stillWaterSurface.getDeepColor();
+        distortionStrength = stillWaterSurface.getDistortionStrength();
+        sunDirection = stillWaterSurface.getSunDirection();
+        waveAmplitude = stillWaterSurface.getWaveAmplitude();
+        waveFrequency = stillWaterSurface.getWaveFrequency();
+        waveSpeed = stillWaterSurface.getWaveSpeed();
+        absorptionCoefficient = stillWaterSurface.getAbsorptionCoefficient();
+        specularStrength = stillWaterSurface.getSpecularStrength();
         time = (float) GLFW.glfwGetTime();
     }
 

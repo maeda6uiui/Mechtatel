@@ -5,7 +5,7 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.fog.Fog;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.ParallelLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.PointLight;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.light.Spotlight;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.water.WaterSurface;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.water.StillWaterSurface;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.ParallelLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.PointLightNabor;
 import com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing.SpotlightNabor;
@@ -28,7 +28,7 @@ public class PostProcessingProperties {
     public Vector3f pointLightAmbientColor;
     public Vector3f spotlightAmbientColor;
     public SimpleBlurInfo simpleBlurInfo;
-    public WaterSurface waterSurface;
+    public StillWaterSurface stillWaterSurface;
 
     public PostProcessingProperties() {
         fog = new Fog();
@@ -39,7 +39,7 @@ public class PostProcessingProperties {
         pointLightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
         spotlightAmbientColor = new Vector3f(0.5f, 0.5f, 0.5f);
         simpleBlurInfo = new SimpleBlurInfo();
-        waterSurface = new WaterSurface();
+        stillWaterSurface = new StillWaterSurface();
     }
 
     public ParallelLight createParallelLight() {

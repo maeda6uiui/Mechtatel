@@ -1,7 +1,7 @@
 package com.github.maeda6uiui.mechtatel.core.vulkan.nabor.postprocessing;
 
 import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.CameraUBO;
-import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.WaterSurfaceUBO;
+import com.github.maeda6uiui.mechtatel.core.vulkan.ubo.postprocessing.StillWaterSurfaceUBO;
 import com.github.maeda6uiui.mechtatel.core.vulkan.util.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
@@ -13,12 +13,12 @@ import java.util.List;
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
- * Nabor for water surface
+ * Nabor for still water surface
  *
  * @author maeda6uiui
  */
-public class WaterSurfaceNabor extends PostProcessingNabor {
-    public WaterSurfaceNabor(VkDevice device, List<URL> vertShaderResources, List<URL> fragShaderResources) {
+public class StillWaterSurfaceNabor extends PostProcessingNabor {
+    public StillWaterSurfaceNabor(VkDevice device, List<URL> vertShaderResources, List<URL> fragShaderResources) {
         super(device, vertShaderResources, fragShaderResources);
     }
 
@@ -34,7 +34,7 @@ public class WaterSurfaceNabor extends PostProcessingNabor {
         }
 
         var waterSurfaceUBOInfos = BufferUtils.createUBOBuffers(
-                device, descriptorCount, WaterSurfaceUBO.SIZEOF);
+                device, descriptorCount, StillWaterSurfaceUBO.SIZEOF);
         for (var waterSurfaceUBOInfo : waterSurfaceUBOInfos) {
             this.getUniformBuffers().add(waterSurfaceUBOInfo.buffer);
             this.getUniformBufferMemories().add(waterSurfaceUBOInfo.bufferMemory);
@@ -127,7 +127,7 @@ public class WaterSurfaceNabor extends PostProcessingNabor {
             VkDescriptorBufferInfo waterSurfaceUBOInfo = uboInfos.get(1);
             waterSurfaceUBOInfo.buffer(this.getUniformBuffer(1));
             waterSurfaceUBOInfo.offset(0);
-            waterSurfaceUBOInfo.range(WaterSurfaceUBO.SIZEOF);
+            waterSurfaceUBOInfo.range(StillWaterSurfaceUBO.SIZEOF);
 
             VkWriteDescriptorSet uboDescriptorWrite = descriptorWrites.get(0);
             uboDescriptorWrite.sType(VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET);

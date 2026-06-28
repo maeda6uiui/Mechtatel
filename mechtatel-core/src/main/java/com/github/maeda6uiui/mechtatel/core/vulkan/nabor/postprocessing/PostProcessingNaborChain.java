@@ -67,8 +67,10 @@ public class PostProcessingNaborChain {
         List<URL> spotlightFragShaderResources = shaderConfig.postProcessing.spotlight.fragment.mustGetResourceURLs();
         List<URL> simpleBlurVertShaderResources = shaderConfig.postProcessing.simpleBlur.vertex.mustGetResourceURLs();
         List<URL> simpleBlurFragShaderResources = shaderConfig.postProcessing.simpleBlur.fragment.mustGetResourceURLs();
-        List<URL> waterSurfaceVertShaderResources = shaderConfig.postProcessing.waterSurface.vertex.mustGetResourceURLs();
-        List<URL> waterSurfaceFragShaderResources = shaderConfig.postProcessing.waterSurface.fragment.mustGetResourceURLs();
+        List<URL> stillWaterSurfaceVertShaderResources
+                = shaderConfig.postProcessing.stillWaterSurface.vertex.mustGetResourceURLs();
+        List<URL> stillWaterSurfaceFragShaderResources
+                = shaderConfig.postProcessing.stillWaterSurface.fragment.mustGetResourceURLs();
 
         for (var naborName : naborNames) {
             PostProcessingNabor ppNabor;
@@ -98,8 +100,8 @@ public class PostProcessingNaborChain {
                             new SpotlightNabor(device, spotlightVertShaderResources, spotlightFragShaderResources);
                     case "pp.simple_blur" ->
                             new SimpleBlurNabor(device, simpleBlurVertShaderResources, simpleBlurFragShaderResources);
-                    case "pp.water_surface" ->
-                            new WaterSurfaceNabor(device, waterSurfaceVertShaderResources, waterSurfaceFragShaderResources);
+                    case "pp.still_water_surface" ->
+                            new StillWaterSurfaceNabor(device, stillWaterSurfaceVertShaderResources, stillWaterSurfaceFragShaderResources);
                     default -> throw new IllegalArgumentException("Unknown nabor name specified: " + naborName);
                 };
             }
@@ -226,7 +228,7 @@ public class PostProcessingNaborChain {
                 cameraUBO.update(device, cameraUBOMemory);
 
                 long waterSurfaceUBOMemory = ppNabor.getUniformBufferMemory(1);
-                var waterSurfaceUBO = new WaterSurfaceUBO(ppProperties.waterSurface);
+                var waterSurfaceUBO = new StillWaterSurfaceUBO(ppProperties.stillWaterSurface);
                 waterSurfaceUBO.update(device, waterSurfaceUBOMemory);
             }
             break;
@@ -300,8 +302,8 @@ public class PostProcessingNaborChain {
                         lightUBO.update(device, uboMemory, j);
                     }
                 }
-                case WATER_SURFACE -> {
-                    var waterSurfaceUBO = new WaterSurfaceUBO(ppProperties.waterSurface);
+                case STILL_WATER_SURFACE -> {
+                    var waterSurfaceUBO = new StillWaterSurfaceUBO(ppProperties.stillWaterSurface);
                     waterSurfaceUBO.update(device, uboMemory);
                 }
             }

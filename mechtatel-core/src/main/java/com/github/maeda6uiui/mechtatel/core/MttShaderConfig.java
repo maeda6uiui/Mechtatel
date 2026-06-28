@@ -188,11 +188,11 @@ public class MttShaderConfig {
             }
         }
 
-        public static class WaterSurfaceShaderInfo {
+        public static class StillWaterSurfaceShaderInfo {
             public ShaderModulesInfo vertex;
             public ShaderModulesInfo fragment;
 
-            public WaterSurfaceShaderInfo() {
+            public StillWaterSurfaceShaderInfo() {
                 vertex = new ShaderModulesInfo();
                 vertex.addSingleShaderModule(
                         "/Standard/Shader/PostProcessing/post_processing.vert.slang");
@@ -200,11 +200,11 @@ public class MttShaderConfig {
                 String location = ShaderModulesInfo.class.getName();
                 var fragmentMainModule = new ShaderModuleInfo();
                 fragmentMainModule.addShader(
-                        "/Standard/Shader/PostProcessing/WaterSurface/main.frag.slang", location);
+                        "/Standard/Shader/PostProcessing/StillWaterSurface/main.frag.slang", location);
                 fragmentMainModule.addShader(
-                        "/Standard/Shader/PostProcessing/WaterSurface/wave.slang", location);
+                        "/Standard/Shader/PostProcessing/StillWaterSurface/wave.slang", location);
                 fragmentMainModule.addShader(
-                        "/Standard/Shader/PostProcessing/WaterSurface/shading.slang", location);
+                        "/Standard/Shader/PostProcessing/StillWaterSurface/shading.slang", location);
                 fragment = new ShaderModulesInfo();
                 fragment.modules.put("main", fragmentMainModule);
             }
@@ -215,7 +215,7 @@ public class MttShaderConfig {
         public PointLightShaderInfo pointLight;
         public SimpleBlurShaderInfo simpleBlur;
         public SpotlightShaderInfo spotlight;
-        public WaterSurfaceShaderInfo waterSurface;
+        public StillWaterSurfaceShaderInfo stillWaterSurface;
 
         public PostProcessingShaderInfo() {
             fog = new FogShaderInfo();
@@ -223,7 +223,7 @@ public class MttShaderConfig {
             pointLight = new PointLightShaderInfo();
             simpleBlur = new SimpleBlurShaderInfo();
             spotlight = new SpotlightShaderInfo();
-            waterSurface = new WaterSurfaceShaderInfo();
+            stillWaterSurface = new StillWaterSurfaceShaderInfo();
         }
     }
 

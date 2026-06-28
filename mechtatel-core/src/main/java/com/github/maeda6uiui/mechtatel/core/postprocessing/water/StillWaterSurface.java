@@ -3,11 +3,11 @@ package com.github.maeda6uiui.mechtatel.core.postprocessing.water;
 import org.joml.Vector3f;
 
 /**
- * Water surface
+ * Still water surface
  *
  * @author maeda6uiui
  */
-public class WaterSurface {
+public class StillWaterSurface {
     private float waterLevel;
     private Vector3f shallowColor;
     private Vector3f deepColor;
@@ -19,7 +19,7 @@ public class WaterSurface {
     private float specularStrength;
     private Vector3f sunDirection;
 
-    public WaterSurface() {
+    public StillWaterSurface() {
         waterLevel = 0.0f;
         shallowColor = new Vector3f(0.25f, 0.6f, 0.7f);
         deepColor = new Vector3f(0.0f, 0.1f, 0.2f);

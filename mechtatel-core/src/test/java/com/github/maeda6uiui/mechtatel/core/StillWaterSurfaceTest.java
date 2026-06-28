@@ -3,7 +3,7 @@ package com.github.maeda6uiui.mechtatel.core;
 import com.github.maeda6uiui.mechtatel.core.camera.FreeCamera;
 import com.github.maeda6uiui.mechtatel.core.input.keyboard.KeyCode;
 import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingProperties;
-import com.github.maeda6uiui.mechtatel.core.postprocessing.water.WaterSurface;
+import com.github.maeda6uiui.mechtatel.core.postprocessing.water.StillWaterSurface;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
@@ -15,10 +15,10 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class WaterSurfaceTest extends Mechtatel {
-    private static final Logger logger = LoggerFactory.getLogger(WaterSurfaceTest.class);
+public class StillWaterSurfaceTest extends Mechtatel {
+    private static final Logger logger = LoggerFactory.getLogger(StillWaterSurfaceTest.class);
 
-    public WaterSurfaceTest(MttSettings settings) {
+    public StillWaterSurfaceTest(MttSettings settings) {
         super(settings);
         this.run();
     }
@@ -27,7 +27,7 @@ public class WaterSurfaceTest extends Mechtatel {
         MttSettings
                 .load("./Mechtatel/settings.json")
                 .ifPresentOrElse(
-                        WaterSurfaceTest::new,
+                        StillWaterSurfaceTest::new,
                         () -> logger.error("Failed to load settings")
                 );
     }
@@ -43,7 +43,7 @@ public class WaterSurfaceTest extends Mechtatel {
         );
 
         PostProcessingProperties ppProp = mainScreen.getPostProcessingProperties();
-        WaterSurface water = ppProp.waterSurface;
+        StillWaterSurface water = ppProp.stillWaterSurface;
         water.setWaterLevel(0.5f);
         water.setShallowColor(new Vector3f(0.3f, 0.7f, 0.75f));
         water.setDeepColor(new Vector3f(0.0f, 0.1f, 0.25f));

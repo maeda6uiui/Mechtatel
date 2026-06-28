@@ -6,6 +6,7 @@ import com.github.maeda6uiui.mechtatel.core.postprocessing.PostProcessingPropert
 import com.github.maeda6uiui.mechtatel.core.postprocessing.water.WaterSurface;
 import com.github.maeda6uiui.mechtatel.core.screen.MttScreen;
 import com.github.maeda6uiui.mechtatel.core.screen.component.MttModel;
+import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,9 @@ public class WaterSurfaceTest extends Mechtatel {
         try {
             floor = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Plane/plane.obj"));
             cube = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
+
+            MttTexture checker = mainScreen.createTexture(Paths.get("./Mechtatel/Standard/Texture/checker.png"), true);
+            floor.replaceTexture(0, checker);
         } catch (IOException e) {
             logger.error("Error", e);
             window.close();

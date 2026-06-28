@@ -75,14 +75,14 @@ public class WaterSurfaceTest extends Mechtatel {
         cube.rescale(new Vector3f(0.5f));
         cube.translate(new Vector3f(0.0f, -1.0f, 0.0f));
 
-        MttModel cubeR = mainScreen.duplicateModel(cube);
-        cubeR.translate(new Vector3f(-3.0f, 0.0f, -3.0f));
+        MttModel cube2 = mainScreen.duplicateModel(cube);
+        cube2.translate(new Vector3f(-3.0f, 0.0f, -3.0f));
 
-        MttModel cubeG = mainScreen.duplicateModel(cube);
-        cubeG.translate(new Vector3f(3.0f, 0.5f, -2.0f));
+        MttModel cube3 = mainScreen.duplicateModel(cube);
+        cube3.translate(new Vector3f(3.0f, 0.0f, -2.0f));
 
-        MttModel cubeB = mainScreen.duplicateModel(cube);
-        cubeB.translate(new Vector3f(-1.0f, -0.5f, 3.0f));
+        MttModel cube4 = mainScreen.duplicateModel(cube);
+        cube4.translate(new Vector3f(-1.0f, 0.0f, 3.0f));
 
         camera = new FreeCamera(mainScreen.getCamera());
     }

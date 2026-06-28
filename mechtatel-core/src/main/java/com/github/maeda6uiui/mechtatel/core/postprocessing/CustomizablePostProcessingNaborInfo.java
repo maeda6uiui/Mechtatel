@@ -25,7 +25,8 @@ public class CustomizablePostProcessingNaborInfo {
         PARALLEL_LIGHT,
         POINT_LIGHT,
         SIMPLE_BLUR,
-        SPOTLIGHT
+        SPOTLIGHT,
+        STILL_WATER_SURFACE
     }
 
     private List<URL> vertShaderResources;

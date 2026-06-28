@@ -222,7 +222,7 @@ public class PostProcessingNaborChain {
             }
             break;
 
-            case "pp.water_surface": {
+            case "pp.still_water_surface": {
                 long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
                 var cameraUBO = new CameraUBO(camera);
                 cameraUBO.update(device, cameraUBOMemory);

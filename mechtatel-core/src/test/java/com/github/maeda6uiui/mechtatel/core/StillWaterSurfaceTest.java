@@ -39,7 +39,7 @@ public class StillWaterSurfaceTest extends Mechtatel {
     public void onCreate(MttWindow window) {
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
-                        .setPostProcessingNaborNames(List.of("pp.water_surface"))
+                        .setPostProcessingNaborNames(List.of("pp.still_water_surface"))
         );
 
         PostProcessingProperties ppProp = mainScreen.getPostProcessingProperties();

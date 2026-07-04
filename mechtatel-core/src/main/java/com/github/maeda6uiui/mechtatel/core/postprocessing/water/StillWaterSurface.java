@@ -22,15 +22,15 @@ public class StillWaterSurface {
     private Vector3f zenithColor;
 
     public StillWaterSurface() {
-        waterLevel = 0.0f;
-        shallowColor = new Vector3f(0.25f, 0.6f, 0.7f);
-        deepColor = new Vector3f(0.0f, 0.1f, 0.2f);
-        distortionStrength = 0.02f;
+        waterLevel = 0.5f;
+        shallowColor = new Vector3f(0.3f, 0.7f, 0.75f);
+        deepColor = new Vector3f(0.0f, 0.1f, 0.25f);
+        distortionStrength = 0.01f;
         waveAmplitude = 0.15f;
-        waveFrequency = 0.6f;
-        waveSpeed = 1.0f;
-        absorptionCoefficient = 0.15f;
-        specularStrength = 0.6f;
+        waveFrequency = 1.2f;
+        waveSpeed = 1.5f;
+        absorptionCoefficient = 0.2f;
+        specularStrength = 0.8f;
         sunDirection = new Vector3f(-0.4f, -1.0f, -0.3f).normalize();
         horizonColor = new Vector3f(0.7f, 0.8f, 0.85f);
         zenithColor = new Vector3f(0.25f, 0.45f, 0.75f);

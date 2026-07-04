@@ -18,6 +18,8 @@ public class StillWaterSurface {
     private float absorptionCoefficient;
     private float specularStrength;
     private Vector3f sunDirection;
+    private Vector3f horizonColor;
+    private Vector3f zenithColor;
 
     public StillWaterSurface() {
         waterLevel = 0.0f;
@@ -30,6 +32,8 @@ public class StillWaterSurface {
         absorptionCoefficient = 0.15f;
         specularStrength = 0.6f;
         sunDirection = new Vector3f(-0.4f, -1.0f, -0.3f).normalize();
+        horizonColor = new Vector3f(0.7f, 0.8f, 0.85f);
+        zenithColor = new Vector3f(0.25f, 0.45f, 0.75f);
     }
 
     public float getWaterLevel() {
@@ -110,5 +114,21 @@ public class StillWaterSurface {
 
     public void setSunDirection(Vector3f sunDirection) {
         this.sunDirection = sunDirection;
+    }
+
+    public Vector3f getHorizonColor() {
+        return horizonColor;
+    }
+
+    public void setHorizonColor(Vector3f horizonColor) {
+        this.horizonColor = horizonColor;
+    }
+
+    public Vector3f getZenithColor() {
+        return zenithColor;
+    }
+
+    public void setZenithColor(Vector3f zenithColor) {
+        this.zenithColor = zenithColor;
     }
 }

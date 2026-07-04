@@ -22,7 +22,9 @@ struct WaterSurfaceUBO
     float distortionStrength;
     float3 sunDirection;
     float waveAmplitude;
+    float3 horizonColor;
     float waveFrequency;
+    float3 zenithColor;
     float waveSpeed;
     float absorptionCoefficient;
     float specularStrength;
@@ -132,7 +134,7 @@ PSOutput main(PSInput input)
     float cosTheta = saturate(dot(waveNormal, -viewDir));
     float fresnel = fresnelSchlick(cosTheta, 0.02);
     float3 reflectDir = reflect(viewDir, waveNormal);
-    float3 sky = skyColor(reflectDir);
+    float3 sky = skyColor(reflectDir, water.horizonColor, water.zenithColor);
     float3 surfaceColor = lerp(tinted, sky, fresnel);
 
     // Specular highlight from the sun on the wave surface.

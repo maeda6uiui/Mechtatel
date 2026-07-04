@@ -55,6 +55,8 @@ public class StillWaterSurfaceTest extends Mechtatel {
         water.setAbsorptionCoefficient(0.2f);
         water.setSpecularStrength(0.8f);
         water.setSunDirection(new Vector3f(-0.4f, -1.0f, -0.3f).normalize());
+        water.setHorizonColor(new Vector3f(0.7f, 0.8f, 0.85f));
+        water.setZenithColor(new Vector3f(0.25f, 0.45f, 0.75f));
 
         MttModel floor;
         MttModel cube;

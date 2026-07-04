@@ -16,7 +16,7 @@ import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_
  * @author maeda6uiui
  */
 public class StillWaterSurfaceUBO extends UBO {
-    public static final int SIZEOF = SIZEOF_VEC4 * 5;
+    public static final int SIZEOF = SIZEOF_VEC4 * 5 + SIZEOF_FLOAT * 3;
 
     private Vector3f shallowColor;
     private float waterLevel;
@@ -24,7 +24,9 @@ public class StillWaterSurfaceUBO extends UBO {
     private float distortionStrength;
     private Vector3f sunDirection;
     private float waveAmplitude;
+    private Vector3f horizonColor;
     private float waveFrequency;
+    private Vector3f zenithColor;
     private float waveSpeed;
     private float absorptionCoefficient;
     private float specularStrength;
@@ -37,7 +39,9 @@ public class StillWaterSurfaceUBO extends UBO {
         distortionStrength = stillWaterSurface.getDistortionStrength();
         sunDirection = stillWaterSurface.getSunDirection();
         waveAmplitude = stillWaterSurface.getWaveAmplitude();
+        horizonColor = stillWaterSurface.getHorizonColor();
         waveFrequency = stillWaterSurface.getWaveFrequency();
+        zenithColor = stillWaterSurface.getZenithColor();
         waveSpeed = stillWaterSurface.getWaveSpeed();
         absorptionCoefficient = stillWaterSurface.getAbsorptionCoefficient();
         specularStrength = stillWaterSurface.getSpecularStrength();
@@ -55,12 +59,15 @@ public class StillWaterSurfaceUBO extends UBO {
         sunDirection.get(SIZEOF_VEC4 * 2, buffer);
         buffer.putFloat(SIZEOF_VEC4 * 2 + SIZEOF_FLOAT * 3, waveAmplitude);
 
-        buffer.putFloat(SIZEOF_VEC4 * 3, waveFrequency);
-        buffer.putFloat(SIZEOF_VEC4 * 3 + SIZEOF_FLOAT, waveSpeed);
-        buffer.putFloat(SIZEOF_VEC4 * 3 + SIZEOF_FLOAT * 2, absorptionCoefficient);
-        buffer.putFloat(SIZEOF_VEC4 * 3 + SIZEOF_FLOAT * 3, specularStrength);
+        horizonColor.get(SIZEOF_VEC4 * 3, buffer);
+        buffer.putFloat(SIZEOF_VEC4 * 3 + SIZEOF_FLOAT * 3, waveFrequency);
 
-        buffer.putFloat(SIZEOF_VEC4 * 4, time);
+        zenithColor.get(SIZEOF_VEC4 * 4, buffer);
+        buffer.putFloat(SIZEOF_VEC4 * 4 + SIZEOF_FLOAT * 3, waveSpeed);
+
+        buffer.putFloat(SIZEOF_VEC4 * 5, absorptionCoefficient);
+        buffer.putFloat(SIZEOF_VEC4 * 5 + SIZEOF_FLOAT, specularStrength);
+        buffer.putFloat(SIZEOF_VEC4 * 5 + SIZEOF_FLOAT * 2, time);
 
         buffer.rewind();
     }

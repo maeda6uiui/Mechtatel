@@ -27,11 +27,9 @@ public float fresnelSchlick(float cosTheta, float f0)
 // reflectDir.y * 0.5 + 0.5 lets reflections that point downward (rare,
 // only when the wave normal tilts the view ray below the horizon) still
 // produce a sensible horizon-colour fallback.
-public float3 skyColor(float3 reflectDir)
+public float3 skyColor(float3 reflectDir, float3 horizon, float3 zenith)
 {
     float t = clamp(reflectDir.y * 0.5 + 0.5, 0.0, 1.0);
-    float3 horizon = float3(0.7, 0.8, 0.85);
-    float3 zenith = float3(0.25, 0.45, 0.75);
     return lerp(horizon, zenith, t);
 }
 

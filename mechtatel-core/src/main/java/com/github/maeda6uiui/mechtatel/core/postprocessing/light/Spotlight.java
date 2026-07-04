@@ -12,7 +12,7 @@ import org.joml.Vector3f;
 /// Don't confuse it with the `attenuations` parameter, which is used for shadow mapping.
 ///
 /// The actual attenuation is then obtained by multiplying the falloff of the light
-/// when the fragment is in between the inner and the outer corns of the light.
+/// when the fragment is in between the inner and the outer cones of the light.
 ///
 /// The following parameters are used for shadow mapping:
 /// `castShadow`, `center`, `fovY`, `aspect`, `zNear`, `zFar`, and `attenuations`.
@@ -30,8 +30,8 @@ public class Spotlight {
     private float k0;
     private float k1;
     private float k2;
-    private float theta; //inner corn
-    private float phi; //outer corn
+    private float theta; //inner cone
+    private float phi; //outer cone
     private float falloff;
     private float specularPowY;
 
@@ -171,12 +171,12 @@ public class Spotlight {
         this.theta = theta;
     }
 
-    public float getInnerCorn() {
+    public float getInnerCone() {
         return getTheta();
     }
 
-    public void setInnerCorn(float innerCorn) {
-        setTheta(innerCorn);
+    public void setInnerCone(float innerCone) {
+        setTheta(innerCone);
     }
 
     @Deprecated
@@ -189,12 +189,12 @@ public class Spotlight {
         this.phi = phi;
     }
 
-    public float getOuterCorn() {
+    public float getOuterCone() {
         return getPhi();
     }
 
-    public void setOuterCorn(float outerCorn) {
-        setPhi(outerCorn);
+    public void setOuterCone(float outerCone) {
+        setPhi(outerCone);
     }
 
     public float getFalloff() {

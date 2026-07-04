@@ -2,11 +2,18 @@ package com.github.maeda6uiui.mechtatel.core.postprocessing.light;
 
 import org.joml.Vector3f;
 
-/**
- * Spotlight
- *
- * @author maeda6uiui
- */
+/// Parameters for spotlight
+///
+/// The base attenuation of the light is calculated by the following formula:
+/// ```
+/// attenuation = 1 / (k0 + k1 * r + k2 * r^2)
+/// ```
+/// where `r` is the distance between the fragment and the light.
+/// Don't confuse it with the `attenuations` parameter, which is used for shadow mapping.
+///
+/// The actual attenuation is then obtained by multiplying the falloff of the light.
+///
+/// @author maeda6uiui
 public class Spotlight {
     private Vector3f position;
     private Vector3f direction;
@@ -150,20 +157,40 @@ public class Spotlight {
         this.k2 = k2;
     }
 
+    @Deprecated
     public float getTheta() {
         return theta;
     }
 
+    @Deprecated
     public void setTheta(float theta) {
         this.theta = theta;
     }
 
+    public float getInnerCorn() {
+        return getTheta();
+    }
+
+    public void setInnerCorn(float innerCorn) {
+        setTheta(innerCorn);
+    }
+
+    @Deprecated
     public float getPhi() {
         return phi;
     }
 
+    @Deprecated
     public void setPhi(float phi) {
         this.phi = phi;
+    }
+
+    public float getOuterCorn() {
+        return getPhi();
+    }
+
+    public void setOuterCorn(float outerCorn) {
+        setPhi(outerCorn);
     }
 
     public float getFalloff() {

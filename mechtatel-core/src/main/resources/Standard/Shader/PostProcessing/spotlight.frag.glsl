@@ -81,7 +81,7 @@ void main(){
             float specularCoefficient=pow(clamp(dot(normal,halfLE),0.0,1.0),lights[i].specularPowY);
 
             vec3 diffuseColor=lights[i].diffuseColor*attenuation;
-            vec3 specularColor=lights[i].specularColor*attenuation;
+            vec3 specularColor=lights[i].specularColor*specularCoefficient*attenuation;
 
             diffuseColor=clamp(diffuseColor,lights[i].diffuseClampMin,lights[i].diffuseClampMax);
             specularColor=clamp(specularColor,lights[i].specularClampMin,lights[i].specularClampMax);

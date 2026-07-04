@@ -2,7 +2,7 @@ package com.github.maeda6uiui.mechtatel.core.postprocessing.light;
 
 import org.joml.Vector3f;
 
-/// Parameters for spotlight
+/// Parameters for a spotlight
 ///
 /// The base attenuation of the light is calculated by the following formula:
 /// ```
@@ -11,7 +11,11 @@ import org.joml.Vector3f;
 /// where `r` is the distance between the fragment and the light.
 /// Don't confuse it with the `attenuations` parameter, which is used for shadow mapping.
 ///
-/// The actual attenuation is then obtained by multiplying the falloff of the light.
+/// The actual attenuation is then obtained by multiplying the falloff of the light
+/// when the fragment is in between the inner and the outer corns of the light.
+///
+/// The following parameters are used for shadow mapping:
+/// `castShadow`, `center`, `fovY`, `aspect`, `zNear`, `zFar`, and `attenuations`.
 ///
 /// @author maeda6uiui
 public class Spotlight {

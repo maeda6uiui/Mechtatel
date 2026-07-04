@@ -48,6 +48,13 @@ public class SpotlightUBO extends UBO {
         outerCone = spotlight.getOuterCone();
         falloff = spotlight.getFalloff();
         specularPowY = spotlight.getSpecularPowY();
+
+        if (innerCone > outerCone) {
+            throw new IllegalArgumentException("The inner cone cannot be larger than the outer cone");
+        }
+        if (specularPowY < 0.0f) {
+            throw new IllegalArgumentException("The specular power cannot be smaller than zero");
+        }
     }
 
     @Override

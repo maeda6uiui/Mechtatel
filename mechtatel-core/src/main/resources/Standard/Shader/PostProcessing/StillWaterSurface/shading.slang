@@ -72,6 +72,10 @@ public float specularHighlight(
 {
     float3 toViewer = -viewDir;
     float3 toLight = -sunDir;
+    if (length(toViewer + toLight) < 1e-4) {
+        return 0.0;
+    }
+
     float3 halfVec = normalize(toViewer + toLight);
     float ndoth = max(dot(normal, halfVec), 0.0);
     return pow(ndoth, 128.0) * strength;

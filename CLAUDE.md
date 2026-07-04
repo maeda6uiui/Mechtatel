@@ -1,10 +1,12 @@
+<!-- @formatter:off -->
+
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project
 
-Mechtatel is a Vulkan-based game engine in Java built on LWJGL. Java 21 is required; Vulkan 1.3 is the default target. The repo is a multi-module Maven project plus two native sub-projects (C++ for Slang, Rust for audio playback).
+Mechtatel is a Vulkan-based game engine in Java built on LWJGL. Java 25 is required; Vulkan 1.3 is the default target. The repo is a multi-module Maven project plus two native sub-projects (C++ for Slang, Rust for audio playback).
 
 ## Build commands
 

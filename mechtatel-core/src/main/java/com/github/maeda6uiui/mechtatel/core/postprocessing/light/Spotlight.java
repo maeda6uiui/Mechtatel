@@ -30,8 +30,8 @@ public class Spotlight {
     private float k0;
     private float k1;
     private float k2;
-    private float theta; //inner cone
-    private float phi; //outer cone
+    private float innerCone;
+    private float outerCone;
     private float falloff;
     private float specularPowY;
 
@@ -55,8 +55,8 @@ public class Spotlight {
         k0 = 0.0f;
         k1 = 0.0f;
         k2 = 0.01f;
-        theta = (float) Math.toRadians(20);
-        phi = (float) Math.toRadians(50);
+        innerCone = (float) Math.toRadians(20);
+        outerCone = (float) Math.toRadians(50);
         falloff = 2.0f;
         specularPowY = 2.0f;
 
@@ -163,38 +163,38 @@ public class Spotlight {
 
     @Deprecated
     public float getTheta() {
-        return theta;
+        return innerCone;
     }
 
     @Deprecated
     public void setTheta(float theta) {
-        this.theta = theta;
+        this.innerCone = theta;
     }
 
     public float getInnerCone() {
-        return getTheta();
+        return innerCone;
     }
 
     public void setInnerCone(float innerCone) {
-        setTheta(innerCone);
+        this.innerCone = innerCone;
     }
 
     @Deprecated
     public float getPhi() {
-        return phi;
+        return outerCone;
     }
 
     @Deprecated
     public void setPhi(float phi) {
-        this.phi = phi;
+        this.outerCone = phi;
     }
 
     public float getOuterCone() {
-        return getPhi();
+        return outerCone;
     }
 
     public void setOuterCone(float outerCone) {
-        setPhi(outerCone);
+        this.outerCone = outerCone;
     }
 
     public float getFalloff() {

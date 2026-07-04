@@ -2,11 +2,22 @@ package com.github.maeda6uiui.mechtatel.core.postprocessing.light;
 
 import org.joml.Vector3f;
 
-/**
- * Spotlight
- *
- * @author maeda6uiui
- */
+/// Parameters for a spotlight
+///
+/// The base attenuation of the light is calculated by the following formula:
+/// ```
+/// attenuation = 1 / (k0 + k1 * r + k2 * r^2)
+/// ```
+/// where `r` is the distance between the fragment and the light.
+/// Don't confuse it with the `attenuations` parameter, which is used for shadow mapping.
+///
+/// The actual attenuation is then obtained by multiplying the falloff of the light
+/// when the fragment is in between the inner and the outer cones of the light.
+///
+/// The following parameters are used for shadow mapping:
+/// `castShadow`, `center`, `fovY`, `aspect`, `zNear`, `zFar`, and `attenuations`.
+///
+/// @author maeda6uiui
 public class Spotlight {
     private Vector3f position;
     private Vector3f direction;
@@ -19,8 +30,8 @@ public class Spotlight {
     private float k0;
     private float k1;
     private float k2;
-    private float theta; //inner corn
-    private float phi; //outer corn
+    private float innerCone;
+    private float outerCone;
     private float falloff;
     private float specularPowY;
 
@@ -44,8 +55,8 @@ public class Spotlight {
         k0 = 0.0f;
         k1 = 0.0f;
         k2 = 0.01f;
-        theta = (float) Math.toRadians(20);
-        phi = (float) Math.toRadians(50);
+        innerCone = (float) Math.toRadians(20);
+        outerCone = (float) Math.toRadians(50);
         falloff = 2.0f;
         specularPowY = 2.0f;
 
@@ -150,20 +161,40 @@ public class Spotlight {
         this.k2 = k2;
     }
 
+    @Deprecated
     public float getTheta() {
-        return theta;
+        return innerCone;
     }
 
+    @Deprecated
     public void setTheta(float theta) {
-        this.theta = theta;
+        this.innerCone = theta;
     }
 
+    public float getInnerCone() {
+        return innerCone;
+    }
+
+    public void setInnerCone(float innerCone) {
+        this.innerCone = innerCone;
+    }
+
+    @Deprecated
     public float getPhi() {
-        return phi;
+        return outerCone;
     }
 
+    @Deprecated
     public void setPhi(float phi) {
-        this.phi = phi;
+        this.outerCone = phi;
+    }
+
+    public float getOuterCone() {
+        return outerCone;
+    }
+
+    public void setOuterCone(float outerCone) {
+        this.outerCone = outerCone;
     }
 
     public float getFalloff() {

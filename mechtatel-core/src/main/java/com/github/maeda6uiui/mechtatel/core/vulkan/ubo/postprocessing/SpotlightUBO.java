@@ -27,8 +27,8 @@ public class SpotlightUBO extends UBO {
     private float k0;
     private float k1;
     private float k2;
-    private float theta;
-    private float phi;
+    private float innerCone;
+    private float outerCone;
     private float falloff;
     private float specularPowY;
 
@@ -44,10 +44,17 @@ public class SpotlightUBO extends UBO {
         k0 = spotlight.getK0();
         k1 = spotlight.getK1();
         k2 = spotlight.getK2();
-        theta = spotlight.getTheta();
-        phi = spotlight.getPhi();
+        innerCone = spotlight.getInnerCone();
+        outerCone = spotlight.getOuterCone();
         falloff = spotlight.getFalloff();
         specularPowY = spotlight.getSpecularPowY();
+
+        if (innerCone > outerCone) {
+            throw new IllegalArgumentException("The inner cone cannot be larger than the outer cone");
+        }
+        if (specularPowY < 0.0f) {
+            throw new IllegalArgumentException("The specular power cannot be smaller than zero");
+        }
     }
 
     @Override
@@ -63,8 +70,8 @@ public class SpotlightUBO extends UBO {
         buffer.putFloat(SIZEOF_VEC4 * 7 + SIZEOF_VEC3, k0);
         buffer.putFloat(SIZEOF_VEC4 * 8, k1);
         buffer.putFloat(SIZEOF_VEC4 * 8 + SIZEOF_FLOAT, k2);
-        buffer.putFloat(SIZEOF_VEC4 * 8 + SIZEOF_FLOAT * 2, theta);
-        buffer.putFloat(SIZEOF_VEC4 * 8 + SIZEOF_FLOAT * 3, phi);
+        buffer.putFloat(SIZEOF_VEC4 * 8 + SIZEOF_FLOAT * 2, innerCone);
+        buffer.putFloat(SIZEOF_VEC4 * 8 + SIZEOF_FLOAT * 3, outerCone);
         buffer.putFloat(SIZEOF_VEC4 * 9, falloff);
         buffer.putFloat(SIZEOF_VEC4 * 9 + SIZEOF_FLOAT, specularPowY);
 

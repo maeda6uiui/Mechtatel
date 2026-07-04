@@ -28,8 +28,8 @@ struct Spotlight{
     float k0;
     float k1;
     float k2;
-    float theta;
-    float phi;
+    float innerCone;
+    float outerCone;
     float falloff;
     float specularPowY;
 };
@@ -66,22 +66,22 @@ void main(){
         r=normalize(r);
 
         float cosAlpha=dot(r,lights[i].direction);
-        float cosHalfTheta=cos(lights[i].theta/2.0);
-        float cosHalfPhi=cos(lights[i].phi/2.0);
+        float cosHalfInnerCone=cos(lights[i].innerCone/2.0);
+        float cosHalfOuterCone=cos(lights[i].outerCone/2.0);
 
         vec3 spotlightColor;
-        if(cosAlpha<=cosHalfPhi){
+        if(cosAlpha<=cosHalfOuterCone){
             spotlightColor=vec3(0.0);
         }else{
-            if(cosAlpha<=cosHalfTheta){
-                attenuation*=pow((cosAlpha-cosHalfPhi)/(cosHalfTheta-cosHalfPhi),lights[i].falloff);
+            if(cosAlpha<=cosHalfInnerCone){
+                attenuation*=pow((cosAlpha-cosHalfOuterCone)/(cosHalfInnerCone-cosHalfOuterCone),lights[i].falloff);
             }
 
             vec3 halfLE=-normalize(cameraDirection+lights[i].direction);
             float specularCoefficient=pow(clamp(dot(normal,halfLE),0.0,1.0),lights[i].specularPowY);
 
             vec3 diffuseColor=lights[i].diffuseColor*attenuation;
-            vec3 specularColor=lights[i].specularColor*attenuation;
+            vec3 specularColor=lights[i].specularColor*specularCoefficient*attenuation;
 
             diffuseColor=clamp(diffuseColor,lights[i].diffuseClampMin,lights[i].diffuseClampMax);
             specularColor=clamp(specularColor,lights[i].specularClampMin,lights[i].specularClampMax);

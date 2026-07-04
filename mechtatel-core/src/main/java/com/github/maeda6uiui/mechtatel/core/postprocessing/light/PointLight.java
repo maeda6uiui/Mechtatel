@@ -2,11 +2,19 @@ package com.github.maeda6uiui.mechtatel.core.postprocessing.light;
 
 import org.joml.Vector3f;
 
-/**
- * Point light
- *
- * @author maeda6uiui
- */
+/// Parameters for a point light
+///
+/// A point light is like a spotlight, but it doesn't have a lighting direction.
+/// The attenuation is calculated just the same as spotlight.
+/// ```
+/// attenuation = 1 / (k0 + k1 * r + k2 * r^2)
+/// ```
+/// where `r` is the distance between the fragment and the light.
+///
+/// Unlike spotlights, point lights can't be used for shadow mapping,
+/// as it doesn't have the direction and therefore the direction of the shadow can't be established.
+///
+/// @author maeda6uiui
 public class PointLight {
     private Vector3f position;
     private Vector3f diffuseColor;

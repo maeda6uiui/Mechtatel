@@ -44,8 +44,8 @@ public class SpotlightUBO extends UBO {
         k0 = spotlight.getK0();
         k1 = spotlight.getK1();
         k2 = spotlight.getK2();
-        theta = spotlight.getTheta();
-        phi = spotlight.getPhi();
+        theta = spotlight.getInnerCone();
+        phi = spotlight.getOuterCone();
         falloff = spotlight.getFalloff();
         specularPowY = spotlight.getSpecularPowY();
     }

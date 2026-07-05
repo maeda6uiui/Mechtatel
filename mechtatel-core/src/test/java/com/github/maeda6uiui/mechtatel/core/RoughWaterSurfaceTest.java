@@ -39,7 +39,7 @@ public class RoughWaterSurfaceTest extends Mechtatel {
     public void onCreate(MttWindow window) {
         mainScreen = window.createScreen(
                 new MttScreen.MttScreenCreateInfo()
-                        .setPostProcessingNaborNames(List.of("pp.rough_water_surface"))
+                        .setPostProcessingNaborNames(List.of("pp.rough_water_surface", "pp.fog"))
         );
 
         //Rough water is designed for large distortion:
@@ -62,11 +62,15 @@ public class RoughWaterSurfaceTest extends Mechtatel {
         water.setHorizonColor(new Vector3f(0.7f, 0.8f, 0.85f));
         water.setZenithColor(new Vector3f(0.25f, 0.45f, 0.75f));
 
+        ppProp.fog.setStart(25.0f);
+        ppProp.fog.setEnd(50.0f);
+
         MttModel floor;
         MttModel cube;
         try {
             floor = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Plane/plane.obj"));
             cube = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
+            cube.setVisible(false);
 
             MttTexture checker = mainScreen.createTexture(Paths.get("./Mechtatel/Standard/Texture/checker.png"), true);
             floor.replaceTexture(0, checker);
@@ -78,9 +82,7 @@ public class RoughWaterSurfaceTest extends Mechtatel {
         }
 
         floor.translate(new Vector3f(0.0f, -2.0f, 0.0f));
-
-        cube.rescale(new Vector3f(0.5f));
-        cube.translate(new Vector3f(0.0f, -1.0f, 0.0f));
+        floor.rescale(new Vector3f(10.0f, 1.0f, 10.0f));
 
         MttModel cube2 = mainScreen.duplicateModel(cube);
         cube2.translate(new Vector3f(-3.0f, 0.0f, -3.0f));

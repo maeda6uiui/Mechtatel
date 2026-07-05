@@ -1,9 +1,9 @@
 package com.github.maeda6uiui.mechtatel.core;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.maeda6uiui.mechtatel.core.util.MttURLUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.net.URL;

@@ -71,6 +71,10 @@ public class PostProcessingNaborChain {
                 = shaderConfig.postProcessing.stillWaterSurface.vertex.mustGetResourceURLs();
         List<URL> stillWaterSurfaceFragShaderResources
                 = shaderConfig.postProcessing.stillWaterSurface.fragment.mustGetResourceURLs();
+        List<URL> roughWaterSurfaceVertShaderResources
+                = shaderConfig.postProcessing.roughWaterSurface.vertex.mustGetResourceURLs();
+        List<URL> roughWaterSurfaceFragShaderResources
+                = shaderConfig.postProcessing.roughWaterSurface.fragment.mustGetResourceURLs();
 
         for (var naborName : naborNames) {
             PostProcessingNabor ppNabor;
@@ -102,6 +106,8 @@ public class PostProcessingNaborChain {
                             new SimpleBlurNabor(device, simpleBlurVertShaderResources, simpleBlurFragShaderResources);
                     case "pp.still_water_surface" ->
                             new StillWaterSurfaceNabor(device, stillWaterSurfaceVertShaderResources, stillWaterSurfaceFragShaderResources);
+                    case "pp.rough_water_surface" ->
+                            new RoughWaterSurfaceNabor(device, roughWaterSurfaceVertShaderResources, roughWaterSurfaceFragShaderResources);
                     default -> throw new IllegalArgumentException("Unknown nabor name specified: " + naborName);
                 };
             }
@@ -233,6 +239,17 @@ public class PostProcessingNaborChain {
             }
             break;
 
+            case "pp.rough_water_surface": {
+                long cameraUBOMemory = ppNabor.getUniformBufferMemory(0);
+                var cameraUBO = new CameraUBO(camera);
+                cameraUBO.update(device, cameraUBOMemory);
+
+                long waterSurfaceUBOMemory = ppNabor.getUniformBufferMemory(1);
+                var waterSurfaceUBO = new RoughWaterSurfaceUBO(ppProperties.roughWaterSurface);
+                waterSurfaceUBO.update(device, waterSurfaceUBOMemory);
+            }
+            break;
+
             default:
                 throw new IllegalArgumentException("Unsupported nabor specified: " + naborName);
         }
@@ -304,6 +321,10 @@ public class PostProcessingNaborChain {
                 }
                 case STILL_WATER_SURFACE -> {
                     var waterSurfaceUBO = new StillWaterSurfaceUBO(ppProperties.stillWaterSurface);
+                    waterSurfaceUBO.update(device, uboMemory);
+                }
+                case ROUGH_WATER_SURFACE -> {
+                    var waterSurfaceUBO = new RoughWaterSurfaceUBO(ppProperties.roughWaterSurface);
                     waterSurfaceUBO.update(device, uboMemory);
                 }
             }

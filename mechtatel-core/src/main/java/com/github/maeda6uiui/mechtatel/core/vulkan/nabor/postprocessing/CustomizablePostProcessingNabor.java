@@ -60,6 +60,7 @@ public class CustomizablePostProcessingNabor extends PostProcessingNabor {
                 case SIMPLE_BLUR -> SimpleBlurInfoUBO.SIZEOF;
                 case SPOTLIGHT -> SpotlightUBO.SIZEOF;
                 case STILL_WATER_SURFACE -> StillWaterSurfaceUBO.SIZEOF;
+                case ROUGH_WATER_SURFACE -> RoughWaterSurfaceUBO.SIZEOF;
             };
             var uboInfos = BufferUtils.createUBOBuffers(device, descriptorCount, size);
             for (var uboInfo : uboInfos) {
@@ -158,6 +159,7 @@ public class CustomizablePostProcessingNabor extends PostProcessingNabor {
                     case SIMPLE_BLUR -> uboInfo.range(SimpleBlurInfoUBO.SIZEOF);
                     case SPOTLIGHT -> uboInfo.range(SpotlightUBO.SIZEOF);
                     case STILL_WATER_SURFACE -> uboInfo.range(StillWaterSurfaceUBO.SIZEOF);
+                    case ROUGH_WATER_SURFACE -> uboInfo.range(RoughWaterSurfaceUBO.SIZEOF);
                 }
             }
 

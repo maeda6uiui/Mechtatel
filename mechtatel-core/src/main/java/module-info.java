@@ -1,7 +1,5 @@
 module com.github.maeda6uiui.mechtatel.core {
     requires java.desktop;
-    requires com.fasterxml.jackson.core;
-    requires com.fasterxml.jackson.databind;
     requires com.github.dabasan.jxm.bd1;
     requires Libbulletjme;
     requires transitive org.slf4j;
@@ -17,6 +15,8 @@ module com.github.maeda6uiui.mechtatel.core {
     requires com.github.maeda6uiui.mechtatel.natives;
     requires com.sun.jna;
     requires org.apache.commons.io;
+    requires com.fasterxml.jackson.annotation;
+    requires tools.jackson.databind;
 
     exports com.github.maeda6uiui.mechtatel.core;
     exports com.github.maeda6uiui.mechtatel.core.fseffect;

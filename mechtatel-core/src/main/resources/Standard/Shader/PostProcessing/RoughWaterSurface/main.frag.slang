@@ -152,7 +152,7 @@ PSOutput main(PSInput input)
     float refractedStencil = stencilTexture.Sample(textureSampler, refractedUV).r;
     float3 sampledAlbedo = albedo.rgb;
     float sampledDist = fragDist;
-    if (refractedStencil < 0.5 && refractedFragPos.y <= water.waterLevel + 0.05)
+    if (refractedStencil < 0.5 && refractedFragPos.y <= water.waterLevel+wave.height + 0.05)
     {
         sampledAlbedo = albedoTexture.Sample(textureSampler, refractedUV).rgb;
         sampledDist = length(refractedFragPos - eye);

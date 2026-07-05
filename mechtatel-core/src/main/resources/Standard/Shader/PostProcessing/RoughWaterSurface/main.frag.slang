@@ -15,12 +15,14 @@ struct CameraUBO
 ConstantBuffer<CameraUBO> camera : register(b0, space0);
 
 // Uniforms for the rough-water surface. The std140 layout below is packed as
-// six float4 blocks (each a float3 + a trailing scalar) followed by four loose
-// floats, so a matching Java UBO would be SIZEOF_VEC4 * 6 + SIZEOF_FLOAT * 4.
+// six float4 blocks (each a float3 + a trailing scalar) followed by eight loose
+// floats (two more float4 blocks), so a matching Java UBO would be
+// SIZEOF_VEC4 * 6 + SIZEOF_FLOAT * 8.
 // Note there is no distortionStrength / absorptionCoefficient here (rough water
 // does not refract); `transmissionStrength` replaces them as the single "how
-// much of the scene shows through" control, and `choppiness` / foam fields are
-// new.
+// much of the scene shows through" control, and `choppiness` / foam / swell
+// fields are new. The `swell*` trio drives the large, slow heave that makes the
+// water level rise and fall like an ocean.
 struct WaterSurfaceUBO
 {
     float3 deepColor;
@@ -38,7 +40,11 @@ struct WaterSurfaceUBO
     float choppiness;
     float foamIntensity;
     float specularStrength;
+    float swellAmplitude;
+    float swellFrequency;
+    float swellSpeed;
     float time;
+    float _pad;
 };
 ConstantBuffer<WaterSurfaceUBO> water : register(b1, space0);
 
@@ -82,18 +88,38 @@ PSOutput main(PSInput input)
     float fragDist = length(viewVec);
     float3 viewDir = viewVec / max(fragDist, 1e-6);
 
-    // Ray-plane intersection with y = waterLevel.
-    // Parameter t such that eye + t*viewDir hits the plane.
+    // Ray intersection with the heaving water surface y = waterLevel + h(x,z,t).
+    // The surface height h depends on the XZ we hit, which in turn depends on the
+    // intersection distance, so we solve it by fixed-point iteration: start from
+    // the flat plane at waterLevel, sample the wave there, re-intersect against
+    // the displaced surface, and repeat. A couple of steps are plenty for the
+    // gentle slopes of a water surface, and this is what makes the whole surface
+    // visibly rise and fall rather than sit at a fixed level.
     float denom = viewDir.y;
     bool rayCrossesSurface = false;
     float tWater = 0.0;
     if (abs(denom) > 1e-4)
     {
         tWater = (water.waterLevel - eye.y) / denom;
+        for (int iter = 0; iter < 2; ++iter)
+        {
+            float3 p = eye + viewDir * tWater;
+            float h = sampleWave(
+                p.xz,
+                water.waveAmplitude,
+                water.waveFrequency,
+                water.waveSpeed,
+                water.choppiness,
+                water.swellAmplitude,
+                water.swellFrequency,
+                water.swellSpeed,
+                water.time).height;
+            tWater = (water.waterLevel + h - eye.y) / denom;
+        }
         rayCrossesSurface = (tWater > 0.0) && (tWater < fragDist);
     }
 
-    // If the view ray doesn't pass through the water plane between the camera
+    // If the view ray doesn't pass through the water surface between the camera
     // and the visible fragment, leave the pixel unchanged.
     if (!rayCrossesSurface)
     {
@@ -108,6 +134,9 @@ PSOutput main(PSInput input)
         water.waveFrequency,
         water.waveSpeed,
         water.choppiness,
+        water.swellAmplitude,
+        water.swellFrequency,
+        water.swellSpeed,
         water.time);
     float3 waveNormal = wave.normal;
 

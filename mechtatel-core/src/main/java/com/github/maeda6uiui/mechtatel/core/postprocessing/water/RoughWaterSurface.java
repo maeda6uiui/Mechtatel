@@ -21,6 +21,9 @@ public class RoughWaterSurface {
     private float waveFrequency;
     private float waveSpeed;
     private float choppiness;
+    private float swellAmplitude;
+    private float swellFrequency;
+    private float swellSpeed;
     private Vector3f foamColor;
     private float foamThreshold;
     private float foamIntensity;
@@ -38,6 +41,9 @@ public class RoughWaterSurface {
         waveFrequency = 1.0f;
         waveSpeed = 1.8f;
         choppiness = 2.0f;
+        swellAmplitude = 0.5f;
+        swellFrequency = 0.3f;
+        swellSpeed = 0.7f;
         foamColor = new Vector3f(0.9f, 0.95f, 1.0f);
         foamThreshold = 0.6f;
         foamIntensity = 1.0f;
@@ -109,6 +115,30 @@ public class RoughWaterSurface {
 
     public void setChoppiness(float choppiness) {
         this.choppiness = choppiness;
+    }
+
+    public float getSwellAmplitude() {
+        return swellAmplitude;
+    }
+
+    public void setSwellAmplitude(float swellAmplitude) {
+        this.swellAmplitude = swellAmplitude;
+    }
+
+    public float getSwellFrequency() {
+        return swellFrequency;
+    }
+
+    public void setSwellFrequency(float swellFrequency) {
+        this.swellFrequency = swellFrequency;
+    }
+
+    public float getSwellSpeed() {
+        return swellSpeed;
+    }
+
+    public void setSwellSpeed(float swellSpeed) {
+        this.swellSpeed = swellSpeed;
     }
 
     public Vector3f getFoamColor() {

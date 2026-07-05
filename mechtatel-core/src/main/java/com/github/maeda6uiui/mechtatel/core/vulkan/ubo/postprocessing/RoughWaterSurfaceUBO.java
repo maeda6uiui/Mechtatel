@@ -15,13 +15,13 @@ import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_
  *
  * <p>The layout mirrors the {@code WaterSurfaceUBO} struct in
  * {@code Standard/Shader/PostProcessing/RoughWaterSurface/main.frag.slang}:
- * six std140 vec4 blocks (each a vec3 plus a trailing scalar) followed by four
- * loose floats.
+ * six std140 vec4 blocks (each a vec3 plus a trailing scalar) followed by eight
+ * loose floats (two more vec4 blocks; the last float is padding).
  *
  * @author maeda6uiui
  */
 public class RoughWaterSurfaceUBO extends UBO {
-    public static final int SIZEOF = SIZEOF_VEC4 * 6 + SIZEOF_FLOAT * 4;
+    public static final int SIZEOF = SIZEOF_VEC4 * 6 + SIZEOF_FLOAT * 8;
 
     private Vector3f deepColor;
     private float waterLevel;
@@ -38,6 +38,9 @@ public class RoughWaterSurfaceUBO extends UBO {
     private float choppiness;
     private float foamIntensity;
     private float specularStrength;
+    private float swellAmplitude;
+    private float swellFrequency;
+    private float swellSpeed;
     private float time;
 
     public RoughWaterSurfaceUBO(RoughWaterSurface roughWaterSurface) {
@@ -56,6 +59,9 @@ public class RoughWaterSurfaceUBO extends UBO {
         choppiness = roughWaterSurface.getChoppiness();
         foamIntensity = roughWaterSurface.getFoamIntensity();
         specularStrength = roughWaterSurface.getSpecularStrength();
+        swellAmplitude = roughWaterSurface.getSwellAmplitude();
+        swellFrequency = roughWaterSurface.getSwellFrequency();
+        swellSpeed = roughWaterSurface.getSwellSpeed();
         time = (float) GLFW.glfwGetTime();
     }
 
@@ -82,7 +88,11 @@ public class RoughWaterSurfaceUBO extends UBO {
         buffer.putFloat(SIZEOF_VEC4 * 6, choppiness);
         buffer.putFloat(SIZEOF_VEC4 * 6 + SIZEOF_FLOAT, foamIntensity);
         buffer.putFloat(SIZEOF_VEC4 * 6 + SIZEOF_FLOAT * 2, specularStrength);
-        buffer.putFloat(SIZEOF_VEC4 * 6 + SIZEOF_FLOAT * 3, time);
+        buffer.putFloat(SIZEOF_VEC4 * 6 + SIZEOF_FLOAT * 3, swellAmplitude);
+
+        buffer.putFloat(SIZEOF_VEC4 * 7, swellFrequency);
+        buffer.putFloat(SIZEOF_VEC4 * 7 + SIZEOF_FLOAT, swellSpeed);
+        buffer.putFloat(SIZEOF_VEC4 * 7 + SIZEOF_FLOAT * 2, time);
 
         buffer.rewind();
     }

@@ -38,6 +38,20 @@ static const float2 WAVE_DIRS[6] = {
 static const float WAVE_WEIGHTS[6] = { 1.0, 0.7, 0.5, 0.35, 0.25, 0.18 };
 static const float WAVE_FREQ_MULTIPLIERS[6] = { 1.0, 1.9, 2.7, 3.8, 5.3, 7.1 };
 
+// Large-scale ocean swell: a couple of slow, long-wavelength waves layered on
+// top of the chop. Their job is to heave the whole surface up and down (the
+// "water level fluctuates" part) rather than add ripple detail, so they have a
+// much lower frequency and speed than the octaves above and their amplitude is
+// controlled separately. Two crossed directions keep the heave from looking
+// like a single 1-D corrugation.
+static const int NUM_SWELLS = 2;
+static const float2 SWELL_DIRS[2] = {
+    float2(0.86, 0.5),
+    float2(0.5, -0.86)
+};
+static const float SWELL_WEIGHTS[2] = { 1.0, 0.45 };
+static const float SWELL_FREQ_MULTIPLIERS[2] = { 1.0, 1.7 };
+
 // One evaluation of the wave field at a point: the surface height, its unit
 // normal, and the maximum possible height (the sum of all octave amplitudes).
 // `maxHeight` lets downstream code normalise `height` into [-1, 1] without
@@ -74,18 +88,26 @@ float effectiveFrequency(int i, float frequency, float choppiness)
 // Evaluate the full wave field at a world-space XZ position.
 //
 // Height is sum_i amp * w_i * sin(phase_i), the same construction as the
-// still-water module. The normal of a height field y = h(x, z) is
+// still-water module, summed over both the chop octaves and the swell. The
+// normal of a height field y = h(x, z) is
 //     n = normalize(-dh/dx, 1, -dh/dz)
-// and each octave differentiates to
+// and each component differentiates to
 //     d/dx [ amp * w_i * sin(phase_i) ] = amp * w_i * k_i * dir_i.x * cos(phase_i)
-// (WAVE_DIRS[i].y is the Z component — the directions live on the XZ plane,
-// packed in float2). `w_i` and `k_i` are the choppiness-adjusted values above.
+// (the .y of each direction is the Z component — the directions live on the XZ
+// plane, packed in float2). `w_i` and `k_i` are the choppiness-adjusted values
+// above for the chop, and the swell constants for the swell.
+//
+// The returned `height` is what displaces the surface plane vertically, so with
+// the swell present the whole ocean visibly heaves up and down over time.
 public WaveSample sampleWave(
     float2 worldXZ,
     float amplitude,
     float frequency,
     float speed,
     float choppiness,
+    float swellAmplitude,
+    float swellFrequency,
+    float swellSpeed,
     float time)
 {
     float h = 0.0;
@@ -106,6 +128,21 @@ public WaveSample sampleWave(
         h += amp * s;
         dhdx += amp * k * WAVE_DIRS[i].x * c;
         dhdz += amp * k * WAVE_DIRS[i].y * c;
+        maxHeight += amp;
+    }
+
+    for (int i = 0; i < NUM_SWELLS; ++i)
+    {
+        float k = swellFrequency * SWELL_FREQ_MULTIPLIERS[i];
+        float phase = dot(SWELL_DIRS[i], worldXZ) * k + time * swellSpeed * (1.0 + 0.15 * float(i));
+
+        float s = sin(phase);
+        float c = cos(phase);
+        float amp = swellAmplitude * SWELL_WEIGHTS[i];
+
+        h += amp * s;
+        dhdx += amp * k * SWELL_DIRS[i].x * c;
+        dhdz += amp * k * SWELL_DIRS[i].y * c;
         maxHeight += amp;
     }
 

@@ -73,7 +73,8 @@ public float specularHighlight(
 {
     float3 toViewer = -viewDir;
     float3 toLight = -sunDir;
-    if (length(toViewer + toLight) < 1e-4) {
+    if (length(toViewer + toLight) < 1e-4)
+    {
         return 0.0;
     }
 

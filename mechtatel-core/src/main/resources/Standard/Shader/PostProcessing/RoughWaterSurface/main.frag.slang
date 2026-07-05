@@ -105,15 +105,16 @@ PSOutput main(PSInput input)
         {
             float3 p = eye + viewDir * tWater;
             float h = sampleWave(
-                p.xz,
-                water.waveAmplitude,
-                water.waveFrequency,
-                water.waveSpeed,
-                water.choppiness,
-                water.swellAmplitude,
-                water.swellFrequency,
-                water.swellSpeed,
-                water.time).height;
+                          p.xz,
+                          water.waveAmplitude,
+                          water.waveFrequency,
+                          water.waveSpeed,
+                          water.choppiness,
+                          water.swellAmplitude,
+                          water.swellFrequency,
+                          water.swellSpeed,
+                          water.time)
+                          .height;
             tWater = (water.waterLevel + h - eye.y) / denom;
         }
         rayCrossesSurface = (tWater > 0.0) && (tWater < fragDist);
@@ -152,7 +153,7 @@ PSOutput main(PSInput input)
     float refractedStencil = stencilTexture.Sample(textureSampler, refractedUV).r;
     float3 sampledAlbedo = albedo.rgb;
     float sampledDist = fragDist;
-    if (refractedStencil < 0.5 && refractedFragPos.y <= water.waterLevel+wave.height + 0.05)
+    if (refractedStencil < 0.5 && refractedFragPos.y <= water.waterLevel + wave.height + 0.05)
     {
         sampledAlbedo = albedoTexture.Sample(textureSampler, refractedUV).rgb;
         sampledDist = length(refractedFragPos - eye);

@@ -74,7 +74,6 @@ public class RoughWaterSurfaceTest extends Mechtatel {
         try {
             floor = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Plane/plane.obj"));
             cube = mainScreen.createModel(Paths.get("./Mechtatel/Standard/Model/Cube/cube.obj"));
-            cube.setVisible(false);
 
             MttTexture checker = mainScreen.createTexture(Paths.get("./Mechtatel/Standard/Texture/checker.png"), true);
             floor.replaceTexture(0, checker);
@@ -87,6 +86,9 @@ public class RoughWaterSurfaceTest extends Mechtatel {
 
         floor.translate(new Vector3f(0.0f, -2.0f, 0.0f));
         floor.rescale(new Vector3f(10.0f, 1.0f, 10.0f));
+
+        cube.rescale(new Vector3f(0.5f));
+        cube.translate(new Vector3f(0.0f, -1.0f, 0.0f));
 
         MttModel cube2 = mainScreen.duplicateModel(cube);
         cube2.translate(new Vector3f(-3.0f, 0.0f, -3.0f));

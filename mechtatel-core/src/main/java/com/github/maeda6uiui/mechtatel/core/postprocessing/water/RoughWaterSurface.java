@@ -17,6 +17,7 @@ public class RoughWaterSurface {
     private Vector3f deepColor;
     private Vector3f shallowColor;
     private float transmissionStrength;
+    private float distortionStrength;
     private float waveAmplitude;
     private float waveFrequency;
     private float waveSpeed;
@@ -37,6 +38,7 @@ public class RoughWaterSurface {
         deepColor = new Vector3f(0.0f, 0.08f, 0.2f);
         shallowColor = new Vector3f(0.1f, 0.35f, 0.45f);
         transmissionStrength = 0.15f;
+        distortionStrength = 0.02f;
         waveAmplitude = 0.4f;
         waveFrequency = 1.0f;
         waveSpeed = 1.8f;
@@ -83,6 +85,14 @@ public class RoughWaterSurface {
 
     public void setTransmissionStrength(float transmissionStrength) {
         this.transmissionStrength = transmissionStrength;
+    }
+
+    public float getDistortionStrength() {
+        return distortionStrength;
+    }
+
+    public void setDistortionStrength(float distortionStrength) {
+        this.distortionStrength = distortionStrength;
     }
 
     public float getWaveAmplitude() {

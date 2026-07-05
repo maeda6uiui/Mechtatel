@@ -18,11 +18,11 @@ ConstantBuffer<CameraUBO> camera : register(b0, space0);
 // six float4 blocks (each a float3 + a trailing scalar) followed by eight loose
 // floats (two more float4 blocks), so a matching Java UBO would be
 // SIZEOF_VEC4 * 6 + SIZEOF_FLOAT * 8.
-// Note there is no distortionStrength / absorptionCoefficient here (rough water
-// does not refract); `transmissionStrength` replaces them as the single "how
-// much of the scene shows through" control, and `choppiness` / foam / swell
-// fields are new. The `swell*` trio drives the large, slow heave that makes the
-// water level rise and fall like an ocean.
+// `transmissionStrength` controls how much of the underwater scene shows
+// through, and `distortionStrength` (like the still-water effect) offsets that
+// underwater sample by the wave normal to fake refraction — set it to 0 to read
+// the scene straight through. The `swell*` trio drives the large, slow heave
+// that makes the water level rise and fall like an ocean.
 struct WaterSurfaceUBO
 {
     float3 deepColor;
@@ -44,7 +44,7 @@ struct WaterSurfaceUBO
     float swellFrequency;
     float swellSpeed;
     float time;
-    float _pad;
+    float distortionStrength;
 };
 ConstantBuffer<WaterSurfaceUBO> water : register(b1, space0);
 
@@ -140,14 +140,31 @@ PSOutput main(PSInput input)
         water.time);
     float3 waveNormal = wave.normal;
 
-    // Water body colour. Rough water does not refract, so we read the scene
-    // straight through the original tap (no wave-normal distortion) and let
-    // waterBodyColor keep only a faint, depth-attenuated amount of it. The
-    // in-water path length is the distance the view ray travels below the
-    // surface before hitting the visible geometry.
-    float depthInWater = max(fragDist - tWater, 0.0);
+    // Refraction: offset the underwater sample by the wave normal, just like the
+    // still-water effect (distortionStrength = 0 disables it, reading the scene
+    // straight through). We only accept the refracted tap if it is still part of
+    // the underwater scene — not masked by the stencil, and at or below the water
+    // level — otherwise we fall back to the straight-through sample so foreground
+    // objects or sky above the surface don't bleed into the water.
+    float2 distortion = waveNormal.xz * water.distortionStrength;
+    float2 refractedUV = clamp(input.fragTexCoords + distortion, 0.0, 1.0);
+    float3 refractedFragPos = positionTexture.Sample(textureSampler, refractedUV).rgb;
+    float refractedStencil = stencilTexture.Sample(textureSampler, refractedUV).r;
+    float3 sampledAlbedo = albedo.rgb;
+    float sampledDist = fragDist;
+    if (refractedStencil < 0.5 && refractedFragPos.y <= water.waterLevel + 0.05)
+    {
+        sampledAlbedo = albedoTexture.Sample(textureSampler, refractedUV).rgb;
+        sampledDist = length(refractedFragPos - eye);
+    }
+
+    // Water body colour: waterBodyColor keeps only a faint, depth-attenuated
+    // amount of the (now possibly refracted) underwater sample. The in-water
+    // path length is the distance the view ray travels below the surface before
+    // reaching the visible geometry we actually shade.
+    float depthInWater = max(sampledDist - tWater, 0.0);
     float3 body = waterBodyColor(
-        albedo.rgb,
+        sampledAlbedo,
         water.shallowColor,
         water.deepColor,
         water.transmissionStrength,

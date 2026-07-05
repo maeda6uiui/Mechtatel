@@ -2,10 +2,10 @@
 //
 // Shading helpers for the rough-water postprocessing pass. As with the
 // still-water effect these are closed-form approximations of optical effects -
-// none trace rays or read extra textures. The rough effect deliberately drops
-// refraction: instead of resolving what is seen *through* the surface, the main
-// shader builds the water body colour, mixes in a Fresnel-weighted sky
-// reflection, lays foam on top of the crests, and finishes with a sun glint.
+// none trace rays or read extra textures. The main shader builds the water body
+// colour (from a faintly transmitted, optionally refracted underwater sample),
+// mixes in a Fresnel-weighted sky reflection, lays foam on top of the crests,
+// and finishes with a sun glint.
 module shading;
 
 // Schlick's approximation of the Fresnel reflectance: the fraction of light

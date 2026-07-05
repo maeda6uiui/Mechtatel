@@ -42,6 +42,7 @@ public class RoughWaterSurfaceUBO extends UBO {
     private float swellFrequency;
     private float swellSpeed;
     private float time;
+    private float distortionStrength;
 
     public RoughWaterSurfaceUBO(RoughWaterSurface roughWaterSurface) {
         deepColor = roughWaterSurface.getDeepColor();
@@ -62,6 +63,7 @@ public class RoughWaterSurfaceUBO extends UBO {
         swellAmplitude = roughWaterSurface.getSwellAmplitude();
         swellFrequency = roughWaterSurface.getSwellFrequency();
         swellSpeed = roughWaterSurface.getSwellSpeed();
+        distortionStrength = roughWaterSurface.getDistortionStrength();
         time = (float) GLFW.glfwGetTime();
     }
 
@@ -93,6 +95,7 @@ public class RoughWaterSurfaceUBO extends UBO {
         buffer.putFloat(SIZEOF_VEC4 * 7, swellFrequency);
         buffer.putFloat(SIZEOF_VEC4 * 7 + SIZEOF_FLOAT, swellSpeed);
         buffer.putFloat(SIZEOF_VEC4 * 7 + SIZEOF_FLOAT * 2, time);
+        buffer.putFloat(SIZEOF_VEC4 * 7 + SIZEOF_FLOAT * 3, distortionStrength);
 
         buffer.rewind();
     }

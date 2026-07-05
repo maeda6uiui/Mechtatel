@@ -50,11 +50,12 @@ public class RoughWaterSurfaceTest extends Mechtatel {
         water.setDeepColor(new Vector3f(0.0f, 0.08f, 0.2f));
         water.setShallowColor(new Vector3f(0.1f, 0.35f, 0.45f));
         water.setTransmissionStrength(0.15f);
+        water.setDistortionStrength(0.02f);
         water.setWaveAmplitude(0.1f);
         water.setWaveFrequency(1.0f);
         water.setWaveSpeed(1.8f);
         water.setChoppiness(1.0f);
-        water.setSwellAmplitude(0.5f);
+        water.setSwellAmplitude(1.0f);
         water.setSwellFrequency(0.3f);
         water.setSwellSpeed(0.7f);
         water.setFoamColor(new Vector3f(0.9f, 0.95f, 1.0f));

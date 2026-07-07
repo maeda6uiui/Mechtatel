@@ -39,11 +39,11 @@ public class RoughWaterSurface {
         shallowColor = new Vector3f(0.1f, 0.35f, 0.45f);
         transmissionStrength = 0.15f;
         distortionStrength = 0.02f;
-        waveAmplitude = 0.4f;
+        waveAmplitude = 0.1f;
         waveFrequency = 1.0f;
         waveSpeed = 1.8f;
-        choppiness = 2.0f;
-        swellAmplitude = 0.5f;
+        choppiness = 1.0f;
+        swellAmplitude = 1.0f;
         swellFrequency = 0.3f;
         swellSpeed = 0.7f;
         foamColor = new Vector3f(0.9f, 0.95f, 1.0f);

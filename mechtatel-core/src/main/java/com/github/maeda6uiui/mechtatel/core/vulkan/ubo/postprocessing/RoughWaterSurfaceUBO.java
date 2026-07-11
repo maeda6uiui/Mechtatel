@@ -14,9 +14,7 @@ import static com.github.maeda6uiui.mechtatel.core.vulkan.ubo.SizeofInfo.SIZEOF_
  * Uniform buffer object for rough water surface
  *
  * <p>The layout mirrors the {@code WaterSurfaceUBO} struct in
- * {@code Standard/Shader/PostProcessing/RoughWaterSurface/main.frag.slang}:
- * six std140 vec4 blocks (each a vec3 plus a trailing scalar) followed by eight
- * loose floats (two more vec4 blocks; the last float is padding).
+ * {@code Standard/Shader/PostProcessing/RoughWaterSurface/main.frag.slang}.
  *
  * @author maeda6uiui
  */

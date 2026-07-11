@@ -6,9 +6,7 @@ import org.joml.Vector3f;
  * Rough water surface
  *
  * <p>Unlike {@link StillWaterSurface}, this effect targets a heavily distorted
- * ocean-like surface where the scene underneath is barely visible. It does not
- * refract; instead the surface is dominated by deep-water color, sky reflection,
- * and foam on the wave crests.
+ * ocean-like surface where the scene underneath is barely visible.
  *
  * @author maeda6uiui
  */

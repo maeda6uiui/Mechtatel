@@ -14,10 +14,7 @@ struct CameraUBO
 };
 ConstantBuffer<CameraUBO> camera : register(b0, space0);
 
-// Uniforms for the rough-water surface. The std140 layout below is packed as
-// six float4 blocks (each a float3 + a trailing scalar) followed by eight loose
-// floats (two more float4 blocks), so a matching Java UBO would be
-// SIZEOF_VEC4 * 6 + SIZEOF_FLOAT * 8.
+// Uniforms for the rough-water surface.
 // `transmissionStrength` controls how much of the underwater scene shows
 // through, and `distortionStrength` (like the still-water effect) offsets that
 // underwater sample by the wave normal to fake refraction — set it to 0 to read

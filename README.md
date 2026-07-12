@@ -154,30 +154,42 @@ public static void main(String[] args) {
 
 ## Screenshots
 
-Some basic primitives
+### Some basic primitives
 
 ![Primitives](./Image/primitives.png)
 
-Physics objects
+### Physics objects
 
-![Physics objects](./Image/physics_objects.png)
+https://github.com/user-attachments/assets/30f6bce4-7e85-4cd7-8bf0-4d9db438533e
 
-Spotlights
+### Spotlights
 
 ![Spotlights](./Image/spotlights.png)
 
-Shadow mapping
+### Shadow mapping
 
 ![Shadow mapping](./Image/shadow_mapping.png)
 
-Skeletal animation
+### Skeletal animation
 
-![Skeletal animation](./Image/skeletal_animation.png)
+https://github.com/user-attachments/assets/65d0cb8f-ee49-4daa-aa64-b8614ce935ed
 
-ImGui
+### ImGui
 
 ![ImGui](./Image/imgui.png)
 
-Rendering to multiple windows
+### Rendering to multiple windows
 
 ![Rendering to multiple windows](./Image/rendering_to_multiple_windows.png)
+
+### Water effects
+
+#### Still water
+
+https://github.com/user-attachments/assets/ec4396bb-3c64-47f4-8a52-a9c9bc8c6602
+
+#### Rough water
+
+Click the following image to watch the demo on YouTube.
+
+[![Rough Water Effect](https://img.youtube.com/vi/Io_jJE6zkI0/maxresdefault.jpg)](https://youtu.be/Io_jJE6zkI0)

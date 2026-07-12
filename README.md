@@ -8,7 +8,7 @@ Mechtatel (ru: Мечтатель en: Dreamer)
 
 ## Overview
 
-This project aims to create a Vulkan-based game engine in Java with help of [LWJGL](https://www.lwjgl.org/).
+This project aims to create a Vulkan-based game engine in Java with the help of [LWJGL](https://www.lwjgl.org/).
 It's still far from what you call a game engine, but I'll keep on developing little by little in my free time.
 Leave a star in this repo if you like it!
 
@@ -52,17 +52,17 @@ Support for Linux arm64 is partly tested on a `g5g.xlarge` instance of AWS EC2.
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-core</artifactId>
-        <version>0.4.1</version>
+        <version>0.5.0</version>
     </dependency>
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-platform-pack-linux</artifactId>
-        <version>0.4.1</version>
+        <version>0.5.0</version>
     </dependency>
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-logging</artifactId>
-        <version>0.4.1</version>
+        <version>0.5.0</version>
     </dependency>
 </dependencies>
 ```
@@ -90,12 +90,12 @@ You can overwrite it or use another logging implementation at your discretion.
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-audio</artifactId>
-        <version>0.4.1</version>
+        <version>0.5.0</version>
     </dependency>
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-audio-natives-linux</artifactId>
-        <version>0.4.1</version>
+        <version>0.5.0</version>
     </dependency>
 </dependencies>
 ```
@@ -145,7 +145,6 @@ public static void main(String[] args) {
 ## Todo
 
 - Reflection mapping
-- Water surface
 
 ## Special thanks to
 
@@ -155,30 +154,42 @@ public static void main(String[] args) {
 
 ## Screenshots
 
-Some basic primitives
+### Some basic primitives
 
 ![Primitives](./Image/primitives.png)
 
-Physics objects
+### Physics objects
 
-![Physics objects](./Image/physics_objects.png)
+https://github.com/user-attachments/assets/30f6bce4-7e85-4cd7-8bf0-4d9db438533e
 
-Spotlights
+### Spotlights
 
 ![Spotlights](./Image/spotlights.png)
 
-Shadow mapping
+### Shadow mapping
 
 ![Shadow mapping](./Image/shadow_mapping.png)
 
-Skeletal animation
+### Skeletal animation
 
-![Skeletal animation](./Image/skeletal_animation.png)
+https://github.com/user-attachments/assets/65d0cb8f-ee49-4daa-aa64-b8614ce935ed
 
-ImGui
+### ImGui
 
 ![ImGui](./Image/imgui.png)
 
-Rendering to multiple windows
+### Rendering to multiple windows
 
 ![Rendering to multiple windows](./Image/rendering_to_multiple_windows.png)
+
+### Water effects
+
+#### Still water
+
+https://github.com/user-attachments/assets/ec4396bb-3c64-47f4-8a52-a9c9bc8c6602
+
+#### Rough water
+
+Click the following image to watch the demo on YouTube.
+
+[![Rough Water Effect](https://img.youtube.com/vi/Io_jJE6zkI0/maxresdefault.jpg)](https://youtu.be/Io_jJE6zkI0)

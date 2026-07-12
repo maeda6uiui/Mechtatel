@@ -23,8 +23,8 @@ jobs:
       - name: Download Slang release
         run: |
           mkdir Download && cd Download
-          wget https://github.com/shader-slang/slang/releases/download/v2025.17/slang-2025.17-macos-aarch64.tar.gz
-          tar -xf slang-2025.17-macos-aarch64.tar.gz
+          wget https://github.com/shader-slang/slang/releases/download/v2026.13/slang-2026.13-macos-aarch64.tar.gz
+          tar -xf slang-2026.13-macos-aarch64.tar.gz
       - name: Copy libslang.dylib to lib directory
         run: |
           mkdir lib

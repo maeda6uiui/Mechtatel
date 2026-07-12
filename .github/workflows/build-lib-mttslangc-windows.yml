@@ -24,9 +24,9 @@ jobs:
         run: |
           mkdir Download; cd Download
           Invoke-WebRequest `
-            https://github.com/shader-slang/slang/releases/download/v2025.17/slang-2025.17-windows-x86_64.tar.gz `
-            -OutFile slang-2025.17-windows-x86_64.tar.gz
-          tar -xf slang-2025.17-windows-x86_64.tar.gz
+            https://github.com/shader-slang/slang/releases/download/v2026.13/slang-2026.13-windows-x86_64.tar.gz `
+            -OutFile slang-2026.13-windows-x86_64.tar.gz
+          tar -xf slang-2026.13-windows-x86_64.tar.gz
       - name: Copy slang.dll and slang.lib to lib directory
         run: |
           mkdir lib

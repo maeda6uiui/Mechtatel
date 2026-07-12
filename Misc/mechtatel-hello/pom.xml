@@ -6,13 +6,13 @@
 
     <groupId>io.github.maeda6uiui</groupId>
     <artifactId>mechtatel-hello</artifactId>
-    <version>0.3.1-SNAPSHOT-2025.12.0</version>
+    <version>0.5.0-2026.7.0</version>
 
     <properties>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mechtatel.version>0.3.1-SNAPSHOT</mechtatel.version>
+        <mechtatel.version>0.5.0</mechtatel.version>
     </properties>
 
     <repositories>
@@ -31,7 +31,7 @@
 
     <profiles>
         <profile>
-            <id>mechtatel-natives-linux-amd64</id>
+            <id>mechtatel-natives-linux-x64</id>
             <activation>
                 <os>
                     <family>unix</family>
@@ -57,7 +57,7 @@
             </properties>
         </profile>
         <profile>
-            <id>mechtatel-natives-windows-amd64</id>
+            <id>mechtatel-natives-windows-x64</id>
             <activation>
                 <os>
                     <family>windows</family>
@@ -89,8 +89,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
+                    <source>25</source>
+                    <target>25</target>
                 </configuration>
             </plugin>
             <plugin>

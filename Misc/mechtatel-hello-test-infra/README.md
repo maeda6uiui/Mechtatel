@@ -34,6 +34,12 @@ sudo apt upgrade
 sudo apt install nvidia-driver-595-server
 ```
 
+### Install other requirements
+
+```
+sudo apt install libxtst6 libxi6 libxrender1
+```
+
 ### Run mechtatel-hello
 
 mechtatel-hello runs in the headless mode, that is, rendering without a window.

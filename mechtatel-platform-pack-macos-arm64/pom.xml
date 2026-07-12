@@ -7,7 +7,7 @@
     <parent>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel</artifactId>
-        <version>0.4.2-SNAPSHOT</version>
+        <version>0.5.0</version>
     </parent>
 
     <artifactId>mechtatel-platform-pack-macos-arm64</artifactId>

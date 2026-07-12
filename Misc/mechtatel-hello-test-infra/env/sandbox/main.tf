@@ -26,6 +26,29 @@ module "network" {
   cidr_block = local.vpc_cidr_block
 }
 
+data "aws_ami" "ubuntu_24_04_arm64" {
+  most_recent = true
+
+  owners = ["099720109477"] # Canonical
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-arm64-server-*"]
+  }
+  filter {
+    name   = "architecture"
+    values = ["arm64"]
+  }
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+  filter {
+    name   = "state"
+    values = ["available"]
+  }
+}
+
 module "instance" {
   source = "../../modules/instance"
 
@@ -49,7 +72,7 @@ module "instance" {
     public_key = file("mechtatel-hello-test.pub")
   }
   instance_config = {
-    ami           = "ami-0cf8decb2a7ae7588" #Deep Learning ARM64 AMI OSS Nvidia Driver GPU PyTorch 2.9 (Amazon Linux 2023) 20251226
+    ami           = data.aws_ami.ubuntu_24_04_arm64.id
     instance_type = "g5g.xlarge"
     volume_size   = 32
     subnet_key    = "1c"

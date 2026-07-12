@@ -8,7 +8,7 @@ Mechtatel (ru: Мечтатель en: Dreamer)
 
 ## Overview
 
-This project aims to create a Vulkan-based game engine in Java with help of [LWJGL](https://www.lwjgl.org/).
+This project aims to create a Vulkan-based game engine in Java with the help of [LWJGL](https://www.lwjgl.org/).
 It's still far from what you call a game engine, but I'll keep on developing little by little in my free time.
 Leave a star in this repo if you like it!
 
@@ -52,17 +52,17 @@ Support for Linux arm64 is partly tested on a `g5g.xlarge` instance of AWS EC2.
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-core</artifactId>
-        <version>0.4.1</version>
+        <version>0.5.0</version>
     </dependency>
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-platform-pack-linux</artifactId>
-        <version>0.4.1</version>
+        <version>0.5.0</version>
     </dependency>
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-logging</artifactId>
-        <version>0.4.1</version>
+        <version>0.5.0</version>
     </dependency>
 </dependencies>
 ```
@@ -90,12 +90,12 @@ You can overwrite it or use another logging implementation at your discretion.
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-audio</artifactId>
-        <version>0.4.1</version>
+        <version>0.5.0</version>
     </dependency>
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-audio-natives-linux</artifactId>
-        <version>0.4.1</version>
+        <version>0.5.0</version>
     </dependency>
 </dependencies>
 ```

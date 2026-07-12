@@ -145,7 +145,6 @@ public static void main(String[] args) {
 ## Todo
 
 - Reflection mapping
-- Water surface
 
 ## Special thanks to
 

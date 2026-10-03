@@ -13,16 +13,6 @@ import java.io.IOException;
  */
 public class MttNativeLoader2 extends MttNativeLoaderBase {
     @Override
-    public void loadLibbulletjme() throws IOException {
-        MttResourceFileUtils.loadNativeLib(
-                this.getClass(),
-                "/Bin/Linux64ReleaseSp_libbulletjme.so",
-                TEMP_FILENAME_PREFIX,
-                false
-        );
-    }
-
-    @Override
     public File extractLibMttSlangc() throws IOException {
         return MttResourceFileUtils.extractFileIntoDir(
                 this.getClass(), "/Bin/libmttslangc.so", this.getTempDir());

@@ -3,8 +3,6 @@ package com.github.maeda6uiui.mechtatel.core;
 import com.github.maeda6uiui.mechtatel.core.physics.MttDefaultPhysicsSpace;
 import com.github.maeda6uiui.mechtatel.core.screen.texture.MttTexture;
 import com.github.maeda6uiui.mechtatel.core.vulkan.MttVulkanInstance;
-import com.github.maeda6uiui.mechtatel.natives.MttNativeLoaderBase;
-import com.github.maeda6uiui.mechtatel.natives.MttNativeLoaderFactory2;
 import com.jme3.bullet.PhysicsSpace;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.openal.AL;
@@ -14,8 +12,6 @@ import org.lwjgl.system.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -81,27 +77,7 @@ public class Mechtatel implements IMechtatelWindowEventHandlers {
         AL.createCapabilities(deviceCaps);
         //==========
 
-        //Load native libraries
-        MttNativeLoaderBase nativeLoader;
-        try {
-            nativeLoader = MttNativeLoaderFactory2.createNativeLoader(PlatformInfo.PLATFORM_WITH_ARCH);
-        } catch (ClassNotFoundException
-                 | NoSuchMethodException
-                 | InstantiationException
-                 | IllegalAccessException
-                 | InvocationTargetException e) {
-            logger.error("Failed to create native loader", e);
-            throw new RuntimeException(e);
-        }
-
-        try {
-            nativeLoader.loadLibbulletjme();
-            nativeLoader.loadLibImguiJava();
-        } catch (IOException e) {
-            logger.error("Failed to load native library");
-            throw new RuntimeException(e);
-        }
-        //==========
+        NativeLibLoader.loadNativeLibs();
 
         MttDefaultPhysicsSpace.init(PhysicsSpace.BroadphaseType.DBVT);
 

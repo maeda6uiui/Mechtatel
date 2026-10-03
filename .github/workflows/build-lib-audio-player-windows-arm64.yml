@@ -12,11 +12,13 @@ jobs:
     permissions:
       contents: write
     runs-on: windows-11-arm
+    defaults:
+      run:
+        working-directory: mechtatel-audio-natives/natives/lib-audio-player
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Build native library with cargo
-        working-directory: mechtatel-audio-natives/natives/lib-audio-player
         run: cargo build --release
       - name: Rename build artifact to prevent name collision
         run: |

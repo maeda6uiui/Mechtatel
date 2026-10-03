@@ -11,7 +11,7 @@ jobs:
     name: Build native library of imgui-java for Windows arm64
     permissions:
       contents: write
-    runs-on: windows-11-arm
+    runs-on: ubuntu-22.04
     defaults:
       run:
         working-directory: Misc/imgui-java
@@ -25,6 +25,12 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
+      - name: Install llvm-mingw
+        working-directory: /tmp
+        run: |
+          wget https://github.com/mstorsjo/llvm-mingw/releases/download/20260922/llvm-mingw-20260922-ucrt-ubuntu-22.04-x86_64.tar.xz
+          tar -xf llvm-mingw-20260922-ucrt-ubuntu-22.04-x86_64.tar.xz
+          echo "$PWD/llvm-mingw-20260922-ucrt-ubuntu-22.04-x86_64/bin" >> $GITHUB_PATH
       - name: Build lib-imgui-java
         run: ./gradlew imgui-binding:generateLibs -Denvs=windowsarm64 -Dlocal
       - name: Rename build artifact to prevent name collision

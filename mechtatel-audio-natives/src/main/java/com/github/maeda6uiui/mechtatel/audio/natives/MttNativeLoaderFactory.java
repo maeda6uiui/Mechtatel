@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 public class MttNativeLoaderFactory {
     private static final String NATIVE_LOADER_CLASS_NAME = "MttNativeLoader";
     private static final String WINDOWS_PACKAGE_PATH = "com.github.maeda6uiui.mechtatel.audio.natives.windows";
+    private static final String WINDOWS_ARM64_PACKAGE_PATH = "com.github.maeda6uiui.mechtatel.audio.natives.windowsarm64";
     private static final String LINUX_PACKAGE_PATH = "com.github.maeda6uiui.mechtatel.audio.natives.linux";
     private static final String LINUX_ARM64_PACKAGE_PATH = "com.github.maeda6uiui.mechtatel.audio.natives.linuxarm64";
     private static final String MACOS_ARM64_PACKAGE_PATH = "com.github.maeda6uiui.mechtatel.audio.natives.macosarm64";
@@ -19,6 +20,7 @@ public class MttNativeLoaderFactory {
             InstantiationException, IllegalAccessException, InvocationTargetException {
         String className = switch (platform) {
             case "windows" -> WINDOWS_PACKAGE_PATH + "." + NATIVE_LOADER_CLASS_NAME;
+            case "windowsarm64" -> WINDOWS_ARM64_PACKAGE_PATH + "." + NATIVE_LOADER_CLASS_NAME;
             case "linux" -> LINUX_PACKAGE_PATH + "." + NATIVE_LOADER_CLASS_NAME;
             case "linuxarm64" -> LINUX_ARM64_PACKAGE_PATH + "." + NATIVE_LOADER_CLASS_NAME;
             case "macosarm64" -> MACOS_ARM64_PACKAGE_PATH + "." + NATIVE_LOADER_CLASS_NAME;

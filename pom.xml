@@ -31,6 +31,8 @@
         <module>mechtatel-platform-pack-linux-arm64</module>
         <module>mechtatel-platform-pack-macos-arm64</module>
         <module>mechtatel-audio-natives-windows-arm64</module>
+        <module>mechtatel-natives-windows-arm64</module>
+        <module>mechtatel-platform-pack-windows-arm64</module>
     </modules>
 
     <licenses>

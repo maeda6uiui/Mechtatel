@@ -78,12 +78,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.stephengold</groupId>
-            <artifactId>Libbulletjme</artifactId>
-            <version>21.2.1</version>
-        </dependency>
-
-        <dependency>
             <groupId>io.github.maeda6uiui</groupId>
             <artifactId>jxm-bd1</artifactId>
             <version>3.0.0</version>
@@ -104,6 +98,22 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.21.0</version>
+        </dependency>
+
+        <dependency>
+            <!--
+                Artifact ID has `Windows64` in it, but it only loads the JVM library.
+                The native library is loaded in the corresponding platform pack.
+                See `mechtatel-platform-pack-linux` for instance.
+             -->
+            <groupId>com.github.stephengold</groupId>
+            <artifactId>Libbulletjme-Windows64</artifactId>
+            <version>23.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.electrostat-lab</groupId>
+            <artifactId>snaploader</artifactId>
+            <version>1.1.1-stable</version>
         </dependency>
 
         <dependency>

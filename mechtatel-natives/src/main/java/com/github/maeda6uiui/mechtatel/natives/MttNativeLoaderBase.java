@@ -43,8 +43,6 @@ public abstract class MttNativeLoaderBase {
         return tempDir;
     }
 
-    public abstract void loadLibbulletjme() throws IOException;
-
     public abstract File extractLibMttSlangc() throws IOException;
 
     public abstract File extractLibSlang() throws IOException;

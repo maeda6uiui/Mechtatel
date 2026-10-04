@@ -56,6 +56,13 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.stephengold</groupId>
+            <artifactId>Libbulletjme-MacOSX_ARM64</artifactId>
+            <version>23.1.2</version>
+            <classifier>SpRelease</classifier>
+        </dependency>
+
+        <dependency>
             <groupId>io.github.maeda6uiui</groupId>
             <artifactId>${mechtatel.natives}</artifactId>
             <version>${project.parent.version}</version>

@@ -110,6 +110,19 @@
             </properties>
         </profile>
         <profile>
+            <id>mechtatel-natives-windows-aarch64</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <mechtatel.platformPack>mechtatel-platform-pack-windows-arm64</mechtatel.platformPack>
+                <mechtatel.audio.natives>mechtatel-audio-natives-windows-arm64</mechtatel.audio.natives>
+            </properties>
+        </profile>
+        <profile>
             <id>mechtatel-natives-macos-aarch64</id>
             <activation>
                 <os>

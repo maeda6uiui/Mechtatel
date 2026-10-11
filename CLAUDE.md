@@ -51,14 +51,14 @@ The Maven reactor (`pom.xml`) groups modules into a few families:
 
 - **`mechtatel-core`** — engine entry points (`Mechtatel`, `MttWindow`, `MttHeadlessInstance`), settings/shader-config loading, and `core.vulkan.*` which contains `MttVulkanInstance` plus all Vulkan plumbing (`nabor` = render-pass + pipeline bundles, `screen`, `shader`, `swapchain`, `ubo`, `drawer`, `cache`, `creator`). Higher-level scene types (`screen.component`, `model`, `physics`, `postprocessing`, `shadow`, `fseffect`, `text`, `sound`, `camera`, `input`) sit on top of the Vulkan layer. Standard GLSL shaders live under `src/main/resources/Standard/Shader/{GBuffer,FullScreenEffect,PostProcessing,Primitive,Present,ShadowMapping,MergeScenes,TextureOperation}`.
 - **`mechtatel-audio`** — pure-Java JNA wrapper around a Rust audio library; usable independently of `mechtatel-core`.
-- **`mechtatel-natives`** + per-platform `mechtatel-natives-{linux,linux-arm64,windows,macos-arm64}` — packaged binaries of `libmttslangc` (Slang shader compiler bridge, C++ via CMake) wrapped by `MttNativeLoaderBase`.
-- **`mechtatel-audio-natives`** + per-platform `mechtatel-audio-natives-{linux,linux-arm64,windows,macos-arm64}` — packaged binaries of `lib-audio-player` (Rust crate under `mechtatel-audio-natives/natives/lib-audio-player`).
-- **`mechtatel-platform-pack-{linux,linux-arm64,windows,macos-arm64}`** — meta-modules that pull in the matching LWJGL `${lwjgl.natives}` classifier jars **plus** the matching `mechtatel-natives-*`. Downstream apps depend on **one** platform-pack (selected by Maven OS/arch profile via `${mechtatel.platformPack}`).
+- **`mechtatel-natives`** + per-platform `mechtatel-natives-{linux,linux-arm64,windows,windows-arm64,macos-arm64}` — packaged binaries of `libmttslangc` (Slang shader compiler bridge, C++ via CMake) wrapped by `MttNativeLoaderBase`.
+- **`mechtatel-audio-natives`** + per-platform `mechtatel-audio-natives-{linux,linux-arm64,windows,windows-arm64,macos-arm64}` — packaged binaries of `lib-audio-player` (Rust crate under `mechtatel-audio-natives/natives/lib-audio-player`).
+- **`mechtatel-platform-pack-{linux,linux-arm64,windows,windows-arm64,macos-arm64}`** — meta-modules that pull in the matching LWJGL `${lwjgl.natives}` classifier jars **plus** the matching `mechtatel-natives-*`. Downstream apps depend on **one** platform-pack (selected by Maven OS/arch profile via `${mechtatel.platformPack}`).
 - **`mechtatel-common-utils`**, **`mechtatel-logging`** — shared helpers and an optional Logback config.
 
 ### Native loading
 
-`MttNativeLoaderFactory2` reflectively instantiates `com.github.maeda6uiui.mechtatel.natives.{windows,linux,linuxarm64,macosarm64}.MttNativeLoader2` based on the platform string passed in. The class is provided by whichever `mechtatel-natives-*` jar is on the classpath, so adding a new platform means adding a new natives module + an entry in this factory.
+`MttNativeLoaderFactory2` reflectively instantiates `com.github.maeda6uiui.mechtatel.natives.{windows,windowsarm64,linux,linuxarm64,macosarm64}.MttNativeLoader2` based on the platform string passed in. The class is provided by whichever `mechtatel-natives-*` jar is on the classpath, so adding a new platform means adding a new natives module + an entry in this factory.
 
 ### Settings & shader config
 
@@ -66,7 +66,7 @@ Engine entry points are constructed from `MttSettings` (typically loaded from `.
 
 ## Native library builds (CI-driven)
 
-The native libraries are **not** built by `mvn install`. Each platform binary is produced by a dedicated GitHub Actions workflow under `.github/workflows/build-lib-*-{linux,linux-arm64,windows,macos-arm64}.yml`, triggered by tags like `mttslangc-natives-linux-*` or `audio-player-natives-windows-*`. Workflows attach the built `.so`/`.dll`/`.dylib` to the GitHub release; the per-platform Maven natives modules then bundle those artifacts.
+The native libraries are **not** built by `mvn install`. Each platform binary is produced by a dedicated GitHub Actions workflow under `.github/workflows/build-lib-*-{linux,linux-arm64,windows,windows-arm64,macos-arm64}.yml`, triggered by tags like `mttslangc-natives-linux-*` or `audio-player-natives-windows-*`. Workflows attach the built `.so`/`.dll`/`.dylib` to the GitHub release; the per-platform Maven natives modules then bundle those artifacts.
 
 To build `libmttslangc` locally (Linux example): see `.github/workflows/build-lib-mttslangc-linux.yml` — it downloads a Slang release, copies `libslang.so` into `mechtatel-natives/natives/lib-mttslangc/lib/`, then runs cmake from a `build/` subdir. The Rust audio library lives at `mechtatel-audio-natives/natives/lib-audio-player` and builds with standard `cargo build --release`.
 

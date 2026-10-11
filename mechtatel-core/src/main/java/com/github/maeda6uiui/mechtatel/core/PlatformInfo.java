@@ -24,6 +24,14 @@ public class PlatformInfo {
             } else {
                 throw new RuntimeException("Unsupported architecture: " + ARCHITECTURE);
             }
+        } else if (PLATFORM.equals("windows")) {
+            if (ARCHITECTURE.equals("x64")) {
+                PLATFORM_WITH_ARCH = PLATFORM;
+            } else if (ARCHITECTURE.equals("arm64")) {
+                PLATFORM_WITH_ARCH = PLATFORM + "arm64";
+            } else {
+                throw new RuntimeException("Unsupported architecture: " + ARCHITECTURE);
+            }
         } else if (PLATFORM.equals("macos")) {
             if (ARCHITECTURE.equals("arm64")) {
                 PLATFORM_WITH_ARCH = PLATFORM + "arm64";

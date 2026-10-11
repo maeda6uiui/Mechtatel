@@ -15,16 +15,6 @@ import java.util.List;
  */
 public class MttNativeLoader2 extends MttNativeLoaderBase {
     @Override
-    public void loadLibbulletjme() throws IOException {
-        MttResourceFileUtils.loadNativeLib(
-                this.getClass(),
-                "/Bin/Windows64ReleaseSp_bulletjme.dll",
-                TEMP_FILENAME_PREFIX,
-                false
-        );
-    }
-
-    @Override
     public File extractLibMttSlangc() throws IOException {
         return MttResourceFileUtils.extractFileIntoDir(
                 this.getClass(), "/Bin/mttslangc.dll", this.getTempDir());

@@ -1,0 +1,43 @@
+name: Build native library of imgui-java for Windows arm64
+
+on:
+  push:
+    tags:
+      - "mtt-imgui-java-natives-all-*"
+      - "mtt-imgui-java-natives-windowsarm64-*"
+
+jobs:
+  build:
+    name: Build native library of imgui-java for Windows arm64
+    permissions:
+      contents: write
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: Misc/imgui-java
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Install llvm-mingw
+        working-directory: /tmp
+        run: |
+          wget https://github.com/mstorsjo/llvm-mingw/releases/download/20260922/llvm-mingw-20260922-ucrt-ubuntu-22.04-x86_64.tar.xz
+          tar -xf llvm-mingw-20260922-ucrt-ubuntu-22.04-x86_64.tar.xz
+          echo "$PWD/llvm-mingw-20260922-ucrt-ubuntu-22.04-x86_64/bin" >> $GITHUB_PATH
+      - name: Build lib-imgui-java
+        run: ./gradlew imgui-binding:generateLibs -Denvs=windowsarm64 -Dlocal
+      - name: Rename build artifact to prevent name collision
+        run: |
+          cd imgui-binding/build/libsNative/windowsarm64
+          mv imgui-java64.dll imgui-java-arm64.dll
+      - name: Publish build artifact to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Misc/imgui-java/imgui-binding/build/libsNative/windowsarm64/imgui-java-arm64.dll

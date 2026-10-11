@@ -1,0 +1,30 @@
+name: Build native library of audio player for Windows arm64
+
+on:
+  push:
+    tags:
+      - "audio-natives-all-*"
+      - "audio-natives-windowsarm64-*"
+
+jobs:
+  build:
+    name: Build native library of audio player for Windows arm64
+    permissions:
+      contents: write
+    runs-on: windows-11-arm
+    defaults:
+      run:
+        working-directory: mechtatel-audio-natives/natives/lib-audio-player
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build native library with cargo
+        run: cargo build --release
+      - name: Rename build artifact to prevent name collision
+        run: |
+          cd target/release
+          mv audioplayer.dll audioplayer-arm64.dll
+      - name: Publish native library to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mechtatel-audio-natives/natives/lib-audio-player/target/release/audioplayer-arm64.dll

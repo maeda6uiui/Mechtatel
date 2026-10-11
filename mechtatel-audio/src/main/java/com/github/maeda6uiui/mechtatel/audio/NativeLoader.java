@@ -18,7 +18,13 @@ public class NativeLoader {
     private static String getPlatform() {
         String platform;
         if (Platform.isWindows()) {
-            platform = "windows";
+            if (Platform.isIntel()) {
+                platform = "windows";
+            } else if (Platform.isARM()) {
+                platform = "windowsarm64";
+            } else {
+                throw new RuntimeException("Unsupported platform");
+            }
         } else if (Platform.isLinux()) {
             if (Platform.isIntel()) {
                 platform = "linux";

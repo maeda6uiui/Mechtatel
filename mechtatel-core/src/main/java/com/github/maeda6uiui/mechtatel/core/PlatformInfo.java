@@ -15,25 +15,30 @@ public class PlatformInfo {
     static {
         PLATFORM = Platform.get().name().toLowerCase();
         ARCHITECTURE = Platform.getArchitecture().name().toLowerCase();
+        PLATFORM_WITH_ARCH = resolvePlatformWithArch(PLATFORM, ARCHITECTURE);
+    }
 
-        switch (PLATFORM) {
+    static String resolvePlatformWithArch(String platform, String architecture) {
+        switch (platform) {
             case "linux", "windows" -> {
-                if (ARCHITECTURE.equals("x64")) {
-                    PLATFORM_WITH_ARCH = PLATFORM;
-                } else if (ARCHITECTURE.equals("arm64")) {
-                    PLATFORM_WITH_ARCH = PLATFORM + "arm64";
+                if (architecture.equals("x64")) {
+                    return platform;
+                } else if (architecture.equals("arm64")) {
+                    return platform + "arm64";
                 } else {
-                    throw new RuntimeException("Unsupported architecture: " + ARCHITECTURE);
+                    throw new RuntimeException("Unsupported architecture: " + architecture);
                 }
             }
             case "macos" -> {
-                if (ARCHITECTURE.equals("arm64")) {
-                    PLATFORM_WITH_ARCH = PLATFORM + "arm64";
+                if (architecture.equals("arm64")) {
+                    return platform + "arm64";
                 } else {
-                    throw new RuntimeException("Unsupported architecture: " + ARCHITECTURE);
+                    throw new RuntimeException("Unsupported architecture: " + architecture);
                 }
             }
-            default -> PLATFORM_WITH_ARCH = PLATFORM;
+            default -> {
+                return platform;
+            }
         }
     }
 }

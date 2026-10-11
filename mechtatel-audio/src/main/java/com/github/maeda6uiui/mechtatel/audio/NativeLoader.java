@@ -16,33 +16,33 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class NativeLoader {
     private static String getPlatform() {
-        String platform;
-        if (Platform.isWindows()) {
-            if (Platform.isIntel()) {
-                platform = "windows";
-            } else if (Platform.isARM()) {
-                platform = "windowsarm64";
-            } else {
-                throw new RuntimeException("Unsupported platform");
+        return resolvePlatform(
+                Platform.isWindows(),
+                Platform.isLinux(),
+                Platform.isMac(),
+                Platform.isIntel(),
+                Platform.isARM());
+    }
+
+    static String resolvePlatform(boolean isWindows, boolean isLinux, boolean isMac, boolean isIntel, boolean isArm) {
+        if (isWindows) {
+            if (isIntel) {
+                return "windows";
+            } else if (isArm) {
+                return "windowsarm64";
             }
-        } else if (Platform.isLinux()) {
-            if (Platform.isIntel()) {
-                platform = "linux";
-            } else if (Platform.isARM()) {
-                platform = "linuxarm64";
-            } else {
-                throw new RuntimeException("Unsupported platform");
+        } else if (isLinux) {
+            if (isIntel) {
+                return "linux";
+            } else if (isArm) {
+                return "linuxarm64";
             }
-        } else if (Platform.isMac()) {
-            if (Platform.isARM()) {
-                platform = "macosarm64";
-            } else {
-                throw new RuntimeException("Unsupported platform");
+        } else if (isMac) {
+            if (isArm) {
+                return "macosarm64";
             }
-        } else {
-            throw new RuntimeException("Unsupported platform");
         }
-        return platform;
+        throw new RuntimeException("Unsupported platform");
     }
 
     public static IAudioPlayer load() {

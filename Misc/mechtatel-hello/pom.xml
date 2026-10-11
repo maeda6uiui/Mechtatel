@@ -69,6 +69,18 @@
             </properties>
         </profile>
         <profile>
+            <id>mechtatel-natives-windows-aarch64</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <mechtatel.platformPack>mechtatel-platform-pack-windows-arm64</mechtatel.platformPack>
+            </properties>
+        </profile>
+        <profile>
             <id>mechtatel-natives-macos-aarch64</id>
             <activation>
                 <os>

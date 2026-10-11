@@ -2,9 +2,10 @@
 
 # Mechtatel
 
-Mechtatel (ru: Мечтатель en: Dreamer)
+Mechtatel (ru: Мечтатель, en: Dreamer)
 
-> Мечтай до тех пор, пока не узнаешь, что давно пора повзрослеть и бросить эту фигню.
+> Мечтай до тех пор, пока не узнаешь, что давно пора повзрослеть и бросить эту фигню.<br>
+> (Dream until you realize it's time to grow up and quit this nonsense.)
 
 ## Overview
 

@@ -28,6 +28,11 @@ jobs:
           server-password: MAVEN_CENTRAL_TOKEN
           gpg-private-key: ${{secrets.gpgPrivateKey}}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
+      # Maven 3.10 leaves local-repository files in the Central bundle, which Central rejects
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: 3.9.16
       - name: Deploy to Maven Central
         run: mvn -B -ntp deploy -Dskip.audio.tests=true -Dmaven.repository.credentialScope=id
         env:

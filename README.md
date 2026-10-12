@@ -35,12 +35,13 @@ Its somewhat cheap taste of 20-year-old gameplay still captivates me.
 
 ### Supported platforms
 
-| Platform    | Tested |
-|-------------|--------|
-| Linux x64   | Yes    |
-| Linux arm64 | No     |
-| Windows x64 | No     |
-| macOS arm64 | No     |
+| Platform      | Tested |
+|---------------|--------|
+| Linux x64     | Yes    |
+| Linux arm64   | No     |
+| Windows x64   | No     |
+| Windows arm64 | No     |
+| macOS arm64   | No     |
 
 Support for Linux arm64 is partly tested on a `g5g.xlarge` instance of AWS EC2.
 
@@ -53,17 +54,17 @@ Support for Linux arm64 is partly tested on a `g5g.xlarge` instance of AWS EC2.
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-core</artifactId>
-        <version>0.5.0</version>
+        <version>0.6.0</version>
     </dependency>
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-platform-pack-linux</artifactId>
-        <version>0.5.0</version>
+        <version>0.6.0</version>
     </dependency>
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-logging</artifactId>
-        <version>0.5.0</version>
+        <version>0.6.0</version>
     </dependency>
 </dependencies>
 ```
@@ -71,12 +72,13 @@ Support for Linux arm64 is partly tested on a `g5g.xlarge` instance of AWS EC2.
 `mechtatel-platform-pack-linux` module loads platform-dependent dependencies for Linux x64.
 You have to change it according to your target platform.
 
-| Platform    | Module name                         |
-|-------------|-------------------------------------|
-| Linux x64   | mechtatel-platform-pack-linux       |
-| Linux arm64 | mechtatel-platform-pack-linux-arm64 |
-| Windows x64 | mechtatel-platform-pack-windows     |
-| macOS arm64 | mechtatel-platform-pack-macos-arm64 |
+| Platform      | Module name                           |
+|---------------|---------------------------------------|
+| Linux x64     | mechtatel-platform-pack-linux         |
+| Linux arm64   | mechtatel-platform-pack-linux-arm64   |
+| Windows x64   | mechtatel-platform-pack-windows       |
+| Windows arm64 | mechtatel-platform-pack-windows-arm64 |
+| macOS arm64   | mechtatel-platform-pack-macos-arm64   |
 
 pom.xml in the [mechtatel-hello](./Misc/mechtatel-hello) project might be a good starting point if you want to dynamically load a platform-pack module according to the target platform.
 
@@ -91,12 +93,12 @@ You can overwrite it or use another logging implementation at your discretion.
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-audio</artifactId>
-        <version>0.5.0</version>
+        <version>0.6.0</version>
     </dependency>
     <dependency>
         <groupId>io.github.maeda6uiui</groupId>
         <artifactId>mechtatel-audio-natives-linux</artifactId>
-        <version>0.5.0</version>
+        <version>0.6.0</version>
     </dependency>
 </dependencies>
 ```
@@ -107,12 +109,13 @@ It can be used independently from `mechtatel-core`.
 
 As with the `mechtatel-core` module, you have to add a platform-dependent module to dependencies according to the target platform.
 
-| Platform    | Module name                         |
-|-------------|-------------------------------------|
-| Linux x64   | mechtatel-audio-natives-linux       |
-| Linux arm64 | mechtatel-audio-natives-linux-arm64 |
-| Windows x64 | mechtatel-audio-natives-windows     |
-| macOS arm64 | mechtatel-audio-natives-macos-arm64 |
+| Platform      | Module name                           |
+|---------------|---------------------------------------|
+| Linux x64     | mechtatel-audio-natives-linux         |
+| Linux arm64   | mechtatel-audio-natives-linux-arm64   |
+| Windows x64   | mechtatel-audio-natives-windows       |
+| Windows arm64 | mechtatel-audio-natives-windows-arm64 |
+| macOS arm64   | mechtatel-audio-natives-macos-arm64   |
 
 ## Documentation
 

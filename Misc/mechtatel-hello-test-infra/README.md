@@ -24,7 +24,7 @@ In the `env/sandbox` directory, run the following commands:
 
 ### Install an NVIDIA driver
 
-The operating system installed on the EC2 instance is Ubuntu Server 24.04 by default.
+The operating system installed on the EC2 instance is Ubuntu Server 26.04 by default.
 It doesn't have any NVIDIA drivers installed, so you have to install it by yourself.
 There might be multiple options, but for now, I'll list the commands that I ran when testing it myself.
 

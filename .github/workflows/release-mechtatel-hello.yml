@@ -25,6 +25,11 @@ jobs:
             archiveFilename: mechtatel-hello_windows_x64.zip
             jarFilename: mechtatel-hello_windows_x64.jar
             openJdkUrl: https://download.java.net/java/GA/jdk26.0.1/458fda22e4c54d5ba572ab8d2b22eb83/8/GPL/openjdk-26.0.1_windows-x64_bin.zip
+          - name: Windows arm64
+            mvnProfile: mechtatel-natives-windows-aarch64
+            archiveFilename: mechtatel-hello_windows_arm64.zip
+            jarFilename: mechtatel-hello_windows_arm64.jar
+            openJdkUrl: https://aka.ms/download-jdk/microsoft-jdk-25.0.4.1-windows-aarch64.zip
           - name: macOS arm64
             mvnProfile: mechtatel-natives-macos-aarch64
             archiveFilename: mechtatel-hello_macos_arm64.tar.gz

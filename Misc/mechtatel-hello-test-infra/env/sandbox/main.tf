@@ -30,14 +30,14 @@ module "network" {
   ]
 }
 
-data "aws_ami" "ubuntu_24_04_arm64" {
+data "aws_ami" "ubuntu_26_04_arm64" {
   most_recent = true
 
   owners = ["099720109477"] # Canonical
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-arm64-server-*"]
+    values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-*-26.04-arm64-server-*"]
   }
   filter {
     name   = "architecture"
@@ -72,7 +72,7 @@ module "instance" {
     public_key = file("mechtatel-hello-test.pub")
   }
   instance_config = {
-    ami           = data.aws_ami.ubuntu_24_04_arm64.id
+    ami           = data.aws_ami.ubuntu_26_04_arm64.id
     instance_type = "g5g.xlarge"
     volume_size   = 32
     subnet_key    = "main"

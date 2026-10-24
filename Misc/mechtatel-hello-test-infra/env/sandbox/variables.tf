@@ -1,3 +1,3 @@
-variable "ssh_cidr" {
+variable "ssh_cidr_block" {
   type = string
 }

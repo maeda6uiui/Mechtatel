@@ -2,35 +2,20 @@ variable "env" {
   type = string
 }
 
-variable "vpc" {
-  type = object({
-    id = string
-  })
+variable "vpc_id"{
+  type = string
 }
 
-variable "subnet" {
+variable "subnets" {
   type = object({
     public = map(object({
-      cidr_block        = string
-      availability_zone = string
+      id=string
     }))
   })
 }
 
-variable "security_group" {
-  type = object({
-    allow_ssh = object({
-      ipv4_cidrs = list(string)
-    })
-  })
-}
-
-variable "route_table" {
-  type = object({
-    public = object({
-      id = string
-    })
-  })
+variable "security_group_id" {
+  type = string
 }
 
 variable "private_ips" {

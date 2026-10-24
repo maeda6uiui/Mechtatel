@@ -10,12 +10,12 @@ variable "subnets" {
     }))
   })
   validation {
-    condition = contains(keys(var.subnets.public),"main")
+    condition     = contains(keys(var.subnets.public), "main")
     error_message = "Definition of the `main` subnet must be provided."
   }
 }
 
 variable "allow_ssh_cidr_blocks" {
-  type = list(string)
+  type    = list(string)
   default = []
 }

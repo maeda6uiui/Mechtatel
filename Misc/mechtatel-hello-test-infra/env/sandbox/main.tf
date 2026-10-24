@@ -24,7 +24,7 @@ module "network" {
   source = "../../modules/network"
 
   vpc_cidr_block = local.vpc_cidr_block
-  subnets = local.subnets
+  subnets        = local.subnets
   allow_ssh_cidr_blocks = [
     var.ssh_cidr_block
   ]
@@ -58,8 +58,8 @@ module "instance" {
 
   env = local.env
 
-  vpc_id = module.network.vpc.main.id
-  subnets = module.network.subnets
+  vpc_id            = module.network.vpc.main.id
+  subnets           = module.network.subnets
   security_group_id = module.network.security_groups.main.id
 
   private_ips = {

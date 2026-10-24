@@ -2,14 +2,14 @@ variable "env" {
   type = string
 }
 
-variable "vpc_id"{
+variable "vpc_id" {
   type = string
 }
 
 variable "subnets" {
   type = object({
     public = map(object({
-      id=string
+      id = string
     }))
   })
 }

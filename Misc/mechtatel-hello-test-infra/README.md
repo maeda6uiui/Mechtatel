@@ -9,11 +9,11 @@ Terraform will create a `g5g.xlarge` instance on AWS, along with other required 
 
 ### Create a pair of SSH keys
 
-Create a pair of SSH keys (`mechtatel-hello-test.pem` and `mechtatel-hello-test.pub`) and place them in `env/sandbox`.
+Create a pair of SSH keys (`mechtatel-hello-test.pem` and `mechtatel-hello-test.pub`) and place them in `environments/sandbox`.
 
 ### Run Terraform
 
-In the `env/sandbox` directory, run the following commands:
+In the `environments/sandbox` directory, run the following commands:
 
 1. `terraform init` 
 2. Set the `ssh_cidr` variable

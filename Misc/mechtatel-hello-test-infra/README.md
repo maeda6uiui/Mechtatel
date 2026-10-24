@@ -16,8 +16,8 @@ Create a pair of SSH keys (`mechtatel-hello-test.pem` and `mechtatel-hello-test.
 In the `environments/sandbox` directory, run the following commands:
 
 1. `terraform init` 
-2. Set the `ssh_cidr` variable
-   1. One way to set it is via environment variable: `export TF_VAR_ssh_cidr="xxx.xxx.xxx.xxx/32"`
+2. Set the `ssh_cidr_block` variable
+   1. One way to set it is via environment variable: `export TF_VAR_ssh_cidr_block="xxx.xxx.xxx.xxx/32"`
    2. You can only connect via SSH from that IP address
 3. `terraform plan -out sandbox.tfplan`, check if the plan is shown as expected
 4. `terraform apply sandbox.tfplan`

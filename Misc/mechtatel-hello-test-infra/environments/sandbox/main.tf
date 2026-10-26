@@ -58,12 +58,12 @@ module "instance" {
 
   env = local.env
 
-  vpc_id            = module.network.vpc.main.id
+  vpc_id            = module.network.vpc.id
   subnets           = module.network.subnets
   security_group_id = module.network.security_groups.main.id
 
   private_ips = {
-    for k, v in local.subnet.public : k => [
+    for k, v in local.subnets.public : k => [
       cidrhost(v.cidr_block, 10)
     ]
   }

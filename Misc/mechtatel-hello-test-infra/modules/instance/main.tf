@@ -1,5 +1,5 @@
 resource "aws_network_interface" "main" {
-  for_each = var.subnets.public["main"].id
+  for_each = var.subnets.public
 
   subnet_id   = each.value.id
   private_ips = var.private_ips[each.key]

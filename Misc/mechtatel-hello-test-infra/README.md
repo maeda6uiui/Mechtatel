@@ -73,3 +73,17 @@ xvfb-run -a ./start.sh -t primitives -o primitives.png
 ```
 
 Check the output of `./start.sh -h` to find further info.
+
+### Expected outputs
+
+#### primitives
+
+![primitives](./Image/primitives.png)
+
+#### imgui
+
+![imgui](./Image/imgui.png)
+
+#### monochrome-image
+
+![monochrome image](./Image/monochrome_image.png)

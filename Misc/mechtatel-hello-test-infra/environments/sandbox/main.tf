@@ -2,7 +2,7 @@ locals {
   env = "sandbox"
 
   vpc_cidr_block = "172.17.0.0/20"
-  subnet = {
+  subnets = {
     public = {
       "1a" = {
         cidr_block        = cidrsubnet(local.vpc_cidr_block, 4, 0)
@@ -23,17 +23,21 @@ locals {
 module "network" {
   source = "../../modules/network"
 
-  cidr_block = local.vpc_cidr_block
+  vpc_cidr_block = local.vpc_cidr_block
+  subnets        = local.subnets
+  allow_ssh_cidr_blocks = [
+    var.ssh_cidr_block
+  ]
 }
 
-data "aws_ami" "ubuntu_24_04_arm64" {
+data "aws_ami" "ubuntu_26_04_arm64" {
   most_recent = true
 
   owners = ["099720109477"] # Canonical
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-arm64-server-*"]
+    values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-*-26.04-arm64-server-*"]
   }
   filter {
     name   = "architecture"
@@ -54,16 +58,12 @@ module "instance" {
 
   env = local.env
 
-  vpc    = module.network.vpc
-  subnet = local.subnet
-  security_group = {
-    allow_ssh = {
-      ipv4_cidrs = [var.ssh_cidr]
-    }
-  }
-  route_table = module.network.route_table
+  vpc_id            = module.network.vpc.id
+  subnets           = module.network.subnets
+  security_group_id = module.network.security_groups.main.id
+
   private_ips = {
-    for k, v in local.subnet.public : k => [
+    for k, v in local.subnets.public : k => [
       cidrhost(v.cidr_block, 10)
     ]
   }
@@ -72,7 +72,7 @@ module "instance" {
     public_key = file("mechtatel-hello-test.pub")
   }
   instance_config = {
-    ami           = data.aws_ami.ubuntu_24_04_arm64.id
+    ami           = data.aws_ami.ubuntu_26_04_arm64.id
     instance_type = "g5g.xlarge"
     volume_size   = 32
     subnet_key    = "1c"

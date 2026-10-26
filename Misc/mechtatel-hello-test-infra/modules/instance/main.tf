@@ -1,40 +1,5 @@
-resource "aws_subnet" "public" {
-  for_each = var.subnet.public
-
-  vpc_id            = var.vpc.id
-  availability_zone = each.value.availability_zone
-  cidr_block        = each.value.cidr_block
-}
-
-resource "aws_route_table_association" "public" {
-  for_each = var.subnet.public
-
-  subnet_id      = aws_subnet.public[each.key].id
-  route_table_id = var.route_table.public.id
-}
-
-resource "aws_security_group" "public" {
-  vpc_id = var.vpc.id
-}
-
-resource "aws_vpc_security_group_ingress_rule" "allow_ingress_traffic_ssh_ipv4" {
-  for_each = toset(var.security_group.allow_ssh.ipv4_cidrs)
-
-  security_group_id = aws_security_group.public.id
-  cidr_ipv4         = each.value
-  from_port         = 22
-  ip_protocol       = "tcp"
-  to_port           = 22
-}
-
-resource "aws_vpc_security_group_egress_rule" "allow_all_egress_traffic_ipv4" {
-  security_group_id = aws_security_group.public.id
-  cidr_ipv4         = "0.0.0.0/0"
-  ip_protocol       = "-1"
-}
-
 resource "aws_network_interface" "main" {
-  for_each = aws_subnet.public
+  for_each = var.subnets.public
 
   subnet_id   = each.value.id
   private_ips = var.private_ips[each.key]
@@ -73,7 +38,7 @@ resource "aws_instance" "main" {
 }
 
 resource "aws_network_interface_sg_attachment" "public" {
-  security_group_id    = aws_security_group.public.id
+  security_group_id    = var.security_group_id
   network_interface_id = aws_instance.main.primary_network_interface_id
 }
 

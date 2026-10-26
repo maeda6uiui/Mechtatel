@@ -1,5 +1,9 @@
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr_block
+
+  tags = {
+    Name = "mechtatel-hello-test"
+  }
 }
 
 resource "aws_internet_gateway" "main" {
@@ -22,6 +26,10 @@ resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.main.id
   availability_zone = each.value.availability_zone
   cidr_block        = each.value.cidr_block
+
+  tags = {
+    Name = "mechtatel-hello-test-${each.key}"
+  }
 }
 
 resource "aws_route_table_association" "public" {
@@ -33,6 +41,10 @@ resource "aws_route_table_association" "public" {
 
 resource "aws_security_group" "main" {
   vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "mechtatel-hello-test"
+  }
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_ingress_traffic_ssh" {

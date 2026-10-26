@@ -37,19 +37,25 @@ sudo apt install nvidia-driver-595-server
 ### Install other requirements
 
 ```
-sudo apt install libxtst6 libxi6 libxrender1
+sudo apt install libxtst6 libxi6 libxrender1 xvfb
 ```
+
+`xvfb` provides a virtual X server (see [Run mechtatel-hello](#run-mechtatel-hello) for why it is needed).
 
 ### Run mechtatel-hello
 
 mechtatel-hello runs in the headless mode, that is, rendering without a window.
-I expected it to work fine in environments without a monitor, but that wasn't the case.
-I guess there is a better way to accomplish it, but the easiest way is to use SSH with X11 forwarding (`-X`).
-So the command would look like:
+However, the engine still initializes GLFW even in the headless mode, and GLFW on Linux needs an X server (or a Wayland compositor) to connect to.
+Rendering itself is done on the GPU of the instance, so the X server is only there to make GLFW happy.
+
+You don't need an X11 client on your machine. Run the app under Xvfb (a virtual X server) on the instance, as described below.
+Connect with plain SSH:
 
 ```
-ssh -i mechtatel-hello-test.pem -X ubuntu@xxx.xxx.xxx.xxx
+ssh -i mechtatel-hello-test.pem ubuntu@xxx.xxx.xxx.xxx
 ```
+
+(Connecting with X11 forwarding, `ssh -X`, also works, but it requires an X11 client on your machine.)
 
 Download a release of mechtatel-hello and extract it:
 
@@ -60,9 +66,10 @@ tar -xf mechtatel-hello_linux_arm64.tar.gz
 
 You can run mechtatel-hello by calling `start.sh`.
 `-t` specifies the type of rendering, and `-o` specifies the output filepath of the rendering result.
+Prefix the command with `xvfb-run -a` to run it without a display:
 
 ```
-./start.sh -t primitives -o primitives.png
+xvfb-run -a ./start.sh -t primitives -o primitives.png
 ```
 
 Check the output of `./start.sh -h` to find further info.

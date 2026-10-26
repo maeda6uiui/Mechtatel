@@ -4,7 +4,7 @@ locals {
   vpc_cidr_block = "172.17.0.0/20"
   subnets = {
     public = {
-      "main" = {
+      "1a" = {
         cidr_block        = cidrsubnet(local.vpc_cidr_block, 4, 0)
         availability_zone = "ap-northeast-1a"
       }
@@ -75,6 +75,6 @@ module "instance" {
     ami           = data.aws_ami.ubuntu_26_04_arm64.id
     instance_type = "g5g.xlarge"
     volume_size   = 32
-    subnet_key    = "main"
+    subnet_key    = "1c"
   }
 }

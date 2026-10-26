@@ -10,10 +10,6 @@ variable "subnets" {
       availability_zone = string
     }))
   })
-  validation {
-    condition     = contains(keys(var.subnets.public), "main")
-    error_message = "Definition of the `main` subnet must be provided."
-  }
   description = "Subnet definitions"
 }
 
